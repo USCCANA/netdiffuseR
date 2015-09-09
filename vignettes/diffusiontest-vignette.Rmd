@@ -1,0 +1,57 @@
+---
+title: "diffusiontest package"
+author: "stephanie dyal"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{diffusiontest package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+#Package Basics
+
+diffusiontest contains tools to calculate network measures associated with diffusion of 
+innovation theory. This document uses an example of tobacco policy diffusion to illustrate
+the use of diffusiontest. The data used in this example is contained in the diffusiontest 
+package. 
+
+
+##diffusiontest creates...
+
+* formatted linklists for dynamic network data for use with diffusiontest functions
+* adjacency matrices
+* node x year matrices for time of adoption
+* node x year matrices indicating if innovation adopted by year
+
+##diffusiontest computes...
+
+
+* selection metrics
+* susceptibility and influence
+* cumulative innovation adopters by year
+* hazard rate for innovation adoption
+* Exposure to innovation adopters through network connection
+* Threshold of exposure through network neccessary for innovation adoption
+
+##diffusiontest contains...
+
+* network data for telecommunication, trade, treaty negotiation, etc. for UN member nations
+* Treaty ratification data for 4 multilateral treaties
+
+#Example of function use: Diffusion of a medical innovation
+
+The medical innovation dataset contains data from 125 physicians located in 4 different cities. The diffusion
+of a medical innovation is tracked across an 18-month period. Three physician networks are assessed: advice, discussion, and friendship. We want to assess susceptibility and infectiousness, exposure, node level and network
+level network measures, thresholds, and cumulative adopters by time period.
+
+The dataset is called `mi.raw`. This dataset contains data on innovation adoption, network innovations, and physician attributes.
+
+##Preparing the Data
+
+###Function: `adoptMat`
+
+The `adoptMat` function creates 2 matrices. We want to create adoption matrices separately for each group, so here we use the `split` function to split the time-of-adoption vector from the dataset into a list with a vector for each city. We call the `adoptMat` function with `lapply`, and apply `adoptMat` to the list of toa vectors.
+
+
+

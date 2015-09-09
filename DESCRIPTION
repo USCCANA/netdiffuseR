@@ -1,0 +1,16 @@
+Package: diffusiontest
+Title: Network Analysis for Diffusion of Innovations
+Version: 0.1
+Authors@R: "Stephanie Dyal <stepharp@usc.edu> [aut, cre]"
+Description: This package contains functions useful for analyzing
+    network data for diffusion of innovations applications.
+    Functions include selection, susceptibility & infection, etc.
+Depends:
+    R (>= 3.1.1)
+License: What license is it under?
+LazyData: true
+Imports:
+    foreign
+Suggests:
+    knitr
+VignetteBuilder: knitr
