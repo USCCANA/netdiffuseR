@@ -1,0 +1,23 @@
+---
+title: "README"
+author: "George G. Vega Yon"
+date: "September 9, 2015"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+# diffusiontest: Network Analysis for Diffusion of Innovations
+
+This package contains functions useful for analyzing network data for diffusion of innovations applications.
+
+Functions include selection, susceptibility & infection, etc.
+
+## Installation
+
+Using the `devtools` package, you can install `diffusiontest` dev version as follows
+
+```r
+devtools::install_github('srdyal/diffusiontest')
+```
+
