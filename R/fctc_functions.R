@@ -34,6 +34,8 @@ hazardrate<- function(Adopt_mat){
   maxTime <- ncol(Adopt_mat)
   n <- nrow(Adopt_mat)
   cum_num    <- colSums(Adopt_mat)
+
+  # Number of new adopters each period between t=2 and t=T-1
   new_adopts <- cum_num[3:(maxTime-1)] - cum_num[2:(maxTime-2)]  # Calcualte hazard rates on 2 - 10 interval
   pool       <- (n - (colSums(Adopt_mat)))
   pool       <- pool[2:(maxTime-2)]
