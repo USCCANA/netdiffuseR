@@ -7,7 +7,7 @@ Description: This package contains functions useful for analyzing
     Functions include selection, susceptibility & infection, etc.
 Depends:
     R (>= 3.1.1)
-License: What license is it under?
+License: MIT + file LICENSE
 LazyData: true
 Imports:
     foreign
