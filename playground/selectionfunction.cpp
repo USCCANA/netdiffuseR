@@ -186,4 +186,10 @@ out <- selectionFunctionEgoAlter(
 adopt <- adoptslist[[1]]$Adopt_mat
 out2 <- select_egoalter(adjmat[,,1], adjmat[,,2], adopt[,1], adopt[,2])
 
+library(microbenchmark)
+microbenchmark(
+  selectionFunctionEgoAlter(adjmat, adopt, 2),
+  select_egoalter(adjmat[,,1], adjmat[,,2], adopt[,1], adopt[,2])
+)
+
 */
