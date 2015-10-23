@@ -131,13 +131,13 @@ edgelist_to_adjmat <- function(
   return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
-# Base data
-set.seed(123)
-n <- 2000
-edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
-times <- sample.int(10, nrow(edgelist), replace=TRUE)
-w <- abs(rnorm(nrow(edgelist)))
-
+# # Base data
+# set.seed(123)
+# n <- 1000
+# edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+# times <- sample.int(10, nrow(edgelist), replace=TRUE)
+# w <- abs(rnorm(nrow(edgelist)))
+#
 # # Simple example
 # edgelist_to_adjmat(edgelist)
 # edgelist_to_adjmat(edgelist, undirected = TRUE)
@@ -153,20 +153,25 @@ w <- abs(rnorm(nrow(edgelist)))
 # # Using times and weights
 # edgelist_to_adjmat(edgelist, times = times, weights = w)
 # edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
-
-# Benchmark with the previous version
-library(microbenchmark)
-library(diffusiontest)
-
-dat <- as.data.frame(cbind(edgelist, w))
-colnames(dat) <- c('ego','alter','tie')
-microbenchmark(
-  adjmatbuild(dat,n,1:n),
-  edgelist_to_adjmat(edgelist, w), times=10)
-
-old <- adjmatbuild(dat[,-3],n,1:n)
-new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
-arrayInd(which(old!=new), dim(old), dimnames(old))
+#
+# # Benchmark with the previous version
+# library(microbenchmark)
+# library(diffusiontest)
+#
+# dat <- as.data.frame(cbind(edgelist, w))
+# colnames(dat) <- c('ego','alter','tie')
+# microbenchmark(
+#   adjmatbuild(dat,n,1:n),
+#   edgelist_to_adjmat(edgelist, w), times=100)
+#
+# old <- adjmatbuild(dat[,-3],n,1:n)
+# new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
+# arrayInd(which(old!=new), dim(old), dimnames(old))
+#
+# ## Dynamic
+# microbenchmark(
+#   adjByTime(cbind(year=times,dat),n,max(times)),
+#   edgelist_to_adjmat(edgelist, w, times), times=100)
 
 */
 

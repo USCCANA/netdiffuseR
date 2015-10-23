@@ -296,6 +296,9 @@ selectionFunctionEgoAlter <- function(all_nets, Adopt_mat, Time){
                     selects1_=selects1, selects2_=selects2, selects3_=selects3, selects4_=selects4, selects5_=selects5, selects6_=selects6, selects7_=selects7, selects8_=selects8, selects9_=selects9, selects10_=selects10,
                     selects11_=selects11, selects12_=selects12, selects13_=selects13, selects14_=selects14, selects15_=selects15, selects16_=selects16)
     return(select)
+
+
+
   }
 }
 
