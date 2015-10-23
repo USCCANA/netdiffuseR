@@ -1,4 +1,5 @@
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 
 // Combine two vectors and (if) get the unique vect
@@ -23,20 +24,23 @@ NumericVector vec_comb(NumericVector a, NumericVector b, bool uni = false) {
 
 // [[Rcpp::export]]
 NumericMatrix edgelist_to_adjmat_cpp(
-    const NumericMatrix data,
+    const NumericMatrix & data,
+    NumericVector weights = NumericVector::create(),
+    int n = 0,
     bool undirected = false) {
 
   // Getting the dimensions and creating objects
   int m = data.nrow();
-  int k = data.ncol();
 
   // Checking out weights
   NumericVector w(m,1.0);
-  if (k>2) w = data(_,2);
+  if (weights.size() == m) w = clone(weights);
 
   // Identifying the unique nodes and creating the adjmat (base)
-  NumericVector nodes = vec_comb(data(_,0), data(_,1), true);
-  int n = nodes.size();
+  if (n == 0) {
+    NumericVector nodes = vec_comb(data(_,0), data(_,1), true);
+    n = max(nodes);
+  }
   NumericMatrix mat(n,n);
 
   for(int i=0;i<m;i++) {
@@ -60,6 +64,10 @@ uniquecpp(x)
 #' @param ... Further arguments for the method (ignored)
 #' @return A recoded edgelist
 #' @details Recomended for ease of use
+#' @example
+#' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
+#' edgelist
+#' recode(edgelist)
 recode <- function(...) UseMethod("recode")
 
 #' @describeIn recode Method for data.frame
@@ -70,26 +78,97 @@ recode.data.frame <- function(data, ...) {
   data
 }
 
-#' @describeIn recode method for matrix
+#' @describeIn recode Method for matrix
 recode.matrix <- function(data, ...) {
+
+  # Checking the size of the matrix
+
   data <- as.factor(as.vector(data))
   n <- length(data)
   cbind(data[1:(n/2)], data[(n/2+1):n])
 }
 
-edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
-edgelist
-edgelist <- recode(edgelist)
-edgelist
+# Important difference with the previous version, this one accounts for duplicate
+# dyads and also for self edges.
+edgelist_to_adjmat <- function(
+  edgelist, weights=NULL,
+  times=NULL,
+  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE) {
 
-edgelist_to_adjmat_cpp(edgelist)
-edgelist_to_adjmat_cpp(edgelist, undirected = TRUE)
+  # Checking dim of edgelist
+  if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
 
+  # Checking out the weights
+  m <- nrow(edgelist)
+  if (!length(weights)) weights <- rep(1, m)
+
+  # Recoding nodes ids
+  if (!skip.recode) dat <- recode(edgelist)
+  else {
+    warning('Skipping -recode- may cause unexpected behavior.')
+    dat <- edgelist
+  }
+  n <- max(dat)
+
+  # Checking out duplicates and self
+  if (no.self)     dat <- dat[dat[,1]!=dat[,2]]
+  if (no.multiple) dat <- unique(dat)
+
+  # Checking out times
+  if (!length(times)) times <- rep(1, m)
+  t <- max(times)
+
+  # Computing the adjmat
+  adjmat <- vector("list", t)
+
+  for(i in 1:length(adjmat)) {
+    index <- which(times == i)
+    adjmat[[i]] <- edgelist_to_adjmat_cpp(
+      dat[index,,drop=FALSE], weights[index], n, undirected)
+  }
+
+  n <- nrow(adjmat[[1]])
+  return(array(unlist(adjmat), dim=c(n,n,t)))
+}
+
+# Base data
 set.seed(123)
-edgelist <- cbind(edgelist, abs(rnorm(nrow(edgelist))))
+n <- 2000
+edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+times <- sample.int(10, nrow(edgelist), replace=TRUE)
+w <- abs(rnorm(nrow(edgelist)))
 
-edgelist_to_adjmat_cpp(edgelist)
-edgelist_to_adjmat_cpp(edgelist, undirected = TRUE)
+# # Simple example
+# edgelist_to_adjmat(edgelist)
+# edgelist_to_adjmat(edgelist, undirected = TRUE)
+#
+# # Using weights
+# edgelist_to_adjmat(edgelist, w)
+# edgelist_to_adjmat(edgelist, w, undirected = TRUE)
+#
+# # Using times
+# edgelist_to_adjmat(edgelist, times = times)
+# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+#
+# # Using times and weights
+# edgelist_to_adjmat(edgelist, times = times, weights = w)
+# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 
-edgelist
+# Benchmark with the previous version
+library(microbenchmark)
+library(diffusiontest)
+
+dat <- as.data.frame(cbind(edgelist, w))
+colnames(dat) <- c('ego','alter','tie')
+microbenchmark(
+  adjmatbuild(dat,n,1:n),
+  edgelist_to_adjmat(edgelist, w), times=10)
+
+old <- adjmatbuild(dat[,-3],n,1:n)
+new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
+arrayInd(which(old!=new), dim(old), dimnames(old))
+
 */
+
+
+
