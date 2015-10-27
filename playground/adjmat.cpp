@@ -86,5 +86,19 @@ IntegerMatrix toa_mat_cpp(const IntegerVector & year) {
   return toa;
 }
 
+// [[Rcpp::export]]
+IntegerVector isolated_cpp(const NumericMatrix & adjmat) {
 
+  int n = adjmat.ncol();
+  IntegerVector isolated(n,1);
+
+  // Looping through (all) the matrix. Setting the value to 0
+  // whenever there's a link (for both individuals).
+  for(int i=0;i<n;i++)
+    for(int j=0;j<n;j++)
+      if (adjmat(i,j))
+        isolated[i] = 0, isolated[j] = 0;
+
+  return isolated;
+}
 

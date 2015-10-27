@@ -27,4 +27,6 @@ NumericMatrix edgelist_to_adjmat_cpp(
 
 IntegerMatrix toa_mat_cpp(const IntegerVector & year);
 
+IntegerVector isolated_cpp(const NumericMatrix & adjmat);
+
 #endif
