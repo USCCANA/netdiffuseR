@@ -184,6 +184,19 @@ arma::mat rand_graph_cpp(
 }
 
 // [[Rcpp::export]]
+arma::cube rand_dyn_graph_cpp(
+    int n=10, int t=3, double p = 0.3, bool undirected=true,
+    bool weighted=false, bool self=false) {
+
+  arma::cube graphs(n,n,t);
+  for(int i=0;i<t;i++)
+    graphs.slice(i) = rand_graph_cpp(n, p, undirected, weighted, self);
+
+  return graphs;
+
+}
+
+// [[Rcpp::export]]
 arma::cube mycube_cpp(int n, int t) {
   arma::cube x(n,n,t, arma::fill::zeros);
   return x;

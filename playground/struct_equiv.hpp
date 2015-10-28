@@ -12,6 +12,7 @@
 *******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "adjmat.hpp"
 
 #ifndef STRUCT_EQUIV_H
 #define STRUCT_EQUIV_H
