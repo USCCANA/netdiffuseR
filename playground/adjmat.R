@@ -76,38 +76,38 @@ edgelist_to_adjmat <- function(
   else return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
-# # Base data
-# set.seed(123)
-# n <- 1000
-# edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
-# times <- sample.int(10, nrow(edgelist), replace=TRUE)
-# w <- abs(rnorm(nrow(edgelist)))
-#
-# # Simple example
-# edgelist_to_adjmat(edgelist)
-# edgelist_to_adjmat(edgelist, undirected = TRUE)
-#
-# # Using weights
-# edgelist_to_adjmat(edgelist, w)
-# edgelist_to_adjmat(edgelist, w, undirected = TRUE)
-#
-# # Using times
-# edgelist_to_adjmat(edgelist, times = times)
-# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
-#
-# # Using times and weights
-# edgelist_to_adjmat(edgelist, times = times, weights = w)
-# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
-#
-# # Benchmark with the previous version
-# library(microbenchmark)
-# library(diffusiontest)
-#
-# dat <- as.data.frame(cbind(edgelist, w))
-# colnames(dat) <- c('ego','alter','tie')
-# microbenchmark(
-#   adjmatbuild(dat,n,1:n),
-#   edgelist_to_adjmat(edgelist, w), times=100)
+# Base data
+set.seed(123)
+n <- 10
+edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+times <- sample.int(10, nrow(edgelist), replace=TRUE)
+w <- abs(rnorm(nrow(edgelist)))
+
+# Simple example
+edgelist_to_adjmat(edgelist)
+edgelist_to_adjmat(edgelist, undirected = TRUE)
+
+# Using weights
+edgelist_to_adjmat(edgelist, w)
+edgelist_to_adjmat(edgelist, w, undirected = TRUE)
+
+# Using times
+edgelist_to_adjmat(edgelist, times = times)
+edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+
+# Using times and weights
+edgelist_to_adjmat(edgelist, times = times, weights = w)
+edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+
+# Benchmark with the previous version
+library(microbenchmark)
+library(diffusiontest)
+
+dat <- as.data.frame(cbind(edgelist, w))
+colnames(dat) <- c('ego','alter','tie')
+microbenchmark(
+  adjmatbuild(dat,n,1:n),
+  edgelist_to_adjmat(edgelist, w), times=100)
 #
 # old <- adjmatbuild(dat[,-3],n,1:n)
 # new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
