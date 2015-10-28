@@ -1,6 +1,5 @@
-#include <RcppArmadillo.h>
-
 // [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
 
 #include "adjmat.hpp"
 

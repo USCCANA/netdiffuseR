@@ -10,6 +10,7 @@
 *  - toa_mat_cpp: creates the time of adoption matrix
 *
 *******************************************************************************/
+// [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
 #ifndef STRUCT_EQUIV_H

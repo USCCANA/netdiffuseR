@@ -10,30 +10,31 @@
 *  - toa_mat_cpp: creates the time of adoption matrix
 *
 *******************************************************************************/
-#include <RcppArmadillo.h>
-
 // [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
 
 #ifndef ADJMAT_H
 #define ADJMAT_H
 
 using namespace Rcpp;
 
-NumericVector vec_comb(const NumericVector & a, const NumericVector & b, bool uni = false);
-
 List adopt_mat_cpp(const IntegerVector & year);
 
-arma::matrix edgelist_to_adjmat_cpp(
-    const NumericMatrix & data, NumericVector weights = NumericVector::create(),
+arma::mat edgelist_to_adjmat_cpp(
+    const arma::mat & data, NumericVector weights = NumericVector::create(),
     int n = 0,bool undirected = false);
+
+arma::mat adjmat_to_edgelist_cpp(
+    const arma::mat & adjmat, bool undirected = true);
 
 IntegerMatrix toa_mat_cpp(const IntegerVector & year);
 
-IntegerVector isolated_cpp(const NumericMatrix & adjmat);
+IntegerVector isolated_cpp(const arma::mat & adjmat);
 
-arma::colvec degree_cpp(const NumericMatrix & adjmat, const int & cmode=2,
+arma::colvec degree_cpp(const arma::mat & adjmat, const int & cmode=2,
                            bool undirected=true, bool self=false);
 
-arma::mat rand_graph_cpp(int n=10, bool weighted=false, bool undirected=true);
+arma::mat rand_graph_cpp(int n=10, double p = 0.3, bool undirected=true,
+                         bool weighted=false, bool self=false);
 
 #endif

@@ -2,6 +2,33 @@ Rcpp::sourceCpp("/home/george/Documents/usc/software/diffusiontest/playground/ad
 library(microbenchmark)
 library(diffusiontest)
 
+#' Erdos-Renyi (bernoulli) random graph
+#'
+#' Follows the G(N,p) model
+#'
+#' @param n Number of vertices
+#' @param p Probability of connection between ego and alter.
+#' @param undirected whether the graph is undirected or not.
+#' @param weighted Whether the graph is weighted or not.
+#' @param self Wheter it includes self-edges.
+#' @return A graph represented by an adjacency matrix
+#' @note The resulting adjacency matrix is dense (hence, be careful with the size)
+#' @example
+#' \dontrun{
+#' # Setting the seed
+#' set.seed(123)
+#'
+#' # Generating an directed graph
+#' rand_graph(undirected=FALSE)
+#'
+#' # Comparing P(tie)
+#' x <- rand_graph(1000, p=.1)
+#' sum(x)/length(x)
+#' }
+rand_graph <- function(n=10, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE) {
+  rand_graph_cpp(n, p, undirected, weighted, self)
+}
+
 # Adj mat
 #' Recodes an edgelist such that ids go from 1 to n
 #' @param data Edgelist as either a matrix or dataframe with ego and alter
@@ -76,38 +103,38 @@ edgelist_to_adjmat <- function(
   else return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
-# Base data
-set.seed(123)
-n <- 10
-edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
-times <- sample.int(10, nrow(edgelist), replace=TRUE)
-w <- abs(rnorm(nrow(edgelist)))
+# # Base data
+# set.seed(123)
+# n <- 10
+# edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+# times <- sample.int(10, nrow(edgelist), replace=TRUE)
+# w <- abs(rnorm(nrow(edgelist)))
+#
+# # Simple example
+# edgelist_to_adjmat(edgelist)
+# edgelist_to_adjmat(edgelist, undirected = TRUE)
+#
+# # Using weights
+# edgelist_to_adjmat(edgelist, w)
+# edgelist_to_adjmat(edgelist, w, undirected = TRUE)
+#
+# # Using times
+# edgelist_to_adjmat(edgelist, times = times)
+# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+#
+# # Using times and weights
+# edgelist_to_adjmat(edgelist, times = times, weights = w)
+# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 
-# Simple example
-edgelist_to_adjmat(edgelist)
-edgelist_to_adjmat(edgelist, undirected = TRUE)
-
-# Using weights
-edgelist_to_adjmat(edgelist, w)
-edgelist_to_adjmat(edgelist, w, undirected = TRUE)
-
-# Using times
-edgelist_to_adjmat(edgelist, times = times)
-edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
-
-# Using times and weights
-edgelist_to_adjmat(edgelist, times = times, weights = w)
-edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
-
-# Benchmark with the previous version
-library(microbenchmark)
-library(diffusiontest)
-
-dat <- as.data.frame(cbind(edgelist, w))
-colnames(dat) <- c('ego','alter','tie')
-microbenchmark(
-  adjmatbuild(dat,n,1:n),
-  edgelist_to_adjmat(edgelist, w), times=100)
+# # Benchmark with the previous version
+# library(microbenchmark)
+# library(diffusiontest)
+#
+# dat <- as.data.frame(cbind(edgelist, w))
+# colnames(dat) <- c('ego','alter','tie')
+# microbenchmark(
+#   adjmatbuild(dat,n,1:n),
+#   edgelist_to_adjmat(edgelist, w), times=100)
 #
 # old <- adjmatbuild(dat[,-3],n,1:n)
 # new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]

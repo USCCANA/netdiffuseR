@@ -4,25 +4,6 @@
 
 using namespace Rcpp;
 
-// Combine two vectors and (if) get the unique vect
-NumericVector vec_comb(const NumericVector & a, const NumericVector & b, bool uni = false) {
-
-  // Parameters
-  int n_a = a.size(), n_b = b.size();
-
-  NumericVector c(n_a+n_b);
-
-  for(int i=0;i<n_a;i++)
-    c[i] = a[i];
-
-  for(int i=0;i<n_b;i++)
-    c[i+n_a] = b[i];
-
-  // If returning a unique vector
-  if (uni) return(unique(c));
-  return c;
-}
-
 // [[Rcpp::export]]
 List adopt_mat_cpp(const IntegerVector & year) {
 
@@ -48,13 +29,13 @@ List adopt_mat_cpp(const IntegerVector & year) {
 
 // [[Rcpp::export]]
 arma::mat edgelist_to_adjmat_cpp(
-    const NumericMatrix & edgelist,
+    const arma::mat & edgelist,
     NumericVector weights = NumericVector::create(),
     int n = 0,
     bool undirected = false) {
 
   // Getting the dimensions and creating objects
-  int m = edgelist.nrow();
+  int m = edgelist.n_rows;
 
   // Checking out weights
   NumericVector w(m,1.0);
@@ -62,8 +43,7 @@ arma::mat edgelist_to_adjmat_cpp(
 
   // Identifying the unique nodes and creating the adjmat (base)
   if (n == 0) {
-    NumericVector nodes = vec_comb(edgelist(_,0), edgelist(_,1), true);
-    n = max(nodes);
+    n = (int) max(max(edgelist));
   }
   arma::mat mat(n,n, arma::fill::zeros);
 
@@ -73,6 +53,30 @@ arma::mat edgelist_to_adjmat_cpp(
   }
 
   return mat;
+}
+
+// [[Rcpp::export]]
+arma::mat adjmat_to_edgelist_cpp(const arma::mat & adjmat, bool undirected = true) {
+  std::vector< double > ego;
+  std::vector< double > alter;
+
+  int n = adjmat.n_cols;
+
+  for(int i=0;i<n;i++) {
+    /* Setting the length of the subloop acordingly to type of graph */
+    int m = n;
+    if (undirected) m=i;
+    for(int j=0;j<m;j++) {
+      if (adjmat(i,j))
+        ego.push_back(i+1.0), alter.push_back(j+1.0);
+    }
+  }
+
+  // Creating colvectors to be used with join_rows.
+  arma::mat egom(ego);
+  arma::mat alterm(alter);
+
+  return join_rows(egom, alterm);
 }
 
 // [[Rcpp::export]]
@@ -89,9 +93,9 @@ IntegerMatrix toa_mat_cpp(const IntegerVector & year) {
 }
 
 // [[Rcpp::export]]
-IntegerVector isolated_cpp(const NumericMatrix & adjmat) {
+IntegerVector isolated_cpp(const arma::mat & adjmat) {
 
-  int n = adjmat.ncol();
+  int n = adjmat.n_cols;
   IntegerVector isolated(n,1);
 
   // Looping through (all) the matrix. Setting the value to 0
@@ -111,13 +115,12 @@ IntegerVector isolated_cpp(const NumericMatrix & adjmat) {
  */
 // [[Rcpp::export]]
 arma::colvec degree_cpp(
-    const NumericMatrix & adjmat, const int & cmode=2,
+    const arma::mat & adjmat, const int & cmode=2,
     bool undirected=true, bool self=false) {
 
-  int n = adjmat.ncol();
-  NumericVector indegree(n);
-  NumericVector oudegree(n);
-  arma::colvec degree(n);
+  int n = adjmat.n_cols;
+  arma::colvec indegree(n);
+  arma::colvec oudegree(n);
 
   for(int i=0;i<n;i++) {
     int m=n;
@@ -135,11 +138,7 @@ arma::colvec degree_cpp(
     }
   }
 
-  // Adding all up
-  for(int i=0;i<n;i++)
-    degree[i]+=indegree[i]+oudegree[i];
-
-  return degree;
+  return indegree+oudegree;
 }
 
 /* **R
@@ -152,21 +151,31 @@ degree_cpp(adjmat,2,FALSE)
 
 // [[Rcpp::export]]
 arma::mat rand_graph_cpp(
-    int n=10, double p = 0.5,
-    bool weighted=false, bool undirected=true, bool self=false) {
+    int n=10, double p = 0.3, bool undirected=true,
+    bool weighted=false, bool self=false) {
   arma::mat graph(n, n, arma::fill::zeros);
 
   NumericVector datasource = runif(n*n);
 
+  double w = 0.0;
   for(int i=0;i<n;i++) {
+
+    /* Setting the length of the subloop acordingly to type of graph */
     int m = n;
     if (undirected) m=i;
     for(int j=0;j<m;j++) {
+
+      /* Assessing if include self */
       if (!self && (i==j)) continue;
+
+      /* Setting the value of the tie */
       double val = datasource[i*n+j];
+      w = val;
+
       if (val > (1-p)) {
-        graph(i,j) = 1.0;
-        if (undirected) graph(j,i) = 1.0;
+        if (!weighted) w=1.0;
+        graph(i,j) = w;
+        if (undirected) graph(j,i) = w;
       }
     }
   }
@@ -180,20 +189,12 @@ arma::cube mycube_cpp(int n, int t) {
   return x;
 }
 
-/***R
+/* **R
 set.seed(123)
 rand_graph_cpp()
 
-set.seed(123)
-rand_graph_cpp()
+rand_graph(undirected=FALSE)
 
-set.seed(123)
-rand_graph_cpp(undirected=FALSE)
-
-library(igraph)
-x <- rand_graph_cpp(10)
-z <- graph_from_adjacency_matrix(x);plot(z)
-
-x <- rand_graph_cpp(10000, p=.1)
+x <- rand_graph(1000, p=.1)
 sum(x)/length(x)
 */
