@@ -101,7 +101,9 @@ if (type=="dynamic"){
 }
 
 
-# adoption matrices -------------------------------------------------------
+# adoption matrices ------------------------------for(int j=0;j<n;j++)
+for(int k=0;k<n;k++)
+  NUMERATOR(j) = dynadjmat(j,k,i)/sedist(j,k)*adopt(k,i);-------------------------
 
 
 

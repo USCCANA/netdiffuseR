@@ -76,7 +76,9 @@ arma::mat adjmat_to_edgelist_cpp(const arma::mat & adjmat, bool undirected = tru
   arma::mat egom(ego);
   arma::mat alterm(alter);
 
-  return join_rows(egom, alterm);
+  arma::mat output = join_rows(egom, alterm);
+
+  return output;
 }
 
 // [[Rcpp::export]]
@@ -119,8 +121,8 @@ arma::colvec degree_cpp(
     bool undirected=true, bool self=false) {
 
   int n = adjmat.n_cols;
-  arma::colvec indegree(n);
-  arma::colvec oudegree(n);
+  arma::colvec indegree(n, arma::fill::zeros);
+  arma::colvec oudegree(n, arma::fill::zeros);
 
   for(int i=0;i<n;i++) {
     int m=n;
@@ -132,13 +134,15 @@ arma::colvec degree_cpp(
 
       double val = adjmat(i,j);
       if (val!=0.0) {
-        if (cmode!=1) indegree[j] += val;
-        if (cmode!=0) oudegree[i] += val;
+        if (cmode!=1) indegree(j) += val;
+        if (cmode!=0) oudegree(i) += val;
       }
     }
   }
 
-  return indegree+oudegree;
+  arma::colvec degree = indegree+oudegree;
+
+  return degree;
 }
 
 /* **R

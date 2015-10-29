@@ -15,103 +15,87 @@ using namespace Rcpp;
  */
 
 // [[Rcpp::export]]
-arma::cube inputoutputarray(NumericVector x) {
-  IntegerVector dims = x.attr("dim");
-  arma::cube y(x.begin(), dims[0], dims[1], dims[2], false);
-  return y;
-}
-
-// [[Rcpp::export]]
-arma::mat exposure_cpp(NumericVector dynmat, const arma::mat adopt,
+arma::mat exposure_cpp(NumericVector graph, const arma::mat & adopt,
                   int wtype = 0) {
 
-  IntegerVector dims=dynmat.attr("dim");
-  const arma::cube dynadjmat(dynmat.begin(), dims[0], dims[1], dims[2], false);
+  // Coersing a NumericVector into a cube for ease of use
+  IntegerVector dims=graph.attr("dim");
+  const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
 
   // Variables initialization
-  const int n = dynadjmat.n_cols;
-  const int T = dynadjmat.n_slices;
+  const int n = graph_cube.n_rows;
+  const int T = graph_cube.n_slices;
   arma::mat exposure(n,T, arma::fill::zeros);
 
+  // Initializing containers
   List se(3);
   arma::colvec degree(n);
-  arma::mat sedist(n,n);
+  arma::mat semat(n,n);
 
   arma::colvec NUMERATOR(n);
   arma::colvec DENOMINATOR(n);
-  arma::colvec RATIO(n);
+  arma::mat graph_t(n,n);
 
-  arma::mat subgraph(n,n);
-
-  for(int i=0;i<T;i++) {
+  for(int t=0;t<(T-1);t++) {
+    graph_t = graph_cube.slice(t);
     // Computing weights
+
     if (wtype==0) { // Unweighted
-      NUMERATOR = dynadjmat.slice(i) * adopt.col(i);
+      NUMERATOR = graph_t*adopt.col(t);
+      DENOMINATOR = sum(graph_t,1);
     }
-    /*else if (wtype == 1) {// SE
-      se = struct_equiv_cpp(subgraph, 1.0, true, true);
-      sedist = as< arma::mat >(se["d"]);
-      NUMERATOR = (subgraph % sedist) * adopt.col(i);
+    else if (wtype == 1) {// SE
+
+      // Calculating the inverse of the SE distance
+      se = struct_equiv_cpp(graph_t, 1.0, true, true);
+      semat       = (as< arma::mat >(se["d"]));
+      NUMERATOR   = semat * adopt.col(t);
+      DENOMINATOR = sum(semat, 1);
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
-      degree = degree_cpp(subgraph, wtype - 2);
-      NUMERATOR = subgraph * (adopt.col(i) % degree);
+      degree = degree_cpp(graph_t, wtype - 2);
+      NUMERATOR = graph_t*(adopt.col(t) % degree);
+      DENOMINATOR = sum(graph_t,1);
     }
     else {
       stop("Invalid weight code.");
-    }*/
-    // if (i==1) return exposure;
-    DENOMINATOR = sum(dynadjmat.slice(i),1);
-    // arma::colvec suma=NUMERATOR / sum(dynadjmat.slice(t),1);
+    }
 
-    Rprintf("Num ncols:%d nrows:%d\n", NUMERATOR.n_cols, NUMERATOR.n_rows);
-    Rprintf("Den ncols:%d nrows:%d\n", DENOMINATOR.n_cols, DENOMINATOR.n_rows);
-    for(int j=0;j<n;j++) Rprintf("%02.4f,",NUMERATOR[j]);
-    Rprintf("\n");
-    for(int j=0;j<n;j++) Rprintf("%02.4f,",DENOMINATOR[j]);
-    Rprintf("\n");
-
-    // return exposure;
-    // exposure.col(i) = (NUMERATOR/DENOMINATOR);
+    // Filling the output
+    exposure.col(t+1) = NUMERATOR / (DENOMINATOR + 1e-10);
 
   }
 
   return exposure;
 }
-/*
- ExposureCalc <- function(all_nets, Adopt_mat){
- n <- dim(all_nets)[1]
- maxTime <- ncol(Adopt_mat)
- Exposure   <- matrix(data = 0, nrow = n, ncol = (maxTime), byrow = TRUE)
- ExposureSE <- matrix(data = 0, nrow = n, ncol = (maxTime), byrow = TRUE)
- ExposureC  <- matrix(data = 0, nrow = n, ncol = (maxTime), byrow = TRUE)
- dynmatfor(int j=0;j<n;j++) Rprintf("%02.4f,",NUMERATOR[j]);
-  for(Time in 1:maxTime){
-#Anything that is multiplied by adoption is specific by convention
-    if(Time < maxTime){
-      adjmat_mat <- all_nets[,,Time]
-      semat_mat <- (1 /(sedist(adjmat_mat, method="euclidean")))
-      semat_mat[is.infinite(semat_mat[,])]<- 0
-      diag(semat_mat) <- 0
-      in_deg <- (degree(as.network(adjmat_mat), cmode="indegree"))
-      ExposureC[,Time+1]    <-((adjmat_mat %*% (Adopt_mat[,Time] * in_deg)) / (rowSums(adjmat_mat)+.0001))
-      Exposure[,Time+1]   <-((adjmat_mat %*% Adopt_mat[,Time]) / (rowSums(adjmat_mat)+.0001))
-      ExposureSE[,Time+1] <-((semat_mat %*% Adopt_mat[,Time]) / (rowSums(semat_mat)+.0001))
-    }
-  }arma::colvec NUMERATOR(n);
 
-  res <- list(Exposure = Exposure, ExposureSE = ExposureSE, ExposureC = ExposureC)
-    return(res)
-}*/
 
-/** *R
+/***R
 library(sna)
 library(network)
 library(diffusiontest)
 set.seed(123)
-grapj <- array(unlist(lapply(1:3, function(...) rand_graph_cpp())), c(10,10,3))
-adopt <- adopt_mat_cpp(sample(1:3, 10, TRUE))
-exposure_cpp(grapj, adopt$adoptmat)
+graph <- rand_dyn_graph_cpp(n=10,t=10)
+adopt <- adopt_mat_cpp(sample(1:dim(graph)[3], dim(graph)[2], TRUE))
 
-diffusiontest::ExposureCalc(graph, adopt$adoptmat)
+exposure <- function(dynmat, adopt) {
+  list(
+    indegree=exposure_cpp(dynmat, adopt,2),
+    structeq=exposure_cpp(dynmat, adopt,1),
+    unweight=exposure_cpp(dynmat, adopt,0)
+  )
+}
+
+library(microbenchmark)
+
+microbenchmark(
+  old=ExposureCalc(graph, adopt$adoptmat),
+  new=exposure(graph, adopt$adoptmat),
+  times=100
+)
+# Unit: microseconds
+# expr      min        lq      mean    median        uq       max neval cld
+#  old 4474.098 4621.5280 5190.7354 4756.6200 4926.9885 93214.670  1000   b
+#  new   50.578   55.1375  101.2266   86.3295   97.3335  3711.223  1000  a
+# 4756.6200/86.3295 = 55.09843
 */
