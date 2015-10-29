@@ -14,17 +14,17 @@ List adopt_mat_cpp(const IntegerVector & year) {
 
   // Creating output
   List out(2);
-  IntegerMatrix adoptmat1(n,T);
+  arma::mat adopt(n,T,arma::fill::zeros);
 
   for(int i=0;i<n;i++)
-    adoptmat1(i,year[i]-T0) = 1;
+    adopt(i,year[i]-T0) = 1.0;
 
-  IntegerMatrix adoptmat = clone(adoptmat1);
-  for(int i=0;i<n;i++)
-    for(int j=1;j<T;j++)
-      adoptmat(i,j) += adoptmat(i,j-1);
+  arma::mat cumadopt = cumsum(adopt, 1);
 
-  return List::create(_["adoptmat"]=adoptmat,_["adoptmat1"]=adoptmat1);
+  /* Adopt_mat -> cumadopt
+    Adopt_mat1 -> adopt
+  */
+  return List::create(_["adopt"]=adopt, _["cumadopt"]=cumadopt);
 }
 
 // [[Rcpp::export]]

@@ -15,7 +15,7 @@ using namespace Rcpp;
  */
 
 // [[Rcpp::export]]
-arma::mat exposure_cpp(NumericVector graph, const arma::mat & adopt,
+arma::mat exposure_cpp(NumericVector graph, const arma::mat & cumadopt,
                   int wtype = 0) {
 
   // Coersing a NumericVector into a cube for ease of use
@@ -41,7 +41,7 @@ arma::mat exposure_cpp(NumericVector graph, const arma::mat & adopt,
     // Computing weights
 
     if (wtype==0) { // Unweighted
-      NUMERATOR = graph_t*adopt.col(t);
+      NUMERATOR = graph_t*cumadopt.col(t);
       DENOMINATOR = sum(graph_t,1);
     }
     else if (wtype == 1) {// SE
@@ -49,12 +49,12 @@ arma::mat exposure_cpp(NumericVector graph, const arma::mat & adopt,
       // Calculating the inverse of the SE distance
       se = struct_equiv_cpp(graph_t, 1.0, true, true);
       semat       = (as< arma::mat >(se["d"]));
-      NUMERATOR   = semat * adopt.col(t);
+      NUMERATOR   = semat * cumadopt.col(t);
       DENOMINATOR = sum(semat, 1);
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
       degree = degree_cpp(graph_t, wtype - 2);
-      NUMERATOR = graph_t*(adopt.col(t) % degree);
+      NUMERATOR = graph_t*(cumadopt.col(t) % degree);
       DENOMINATOR = sum(graph_t,1);
     }
     else {
@@ -89,8 +89,8 @@ exposure <- function(dynmat, adopt) {
 library(microbenchmark)
 
 microbenchmark(
-  old=ExposureCalc(graph, adopt$adoptmat),
-  new=exposure(graph, adopt$adoptmat),
+  old=ExposureCalc(graph, adopt$cumadopt),
+  new=exposure(graph, adopt$cumadopt),
   times=100
 )
 # Unit: microseconds
@@ -99,3 +99,91 @@ microbenchmark(
 #  new   50.578   55.1375  101.2266   86.3295   97.3335  3711.223  1000  a
 # 4756.6200/86.3295 = 55.09843
 */
+
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
+  int n = cumadopt.n_rows;
+  int T = cumadopt.n_cols;
+
+  arma::mat adoptcount(3,T);
+
+  // Computing cumulative adoptes
+  adoptcount.row(0) = cumsum(sum(cumadopt,0));
+  adoptcount.row(1) = adoptcount.row(0)/n;
+
+  // Calculating rate
+  adoptcount(2,0) = 0.0;
+  for(int t=1;t<T;t++)
+    adoptcount(2,t) = (adoptcount(1,t) - adoptcount(1,t-1))/(adoptcount(1,t-1) + 1e-10);
+
+  return adoptcount;
+}
+
+/***R
+set.seed(123)
+times <- sample(1:5, 10, TRUE)
+adoptmat <- adopt_mat_cpp(times)
+adoptmat$adoptmat
+new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
+old = diffusiontest::cumulativeAdopters(adoptmat$cumadopt)
+new;old
+microbenchmark::microbenchmark(
+  old = diffusiontest::cumulativeAdopters(adoptmat$cumadopt),
+  new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
+)
+
+*/
+
+// [[Rcpp::export]]
+arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt) {
+  int n = cumadopt.n_rows;
+  int T = cumadopt.n_cols;
+
+  arma::rowvec cumadoptcount(T);
+  arma::rowvec hazard(T);
+
+  // Computing cumulative adoptes
+  cumadoptcount = cumsum(sum(cumadopt,0));
+
+  hazard(0) = 0.0;
+  for(int t=1;t<T;t++)
+    hazard(t) = (cumadoptcount(t) - cumadoptcount(t-1)) /
+        (n - cumadoptcount(t-1) + 1e-10);
+
+  return hazard;
+}
+
+/***R
+old = hazardrate(adoptmat$cumadopt)
+new = hazard_rate_cpp(adoptmat$cumadopt)
+*/
+
+/*
+// [[Rcpp::export]]
+arma::colvec threshold_cpp(
+    const arma::colvec & exposure,
+    const arma::mat & adopt
+    ) {
+
+  int n = adopt.n_rows;
+  int T = adopt.n_cols;
+
+  // Verifying if exposure was computed
+  arma::mat exposure2(n,n);
+  if (exposure.ncol()) {
+    arma::mat exposure2(exposure);
+  }
+  else {
+
+  }
+
+  arma::colvec threshold(n);
+
+  arma::rowvec nadopt = sum(adopt, 0);
+
+  for(int i=0;i<n;i++) {
+    threshold(i) = sum(adopt.)
+  }
+    }*/
