@@ -188,7 +188,7 @@ ExposureCalc <- function(all_nets, Adopt_mat){
       semat_mat[is.infinite(semat_mat[,])]<- 0
       diag(semat_mat) <- 0
       in_deg <- (degree(as.network(adjmat_mat), cmode="indegree"))
-      ExposureC[,Time+1]    <-((adjmat_mat %*% (Adopt_mat[,Time] * in_deg)) / (rowSums(adjmat_mat)+.0001))
+      ExposureC[,Time+1]  <-((adjmat_mat %*% (Adopt_mat[,Time] * in_deg)) / (rowSums(adjmat_mat)+.0001))
       Exposure[,Time+1]   <-((adjmat_mat %*% Adopt_mat[,Time]) / (rowSums(adjmat_mat)+.0001))
       ExposureSE[,Time+1] <-((semat_mat %*% Adopt_mat[,Time]) / (rowSums(semat_mat)+.0001))
     }

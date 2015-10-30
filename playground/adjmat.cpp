@@ -95,20 +95,63 @@ IntegerMatrix toa_mat_cpp(const IntegerVector & year) {
 }
 
 // [[Rcpp::export]]
-IntegerVector isolated_cpp(const arma::mat & adjmat) {
+arma::colvec isolated_cpp(
+    const arma::mat & adjmat,
+    bool undirected=true) {
 
   int n = adjmat.n_cols;
-  IntegerVector isolated(n,1);
+  arma::colvec isolated(n,arma::fill::ones);
 
   // Looping through (all) the matrix. Setting the value to 0
   // whenever there's a link (for both individuals).
-  for(int i=0;i<n;i++)
-    for(int j=0;j<n;j++)
+
+  for(int i=0;i<n;i++) {
+    // First, need to get the size of the loop
+    int m=n;
+    if (undirected) m = i;
+    for(int j=0;j<m;j++)
       if (adjmat(i,j))
-        isolated[i] = 0, isolated[j] = 0;
+        isolated(i) = 0, isolated(j) = 0;
+  }
 
   return isolated;
 }
+
+// [[Rcpp::export]]
+arma::mat drop_isolated_cpp(const arma::mat & adjmat, bool undirected=true) {
+  int n = adjmat.n_cols;
+  arma::colvec isolated = isolated_cpp(adjmat, undirected);
+
+  int m = sum(isolated);
+  arma::mat newadjmat(n-m,n-m);
+
+  // Rcpp::warning()
+
+  // Indexes of the new adjacency matrix
+  int ii=0;
+  int ji=0;
+  for(int i=0;i<n;i++) {
+
+    // If an isolated was found, continue next
+    if (isolated(i)) continue;
+    for(int j=0;j<n;j++) {
+      if (isolated(j)) continue;
+      newadjmat(ii,ji++)=adjmat(i,j);
+    }
+    // Continue next
+    ii++,ji=0;
+  }
+
+  return newadjmat;
+}
+
+/***R
+set.seed(123)
+lonenet <- rand_graph_cpp(8, p=.8,undirected=TRUE)
+lonenet[c(1,4),] <- 0
+lonenet[,c(1,4)] <- 0
+isolated_cpp(lonenet)
+*/
 
 /* cmode:
  *  0: Indegree
@@ -198,12 +241,6 @@ arma::cube rand_dyn_graph_cpp(
 
   return graphs;
 
-}
-
-// [[Rcpp::export]]
-arma::cube mycube_cpp(int n, int t) {
-  arma::cube x(n,n,t, arma::fill::zeros);
-  return x;
 }
 
 /* **R

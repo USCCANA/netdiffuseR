@@ -9,7 +9,7 @@ using namespace Rcpp;
 List struct_equiv_cpp(
     const arma::mat & gdist,
     double v = 1.0,
-    bool donly = false,
+    bool unscaled = false,
     bool inv = false, double invrep = 0.0) {
 
   int n = gdist.n_cols;
@@ -34,19 +34,17 @@ List struct_equiv_cpp(
       d(i,j) = pow(pow(gdist(i,j) - gdist(j,i), 2.0) + sumik + sumki, 0.5 );
 
       // If only inverse required
-      if (inv) {
-        if (d(i,j)==0.0) d(i,j) = invrep;
-        else d(i,j) = 1/d(i,j);
-      }
+      if (inv && unscaled) d(i,j) = 1/(d(i,j) + 1e-10);
+
       d(j,i) = d(i,j);
     }
   }
 
+  // If only distance must be computed
+  if (unscaled) return List::create(_["SE"]=d, _["d"]=d, _["gdist"]=gdist);
+
   // Computing distances
   NumericMatrix SE(n,n);
-
-  // If only distance must be computed
-  if (donly) return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=gdist);
 
   for(int i=0;i<n;i++) {
 
@@ -66,7 +64,14 @@ List struct_equiv_cpp(
     // Computing (dmax - d)/sum(dmax - d)
     for(int j=0;j<n;j++) {
       if (i==j) continue;
-      SE(i,j) = pow(dmax[i] - d(j,i), v)/sumdmaxd;
+      SE(i,j) = pow(dmax[i] - d(j,i), v)/(sumdmaxd + 1e-10);
+    }
+
+    // If inverse required
+    if (inv) {
+      for(int j=0;j<n;j++) {
+        SE(i,j) = 1/(SE(i,j) + 1e-10);
+      }
     }
   }
 
@@ -75,9 +80,7 @@ List struct_equiv_cpp(
 
 /***R
 set.seed(1234)
-n <- 10
-edgelist <- matrix(sample(1:n, size = n, replace = TRUE), ncol=2)
-adjmat <- edgelist_to_adjmat_cpp(edgelist)
+adjmat <- rand_graph_cpp()
 
 struct_equiv <- function(adjmat, v=1, ...) {
   geod <- sna::geodist(adjmat, inf.replace = 0, ...)

@@ -19,7 +19,9 @@
 
 using namespace Rcpp;
 
-List struct_equiv_cpp(const arma::mat & gdist,double v = 1.0,
-                      bool donly = false, bool inv = false, double invrep = 0.0);
+List struct_equiv_cpp(const arma::mat & gdist,
+                      double v = 1.0,
+                      bool unscaled = false,
+                      bool inv = false, double invrep = 0.0);
 
 #endif
