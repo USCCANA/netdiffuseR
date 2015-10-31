@@ -39,9 +39,10 @@ rand_graph <- function(n=10, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE)
 #' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 #' edgelist
 #' recode(edgelist)
-recode <- function(...) UseMethod("recode")
+recode <- function(data, ...) UseMethod("recode")
 
-#' @describeIn recode Method for data.frame
+#' @describeIn recode Method for data frame
+#' @export
 recode.data.frame <- function(data, ...) {
   cn <- colnames(data)
   data <- as.data.frame(recode.matrix(as.matrix(data), ...))
@@ -50,6 +51,7 @@ recode.data.frame <- function(data, ...) {
 }
 
 #' @describeIn recode Method for matrix
+#' @export
 recode.matrix <- function(data, ...) {
 
   # Checking the size of the matrixRcppArmadilloForward.h
@@ -61,13 +63,56 @@ recode.matrix <- function(data, ...) {
 
 # Important difference with the previous version, this one accounts for duplicate
 # dyads and also for self edges.
-edgelist_to_adjmat <- function(
+#' @param edgelist
+#' @param weights
+#' @param times
+#' @param simplify
+#' @param undirected
+#' @param skip.recode
+#' @param no.self
+#' @param no.multiple
+#' @example
+#' # Base data
+#' set.seed(123)
+#' n <- 10
+#' edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+#' times <- sample.int(10, nrow(edgelist), replace=TRUE)
+#' w <- abs(rnorm(nrow(edgelist)))
+#'
+#' # Simple example
+#' edgelist_to_adjmat(edgelist)
+#' edgelist_to_adjmat(edgelist, undirected = TRUE)
+#'
+#' # Using weights
+#' edgelist_to_adjmat(edgelist, w)
+#' edgelist_to_adjmat(edgelist, w, undirected = TRUE)
+#'
+#' # Using times
+#' edgelist_to_adjmat(edgelist, times = times)
+#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+#'
+#' # Using times and weights
+#' edgelist_to_adjmat(edgelist, times = times, weights = w)
+#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+
+edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
+
+#' @describeIn edgelist_to_adjmat Method for data frame
+#' @export
+edgelist_to_adjmat.data.frame <- function(edgelist, ...)
+  edgelist_to_adjmat(as.matrix(edgelist), ...)
+
+#' @describeIn edgelist_to_adjmat Method for matrix object
+#' @export
+edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
   undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE) {
 
-  # Checking dim of edgelist
+  # Checking dim of edgelist (and others)
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
+  if (nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
+  if (nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
 
   # Checking out the weights
   m <- nrow(edgelist)
@@ -103,28 +148,6 @@ edgelist_to_adjmat <- function(
   else return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
-# # Base data
-# set.seed(123)
-# n <- 10
-# edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
-# times <- sample.int(10, nrow(edgelist), replace=TRUE)
-# w <- abs(rnorm(nrow(edgelist)))
-#
-# # Simple example
-# edgelist_to_adjmat(edgelist)
-# edgelist_to_adjmat(edgelist, undirected = TRUE)
-#
-# # Using weights
-# edgelist_to_adjmat(edgelist, w)
-# edgelist_to_adjmat(edgelist, w, undirected = TRUE)
-#
-# # Using times
-# edgelist_to_adjmat(edgelist, times = times)
-# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
-#
-# # Using times and weights
-# edgelist_to_adjmat(edgelist, times = times, weights = w)
-# edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 
 # # Benchmark with the previous version
 # library(microbenchmark)
@@ -146,32 +169,45 @@ edgelist_to_adjmat <- function(
 #   edgelist_to_adjmat(edgelist, w, times), times=100)
 
 
-set.seed(123)
-x <- sample(2000:2005, 10, TRUE)
-y <- as.numeric(as.factor(x))
+#'
+#' @param time Integer vector containing time of adoption
+#' @returns A n x T matrix with times of adoption.
+adopt_mat <- function(time, ...) UseMethod("adopt_mat")
 
-adopt_mat <- function(x,...) UseMethod("adopt_mat")
-adopt_mat.integer <- function(x, ...) adopt_mat_cpp(x)
-adopt_mat.numeric <- function(x, ...) {
-  if (inherits(x, 'numeric')) warning('-x- numeric. will be coersed to integer.')
-  x <- as.integer(x)
-  x <- x + min(x) + 1
-  adopt_mat_cpp(x)
+#' @describeIn adopt_mat Method for integer vector
+#' @export
+adopt_mat.integer <- function(time, ...) adopt_mat_cpp(x)
+
+#' @describeIn adopt_mat Method for numeric vector
+#' @export
+adopt_mat.numeric <- function(time, ...) {
+  if (inherits(time, 'numeric')) warning('-x- numeric. will be coersed to integer.')
+  time <- as.integer(time)
+  time <- time + min(time) + 1
+  adopt_mat_cpp(time)
 }
 
-new <- adopt_mat(x)
-old <- adoptMat(y)
 
-sum(new[[1]] - old[[1]])
-sum(new[[2]] - old[[2]])
-
-microbenchmark(adoptMat(y), adopt_mat_cpp(x), times=1000)
+# set.seed(123)
+# x <- sample(2000:2005, 10, TRUE)
+# y <- as.numeric(as.factor(x))
+#
+# new <- adopt_mat(x)
+# old <- adoptMat(y)
+#
+# sum(new[[1]] - old[[1]])
+# sum(new[[2]] - old[[2]])
+#
+# microbenchmark(adoptMat(y), adopt_mat_cpp(x), times=1000)
 # Unit: microseconds
 #             expr    min     lq      mean median      uq      max neval cld
 # adoptMat(y)      43.876 51.010 61.133262 53.002 55.9400 4070.201 10000   b
 # adopt_mat_cpp(x)  4.620  6.226  7.921307  7.374  8.2605  114.874 10000  a
 
+#' @param time Integer vector with time of adoption
 toa_mat <- function(x,...) UseMethod("toa_mat")
+
+#' @describeIn toa_mat Method for numeric vector
 toa_mat.numeric <- function(x,...) {
   toa_mat_cpp(x)
 }

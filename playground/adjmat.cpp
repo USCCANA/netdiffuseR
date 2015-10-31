@@ -176,9 +176,11 @@ arma::colvec degree_cpp(
       if (!self && i==j) continue;
 
       double val = adjmat(i,j);
+
       if (val!=0.0) {
-        if (cmode!=1) indegree(j) += val;
-        if (cmode!=0) oudegree(i) += val;
+
+        if ((cmode!=1) | undirected) indegree(j) += val;
+        if ((cmode!=0) | undirected) oudegree(i) += val;
       }
     }
   }
@@ -202,6 +204,7 @@ arma::mat rand_graph_cpp(
     bool weighted=false, bool self=false) {
   arma::mat graph(n, n, arma::fill::zeros);
 
+  // Using Rcpp (R's) RNG since it uses R's seed
   NumericVector datasource = runif(n*n);
 
   double w = 0.0;

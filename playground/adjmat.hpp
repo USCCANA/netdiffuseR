@@ -31,6 +31,10 @@ IntegerMatrix toa_mat_cpp(const IntegerVector & year);
 
 IntegerVector isolated_cpp(const arma::mat & adjmat);
 
+arma::mat drop_isolated_cpp(const arma::mat & adjmat, bool undirected=true) {
+  int n = adjmat.n_cols;
+  arma::colvec isolated = isolated_cpp(adjmat, undirected);
+
 arma::colvec degree_cpp(const arma::mat & adjmat, const int & cmode=2,
                            bool undirected=true, bool self=false);
 
