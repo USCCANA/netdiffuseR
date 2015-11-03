@@ -1,0 +1,16 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{netdiffusR}: Network Analysis for Diffusion of Innovations",
+         author = c(
+          person("Thomas", "Valente"),
+          person("Stephanie", "Dyal"),
+          person("Tim", "Hayes"),
+          person("Kar-Hai", "Chu"),
+          person("Heather", "Wipfli"),
+          person("Kayo", "Fujimoto"),
+          person("George", "Vega Yon")),
+         year = year,
+         note = note,
+         url = "https://github.com/srdyal/diffusiontest")
