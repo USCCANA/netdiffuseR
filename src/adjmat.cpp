@@ -1,6 +1,25 @@
-#include <RcppArmadillo.h>
+/*******************************************************************************
+ adjmat.cpp: FUNCTIONS FOR NETWORK DATA MANAGEMENT
+
+ created: nov 2, 2015
+ copyright: MIT + LICENCE file
+
+ This set of functions helps handling network data, in particular, diffussion
+ network data. Importing edgelist as adjacency matrices and generating auxiliary
+ matrices used for the model.
+
+ This file contains the following functions:
+   - adopt_mat_cpp: Creates an adoption matrix of size nxT
+   - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
+   - adjmat_to_edgelist_cpp: The converse of the previous function
+   - toa_mat_cpp: Creates a Time of Adoption Matrix of size nxT
+   - isolated_cpp: Identifies the isolated nodes in a network
+   - drop_isolated_cpp: Removes isolated networks from an adjmat
+*******************************************************************************/
 
 // [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
+#include "rand_graph.hpp"
 
 using namespace Rcpp;
 
@@ -45,15 +64,16 @@ arma::mat edgelist_to_adjmat_cpp(
   if (n == 0) {
     n = (int) max(max(edgelist));
   }
-  arma::mat mat(n,n, arma::fill::zeros);
+  arma::mat adjmat(n,n, arma::fill::zeros);
 
   for(int i=0;i<m;i++) {
-    mat(edgelist(i,0)-1,edgelist(i,1)-1) += w[i];
-    if (undirected) mat(edgelist(i,1)-1,edgelist(i,0)-1) += w[i];
+    adjmat(edgelist(i,0)-1,edgelist(i,1)-1) += w[i];
+    if (undirected) adjmat(edgelist(i,1)-1,edgelist(i,0)-1) += w[i];
   }
 
-  return mat;
+  return adjmat;
 }
+
 
 // [[Rcpp::export]]
 arma::mat adjmat_to_edgelist_cpp(const arma::mat & adjmat, bool undirected = true) {
@@ -76,10 +96,45 @@ arma::mat adjmat_to_edgelist_cpp(const arma::mat & adjmat, bool undirected = tru
   arma::mat egom(ego);
   arma::mat alterm(alter);
 
-  arma::mat output = join_rows(egom, alterm);
+  arma::mat edgelist = join_rows(egom, alterm);
 
-  return output;
+  return edgelist;
 }
+
+// [[Rcpp::export]]
+arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true) {
+
+  // Coersing a NumericVector into a cube for ease of use
+  IntegerVector dims=adjmat.attr("dim");
+  const arma::cube adjmat_cube(adjmat.begin(), dims[0], dims[1], dims[2], false);
+
+  int T = adjmat_cube.n_slices;
+  int n = adjmat_cube.n_cols;
+
+  std::vector< double > ego;
+  std::vector< double > alter;
+  std::vector< double > time;
+
+  for(int t=0;t<T;t++)
+    for(int i=0;i<n;i++) {
+      /* Setting the length of the subloop acordingly to type of graph */
+      int m = n;
+      if (undirected) m=i;
+      for(int j=0;j<m;j++)
+        if (adjmat_cube(i,j,t))
+          ego.push_back(i+1.0), alter.push_back(j+1.0), time.push_back(t+1.0);
+    }
+
+  // Creating colvectors to be used with join_rows.
+  arma::mat egom(ego);
+  arma::mat alterm(alter);
+  arma::mat timem(time);
+
+  arma::mat edgelist = join_rows(join_rows(egom, alterm), timem);
+
+  return edgelist;
+}
+
 
 // [[Rcpp::export]]
 IntegerMatrix toa_mat_cpp(const IntegerVector & year) {
@@ -145,113 +200,10 @@ arma::mat drop_isolated_cpp(const arma::mat & adjmat, bool undirected=true) {
   return newadjmat;
 }
 
-/***R
+/** *R
 set.seed(123)
 lonenet <- rand_graph_cpp(8, p=.8,undirected=TRUE)
 lonenet[c(1,4),] <- 0
 lonenet[,c(1,4)] <- 0
 isolated_cpp(lonenet)
-*/
-
-/* cmode:
- *  0: Indegree
- *  1: Outdegree
- *  2: Degree
- */
-// [[Rcpp::export]]
-arma::colvec degree_cpp(
-    const arma::mat & adjmat, const int & cmode=2,
-    bool undirected=true, bool self=false) {
-
-  int n = adjmat.n_cols;
-  arma::colvec indegree(n, arma::fill::zeros);
-  arma::colvec oudegree(n, arma::fill::zeros);
-
-  for(int i=0;i<n;i++) {
-    int m=n;
-    if (undirected) m = i;
-    for(int j=0;j<m;j++) {
-
-      // Checking out whether compute self or not
-      if (!self && i==j) continue;
-
-      double val = adjmat(i,j);
-
-      if (val!=0.0) {
-
-        if ((cmode!=1) | undirected) indegree(j) += val;
-        if ((cmode!=0) | undirected) oudegree(i) += val;
-      }
-    }
-  }
-
-  arma::colvec degree = indegree+oudegree;
-
-  return degree;
-}
-
-/* **R
-edgelist <- rbind(c(2,1),c(3,1),c(3,2))
-adjmat <- edgelist_to_adjmat_cpp(edgelist)
-degree_cpp(adjmat,0,FALSE)
-degree_cpp(adjmat,1,FALSE)
-degree_cpp(adjmat,2,FALSE)
-*/
-
-// [[Rcpp::export]]
-arma::mat rand_graph_cpp(
-    int n=10, double p = 0.3, bool undirected=true,
-    bool weighted=false, bool self=false) {
-  arma::mat graph(n, n, arma::fill::zeros);
-
-  // Using Rcpp (R's) RNG since it uses R's seed
-  NumericVector datasource = runif(n*n);
-
-  double w = 0.0;
-  for(int i=0;i<n;i++) {
-
-    /* Setting the length of the subloop acordingly to type of graph */
-    int m = n;
-    if (undirected) m=i;
-    for(int j=0;j<m;j++) {
-
-      /* Assessing if include self */
-      if (!self && (i==j)) continue;
-
-      /* Setting the value of the tie */
-      double val = datasource[i*n+j];
-      w = val;
-
-      if (val > (1-p)) {
-        if (!weighted) w=1.0;
-        graph(i,j) = w;
-        if (undirected) graph(j,i) = w;
-      }
-    }
-  }
-
-  return graph;
-}
-
-// [[Rcpp::export]]
-arma::cube rand_dyn_graph_cpp(
-    int n=10, int t=3, double p = 0.3, bool undirected=true,
-    bool weighted=false, bool self=false) {
-
-  arma::cube graphs(n,n,t);
-  for(int i=0;i<t;i++)
-    graphs.slice(i) = rand_graph_cpp(n, p, undirected, weighted, self);
-
-  return graphs;
-
-}
-
-/* **R
-set.seed(123)
-rand_graph_cpp()
-
-rand_graph(undirected=FALSE)
-
-x <- rand_graph(1000, p=.1)
-sum(x)/length(x)
 */

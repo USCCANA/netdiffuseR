@@ -1,7 +1,14 @@
 Package: diffusiontest
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.1
-Authors@R: "Stephanie Dyal <stepharp@usc.edu> [aut, cre]"
+Version: 0.15.11
+Date: 02-11-2015
+Authors@R: c(person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph")),
+  person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut")),
+  person("Tim", "Hayes", email="timothybhayes@gmail.com", role=c("aut")),
+  person("Kar-Hai", "Chu", email=" karhai.chu@usc.edu", role=c("aut")),
+  person("Heather", "Wipfli", email="hwipfli@usc.edu", role=c("aut")),
+  person("Kayo", "Fujimoto", email="Kayo.Fujimoto@uth.tmc.edu", role=c("aut")),
+  person("George", "Vega Yon", email="vegayon@usc.edu", role=c("aut", "cre")))
 Description: This package contains functions useful for analyzing
     network data for diffusion of innovations applications.
     Functions include selection, susceptibility & infection, etc.
@@ -10,7 +17,10 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    foreign
+    Rcpp (>= 0.12.1),
+    sna
 Suggests:
     knitr
 VignetteBuilder: knitr
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 5.0.0

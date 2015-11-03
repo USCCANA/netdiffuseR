@@ -14,8 +14,8 @@
 #include <RcppArmadillo.h>
 #include "adjmat.hpp"
 
-#ifndef STRUCT_EQUIV_H
-#define STRUCT_EQUIV_H
+#ifndef DIFFTEST_STRUCT_EQUIV_
+#define DIFFTEST_STRUCT_EQUIV_
 
 using namespace Rcpp;
 

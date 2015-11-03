@@ -1,77 +1,33 @@
-Rcpp::sourceCpp("/home/george/Documents/usc/software/diffusiontest/playground/adjmat.cpp")
-library(microbenchmark)
-library(diffusiontest)
-
-#' Erdos-Renyi (bernoulli) random graph
-#'
-#' Follows the G(N,p) model
-#'
-#' @param n Number of vertices
-#' @param p Probability of connection between ego and alter.
-#' @param undirected whether the graph is undirected or not.
-#' @param weighted Whether the graph is weighted or not.
-#' @param self Wheter it includes self-edges.
-#' @return A graph represented by an adjacency matrix
-#' @note The resulting adjacency matrix is dense (hence, be careful with the size)
-#' @example
-#' \dontrun{
-#' # Setting the seed
-#' set.seed(123)
-#'
-#' # Generating an directed graph
-#' rand_graph(undirected=FALSE)
-#'
-#' # Comparing P(tie)
-#' x <- rand_graph(1000, p=.1)
-#' sum(x)/length(x)
-#' }
-rand_graph <- function(n=10, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE) {
-  rand_graph_cpp(n, p, undirected, weighted, self)
-}
-
-# Adj mat
-#' Recodes an edgelist such that ids go from 1 to n
-#' @param data Edgelist as either a matrix or dataframe with ego and alter
-#' @param ... Further arguments for the method (ignored)
-#' @return A recoded edgelist
-#' @details Recomended for ease of use
-#' @example
-#' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
-#' edgelist
-#' recode(edgelist)
-recode <- function(data, ...) UseMethod("recode")
-
-#' @describeIn recode Method for data frame
-#' @export
-recode.data.frame <- function(data, ...) {
-  cn <- colnames(data)
-  data <- as.data.frame(recode.matrix(as.matrix(data), ...))
-  colnames(data) <- cn
-  data
-}
-
-#' @describeIn recode Method for matrix
-#' @export
-recode.matrix <- function(data, ...) {
-
-  # Checking the size of the matrixRcppArmadilloForward.h
-
-  data <- as.factor(as.vector(data))
-  n <- length(data)
-  cbind(data[1:(n/2)], data[(n/2+1):n])
-}
+# Rcpp::sourceCpp("/home/george/Documents/usc/software/diffusiontest/playground/adjmat.cpp")
+# library(microbenchmark)
+# library(diffusiontest)
 
 # Important difference with the previous version, this one accounts for duplicate
 # dyads and also for self edges.
-#' @param edgelist
-#' @param weights
-#' @param times
-#' @param simplify
-#' @param undirected
-#' @param skip.recode
-#' @param no.self
-#' @param no.multiple
-#' @example
+
+#' Generates adjacency adjacency matrix from an edgelist
+#' @param edgelist Two column matrix/data.frame in the form of ego -source- and
+#' alter -target- (see details).
+#' @param weights Numeric vector. Strength of ties (optional).
+#' @param times Integer vector. Periodicity of the ties (optional).
+#' @param simplify Logical. When TRUE and no times vector it will return an adjacency
+#' matrix, otherwise an array of adjacency matrices.
+#' @param undirected Logical. TRUE when the graph is undirected.
+#' @param skip.recode Logical. FALSE when recode of nodes's ids is performed (see details).
+#' @param no.self Logical. TRUE when self edges are excluded.
+#' @param no.multiple Logical. TRUE when multiple edges should not be included
+#' (see details).
+#' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
+#' By default, the function will \code{\link{recode}} the edgelist before starting.
+#'
+#' When multiple edges are included, each vertex between \{i,j\} will be accounted
+#' as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
+#' times, the adjacency matrix element (i,j) will have a 2.
+#' @return Either an adjacency matrix (if times is NULL) or an array of these
+#' (if times is not null).
+#' @export
+#' @seealso \code{\link{adjmat_to_edgelist}}
+#' @examples
 #' # Base data
 #' set.seed(123)
 #' n <- 10
@@ -94,7 +50,6 @@ recode.matrix <- function(data, ...) {
 #' # Using times and weights
 #' edgelist_to_adjmat(edgelist, times = times, weights = w)
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
-
 edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 
 #' @describeIn edgelist_to_adjmat Method for data frame
@@ -169,9 +124,9 @@ edgelist_to_adjmat.matrix <- function(
 #   edgelist_to_adjmat(edgelist, w, times), times=100)
 
 
-#'
+#' Creates an adoption Matrix
 #' @param time Integer vector containing time of adoption
-#' @returns A n x T matrix with times of adoption.
+#' @return A n x T matrix with times of adoption.
 adopt_mat <- function(time, ...) UseMethod("adopt_mat")
 
 #' @describeIn adopt_mat Method for integer vector
@@ -204,6 +159,7 @@ adopt_mat.numeric <- function(time, ...) {
 # adoptMat(y)      43.876 51.010 61.133262 53.002 55.9400 4070.201 10000   b
 # adopt_mat_cpp(x)  4.620  6.226  7.921307  7.374  8.2605  114.874 10000  a
 
+#' Creates a Time of Adoption (TOA) Matrix
 #' @param time Integer vector with time of adoption
 toa_mat <- function(x,...) UseMethod("toa_mat")
 
@@ -212,11 +168,11 @@ toa_mat.numeric <- function(x,...) {
   toa_mat_cpp(x)
 }
 
-set.seed(123)
-x <- sample(2000:2005, 10, TRUE)
-toa_mat(x)
-
-microbenchmark(toaMat(x), toa_mat_cpp(x), times=1000)
+# set.seed(123)
+# x <- sample(2000:2005, 10, TRUE)
+# toa_mat(x)
+#
+# microbenchmark(toaMat(x), toa_mat_cpp(x), times=1000)
 # Unit: microseconds
 #           expr     min      lq       mean   median       uq      max neval cld
 # toaMat(x)      227.279 247.679 291.940566 272.4290 283.6845 3667.118  1000   b

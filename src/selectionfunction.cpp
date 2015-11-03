@@ -1,4 +1,5 @@
-#include <Rcpp.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
 #include "adjmat.hpp"
 using namespace Rcpp;
 
@@ -60,7 +61,7 @@ List select_egoalter_cpp(
 }
 
 
-/***R
+/** *R
 source("/home/george/Documents/usc/software/diffusiontest/playground/adjmat.R", echo = FALSE)
 
 library(microbenchmark)

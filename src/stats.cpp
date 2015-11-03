@@ -1,10 +1,73 @@
-#include <RcppArmadillo.h>
+/*******************************************************************************
+ stats.cpp: FUNCTIONS FOR CALCULATING NETWORK STATISTICS
+
+ created: nov 2, 2015
+ copyright: MIT + LICENCE file
+
+ This set of functions helps handling network data, in particular, diffussion
+ network data. Importing edgelist as adjacency matrices and generating auxiliary
+ matrices used for the model.
+
+ This file contains the following functions:
+  - adopt_mat_cpp: Creates an adoption matrix of size nxT
+  - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
+  - adjmat_to_edgelist_cpp: The converse of the previous function
+  - toa_mat_cpp: Creates a Time of Adoption Matrix of size nxT
+  - isolated_cpp: Identifies the isolated nodes in a network
+  - drop_isolated_cpp: Removes isolated networks from an adjmat
+*******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadillo.h>
 
 #include "adjmat.hpp"
 #include "struct_equiv.hpp"
 
 using namespace Rcpp;
+
+/* cmode:
+ *  0: Indegree
+ *  1: Outdegree
+ *  2: Degree
+ */
+// [[Rcpp::export]]
+arma::colvec degree_cpp(
+    const arma::mat & adjmat, const int & cmode=2,
+    bool undirected=true, bool self=false) {
+
+  int n = adjmat.n_cols;
+  arma::colvec indegree(n, arma::fill::zeros);
+  arma::colvec oudegree(n, arma::fill::zeros);
+
+  for(int i=0;i<n;i++) {
+    int m=n;
+    if (undirected) m = i;
+    for(int j=0;j<m;j++) {
+
+      // Checking out whether compute self or not
+      if (!self && i==j) continue;
+
+      double val = adjmat(i,j);
+
+      if (val!=0.0) {
+
+        if ((cmode!=1) | undirected) indegree(j) += val;
+        if ((cmode!=0) | undirected) oudegree(i) += val;
+      }
+    }
+  }
+
+  arma::colvec degree = indegree+oudegree;
+
+  return degree;
+}
+
+/* **R
+ edgelist <- rbind(c(2,1),c(3,1),c(3,2))
+ adjmat <- edgelist_to_adjmat_cpp(edgelist)
+ degree_cpp(adjmat,0,FALSE)
+ degree_cpp(adjmat,1,FALSE)
+ degree_cpp(adjmat,2,FALSE)
+*/
 
 /* which:
  * 0: Unweighted
@@ -77,7 +140,7 @@ arma::mat exposure_cpp(
 }
 
 
-/***R
+/** *R
 library(sna)
 library(network)
 library(diffusiontest)
@@ -106,8 +169,6 @@ exposure <- function(dynmat, adopt) {
 #  new   50.578   55.1375  101.2266   86.3295   97.3335  3711.223  1000  a
 # 4756.6200/86.3295 = 55.09843
 */
-
-using namespace Rcpp;
 
 // [[Rcpp::export]]
 arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {

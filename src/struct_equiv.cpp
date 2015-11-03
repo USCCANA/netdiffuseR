@@ -1,8 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
-#include "adjmat.hpp"
-
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -78,7 +76,7 @@ List struct_equiv_cpp(
   return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=gdist);
 }
 
-/***R
+/** *R
 set.seed(1234)
 adjmat <- rand_graph_cpp()
 
