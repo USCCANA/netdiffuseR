@@ -4,7 +4,7 @@
 \alias{rand_graph}
 \title{Erdos-Renyi (bernoulli) random graph}
 \usage{
-rand_graph(n = 10, t = 0, p = 0.3, undirected = TRUE,
+rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
   weighted = FALSE, self = FALSE)
 }
 \arguments{

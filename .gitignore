@@ -2,3 +2,13 @@
 .Rhistory
 .RData
 inst/doc
+
+# Binary files
+*.so
+*.o
+*.xls*
+*.doc*
+
+*.zip
+*.gz
+*.tar

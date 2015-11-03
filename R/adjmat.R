@@ -209,18 +209,36 @@ toa_mat.numeric <- function(x,...) {
 # [1] 42.38422
 
 
-#' Finds isolated nodes
+#' Manages isolated nodes
 #' @param adjmat Square matrix. An graph as an adjacency matrix.
 #' @param undirected Logical. TRUE when the graph is undirected.
-#' @return An integer vector of size n with 1's where a node is isolated
+#' @export
+#' @return
+#' In the case of \code{isolated}, an integer vector of size n with 1's where a
+#' node is isolated. Otherwise a modified adjacency matrix excluding the
+#' isolated nodes.
+#' @examples
+#' \dontrun{
+#' # Generating random graph
+#' set.seed(123)
+#' adjmat <- rand_graph()
+#'
+#' # Making nodes 1 and 4 isolated
+#' adjmat[c(1,4),] <- 0
+#' adjmat[,c(1,4)] <- 0
+#'
+#' # Finding isolated nodes
+#' isolated(adjmat)
+#'
+#' # Removing isolated nodes
+#' drop_isolated(adjmat)
+#' }
 isolated <- function(adjmat, undirected=TRUE) {
   isolated_cpp(adjmat, undirected)
 }
 
-#' Drop isolated nodes from a graph
-#' @param adjmat Square matrix. An graph as an adjacency matrix.
-#' @param undirected Logical. TRUE when the graph is undirected.
-#' @return A modified adjacency matrix excluding the isolated nodes.
+#' @rdname isolated
+#' @export
 drop_isolated <- function(adjmat, undirected=TRUE) {
   drop_isolated_cpp(adjmat, undirected)
 }

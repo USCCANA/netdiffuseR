@@ -27,7 +27,7 @@
 #' # Several period random gram
 #' rand_graph(t=5)
 #' }
-rand_graph <- function(n=10, t=0, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE) {
+rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE) {
   if (t==1) return(rand_graph_cpp(n, p, undirected, weighted, self))
   else return(rand_dyn_graph_cpp(n, t, p, undirected, weighted, self))
 }

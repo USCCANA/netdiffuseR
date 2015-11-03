@@ -3,3 +3,6 @@ NULL
 
 #' @importFrom sna geodist
 NULL
+
+#' @useDynLib diffusiontest
+NULL

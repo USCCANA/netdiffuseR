@@ -3,3 +3,13 @@
 ^data-raw$
 ^playground$
 .*\.old
+
+# Binari files
+.*\.tar\.gz
+.*\.zip
+.*\.xls
+.*\.doc
+.*\.pdf
+
+# Misc
+^README\.Rmd$
