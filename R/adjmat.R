@@ -8,6 +8,7 @@
 #' Generates adjacency adjacency matrix from an edgelist
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
+#' @param adjmat Square matrix. An adjacency matrix.
 #' @param weights Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Periodicity of the ties (optional).
 #' @param simplify Logical. When TRUE and no times vector it will return an adjacency
@@ -103,6 +104,18 @@ edgelist_to_adjmat.matrix <- function(
   else return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
+#' From adjacency matrix to edgelist
+#' @param adjmat Square matrix. An adjacency matrix.
+#' @param undirected Logical. TRUE when the graph is undirected.
+#' @return A nx2 matrix representing an edgelist.
+#' @seealso \code{\link{edgelist_to_adjmat}}
+#' @export
+adjmat_to_edgelist <- function(...) UseMethod("adjmat_to_edgelist")
+
+#' @describeIn adjmat_to_edgelist Method for matrix
+adjmat_to_edgelist.matrix <- function(adjmat, undirected=TRUE) {
+  adjmat_to_edgelist_cpp(adjmat, undirected)
+}
 
 # # Benchmark with the previous version
 # library(microbenchmark)
@@ -123,10 +136,12 @@ edgelist_to_adjmat.matrix <- function(
 #   adjByTime(cbind(year=times,dat),n,max(times)),
 #   edgelist_to_adjmat(edgelist, w, times), times=100)
 
-
-#' Creates an adoption Matrix
-#' @param time Integer vector containing time of adoption
-#' @return A n x T matrix with times of adoption.
+#' Creates an adoption matrices
+#' @param time Integer vector containing time of adoption of the innovation.
+#' @param ... Ignored.
+#' @return A list of 2 n x T matrices with times of adoption.
+#' \code{cumadopt} has 1's for all years in which a node indicates having the innovation.
+#' \code{adopt} has 1's only for the year of adoption and 0 for the rest.
 adopt_mat <- function(time, ...) UseMethod("adopt_mat")
 
 #' @describeIn adopt_mat Method for integer vector
@@ -159,8 +174,21 @@ adopt_mat.numeric <- function(time, ...) {
 # adoptMat(y)      43.876 51.010 61.133262 53.002 55.9400 4070.201 10000   b
 # adopt_mat_cpp(x)  4.620  6.226  7.921307  7.374  8.2605  114.874 10000  a
 
-#' Creates a Time of Adoption (TOA) Matrix
-#' @param time Integer vector with time of adoption
+#' Difference in Time of Adoption (TOA) between nodes
+#'
+#' Creates n x n matrix indicating the difference in times of adoption between
+#' each pair of nodes
+#' @param time Integer vector with times of adoption
+#' @param ... Ignored
+#' @return An n x n matrix indicating the difference in times of adoption between
+#' each pair of nodes.
+#' @examples
+#' # Generating a random vector of time
+#' set.seed(123)
+#' times <- sample(2000:2005, 10, TRUE)
+#'
+#' # Computing the TOA differences
+#' toa_mat(times)
 toa_mat <- function(x,...) UseMethod("toa_mat")
 
 #' @describeIn toa_mat Method for numeric vector
@@ -177,4 +205,22 @@ toa_mat.numeric <- function(x,...) {
 #           expr     min      lq       mean   median       uq      max neval cld
 # toaMat(x)      227.279 247.679 291.940566 272.4290 283.6845 3667.118  1000   b
 # toa_mat_cpp(x)   3.539   4.623   6.887954   6.3755   7.4645   54.817  1000  a
+# > 291.940566/6.887954
+# [1] 42.38422
 
+
+#' Finds isolated nodes
+#' @param adjmat Square matrix. An graph as an adjacency matrix.
+#' @param undirected Logical. TRUE when the graph is undirected.
+#' @return An integer vector of size n with 1's where a node is isolated
+isolated <- function(adjmat, undirected=TRUE) {
+  isolated_cpp(adjmat, undirected)
+}
+
+#' Drop isolated nodes from a graph
+#' @param adjmat Square matrix. An graph as an adjacency matrix.
+#' @param undirected Logical. TRUE when the graph is undirected.
+#' @return A modified adjacency matrix excluding the isolated nodes.
+drop_isolated <- function(adjmat, undirected=TRUE) {
+  drop_isolated_cpp(adjmat, undirected)
+}
