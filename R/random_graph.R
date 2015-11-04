@@ -8,6 +8,11 @@
 #' @param undirected Logical scalar. Whether the graph is undirected or not.
 #' @param weighted LoWhether the graph is weighted or not.
 #' @param self Wheter it includes self-edges.
+#' @param as.edgelist Logical. When TRUE the graph is presented as an edgelist
+#' instead.
+#' @references
+#' Barabási, Albert-László. "Network science book" Retrieved November 1 (2015)
+#' \url{http://barabasi.com/networksciencebook/}.
 #' @return A graph represented by an adjacency matrix (if t=1), or an array of
 #' adjacency matrices (if t>1).
 #' @export
@@ -27,7 +32,13 @@
 #' # Several period random gram
 #' rand_graph(t=5)
 #' }
-rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE, self=FALSE) {
-  if (t==1) return(rand_graph_cpp(n, p, undirected, weighted, self))
-  else return(rand_dyn_graph_cpp(n, t, p, undirected, weighted, self))
+rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE,
+                       self=FALSE, as.edgelist=FALSE) {
+
+  # Generating the random graph
+  if (t==1) graph <- rand_graph_cpp(n, p, undirected, weighted, self)
+  else graph <- rand_dyn_graph_cpp(n, t, p, undirected, weighted, self)
+
+  if (as.edgelist) return(adjmat_to_edgelist(graph, undirected))
+  else return(graph)
 }

@@ -6,6 +6,7 @@
 #' @param graph Either an adjacency matrix or an array.
 #' @param adopt nxT matrix. Cumulative addoption matrix.
 #' @param period Integer. Optional to make the count for a particular period of time.
+#' @param ... Further arguments to be passed to the method
 #' @details The 16 categories are classified using the table that follows. The
 #' first two Yes/No columns represent Ego's adoption of the innovation in t-1
 #' and t; while the first two Yes/No rows represent Alter's adoption of the
@@ -32,7 +33,7 @@
 #' Pages 89-97, ISSN 0277-9536
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
-select_egoalter <- function(...) UseMethod("select_egoalter")
+select_egoalter <- function(graph, ...) UseMethod("select_egoalter")
 
 #' @describeIn select_egoalter Method for arrays
 select_egoalter.array <- function(graph, adopt, period=NULL) {

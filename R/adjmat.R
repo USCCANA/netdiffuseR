@@ -5,7 +5,10 @@
 # Important difference with the previous version, this one accounts for duplicate
 # dyads and also for self edges.
 
-#' Generates adjacency adjacency matrix from an edgelist
+#' Conversion between adjacency matrix and edgelist
+#'
+#' Generates adjacency adjacency matrix from an edgelist and viceversa.
+#'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
 #' @param adjmat Square matrix. An adjacency matrix.
@@ -18,21 +21,22 @@
 #' @param no.self Logical. TRUE when self edges are excluded.
 #' @param no.multiple Logical. TRUE when multiple edges should not be included
 #' (see details).
+#' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
 #'
 #' When multiple edges are included, each vertex between \{i,j\} will be accounted
 #' as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
 #' times, the adjacency matrix element (i,j) will have a 2.
-#' @return Either an adjacency matrix (if times is NULL) or an array of these
-#' (if times is not null).
+#' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
+#' (if times is NULL) or an array of these (if times is not null). For
+#' \code{adjmat_to_edgelist} the output is an edgelist.
 #' @export
-#' @seealso \code{\link{adjmat_to_edgelist}}
 #' @examples
 #' # Base data
 #' set.seed(123)
 #' n <- 10
-#' edgelist <- matrix(sample(1:n, size = n*10, replace = TRUE), ncol=2)
+#' edgelist <- rand_graph(n, as.edgelist=TRUE)
 #' times <- sample.int(10, nrow(edgelist), replace=TRUE)
 #' w <- abs(rnorm(nrow(edgelist)))
 #'
@@ -53,12 +57,12 @@
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 
-#' @describeIn edgelist_to_adjmat Method for data frame
+#' @rdname edgelist_to_adjmat
 #' @export
 edgelist_to_adjmat.data.frame <- function(edgelist, ...)
   edgelist_to_adjmat(as.matrix(edgelist), ...)
 
-#' @describeIn edgelist_to_adjmat Method for matrix object
+#' @rdname edgelist_to_adjmat
 #' @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
@@ -67,8 +71,8 @@ edgelist_to_adjmat.matrix <- function(
 
   # Checking dim of edgelist (and others)
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
-  if (nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
-  if (nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
+  if (length(times) && nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
+  if (length(weights) && nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
 
   # Checking out the weights
   m <- nrow(edgelist)
@@ -100,21 +104,32 @@ edgelist_to_adjmat.matrix <- function(
   }
 
   n <- nrow(adjmat[[1]])
-  if (simplify & !length(times)) return(adjmat[[1]])
+  if (t==1 & simplify) return(adjmat[[1]])
   else return(array(unlist(adjmat), dim=c(n,n,t)))
 }
 
-#' From adjacency matrix to edgelist
-#' @param adjmat Square matrix. An adjacency matrix.
-#' @param undirected Logical. TRUE when the graph is undirected.
-#' @return A nx2 matrix representing an edgelist.
-#' @seealso \code{\link{edgelist_to_adjmat}}
+#' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist <- function(...) UseMethod("adjmat_to_edgelist")
+adjmat_to_edgelist <- function(adjmat, ...) UseMethod("adjmat_to_edgelist")
 
-#' @describeIn adjmat_to_edgelist Method for matrix
+#' @rdname edgelist_to_adjmat
+#' @export
 adjmat_to_edgelist.matrix <- function(adjmat, undirected=TRUE) {
   adjmat_to_edgelist_cpp(adjmat, undirected)
+}
+
+#' @rdname edgelist_to_adjmat
+#' @export
+adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
+  edgelist <- matrix(ncol=2,nrow=0)
+  times <- vector('integer',0L)
+  for (i in 1:dim(adjmat)[3]) {
+    x <- adjmat_to_edgelist.matrix(adjmat[,,i], undirected)
+    edgelist <- rbind(edgelist, x)
+    times <- c(times, rep(i,nrow(edgelist)))
+  }
+
+  return(list(edgelist, times))
 }
 
 # # Benchmark with the previous version
@@ -139,16 +154,17 @@ adjmat_to_edgelist.matrix <- function(adjmat, undirected=TRUE) {
 #' Creates an adoption matrices
 #' @param time Integer vector containing time of adoption of the innovation.
 #' @param ... Ignored.
+#' @export
 #' @return A list of 2 n x T matrices with times of adoption.
 #' \code{cumadopt} has 1's for all years in which a node indicates having the innovation.
 #' \code{adopt} has 1's only for the year of adoption and 0 for the rest.
 adopt_mat <- function(time, ...) UseMethod("adopt_mat")
 
-#' @describeIn adopt_mat Method for integer vector
+#' @rdname adopt_mat
 #' @export
-adopt_mat.integer <- function(time, ...) adopt_mat_cpp(x)
+adopt_mat.integer <- function(time, ...) adopt_mat_cpp(time)
 
-#' @describeIn adopt_mat Method for numeric vector
+#' @rdname adopt_mat
 #' @export
 adopt_mat.numeric <- function(time, ...) {
   if (inherits(time, 'numeric')) warning('-x- numeric. will be coersed to integer.')
@@ -178,10 +194,11 @@ adopt_mat.numeric <- function(time, ...) {
 #'
 #' Creates n x n matrix indicating the difference in times of adoption between
 #' each pair of nodes
-#' @param time Integer vector with times of adoption
+#' @param times Integer vector with times of adoption
 #' @param ... Ignored
 #' @return An n x n matrix indicating the difference in times of adoption between
 #' each pair of nodes.
+#' @export
 #' @examples
 #' # Generating a random vector of time
 #' set.seed(123)
@@ -189,11 +206,12 @@ adopt_mat.numeric <- function(time, ...) {
 #'
 #' # Computing the TOA differences
 #' toa_mat(times)
-toa_mat <- function(x,...) UseMethod("toa_mat")
+toa_mat <- function(times,...) UseMethod("toa_mat")
 
-#' @describeIn toa_mat Method for numeric vector
-toa_mat.numeric <- function(x,...) {
-  toa_mat_cpp(x)
+#' @rdname toa_mat
+#' @export
+toa_mat.numeric <- function(times,...) {
+  toa_mat_cpp(times)
 }
 
 # set.seed(123)

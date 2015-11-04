@@ -5,7 +5,7 @@
 \title{Erdos-Renyi (bernoulli) random graph}
 \usage{
 rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
-  weighted = FALSE, self = FALSE)
+  weighted = FALSE, self = FALSE, as.edgelist = FALSE)
 }
 \arguments{
 \item{n}{Integer. Number of vertices}
@@ -19,6 +19,9 @@ rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
 \item{weighted}{LoWhether the graph is weighted or not.}
 
 \item{self}{Wheter it includes self-edges.}
+
+\item{as.edgelist}{Logical. When TRUE the graph is presented as an edgelist
+instead.}
 }
 \value{
 A graph represented by an adjacency matrix (if t=1), or an array of
@@ -45,5 +48,9 @@ sum(x)/length(x)
 # Several period random gram
 rand_graph(t=5)
 }
+}
+\references{
+Barabási, Albert-László. "Network science book" Retrieved November 1 (2015)
+\url{http://barabasi.com/networksciencebook/}.
 }
 

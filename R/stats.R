@@ -2,7 +2,7 @@
 #' @param adjmat Square matrix. Adjacency matrix
 #' @param cmode Integer. 0 for indegree, 1 for outdegree and 2 for degree.
 #' @param undirected Logical. TRUE when the graph is undirected.
-#' @param slef Logical. TRUE when self edges should not be considered.
+#' @param self Logical. TRUE when self edges should not be considered.
 #' @return A numeric vector with the degree of each node.
 #' @export
 degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {

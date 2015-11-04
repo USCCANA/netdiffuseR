@@ -22,10 +22,6 @@ each pair of nodes.
 Creates n x n matrix indicating the difference in times of adoption between
 each pair of nodes
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{numeric}: Method for numeric vector
-}}
 \examples{
 # Generating a random vector of time
 set.seed(123)

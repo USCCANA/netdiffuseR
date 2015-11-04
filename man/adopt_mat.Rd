@@ -25,10 +25,4 @@ A list of 2 n x T matrices with times of adoption.
 \description{
 Creates an adoption matrices
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{integer}: Method for integer vector
-
-\item \code{numeric}: Method for numeric vector
-}}
 
