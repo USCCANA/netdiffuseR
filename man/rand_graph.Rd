@@ -30,6 +30,16 @@ adjacency matrices (if t>1).
 \description{
 Follows the G(N,p) model
 }
+\details{
+Basically, for each pair of nodes \{i,j\}, an edge is created with probability
+p, this is, P\{Link i-j\} = P\{x<p\}, where x is drawn from a Uniform(0,1).
+
+When \code{weighted=TRUE}, the strength of ties is given by
+the random draw x used to compare against p, hence, if x < p then the strength
+will be set to x.
+
+In the case of dynamic graphs, the algorithm is repeated t times.
+}
 \note{
 The resulting adjacency matrix is dense (hence, be careful with the size)
 }

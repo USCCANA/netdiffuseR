@@ -59,15 +59,18 @@ edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 
 #' @rdname edgelist_to_adjmat
 #' @export
-edgelist_to_adjmat.data.frame <- function(edgelist, ...)
-  edgelist_to_adjmat(as.matrix(edgelist), ...)
+edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
+  edgelist <- as.matrix(edgelist)
+  NextMethod("edgelist_to_adjmat")
+}
+
 
 #' @rdname edgelist_to_adjmat
 #' @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
-  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE) {
+  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE, ...) {
 
   # Checking dim of edgelist (and others)
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -110,7 +113,7 @@ edgelist_to_adjmat.matrix <- function(
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist <- function(adjmat, ...) UseMethod("adjmat_to_edgelist")
+adjmat_to_edgelist <- function(adjmat, undirected=TRUE) UseMethod("adjmat_to_edgelist")
 
 #' @rdname edgelist_to_adjmat
 #' @export
@@ -152,25 +155,35 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #   edgelist_to_adjmat(edgelist, w, times), times=100)
 
 #' Creates an adoption matrices
-#' @param time Integer vector containing time of adoption of the innovation.
+#' @param times Integer vector containing time of adoption of the innovation.
+#' @param recode Logical. When TRUE recodes time (see details).
 #' @param ... Ignored.
+#' @details
+#'
+#' By construction this function requires time units to be between 1 and T, where
+#' T is the length (number) of time periods. By default a recoding of time is
+#' performed as \eqn{time'=time - max(time) + 1}{time'=time - max(time) + 1}.
+#'
 #' @export
-#' @return A list of 2 n x T matrices with times of adoption.
+#' @return A list of two n x T matrices with times of adoption.
 #' \code{cumadopt} has 1's for all years in which a node indicates having the innovation.
 #' \code{adopt} has 1's only for the year of adoption and 0 for the rest.
-adopt_mat <- function(time, ...) UseMethod("adopt_mat")
+adopt_mat <- function(times, recode=TRUE, ...) UseMethod("adopt_mat")
 
-#' @rdname adopt_mat
+#' @describeIn adopt_mat Integers
 #' @export
-adopt_mat.integer <- function(time, ...) adopt_mat_cpp(time)
+adopt_mat.integer <- function(times, recode=TRUE, ...) {
+  # Rescaling
+  if (recode) times <- times - min(times) + 1L
+  adopt_mat_cpp(times)
+}
 
-#' @rdname adopt_mat
+#' @describeIn adopt_mat Numeric
 #' @export
-adopt_mat.numeric <- function(time, ...) {
-  if (inherits(time, 'numeric')) warning('-x- numeric. will be coersed to integer.')
-  time <- as.integer(time)
-  time <- time + min(time) + 1
-  adopt_mat_cpp(time)
+adopt_mat.numeric <- function(times, recode=TRUE, ...) {
+  if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
+  times <- as.integer(times)
+  NextMethod("adopt_mat")
 }
 
 
@@ -194,8 +207,7 @@ adopt_mat.numeric <- function(time, ...) {
 #'
 #' Creates n x n matrix indicating the difference in times of adoption between
 #' each pair of nodes
-#' @param times Integer vector with times of adoption
-#' @param ... Ignored
+#' @inheritParams adopt_mat
 #' @return An n x n matrix indicating the difference in times of adoption between
 #' each pair of nodes.
 #' @export
@@ -206,12 +218,21 @@ adopt_mat.numeric <- function(time, ...) {
 #'
 #' # Computing the TOA differences
 #' toa_mat(times)
-toa_mat <- function(times,...) UseMethod("toa_mat")
+toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
-#' @rdname toa_mat
+#' @describeIn toa_mat Integer vectors
 #' @export
-toa_mat.numeric <- function(times,...) {
+toa_mat.integer <- function(times, recode=TRUE, ...) {
+  # Rescaling
+  if (recode) times <- times - min(times) + 1L
   toa_mat_cpp(times)
+}
+
+#' @describeIn toa_mat Numeric vectors
+#' @export
+toa_mat.numeric <- function(times, recode=TRUE, ...) {
+  times <- as.integer(times)
+  NextMethod("toa_mat")
 }
 
 # set.seed(123)

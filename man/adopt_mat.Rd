@@ -6,23 +6,36 @@
 \alias{adopt_mat.numeric}
 \title{Creates an adoption matrices}
 \usage{
-adopt_mat(time, ...)
+adopt_mat(times, recode = TRUE, ...)
 
-\method{adopt_mat}{integer}(time, ...)
+\method{adopt_mat}{integer}(times, recode = TRUE, ...)
 
-\method{adopt_mat}{numeric}(time, ...)
+\method{adopt_mat}{numeric}(times, recode = TRUE, ...)
 }
 \arguments{
-\item{time}{Integer vector containing time of adoption of the innovation.}
+\item{times}{Integer vector containing time of adoption of the innovation.}
+
+\item{recode}{Logical. When TRUE recodes time (see details).}
 
 \item{...}{Ignored.}
 }
 \value{
-A list of 2 n x T matrices with times of adoption.
+A list of two n x T matrices with times of adoption.
 \code{cumadopt} has 1's for all years in which a node indicates having the innovation.
 \code{adopt} has 1's only for the year of adoption and 0 for the rest.
 }
 \description{
 Creates an adoption matrices
 }
+\details{
+By construction this function requires time units to be between 1 and T, where
+T is the length (number) of time periods. By default a recoding of time is
+performed as \eqn{time'=time - max(time) + 1}{time'=time - max(time) + 1}.
+}
+\section{Methods (by class)}{
+\itemize{
+\item \code{integer}: Integers
+
+\item \code{numeric}: Numeric
+}}
 

@@ -10,6 +10,17 @@
 #' @param self Wheter it includes self-edges.
 #' @param as.edgelist Logical. When TRUE the graph is presented as an edgelist
 #' instead.
+#' @details
+#'
+#' Basically, for each pair of nodes \{i,j\}, an edge is created with probability
+#' p, this is, P\{Link i-j\} = P\{x<p\}, where x is drawn from a Uniform(0,1).
+#'
+#' When \code{weighted=TRUE}, the strength of ties is given by
+#' the random draw x used to compare against p, hence, if x < p then the strength
+#' will be set to x.
+#'
+#' In the case of dynamic graphs, the algorithm is repeated t times.
+#'
 #' @references
 #' Barabási, Albert-László. "Network science book" Retrieved November 1 (2015)
 #' \url{http://barabasi.com/networksciencebook/}.

@@ -19,8 +19,8 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
-#include "adjmat.hpp"
-#include "struct_equiv.hpp"
+#include "adjmat.h"
+#include "struct_equiv.h"
 
 using namespace Rcpp;
 

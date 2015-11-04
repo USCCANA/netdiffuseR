@@ -13,12 +13,24 @@ degree(adjmat, cmode = 2, undirected = TRUE, self = FALSE)
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
 
-\item{slef}{Logical. TRUE when self edges should not be considered.}
+\item{self}{Logical. TRUE when self edges should not be considered.}
 }
 \value{
 A numeric vector with the degree of each node.
 }
 \description{
 Calculates degree of each node
+}
+\examples{
+# Creating a directed graph
+graph <- rand_graph(undirected=FALSE)
+graph
+
+# Comparing degree measurements
+ data.frame(
+   In=degree(graph, 0, undirected = FALSE),
+   Out=degree(graph, 1, undirected = FALSE),
+   Degree=degree(graph, 2, undirected = FALSE)
+ )
 }
 

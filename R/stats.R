@@ -5,7 +5,24 @@
 #' @param self Logical. TRUE when self edges should not be considered.
 #' @return A numeric vector with the degree of each node.
 #' @export
+#' @examples
+#' # Creating a directed graph
+#' graph <- rand_graph(undirected=FALSE)
+#' graph
+#'
+#' # Comparing degree measurements
+#'  data.frame(
+#'    In=degree(graph, 0, undirected = FALSE),
+#'    Out=degree(graph, 1, undirected = FALSE),
+#'    Degree=degree(graph, 2, undirected = FALSE)
+#'  )
 degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {
+  # Performing checks
+  if (!inherits(adjmat, 'matrix')) stop('-adjmat- should be a matrix.')
+  if (!(cmode %in% 0:2)) stop('Invalid -cmode- ',cmode,'. Should be either ',
+                              '0 (indegree), 1 (outdegree) or 2 (degree).')
+
+  # Computing degree
   degree_cpp(adjmat, cmode, undirected, self)
 }
 
@@ -16,9 +33,49 @@ degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {
 #' @param wtype Integer. Weighting type (see details).
 #' @param v Double. Constant for Structural Equivalence.
 #' @param undirected Logical. TRUE if the graph is undirected.
+#' @details
+#'
+#' When \code{wtype=0} (default), exposure is defined as follows
+#'
+#' \deqn{E_{n(t)}=\frac{S_{nn}\times A_{n(t)}}{S_{n+}}}{%
+#'       E(n,t)  =[     S(n,n) x     A(n,t)] / S(n+)}
+#'
+#' where \eqn{E_{n(t)}}{E(n,t)} is the exposure of the network at time t,
+#' \eqn{S_{nn}}{S(n,n)} is the social network, \eqn{A_{n(t)}}{A(n,t)} is the
+#' cumulative adoption matrix at time t, and \eqn{S_{n+}}{S(n+)} is the row-wide
+#' sum of the graph.
+#'
+#' If \code{wtype=1} (Structural Equivalence), exposure is now computed as:
+#'
+#' \deqn{E_{n(t)}=\frac{SE_{nn}^{-1}\times A_{n(t)}}{SE_{n+}^{-1}}}{%
+#'       E(n,t)  =[     SE(n,n)^[-1] x     A(n,t)] / SE(n+)^[-1]}
+#'
+#' where SE stands for Structural Equivalence (see \code{\link{struct_equiv}}).
+#' Otherwise, for any value above of \code{wtype}--2, 3 or 4, which stands for
+#' indegree, outdegree and degree respectively-- is calculated accordingly to
+#'
+#' \deqn{E_{n(t)}=\frac{S_{nn}\times (A_{n(t)} / D_n)}{S_{n+}}}{%
+#'       E(n,t)  =[     S(n,n) x     [A(n,t)/D(n)] / S(n+)}
+#'
+#' where \eqn{D_n}{D(n)} is a column vector of size n containing the degree of
+#' each node.
+#' @references
+#' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
+#' Equivalence". American Journal of Sociology, 92(6), 1287.
+#' \url{http://doi.org/10.1086/228667}
+#'
+#' Valente, T. W. (1995). "Network models of the diffusion of innovations"
+#'  (2nd ed.). Cresskill N.J.: Hampton Press.
+#'
+#' @backref src/stats.cpp
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE) {
+exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE)
+  UseMethod('exposure')
+
+#' @describeIn exposure Method for arrays
+#' @export
+exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE) {
   exposure_cpp(graph, cumadopt, wtype, v, undirected)
 }
 

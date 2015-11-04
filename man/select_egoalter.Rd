@@ -5,12 +5,14 @@
 \alias{select_egoalter.array}
 \title{Calculate the number of adoption changes between ego and alter.}
 \usage{
-select_egoalter(...)
+select_egoalter(graph, ...)
 
 \method{select_egoalter}{array}(graph, adopt, period = NULL)
 }
 \arguments{
 \item{graph}{Either an adjacency matrix or an array.}
+
+\item{...}{Further arguments to be passed to the method}
 
 \item{adopt}{nxT matrix. Cumulative addoption matrix.}
 

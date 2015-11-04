@@ -10,7 +10,8 @@
 #' recode(edgelist)
 recode <- function(data, ...) UseMethod("recode")
 
-#' @describeIn recode Method for data frame
+#' @describeIn recode Method for recoding data frames. It keeps the class of the
+#' object as it returns a data.frame.
 #' @export
 recode.data.frame <- function(data, ...) {
   cn <- colnames(data)
@@ -19,7 +20,8 @@ recode.data.frame <- function(data, ...) {
   data
 }
 
-#' @describeIn recode Method for matrix
+#' @describeIn recode Method for matrices. Likewise the method for data frames,
+#' it returns an object of the same class as the input, a matrix.
 #' @export
 recode.matrix <- function(data, ...) {
 

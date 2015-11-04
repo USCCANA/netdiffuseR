@@ -2,17 +2,22 @@
 % Please edit documentation in R/adjmat.R
 \name{toa_mat}
 \alias{toa_mat}
+\alias{toa_mat.integer}
 \alias{toa_mat.numeric}
 \title{Difference in Time of Adoption (TOA) between nodes}
 \usage{
-toa_mat(x, ...)
+toa_mat(times, recode = TRUE, ...)
 
-\method{toa_mat}{numeric}(x, ...)
+\method{toa_mat}{integer}(times, recode = TRUE, ...)
+
+\method{toa_mat}{numeric}(times, recode = TRUE, ...)
 }
 \arguments{
-\item{...}{Ignored}
+\item{times}{Integer vector containing time of adoption of the innovation.}
 
-\item{time}{Integer vector with times of adoption}
+\item{recode}{Logical. When TRUE recodes time (see details).}
+
+\item{...}{Ignored.}
 }
 \value{
 An n x n matrix indicating the difference in times of adoption between
@@ -22,6 +27,12 @@ each pair of nodes.
 Creates n x n matrix indicating the difference in times of adoption between
 each pair of nodes
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{integer}: Integer vectors
+
+\item \code{numeric}: Numeric vectors
+}}
 \examples{
 # Generating a random vector of time
 set.seed(123)

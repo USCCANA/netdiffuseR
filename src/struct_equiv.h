@@ -12,7 +12,6 @@
 *******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#include "adjmat.hpp"
 
 #ifndef DIFFTEST_STRUCT_EQUIV_
 #define DIFFTEST_STRUCT_EQUIV_

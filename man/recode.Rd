@@ -28,9 +28,11 @@ Recomended for ease of use
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{data.frame}: Method for data frame
+\item \code{data.frame}: Method for recoding data frames. It keeps the class of the
+object as it returns a data.frame.
 
-\item \code{matrix}: Method for matrix
+\item \code{matrix}: Method for matrices. Likewise the method for data frames,
+it returns an object of the same class as the input, a matrix.
 }}
 \examples{
 edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))

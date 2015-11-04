@@ -15,17 +15,19 @@ edgelist_to_adjmat(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
-  no.self = FALSE, no.multiple = FALSE)
+  no.self = FALSE, no.multiple = FALSE, ...)
 
-adjmat_to_edgelist(...)
+adjmat_to_edgelist(adjmat, undirected = TRUE)
 
 \method{adjmat_to_edgelist}{matrix}(adjmat, undirected = TRUE)
 
-\method{adjmat_to_edgelist}{array}(graph, undirected = TRUE)
+\method{adjmat_to_edgelist}{array}(adjmat, undirected = TRUE)
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
 alter -target- (see details).}
+
+\item{...}{Further arguments for the method.}
 
 \item{weights}{Numeric vector. Strength of ties (optional).}
 
@@ -61,12 +63,6 @@ When multiple edges are included, each vertex between \{i,j\} will be accounted
 as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
 times, the adjacency matrix element (i,j) will have a 2.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{data.frame}: Method for data frame
-
-\item \code{matrix}: Method for matrix object
-}}
 \examples{
 # Base data
 set.seed(123)
