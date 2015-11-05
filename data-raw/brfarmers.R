@@ -39,3 +39,6 @@ library(diffusiontest)
 
 # Creating the graph object
 graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), times=yr))
+
+# Plotting one of those
+igraph::plot.igraph(igraph::graph_from_adjacency_matrix(graph[,,1]))
