@@ -72,7 +72,19 @@ edgelist_to_adjmat.matrix <- function(
   times=NULL, simplify=TRUE,
   undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE, ...) {
 
-  # Checking dim of edgelist (and others)
+  # Checking out full observations (droping incomplete)
+  index <- complete.cases(edgelist)
+  edgelist <- edgelist[index,,drop=FALSE]
+  if (length(times)) times <- times[index]
+  if (length(weights)) weights <- weights[index]
+
+  # For the output
+  incomplete <- which(!index)
+  if (length(incomplete))
+    warning("Some vertices had NA/NULL values. These will not be considered",
+            " in the graph: ",paste0(incomplete, collapse = ", "))
+
+    # Checking dim of edgelist (and others)
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
   if (length(times) && nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
   if (length(weights) && nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
@@ -95,6 +107,9 @@ edgelist_to_adjmat.matrix <- function(
 
   # Checking out times
   if (!length(times)) times <- rep(1, m)
+  else {
+    times <- times - min(times) + 1L
+  }
   t <- max(times)
 
   # Computing the adjmat
@@ -107,8 +122,11 @@ edgelist_to_adjmat.matrix <- function(
   }
 
   n <- nrow(adjmat[[1]])
-  if (t==1 & simplify) return(adjmat[[1]])
-  else return(array(unlist(adjmat), dim=c(n,n,t)))
+  if (t==1 & simplify) adjmat <- adjmat[[1]]
+  else adjmat <- array(unlist(adjmat), dim=c(n,n,t))
+
+  attr(adjmat, "incomplete") <- incomplete
+  return(adjmat)
 }
 
 #' @rdname edgelist_to_adjmat
@@ -162,7 +180,7 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #'
 #' By construction this function requires time units to be between 1 and T, where
 #' T is the length (number) of time periods. By default a recoding of time is
-#' performed as \eqn{time'=time - max(time) + 1}{time'=time - max(time) + 1}.
+#' performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
 #'
 #' @export
 #' @return A list of two n x T matrices with times of adoption.

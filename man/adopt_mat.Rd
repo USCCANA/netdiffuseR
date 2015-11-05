@@ -30,7 +30,7 @@ Creates an adoption matrices
 \details{
 By construction this function requires time units to be between 1 and T, where
 T is the length (number) of time periods. By default a recoding of time is
-performed as \eqn{time'=time - max(time) + 1}{time'=time - max(time) + 1}.
+performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
 }
 \section{Methods (by class)}{
 \itemize{
