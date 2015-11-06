@@ -1,0 +1,161 @@
+---
+title: "diffusiontest updates"
+author: "George G. Vega Yon"
+date: "November 5, 2015"
+output: 
+  ioslides_presentation: 
+    fig_caption: yes
+    logo: ~/Dropbox/usc/cana/cana_logo.png
+---
+
+# Function changes
+## Function changes: List
+- **adjmatbuild** and **adjByTime** -> edgelist_to_adjmat
+    - adjmat_to_edgelist
+- **selectionFunctionEgoAlter** -> select_egoalter
+
+- **adoptMat** -> adopt_mat
+- **toaMat** -> toa_mat
+
+- ExposureCalc -> exposure_cpp
+- cumulativeAdopters -> cumulative_adopt_count_cpp
+- hazardrate -> hazard_rate_cpp
+- threshold -> threshold_cpp
+
+# Other New features
+## Other New features: List
+- isolated_cpp
+- drop\_isolated\_cpp
+- rand\_graph\_cpp
+- rand\_dyn\_graph_cpp
+- sna::degree -> degree_cpp
+- sna::sedist ~> struct_equiv_cpp
+
+
+# So far...
+## So far we have
+
+- All but 2 functions rewritten using Rcpp
+- Package building
+- All functions with basic documentation (missing details)
+
+## Next steps
+
+- Include datasets
+- Package tests
+- Build demos
+- Write vignettes
+
+# Some examples
+
+## Example 1: Creating a random graph
+
+```{r ex1: Random graph, warning=FALSE, message=FALSE}
+library(diffusiontest)
+set.seed(123)
+graph <- rand_graph()
+graph
+```
+----------------
+
+### Converting to an edgelist
+
+```{r, size="tiny"}
+adjmat_to_edgelist(graph)
+```
+
+--------------
+
+### Plotting (meantime using sna)
+
+```{r ex1 cont, warning=FALSE, message=FALSE}
+library(sna)
+sna::gplot(graph)
+```
+
+---------------
+
+### Computing degree
+
+```{r ex1 Degree, warning=FALSE, message=FALSE}
+# Creating a directed graph
+set.seed(123)
+graph <- rand_graph(n=4,undirected=FALSE)
+graph
+```
+
+----------------
+
+### Computing degree (cont.)
+
+```{r ex1 Degree cont}
+# Comparing degree measurements
+ data.frame(
+   In=diffusiontest::degree(graph, 0, undirected = FALSE),
+   Out=diffusiontest::degree(graph, 1, undirected = FALSE),
+   Degree=diffusiontest::degree(graph, 2, undirected = FALSE)
+ )
+```
+
+---------------------
+
+### Finding and droping isolated vertices
+
+```{r ex1 Isolated}
+graph
+isolated(graph, undirected=FALSE)
+
+```
+
+
+## Example 2: Creating a dynamic random graph
+
+<div class="columns-2">
+```{r ex2: Dyn Random graph, warning=FALSE, message=FALSE}
+set.seed(1234)
+graph <- rand_graph(n=5,t=3)
+graph
+
+# Vector of adoption times
+times <- sample(2001:2003, 5, TRUE)
+```
+</div>
+
+----------
+
+### Computing exposure: First the adopt mat
+
+```{r ex2 Adopt mat}
+adopt <- adopt_mat(times)
+adopt
+```
+
+---------
+
+### We can see how it looks like
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+plot_diffnet(graph, adopt$cumadopt)
+```
+
+<p style="font-size:12px;">Adopters: Blue<br>Non Adopters: Grey</p>
+
+-------------
+
+### Computing exposure: Now, the exposure
+
+```{r ex2 Exposure}
+exposure(graph, adopt$cumadopt)
+```
+
+Note that the function works specifically for arrays
+
+```{r ex2 Exposure err}
+e <- tryCatch(exposure(graph[,,1], adopt$cumadopt), 
+         error=function(e) e)
+```
+
+```{r, echo=FALSE}
+structure(e, class="knit_asis")
+```
+

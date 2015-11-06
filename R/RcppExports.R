@@ -25,8 +25,8 @@ isolated_cpp <- function(adjmat, undirected = TRUE) {
     .Call('diffusiontest_isolated_cpp', PACKAGE = 'diffusiontest', adjmat, undirected)
 }
 
-drop_isolated_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('diffusiontest_drop_isolated_cpp', PACKAGE = 'diffusiontest', adjmat, undirected)
+drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
+    .Call('diffusiontest_drop_isolated_cpp', PACKAGE = 'diffusiontest', adjmat, isolated, undirected)
 }
 
 rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {

@@ -22,7 +22,7 @@
 #' In the case of dynamic graphs, the algorithm is repeated t times.
 #'
 #' @references
-#' Barabási, Albert-László. "Network science book" Retrieved November 1 (2015)
+#' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 #' \url{http://barabasi.com/networksciencebook/}.
 #' @return A graph represented by an adjacency matrix (if t=1), or an array of
 #' adjacency matrices (if t>1).

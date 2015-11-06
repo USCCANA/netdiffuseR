@@ -2,15 +2,27 @@
 % Please edit documentation in R/adjmat.R
 \name{isolated}
 \alias{drop_isolated}
+\alias{drop_isolated.array}
+\alias{drop_isolated.matrix}
 \alias{isolated}
+\alias{isolated.array}
+\alias{isolated.matrix}
 \title{Manages isolated nodes}
 \usage{
-isolated(adjmat, undirected = TRUE)
+isolated(graph, undirected = TRUE)
 
-drop_isolated(adjmat, undirected = TRUE)
+\method{isolated}{matrix}(graph, undirected = TRUE)
+
+\method{isolated}{array}(graph, undirected = TRUE)
+
+drop_isolated(graph, undirected = TRUE)
+
+\method{drop_isolated}{matrix}(graph, undirected = TRUE)
+
+\method{drop_isolated}{array}(graph, undirected = TRUE)
 }
 \arguments{
-\item{adjmat}{Square matrix. An graph as an adjacency matrix.}
+\item{graph}{Square matrix. An graph as an adjacency matrix.}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
 }

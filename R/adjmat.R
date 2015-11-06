@@ -267,7 +267,7 @@ toa_mat.numeric <- function(times, recode=TRUE, ...) {
 
 
 #' Manages isolated nodes
-#' @param adjmat Square matrix. An graph as an adjacency matrix.
+#' @param graph Square matrix. An graph as an adjacency matrix.
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @export
 #' @return
@@ -290,12 +290,58 @@ toa_mat.numeric <- function(times, recode=TRUE, ...) {
 #' # Removing isolated nodes
 #' drop_isolated(adjmat)
 #' }
-isolated <- function(adjmat, undirected=TRUE) {
-  isolated_cpp(adjmat, undirected)
+isolated <- function(graph, undirected=TRUE) {
+  UseMethod("isolated")
+}
+
+#' @export
+#' @rdname isolated
+isolated.matrix <- function(graph, undirected=TRUE) {
+  isolated_cpp(graph, undirected)
+}
+
+#' @export
+#' @rdname isolated
+isolated.array <- function(graph, undirected=TRUE) {
+  nper<- dim(graph)[3]
+  n   <- dim(graph)[2]
+  iso <- matrix(NA ,ncol=nper, nrow=n)
+  for(i in 1:nper) {
+    iso[,i] <- isolated_cpp(graph[,,i], undirected)
+  }
+
+  list(
+    isolated_t=iso,
+    isolated=ifelse(apply(iso, 1, sum)==nper, 1, 0)
+  )
+}
+
+#' @export
+#' @rdname isolated
+drop_isolated <- function(graph, undirected=TRUE) {
+  UseMethod("drop_isolated")
+}
+
+
+#' @rdname isolated
+#' @export
+drop_isolated.matrix <- function(graph, undirected=TRUE) {
+  drop_isolated_cpp(graph, vector(0, "numeric"), undirected)
 }
 
 #' @rdname isolated
 #' @export
-drop_isolated <- function(adjmat, undirected=TRUE) {
-  drop_isolated_cpp(adjmat, undirected)
+drop_isolated.array <- function(graph, undirected=TRUE) {
+  # Getting isolated vecs
+  iso <- isolated.array(graph, undirected)[[2]]
+  m   <- sum(iso)
+  n   <- dim(graph)[1]
+  t   <- dim(graph)[3]
+  out <- array(dim=c(n-m,n-m,t))
+
+  # Removing
+  for(i in 1:t)
+    out[,,i] <- drop_isolated_cpp(graph[,,i], iso, undirected)
+
+  out
 }

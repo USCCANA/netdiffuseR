@@ -79,14 +79,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // drop_isolated_cpp
-arma::mat drop_isolated_cpp(const arma::mat& adjmat, bool undirected);
-RcppExport SEXP diffusiontest_drop_isolated_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
+arma::mat drop_isolated_cpp(const arma::mat& adjmat, arma::colvec isolated, bool undirected);
+RcppExport SEXP diffusiontest_drop_isolated_cpp(SEXP adjmatSEXP, SEXP isolatedSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::mat& >::type adjmat(adjmatSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type isolated(isolatedSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    __result = Rcpp::wrap(drop_isolated_cpp(adjmat, undirected));
+    __result = Rcpp::wrap(drop_isolated_cpp(adjmat, isolated, undirected));
     return __result;
 END_RCPP
 }

@@ -173,9 +173,9 @@ arma::colvec isolated_cpp(
 }
 
 // [[Rcpp::export]]
-arma::mat drop_isolated_cpp(const arma::mat & adjmat, bool undirected=true) {
+arma::mat drop_isolated_cpp(const arma::mat & adjmat, arma::colvec isolated, bool undirected=true) {
   int n = adjmat.n_cols;
-  arma::colvec isolated = isolated_cpp(adjmat, undirected);
+  if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
 
   int m = sum(isolated);
   arma::mat newadjmat(n-m,n-m);

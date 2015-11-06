@@ -22,6 +22,6 @@ IntegerMatrix toa_mat_cpp(const IntegerVector & year);
 
 IntegerVector isolated_cpp(const arma::mat & adjmat, bool undirected=true);
 
-arma::mat drop_isolated_cpp(const arma::mat & adjmat, bool undirected=true);
+arma::mat drop_isolated_cpp(const arma::mat & adjmat, arma::colvec isolated, bool undirected=true);
 
 #endif

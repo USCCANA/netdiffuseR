@@ -102,7 +102,7 @@ arma::mat exposure_cpp(
   // Filling the first and last with zeros
   // may skip this in the future.
   exposure.col(0).fill(0.0);
-  exposure.col(T).fill(0.0);
+  exposure.col(T-1).fill(0.0);
 
   for(int t=0;t<(T-1);t++) {
     graph_t = graph_cube.slice(t);

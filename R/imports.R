@@ -1,7 +1,7 @@
 #' @importFrom Rcpp evalCpp
 NULL
 
-#' @importFrom sna geodist
+#' @importFrom sna geodist gplot
 NULL
 
 #' @useDynLib diffusiontest

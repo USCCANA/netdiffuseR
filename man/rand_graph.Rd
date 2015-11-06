@@ -60,7 +60,7 @@ rand_graph(t=5)
 }
 }
 \references{
-Barabási, Albert-László. "Network science book" Retrieved November 1 (2015)
+Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 \url{http://barabasi.com/networksciencebook/}.
 }
 
