@@ -4,5 +4,5 @@ NULL
 #' @importFrom sna geodist gplot
 NULL
 
-#' @useDynLib diffusiontest
+#' @useDynLib netdiffuseR
 NULL

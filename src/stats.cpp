@@ -143,7 +143,7 @@ arma::mat exposure_cpp(
 /** *R
 library(sna)
 library(network)
-library(diffusiontest)
+library(netdiffuseR)
 set.seed(123)
 graph <- rand_dyn_graph_cpp(n=10,t=10)
 adopt <- adopt_mat_cpp(sample(1:dim(graph)[3], dim(graph)[2], TRUE))
@@ -189,16 +189,17 @@ arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
   return adoptcount;
 }
 
+
 /** *R
 set.seed(123)
 times <- sample(1:5, 10, TRUE)
 adoptmat <- adopt_mat_cpp(times)
 adoptmat$adoptmat
 new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
-old = diffusiontest::cumulativeAdopters(adoptmat$cumadopt)
+old = netdifusseR::cumulativeAdopters(adoptmat$cumadopt)
 new;old
 microbenchmark::microbenchmark(
-  old = diffusiontest::cumulativeAdopters(adoptmat$cumadopt),
+  old = netdiffusseR::cumulativeAdopters(adoptmat$cumadopt),
   new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
 )
 
@@ -232,7 +233,7 @@ new = hazard_rate_cpp(adoptmat$cumadopt)
 // [[Rcpp::export]]
 arma::colvec threshold_cpp(
     const arma::mat & exposure,
-    const arma::vec & toe
+    const arma::vec & times
     ) {
 
   int n = exposure.n_rows;
@@ -241,7 +242,7 @@ arma::colvec threshold_cpp(
   arma::colvec threshold(n);
 
   for(int i=0;i<n;i++) {
-    threshold(i) = exposure(i,toe(i)-1);
+    threshold(i) = exposure(i,times(i)-1);
   }
 
   return threshold;

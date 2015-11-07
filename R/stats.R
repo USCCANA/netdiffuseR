@@ -80,29 +80,51 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE)
 }
 
 #' Cummulative count of adopters
+#'
+#' Calculates the number of adopters in each period, the proportion of adopters, and
+#' the adoption rate.
+#'
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
+#' @details The rate of adoption (3rd row), is calculated as
+#' \deqn{\frac{q_t - q_{t-1}}{q_{t-1}}}{[q(t) - q(t-1)]/q(t-1)}
+#' where \eqn{q_i}{q(i)} is the number of adopters in time i.
+#' @return A 3xT matrix, where its rows contain the number of adoptes, the proportion of
+#' adopters and the rate of adoption respectively for earch period of time.
 #' @export
 cumulative_adopt_count <- function(cumadopt) {
-  cumulative_adopt_count_cpp(cumadopt)
+  x <- cumulative_adopt_count_cpp(cumadopt)
+  row.names(x) <- c("num", "prop", "rate")
+  return(x)
 }
 
 #' Calculates hazard rate
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
-#' @return A vector indicating the hazard rate of each node
+#' @details Hazard rate is calculated as
+#' \deqn{\fraq{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
+#' where \eqn{q_i}{q(i)} is the number of adopters in time i, and \eqn{n}{n} is the number of individuals
+#' in the system.
+#' @return A row vector of size T with hazard rates for t>1.
 #' @export
 hazard_rate <- function(cumadopt) {
-  hazard_rate_cpp(cumadopt)
+  x <- hazard_rate_cpp(cumadopt)
+  row.names(x) <- "hazard"
+  x
 }
 
 #' Calculates threshold
+#'
+#' Threshold as the exposure of vertex by the time of the adoption.
+#'
 #' @param exposure nxT matrix. Exposure to the innovation obtained from
 #' \code{\link{exposure}}.
-#' @param toe Integer vector. Indicating the time of adoption of the innovation.
-#' @return A vector of size n indicating the threshold of each node.
+#' @param times Integer vector. Indicating the time of adoption of the innovation.
+#' @param times.recode Logical. TRUE when time recoding must be done.
+#' @return A vector of size \eqn{n}{n} indicating the threshold for each node.
 #' @export
-threshold <- function(exposure, toe) {
-  threshold_cpp(exposure, toe)
+threshold <- function(exposure, times, times.recode=TRUE) {
+  if (times.recode) times <- times - min(times) + 1L
+  threshold_cpp(exposure, times)
 }
 

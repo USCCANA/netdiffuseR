@@ -1,5 +1,5 @@
 ---
-title: "diffusiontest updates"
+title: "netdiffuseR updates"
 author: "George G. Vega Yon"
 date: "November 5, 2015"
 output: 
@@ -36,22 +36,23 @@ output:
 ## So far we have
 
 - All but 2 functions rewritten using Rcpp
+    * `susceptInfect` and `eventhistory`
 - Package building
 - All functions with basic documentation (missing details)
 
 ## Next steps
 
-- Include datasets
+- Include datasets (Classic)
 - Package tests
-- Build demos
-- Write vignettes
+- Build demos (easy)
+- Write vignettes (a paper for JSS)
 
 # Some examples
 
 ## Example 1: Creating a random graph
 
 ```{r ex1: Random graph, warning=FALSE, message=FALSE}
-library(diffusiontest)
+library(netdiffuseR)
 set.seed(123)
 graph <- rand_graph()
 graph
@@ -91,9 +92,9 @@ graph
 ```{r ex1 Degree cont}
 # Comparing degree measurements
  data.frame(
-   In=diffusiontest::degree(graph, 0, undirected = FALSE),
-   Out=diffusiontest::degree(graph, 1, undirected = FALSE),
-   Degree=diffusiontest::degree(graph, 2, undirected = FALSE)
+   In=netdiffuseR::degree(graph, 0, undirected = FALSE),
+   Out=netdiffuseR::degree(graph, 1, undirected = FALSE),
+   Degree=netdiffuseR::degree(graph, 2, undirected = FALSE)
  )
 ```
 
@@ -132,7 +133,7 @@ adopt
 
 ---------
 
-### We can see how it looks like
+### We can see how it looks
 
 ```{r, echo=TRUE, warning=FALSE, message=FALSE}
 plot_diffnet(graph, adopt$cumadopt)
@@ -145,7 +146,8 @@ plot_diffnet(graph, adopt$cumadopt)
 ### Computing exposure: Now, the exposure
 
 ```{r ex2 Exposure}
-exposure(graph, adopt$cumadopt)
+exps <- exposure(graph, adopt$cumadopt)
+exps
 ```
 
 Note that the function works specifically for arrays
@@ -159,3 +161,12 @@ e <- tryCatch(exposure(graph[,,1], adopt$cumadopt),
 structure(e, class="knit_asis")
 ```
 
+## Example 3: Other net measurements
+
+<div class="columns-2">
+```{r}
+cumulative_adopt_count(adopt$cumadopt)
+hazard_rate(adopt$cumadopt)
+threshold(exps, times)
+```
+</div>

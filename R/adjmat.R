@@ -1,6 +1,6 @@
-# Rcpp::sourceCpp("/home/george/Documents/usc/software/diffusiontest/playground/adjmat.cpp")
+# Rcpp::sourceCpp("/home/george/Documents/usc/software/netdiffuseR/playground/adjmat.cpp")
 # library(microbenchmark)
-# library(diffusiontest)
+# library(netdiffuseR)
 
 # Important difference with the previous version, this one accounts for duplicate
 # dyads and also for self edges.
@@ -21,6 +21,7 @@
 #' @param no.self Logical. TRUE when self edges are excluded.
 #' @param no.multiple Logical. TRUE when multiple edges should not be included
 #' (see details).
+#' @param times.recode Logical. TRUE when time recoding must be done.
 #' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
@@ -70,7 +71,7 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
-  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE, ...) {
+  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE, times.recode=TRUE, ...) {
 
   # Checking out full observations (droping incomplete)
   index <- complete.cases(edgelist)
@@ -108,7 +109,7 @@ edgelist_to_adjmat.matrix <- function(
   # Checking out times
   if (!length(times)) times <- rep(1, m)
   else {
-    times <- times - min(times) + 1L
+    if (times.recode) times <- times - min(times) + 1L
   }
   t <- max(times)
 
@@ -155,7 +156,7 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 
 # # Benchmark with the previous version
 # library(microbenchmark)
-# library(diffusiontest)
+# library(netdiffuseR)
 #
 # dat <- as.data.frame(cbind(edgelist, w))
 # colnames(dat) <- c('ego','alter','tie')

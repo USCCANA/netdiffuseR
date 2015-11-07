@@ -11,9 +11,15 @@ hazard_rate(cumadopt)
 \code{\link{toa_mat}}}
 }
 \value{
-A vector indicating the hazard rate of each node
+A row vector of size T with hazard rates for t>1.
 }
 \description{
 Calculates hazard rate
+}
+\details{
+Hazard rate is calculated as
+\deqn{\fraq{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
+where \eqn{q_i}{q(i)} is the number of adopters in time i, and \eqn{n}{n} is the number of individuals
+in the system.
 }
 

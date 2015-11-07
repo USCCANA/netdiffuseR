@@ -2,66 +2,66 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 adopt_mat_cpp <- function(year) {
-    .Call('diffusiontest_adopt_mat_cpp', PACKAGE = 'diffusiontest', year)
+    .Call('netdiffuseR_adopt_mat_cpp', PACKAGE = 'netdiffuseR', year)
 }
 
 edgelist_to_adjmat_cpp <- function(edgelist, weights = as.numeric( c()), n = 0L, undirected = FALSE) {
-    .Call('diffusiontest_edgelist_to_adjmat_cpp', PACKAGE = 'diffusiontest', edgelist, weights, n, undirected)
+    .Call('netdiffuseR_edgelist_to_adjmat_cpp', PACKAGE = 'netdiffuseR', edgelist, weights, n, undirected)
 }
 
 adjmat_to_edgelist_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('diffusiontest_adjmat_to_edgelist_cpp', PACKAGE = 'diffusiontest', adjmat, undirected)
+    .Call('netdiffuseR_adjmat_to_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
 adjmat_to_dyn_edgelist_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('diffusiontest_adjmat_to_dyn_edgelist_cpp', PACKAGE = 'diffusiontest', adjmat, undirected)
+    .Call('netdiffuseR_adjmat_to_dyn_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
 toa_mat_cpp <- function(year) {
-    .Call('diffusiontest_toa_mat_cpp', PACKAGE = 'diffusiontest', year)
+    .Call('netdiffuseR_toa_mat_cpp', PACKAGE = 'netdiffuseR', year)
 }
 
 isolated_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('diffusiontest_isolated_cpp', PACKAGE = 'diffusiontest', adjmat, undirected)
+    .Call('netdiffuseR_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
 drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
-    .Call('diffusiontest_drop_isolated_cpp', PACKAGE = 'diffusiontest', adjmat, isolated, undirected)
+    .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
 rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('diffusiontest_rand_graph_cpp', PACKAGE = 'diffusiontest', n, p, undirected, weighted, self)
+    .Call('netdiffuseR_rand_graph_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
 
 rand_dyn_graph_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('diffusiontest_rand_dyn_graph_cpp', PACKAGE = 'diffusiontest', n, t, p, undirected, weighted, self)
+    .Call('netdiffuseR_rand_dyn_graph_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
 }
 
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
-    .Call('diffusiontest_select_egoalter_cpp', PACKAGE = 'diffusiontest', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
+    .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
 degree_cpp <- function(adjmat, cmode = 2L, undirected = TRUE, self = FALSE) {
-    .Call('diffusiontest_degree_cpp', PACKAGE = 'diffusiontest', adjmat, cmode, undirected, self)
+    .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat, cmode, undirected, self)
 }
 
 exposure_cpp <- function(graph, cumadopt, wtype = 0L, v = 1.0, undirected = TRUE) {
-    .Call('diffusiontest_exposure_cpp', PACKAGE = 'diffusiontest', graph, cumadopt, wtype, v, undirected)
+    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, wtype, v, undirected)
 }
 
 cumulative_adopt_count_cpp <- function(cumadopt) {
-    .Call('diffusiontest_cumulative_adopt_count_cpp', PACKAGE = 'diffusiontest', cumadopt)
+    .Call('netdiffuseR_cumulative_adopt_count_cpp', PACKAGE = 'netdiffuseR', cumadopt)
 }
 
 hazard_rate_cpp <- function(cumadopt) {
-    .Call('diffusiontest_hazard_rate_cpp', PACKAGE = 'diffusiontest', cumadopt)
+    .Call('netdiffuseR_hazard_rate_cpp', PACKAGE = 'netdiffuseR', cumadopt)
 }
 
-threshold_cpp <- function(exposure, toe) {
-    .Call('diffusiontest_threshold_cpp', PACKAGE = 'diffusiontest', exposure, toe)
+threshold_cpp <- function(exposure, times) {
+    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, times)
 }
 
 struct_equiv_cpp <- function(gdist, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
-    .Call('diffusiontest_struct_equiv_cpp', PACKAGE = 'diffusiontest', gdist, v, unscaled, inv, invrep)
+    .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', gdist, v, unscaled, inv, invrep)
 }
 

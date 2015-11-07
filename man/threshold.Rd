@@ -4,18 +4,20 @@
 \alias{threshold}
 \title{Calculates threshold}
 \usage{
-threshold(exposure, toe)
+threshold(exposure, times, times.recode = TRUE)
 }
 \arguments{
 \item{exposure}{nxT matrix. Exposure to the innovation obtained from
 \code{\link{exposure}}.}
 
-\item{toe}{Integer vector. Indicating the time of adoption of the innovation.}
+\item{times}{Integer vector. Indicating the time of adoption of the innovation.}
+
+\item{times.recode}{Logical. TRUE when time recoding must be done.}
 }
 \value{
-A vector of size n indicating the threshold of each node.
+A vector of size \eqn{n}{n} indicating the threshold for each node.
 }
 \description{
-Calculates threshold
+Threshold as the exposure of vertex by the time of the adoption.
 }
 
