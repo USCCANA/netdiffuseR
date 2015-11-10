@@ -9,10 +9,10 @@
  matrices used for the model.
 
  This file contains the following functions:
-   - adopt_mat_cpp: Creates an adoption matrix of size nxT
+   - toa_mat_cpp: Creates an adoption matrix of size nxT
    - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
    - adjmat_to_edgelist_cpp: The converse of the previous function
-   - toa_mat_cpp: Creates a Time of Adoption Matrix of size nxT
+   - toa_diff_cpp: Creates a Time of Adoption Matrix of size nxT
    - isolated_cpp: Identifies the isolated nodes in a network
    - drop_isolated_cpp: Removes isolated networks from an adjmat
 *******************************************************************************/
@@ -24,7 +24,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List adopt_mat_cpp(const IntegerVector & year) {
+List toa_mat_cpp(const IntegerVector & year) {
 
   // Measuring time
   int T0 = min(year);
@@ -137,16 +137,16 @@ arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true)
 
 
 // [[Rcpp::export]]
-IntegerMatrix toa_mat_cpp(const IntegerVector & year) {
+IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
   int n = year.size();
 
-  IntegerMatrix toa(n,n);
+  IntegerMatrix diff(n,n);
 
   for(int i=0;i<n;i++)
     for(int j=0;j<i;j++)
-      toa(i,j) = year[j]-year[i], toa(j,i)=year[i]-year[j];
+      diff(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
 
-  return toa;
+  return diff;
 }
 
 // [[Rcpp::export]]

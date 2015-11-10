@@ -13,7 +13,7 @@ arma::colvec degree_cpp(
 
 arma::mat exposure_cpp(
     NumericVector graph, const arma::mat & cumadopt, int wtype = 0,
-    double v = 1.0, bool undirected=true);
+    double v = 1.0, bool undirected=true, bool normalized=true);
 
 arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt);
 

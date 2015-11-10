@@ -6,14 +6,14 @@
 
 using namespace Rcpp;
 
-// adopt_mat_cpp
-List adopt_mat_cpp(const IntegerVector& year);
-RcppExport SEXP netdiffuseR_adopt_mat_cpp(SEXP yearSEXP) {
+// toa_mat_cpp
+List toa_mat_cpp(const IntegerVector& year);
+RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const IntegerVector& >::type year(yearSEXP);
-    __result = Rcpp::wrap(adopt_mat_cpp(year));
+    __result = Rcpp::wrap(toa_mat_cpp(year));
     return __result;
 END_RCPP
 }
@@ -55,14 +55,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// toa_mat_cpp
-IntegerMatrix toa_mat_cpp(const IntegerVector& year);
-RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP) {
+// toa_diff_cpp
+IntegerMatrix toa_diff_cpp(const IntegerVector& year);
+RcppExport SEXP netdiffuseR_toa_diff_cpp(SEXP yearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const IntegerVector& >::type year(yearSEXP);
-    __result = Rcpp::wrap(toa_mat_cpp(year));
+    __result = Rcpp::wrap(toa_diff_cpp(year));
     return __result;
 END_RCPP
 }
@@ -88,6 +88,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::colvec >::type isolated(isolatedSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     __result = Rcpp::wrap(drop_isolated_cpp(adjmat, isolated, undirected));
+    return __result;
+END_RCPP
+}
+// infection_cpp
+arma::mat infection_cpp(NumericVector graph, const arma::colvec& times);
+RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type times(timesSEXP);
+    __result = Rcpp::wrap(infection_cpp(graph, times));
     return __result;
 END_RCPP
 }
@@ -151,8 +163,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // exposure_cpp
-arma::mat exposure_cpp(NumericVector graph, const arma::mat& cumadopt, int wtype, double v, bool undirected);
-RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP wtypeSEXP, SEXP vSEXP, SEXP undirectedSEXP) {
+arma::mat exposure_cpp(NumericVector graph, const arma::mat& cumadopt, int wtype, double v, bool undirected, bool normalized);
+RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP wtypeSEXP, SEXP vSEXP, SEXP undirectedSEXP, SEXP normalizedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -161,7 +173,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type wtype(wtypeSEXP);
     Rcpp::traits::input_parameter< double >::type v(vSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    __result = Rcpp::wrap(exposure_cpp(graph, cumadopt, wtype, v, undirected));
+    Rcpp::traits::input_parameter< bool >::type normalized(normalizedSEXP);
+    __result = Rcpp::wrap(exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized));
     return __result;
 END_RCPP
 }

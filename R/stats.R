@@ -33,6 +33,7 @@ degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {
 #' @param wtype Integer. Weighting type (see details).
 #' @param v Double. Constant for Structural Equivalence.
 #' @param undirected Logical. TRUE if the graph is undirected.
+#' @param normalized Logical. When true, the exposure will be between zero and one.
 #' @details
 #'
 #' When \code{wtype=0} (default), exposure is defined as follows
@@ -59,6 +60,9 @@ degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {
 #'
 #' where \eqn{D_n}{D(n)} is a column vector of size n containing the degree of
 #' each node.
+#'
+#' Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
+#' numerator of the above formulas.
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 #' Equivalence". American Journal of Sociology, 92(6), 1287.
@@ -70,13 +74,13 @@ degree <- function(adjmat, cmode=2, undirected=TRUE, self=FALSE) {
 #' @backref src/stats.cpp
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE)
+exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE, normalized=TRUE)
   UseMethod('exposure')
 
 #' @describeIn exposure Method for arrays
 #' @export
-exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE) {
-  exposure_cpp(graph, cumadopt, wtype, v, undirected)
+exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE, normalized=TRUE) {
+  exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized)
 }
 
 #' Cummulative count of adopters
@@ -102,7 +106,7 @@ cumulative_adopt_count <- function(cumadopt) {
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @details Hazard rate is calculated as
-#' \deqn{\fraq{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
+#' \deqn{\frac{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
 #' where \eqn{q_i}{q(i)} is the number of adopters in time i, and \eqn{n}{n} is the number of individuals
 #' in the system.
 #' @return A row vector of size T with hazard rates for t>1.

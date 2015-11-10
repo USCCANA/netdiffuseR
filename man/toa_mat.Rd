@@ -4,7 +4,7 @@
 \alias{toa_mat}
 \alias{toa_mat.integer}
 \alias{toa_mat.numeric}
-\title{Difference in Time of Adoption (TOA) between nodes}
+\title{Time of adoption matrix}
 \usage{
 toa_mat(times, recode = TRUE, ...)
 
@@ -20,25 +20,25 @@ toa_mat(times, recode = TRUE, ...)
 \item{...}{Ignored.}
 }
 \value{
-An n x n matrix indicating the difference in times of adoption between
-each pair of nodes.
+A list of two \eqn{n \times T}{n x T}
+\itemize{
+ \item{\code{cumadopt} has 1's for all years in which a node indicates having the innovation.}
+ \item{\code{adopt} has 1's only for the year of adoption and 0 for the rest.}
+}
 }
 \description{
-Creates n x n matrix indicating the difference in times of adoption between
-each pair of nodes
+Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during
+which an individual had already adopted the innovation.
+}
+\details{
+By construction this function requires time units to be between 1 and T, where
+T is the length (number) of time periods. By default a recoding of time is
+performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{integer}: Integer vectors
+\item \code{integer}: Integers
 
-\item \code{numeric}: Numeric vectors
+\item \code{numeric}: Numeric
 }}
-\examples{
-# Generating a random vector of time
-set.seed(123)
-times <- sample(2000:2005, 10, TRUE)
-
-# Computing the TOA differences
-toa_mat(times)
-}
 

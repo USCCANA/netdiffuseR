@@ -173,7 +173,11 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #   adjByTime(cbind(year=times,dat),n,max(times)),
 #   edgelist_to_adjmat(edgelist, w, times), times=100)
 
-#' Creates an adoption matrices
+#' Time of adoption matrix
+#'
+#' Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during
+#' which an individual had already adopted the innovation.
+#'
 #' @param times Integer vector containing time of adoption of the innovation.
 #' @param recode Logical. When TRUE recodes time (see details).
 #' @param ... Ignored.
@@ -184,62 +188,14 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #' performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
 #'
 #' @export
-#' @return A list of two n x T matrices with times of adoption.
-#' \code{cumadopt} has 1's for all years in which a node indicates having the innovation.
-#' \code{adopt} has 1's only for the year of adoption and 0 for the rest.
-adopt_mat <- function(times, recode=TRUE, ...) UseMethod("adopt_mat")
-
-#' @describeIn adopt_mat Integers
-#' @export
-adopt_mat.integer <- function(times, recode=TRUE, ...) {
-  # Rescaling
-  if (recode) times <- times - min(times) + 1L
-  adopt_mat_cpp(times)
-}
-
-#' @describeIn adopt_mat Numeric
-#' @export
-adopt_mat.numeric <- function(times, recode=TRUE, ...) {
-  if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
-  times <- as.integer(times)
-  NextMethod("adopt_mat")
-}
-
-
-# set.seed(123)
-# x <- sample(2000:2005, 10, TRUE)
-# y <- as.numeric(as.factor(x))
-#
-# new <- adopt_mat(x)
-# old <- adoptMat(y)
-#
-# sum(new[[1]] - old[[1]])
-# sum(new[[2]] - old[[2]])
-#
-# microbenchmark(adoptMat(y), adopt_mat_cpp(x), times=1000)
-# Unit: microseconds
-#             expr    min     lq      mean median      uq      max neval cld
-# adoptMat(y)      43.876 51.010 61.133262 53.002 55.9400 4070.201 10000   b
-# adopt_mat_cpp(x)  4.620  6.226  7.921307  7.374  8.2605  114.874 10000  a
-
-#' Difference in Time of Adoption (TOA) between nodes
-#'
-#' Creates n x n matrix indicating the difference in times of adoption between
-#' each pair of nodes
-#' @inheritParams adopt_mat
-#' @return An n x n matrix indicating the difference in times of adoption between
-#' each pair of nodes.
-#' @export
-#' @examples
-#' # Generating a random vector of time
-#' set.seed(123)
-#' times <- sample(2000:2005, 10, TRUE)
-#'
-#' # Computing the TOA differences
-#' toa_mat(times)
+#' @return A list of two \eqn{n \times T}{n x T}
+#' \itemize{
+#'  \item{\code{cumadopt} has 1's for all years in which a node indicates having the innovation.}
+#'  \item{\code{adopt} has 1's only for the year of adoption and 0 for the rest.}
+#' }
 toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
-#' @describeIn toa_mat Integer vectors
+#' @describeIn toa_mat Integers
 #' @export
 toa_mat.integer <- function(times, recode=TRUE, ...) {
   # Rescaling
@@ -247,22 +203,75 @@ toa_mat.integer <- function(times, recode=TRUE, ...) {
   toa_mat_cpp(times)
 }
 
-#' @describeIn toa_mat Numeric vectors
+#' @describeIn toa_mat Numeric
 #' @export
 toa_mat.numeric <- function(times, recode=TRUE, ...) {
+  if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
   times <- as.integer(times)
   NextMethod("toa_mat")
 }
 
+
 # set.seed(123)
 # x <- sample(2000:2005, 10, TRUE)
-# toa_mat(x)
+# y <- as.numeric(as.factor(x))
 #
-# microbenchmark(toaMat(x), toa_mat_cpp(x), times=1000)
+# new <- toa_mat(x)
+# old <- adoptMat(y)
+#
+# sum(new[[1]] - old[[1]])
+# sum(new[[2]] - old[[2]])
+#
+# microbenchmark(adoptMat(y), toa_mat_cpp(x), times=1000)
+# Unit: microseconds
+#             expr    min     lq      mean median      uq      max neval cld
+# adoptMat(y)      43.876 51.010 61.133262 53.002 55.9400 4070.201 10000   b
+# toa_mat_cpp(x)  4.620  6.226  7.921307  7.374  8.2605  114.874 10000  a
+
+#' Difference in Time of Adoption (TOA) between individuals
+#'
+#' Creates \eqn{n \times n}{n x n} matrix indicating the difference in times of adoption between
+#' each pair of nodes
+#' @inheritParams toa_mat
+#' @details Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
+#' toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
+#' adopted the innovation sonner.
+#' @return An \eqn{n \times n}{n x n} symmetric matrix indicating the difference in times of
+#' adoption between each pair of nodes.
+#' @export
+#' @examples
+#' # Generating a random vector of time
+#' set.seed(123)
+#' times <- sample(2000:2005, 10, TRUE)
+#'
+#' # Computing the TOA differences
+#' toa_diff(times)
+toa_diff <- function(times, recode=TRUE, ...) UseMethod("toa_diff")
+
+#' @describeIn toa_diff Integer vectors
+#' @export
+toa_diff.integer <- function(times, recode=TRUE, ...) {
+  # Rescaling
+  if (recode) times <- times - min(times) + 1L
+  toa_diff_cpp(times)
+}
+
+#' @describeIn toa_diff Numeric vectors
+#' @export
+toa_diff.numeric <- function(times, recode=TRUE, ...) {
+  times <- as.integer(times)
+  NextMethod("toa_diff")
+}
+
+# set.seed(123)
+# x <- sample(2000:2005, 10, TRUE)
+# toa_diff(x)
+#
+# microbenchmark(toaMat(x), toa_diff_cpp(x), times=1000)
 # Unit: microseconds
 #           expr     min      lq       mean   median       uq      max neval cld
 # toaMat(x)      227.279 247.679 291.940566 272.4290 283.6845 3667.118  1000   b
-# toa_mat_cpp(x)   3.539   4.623   6.887954   6.3755   7.4645   54.817  1000  a
+# toa_diff_cpp(x)   3.539   4.623   6.887954   6.3755   7.4645   54.817  1000  a
 # > 291.940566/6.887954
 # [1] 42.38422
 

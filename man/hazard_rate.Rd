@@ -18,7 +18,7 @@ Calculates hazard rate
 }
 \details{
 Hazard rate is calculated as
-\deqn{\fraq{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
+\deqn{\frac{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
 where \eqn{q_i}{q(i)} is the number of adopters in time i, and \eqn{n}{n} is the number of individuals
 in the system.
 }

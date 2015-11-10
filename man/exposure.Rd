@@ -5,10 +5,11 @@
 \alias{exposure.array}
 \title{Ego exposure}
 \usage{
-exposure(graph, cumadopt, wtype = 0, v = 1, undirected = TRUE)
+exposure(graph, cumadopt, wtype = 0, v = 1, undirected = TRUE,
+  normalized = TRUE)
 
 \method{exposure}{array}(graph, cumadopt, wtype = 0, v = 1,
-  undirected = TRUE)
+  undirected = TRUE, normalized = TRUE)
 }
 \arguments{
 \item{graph}{An array of adjacency matrices}
@@ -21,6 +22,8 @@ exposure(graph, cumadopt, wtype = 0, v = 1, undirected = TRUE)
 \item{v}{Double. Constant for Structural Equivalence.}
 
 \item{undirected}{Logical. TRUE if the graph is undirected.}
+
+\item{normalized}{Logical. When true, the exposure will be between zero and one.}
 }
 \value{
 A matrix of size nxT with exposure for each node.
@@ -53,6 +56,9 @@ indegree, outdegree and degree respectively-- is calculated accordingly to
 
 where \eqn{D_n}{D(n)} is a column vector of size n containing the degree of
 each node.
+
+Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
+numerator of the above formulas.
 }
 \section{Methods (by class)}{
 \itemize{

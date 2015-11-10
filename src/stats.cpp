@@ -9,7 +9,7 @@
  matrices used for the model.
 
  This file contains the following functions:
-  - adopt_mat_cpp: Creates an adoption matrix of size nxT
+  - toa_mat_cpp: Creates an adoption matrix of size nxT
   - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
   - adjmat_to_edgelist_cpp: The converse of the previous function
   - toa_mat_cpp: Creates a Time of Adoption Matrix of size nxT
@@ -80,7 +80,7 @@ arma::colvec degree_cpp(
 // [[Rcpp::export]]
 arma::mat exposure_cpp(
     NumericVector graph, const arma::mat & cumadopt, int wtype = 0,
-    double v = 1.0, bool undirected=true) {
+    double v = 1.0, bool undirected=true, bool normalized=true) {
 
   // Coersing a NumericVector into a cube for ease of use
   IntegerVector dims=graph.attr("dim");
@@ -110,7 +110,7 @@ arma::mat exposure_cpp(
 
     if (wtype==0) { // Unweighted
       NUMERATOR = graph_t*cumadopt.col(t);
-      DENOMINATOR = sum(graph_t,1) + 1e-15;
+      if (normalized) DENOMINATOR = sum(graph_t,1) + 1e-15;
     }
     else if (wtype == 1) {// SE
 
@@ -119,20 +119,21 @@ arma::mat exposure_cpp(
       semat       = (as< arma::mat >(se["SE"]));
 
       NUMERATOR   = semat * cumadopt.col(t);
-      DENOMINATOR = sum(semat, 1) + 1e-15;
+      if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
       arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
 
       NUMERATOR = graph_t*(cumadopt.col(t) % degree);
-      DENOMINATOR = sum(graph_t,1) + 1e-15;
+      if (normalized) DENOMINATOR = sum(graph_t,1) + 1e-15;
     }
     else {
       stop("Invalid weight code.");
     }
 
     // Filling the output
-    exposure.col(t+1) = NUMERATOR / DENOMINATOR;
+    if (normalized) exposure.col(t+1) = NUMERATOR / DENOMINATOR;
+    else exposure.col(t+1) = NUMERATOR;
 
   }
 
@@ -146,7 +147,7 @@ library(network)
 library(netdiffuseR)
 set.seed(123)
 graph <- rand_dyn_graph_cpp(n=10,t=10)
-adopt <- adopt_mat_cpp(sample(1:dim(graph)[3], dim(graph)[2], TRUE))
+adopt <- toa_mat_cpp(sample(1:dim(graph)[3], dim(graph)[2], TRUE))
 
 exposure <- function(dynmat, adopt) {
   list(
@@ -193,7 +194,7 @@ arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
 /** *R
 set.seed(123)
 times <- sample(1:5, 10, TRUE)
-adoptmat <- adopt_mat_cpp(times)
+adoptmat <- toa_mat_cpp(times)
 adoptmat$adoptmat
 new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
 old = netdifusseR::cumulativeAdopters(adoptmat$cumadopt)
@@ -254,7 +255,7 @@ set.seed(123)
 graph <- rand_dyn_graph_cpp(n=10,t=10)
 tadopt <- sample(1:dim(graph)[3], dim(graph)[2], TRUE)
 
-adopt <- adopt_mat_cpp(tadopt)
+adopt <- toa_mat_cpp(tadopt)
 exp_mat <- exposure(graph, adopt$cumadopt)$unweight
 
 threshold_cpp(exp_mat, tadopt)
