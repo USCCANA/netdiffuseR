@@ -5,7 +5,8 @@
 \title{Create a diffusion graph}
 \usage{
 plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
-  mode = "fruchtermanreingold", layout.par = NULL, mfcol.par = NULL, ...)
+  mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
+  main = "Network in time \%d", ...)
 }
 \arguments{
 \item{graph}{An array}
@@ -17,6 +18,10 @@ plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
 \item{mode}{Layout}
 
 \item{layout.par}{Layout parameters}
+
+\item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}}
+
+\item{main}{Characetr. A title template to be passed to \code{\link{sprintf}}}
 
 \item{...}{Further arguments to be passed to gplot}
 }

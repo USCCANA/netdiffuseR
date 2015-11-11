@@ -29,8 +29,12 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
-infection_cpp <- function(graph, times) {
-    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times)
+infection_cpp <- function(graph, times, normalize = TRUE) {
+    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize)
+}
+
+susceptibility_cpp <- function(graph, times, normalize = TRUE) {
+    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize)
 }
 
 rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {

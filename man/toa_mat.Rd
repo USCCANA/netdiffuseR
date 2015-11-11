@@ -8,9 +8,9 @@
 \usage{
 toa_mat(times, recode = TRUE, ...)
 
-\method{toa_mat}{integer}(times, recode = TRUE, ...)
-
 \method{toa_mat}{numeric}(times, recode = TRUE, ...)
+
+\method{toa_mat}{integer}(times, recode = TRUE, ...)
 }
 \arguments{
 \item{times}{Integer vector containing time of adoption of the innovation.}
@@ -37,8 +37,8 @@ performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{integer}: Integers
-
 \item \code{numeric}: Numeric
+
+\item \code{integer}: Integers
 }}
 

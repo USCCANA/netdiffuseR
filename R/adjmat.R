@@ -195,6 +195,14 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #' }
 toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
+#' @describeIn toa_mat Numeric
+#' @export
+toa_mat.numeric <- function(times, recode=TRUE, ...) {
+  if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
+  times <- as.integer(times)
+  toa_mat.integer(times, recode)
+}
+
 #' @describeIn toa_mat Integers
 #' @export
 toa_mat.integer <- function(times, recode=TRUE, ...) {
@@ -202,15 +210,6 @@ toa_mat.integer <- function(times, recode=TRUE, ...) {
   if (recode) times <- times - min(times) + 1L
   toa_mat_cpp(times)
 }
-
-#' @describeIn toa_mat Numeric
-#' @export
-toa_mat.numeric <- function(times, recode=TRUE, ...) {
-  if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
-  times <- as.integer(times)
-  NextMethod("toa_mat")
-}
-
 
 # set.seed(123)
 # x <- sample(2000:2005, 10, TRUE)
@@ -260,7 +259,7 @@ toa_diff.integer <- function(times, recode=TRUE, ...) {
 #' @export
 toa_diff.numeric <- function(times, recode=TRUE, ...) {
   times <- as.integer(times)
-  NextMethod("toa_diff")
+  toa_diff.integer(times, recode)
 }
 
 # set.seed(123)

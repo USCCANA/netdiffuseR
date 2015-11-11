@@ -4,11 +4,13 @@
 #' @param vcols A vector of size 2 with colors
 #' @param mode Layout
 #' @param layout.par Layout parameters
+#' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}
+#' @param main Characetr. A title template to be passed to \code{\link{sprintf}}
 #' @param ... Further arguments to be passed to gplot
 #' @return NULL
 #' @export
 plot_diffnet <- function(graph, cumadopt, vcols=c("blue","grey"), mode="fruchtermanreingold", layout.par=NULL,
-                         mfcol.par=NULL, ...) {
+                         mfrow.par=NULL, main="Network in time %d",...) {
   t <- dim(graph)[3]
   n <- dim(graph)[1]
 
@@ -24,27 +26,29 @@ plot_diffnet <- function(graph, cumadopt, vcols=c("blue","grey"), mode="fruchter
   coords <- fun(cumgraph, layout.par)
 
   # Figuring out the dimension
-  if (!length(mfcol.par)) {
-    if (t<4) mfcol.par <- c(1,t)
-    else if (t==4) mfcol.par <- c(2,2)
-    else if (t==5) mfcol.par <- c(2,3)
-    else if (t==6) mfcol.par <- c(2,3)
-    else if (t==7) mfcol.par <- c(2,4)
-    else if (t==8) mfcol.par <- c(2,4)
-    else if (t==9) mfcol.par <- c(3,4)
-    else if (t==10) mfcol.par <- c(3,4)
-    else if (t==11) mfcol.par <- c(3,4)
-    else if (t==12) mfcol.par <- c(3,4)
-    else mfcol.par <- c(ceiling(t/4),4)
+  if (!length(mfrow.par)) {
+    if (t<4) mfrow.par <- c(1,t)
+    else if (t==4) mfrow.par <- c(2,2)
+    else if (t==5) mfrow.par <- c(2,3)
+    else if (t==6) mfrow.par <- c(2,3)
+    else if (t==7) mfrow.par <- c(2,4)
+    else if (t==8) mfrow.par <- c(2,4)
+    else if (t==9) mfrow.par <- c(3,4)
+    else if (t==10) mfrow.par <- c(3,4)
+    else if (t==11) mfrow.par <- c(3,4)
+    else if (t==12) mfrow.par <- c(3,4)
+    else mfrow.par <- c(ceiling(t/4),4)
   }
 
   # Plotting
   curseed <- .Random.seed
-  par(mfcol=c(1,3))
+  oldpar <- par(no.readonly = TRUE)
+  par(mfrow=mfrow.par)
   for(i in 1:t)  {
     set.seed(curseed)
-    sna::gplot(graph[,,i],displaylabels =  TRUE, vertex.col = cols[,i], coord=coords, ...)
+    sna::gplot(graph[,,i],displaylabels =  TRUE, vertex.col = cols[,i], coord=coords,
+               main=sprintf(main, i), ...)
   }
-  par(mfcol=c(1,1))
+  par(oldpar)
 
 }
