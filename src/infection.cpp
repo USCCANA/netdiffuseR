@@ -6,7 +6,10 @@ using namespace Rcpp;
 arma::mat infection_cpp(
     NumericVector graph,
     const arma::colvec & times,
-    bool normalize = true) {
+    bool normalize = true,
+    int K = 1,
+    double r = 0.5,
+    bool expdiscount = false) {
 
   // Coersing a NumericVector into a cube for ease of use
   IntegerVector dims=graph.attr("dim");
@@ -18,8 +21,25 @@ arma::mat infection_cpp(
   arma::colvec infect(n, arma::fill::zeros);
 
   // Variables to use within loop
-  arma::mat graph_t(n,n);
   int ti, tj;
+
+  // Creating discount variable, firts, must be truncated.
+  if (K >= T) {
+    warning("Too many periods selected, will be truncated to T-1.");
+    K = T - 1;
+  }
+
+  // The discount can be either exponential (1 + r)^(k-1), or
+  // lineal in the form of k.
+  double discount[K];
+  if (!expdiscount) {
+    for(int k=1;k<=K;k++)
+      discount[k-1] = k;
+  }
+  else {
+    for(int k=1;k<=K;k++)
+      discount[k-1] = pow((1.0 + r), k);
+  }
 
   for(int i=0;i<n;i++) {
     // Capturing variables
@@ -30,29 +50,37 @@ arma::mat infection_cpp(
     double denominator = 0.0;
 
     // For the adjusted verion, see the mathematical supplement on Valente et al. (2015)
-    int nadopt_t = 0;
+    double nadopt_t = 0;
 
-    graph_t = graph_cube.slice(ti);
+    for(int k=1;k<=K;k++) {
 
-    for(int j=0;j<n;j++) {
-      if (i==j) continue;
+      // Current time period from 1 to T
+      int t = ti + k - 1;
 
-      tj = times(j);
-      // Adding up for t+1
-      if (graph_t(j,i) != 0) {
-        if (tj ==(ti+1)) {
-          numerator += 1.0;
+      // If the required time period does not exists, then continue, recall that
+      // vectors can be reach up to T - 1
+      if (t >= T) continue;
+
+      for(int j=0;j<n;j++) {
+        if (i==j) continue;
+
+        tj = times(j);
+        // Adding up for t+k iff a link between j and i exists
+        if (graph_cube(j,i,t) != 0) {
+          if (tj ==(ti+k)) {
+            numerator += 1.0 / discount[k-1];
+          }
+          // Adding up for t+1 <= t <= T
+          if (tj >=(ti+k)) denominator += 1.0 / discount[k-1];
         }
-        // Adding up for t+1 <= t <= T
-        if (tj >= ti) denominator += 1.0;
-      }
 
-      // Has adopted so far?
-      if (tj <= (ti+1)) ++nadopt_t;
+        // Has adopted so far? (discounted version)
+        if (tj == (ti+k)) nadopt_t += 1.0 / discount[k-1];
+      }
     }
 
     // Putting all together
-    infect(i) = (numerator / (denominator + 1e-10)) / (nadopt_t + 1e-10);
+    infect(i) = (numerator / (denominator + 1e-10));
     if (normalize) infect(i) = infect(i) / (nadopt_t + 1e-10);
   }
 
@@ -63,7 +91,10 @@ arma::mat infection_cpp(
 arma::colvec susceptibility_cpp(
     NumericVector graph,
     const arma::colvec & times,
-    bool normalize = true) {
+    bool normalize = true,
+    int K = 1,
+    double r = 0.5,
+    bool expdiscount = false) {
 
   // Coersing a NumericVector into a cube for ease of use
   IntegerVector dims=graph.attr("dim");
@@ -75,8 +106,25 @@ arma::colvec susceptibility_cpp(
   arma::colvec suscep(n, arma::fill::zeros);
 
   // Variables to use within loop
-  arma::mat graph_t(n,n);
   int ti, tj;
+
+  // Creating discount variable, firts, must be truncated.
+  if (K >= T) {
+    warning("Too many periods selected, will be truncated to T-1.");
+    K = T - 1;
+  }
+
+  // The discount can be either exponential (1 + r)^(k-1), or
+  // lineal in the form of k.
+  double discount[K];
+  if (!expdiscount) {
+    for(int k=1;k<=K;k++)
+      discount[k-1] = k;
+  }
+  else {
+    for(int k=1;k<=K;k++)
+      discount[k-1] = pow((1.0 + r), k);
+  }
 
   for(int i=0;i<n;i++) {
     // Capturing variables
@@ -87,29 +135,41 @@ arma::colvec susceptibility_cpp(
     double denominator = 0.0;
 
     // For the adjusted verion, see the mathematical supplement on Valente et al. (2015)
-    int nadopt_t = 0;
+    double nadopt_t = 0;
 
-    graph_t = graph_cube.slice(ti-1);
+    for(int k=1;k<=K;k++) {
 
-    for(int j=0;j<n;j++) {
-      if (i==j) continue;
+      // Current time period from 1 to T
+      int t = ti - k + 1;
 
-      tj = times(j);
-      // Adding up for t+1
-      if (graph_t(i,j) != 0) {
-        if (tj ==(ti-1)) {
-          numerator += 1.0;
+      // If the required time period does not exists, then continue, recall that
+      // vectors can be reached starting 0. If t=1, then in C++ it is equivalent
+      // to 0, so we need to reach time of adoption at -1 (which does not
+      // exists, or we don't know if it exists).
+      if (t <= 1) continue;
+
+      for(int j=0;j<n;j++) {
+        if (i==j) continue;
+
+        tj = times(j);
+        // Adding up for t+k iff a link between j and i exists. Notice that the
+        // t - 1 is because t is in [1;T], and we actually want t-1. If t=1, then
+        // in C++ it is 0.
+        if (graph_cube(i,j,t - 1) != 0) {
+          if (tj == (ti - k)) {
+            numerator += 1.0 / discount[k-1];
+          }
+          // Adding up for t+1 <= t <= T
+          if (tj <=(ti - k)) denominator += 1.0 / discount[k-1];
         }
-        // Adding up for t+1 <= t <= T
-        if (tj < ti) denominator += 1.0;
-      }
 
-      // Has adopted so far?
-      if (tj <= (ti+1)) ++nadopt_t;
+        // Has adopted so far? (discounted version)
+        if (tj == (ti - k)) nadopt_t += 1.0 / discount[k-1];
+      }
     }
 
     // Putting all together
-    suscep(i) = (numerator / (denominator + 1e-10));
+    suscep(i) = (numerator / (denominator + 1e-10)) ;
     if (normalize) suscep(i) = suscep(i) / (nadopt_t + 1e-10);
   }
 

@@ -139,6 +139,7 @@ susceptInfect <- function(toa, toamat, Adopt_mat1, all_nets, maxTime){
 
     adjmat_mat <- all_nets[ , , i]
 
+    # Computing susceptibility
     sus_mat <- as.integer((adjmat_mat + (toamat==-1) + (rowadopt==i)) ==3)
     sus_mat <- matrix(sus_mat, n, n)
 
@@ -149,12 +150,17 @@ susceptInfect <- function(toa, toamat, Adopt_mat1, all_nets, maxTime){
     out_deg_before <- rowSums(sus_mat2)
     suscep_1n <- (sus_num / (out_deg_before+.00001))
     suscep_1n_n <- rep(0, n)
+
+    # It seems that susceptibility is attached to the rest of the time periods
+    # after the adoption of the innovation (according to this formula)
     for (u in 1:n) {
       if (toa[u]==1)  {(suscep_1n_n[u] <- suscep_1n[u]) #just be zero?
       }else{
         suscep_1n_n[u] <- (suscep_1n[u] / (cum_ados1[toa[u]-1]+.0001))
       }
     }
+
+    # Computing infection
     inf_mat <- as.integer((t(adjmat_mat) + (toamat==1) + (rowadopt==i)) ==3)
     inf_mat <- matrix(inf_mat, n, n)
 
