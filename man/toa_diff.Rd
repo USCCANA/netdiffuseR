@@ -20,11 +20,11 @@ toa_diff(times, recode = TRUE, ...)
 \item{...}{Ignored.}
 }
 \value{
-An \eqn{n \times n}{n x n} symmetric matrix indicating the difference in times of
+An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
 adoption between each pair of nodes.
 }
 \description{
-Creates \eqn{n \times n}{n x n} matrix indicating the difference in times of adoption between
+Creates \eqn{n \times n}{n * n} matrix indicating the difference in times of adoption between
 each pair of nodes
 }
 \details{
@@ -32,12 +32,6 @@ Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
 adopted the innovation sonner.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{integer}: Integer vectors
-
-\item \code{numeric}: Numeric vectors
-}}
 \examples{
 # Generating a random vector of time
 set.seed(123)

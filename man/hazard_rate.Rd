@@ -2,7 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{hazard_rate}
 \alias{hazard_rate}
-\title{Calculates hazard rate}
+\title{Graph Hazard Rate}
 \usage{
 hazard_rate(cumadopt)
 }
@@ -11,15 +11,17 @@ hazard_rate(cumadopt)
 \code{\link{toa_mat}}}
 }
 \value{
-A row vector of size T with hazard rates for t>1.
+A row vector of size \eqn{T} with hazard rates for \eqn{t>1}.
 }
 \description{
-Calculates hazard rate
+Computes the hazard rate of the network at each period of time.
 }
 \details{
-Hazard rate is calculated as
+For \eqn{t>1}, hazard rate is calculated as
+
 \deqn{\frac{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
-where \eqn{q_i}{q(i)} is the number of adopters in time i, and \eqn{n}{n} is the number of individuals
-in the system.
+
+where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
+the number of vertices in the graph.
 }
 

@@ -12,13 +12,13 @@ rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
 
 \item{t}{Integer. Number of time periods}
 
-\item{p}{Double. Probability of connection between ego and alter.}
+\item{p}{Double. Probability of a link between ego and alter.}
 
 \item{undirected}{Logical scalar. Whether the graph is undirected or not.}
 
-\item{weighted}{LoWhether the graph is weighted or not.}
+\item{weighted}{Logical. Whether the graph is weighted or not.}
 
-\item{self}{Wheter it includes self-edges.}
+\item{self}{Logical. Wheter it includes self-edges.}
 
 \item{as.edgelist}{Logical. When TRUE the graph is presented as an edgelist
 instead.}
@@ -28,20 +28,24 @@ A graph represented by an adjacency matrix (if t=1), or an array of
 adjacency matrices (if t>1).
 }
 \description{
-Follows the G(N,p) model
+Using the \eqn{G(N,p)} model, generates a random graph.
 }
 \details{
-Basically, for each pair of nodes \{i,j\}, an edge is created with probability
-p, this is, P\{Link i-j\} = P\{x<p\}, where x is drawn from a Uniform(0,1).
+Basically, for each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
+with probability \eqn{p}, this is, \eqn{Pr\{Link i-j\} = Pr\{x<p\}}{%
+Pr{Link i-j}}, where \eqn{x} is drawn from a \eqn{Uniform(0,1)}.
 
 When \code{weighted=TRUE}, the strength of ties is given by
-the random draw x used to compare against p, hence, if x < p then the strength
-will be set to x.
+the random draw \eqn{x} used to compare against \eqn{p}, hence, if \eqn{x < p}
+then the strength will be set to \eqn{x}.
 
-In the case of dynamic graphs, the algorithm is repeated t times.
+In the case of dynamic graphs, the algorithm is repeated \eqn{t} times, so the
+networks are uncorrelated.
 }
 \note{
-The resulting adjacency matrix is dense (hence, be careful with the size)
+The resulting adjacency matrix is store as a dense matrix, not as a
+sparce matrix, hence the user should be careful when choosing the size of
+the network.
 }
 \examples{
 \dontrun{

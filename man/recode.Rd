@@ -24,7 +24,8 @@ A recoded edgelist
 Recodes an edgelist such that ids go from 1 to n
 }
 \details{
-Recomended for ease of use
+Required for using most of the package's functions, as ids are used
+as a reference for accessing elements in adjacency matrices.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -38,5 +39,8 @@ it returns an object of the same class as the input, a matrix.
 edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 edgelist
 recode(edgelist)
+}
+\seealso{
+\code{\link{edgelist_to_adjmat}}
 }
 

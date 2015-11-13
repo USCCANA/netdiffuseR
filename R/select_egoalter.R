@@ -1,24 +1,23 @@
 #' Calculate the number of adoption changes between ego and alter.
 #'
-#' The changes are based on 16 categories combining (ego, alter) x (adopt in t) x
-#' (adopt in t-1) (see details).
+#' The changes are based on 16 categories combining (ego, alter) x (adopt in \eqn{t}) x
+#' (adopt in \eqn{t-1}) (see details).
 #'
-#' @param graph Either an adjacency matrix or an array.
-#' @param adopt nxT matrix. Cumulative addoption matrix.
+#' @param graph An \eqn{n\times n\times T}{n*n*T} array.
+#' @param adopt \eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.
 #' @param period Integer. Optional to make the count for a particular period of time.
-#' @param ... Further arguments to be passed to the method
 #' @details The 16 categories are classified using the table that follows. The
-#' first two Yes/No columns represent Ego's adoption of the innovation in t-1
-#' and t; while the first two Yes/No rows represent Alter's adoption of the
-#' innovation in t-1 and t respectively. So for example, number 4 means that
-#' while neither of the two had addopted the innovation in t-1, both have in t.
-#' At the same time, number 12 means that ego adopted the innovation in t, but
-#' alter had already adopted in t-1 (so it has it in both, t and t-1).
+#' first two Yes/No columns represent Ego's adoption of the innovation in \eqn{t-1}
+#' and \eqn{t}; while the first two Yes/No rows represent Alter's adoption of the
+#' innovation in \eqn{t-1} and t respectively. So for example, number 4 means that
+#' while neither of the two had addopted the innovation in \eqn{t-1}, both have in \eqn{t}.
+#' At the same time, number 12 means that ego adopted the innovation in \eqn{t}, but
+#' alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
 #'
 #' \tabular{rrrcccc}{
 #'       \tab       \tab       \tab Alter \tab     \tab     \tab     \cr
-#'       \tab       \tab t-1   \tab  No   \tab     \tab Yes \tab     \cr
-#'       \tab t-1   \tab t     \tab  No   \tab Yes \tab No  \tab Yes \cr
+#'       \tab       \tab \eqn{t-1}   \tab  No   \tab     \tab Yes \tab     \cr
+#'       \tab \eqn{t-1}   \tab \eqn{t}     \tab  No   \tab Yes \tab No  \tab Yes \cr
 #'   Ego \tab No    \tab No    \tab   1   \tab  2  \tab   9 \tab  10 \cr
 #'       \tab       \tab Yes   \tab   3   \tab  4  \tab 11  \tab  12 \cr
 #'       \tab Yes   \tab No    \tab   5   \tab  6  \tab 13  \tab  14 \cr
@@ -28,14 +27,15 @@
 #' @return An array of the count of selection changes for the 16 categories by node.
 #' @references
 #' Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
-#' Fujimoto, Diffusion of innovations theory applied to global tobacco control
-#' treaty ratification, Social Science & Medicine, Volume 145, November 2015,
+#' Fujimoto, \emph{Diffusion of innovations theory applied to global tobacco control
+#' treaty ratification}, Social Science & Medicine, Volume 145, November 2015,
 #' Pages 89-97, ISSN 0277-9536
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
-select_egoalter <- function(graph, ...) UseMethod("select_egoalter")
+select_egoalter <- function(graph, adopt, period=NULL) UseMethod("select_egoalter")
 
-#' @describeIn select_egoalter Method for arrays
+#' @rdname select_egoalter
+#' @export
 select_egoalter.array <- function(graph, adopt, period=NULL) {
 
   # Computing selection mat and coersing into a single matrix

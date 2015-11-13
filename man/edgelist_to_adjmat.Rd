@@ -33,7 +33,7 @@ alter -target- (see details).}
 
 \item{times}{Integer vector. Periodicity of the ties (optional).}
 
-\item{simplify}{Logical. When TRUE and no times vector it will return an adjacency
+\item{simplify}{Logical. When TRUE and \code{times=NULL} it will return an adjacency
 matrix, otherwise an array of adjacency matrices.}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
@@ -47,7 +47,7 @@ matrix, otherwise an array of adjacency matrices.}
 
 \item{times.recode}{Logical. TRUE when time recoding must be done.}
 
-\item{adjmat}{Square matrix. An adjacency matrix.}
+\item{adjmat}{An \eqn{n\times n}{n * n} matrix. An adjacency matrix.}
 }
 \value{
 In the case of \code{edgelist_to_adjmat} either an adjacency matrix
@@ -63,7 +63,7 @@ By default, the function will \code{\link{recode}} the edgelist before starting.
 
 When multiple edges are included, each vertex between \{i,j\} will be accounted
 as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
-times, the adjacency matrix element (i,j) will have a 2.
+times, the adjacency matrix element (i,j) will be 2.
 }
 \examples{
 # Base data

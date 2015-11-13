@@ -7,7 +7,7 @@
 \alias{isolated}
 \alias{isolated.array}
 \alias{isolated.matrix}
-\title{Manages isolated nodes}
+\title{Find and remove isolated vertices}
 \usage{
 isolated(graph, undirected = TRUE)
 
@@ -22,17 +22,16 @@ drop_isolated(graph, undirected = TRUE)
 \method{drop_isolated}{array}(graph, undirected = TRUE)
 }
 \arguments{
-\item{graph}{Square matrix. An graph as an adjacency matrix.}
+\item{graph}{Either a \eqn{n\times n}{n*n} Matrix or a \eqn{n\times n\times T}{n*n*T} array.}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
 }
 \value{
-In the case of \code{isolated}, an integer vector of size n with 1's where a
-node is isolated. Otherwise a modified adjacency matrix excluding the
-isolated nodes.
+\item{isolated}{an integer vector of size \eqn{n} with 1's where a node is isolated}
+ \item{drop_isolated}{a modified graph excluding isolated vertices.}
 }
 \description{
-Manages isolated nodes
+Find and remove unconnected vertices from the graph.
 }
 \examples{
 \dontrun{

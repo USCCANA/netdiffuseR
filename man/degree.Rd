@@ -2,24 +2,33 @@
 % Please edit documentation in R/stats.R
 \name{degree}
 \alias{degree}
-\title{Calculates degree of each node}
+\alias{degree.array}
+\alias{degree.matrix}
+\title{Indegree, outdegree and degree of the vertices}
 \usage{
-degree(adjmat, cmode = 2, undirected = TRUE, self = FALSE)
+degree(graph, cmode = "degree", undirected = TRUE, self = FALSE)
+
+\method{degree}{matrix}(graph, cmode = "degree", undirected = TRUE,
+  self = FALSE)
+
+\method{degree}{array}(graph, cmode = "degree", undirected = TRUE,
+  self = FALSE)
 }
 \arguments{
-\item{adjmat}{Square matrix. Adjacency matrix}
+\item{graph}{Either an \eqn{n\times n}{n * n} Matrix or a \eqn{n\times n\times T}{n * n * T} array}
 
-\item{cmode}{Integer. 0 for indegree, 1 for outdegree and 2 for degree.}
+\item{cmode}{Character. Either "indegree", "outdegree" or "degree".}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
 
 \item{self}{Logical. TRUE when self edges should not be considered.}
 }
 \value{
-A numeric vector with the degree of each node.
+Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
+a matrix), or a matrix of size \eqn{n\times T}{n * T}
 }
 \description{
-Calculates degree of each node
+Computes the requested degree measure for each node in the graph.
 }
 \examples{
 # Creating a directed graph

@@ -12,15 +12,19 @@ cumulative_adopt_count(cumadopt)
 }
 \value{
 A 3xT matrix, where its rows contain the number of adoptes, the proportion of
-adopters and the rate of adoption respectively for earch period of time.
+adopters and the rate of adoption respectively, for earch period of time.
 }
 \description{
-Calculates the number of adopters in each period, the proportion of adopters, and
-the adoption rate.
+For each period, calculates the number of adopters, the proportion of adopters,
+and the adoption rate.
 }
 \details{
-The rate of adoption (3rd row), is calculated as
+The rate of adoption--returned in the 3rd row out the resulting
+matrix--is calculated as
+
 \deqn{\frac{q_t - q_{t-1}}{q_{t-1}}}{[q(t) - q(t-1)]/q(t-1)}
-where \eqn{q_i}{q(i)} is the number of adopters in time i.
+
+where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
+it is only calculated fot \eqn{t>1}.
 }
 

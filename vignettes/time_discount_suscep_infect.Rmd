@@ -2,8 +2,12 @@
 title: "Time Discounted Infection and Susceptibility"
 author: "George G. Vega Yon"
 date: "November 11, 2015"
-output: pdf_document
+output: rmarkdown::pdf_document
 fontsize: 12pt
+vignette: >
+  %\VignetteIndexEntry{Time Discounted Infection and Susceptibility}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 In Myers (2000), susceptibility and infection is defined for a given time period and as a constant throughout the network--so only varies on $t$. In order to include effects from previous/coming time periods, it adds up through the \emph{severity} of the rioting, which in our case would be strength of tie, hence a dichotomous variable, whenever the event occurred a week within $t$, furthermore, he then introduces a discount factor in order to account for decay of the influence of the event. Finally, he obtains

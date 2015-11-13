@@ -92,28 +92,34 @@ BEGIN_RCPP
 END_RCPP
 }
 // infection_cpp
-arma::mat infection_cpp(NumericVector graph, const arma::colvec& times, bool normalize);
-RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP) {
+arma::mat infection_cpp(NumericVector graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount);
+RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const arma::colvec& >::type times(timesSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    __result = Rcpp::wrap(infection_cpp(graph, times, normalize));
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< bool >::type expdiscount(expdiscountSEXP);
+    __result = Rcpp::wrap(infection_cpp(graph, times, normalize, K, r, expdiscount));
     return __result;
 END_RCPP
 }
 // susceptibility_cpp
-arma::colvec susceptibility_cpp(NumericVector graph, const arma::colvec& times, bool normalize);
-RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP) {
+arma::colvec susceptibility_cpp(NumericVector graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount);
+RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const arma::colvec& >::type times(timesSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    __result = Rcpp::wrap(susceptibility_cpp(graph, times, normalize));
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< bool >::type expdiscount(expdiscountSEXP);
+    __result = Rcpp::wrap(susceptibility_cpp(graph, times, normalize, K, r, expdiscount));
     return __result;
 END_RCPP
 }

@@ -11,10 +11,10 @@
 #'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
-#' @param adjmat Square matrix. An adjacency matrix.
+#' @param adjmat An \eqn{n\times n}{n * n} matrix. An adjacency matrix.
 #' @param weights Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Periodicity of the ties (optional).
-#' @param simplify Logical. When TRUE and no times vector it will return an adjacency
+#' @param simplify Logical. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @param skip.recode Logical. FALSE when recode of nodes's ids is performed (see details).
@@ -28,7 +28,7 @@
 #'
 #' When multiple edges are included, each vertex between \{i,j\} will be accounted
 #' as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
-#' times, the adjacency matrix element (i,j) will have a 2.
+#' times, the adjacency matrix element (i,j) will be 2.
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 #' (if times is NULL) or an array of these (if times is not null). For
 #' \code{adjmat_to_edgelist} the output is an edgelist.
@@ -195,7 +195,7 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #' }
 toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
-#' @describeIn toa_mat Numeric
+#' @rdname toa_mat
 #' @export
 toa_mat.numeric <- function(times, recode=TRUE, ...) {
   if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
@@ -203,7 +203,7 @@ toa_mat.numeric <- function(times, recode=TRUE, ...) {
   toa_mat.integer(times, recode)
 }
 
-#' @describeIn toa_mat Integers
+#' @rdname toa_mat
 #' @export
 toa_mat.integer <- function(times, recode=TRUE, ...) {
   # Rescaling
@@ -229,13 +229,13 @@ toa_mat.integer <- function(times, recode=TRUE, ...) {
 
 #' Difference in Time of Adoption (TOA) between individuals
 #'
-#' Creates \eqn{n \times n}{n x n} matrix indicating the difference in times of adoption between
+#' Creates \eqn{n \times n}{n * n} matrix indicating the difference in times of adoption between
 #' each pair of nodes
 #' @inheritParams toa_mat
 #' @details Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 #' toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
 #' adopted the innovation sonner.
-#' @return An \eqn{n \times n}{n x n} symmetric matrix indicating the difference in times of
+#' @return An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
 #' adoption between each pair of nodes.
 #' @export
 #' @examples
@@ -247,7 +247,7 @@ toa_mat.integer <- function(times, recode=TRUE, ...) {
 #' toa_diff(times)
 toa_diff <- function(times, recode=TRUE, ...) UseMethod("toa_diff")
 
-#' @describeIn toa_diff Integer vectors
+#' @rdname toa_diff
 #' @export
 toa_diff.integer <- function(times, recode=TRUE, ...) {
   # Rescaling
@@ -255,7 +255,7 @@ toa_diff.integer <- function(times, recode=TRUE, ...) {
   toa_diff_cpp(times)
 }
 
-#' @describeIn toa_diff Numeric vectors
+#' @rdname toa_diff
 #' @export
 toa_diff.numeric <- function(times, recode=TRUE, ...) {
   times <- as.integer(times)
@@ -275,14 +275,16 @@ toa_diff.numeric <- function(times, recode=TRUE, ...) {
 # [1] 42.38422
 
 
-#' Manages isolated nodes
-#' @param graph Square matrix. An graph as an adjacency matrix.
+#' Find and remove isolated vertices
+#'
+#' Find and remove unconnected vertices from the graph.
+#'
+#' @param graph Either a \eqn{n\times n}{n*n} Matrix or a \eqn{n\times n\times T}{n*n*T} array.
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @export
 #' @return
-#' In the case of \code{isolated}, an integer vector of size n with 1's where a
-#' node is isolated. Otherwise a modified adjacency matrix excluding the
-#' isolated nodes.
+#'  \item{isolated}{an integer vector of size \eqn{n} with 1's where a node is isolated}
+#'  \item{drop_isolated}{a modified graph excluding isolated vertices.}
 #' @examples
 #' \dontrun{
 #' # Generating random graph

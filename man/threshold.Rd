@@ -7,7 +7,7 @@
 threshold(exposure, times, times.recode = TRUE)
 }
 \arguments{
-\item{exposure}{nxT matrix. Exposure to the innovation obtained from
+\item{exposure}{\eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
 \code{\link{exposure}}.}
 
 \item{times}{Integer vector. Indicating the time of adoption of the innovation.}
@@ -15,9 +15,9 @@ threshold(exposure, times, times.recode = TRUE)
 \item{times.recode}{Logical. TRUE when time recoding must be done.}
 }
 \value{
-A vector of size \eqn{n}{n} indicating the threshold for each node.
+A vector of size \eqn{n} indicating the threshold for each node.
 }
 \description{
-Threshold as the exposure of vertex by the time of the adoption.
+Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
 }
 

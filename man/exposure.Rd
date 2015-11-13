@@ -23,13 +23,15 @@ exposure(graph, cumadopt, wtype = 0, v = 1, undirected = TRUE,
 
 \item{undirected}{Logical. TRUE if the graph is undirected.}
 
-\item{normalized}{Logical. When true, the exposure will be between zero and one.}
+\item{normalized}{Logical. When true, the exposure will be between zero
+and one (see details).}
 }
 \value{
 A matrix of size nxT with exposure for each node.
 }
 \description{
-Ego exposure
+Calculates the level of exposure to the innovation that each node has in the
+graph.
 }
 \details{
 When \code{wtype=0} (default), exposure is defined as follows

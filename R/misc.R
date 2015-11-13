@@ -3,7 +3,9 @@
 #' @param ... Further arguments for the method (ignored)
 #' @return A recoded edgelist
 #' @export
-#' @details Recomended for ease of use
+#' @details Required for using most of the package's functions, as ids are used
+#' as a reference for accessing elements in adjacency matrices.
+#' @seealso \code{\link{edgelist_to_adjmat}}
 #' @examples
 #' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 #' edgelist

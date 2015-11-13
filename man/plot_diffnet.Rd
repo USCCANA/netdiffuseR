@@ -2,7 +2,7 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_diffnet}
 \alias{plot_diffnet}
-\title{Create a diffusion graph}
+\title{Visualize diffusion process}
 \usage{
 plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
@@ -11,13 +11,13 @@ plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
 \arguments{
 \item{graph}{An array}
 
-\item{cumadopt}{nxT matrix}
+\item{cumadopt}{\eqn{n\times T}{n*T} matrix}
 
 \item{vcols}{A vector of size 2 with colors}
 
-\item{mode}{Layout}
+\item{mode}{Character. Name of the layout algorithm to implement (see details)}
 
-\item{layout.par}{Layout parameters}
+\item{layout.par}{Layout parameters (see details)}
 
 \item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}}
 
@@ -25,7 +25,26 @@ plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
 
 \item{...}{Further arguments to be passed to gplot}
 }
+\value{
+Calculated coordinates (invisible).
+}
 \description{
-Create a diffusion graph
+Creates a colored network plot showing the structure of the graph through time
+(one network plot for each time period)  and the set of adopter and non-adopters
+in the network.
+}
+\details{
+Plotting is done via the function \code{\link[sna:gplot]{gplot}},
+and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
+the (\pkg{sna}) package.
+
+In order to center the attention on the diffusion process itself, the
+positions of each vertex are computed only once by aggregating the networks
+through time, this is, instead of computing the layout for each time \eqn{t},
+the function creates a new graph accumulating links through time.
+
+The \code{mfrow.par} sets how to arrange the plots on the device. If \eqn{T=5}
+and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
+of the device and the last two in the bottom.
 }
 
