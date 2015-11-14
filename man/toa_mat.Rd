@@ -21,10 +21,8 @@ toa_mat(times, recode = TRUE, ...)
 }
 \value{
 A list of two \eqn{n \times T}{n x T}
-\itemize{
- \item{\code{cumadopt} has 1's for all years in which a node indicates having the innovation.}
- \item{\code{adopt} has 1's only for the year of adoption and 0 for the rest.}
-}
+ \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
+ \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 }
 \description{
 Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during

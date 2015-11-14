@@ -73,3 +73,37 @@ plot_diffnet <- function(graph, cumadopt, vcols=c("blue","grey"), mode="fruchter
   invisible(coords)
 
 }
+
+#' Creates a \code{diffusionnet} class object
+#' @param graph Either an adjacency matrix, an array or an edgelist
+as_diffusionnet <- function(graph, ...) {
+
+}
+
+#' @rdname as_diffusionnet
+as_diffusionnet.matrix <- function(graph, toa, recode=TRUE, ...) {
+  # Figuring out if it is an edgelist
+  k <- ncol(graph)
+  n <- ncol(graph)
+  if ((n!=k) & (k>2)) stop("Invalid -graph-. It should be either an edgelist or a square matrix.")
+  else if ((k==2))
+
+  t <- length(unique(toa))
+
+  graph <- array(rep(graph, t), dim=c(n, n, t))
+  as_diffusionnet.array(graph, toa, recode)
+}
+
+#' @rdname as_diffusionnet
+as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
+
+  # Getting times of adoption
+  adopmats <- toa_mat(toa, recode)
+
+  list(
+    graph=graph,
+    adopt.mat=adoptmats$adopt,
+    cumadopt.mat=adoptmats$cumadopt,
+    toa=toa
+  )
+}

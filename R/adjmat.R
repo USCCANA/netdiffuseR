@@ -189,10 +189,8 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #'
 #' @export
 #' @return A list of two \eqn{n \times T}{n x T}
-#' \itemize{
-#'  \item{\code{cumadopt} has 1's for all years in which a node indicates having the innovation.}
-#'  \item{\code{adopt} has 1's only for the year of adoption and 0 for the rest.}
-#' }
+#'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
+#'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
 #' @rdname toa_mat
