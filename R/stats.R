@@ -49,10 +49,12 @@ degree.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 degree.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
   n <- dim(graph)[1]
   t <- dim(graph)[3]
-  output <- matrix(ncol=t, nrow=t)
+  output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,,i] <- degree(graph[,,i], cmode, undirected, self)
+    output[,i] <- degree(graph[,,i], cmode, undirected, self)
+
+  output
 }
 
 #' Ego exposure
