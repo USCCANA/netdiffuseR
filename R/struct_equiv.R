@@ -29,7 +29,7 @@
 #' vertex in the network. All summations are made over \eqn{k\not\in \{i,j\}}{k!={i,j}}
 #'
 #' Here, the value of \eqn{v} is interpreted as cohesion level. The higher its value,
-#' the higher will be the influence that the closets alters will have over ego (see
+#' the higher will be the influence that the closests alters will have over ego (see
 #' Burt's paper in the reference).
 #'
 #' @return When \code{graph} is an adjacency matrix, it returns a square matrix,
