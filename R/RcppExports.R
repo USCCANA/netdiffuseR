@@ -37,6 +37,14 @@ susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, 
     .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount)
 }
 
+seq_cpp <- function(from, to, lengthout) {
+    .Call('netdiffuseR_seq_cpp', PACKAGE = 'netdiffuseR', from, to, lengthout)
+}
+
+grid_distribution <- function(x, y, n = 100L) {
+    .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, n)
+}
+
 rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rand_graph_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }

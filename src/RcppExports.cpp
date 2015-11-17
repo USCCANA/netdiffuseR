@@ -123,6 +123,32 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// seq_cpp
+arma::vec seq_cpp(double from, double to, int lengthout);
+RcppExport SEXP netdiffuseR_seq_cpp(SEXP fromSEXP, SEXP toSEXP, SEXP lengthoutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< double >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< double >::type to(toSEXP);
+    Rcpp::traits::input_parameter< int >::type lengthout(lengthoutSEXP);
+    __result = Rcpp::wrap(seq_cpp(from, to, lengthout));
+    return __result;
+END_RCPP
+}
+// grid_distribution
+List grid_distribution(const arma::vec& x, const arma::vec& y, int n);
+RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    __result = Rcpp::wrap(grid_distribution(x, y, n));
+    return __result;
+END_RCPP
+}
 // rand_graph_cpp
 arma::mat rand_graph_cpp(int n, double p, bool undirected, bool weighted, bool self);
 RcppExport SEXP netdiffuseR_rand_graph_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {

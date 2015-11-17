@@ -245,43 +245,66 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE,
 
 }
 
-#' Generates a heatmap of \% between suscept and infect
+#' Plot distribution of infect/suscep
+#'
+#' After calculating infectiousness and susceptibility of each individual on the
+#' network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
+#' proportion of individuals that lie within each cell.
+#'
 #' @param graph an array
 #' @param toa Times of adoption
 #' @param normalize Logical. TRUE
-#' @param max.blocks Maximum number of cols/rows the output matrix will have
-#' @param ... Additional parameters to be passed to infection/susceptibility
+#' @param K Integer. Number of time periods to consider
+#' @param r Double. Rate
+#' @param expdiscount Logical.
+#' @param logscale Logical. When TRUE the axis of the plot will be presented in log-scale
+#' @param nlevels Integer. Number of levels to plot (see \code{\link{filled.contour}})
+#' @param main Character. Title of the graph
+#' @param xlab Character. Title of the x-axis
+#' @param ylab Character. Title of the y-axis
+#' @param sub Character. Subtitle of the graph
+#' @param col Character vector of size \code{nlevels}. Colours for the scale
+#' @param include.grid Logical. When TRUE, the grid of the graph is drawn
+#' @param ... Additional parameters to be passed to \code{\link{filled.contour}}
 #' @return The matrix to be plotted
+#' @export
 #' @examples
 #' # Generating a random graph
 #' set.seed(1234)
 #' n <- 500
-#' nper <- 20
-#' graph <- rand_graph(n,nper, p=.1, undirected = FALSE)
+#' nper <- 30
+#' graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
 #' toa <- sample(1:(1+nper-1), n, TRUE)
-#' adopt <- toa_mat(toa)
 #'
-#' x <- plot_infectsuscep(graph, toa, K=3)
-#' image(x, col = heat.colors(100))
-
-plot_infectsuscep <- function(graph, toa, normalize=TRUE, max.blocks=100, ...) {
+#' # Visualizing distribution of suscep/infect
+#' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
+plot_infectsuscep <- function(graph, toa, normalize=TRUE,
+                              K=1L, r=0.5, expdiscount=FALSE,
+                              nlevels=20,
+                              logscale=FALSE,
+                              main="Distribution of Infectiousness and\nSusceptibility",
+                              xlab="Infectiousness of ego",
+                              ylab="Susceptibility of ego",
+                              sub=ifelse(logscale, "(in log-scale)", NULL),
+                              col=grey((nlevels:1)/nlevels),
+                              include.grid=TRUE,
+                              ...) {
   # Computing infect and suscept
-  infect <- infection(graph, toa, normalize, ...)
-  suscep <- susceptibility(graph, toa, normalize, ...)
+  infect <- infection(graph, toa, normalize, K, r, expdiscount)
+  suscep <- susceptibility(graph, toa, normalize, K, r, expdiscount)
 
   # Performing classification (linear)
-  n <- length(toa)
-  m <- min(c(ceiling(n/2), max.blocks))
-  inf <- range(infect); inf <- seq(inf[1],inf[2], length.out = m)
-  sus <- range(suscep); sus <- seq(sus[1],sus[2], length.out = m)
-  m <- m - 1
+  if (logscale) {
+    infect<-log(infect); infect[which(!is.finite(infect))] <- 0
+    suscep<-log(suscep); suscep[which(!is.finite(suscep))] <- 0
+  }
+  coords <- netdiffuseR:::grid_distribution(x=infect, y=suscep, nlevels)
 
-  out <- matrix(ncol=m, nrow=m)
-  for (i in 1:m)
-    for(j in 1:m)
-      out[i,j] <- sum((infect <= inf[i+1]) & (infect > inf[i]) &
-        (suscep <= sus[j+1]) & (suscep > sus[j]))
+  # Nice plot
+  n <- sum(coords$z)
+  with(coords, filled.contour(x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub,
+                              col=col, ...))
+  if (include.grid) grid()
 
-  out/sum(out)
+  invisible(list(infect=infect, suscept=suscep, coords=coords))
 }
-
