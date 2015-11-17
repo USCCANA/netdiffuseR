@@ -76,24 +76,25 @@
 #' @export
 #' @return A numeric column vector of size \eqn{n} with either infection/susceptibility rates.
 #'
-infection <- function(graph, times, normalize=TRUE) {
+infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   UseMethod("infection")
 }
 
 #' @rdname infection
 #' @export
-infection.array <- function(graph, times, normalize=TRUE) {
-  infection_cpp(graph, times, normalize)
+infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+  infection_cpp(graph, times, normalize, K=1L, r=0.5, expdiscount=FALSE)
 }
 
 #' @rdname infection
 #' @export
-susceptibility <- function(graph, times, normalize=TRUE) {
+susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   UseMethod("susceptibility")
 }
 
 #' @rdname infection
 #' @export
-susceptibility.array <- function(graph, times, normalize=TRUE) {
-  susceptibility_cpp(graph, times, normalize)
+susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+  susceptibility_cpp(graph, times, normalize, K=1L, r=0.5, expdiscount=FALSE)
 }
+

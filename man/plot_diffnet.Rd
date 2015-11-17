@@ -4,16 +4,20 @@
 \alias{plot_diffnet}
 \title{Visualize diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, vcols = c("blue", "grey"),
-  mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
-  main = "Network in time \%d", ...)
+plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
+  vertex.cex = 1, edge.col = "gray", mode = "fruchtermanreingold",
+  layout.par = NULL, mfrow.par = NULL, main = "Network in time \%d", ...)
 }
 \arguments{
 \item{graph}{An array}
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix}
 
-\item{vcols}{A vector of size 2 with colors}
+\item{vertex.col}{A character vector of size 2 with colors}
+
+\item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices}
+
+\item{edge.col}{Character. Color of the edge}
 
 \item{mode}{Character. Name of the layout algorithm to implement (see details)}
 
@@ -46,5 +50,16 @@ the function creates a new graph accumulating links through time.
 The \code{mfrow.par} sets how to arrange the plots on the device. If \eqn{T=5}
 and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 of the device and the last two in the bottom.
+}
+\examples{
+#' # Generating a random graph
+set.seed(1234)
+n <- 6
+nper <- 5
+graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+toa <- sample(2000:(2000+nper-1), n, TRUE)
+adopt <- toa_mat(toa)
+
+plot_diffnet(graph, adopt$cumadopt)
 }
 

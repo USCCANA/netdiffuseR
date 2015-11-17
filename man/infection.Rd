@@ -7,13 +7,17 @@
 \alias{susceptibility.array}
 \title{Susceptibility and Infection}
 \usage{
-infection(graph, times, normalize = TRUE)
+infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE)
 
-\method{infection}{array}(graph, times, normalize = TRUE)
+\method{infection}{array}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE)
 
-susceptibility(graph, times, normalize = TRUE)
+susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE)
 
-\method{susceptibility}{array}(graph, times, normalize = TRUE)
+\method{susceptibility}{array}(graph, times, normalize = TRUE, K = 1L,
+  r = 0.5, expdiscount = FALSE)
 }
 \arguments{
 \item{graph}{Array of size \eqn{n\times n\times T}{n*n*T} as a dynamic graph}

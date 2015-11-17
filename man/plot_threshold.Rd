@@ -6,7 +6,7 @@
 \usage{
 plot_threshold(graph, exposure, toa, times.recode = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
-  ylab = "Threshold", vertex.size = NULL, vertex.col = rep("lightblue",
+  ylab = "Threshold", vertex.cex = NULL, vertex.col = rep("blue",
   length(toa)), vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,
   edge.col = "gray", arrow.length = 0.2, include.grid = TRUE, bty = "n",
   ...)
@@ -16,7 +16,7 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE,
 
 \item{exposure}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
-\item{toa}{Integer vector of size \eqn{n}. Times of exposure}
+\item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
 
 \item{main}{Character. Title of the plot}
 
@@ -24,13 +24,13 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE,
 
 \item{ylab}{Character. y-axis label}
 
-\item{vertex.size}{Numeric vector of size \eqn{n}. Relative size of the vertices}
+\item{vertex.cex}{Numeric vector of size \eqn{n}. Relative size of the vertices}
 
 \item{vertex.col}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices}
 
 \item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices}
 
-\item{vertex.lab.pos}{Integer value to be passed to \code{\link[par]{par through pos}}}
+\item{vertex.lab.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}}
 
 \item{edge.width}{Numeric. Width of the edges}
 
@@ -67,7 +67,7 @@ plot_threshold(graph, expos, toa)
 # Calculating degree (for sizing the vertices)
 indegree <- netdiffuseR::degree(graph, cmode="indegree")
 indegree <- apply(indegree, 1, mean)
-plot_threshold(graph, expos, toa, vertex.size = indegree)
+plot_threshold(graph, expos, toa, vertex.cex = indegree)
 
 }
 
