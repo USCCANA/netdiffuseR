@@ -7,9 +7,9 @@
 #' @param p Double. Probability of a link between ego and alter.
 #' @param undirected Logical scalar. Whether the graph is undirected or not.
 #' @param weighted Logical. Whether the graph is weighted or not.
-#' @param self Logical. Wheter it includes self-edges.
+#' @param self Logical. Whether it includes self-edges.
 #' @param as.edgelist Logical. When TRUE the graph is presented as an edgelist
-#' instead.
+#' instead of an adjacency matrix.
 #' @details
 #'
 #' Basically, for each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
@@ -30,7 +30,7 @@
 #' adjacency matrices (if t>1).
 #' @export
 #' @note The resulting adjacency matrix is store as a dense matrix, not as a
-#' sparce matrix, hence the user should be careful when choosing the size of
+#' sparse matrix, hence the user should be careful when choosing the size of
 #' the network.
 #' @examples
 #' \dontrun{
