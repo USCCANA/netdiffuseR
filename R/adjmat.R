@@ -7,7 +7,7 @@
 
 #' Conversion between adjacency matrix and edgelist
 #'
-#' Generates adjacency adjacency matrix from an edgelist and viceversa.
+#' Generates adjacency matrix from an edgelist and viceversa.
 #'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
@@ -26,7 +26,7 @@
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
 #'
-#' When multiple edges are included, each vertex between \{i,j\} will be accounted
+#' When multiple edges are included, each vertex between \{i,j\} will be counted
 #' as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
 #' times, the adjacency matrix element (i,j) will be 2.
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
