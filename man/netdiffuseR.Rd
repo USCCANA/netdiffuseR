@@ -7,7 +7,7 @@
 \title{netdiffuseR}
 \description{
 You can access to the project website at
-\url{https://github.com/srdyal/diffusiontest}
+\url{https://github.com/USCCANA/diffusiontest}
 }
 \details{
 Network Analysis for Diffusion of Innovations

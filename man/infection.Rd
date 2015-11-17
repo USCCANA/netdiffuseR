@@ -30,7 +30,7 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{r}{Double. Discount rate used when \code{expdiscount=TRUE}}
 
-\item{expdiscount}{Logical. When TRUE, exponential discount rate us used (see details)}
+\item{expdiscount}{Logical. When TRUE, exponential discount rate is used (see details)}
 }
 \value{
 A numeric column vector of size \eqn{n} with either infection/susceptibility rates.
@@ -40,7 +40,8 @@ Calculates infectiousness and susceptibility for each node in the graph
 }
 \details{
 Normalization, \code{normalize=TRUE}, is applied by dividing the
-resulting number by the number of individuals who adopted the innovation at
+resulting number from the infectiousness/susceptibility calcuation
+by the number of individuals who adopted the innovation at
 time \eqn{t}.
 
 Given that node \eqn{i} adopted the innovation in time \eqn{t}, its
@@ -79,7 +80,7 @@ S(i)' = S(i)/[\sum_k \sum_j z(j,t-k)/w(k)]
 
 I(i)' = I(i)/[\sum_k \sum_j z(j,t-k)/w(k)]}
 
-For more details on this measurements, please refer to the vignette titled
+For more details on these measurements, please refer to the vignette titled
 \emph{Time Discounted Infection and Susceptibility}.
 }
 \section{Discount rate}{

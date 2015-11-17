@@ -11,7 +11,7 @@
 #' @details
 #'
 #' Normalization, \code{normalize=TRUE}, is applied by dividing the
-#' resulting number from the infectiousness/susceptibility calcuation 
+#' resulting number from the infectiousness/susceptibility calcuation
 #' by the number of individuals who adopted the innovation at
 #' time \eqn{t}.
 #'
@@ -84,7 +84,7 @@ infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FAL
 #' @rdname infection
 #' @export
 infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
-  infection_cpp(graph, times, normalize, K=1L, r=0.5, expdiscount=FALSE)
+  infection_cpp(graph, times, normalize, K, r, expdiscount)
 }
 
 #' @rdname infection
@@ -96,6 +96,6 @@ susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 #' @rdname infection
 #' @export
 susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
-  susceptibility_cpp(graph, times, normalize, K=1L, r=0.5, expdiscount=FALSE)
+  susceptibility_cpp(graph, times, normalize, K, r, expdiscount)
 }
 

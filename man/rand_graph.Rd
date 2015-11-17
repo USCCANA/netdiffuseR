@@ -18,10 +18,10 @@ rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
 
 \item{weighted}{Logical. Whether the graph is weighted or not.}
 
-\item{self}{Logical. Wheter it includes self-edges.}
+\item{self}{Logical. Whether it includes self-edges.}
 
 \item{as.edgelist}{Logical. When TRUE the graph is presented as an edgelist
-instead.}
+instead of an adjacency matrix.}
 }
 \value{
 A graph represented by an adjacency matrix (if t=1), or an array of
@@ -44,7 +44,7 @@ networks are uncorrelated.
 }
 \note{
 The resulting adjacency matrix is store as a dense matrix, not as a
-sparce matrix, hence the user should be careful when choosing the size of
+sparse matrix, hence the user should be careful when choosing the size of
 the network.
 }
 \examples{
