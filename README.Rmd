@@ -25,6 +25,6 @@ Functions include selection, susceptibility & infection, etc.
 Using the `devtools` package, you can install `diffusiontest` dev version as follows
 
 ```r
-devtools::install_github('srdyal/diffusiontest')
+devtools::install_github('USCCANA/diffusiontest')
 ```
 

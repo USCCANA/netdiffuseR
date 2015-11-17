@@ -7,11 +7,12 @@
 #' @param normalize Logical. Whether or not to normalize the outcome
 #' @param K Integer. Number of time periods to consider
 #' @param r Double. Discount rate used when \code{expdiscount=TRUE}
-#' @param expdiscount Logical. When TRUE, exponential discount rate us used (see details)
+#' @param expdiscount Logical. When TRUE, exponential discount rate is used (see details)
 #' @details
 #'
 #' Normalization, \code{normalize=TRUE}, is applied by dividing the
-#' resulting number by the number of individuals who adopted the innovation at
+#' resulting number from the infectiousness/susceptibility calcuation 
+#' by the number of individuals who adopted the innovation at
 #' time \eqn{t}.
 #'
 #' Given that node \eqn{i} adopted the innovation in time \eqn{t}, its
@@ -50,7 +51,7 @@
 #'
 #' I(i)' = I(i)/[\sum_k \sum_j z(j,t-k)/w(k)]}
 #'
-#' For more details on this measurements, please refer to the vignette titled
+#' For more details on these measurements, please refer to the vignette titled
 #' \emph{Time Discounted Infection and Susceptibility}.
 #'
 #' @section Discount rate:
