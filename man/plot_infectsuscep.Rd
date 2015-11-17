@@ -2,9 +2,14 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_infectsuscep}
 \alias{plot_infectsuscep}
-\title{Generates a heatmap of \% between suscept and infect}
+\title{Plot distribution of infect/suscep}
 \usage{
-plot_infectsuscep(graph, toa, normalize = TRUE, max.blocks = 100, ...)
+plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE, nlevels = 20, logscale = FALSE,
+  main = "Distribution of Infectiousness and\\nSusceptibility",
+  xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
+  sub = ifelse(logscale, "(in log-scale)", NULL),
+  col = grey((nlevels:1)/nlevels), include.grid = TRUE, ...)
 }
 \arguments{
 \item{graph}{an array}
@@ -13,26 +18,47 @@ plot_infectsuscep(graph, toa, normalize = TRUE, max.blocks = 100, ...)
 
 \item{normalize}{Logical. TRUE}
 
-\item{max.blocks}{Maximum number of cols/rows the output matrix will have}
+\item{K}{Integer. Number of time periods to consider}
 
-\item{...}{Additional parameters to be passed to infection/susceptibility}
+\item{r}{Double. Rate}
+
+\item{expdiscount}{Logical.}
+
+\item{nlevels}{Integer. Number of levels to plot (see \code{\link{filled.contour}})}
+
+\item{logscale}{Logical. When TRUE the axis of the plot will be presented in log-scale}
+
+\item{main}{Character. Title of the graph}
+
+\item{xlab}{Character. Title of the x-axis}
+
+\item{ylab}{Character. Title of the y-axis}
+
+\item{sub}{Character. Subtitle of the graph}
+
+\item{col}{Character vector of size \code{nlevels}. Colours for the scale}
+
+\item{include.grid}{Logical. When TRUE, the grid of the graph is drawn}
+
+\item{...}{Additional parameters to be passed to \code{\link{filled.contour}}}
 }
 \value{
 The matrix to be plotted
 }
 \description{
-Generates a heatmap of \% between suscept and infect
+After calculating infectiousness and susceptibility of each individual on the
+network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
+proportion of individuals that lie within each cell.
 }
 \examples{
 # Generating a random graph
 set.seed(1234)
 n <- 500
-nper <- 20
-graph <- rand_graph(n,nper, p=.1, undirected = FALSE)
+nper <- 30
+graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
-adopt <- toa_mat(toa)
 
-x <- plot_infectsuscep(graph, toa, K=3)
-image(x, col = heat.colors(100))
+# Visualizing distribution of suscep/infect
+out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
 }
 
