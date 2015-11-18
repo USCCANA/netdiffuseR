@@ -6,7 +6,8 @@
 \usage{
 plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
   vertex.cex = 1, edge.col = "gray", mode = "fruchtermanreingold",
-  layout.par = NULL, mfrow.par = NULL, main = "Network in time \%d", ...)
+  layout.par = NULL, mfrow.par = NULL, main = "Network in time \%d",
+  mai = c(0, 0, 1, 0), mar = rep(1, 4) + 0.1, ...)
 }
 \arguments{
 \item{graph}{An array}
@@ -26,6 +27,8 @@ plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
 \item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}}
 
 \item{main}{Characetr. A title template to be passed to \code{\link{sprintf}}}
+
+\item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}}}
 
 \item{...}{Further arguments to be passed to gplot}
 }

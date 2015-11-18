@@ -76,6 +76,113 @@ z <- grid_distribution(x,y,40)
 
 sum(z$z)
 with(z, contour(x,y,z/sum(z), nlevels = 40))
-with(z, persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
+with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 */
 
+// [[Rcpp::export]]
+List edges_coords(
+    const arma::mat & graph,
+    const arma::colvec & toa,
+    const arma::colvec & x,
+    const arma::colvec & y,
+    const arma::colvec & vertex_cex,
+    bool undirected=true,
+    bool no_contemporary=true) {
+
+  int n = graph.n_cols;
+
+  // The output matrix has the following
+  // - x0 and y0
+  // - x1 and y1
+  // - alpha
+  // - dist
+  // - size0 and size1
+  // - mutual
+  std::vector< double > x0;
+  std::vector< double > y0;
+  std::vector< double > x1;
+  std::vector< double > y1;
+  std::vector< double > alpha;
+  std::vector< double > dist;
+  std::vector< double > size0;
+  std::vector< double > size1;
+  // std::vector< int > mutual;
+
+  // Rescaling the vertex sizes
+  arma::colvec vertex_size(vertex_cex);
+  double mins = vertex_size.min();
+  double maxs = vertex_size.max();
+
+//   for(int i=0;i<n;i++) {
+//     vertex_size(i) = (vertex_size(i) - mins + 1e-5)/(maxs-mins+ 1e-5)/4.0;
+//   }
+
+  for(int i=0;i<n;i++) {
+    // Verifying undirected or not
+    int m=n;
+    if (undirected) m=i;
+
+    for(int j=0;j<m;j++) {
+      if (!graph(i,j)) continue;
+
+      if (no_contemporary && (toa(i)==toa(j)) ) continue;
+
+      // Euclidean distance
+      double d = pow( pow(x(i) - x(j), 2.0) + pow(y(i) - y(j), 2.0) , 0.5 );
+      dist.push_back(d);
+
+      // Computing the elevation degree
+      double a = acos( (x[i] - x[j])/d );
+      alpha.push_back(a);
+
+      // Adding the xs and the ys
+      x0.push_back(x(i));
+      x1.push_back(x(j) + cos(a)*vertex_size(j));
+
+      y0.push_back(y(i));
+
+      // The formula needs an extra help to figure out the ys
+      if (y(i) < y(j)) y1.push_back(y(j) - sin(a)*vertex_size(j));
+      else             y1.push_back(y(j) + sin(a)*vertex_size(j));
+
+      // Now the sizes
+      size0.push_back(vertex_size(i));
+      size1.push_back(vertex_size(j));
+    }
+  }
+
+  // Building up the output
+  int e = x0.size();
+  NumericMatrix out(e,8);
+  for(int i=0; i<e; i++) {
+    out(i,0) = x0[i];
+    out(i,1) = y0[i];
+    out(i,2) = x1[i];
+    out(i,3) = y1[i];
+    out(i,4) = size0[i];
+    out(i,5) = size1[i];
+    out(i,6) = alpha[i];
+    out(i,7) = dist[i];
+  }
+
+  colnames(out) = CharacterVector::create("x0", "y0", "x1", "y1", "size0",
+           "size1", "alpha", "dist");
+
+  return List::create(_["sizes"]=vertex_size, _["edges"]=out);
+
+}
+
+/***R
+set.seed(123)
+graph <- rand_graph()
+toa <- sample(1:5, 10, TRUE)
+pos <- sna::gplot.layout.random(graph, NULL)
+cex <- seq(1,5,length.out = 10)
+
+arr <- edges_coords(graph, toa, pos[,1], pos[,2], cex/20)
+
+plot(pos, col="white", xlim= c(-2,2), ylim= c(-2,2))
+with(arr, arrows(edges[,1], edges[,2], edges[,3], edges[,4]))
+symbols(pos, circles=arr$sizes, add=TRUE, inches = FALSE, bg="lightblue")
+text(pos[,1], pos[,2], labels = 1:10)
+*/

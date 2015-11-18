@@ -149,6 +149,23 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// edges_coords
+List edges_coords(const arma::mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary);
+RcppExport SEXP netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type toa(toaSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type vertex_cex(vertex_cexSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_contemporary(no_contemporarySEXP);
+    __result = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary));
+    return __result;
+END_RCPP
+}
 // rand_graph_cpp
 arma::mat rand_graph_cpp(int n, double p, bool undirected, bool weighted, bool self);
 RcppExport SEXP netdiffuseR_rand_graph_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {

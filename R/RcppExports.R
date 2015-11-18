@@ -45,6 +45,10 @@ grid_distribution <- function(x, y, n = 100L) {
     .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, n)
 }
 
+edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE) {
+    .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary)
+}
+
 rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rand_graph_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }

@@ -4,7 +4,7 @@
 \alias{plot_threshold}
 \title{Plots threshold}
 \usage{
-plot_threshold(graph, exposure, toa, times.recode = TRUE,
+plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
   ylab = "Threshold", vertex.cex = NULL, vertex.col = rep("blue",
   length(toa)), vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,

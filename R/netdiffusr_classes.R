@@ -13,6 +13,7 @@
 #' @param layout.par Layout parameters (see details)
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}
 #' @param main Characetr. A title template to be passed to \code{\link{sprintf}}
+#' @param mai Numeric vector of size 4. To be passed to \code{\link{par}}
 #' @param ... Further arguments to be passed to gplot
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -44,7 +45,9 @@ plot_diffnet <- function(graph, cumadopt,
                          vertex.col=c("blue","grey"), vertex.cex=1,
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
-                         mfrow.par=NULL, main="Network in time %d",...) {
+                         mfrow.par=NULL, main="Network in time %d",
+                         mai=c(0,0,1,0),
+                         mar=rep(1,4) + 0.1, ...) {
   t <- dim(graph)[3]
   n <- dim(graph)[1]
 
@@ -77,7 +80,7 @@ plot_diffnet <- function(graph, cumadopt,
   # Plotting
   curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
-  par(mfrow=mfrow.par)
+  par(mfrow=mfrow.par, mai=mai, mar=mar)
   for(i in 1:t)  {
     set.seed(curseed)
     sna::gplot(graph[,,i],displaylabels =  TRUE, vertex.col = cols[,i], coord=coords,
@@ -163,7 +166,7 @@ as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
 #' plot_threshold(graph, expos, toa, vertex.cex = indegree)
 #'
 #' @export
-plot_threshold <- function(graph, exposure, toa, times.recode=TRUE,
+plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=TRUE,
                            main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
                            vertex.cex=NULL, vertex.col=rep("blue", length(toa)), vertex.label=NULL, vertex.lab.pos=3,
                            edge.width = 2, edge.col = "gray", arrow.length=.20,
@@ -191,53 +194,38 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE,
   # Plotting
   oldpar <- par(no.readonly = TRUE)
   plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main, ...)
+  if (include.grid) grid()
 
-  # Rescaling vertex sizes
-  if (length(vertex.cex)) {
-
-    # First, for x
-    vrange <- range(vertex.cex)
-    vertex.cex <- (vertex.cex - vrange[2])/(vrange[1] - vrange[2])/4
-    v0 <- which(vertex.cex==0)
-    vertex.cex[v0] <- min(vertex.cex[-v0])/2
-  }
-  else vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
+#   # Rescaling vertex sizes
+#   if (length(vertex.cex)) {
+#
+#     # First, for x
+#     vrange <- range(vertex.cex)
+#     vertex.cex <- (vertex.cex - vrange[2])/(vrange[1] - vrange[2])/4
+#     v0 <- which(vertex.cex==0)
+#     vertex.cex[v0] <- min(vertex.cex[-v0])/2
+#   }
+#   else vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
+  if (!length(vertex.cex)) vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
 
   # Now, for y (it should be different)
   xran <- range(xlim)
   yran <- range(ylim)
   vertex.cex.y <- vertex.cex *(yran[2]-yran[1])/(xran[2]-xran[1])
 
-  # Drawing arrows
-  for(i in 1:n)
-    for(j in 1:n) {
-      if (!cumgraph[i,j] || toa[i]==toa[j]) next
+  # Drawing arrows, first we calculate the coordinates of the edges
+  edges_info <- netdiffuseR:::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
+  edges_info$edges <- as.data.frame(edges_info$edges)
 
-      # Resizing the edge accordingly to the size of the vertex
-      d <- dist(
-        rbind( c(jit[i],y[i]),c(jit[j],y[j]) )
-        )
-      alpha <- acos( (jit[j]-jit[i])/d )
-
-      tox <- jit[j] - cos(alpha)*vertex.cex[j]
-
-      # For y, you need to know whether is above or below
-      if (y[i] < y[j]) toy <- y[j] - sin(alpha)*vertex.cex[j]
-      else             toy <- y[j] + sin(alpha)*vertex.cex[j]
-
-      # sna::gplot.arrow(jit[i], y[i], tox, toy, width=edge.width)
-      arrows(jit[i], y[i], tox, toy, lwd = edge.width, col = edge.col,
-             length=arrow.length)
-    }
+  with(edges_info$edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
+                                length=arrow.length))
 
   # Drawing the vertices and its labels
-  symbols(jit, y, circle=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
+  symbols(jit, y, circle=edges_info$sizes, inches=FALSE, bg=vertex.col, add=TRUE)
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
   text(x=jit, y=y+vertex.cex.y, labels = vertex.label, pos=vertex.lab.pos)
-
-  if (include.grid) grid()
 
   par(oldpar)
 
