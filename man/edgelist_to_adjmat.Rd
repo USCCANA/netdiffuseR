@@ -15,7 +15,7 @@ edgelist_to_adjmat(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
-  no.self = FALSE, no.multiple = FALSE, no.incomplete = FALSE,
+  self = FALSE, multiple = FALSE, use.incomplete = TRUE,
   times.recode = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
@@ -41,12 +41,15 @@ matrix, otherwise an array of adjacency matrices.}
 
 \item{skip.recode}{Logical. FALSE when recode of nodes's ids is performed (see details).}
 
-\item{no.self}{Logical. TRUE when self edges are excluded.}
+\item{self}{Logical. TRUE when self edges are excluded.}
 
-\item{no.multiple}{Logical. TRUE when multiple edges should not be included
+\item{multiple}{Logical. TRUE when multiple edges should not be included
 (see details).}
 
-\item{no.incomplete}{Logical. When TRUE, rows with \code{NA/NULL} values will be drop.}
+\item{use.incomplete}{Logical. When FALSE, rows with \code{NA/NULL} values will be droped
+and will not be considered in the graph, which may reduce the size of the
+adjacency matrix (see
+details).}
 
 \item{times.recode}{Logical. TRUE when time recoding must be done.}
 
@@ -64,9 +67,27 @@ Generates adjacency matrix from an edgelist and viceversa.
 The edgelist must be coded from 1:n (otherwise it may cause an error).
 By default, the function will \code{\link{recode}} the edgelist before starting.
 
-When multiple edges are included, each vertex between \{i,j\} will be counted
-as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
-times, the adjacency matrix element (i,j) will be 2.
+When multiple edges are included, each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
+as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
+times, the adjacency matrix element \code{(i,j)} will be 2.
+
+Including incomplete cases, \code{use.incomplete=TRUE}, can lead to an adjacency matrix
+with isolated vertices. Otherwise, when \code{use.incomplete=FALSE}, if all the
+edges in which a vertex participates have incomplete information in any of the
+variables (a NA, NULL or NaN value, see \code{\link{complete.cases}}), it
+will be dropped from the graph, thus, reducing the size of the adjacency
+matrix by not including isolated vertices.
+
+The function performs several checks before starting to create the adjacency
+matrix. These are:
+\itemize{
+ \item{Dimensions of the inputs, such as number of columns and length of vectors}
+ \item{Having complete cases. If anly edge has a non-numeric value such as NAs or
+ NULL in any variable (including \code{times} and \code{weights}), it will be
+ removed. A full list of such edges can be retrieved from the attribute
+ \code{incomplete}}
+ \item{Nodes and times ids coding}
+}
 }
 \examples{
 # Base data

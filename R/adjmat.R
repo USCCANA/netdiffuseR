@@ -18,18 +18,40 @@
 #' matrix, otherwise an array of adjacency matrices.
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @param skip.recode Logical. FALSE when recode of nodes's ids is performed (see details).
-#' @param no.self Logical. TRUE when self edges are excluded.
-#' @param no.multiple Logical. TRUE when multiple edges should not be included
+#' @param self Logical. TRUE when self edges are excluded.
+#' @param multiple Logical. TRUE when multiple edges should not be included
 #' (see details).
-#' @param no.incomplete Logical. When TRUE, rows with \code{NA/NULL} values will be drop.
+#' @param use.incomplete Logical. When FALSE, rows with \code{NA/NULL} values will be droped
+#' and will not be considered in the graph, which may reduce the size of the
+#' adjacency matrix (see
+#' details).
 #' @param times.recode Logical. TRUE when time recoding must be done.
 #' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
 #'
-#' When multiple edges are included, each vertex between \{i,j\} will be counted
-#' as many times it appears in the edgelist. So if a vertex \{i,j\} appears 2
-#' times, the adjacency matrix element (i,j) will be 2.
+#' When multiple edges are included, each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
+#' as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
+#' times, the adjacency matrix element \code{(i,j)} will be 2.
+#'
+#' Including incomplete cases, \code{use.incomplete=TRUE}, can lead to an adjacency matrix
+#' with isolated vertices. Otherwise, when \code{use.incomplete=FALSE}, if all the
+#' edges in which a vertex participates have incomplete information in any of the
+#' variables (a NA, NULL or NaN value, see \code{\link{complete.cases}}), it
+#' will be dropped from the graph, thus, reducing the size of the adjacency
+#' matrix by not including isolated vertices.
+#'
+#' The function performs several checks before starting to create the adjacency
+#' matrix. These are:
+#' \itemize{
+#'  \item{Dimensions of the inputs, such as number of columns and length of vectors}
+#'  \item{Having complete cases. If anly edge has a non-numeric value such as NAs or
+#'  NULL in any variable (including \code{times} and \code{weights}), it will be
+#'  removed. A full list of such edges can be retrieved from the attribute
+#'  \code{incomplete}}
+#'  \item{Nodes and times ids coding}
+#' }
+#'
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 #' (if times is NULL) or an array of these (if times is not null). For
 #' \code{adjmat_to_edgelist} the output is an edgelist.
@@ -74,64 +96,66 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
-  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE,
-  no.incomplete=FALSE, times.recode=TRUE, ...) {
+  undirected=FALSE, skip.recode=FALSE, self=FALSE, multiple=FALSE,
+  use.incomplete=TRUE, times.recode=TRUE, ...) {
 
-  # For the output
-  incomplete <- NULL
-  if (no.incomplete) {
-    # Checking out full observations (droping incomplete)
-    index <- complete.cases(edgelist)
-    edgelist <- edgelist[index,,drop=FALSE]
-    if (length(times)) times <- times[index]
-    if (length(weights)) weights <- weights[index]
-
-    incomplete <- which(!index)
-    if (length(incomplete))
-      warning("Some vertices had NA/NULL values. These will not be considered",
-              " in the graph: ",paste0(incomplete, collapse = ", "))
-  }
-
-    # Checking dim of edgelist (and others)
+  # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
   if (length(times) && nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
   if (length(weights) && nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
 
-  # Checking out the weights
-  m <- nrow(edgelist)
-  if (!length(weights)) weights <- rep(1, m)
+  ##############################################################################
+  # Step 1: Incomplete cases.
+  # Finding incomplete cases. This is always done since we need to provide a
+  # complete list of variables to the C++ function, otherwise it will throw
+  # an error.
+  complete <- complete.cases(cbind(edgelist, times, weights))
+  incomplete <- which(!complete)
 
+  # If the user chooses to drop incomplete, then what changes is the selection
+  # of ids in the graph.
+  # Times and weights MUST be removed since wont be used in the C++ function
+  if (length(incomplete))
+    warning("Some vertices had NA/NULL values:\n\t",
+            paste0(head(incomplete,20), collapse = ", "),
+            ifelse(length(incomplete)>20,", ...", ""),
+            "\nThe complete list will be stored as an attribute of the resulting",
+            " adjacency matrix, namely, -incomplete-.")
+
+  # If no.incomplete is activated, then the vectors should be fixed
+  if (!use.incomplete) edgelist <- edgelist[complete,,drop=FALSE]
+
+  ##############################################################################
+  # Step 2: Recoding nodes ids
   # Recoding nodes ids
   if (!skip.recode) dat <- recode(edgelist)
   else {
     warning('Skipping -recode- may cause unexpected behavior.')
     dat <- edgelist
   }
-  n <- max(dat, na.rm = TRUE)
-stop("DONT USE THIS FUNCTION. CURRENTLY IT HAS A BUG")
-  # Checking out duplicates and self
-  if (no.self)     dat <- dat[dat[,1]!=dat[,2],]
-  if (undirected) {
-    test <- (dat[,1] > dat[,2])
-    test[is.na(dat[,1])] <- FALSE
-    dat <- cbind(ifelse(test, dat[,1], dat[,2]), ifelse(test, dat[,2], dat[,1]))
-  }
-  if (no.multiple) dat <- unique(dat)
 
-  # Checking out times
-  if (!length(times)) times <- rep(1, m)
-  else {
-    if (times.recode) times <- times - min(times) + 1L
-  }
+  ##############################################################################
+  # Step 3: Preparing -times- and -weights- considering complete cases.
+  # Times + recoding
+  m <- nrow(edgelist)
+  if (length(times)) times <- times[complete]
+  else times <- rep(1, m)
+
+  if (times.recode) times <- times - min(times) + 1L
   t <- max(times)
 
+  # Weights
+  if (length(weights)) weights <- weights[complete]
+  else weights <- rep(1, m)
+
+  ##############################################################################
   # Computing the adjmat
   adjmat <- vector("list", t)
 
   for(i in 1:length(adjmat)) {
     index <- which(times == i)
     adjmat[[i]] <- edgelist_to_adjmat_cpp(
-      dat[index,,drop=FALSE], weights[index], n, undirected)
+      dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
   }
 
   n <- nrow(adjmat[[1]])

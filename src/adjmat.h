@@ -13,7 +13,7 @@ List adopt_mat_cpp(const IntegerVector & year);
 
 arma::mat edgelist_to_adjmat_cpp(
     const arma::mat & data, NumericVector weights = NumericVector::create(),
-    int n = 0,bool undirected = false);
+    int n = 0,bool undirected = false, bool self = false, bool multiple = false);
 
 arma::mat adjmat_to_edgelist_cpp(
     const arma::mat & adjmat, bool undirected = true);

@@ -5,8 +5,8 @@ toa_mat_cpp <- function(year) {
     .Call('netdiffuseR_toa_mat_cpp', PACKAGE = 'netdiffuseR', year)
 }
 
-edgelist_to_adjmat_cpp <- function(edgelist, weights = as.numeric( c()), n = 0L, undirected = FALSE) {
-    .Call('netdiffuseR_edgelist_to_adjmat_cpp', PACKAGE = 'netdiffuseR', edgelist, weights, n, undirected)
+edgelist_to_adjmat_cpp <- function(edgelist, weights = as.numeric( c()), n = 0L, undirected = FALSE, self = FALSE, multiple = FALSE) {
+    .Call('netdiffuseR_edgelist_to_adjmat_cpp', PACKAGE = 'netdiffuseR', edgelist, weights, n, undirected, self, multiple)
 }
 
 adjmat_to_edgelist_cpp <- function(adjmat, undirected = TRUE) {

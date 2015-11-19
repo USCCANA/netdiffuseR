@@ -18,8 +18,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // edgelist_to_adjmat_cpp
-arma::mat edgelist_to_adjmat_cpp(const arma::mat& edgelist, NumericVector weights, int n, bool undirected);
-RcppExport SEXP netdiffuseR_edgelist_to_adjmat_cpp(SEXP edgelistSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP undirectedSEXP) {
+arma::mat edgelist_to_adjmat_cpp(const arma::mat& edgelist, NumericVector weights, int n, bool undirected, bool self, bool multiple);
+RcppExport SEXP netdiffuseR_edgelist_to_adjmat_cpp(SEXP edgelistSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP undirectedSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -27,7 +27,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    __result = Rcpp::wrap(edgelist_to_adjmat_cpp(edgelist, weights, n, undirected));
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    __result = Rcpp::wrap(edgelist_to_adjmat_cpp(edgelist, weights, n, undirected, self, multiple));
     return __result;
 END_RCPP
 }

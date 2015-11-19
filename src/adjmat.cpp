@@ -51,7 +51,9 @@ arma::mat edgelist_to_adjmat_cpp(
     const arma::mat & edgelist,
     NumericVector weights = NumericVector::create(),
     int n = 0,
-    bool undirected = false) {
+    bool undirected = false,
+    bool self = false,
+    bool multiple = false) {
 
   // Getting the dimensions and creating objects
   int m = edgelist.n_rows;
@@ -61,14 +63,43 @@ arma::mat edgelist_to_adjmat_cpp(
   if (weights.size() == m) w = clone(weights);
 
   // Identifying the unique nodes and creating the adjmat (base)
+  // If n is not provided (0), then we need to calculate the number of
+  // nodes in the network.
   if (n == 0) {
     n = (int) max(max(edgelist));
   }
+
+  // Creating output mat and aux mat. The counts mat is used in logical expressions
+  // since the arma::mat class can lead to error when compared to 0 (because of
+  // the precision)
   arma::mat adjmat(n,n, arma::fill::zeros);
+  arma::umat counts(n,n, arma::fill::zeros);
 
   for(int i=0;i<m;i++) {
-    adjmat(edgelist(i,0)-1,edgelist(i,1)-1) += w[i];
-    if (undirected) adjmat(edgelist(i,1)-1,edgelist(i,0)-1) += w[i];
+    // Ids of the vertices
+    int ego = ((int) edgelist(i,0)) - 1;
+    int alter = ((int) edgelist(i,1)) - 1;
+
+    // If self edges are not allowed
+    if (!self && (ego == alter)) continue;
+
+    // If undirected, the order does not matters
+    if (undirected) {
+      int tmp=ego;
+      if (ego < alter) ego = alter, alter=tmp;
+    }
+
+    // If multiple edges are not allowed.
+    if (!multiple && (counts(ego, alter) > 0)) continue;
+
+    adjmat(ego, alter) += w[i];
+    counts(ego, alter) += 1;
+
+    // If undirected, must include in the switch
+    if (undirected) {
+      adjmat(alter, ego) += w[i];
+      counts(alter, ego) += 1;
+    }
   }
 
   return adjmat;
