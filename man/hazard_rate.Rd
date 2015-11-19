@@ -24,4 +24,11 @@ For \eqn{t>1}, hazard rate is calculated as
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 the number of vertices in the graph.
 }
+\seealso{
+Other statistics: \code{\link{cumulative_adopt_count}},
+  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{infection}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
+}
+\keyword{univar}
 

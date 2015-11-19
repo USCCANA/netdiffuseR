@@ -50,4 +50,5 @@ isolated(adjmat)
 drop_isolated(adjmat)
 }
 }
+\keyword{manip}
 

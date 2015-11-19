@@ -15,7 +15,8 @@ edgelist_to_adjmat(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
-  no.self = FALSE, no.multiple = FALSE, times.recode = TRUE, ...)
+  no.self = FALSE, no.multiple = FALSE, no.incomplete = FALSE,
+  times.recode = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
 
@@ -44,6 +45,8 @@ matrix, otherwise an array of adjacency matrices.}
 
 \item{no.multiple}{Logical. TRUE when multiple edges should not be included
 (see details).}
+
+\item{no.incomplete}{Logical. When TRUE, rows with \code{NA/NULL} values will be drop.}
 
 \item{times.recode}{Logical. TRUE when time recoding must be done.}
 
@@ -89,4 +92,5 @@ edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
 edgelist_to_adjmat(edgelist, times = times, weights = w)
 edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 }
+\keyword{manip}
 

@@ -5,6 +5,8 @@
 #' @param graph Square matrix. Adjacency matrix
 #' @param v Double. Cohesion constant (see details)
 #' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
+#' @family statistics
+#' @keywords univar
 #' @details
 #'
 #' Structure equivalence is computed as presented in Valente (1995), and Burt (1987),

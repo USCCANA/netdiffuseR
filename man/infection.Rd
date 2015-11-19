@@ -104,4 +104,14 @@ Myers, D. J. (2000). "The Diffusion of Collective Violence: Infectiousness,
 Susceptibility, and Mass Media Networks". American Journal of Sociology, 106(1),
 173–208. doi:10.1086/303110
 }
+\seealso{
+The user can visualize the distribution of both statistics
+by using the function \code{\link{plot_infectsuscep}}
+
+Other statistics: \code{\link{cumulative_adopt_count}},
+  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
+}
+\keyword{univar}
 

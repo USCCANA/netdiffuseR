@@ -43,12 +43,19 @@ plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
 \item{...}{Additional parameters to be passed to \code{\link{filled.contour}}}
 }
 \value{
-The matrix to be plotted
+A list with three elements:
+\item{infect}{A numeric vector of size \eqn{n} with infectiousness levels}
+\item{suscep}{A numeric vector of size \eqn{n} with susceptibility levels}
+\item{coords}{A list containing the class marks and counts used to draw the
+plot via \code{\link{filled.contour}} (see \code{\link{grid_distribution}})}
 }
 \description{
 After calculating infectiousness and susceptibility of each individual on the
 network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
-proportion of individuals that lie within each cell.
+number of individuals that lie within each cell, and draws a heatmap.
+}
+\details{
+This plotting function was inspired by Aral, S., & Walker, D. (2012).
 }
 \examples{
 # Generating a random graph
@@ -61,4 +68,17 @@ toa <- sample(1:(1+nper-1), n, TRUE)
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
 }
+\references{
+Aral, S., & Walker, D. (2012). "Identifying Influential and Susceptible Members
+of Social Networks". Science, 337(6092), 337–341.
+\url{http://doi.org/10.1126/science.1215842}
+}
+\seealso{
+Infectiousness and susceptibility are computed via \code{\link{infection}} and
+\code{\link{susceptibility}}.
+
+Other visualizations: \code{\link{plot_diffnet}},
+  \code{\link{plot_threshold}}
+}
+\keyword{hplot}
 

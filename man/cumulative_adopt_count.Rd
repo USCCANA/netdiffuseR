@@ -27,4 +27,11 @@ matrix--is calculated as
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 it is only calculated fot \eqn{t>1}.
 }
+\seealso{
+Other statistics: \code{\link{degree}},
+  \code{\link{exposure}}, \code{\link{hazard_rate}},
+  \code{\link{infection}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
+}
+\keyword{univar}
 

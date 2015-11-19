@@ -40,4 +40,5 @@ times <- sample(2000:2005, 10, TRUE)
 # Computing the TOA differences
 toa_diff(times)
 }
+\keyword{manip}
 

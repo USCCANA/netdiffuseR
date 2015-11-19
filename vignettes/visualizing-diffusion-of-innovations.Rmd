@@ -1,0 +1,71 @@
+---
+title: "Visualizing Diffusion of Innovations"
+author: "George G. Vega Yon"
+date: "November 17, 2015"
+output: rmarkdown::pdf_document
+header-includes: \usepackage{graphicx}
+vignette: >
+  %\VignetteIndexEntry{Visualizing Diffusion of Innovations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r Setup, echo=FALSE}
+doctype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+
+# Whether is html or not
+ishtml <- !is.null(doctype) && doctype=='html'
+knitr::opts_chunk$set(fig.height=5, fig.width=8, fig.align="center", 
+                      out.width=ifelse(ishtml, 600, ".8\\linewidth"))
+```
+
+```{r}
+library(netdiffuseR)
+```
+
+# Infectiousness and Susceptibility
+
+```{r}
+# Generating a random graph
+set.seed(1234)
+n <- 500
+nper <- 30
+graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
+toa <- sample(1:(1+nper-1), n, TRUE)
+head(toa)
+
+# Visualizing distribution of suscep/infect
+out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
+```
+
+\clearpage
+
+# Threshold
+
+```{r}
+# Generating a random graph
+set.seed(1234)
+n <- 6
+nper <- 5
+graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+toa <- sample(2000:(2000+nper-1), n, TRUE)
+adopt <- toa_mat(toa)
+
+# Computing exposure
+expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+
+plot_threshold(graph, expos, toa)
+cex <- rowMeans(netdiffuseR::degree(graph))
+cex <- cex/(max(cex) - min(cex))
+plot_threshold(graph, expos, toa, vertex.cex = cex/8)
+```
+
+\clearpage
+
+# Diffusion process
+
+```{r}
+plot_diffnet(graph, adopt$cumadopt)
+```
+
+

@@ -19,26 +19,43 @@ x <- read.dta("data-raw/brfarmers.dta")
 
 # Influential graph
 # Rogers et al. (1970)
-brfarmers <- subset(x, select=c(idold, net31, net32, net33, yr, village))
+brfarmers <- subset(x, select=c(idold, net31, net32, net33, net21, net22, net23, yr, village))
 brfarmers$yr <- as.integer(brfarmers$yr) + 1900L
 
 # Creating an ID
-brfarmers$id <- with(brfarmers, idold + village*100L)
+surveyed        <- with(brfarmers, idold + village*100L)
+brfarmers$id    <- surveyed
 brfarmers$net31 <- with(brfarmers, net31 + village*100L)
 brfarmers$net32 <- with(brfarmers, net32 + village*100L)
 brfarmers$net33 <- with(brfarmers, net33 + village*100L)
+brfarmers$net21 <- with(brfarmers, net21 + village*100L)
+brfarmers$net22 <- with(brfarmers, net22 + village*100L)
+brfarmers$net23 <- with(brfarmers, net23 + village*100L)
+
+# Removing farmes that are not part of the experiment
+brfarmers$net31[which(!(brfarmers$net31 %in% surveyed))]  <- NA
+brfarmers$net32[which(!(brfarmers$net32 %in% surveyed))]  <- NA
+brfarmers$net33[which(!(brfarmers$net33 %in% surveyed))]  <- NA
+brfarmers$net21[which(!(brfarmers$net21 %in% surveyed))]  <- NA
+brfarmers$net22[which(!(brfarmers$net22 %in% surveyed))]  <- NA
+brfarmers$net23[which(!(brfarmers$net23 %in% surveyed))]  <- NA
 
 # Reshaping and droping lost
 brfarmers.long <- reshape(
-  brfarmers, v.names= "net", varying = c("net31", "net32", "net33"),
+  brfarmers, v.names= "net", varying = c("net31", "net32", "net33", "net21", "net22", "net23"),
   timevar = "level", idvar="id", direction="long", drop = c("idold"))
+
+# brfarmers.long <- subset(brfarmers.long, !is.na(net))
 
 length(unique(unlist(subset(brfarmers.long, select=c(id,net)))))
 
-library(diffusiontest)
+library(netdiffuseR)
 
 # Creating the graph object
-graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), times=yr))
+graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE))
+graph <- array(graph, dim=c(692,692,20))
+adopt <- toa_mat(brfarmers$yr)
+plot_diffnet(graph, adopt$cumadopt, displayisolates = FALSE)
 
 # Plotting one of those
-igraph::plot.igraph(igraph::graph_from_adjacency_matrix(graph[,,1]))
+sna::gplot(graph, layout.par=NULL, displayisolates = FALSE)

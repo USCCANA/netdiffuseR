@@ -41,8 +41,37 @@ seq_cpp <- function(from, to, lengthout) {
     .Call('netdiffuseR_seq_cpp', PACKAGE = 'netdiffuseR', from, to, lengthout)
 }
 
-grid_distribution <- function(x, y, n = 100L) {
-    .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, n)
+#' Distribution over a grid
+#'
+#' Distribution of pairs over a grid of fix size (number of elements)
+#'
+#' @param x Numeric vector of size \eqn{n}
+#' @param y Numeric vector of size \eqn{n}
+#' @param nlevels Integer scalar. Number of bins to return
+#' @details
+#'
+#' This function ment for internal use only.
+#'
+#' @export
+#' @keywords misc
+#' @seealso Used by \code{\link{plot_infectsuscep}}
+#' @return Returns a list with three elements
+#' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
+#' \item{y}{Numeric vector of size \code{nlevels} with the class marks for y}
+#' \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
+#' of the elements in terms of frecuency}
+#' @section Examples:
+#' \code{# Generating random vectors of size 100}
+#'
+#' \code{x <- rnorm(100)}
+#'
+#' \code{y <- rnorm(100)}
+#'
+#' \code{# Calculating distribution}
+#'
+#' \code{grid_distribution(x,y,20)}
+grid_distribution <- function(x, y, nlevels = 100L) {
+    .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, nlevels)
 }
 
 edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE) {

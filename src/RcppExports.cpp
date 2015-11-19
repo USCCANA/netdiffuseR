@@ -137,15 +137,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // grid_distribution
-List grid_distribution(const arma::vec& x, const arma::vec& y, int n);
-RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nSEXP) {
+List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
+RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    __result = Rcpp::wrap(grid_distribution(x, y, n));
+    Rcpp::traits::input_parameter< int >::type nlevels(nlevelsSEXP);
+    __result = Rcpp::wrap(grid_distribution(x, y, nlevels));
     return __result;
 END_RCPP
 }

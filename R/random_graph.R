@@ -47,6 +47,7 @@
 #' # Several period random gram
 #' rand_graph(t=5)
 #' }
+#' @keywords distribution
 rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE,
                        self=FALSE, as.edgelist=FALSE) {
 

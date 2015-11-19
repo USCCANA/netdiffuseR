@@ -13,8 +13,37 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 
 }
 
+//' Distribution over a grid
+//'
+//' Distribution of pairs over a grid of fix size (number of elements)
+//'
+//' @param x Numeric vector of size \eqn{n}
+//' @param y Numeric vector of size \eqn{n}
+//' @param nlevels Integer scalar. Number of bins to return
+//' @details
+//'
+//' This function ment for internal use only.
+//'
+//' @export
+//' @keywords misc
+//' @seealso Used by \code{\link{plot_infectsuscep}}
+//' @return Returns a list with three elements
+//' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
+//' \item{y}{Numeric vector of size \code{nlevels} with the class marks for y}
+//' \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
+//' of the elements in terms of frecuency}
+//' @section Examples:
+//' \code{# Generating random vectors of size 100}
+//'
+//' \code{x <- rnorm(100)}
+//'
+//' \code{y <- rnorm(100)}
+//'
+//' \code{# Calculating distribution}
+//'
+//' \code{grid_distribution(x,y,20)}
 // [[Rcpp::export]]
-List grid_distribution(const arma::vec & x, const arma::vec & y, int n=100) {
+List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100) {
 
   // Checking sizes of the vectors
   int m = x.size();
@@ -23,20 +52,20 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int n=100) {
   if (m!=s) stop("x and y don't have the same length.");
 
   // Crating empty matrix jointly with the sequences
-  arma::mat distmat(n,n, arma::fill::zeros);
+  arma::mat distmat(nlevels,nlevels, arma::fill::zeros);
   double xlim[2], ylim[2];
   xlim[0] = x.min()-1e-10;
   xlim[1] = x.max()+1e-10;
   ylim[0] = y.min()-1e-10;
   ylim[1] = y.max()+1e-10;
 
-  arma::vec xseq = seq_cpp(xlim[0], xlim[1], n + 1);
-  arma::vec yseq = seq_cpp(ylim[0], ylim[1], n + 1);
+  arma::vec xseq = seq_cpp(xlim[0], xlim[1], nlevels + 1);
+  arma::vec yseq = seq_cpp(ylim[0], ylim[1], nlevels + 1);
 
   for(int k=0;k<m;k++)
-    for(int i=0;i<n;i++) {
+    for(int i=0;i<nlevels;i++) {
       bool cnt = false;
-      for(int j=0;j<n;j++)
+      for(int j=0;j<nlevels;j++)
         // Testing if x and y are in the range
         if ( ((x(k) <= xseq(i+1)) & (x(k) > xseq(i))) & ((y(k) <= yseq(j+1)) & (y(k) > yseq(j)))) {
           distmat(i,j) += 1;
@@ -47,10 +76,10 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int n=100) {
     }
 
   // Output class mark
-  NumericVector xmark(n);
-  NumericVector ymark(n);
+  NumericVector xmark(nlevels);
+  NumericVector ymark(nlevels);
 
-  for(int i=0;i<n;i++)
+  for(int i=0;i<nlevels;i++)
     xmark[i] = (xseq(i) + yseq(i+1))/2,
       ymark[i] = (yseq(i) + yseq(i+1))/2;
 

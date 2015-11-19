@@ -2,7 +2,7 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_diffnet}
 \alias{plot_diffnet}
-\title{Visualize diffusion process}
+\title{Plot the diffusion process}
 \usage{
 plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
   vertex.cex = 1, edge.col = "gray", mode = "fruchtermanreingold",
@@ -65,4 +65,9 @@ adopt <- toa_mat(toa)
 
 plot_diffnet(graph, adopt$cumadopt)
 }
+\seealso{
+Other visualizations: \code{\link{plot_infectsuscep}},
+  \code{\link{plot_threshold}}
+}
+\keyword{hplot}
 

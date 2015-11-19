@@ -1,4 +1,4 @@
-#' Visualize diffusion process
+#' Plot the diffusion process
 #'
 #' Creates a colored network plot showing the structure of the graph through time
 #' (one network plot for each time period)  and the set of adopter and non-adopters
@@ -40,6 +40,8 @@
 #'
 #' plot_diffnet(graph, adopt$cumadopt)
 #' @return Calculated coordinates (invisible).
+#' @family visualizations
+#' @keywords hplot
 #' @export
 plot_diffnet <- function(graph, cumadopt,
                          vertex.col=c("blue","grey"), vertex.cex=1,
@@ -127,7 +129,11 @@ as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
   )
 }
 
-#' Plots threshold
+#' Threshold level through time
+#'
+#' Draws a graph where the coordinates are given by time of adoption, x-axis,
+#' and threshold level, y-axis.
+#'
 #' @param graph \eqn{n\times n\times T}{n * n * T} array.
 #' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
@@ -145,6 +151,10 @@ as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn
 #' @param bty See \code{\link{par}}
 #' @param ... Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}
+#' @family visualizations
+#' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
+#' obtained returned by \code{\link{exposure}}.
+#' @keywords hplot
 #' @examples
 #'
 #' # Generating a random graph
@@ -194,18 +204,10 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
   # Plotting
   oldpar <- par(no.readonly = TRUE)
   plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main, ...)
+
+  # Should there be a grid??
   if (include.grid) grid()
 
-#   # Rescaling vertex sizes
-#   if (length(vertex.cex)) {
-#
-#     # First, for x
-#     vrange <- range(vertex.cex)
-#     vertex.cex <- (vertex.cex - vrange[2])/(vrange[1] - vrange[2])/4
-#     v0 <- which(vertex.cex==0)
-#     vertex.cex[v0] <- min(vertex.cex[-v0])/2
-#   }
-#   else vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
   if (!length(vertex.cex)) vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
 
   # Now, for y (it should be different)
@@ -237,7 +239,7 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #'
 #' After calculating infectiousness and susceptibility of each individual on the
 #' network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
-#' proportion of individuals that lie within each cell.
+#' number of individuals that lie within each cell, and draws a heatmap.
 #'
 #' @param graph an array
 #' @param toa Times of adoption
@@ -254,7 +256,23 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #' @param col Character vector of size \code{nlevels}. Colours for the scale
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn
 #' @param ... Additional parameters to be passed to \code{\link{filled.contour}}
-#' @return The matrix to be plotted
+#' @details
+#'
+#' This plotting function was inspired by Aral, S., & Walker, D. (2012).
+#'
+#' @return A list with three elements:
+#' \item{infect}{A numeric vector of size \eqn{n} with infectiousness levels}
+#' \item{suscep}{A numeric vector of size \eqn{n} with susceptibility levels}
+#' \item{coords}{A list containing the class marks and counts used to draw the
+#' plot via \code{\link{filled.contour}} (see \code{\link{grid_distribution}})}
+#' @family visualizations
+#' @seealso Infectiousness and susceptibility are computed via \code{\link{infection}} and
+#' \code{\link{susceptibility}}.
+#' @keywords hplot
+#' @references
+#' Aral, S., & Walker, D. (2012). "Identifying Influential and Susceptible Members
+#' of Social Networks". Science, 337(6092), 337–341.
+#' \url{http://doi.org/10.1126/science.1215842}
 #' @export
 #' @examples
 #' # Generating a random graph
@@ -290,9 +308,13 @@ plot_infectsuscep <- function(graph, toa, normalize=TRUE,
 
   # Nice plot
   n <- sum(coords$z)
-  with(coords, filled.contour(x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub,
-                              col=col, ...))
-  if (include.grid) grid()
+  with(coords, filled.contour(
+    x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, col=col,
+    plot.axes={
+      axis(1);axis(2)
+      if (include.grid) grid()
+    },...))
+  # if (include.grid) grid()
 
   invisible(list(infect=infect, suscept=suscep, coords=coords))
 }

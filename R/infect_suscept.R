@@ -8,6 +8,10 @@
 #' @param K Integer. Number of time periods to consider
 #' @param r Double. Discount rate used when \code{expdiscount=TRUE}
 #' @param expdiscount Logical. When TRUE, exponential discount rate is used (see details)
+#' @family statistics
+#' @keywords univar
+#' @seealso The user can visualize the distribution of both statistics
+#' by using the function \code{\link{plot_infectsuscep}}
 #' @details
 #'
 #' Normalization, \code{normalize=TRUE}, is applied by dividing the

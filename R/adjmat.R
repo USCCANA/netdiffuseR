@@ -21,6 +21,7 @@
 #' @param no.self Logical. TRUE when self edges are excluded.
 #' @param no.multiple Logical. TRUE when multiple edges should not be included
 #' (see details).
+#' @param no.incomplete Logical. When TRUE, rows with \code{NA/NULL} values will be drop.
 #' @param times.recode Logical. TRUE when time recoding must be done.
 #' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
@@ -56,6 +57,8 @@
 #' # Using times and weights
 #' edgelist_to_adjmat(edgelist, times = times, weights = w)
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+#' @keywords manip
+#' @family networks
 edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 
 #' @rdname edgelist_to_adjmat
@@ -71,19 +74,23 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
-  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE, times.recode=TRUE, ...) {
-
-  # Checking out full observations (droping incomplete)
-  index <- complete.cases(edgelist)
-  edgelist <- edgelist[index,,drop=FALSE]
-  if (length(times)) times <- times[index]
-  if (length(weights)) weights <- weights[index]
+  undirected=FALSE, skip.recode=FALSE, no.self=FALSE, no.multiple=FALSE,
+  no.incomplete=FALSE, times.recode=TRUE, ...) {
 
   # For the output
-  incomplete <- which(!index)
-  if (length(incomplete))
-    warning("Some vertices had NA/NULL values. These will not be considered",
-            " in the graph: ",paste0(incomplete, collapse = ", "))
+  incomplete <- NULL
+  if (no.incomplete) {
+    # Checking out full observations (droping incomplete)
+    index <- complete.cases(edgelist)
+    edgelist <- edgelist[index,,drop=FALSE]
+    if (length(times)) times <- times[index]
+    if (length(weights)) weights <- weights[index]
+
+    incomplete <- which(!index)
+    if (length(incomplete))
+      warning("Some vertices had NA/NULL values. These will not be considered",
+              " in the graph: ",paste0(incomplete, collapse = ", "))
+  }
 
     # Checking dim of edgelist (and others)
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -100,10 +107,15 @@ edgelist_to_adjmat.matrix <- function(
     warning('Skipping -recode- may cause unexpected behavior.')
     dat <- edgelist
   }
-  n <- max(dat)
-
+  n <- max(dat, na.rm = TRUE)
+stop("DONT USE THIS FUNCTION. CURRENTLY IT HAS A BUG")
   # Checking out duplicates and self
-  if (no.self)     dat <- dat[dat[,1]!=dat[,2]]
+  if (no.self)     dat <- dat[dat[,1]!=dat[,2],]
+  if (undirected) {
+    test <- (dat[,1] > dat[,2])
+    test[is.na(dat[,1])] <- FALSE
+    dat <- cbind(ifelse(test, dat[,1], dat[,2]), ifelse(test, dat[,2], dat[,1]))
+  }
   if (no.multiple) dat <- unique(dat)
 
   # Checking out times
@@ -191,6 +203,7 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 #' @return A list of two \eqn{n \times T}{n x T}
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
+#' @keywords manip
 toa_mat <- function(times, recode=TRUE, ...) UseMethod("toa_mat")
 
 #' @rdname toa_mat
@@ -243,6 +256,7 @@ toa_mat.integer <- function(times, recode=TRUE, ...) {
 #'
 #' # Computing the TOA differences
 #' toa_diff(times)
+#' @keywords manip
 toa_diff <- function(times, recode=TRUE, ...) UseMethod("toa_diff")
 
 #' @rdname toa_diff
@@ -299,6 +313,7 @@ toa_diff.numeric <- function(times, recode=TRUE, ...) {
 #' # Removing isolated nodes
 #' drop_isolated(adjmat)
 #' }
+#' @keywords manip
 isolated <- function(graph, undirected=TRUE) {
   UseMethod("isolated")
 }

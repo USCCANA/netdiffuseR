@@ -20,4 +20,11 @@ A vector of size \eqn{n} indicating the threshold for each node.
 \description{
 Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
 }
+\seealso{
+Other statistics: \code{\link{cumulative_adopt_count}},
+  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{infection}},
+  \code{\link{struct_equiv}}
+}
+\keyword{univar}
 

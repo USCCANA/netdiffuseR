@@ -43,4 +43,5 @@ recode(edgelist)
 \seealso{
 \code{\link{edgelist_to_adjmat}}
 }
+\keyword{misc}
 

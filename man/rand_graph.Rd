@@ -67,4 +67,5 @@ rand_graph(t=5)
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 \url{http://barabasi.com/networksciencebook/}.
 }
+\keyword{distribution}
 

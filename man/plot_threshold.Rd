@@ -2,7 +2,7 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_threshold}
 \alias{plot_threshold}
-\title{Plots threshold}
+\title{Threshold level through time}
 \usage{
 plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
@@ -47,7 +47,8 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
 \item{toa.recode}{Logical. TRUE when time recoding must be done}
 }
 \description{
-Plots threshold
+Draws a graph where the coordinates are given by time of adoption, x-axis,
+and threshold level, y-axis.
 }
 \examples{
 
@@ -70,4 +71,12 @@ indegree <- apply(indegree, 1, mean)
 plot_threshold(graph, expos, toa, vertex.cex = indegree)
 
 }
+\seealso{
+Use \code{\link{threshold}} to retrieve the corresponding threshold
+obtained returned by \code{\link{exposure}}.
+
+Other visualizations: \code{\link{plot_diffnet}},
+  \code{\link{plot_infectsuscep}}
+}
+\keyword{hplot}
 

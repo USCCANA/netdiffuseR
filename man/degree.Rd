@@ -42,4 +42,11 @@ graph
    Degree=degree(graph, 2, undirected = FALSE)
  )
 }
+\seealso{
+Other statistics: \code{\link{cumulative_adopt_count}},
+  \code{\link{exposure}}, \code{\link{hazard_rate}},
+  \code{\link{infection}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
+}
+\keyword{univar}
 

@@ -9,6 +9,8 @@
 #' @return Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
 #' a matrix), or a matrix of size \eqn{n\times T}{n * T}
 #' @export
+#' @family statistics
+#' @keywords univar
 #' @examples
 #' # Creating a directed graph
 #' graph <- rand_graph(undirected=FALSE)
@@ -107,7 +109,8 @@ degree.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations"
 #'  (2nd ed.). Cresskill N.J.: Hampton Press.
 #'
-#' @backref src/stats.cpp
+#' @family statistics
+#' @keywords univar
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
 exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE, normalized=TRUE)
@@ -137,6 +140,8 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE,
 #' it is only calculated fot \eqn{t>1}.
 #' @return A 3xT matrix, where its rows contain the number of adoptes, the proportion of
 #' adopters and the rate of adoption respectively, for earch period of time.
+#' @family statistics
+#' @keywords univar
 #' @export
 cumulative_adopt_count <- function(cumadopt) {
   x <- cumulative_adopt_count_cpp(cumadopt)
@@ -158,6 +163,8 @@ cumulative_adopt_count <- function(cumadopt) {
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 #' the number of vertices in the graph.
 #' @return A row vector of size \eqn{T} with hazard rates for \eqn{t>1}.
+#' @family statistics
+#' @keywords univar
 #' @export
 hazard_rate <- function(cumadopt) {
   x <- hazard_rate_cpp(cumadopt)
@@ -174,6 +181,8 @@ hazard_rate <- function(cumadopt) {
 #' @param times Integer vector. Indicating the time of adoption of the innovation.
 #' @param times.recode Logical. TRUE when time recoding must be done.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
+#' @family statistics
+#' @keywords univar
 #' @export
 threshold <- function(exposure, times, times.recode=TRUE) {
   if (times.recode) times <- times - min(times) + 1L

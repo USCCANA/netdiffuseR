@@ -50,7 +50,7 @@ with \eqn{z_{ij}}{z(ij)} as the geodesic (shortest path) from \eqn{i} to \eqn{j}
 vertex in the network. All summations are made over \eqn{k\not\in \{i,j\}}{k!={i,j}}
 
 Here, the value of \eqn{v} is interpreted as cohesion level. The higher its value,
-the higher will be the influence that the closets alters will have over ego (see
+the higher will be the influence that the closests alters will have over ego (see
 Burt's paper in the reference).
 }
 \references{
@@ -61,4 +61,11 @@ Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.
 Valente, T. W. (1995). "Network models of the diffusion of innovations" (2nd ed.).
 Cresskill N.J.: Hampton Press.
 }
+\seealso{
+Other statistics: \code{\link{cumulative_adopt_count}},
+  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{infection}},
+  \code{\link{threshold}}
+}
+\keyword{univar}
 

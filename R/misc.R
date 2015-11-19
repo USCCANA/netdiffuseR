@@ -10,6 +10,7 @@
 #' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 #' edgelist
 #' recode(edgelist)
+#' @keywords misc
 recode <- function(data, ...) UseMethod("recode")
 
 #' @describeIn recode Method for recoding data frames. It keeps the class of the
