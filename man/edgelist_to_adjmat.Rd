@@ -14,7 +14,7 @@ edgelist_to_adjmat(edgelist, ...)
 \method{edgelist_to_adjmat}{data.frame}(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
-  simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
+  t = NULL, simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
   self = FALSE, multiple = FALSE, use.incomplete = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
@@ -32,6 +32,8 @@ alter -target- (see details).}
 \item{weights}{Numeric vector. Strength of ties (optional).}
 
 \item{times}{Integer vector. Periodicity of the ties (optional).}
+
+\item{t}{Integer scalar. If \code{times} but want to repeat the network \code{t} times.}
 
 \item{simplify}{Logical. When TRUE and \code{times=NULL} it will return an adjacency
 matrix, otherwise an array of adjacency matrices.}

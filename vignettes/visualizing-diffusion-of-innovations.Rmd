@@ -42,7 +42,7 @@ out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 
 # Threshold
 
-```{r}
+```{r, fig.height=8}
 # Generating a random graph
 set.seed(1234)
 n <- 6
@@ -57,7 +57,7 @@ expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 plot_threshold(graph, expos, toa)
 cex <- rowMeans(netdiffuseR::degree(graph))
 cex <- cex/(max(cex) - min(cex))
-plot_threshold(graph, expos, toa, vertex.cex = cex/8)
+plot_threshold(graph, expos, toa, vertex.cex = cex/4)
 ```
 
 \clearpage

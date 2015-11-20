@@ -48,7 +48,9 @@
 #' @export
 plot_diffnet <- function(graph, cumadopt,
                          displaylabels=FALSE,
-                         vertex.col=c("blue","grey"), vertex.cex=1, label=rownames(graph),
+                         vertex.col=c("blue","grey"),
+                         vertex.cex=NA,
+                         label=rownames(graph),
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
                          mfrow.par=NULL, main="Network in time %d",
@@ -67,6 +69,13 @@ plot_diffnet <- function(graph, cumadopt,
   # Getting the coords
   fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
   coords <- fun(cumgraph, layout.par)
+
+  # Adjusting vertex sizes
+  if ((length(vertex.cex)==1) && (n > 1) && is.na(vertex.cex))
+    vertex.cex <- (max(coords[,1]) - min(coords[,1]))/10*3
+
+  if ( (length(vertex.cex)==1) && (n > 1) )
+    vertex.cex <- rep(vertex.cex,n)
 
   # Figuring out the dimension
   if (!length(mfrow.par)) {
@@ -185,15 +194,16 @@ as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
 #' @export
 plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=TRUE,
                            main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-                           vertex.cex=NULL, vertex.col=rep("blue", length(toa)), vertex.label=NULL, vertex.lab.pos=3,
+                           vertex.cex=NA,
+                           vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
                            edge.width = 2, edge.col = "gray", arrow.length=.20,
                            include.grid = TRUE,
                            bty="n", ...) {
-  # Getting basic info
+  # Step 0: Getting basic info
   t <- dim(graph)[3]
   n <- dim(graph)[1]
 
-  # Creating the cumulative graph
+  # Step 1: Creating the cumulative graph
   cumgraph <- matrix(0, n, n)
   for(i in 1:t) {
     cumgraph <- cumgraph + graph[,,i]
@@ -204,9 +214,22 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, amount = .25)
-  xlim <- range(toa) + c(-1,1)
+  xran <- range(toa)
+  xlim <- xran + c(-1,1)
   yran <- range(y)
   ylim <- yran + (yran[2] - yran[1])*.1*c(-1,1)
+
+  # Step 2: Checking colors and sizes
+
+  # Adjusting size of the vertices
+  if ((length(vertex.cex)==1) && (n > 1) && is.na(vertex.cex))
+    vertex.cex <- (xran[2] - xran[1])/10/3
+
+  if ( (length(vertex.cex)==1) && (n > 1) )
+    vertex.cex <- rep(vertex.cex,n)
+
+  if ( (length(vertex.col)==1) && (n > 1) )
+    vertex.col <- rep(vertex.col,n)
 
   # Plotting
   oldpar <- par(no.readonly = TRUE)
@@ -215,22 +238,21 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
   # Should there be a grid??
   if (include.grid) grid()
 
-  if (!length(vertex.cex)) vertex.cex <- rep(1/(max(toa)-min(toa))/4, length(toa))
-
   # Now, for y (it should be different)
   xran <- range(xlim)
   yran <- range(ylim)
   vertex.cex.y <- vertex.cex *(yran[2]-yran[1])/(xran[2]-xran[1])
 
-  # Drawing arrows, first we calculate the coordinates of the edges
-  edges_info <- netdiffuseR:::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
-  edges_info$edges <- as.data.frame(edges_info$edges)
+  # Drawing arrows, first we calculate the coordinates of the edges, for this we
+  # use the function edges_coords. This considers aspect ratio of the plot.
+  edges <- netdiffuseR:::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
+  edges <- as.data.frame(edges)
 
-  with(edges_info$edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
+  with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
                                 length=arrow.length))
 
   # Drawing the vertices and its labels
-  symbols(jit, y, circle=edges_info$sizes, inches=FALSE, bg=vertex.col, add=TRUE)
+  symbols(jit, y, circle=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n

@@ -6,8 +6,8 @@
 \usage{
 plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
-  ylab = "Threshold", vertex.cex = NULL, vertex.col = rep("blue",
-  length(toa)), vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,
+  ylab = "Threshold", vertex.cex = NA, vertex.col = "blue",
+  vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,
   edge.col = "gray", arrow.length = 0.2, include.grid = TRUE, bty = "n",
   ...)
 }

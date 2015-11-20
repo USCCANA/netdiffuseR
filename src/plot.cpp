@@ -25,7 +25,7 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 //' This function ment for internal use only.
 //'
 //' @export
-//' @keywords misc
+//' @keywords misc dplot
 //' @seealso Used by \code{\link{plot_infectsuscep}}
 //' @return Returns a list with three elements
 //' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
@@ -108,8 +108,66 @@ with(z, contour(x,y,z/sum(z), nlevels = 40))
 with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 */
 
+//' Compute ego/alter edge coordinates considering alter's size and aspect ratio
+//'
+//' Given a graph, vertices' positions and sizes, calculates the absolute positions
+//' of the endpoints of the edges considering the plot's aspect ratio.
+//'
+//' @param graph A square matrix of size \eqn{n}. Adjacency matrix.
+//' @param toa Integer vector of size \eqn{n}. Times of adoption.
+//' @param x Numeric vector of size \eqn{n}. x-coordinta of vertices.
+//' @param y Numeric vector of size \eqn{n}. y-coordinta of vertices.
+//' @param vertex_cex Numeric vector of size \eqn{n}. Vertices' sizes in terms
+//' of the x-axis (see \code{\link{symbols}}).
+//' @param undirected Logical scalar. Whether the graph is undirected or not.
+//' @param no_contemporary Logical scalar. Whether to return (calcular) edges'
+//' coordiantes for vertices with the same time of adoption (see details).
+//' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
+//' columns:
+//' \item{x0, y0}{Edge origin}
+//' \item{x1, y1}{Edge target}
+//' \item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
+//' \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
+//' of radians}
+//' \item{dist}{Relavide distance between ego and alters' center.}
+//' With \eqn{m} as the number of resulting edges.
+//' @details
+//'
+//' In order to make the plot's visualization more appealing, this function provides
+//' a straight forward way of computing the tips of the edges considering the
+//' aspect ratio of the axes range. In particular, the following corrections are
+//' made at the moment of calculating the egdes coords:
+//'
+//' \itemize{
+//' \item{Instead of using the actual distance between ego and alter, a relative
+//' one is calculated as follows
+//' \deqn{d'=\left[(x_0-x_1)^2 + (y_0' - y_1')^2\right]^\frac{1}{2}}{d'=sqrt[(x0-x1)^2 + (y0'-y1')^2]}
+//' where \eqn{%
+//' y_i'=y_i\times\frac{\max x - \min x}{\max y - \min y} }{%
+//' yi' = yi * [max(x) - min(x)]/[max(y) - min(y)]}
+//' }
+//' \item{Then, for the relative elevation angle, \code{alpha}, the relative distance \eqn{d'}
+//' is used, \eqn{\alpha'=\arccos\left( (x_0 - x_1)/d' \right)}{\alpha' = acos[ (x0 - x1)/d' ]}}
+//' \item{Finally, the edge's endpoint's (alter) coordinates are computed as follows: %
+//' \deqn{%
+//'   x_1' = x_1 + \cos(\alpha')\times v_1}{%
+//'   x1' = x1 + cos(\alpha') * v1
+//' }
+//' \deqn{%
+//'   y_1' = y_1 -+ \sin(\alpha')\times v_1 \times\frac{\max y - \min y}{\max x - \min x} }{%
+//'   y1' = y1 -+ sin(\alpha')*[max(y) - min(y)]/[max(x) - min(x)]
+//' }
+//' Where \eqn{v_1}{v1} is alter's size in terms of the x-axis, and the sign of
+//' the second term in \eqn{y_1'}{y1'} is negative iff \eqn{y_0 < y_1}{y0<y1}.
+//' }
+//' }
+//'
+//' The resulting values, \eqn{x_1',y_1'}{x1',y1'} can be used with the function
+//' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
+//' @keywords misc dplot
+//' @export
 // [[Rcpp::export]]
-List edges_coords(
+NumericMatrix edges_coords(
     const arma::mat & graph,
     const arma::colvec & toa,
     const arma::colvec & x,
@@ -142,6 +200,9 @@ List edges_coords(
   double mins = vertex_size.min();
   double maxs = vertex_size.max();
 
+  // Expansion factor for y
+  double yexpand = (y.max() - y.min())/(x.max() - x.min());
+
 //   for(int i=0;i<n;i++) {
 //     vertex_size(i) = (vertex_size(i) - mins + 1e-5)/(maxs-mins+ 1e-5)/4.0;
 //   }
@@ -157,7 +218,7 @@ List edges_coords(
       if (no_contemporary && (toa(i)==toa(j)) ) continue;
 
       // Euclidean distance
-      double d = pow( pow(x(i) - x(j), 2.0) + pow(y(i) - y(j), 2.0) , 0.5 );
+      double d = pow( pow(x(i) - x(j), 2.0) + pow( (y(i) - y(j))/yexpand, 2.0) , 0.5 );
       dist.push_back(d);
 
       // Computing the elevation degree
@@ -171,8 +232,8 @@ List edges_coords(
       y0.push_back(y(i));
 
       // The formula needs an extra help to figure out the ys
-      if (y(i) < y(j)) y1.push_back(y(j) - sin(a)*vertex_size(j));
-      else             y1.push_back(y(j) + sin(a)*vertex_size(j));
+      if (y(i) < y(j)) y1.push_back(y(j) - sin(a)*vertex_size(j)*yexpand);
+      else             y1.push_back(y(j) + sin(a)*vertex_size(j)*yexpand);
 
       // Now the sizes
       size0.push_back(vertex_size(i));
@@ -197,7 +258,7 @@ List edges_coords(
   colnames(out) = CharacterVector::create("x0", "y0", "x1", "y1", "size0",
            "size1", "alpha", "dist");
 
-  return List::create(_["sizes"]=vertex_size, _["edges"]=out);
+  return out;
 
 }
 

@@ -41,5 +41,6 @@ This function ment for internal use only.
 \seealso{
 Used by \code{\link{plot_infectsuscep}}
 }
+\keyword{dplot}
 \keyword{misc}
 

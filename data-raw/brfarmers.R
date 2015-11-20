@@ -60,10 +60,10 @@ length(unique(unlist(subset(brfarmers.long, select=c(id,net)))))
 library(netdiffuseR)
 
 # Creating the graph object
-graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE))
+graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE, t=19))
 used.vertex <- rownames(graph)
 
-graph <- array(rep(graph,19), dim=c(dim(graph)[1],dim(graph)[1],19))
+# graph <- array(rep(graph,19), dim=c(dim(graph)[1],dim(graph)[1],19))
 dimnames(graph) <- list(used.vertex, used.vertex, 1948:1966)
 
 # Average indegree
@@ -81,4 +81,6 @@ x <- plot_infectsuscep(graph, toa, K=10, logscale = TRUE, bins=20)
 
 # Threshold
 expo <- exposure(graph, adopt$cumadopt)
-x <- plot_threshold(graph, expo, toa, undirected = FALSE, vertex.cex = dg)
+x <- plot_threshold(graph, expo, toa, undirected = FALSE, vertex.cex = 1/5)
+x$fitted <- loess(threshold~jit, x, parametric = FALSE)$fitted
+lines(fitted~jit, x[order(x$jit),], lwd=3, col="black")

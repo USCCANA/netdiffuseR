@@ -53,7 +53,7 @@ seq_cpp <- function(from, to, lengthout) {
 #' This function ment for internal use only.
 #'
 #' @export
-#' @keywords misc
+#' @keywords misc dplot
 #' @seealso Used by \code{\link{plot_infectsuscep}}
 #' @return Returns a list with three elements
 #' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
@@ -74,6 +74,64 @@ grid_distribution <- function(x, y, nlevels = 100L) {
     .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, nlevels)
 }
 
+#' Compute ego/alter edge coordinates considering alter's size and aspect ratio
+#'
+#' Given a graph, vertices' positions and sizes, calculates the absolute positions
+#' of the endpoints of the edges considering the plot's aspect ratio.
+#'
+#' @param graph A square matrix of size \eqn{n}. Adjacency matrix.
+#' @param toa Integer vector of size \eqn{n}. Times of adoption.
+#' @param x Numeric vector of size \eqn{n}. x-coordinta of vertices.
+#' @param y Numeric vector of size \eqn{n}. y-coordinta of vertices.
+#' @param vertex_cex Numeric vector of size \eqn{n}. Vertices' sizes in terms
+#' of the x-axis (see \code{\link{symbols}}).
+#' @param undirected Logical scalar. Whether the graph is undirected or not.
+#' @param no_contemporary Logical scalar. Whether to return (calcular) edges'
+#' coordiantes for vertices with the same time of adoption (see details).
+#' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
+#' columns:
+#' \item{x0, y0}{Edge origin}
+#' \item{x1, y1}{Edge target}
+#' \item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
+#' \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
+#' of radians}
+#' \item{dist}{Relavide distance between ego and alters' center.}
+#' With \eqn{m} as the number of resulting edges.
+#' @details
+#'
+#' In order to make the plot's visualization more appealing, this function provides
+#' a straight forward way of computing the tips of the edges considering the
+#' aspect ratio of the axes range. In particular, the following corrections are
+#' made at the moment of calculating the egdes coords:
+#'
+#' \itemize{
+#' \item{Instead of using the actual distance between ego and alter, a relative
+#' one is calculated as follows
+#' \deqn{d'=\left[(x_0-x_1)^2 + (y_0' - y_1')^2\right]^\frac{1}{2}}{d'=sqrt[(x0-x1)^2 + (y0'-y1')^2]}
+#' where \eqn{%
+#' y_i'=y_i\times\frac{\max x - \min x}{\max y - \min y} }{%
+#' yi' = yi * [max(x) - min(x)]/[max(y) - min(y)]}
+#' }
+#' \item{Then, for the relative elevation angle, \code{alpha}, the relative distance \eqn{d'}
+#' is used, \eqn{\alpha'=\arccos\left( (x_0 - x_1)/d' \right)}{\alpha' = acos[ (x0 - x1)/d' ]}}
+#' \item{Finally, the edge's endpoint's (alter) coordinates are computed as follows: %
+#' \deqn{%
+#'   x_1' = x_1 + \cos(\alpha')\times v_1}{%
+#'   x1' = x1 + cos(\alpha') * v1
+#' }
+#' \deqn{%
+#'   y_1' = y_1 -+ \sin(\alpha')\times v_1 \times\frac{\max y - \min y}{\max x - \min x} }{%
+#'   y1' = y1 -+ sin(\alpha')*[max(y) - min(y)]/[max(x) - min(x)]
+#' }
+#' Where \eqn{v_1}{v1} is alter's size in terms of the x-axis, and the sign of
+#' the second term in \eqn{y_1'}{y1'} is negative iff \eqn{y_0 < y_1}{y0<y1}.
+#' }
+#' }
+#'
+#' The resulting values, \eqn{x_1',y_1'}{x1',y1'} can be used with the function
+#' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
+#' @keywords misc dplot
+#' @export
 edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE) {
     .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary)
 }

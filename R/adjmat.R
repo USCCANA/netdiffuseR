@@ -14,6 +14,7 @@
 #' @param adjmat An \eqn{n\times n}{n * n} matrix. An adjacency matrix.
 #' @param weights Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Periodicity of the ties (optional).
+#' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
 #' @param simplify Logical. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
 #' @param undirected Logical. TRUE when the graph is undirected.
@@ -94,7 +95,7 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 #' @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
-  times=NULL, simplify=TRUE,
+  times=NULL, t=NULL, simplify=TRUE,
   undirected=FALSE, skip.recode=FALSE, self=FALSE, multiple=FALSE,
   use.incomplete=TRUE, ...) {
 
@@ -145,7 +146,8 @@ edgelist_to_adjmat.matrix <- function(
   oldtimes <- unique(times)
   oldtimes <- order(oldtimes)
   times    <- times - min(times, na.rm = TRUE) + 1L
-  t <- max(times, na.rm = TRUE)
+
+  if (!length(t)) t <- max(times, na.rm = TRUE)
 
   # Weights
   if (length(weights)) weights <- weights[complete]
@@ -155,12 +157,14 @@ edgelist_to_adjmat.matrix <- function(
   # Computing the adjmat
   adjmat <- array(dim=c(n,n,t))
   for(i in 1:t) {
-    index <- which(times == i)
+    index <- which(times <= i)
     adjmat[,,i] <- edgelist_to_adjmat_cpp(
       dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
   }
 
   # Naming
+  if (t>1 && !length(oldtimes))
+    oldtimes <- 1:t
   if (!skip.recode) {
     labs <- attr(dat, "recode")[["label"]]
     dimnames(adjmat) <- list(labs,labs,oldtimes)

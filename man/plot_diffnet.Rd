@@ -5,7 +5,7 @@
 \title{Plot the diffusion process}
 \usage{
 plot_diffnet(graph, cumadopt, displaylabels = FALSE, vertex.col = c("blue",
-  "grey"), vertex.cex = 1, label = rownames(graph), edge.col = "gray",
+  "grey"), vertex.cex = NA, label = rownames(graph), edge.col = "gray",
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
   main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
   0.1, ...)
