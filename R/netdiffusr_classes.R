@@ -6,15 +6,18 @@
 #'
 #' @param graph An array
 #' @param cumadopt \eqn{n\times T}{n*T} matrix
+#' @param displaylabels Logical. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
 #' @param vertex.col A character vector of size 2 with colors
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices
+#' @param label Character vector of size \eqn{n}. If no provided, rownames of
+#' the graph are used.
 #' @param edge.col Character. Color of the edge
 #' @param mode Character. Name of the layout algorithm to implement (see details)
 #' @param layout.par Layout parameters (see details)
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}
 #' @param main Characetr. A title template to be passed to \code{\link{sprintf}}
 #' @param mai Numeric vector of size 4. To be passed to \code{\link{par}}
-#' @param ... Further arguments to be passed to gplot
+#' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}}
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
 #' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
@@ -44,7 +47,8 @@
 #' @keywords hplot
 #' @export
 plot_diffnet <- function(graph, cumadopt,
-                         vertex.col=c("blue","grey"), vertex.cex=1,
+                         displaylabels=FALSE,
+                         vertex.col=c("blue","grey"), vertex.cex=1, label=rownames(graph),
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
                          mfrow.par=NULL, main="Network in time %d",
@@ -83,11 +87,14 @@ plot_diffnet <- function(graph, cumadopt,
   curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
   par(mfrow=mfrow.par, mai=mai, mar=mar)
+
+  times <- as.integer(dimnames(graph)[[3]])
+
   for(i in 1:t)  {
     set.seed(curseed)
-    sna::gplot(graph[,,i],displaylabels =  TRUE, vertex.col = cols[,i], coord=coords,
-               edge.col = edge.col,vertex.cex = vertex.cex,
-               main=sprintf(main, i), ...)
+    sna::gplot(graph[,,i],displaylabels = displaylabels, vertex.col = cols[,i], coord=coords,
+               edge.col = edge.col,vertex.cex = vertex.cex, label=label,
+               main=sprintf(main, times[i]), ...)
   }
   par(oldpar)
 
@@ -253,7 +260,7 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #' @param xlab Character. Title of the x-axis
 #' @param ylab Character. Title of the y-axis
 #' @param sub Character. Subtitle of the graph
-#' @param col Character vector of size \code{nlevels}. Colours for the scale
+#' @param color.palette a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn
 #' @param ... Additional parameters to be passed to \code{\link{filled.contour}}
 #' @details
@@ -286,13 +293,13 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
 plot_infectsuscep <- function(graph, toa, normalize=TRUE,
                               K=1L, r=0.5, expdiscount=FALSE,
-                              nlevels=20,
-                              logscale=FALSE,
+                              bins=50,nlevels=round(bins/2),
+                              logscale=TRUE,
                               main="Distribution of Infectiousness and\nSusceptibility",
                               xlab="Infectiousness of ego",
                               ylab="Susceptibility of ego",
-                              sub=ifelse(logscale, "(in log-scale)", NULL),
-                              col=grey((nlevels:1)/nlevels),
+                              sub=ifelse(logscale, "(in log-scale)", NA),
+                              color.palette=function(n) grey(n:1/n),
                               include.grid=TRUE,
                               ...) {
   # Computing infect and suscept
@@ -304,16 +311,16 @@ plot_infectsuscep <- function(graph, toa, normalize=TRUE,
     infect<-log(infect); infect[which(!is.finite(infect))] <- 0
     suscep<-log(suscep); suscep[which(!is.finite(suscep))] <- 0
   }
-  coords <- netdiffuseR:::grid_distribution(x=infect, y=suscep, nlevels)
+  coords <- netdiffuseR:::grid_distribution(x=infect, y=suscep, bins)
 
   # Nice plot
   n <- sum(coords$z)
   with(coords, filled.contour(
-    x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, col=col,
+    x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, color.palette =color.palette,
     plot.axes={
       axis(1);axis(2)
       if (include.grid) grid()
-    },...))
+    }, nlevels=nlevels, ...))
   # if (include.grid) grid()
 
   invisible(list(infect=infect, suscept=suscep, coords=coords))

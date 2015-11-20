@@ -19,7 +19,8 @@ x <- read.dta("data-raw/brfarmers.dta")
 
 # Influential graph
 # Rogers et al. (1970)
-brfarmers <- subset(x, select=c(idold, net31, net32, net33, net21, net22, net23, yr, village))
+brfarmers <- subset(x, select=c(
+  idold, net31, net32, net33, net21, net22, net23, net11, net12, net13, yr, village))
 brfarmers$yr <- as.integer(brfarmers$yr) + 1900L
 
 # Creating an ID
@@ -31,6 +32,9 @@ brfarmers$net33 <- with(brfarmers, net33 + village*100L)
 brfarmers$net21 <- with(brfarmers, net21 + village*100L)
 brfarmers$net22 <- with(brfarmers, net22 + village*100L)
 brfarmers$net23 <- with(brfarmers, net23 + village*100L)
+brfarmers$net11 <- with(brfarmers, net11 + village*100L)
+brfarmers$net12 <- with(brfarmers, net12 + village*100L)
+brfarmers$net13 <- with(brfarmers, net13 + village*100L)
 
 # Removing farmes that are not part of the experiment
 brfarmers$net31[which(!(brfarmers$net31 %in% surveyed))]  <- NA
@@ -39,10 +43,14 @@ brfarmers$net33[which(!(brfarmers$net33 %in% surveyed))]  <- NA
 brfarmers$net21[which(!(brfarmers$net21 %in% surveyed))]  <- NA
 brfarmers$net22[which(!(brfarmers$net22 %in% surveyed))]  <- NA
 brfarmers$net23[which(!(brfarmers$net23 %in% surveyed))]  <- NA
+brfarmers$net11[which(!(brfarmers$net11 %in% surveyed))]  <- NA
+brfarmers$net12[which(!(brfarmers$net12 %in% surveyed))]  <- NA
+brfarmers$net13[which(!(brfarmers$net13 %in% surveyed))]  <- NA
 
 # Reshaping and droping lost
 brfarmers.long <- reshape(
-  brfarmers, v.names= "net", varying = c("net31", "net32", "net33", "net21", "net22", "net23"),
+  brfarmers, v.names= "net",
+  varying = c("net31", "net32", "net33", "net21", "net22", "net23", "net11", "net12", "net13"),
   timevar = "level", idvar="id", direction="long", drop = c("idold"))
 
 # brfarmers.long <- subset(brfarmers.long, !is.na(net))
@@ -52,10 +60,25 @@ length(unique(unlist(subset(brfarmers.long, select=c(id,net)))))
 library(netdiffuseR)
 
 # Creating the graph object
-graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE))
-graph <- array(graph, dim=c(692,692,20))
-adopt <- toa_mat(brfarmers$yr)
-plot_diffnet(graph, adopt$cumadopt, displayisolates = FALSE)
+graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE))
+used.vertex <- rownames(graph)
 
-# Plotting one of those
-sna::gplot(graph, layout.par=NULL, displayisolates = FALSE)
+graph <- array(rep(graph,19), dim=c(dim(graph)[1],dim(graph)[1],19))
+dimnames(graph) <- list(used.vertex, used.vertex, 1948:1966)
+
+# Average indegree
+dg <- netdiffuseR::degree(graph, "indegree", undirected = FALSE)
+dg <- rowMeans(dg + 1)
+dg <- dg/max(dg)
+
+# Difussion
+toa <- brfarmers$yr[brfarmers$id %in% used.vertex]
+adopt <- toa_mat(toa)
+plot_diffnet(graph, adopt$cumadopt, displayisolates = FALSE, displaylabels=FALSE, mai = c(0,0,0,0), vertex.cex = 2)
+
+# Infection
+x <- plot_infectsuscep(graph, toa, K=10, logscale = TRUE, bins=20)
+
+# Threshold
+expo <- exposure(graph, adopt$cumadopt)
+x <- plot_threshold(graph, expo, toa, undirected = FALSE, vertex.cex = dg)

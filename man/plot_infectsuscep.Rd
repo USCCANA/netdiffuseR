@@ -5,11 +5,12 @@
 \title{Plot distribution of infect/suscep}
 \usage{
 plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, nlevels = 20, logscale = FALSE,
+  expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
+  logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
-  sub = ifelse(logscale, "(in log-scale)", NULL),
-  col = grey((nlevels:1)/nlevels), include.grid = TRUE, ...)
+  sub = ifelse(logscale, "(in log-scale)", NA), color.palette = function(n)
+  grey(n:1/n), include.grid = TRUE, ...)
 }
 \arguments{
 \item{graph}{an array}
@@ -36,7 +37,7 @@ plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{sub}{Character. Subtitle of the graph}
 
-\item{col}{Character vector of size \code{nlevels}. Colours for the scale}
+\item{color.palette}{a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).}
 
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn}
 

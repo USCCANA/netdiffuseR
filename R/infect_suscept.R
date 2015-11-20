@@ -3,7 +3,7 @@
 #' Calculates infectiousness and susceptibility for each node in the graph
 #'
 #' @param graph Array of size \eqn{n\times n\times T}{n*n*T} as a dynamic graph
-#' @param times Integer vector with times of adoption
+#' @param times Integer vector with times of adoption (see details)
 #' @param normalize Logical. Whether or not to normalize the outcome
 #' @param K Integer. Number of time periods to consider
 #' @param r Double. Discount rate used when \code{expdiscount=TRUE}
@@ -88,6 +88,7 @@ infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FAL
 #' @rdname infection
 #' @export
 infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+  times <- times - min(times, na.rm = TRUE) + 1L
   infection_cpp(graph, times, normalize, K, r, expdiscount)
 }
 
@@ -100,6 +101,7 @@ susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 #' @rdname infection
 #' @export
 susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+  times <- times - min(times, na.rm = TRUE) + 1L
   susceptibility_cpp(graph, times, normalize, K, r, expdiscount)
 }
 

@@ -4,19 +4,25 @@
 \alias{plot_diffnet}
 \title{Plot the diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
-  vertex.cex = 1, edge.col = "gray", mode = "fruchtermanreingold",
-  layout.par = NULL, mfrow.par = NULL, main = "Network in time \%d",
-  mai = c(0, 0, 1, 0), mar = rep(1, 4) + 0.1, ...)
+plot_diffnet(graph, cumadopt, displaylabels = FALSE, vertex.col = c("blue",
+  "grey"), vertex.cex = 1, label = rownames(graph), edge.col = "gray",
+  mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
+  main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
+  0.1, ...)
 }
 \arguments{
 \item{graph}{An array}
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix}
 
+\item{displaylabels}{Logical. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
+
 \item{vertex.col}{A character vector of size 2 with colors}
 
 \item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices}
+
+\item{label}{Character vector of size \eqn{n}. If no provided, rownames of
+the graph are used.}
 
 \item{edge.col}{Character. Color of the edge}
 
@@ -30,7 +36,7 @@ plot_diffnet(graph, cumadopt, vertex.col = c("blue", "grey"),
 
 \item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}}}
 
-\item{...}{Further arguments to be passed to gplot}
+\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}}}
 }
 \value{
 Calculated coordinates (invisible).

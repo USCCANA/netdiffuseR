@@ -15,8 +15,7 @@ edgelist_to_adjmat(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
-  self = FALSE, multiple = FALSE, use.incomplete = TRUE,
-  times.recode = TRUE, ...)
+  self = FALSE, multiple = FALSE, use.incomplete = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
 
@@ -50,8 +49,6 @@ matrix, otherwise an array of adjacency matrices.}
 and will not be considered in the graph, which may reduce the size of the
 adjacency matrix (see
 details).}
-
-\item{times.recode}{Logical. TRUE when time recoding must be done.}
 
 \item{adjmat}{An \eqn{n\times n}{n * n} matrix. An adjacency matrix.}
 }

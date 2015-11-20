@@ -22,7 +22,7 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 \arguments{
 \item{graph}{Array of size \eqn{n\times n\times T}{n*n*T} as a dynamic graph}
 
-\item{times}{Integer vector with times of adoption}
+\item{times}{Integer vector with times of adoption (see details)}
 
 \item{normalize}{Logical. Whether or not to normalize the outcome}
 

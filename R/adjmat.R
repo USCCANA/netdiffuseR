@@ -25,7 +25,6 @@
 #' and will not be considered in the graph, which may reduce the size of the
 #' adjacency matrix (see
 #' details).
-#' @param times.recode Logical. TRUE when time recoding must be done.
 #' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
@@ -97,7 +96,7 @@ edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, simplify=TRUE,
   undirected=FALSE, skip.recode=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, times.recode=TRUE, ...) {
+  use.incomplete=TRUE, ...) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -134,6 +133,8 @@ edgelist_to_adjmat.matrix <- function(
     dat <- edgelist
   }
 
+  n <- max(dat, na.rm = TRUE)
+
   ##############################################################################
   # Step 3: Preparing -times- and -weights- considering complete cases.
   # Times + recoding
@@ -141,8 +142,10 @@ edgelist_to_adjmat.matrix <- function(
   if (length(times)) times <- times[complete]
   else times <- rep(1, m)
 
-  if (times.recode) times <- times - min(times) + 1L
-  t <- max(times)
+  oldtimes <- unique(times)
+  oldtimes <- order(oldtimes)
+  times    <- times - min(times, na.rm = TRUE) + 1L
+  t <- max(times, na.rm = TRUE)
 
   # Weights
   if (length(weights)) weights <- weights[complete]
@@ -150,19 +153,24 @@ edgelist_to_adjmat.matrix <- function(
 
   ##############################################################################
   # Computing the adjmat
-  adjmat <- vector("list", t)
-
-  for(i in 1:length(adjmat)) {
+  adjmat <- array(dim=c(n,n,t))
+  for(i in 1:t) {
     index <- which(times == i)
-    adjmat[[i]] <- edgelist_to_adjmat_cpp(
+    adjmat[,,i] <- edgelist_to_adjmat_cpp(
       dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
   }
 
-  n <- nrow(adjmat[[1]])
-  if (t==1 & simplify) adjmat <- adjmat[[1]]
-  else adjmat <- array(unlist(adjmat), dim=c(n,n,t))
+  # Naming
+  if (!skip.recode) {
+    labs <- attr(dat, "recode")[["label"]]
+    dimnames(adjmat) <- list(labs,labs,oldtimes)
+  }
+  else dimmanes(adjmat) <- list(1:n, 1:n, oldtimes)
+
+  if (t==1 & simplify) adjmat <- adjmat[,,1]
 
   attr(adjmat, "incomplete") <- incomplete
+
   return(adjmat)
 }
 
@@ -242,8 +250,13 @@ toa_mat.numeric <- function(times, recode=TRUE, ...) {
 #' @export
 toa_mat.integer <- function(times, recode=TRUE, ...) {
   # Rescaling
+  oldtimes <- range(times)
+  oldtimes <- oldtimes[1]:oldtimes[2]
   if (recode) times <- times - min(times) + 1L
-  toa_mat_cpp(times)
+  output <- toa_mat_cpp(times)
+  colnames(output$cumadopt) <- oldtimes
+  colnames(output$adopt) <- oldtimes
+  output
 }
 
 # set.seed(123)

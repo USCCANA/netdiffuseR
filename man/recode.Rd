@@ -18,7 +18,10 @@ recode(data, ...)
 \item{...}{Further arguments for the method (ignored)}
 }
 \value{
-A recoded edgelist
+A recoded edgelist as a two-column matrix/data.frame depending
+on the class of \code{data}. The output includes an attribute called "recode"
+which contains a two column data.frame providing a mapping between the
+previous code and the new code (see the examples)
 }
 \description{
 Recodes an edgelist such that ids go from 1 to n
@@ -27,18 +30,15 @@ Recodes an edgelist such that ids go from 1 to n
 Required for using most of the package's functions, as ids are used
 as a reference for accessing elements in adjacency matrices.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{data.frame}: Method for recoding data frames. It keeps the class of the
-object as it returns a data.frame.
-
-\item \code{matrix}: Method for matrices. Likewise the method for data frames,
-it returns an object of the same class as the input, a matrix.
-}}
 \examples{
+# Simple example
 edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 edgelist
-recode(edgelist)
+recoded_edgelist <- recode(edgelist)
+recoded_edgelist
+
+# Retrieving the "recode" attribute
+attr(recoded_edgelist, "recode")
 }
 \seealso{
 \code{\link{edgelist_to_adjmat}}
