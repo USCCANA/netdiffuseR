@@ -26,7 +26,7 @@ the number of vertices in the graph.
 }
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
-  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{infection}}, \code{\link{struct_equiv}},
   \code{\link{threshold}}
 }

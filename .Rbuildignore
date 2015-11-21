@@ -3,6 +3,7 @@
 ^data-raw$
 ^playground$
 .*\.old
+^doc$
 
 # Binari files
 .*\.tar\.gz

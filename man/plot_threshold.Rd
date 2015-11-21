@@ -18,6 +18,8 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
 
 \item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
 
+\item{times.recode}{Logical scalar. TRUE when time recoding must be done.}
+
 \item{main}{Character. Title of the plot}
 
 \item{xlab}{Character. x-axis label}
@@ -43,8 +45,6 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE, undirected = TRUE,
 \item{bty}{See \code{\link{par}}}
 
 \item{...}{Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}}
-
-\item{toa.recode}{Logical. TRUE when time recoding must be done}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,

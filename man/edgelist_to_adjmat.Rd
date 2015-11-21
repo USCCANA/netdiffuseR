@@ -14,7 +14,7 @@ edgelist_to_adjmat(edgelist, ...)
 \method{edgelist_to_adjmat}{data.frame}(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
-  t = NULL, simplify = TRUE, undirected = FALSE, skip.recode = FALSE,
+  t = NULL, times.labels = NULL, simplify = TRUE, undirected = FALSE,
   self = FALSE, multiple = FALSE, use.incomplete = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
@@ -39,8 +39,6 @@ alter -target- (see details).}
 matrix, otherwise an array of adjacency matrices.}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
-
-\item{skip.recode}{Logical. FALSE when recode of nodes's ids is performed (see details).}
 
 \item{self}{Logical. TRUE when self edges are excluded.}
 

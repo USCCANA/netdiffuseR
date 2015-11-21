@@ -63,7 +63,7 @@ library(netdiffuseR)
 graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE, t=19))
 used.vertex <- rownames(graph)
 
-# graph <- array(rep(graph,19), dim=c(dim(graph)[1],dim(graph)[1],19))
+# Naming the array
 dimnames(graph) <- list(used.vertex, used.vertex, 1948:1966)
 
 # Average indegree

@@ -1,3 +1,36 @@
+#' Creates a \code{diffnet} class object
+#' @param data Either an adjacency matrix, an array or an edgelist
+#' @param tao Numeric vector of size \eqn{n}. Times of adoption.
+#' @param recode Logical scalar. Passed to \code{\link{toa_mat}}
+as_diffnet <- function(data, toa,
+                       weights=NULL, times=NULL, undirected=FALSE,
+                       self=FALSE, multiple=FALSE,
+                       use.incomplete=FALSE,
+                       recode=TRUE, ...) {
+
+  # Step 0: Figuring out if it is an edgelist
+  d <- dim(data)
+  n <- d[1]
+  k <- d[2]
+  t <- d[3]
+  if ((n!=k) & (k>2)) stop("Invalid -data-. It should be either an edgelist or a square matrix.")
+  else if ((k==2))
+
+  # Step 1: Creating the graph, first we need to see the time length
+  trange <- range(toa)
+  t <- trange[2]-trange[1]
+
+  if      (type == "adjmat")   graph <- array(rep(graph, t), dim=c(n, n, t))
+  else if (type == "edgelist") graph <- edgelist_to_adjmat(
+    data, weights, times, t, undirected=undirected, self=self, multiple=multiple)
+  else {
+    # If its already an array, we better check for the names!
+    graph <- data
+  }
+
+  return(data)
+}
+
 #' Plot the diffusion process
 #'
 #' Creates a colored network plot showing the structure of the graph through time
@@ -17,6 +50,7 @@
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}
 #' @param main Characetr. A title template to be passed to \code{\link{sprintf}}
 #' @param mai Numeric vector of size 4. To be passed to \code{\link{par}}
+#' @param mar Numeric vector of size 4. To be passed to \code{\link{par}}
 #' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}}
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -95,6 +129,7 @@ plot_diffnet <- function(graph, cumadopt,
   # Plotting
   curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
   par(mfrow=mfrow.par, mai=mai, mar=mar)
 
   times <- as.integer(dimnames(graph)[[3]])
@@ -105,44 +140,9 @@ plot_diffnet <- function(graph, cumadopt,
                edge.col = edge.col,vertex.cex = vertex.cex, label=label,
                main=sprintf(main, times[i]), ...)
   }
-  par(oldpar)
 
   invisible(coords)
 
-}
-
-#' Creates a \code{diffusionnet} class object
-#' @param graph Either an adjacency matrix, an array or an edgelist
-as_diffusionnet <- function(graph, ...) {
-
-}
-
-#' @rdname as_diffusionnet
-as_diffusionnet.matrix <- function(graph, toa, recode=TRUE, ...) {
-  # Figuring out if it is an edgelist
-  k <- ncol(graph)
-  n <- ncol(graph)
-  if ((n!=k) & (k>2)) stop("Invalid -graph-. It should be either an edgelist or a square matrix.")
-  else if ((k==2))
-
-  t <- length(unique(toa))
-
-  graph <- array(rep(graph, t), dim=c(n, n, t))
-  as_diffusionnet.array(graph, toa, recode)
-}
-
-#' @rdname as_diffusionnet
-as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
-
-  # Getting times of adoption
-  adopmats <- toa_mat(toa, recode)
-
-  list(
-    graph=graph,
-    adopt.mat=adoptmats$adopt,
-    cumadopt.mat=adoptmats$cumadopt,
-    toa=toa
-  )
 }
 
 #' Threshold level through time
@@ -153,7 +153,7 @@ as_diffusionnet.array <- function(graph, toa, recode=TRUE, ...) {
 #' @param graph \eqn{n\times n\times T}{n * n * T} array.
 #' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
-#' @param toa.recode Logical. TRUE when time recoding must be done
+#' @param times.recode Logical scalar. TRUE when time recoding must be done.
 #' @param main Character. Title of the plot
 #' @param xlab Character. x-axis label
 #' @param ylab Character. y-axis label
@@ -245,14 +245,14 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
-  edges <- netdiffuseR:::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
+  edges <- netdiffuseR::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
   edges <- as.data.frame(edges)
 
   with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
                                 length=arrow.length))
 
   # Drawing the vertices and its labels
-  symbols(jit, y, circle=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
+  symbols(jit, y, circles=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
@@ -276,14 +276,15 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #' @param K Integer. Number of time periods to consider
 #' @param r Double. Rate
 #' @param expdiscount Logical.
-#' @param logscale Logical. When TRUE the axis of the plot will be presented in log-scale
-#' @param nlevels Integer. Number of levels to plot (see \code{\link{filled.contour}})
-#' @param main Character. Title of the graph
-#' @param xlab Character. Title of the x-axis
-#' @param ylab Character. Title of the y-axis
-#' @param sub Character. Subtitle of the graph
+#' @param bins Integer scalar. Size of the grid (\eqn{n}).
+#' @param nlevels Integer. Number of levels to plot (see \code{\link{filled.contour}}).
+#' @param logscale Logical. When TRUE the axis of the plot will be presented in log-scale.
+#' @param main Character. Title of the graph.
+#' @param xlab Character. Title of the x-axis.
+#' @param ylab Character. Title of the y-axis.
+#' @param sub Character. Subtitle of the graph.
 #' @param color.palette a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).
-#' @param include.grid Logical. When TRUE, the grid of the graph is drawn
+#' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
 #' @param ... Additional parameters to be passed to \code{\link{filled.contour}}
 #' @details
 #'
@@ -333,7 +334,7 @@ plot_infectsuscep <- function(graph, toa, normalize=TRUE,
     infect<-log(infect); infect[which(!is.finite(infect))] <- 0
     suscep<-log(suscep); suscep[which(!is.finite(suscep))] <- 0
   }
-  coords <- netdiffuseR:::grid_distribution(x=infect, y=suscep, bins)
+  coords <- netdiffuseR::grid_distribution(x=infect, y=suscep, bins)
 
   # Nice plot
   n <- sum(coords$z)

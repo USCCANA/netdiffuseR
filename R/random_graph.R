@@ -57,5 +57,10 @@ rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE,
   else graph <- rand_dyn_graph_cpp(n, t, p, undirected, weighted, self)
 
   if (as.edgelist) return(adjmat_to_edgelist(graph, undirected))
-  else return(graph)
+
+  # Naming dimensions
+  if (t>1) dimnames(graph) <- list(1:n, 1:n, 1:t)
+  else dimnames(graph) <- list(1:n, 1:n)
+
+  return(graph)
 }

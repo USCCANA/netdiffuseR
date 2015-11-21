@@ -11,6 +11,7 @@
 #' @export
 #' @family statistics
 #' @keywords univar
+#' @aliases degree indegree outrdegree
 #' @examples
 #' # Creating a directed graph
 #' graph <- rand_graph(undirected=FALSE)
@@ -18,17 +19,17 @@
 #'
 #' # Comparing degree measurements
 #'  data.frame(
-#'    In=degree(graph, 0, undirected = FALSE),
-#'    Out=degree(graph, 1, undirected = FALSE),
-#'    Degree=degree(graph, 2, undirected = FALSE)
+#'    In=dgr(graph, "indegree", undirected = FALSE),
+#'    Out=dgr(graph, "outdegree", undirected = FALSE),
+#'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
-degree <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
-  UseMethod("degree")
+dgr <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+  UseMethod("dgr")
 }
 
-#' @rdname degree
+#' @rdname dgr
 #' @export
-degree.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+dgr.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 
   # Retrieving the number
   if      (cmode=="indegree")  cmode <- 0
@@ -43,18 +44,29 @@ degree.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 #                               '0 (indegree), 1 (outdegree) or 2 (degree).')
 
   # Computing degree
-  degree_cpp(graph, cmode, undirected, self)
+  output <- degree_cpp(graph, cmode, undirected, self)
+  if (length(dimnames(graph)[[1]]))
+    rownames(output) <- dimnames(graph)[[1]]
+
+  output
 }
 
-#' @rdname degree
+#' @rdname dgr
 #' @export
-degree.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+dgr.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
   n <- dim(graph)[1]
   t <- dim(graph)[3]
   output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,i] <- degree(graph[,,i], cmode, undirected, self)
+    output[,i] <- dgr(graph[,,i], cmode, undirected, self)
+
+  # Adding names
+  if (length(dimnames(graph)[[3]]))
+    colnames(output) <- dimnames(graph)[[3]]
+
+  if (length(dimnames(graph)[[1]]))
+    rownames(output) <- dimnames(graph)[[1]]
 
   output
 }

@@ -28,7 +28,7 @@ where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 it is only calculated fot \eqn{t>1}.
 }
 \seealso{
-Other statistics: \code{\link{degree}},
+Other statistics: \code{\link{dgr}},
   \code{\link{exposure}}, \code{\link{hazard_rate}},
   \code{\link{infection}}, \code{\link{struct_equiv}},
   \code{\link{threshold}}

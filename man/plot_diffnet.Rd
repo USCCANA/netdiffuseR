@@ -36,6 +36,8 @@ the graph are used.}
 
 \item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}}}
 
+\item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}}}
+
 \item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}}}
 }
 \value{

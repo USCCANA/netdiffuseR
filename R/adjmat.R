@@ -18,7 +18,6 @@
 #' @param simplify Logical. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
 #' @param undirected Logical. TRUE when the graph is undirected.
-#' @param skip.recode Logical. FALSE when recode of nodes's ids is performed (see details).
 #' @param self Logical. TRUE when self edges are excluded.
 #' @param multiple Logical. TRUE when multiple edges should not be included
 #' (see details).
@@ -95,8 +94,8 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 #' @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
-  times=NULL, t=NULL, simplify=TRUE,
-  undirected=FALSE, skip.recode=FALSE, self=FALSE, multiple=FALSE,
+  times=NULL, t=NULL, times.labels=NULL, simplify=TRUE,
+  undirected=FALSE, self=FALSE, multiple=FALSE,
   use.incomplete=TRUE, ...) {
 
   # Step 0: Checking dimensions
@@ -128,11 +127,7 @@ edgelist_to_adjmat.matrix <- function(
   ##############################################################################
   # Step 2: Recoding nodes ids
   # Recoding nodes ids
-  if (!skip.recode) dat <- recode(edgelist)
-  else {
-    warning('Skipping -recode- may cause unexpected behavior.')
-    dat <- edgelist
-  }
+  dat <- recode(edgelist)
 
   n <- max(dat, na.rm = TRUE)
 
@@ -163,13 +158,11 @@ edgelist_to_adjmat.matrix <- function(
   }
 
   # Naming
-  if (t>1 && !length(oldtimes))
+  if (t>1 && (length(oldtimes) == 1))
     oldtimes <- 1:t
-  if (!skip.recode) {
-    labs <- attr(dat, "recode")[["label"]]
-    dimnames(adjmat) <- list(labs,labs,oldtimes)
-  }
-  else dimmanes(adjmat) <- list(1:n, 1:n, oldtimes)
+
+  labs <- attr(dat, "recode")[["label"]]
+  dimnames(adjmat) <- list(labs,labs,oldtimes)
 
   if (t==1 & simplify) adjmat <- adjmat[,,1]
 

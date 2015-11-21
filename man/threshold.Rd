@@ -22,7 +22,7 @@ Threshold as the exposure of vertex by the time of the adoption (see \code{\link
 }
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
-  \code{\link{degree}}, \code{\link{exposure}},
+  \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},
   \code{\link{struct_equiv}}
 }
