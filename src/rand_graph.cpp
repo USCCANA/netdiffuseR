@@ -19,17 +19,15 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::mat rand_graph_cpp(
+arma::sp_mat rand_graph_cpp(
     int n=10, double p = 0.3, bool undirected=true,
     bool weighted=false, bool self=false) {
-  arma::mat graph(n, n, arma::fill::zeros);
 
-  // Using Rcpp (R's) RNG since it uses R's seed
-  NumericVector datasource = runif(n*n);
+  arma::sp_mat graph(n, n);
 
   double w = 0.0;
+  GetRNGstate();
   for(int i=0;i<n;i++) {
-
     /* Setting the length of the subloop acordingly to type of graph */
     int m = n;
     if (undirected) m=i;
@@ -39,7 +37,7 @@ arma::mat rand_graph_cpp(
       if (!self && (i==j)) continue;
 
       /* Setting the value of the tie */
-      double val = datasource[i*n+j];
+      double val = unif_rand();
       w = val;
 
       if (val > (1-p)) {
@@ -49,18 +47,19 @@ arma::mat rand_graph_cpp(
       }
     }
   }
+  PutRNGstate();
 
   return graph;
 }
 
 // [[Rcpp::export]]
-arma::cube rand_dyn_graph_cpp(
+List rand_dyn_graph_cpp(
     int n=10, int t=3, double p = 0.3, bool undirected=true,
     bool weighted=false, bool self=false) {
 
-  arma::cube graphs(n,n,t);
+  List graphs(t);
   for(int i=0;i<t;i++)
-    graphs.slice(i) = rand_graph_cpp(n, p, undirected, weighted, self);
+    graphs[i] = rand_graph_cpp(n, p, undirected, weighted, self);
 
   return graphs;
 

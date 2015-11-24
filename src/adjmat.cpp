@@ -47,7 +47,7 @@ List toa_mat_cpp(const IntegerVector & year) {
 }
 
 // [[Rcpp::export]]
-arma::mat edgelist_to_adjmat_cpp(
+arma::sp_mat edgelist_to_adjmat_cpp(
     const arma::mat & edgelist,
     NumericVector weights = NumericVector::create(),
     int n = 0,
@@ -72,12 +72,11 @@ arma::mat edgelist_to_adjmat_cpp(
   // Creating output mat and aux mat. The counts mat is used in logical expressions
   // since the arma::mat class can lead to error when compared to 0 (because of
   // the precision)
-  arma::mat adjmat(n,n, arma::fill::zeros);
-  arma::umat counts(n,n, arma::fill::zeros);
+  arma::sp_mat adjmat(n,n);
 
   for(int i=0;i<m;i++) {
     // Ids of the vertices
-    int ego = ((int) edgelist(i,0)) - 1;
+    int ego   = ((int) edgelist(i,0)) - 1;
     int alter = ((int) edgelist(i,1)) - 1;
 
     // If self edges are not allowed
@@ -86,20 +85,16 @@ arma::mat edgelist_to_adjmat_cpp(
     // If undirected, the order does not matters
     if (undirected) {
       int tmp=ego;
-      if (ego < alter) ego = alter, alter=tmp;
+      if (ego > alter) ego = alter, alter=tmp;
     }
 
     // If multiple edges are not allowed.
-    if (!multiple && (counts(ego, alter) > 0)) continue;
+    if (!multiple && (adjmat(ego, alter) != 0)) continue;
 
     adjmat(ego, alter) += w[i];
-    counts(ego, alter) += 1;
 
     // If undirected, must include in the switch
-    if (undirected) {
-      adjmat(alter, ego) += w[i];
-      counts(alter, ego) += 1;
-    }
+    if (undirected) adjmat(alter, ego) += w[i];
   }
 
   return adjmat;
@@ -107,7 +102,7 @@ arma::mat edgelist_to_adjmat_cpp(
 
 
 // [[Rcpp::export]]
-arma::mat adjmat_to_edgelist_cpp(const arma::mat & adjmat, bool undirected = true) {
+arma::mat adjmat_to_edgelist_cpp(const arma::sp_mat & adjmat, bool undirected = true) {
   std::vector< double > ego;
   std::vector< double > alter;
 
@@ -182,7 +177,7 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
 
 // [[Rcpp::export]]
 arma::colvec isolated_cpp(
-    const arma::mat & adjmat,
+    const arma::sp_mat & adjmat,
     bool undirected=true) {
 
   int n = adjmat.n_cols;
@@ -204,12 +199,12 @@ arma::colvec isolated_cpp(
 }
 
 // [[Rcpp::export]]
-arma::mat drop_isolated_cpp(const arma::mat & adjmat, arma::colvec isolated, bool undirected=true) {
+arma::sp_mat drop_isolated_cpp(const arma::sp_mat & adjmat, arma::colvec isolated, bool undirected=true) {
   int n = adjmat.n_cols;
   if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
 
   int m = sum(isolated);
-  arma::mat newadjmat(n-m,n-m);
+  arma::sp_mat newadjmat(n-m,n-m);
 
   // Rcpp::warning()
 

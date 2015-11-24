@@ -9,17 +9,19 @@
 \alias{isolated.matrix}
 \title{Find and remove isolated vertices}
 \usage{
-isolated(graph, undirected = TRUE)
+isolated(graph, undirected = getOption("diffnet.undirected"))
 
-\method{isolated}{matrix}(graph, undirected = TRUE)
+\method{isolated}{matrix}(graph, undirected = getOption("diffnet.undirected"))
 
-\method{isolated}{array}(graph, undirected = TRUE)
+\method{isolated}{array}(graph, undirected = getOption("diffnet.undirected"))
 
-drop_isolated(graph, undirected = TRUE)
+drop_isolated(graph, undirected = getOption("diffnet.undirected"))
 
-\method{drop_isolated}{matrix}(graph, undirected = TRUE)
+\method{drop_isolated}{matrix}(graph,
+  undirected = getOption("diffnet.undirected"))
 
-\method{drop_isolated}{array}(graph, undirected = TRUE)
+\method{drop_isolated}{array}(graph,
+  undirected = getOption("diffnet.undirected"))
 }
 \arguments{
 \item{graph}{Either a \eqn{n\times n}{n*n} Matrix or a \eqn{n\times n\times T}{n*n*T} array.}

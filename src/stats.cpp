@@ -31,7 +31,7 @@ using namespace Rcpp;
  */
 // [[Rcpp::export]]
 arma::colvec degree_cpp(
-    const arma::mat & adjmat, const int & cmode=2,
+    const arma::sp_mat & adjmat, const int & cmode=2,
     bool undirected=true, bool self=false) {
 
   int n = adjmat.n_cols;
@@ -79,16 +79,17 @@ arma::colvec degree_cpp(
 
 // [[Rcpp::export]]
 arma::mat exposure_cpp(
-    NumericVector graph, const arma::mat & cumadopt, int wtype = 0,
-    double v = 1.0, bool undirected=true, bool normalized=true) {
+    List graph, const arma::mat & cumadopt, int wtype = 0,
+    double v = 1.0, bool undirected=true, bool normalized=true,
+    int n=0, int T=0) {
 
-  // Coersing a NumericVector into a cube for ease of use
-  IntegerVector dims=graph.attr("dim");
-  const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
+//   // Coersing a NumericVector into a cube for ease of use
+//   IntegerVector dims=graph.attr("dim");
+//   const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
 
   // Variables initialization
-  const int n = graph_cube.n_rows;
-  const int T = graph_cube.n_slices;
+//   const int n = graph_cube.n_rows;
+//   const int T = graph_cube.n_slices;
   arma::mat exposure(n,T);
 
   // Initializing containers
@@ -97,7 +98,7 @@ arma::mat exposure_cpp(
 
   arma::colvec NUMERATOR(n);
   arma::colvec DENOMINATOR(n);
-  arma::mat graph_t(n,n);
+  // arma::mat graph_t(n,n);
 
   // Filling the first and last with zeros
   // may skip this in the future.
@@ -105,12 +106,13 @@ arma::mat exposure_cpp(
   exposure.col(T-1).fill(0.0);
 
   for(int t=0;t<(T-1);t++) {
-    graph_t = graph_cube.slice(t);
+    // graph_t = graph_cube.slice(t);
+    arma::sp_mat graph_t = graph[t];
     // Computing weights
 
     if (wtype==0) { // Unweighted
       NUMERATOR = graph_t*cumadopt.col(t);
-      if (normalized) DENOMINATOR = sum(graph_t,1) + 1e-15;
+      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
     }
     else if (wtype == 1) {// SE
 
@@ -125,7 +127,7 @@ arma::mat exposure_cpp(
       arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
 
       NUMERATOR = graph_t*(cumadopt.col(t) % degree);
-      if (normalized) DENOMINATOR = sum(graph_t,1) + 1e-15;
+      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
     }
     else {
       stop("Invalid weight code.");

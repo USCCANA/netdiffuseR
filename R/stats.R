@@ -23,13 +23,13 @@
 #'    Out=dgr(graph, "outdegree", undirected = FALSE),
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
-dgr <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
   UseMethod("dgr")
 }
 
 #' @rdname dgr
 #' @export
-dgr.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
 
   # Retrieving the number
   if      (cmode=="indegree")  cmode <- 0
@@ -40,8 +40,28 @@ dgr.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 
   # Performing checks
   if (!inherits(graph, 'matrix')) stop('-graph- should be a matrix.')
-#   if (!(cmode %in% 0:2)) stop('Invalid -cmode- ',cmode,'. Should be either ',
-#                               '0 (indegree), 1 (outdegree) or 2 (degree).')
+
+  # Computing degree
+  output <- degree_cpp(Matrix::Matrix(graph), cmode, undirected, self)
+  if (length(dimnames(graph)[[1]]))
+    rownames(output) <- dimnames(graph)[[1]]
+
+  output
+}
+
+#' @rdname dgr
+#' @export
+dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+
+  # Retrieving the number
+  if      (cmode=="indegree")  cmode <- 0
+  else if (cmode=="outdegree") cmode <- 1
+  else if (cmode=="degree")    cmode <- 2
+  else stop('Invalid -cmode- ',cmode,'. Should be either ',
+            '"indegree", "outdegree" or "degree".')
+
+  # Performing checks
+  if (!inherits(graph, 'dgCMatrix')) stop('-graph- should be a dgCMatrix.')
 
   # Computing degree
   output <- degree_cpp(graph, cmode, undirected, self)
@@ -53,13 +73,33 @@ dgr.matrix <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 
 #' @rdname dgr
 #' @export
-dgr.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
+dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+  n <- ncol(graph[[1]])
+  t <- length(graph)
+  output <- matrix(ncol=t, nrow=n)
+
+  for(i in 1:t)
+    output[,i] <- dgr(graph[[i]], cmode, undirected, self)
+
+  # Adding names
+  if (length(names(graph)))
+    colnames(output) <- names(graph)
+
+  if (length(rownames(graph[[1]])))
+    rownames(output) <- rownames(graph[[1]])
+
+  output
+}
+
+#' @rdname dgr
+#' @export
+dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
   n <- dim(graph)[1]
   t <- dim(graph)[3]
   output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,i] <- dgr(graph[,,i], cmode, undirected, self)
+    output[,i] <- dgr(Matrix::Matrix(graph[,,i]), cmode, undirected, self)
 
   # Adding names
   if (length(dimnames(graph)[[3]]))
@@ -125,13 +165,34 @@ dgr.array <- function(graph, cmode="degree", undirected=TRUE, self=FALSE) {
 #' @keywords univar
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE, normalized=TRUE)
+exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE)
   UseMethod('exposure')
 
-#' @describeIn exposure Method for arrays
+#' @rdname exposure
 #' @export
-exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=TRUE, normalized=TRUE) {
-  exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized)
+exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+
+  # Preparing the data
+  n <- nrow(graph)
+  t <- dim(graph)[3]
+  graphl <- vector("list", t)
+  for (i in 1:t)
+    graphl[[i]] <- graph[,,i]
+
+  # Calculating the exposure, and asigning names
+  output <- exposure_cpp(graphl, cumadopt, wtype, v, undirected, normalized, n, t)
+  dimnames(output) <- list(rownames(graph), dimnames(graph)[[3]])
+  output
+}
+
+#' @rdname exposure
+#' @export
+exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+  n <- nrow(graph[[1]])
+  t <- length(graph)
+  output <- exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized, n, t)
+  dimnames(output) <- list(rownames(graph[[1]]), names(graph))
+  output
 }
 
 #' Cummulative count of adopters

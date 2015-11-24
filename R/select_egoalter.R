@@ -36,42 +36,45 @@ select_egoalter <- function(graph, adopt, period=NULL) UseMethod("select_egoalte
 
 #' @rdname select_egoalter
 #' @export
-select_egoalter.array <- function(graph, adopt, period=NULL) {
+select_egoalter.list <- function(graph, adopt, period=NULL) {
 
   # Computing selection mat and coersing into a single matrix
-  nper <- dim(graph)[3]
-  if (length(period) && !(period %in% 2:nper))
-    stop('Invalid period selected. Should be between -', 2,'- and -', nper,'-')
+  n <- dim(graph[[1]])[1]
+  t <- length(graph)
+  if (length(period) && !(period %in% 2:t))
+    stop('Invalid period selected. Should be between -', 2,'- and -', t,'-')
 
-  # Creating column names
+  # Creating column, and row names
   cn <- c('time', 'id',
           sprintf('select_a_%02d', 1:16), sprintf('select_d_%02d', 1:16),
           sprintf('select_s_%02d', 1:16))
 
   # Output parameters
-  n   <- dim(graph)[1]
-  ids <- 1:n
+  ids <- rownames(graph[[1]])
+  if (!length(ids)) ids <- 1:n
+
+  tn <- names(graph)
+  if (!length(tn)) tn <- 1:t
 
   if (length(period)) {
-    out <- cbind(per=period, ids, do.call(cbind, select_egoalter_cpp(
-      graph[,,period-1], graph[,,period],
-      adopt[,period-1], adopt[,period])))
+    out <- data.frame(time=tn[period], ids, select_egoalter_cpp(
+      graph[[period-1]], graph[[period]],
+      adopt[,period-1], adopt[,period]))
 
-    # Assigning colnames
+    # Assigning names
     colnames(out) <- cn
 
     return(out)
   }
 
   # Looping over periods
-  out <- vector("list", nper-1)
-  for (i in 2:nper) {
-    out[[i-1]] <- cbind(time=i, ids, do.call(cbind, select_egoalter_cpp(
-      graph[,,i-1], graph[,,i],adopt[,i-1], adopt[,i])))
+  out <- vector("list", t-1)
+  for (i in 2:t) {
+    out[[i-1]] <- data.frame(time=tn[i], ids, select_egoalter_cpp(
+      graph[[i-1]], graph[[i]],adopt[,i-1], adopt[,i]))
 
-    # Assigning colnames
     colnames(out[[i-1]]) <- cn
   }
 
-  return(array(unlist(out), dim=c(n,length(cn),nper)))
+  return(do.call(rbind, out))
 }

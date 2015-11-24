@@ -3,6 +3,8 @@
 \name{struct_equiv}
 \alias{struct_equiv}
 \alias{struct_equiv.array}
+\alias{struct_equiv.dgCMatrix}
+\alias{struct_equiv.list}
 \alias{struct_equiv.matrix}
 \title{Structural Equivalence}
 \usage{
@@ -10,7 +12,11 @@ struct_equiv(graph, v = 1, ...)
 
 \method{struct_equiv}{matrix}(graph, v = 1, ...)
 
+\method{struct_equiv}{dgCMatrix}(graph, v = 1, ...)
+
 \method{struct_equiv}{array}(graph, v = 1, ...)
+
+\method{struct_equiv}{list}(graph, v = 1, ...)
 }
 \arguments{
 \item{graph}{Square matrix. Adjacency matrix}

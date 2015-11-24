@@ -3,13 +3,17 @@
 \name{exposure}
 \alias{exposure}
 \alias{exposure.array}
+\alias{exposure.list}
 \title{Ego exposure}
 \usage{
-exposure(graph, cumadopt, wtype = 0, v = 1, undirected = TRUE,
-  normalized = TRUE)
+exposure(graph, cumadopt, wtype = 0, v = 1,
+  undirected = getOption("diffnet.undirected"), normalized = TRUE)
 
 \method{exposure}{array}(graph, cumadopt, wtype = 0, v = 1,
-  undirected = TRUE, normalized = TRUE)
+  undirected = getOption("diffnet.undirected"), normalized = TRUE)
+
+\method{exposure}{list}(graph, cumadopt, wtype = 0, v = 1,
+  undirected = getOption("diffnet.undirected"), normalized = TRUE)
 }
 \arguments{
 \item{graph}{An array of adjacency matrices}
@@ -62,10 +66,6 @@ each node.
 Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
 numerator of the above formulas.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{array}: Method for arrays
-}}
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 Equivalence". American Journal of Sociology, 92(6), 1287.

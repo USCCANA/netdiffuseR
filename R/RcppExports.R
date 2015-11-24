@@ -29,12 +29,12 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
-infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE) {
-    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount)
+infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L) {
+    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T)
 }
 
-susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE) {
-    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount)
+susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L) {
+    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T)
 }
 
 seq_cpp <- function(from, to, lengthout) {
@@ -152,8 +152,8 @@ degree_cpp <- function(adjmat, cmode = 2L, undirected = TRUE, self = FALSE) {
     .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat, cmode, undirected, self)
 }
 
-exposure_cpp <- function(graph, cumadopt, wtype = 0L, v = 1.0, undirected = TRUE, normalized = TRUE) {
-    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, wtype, v, undirected, normalized)
+exposure_cpp <- function(graph, cumadopt, wtype = 0L, v = 1.0, undirected = TRUE, normalized = TRUE, n = 0L, T = 0L) {
+    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, wtype, v, undirected, normalized, n, T)
 }
 
 cumulative_adopt_count_cpp <- function(cumadopt) {
@@ -168,7 +168,7 @@ threshold_cpp <- function(exposure, times) {
     .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, times)
 }
 
-struct_equiv_cpp <- function(gdist, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
-    .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', gdist, v, unscaled, inv, invrep)
+struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
+    .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
 }
 

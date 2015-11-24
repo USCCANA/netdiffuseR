@@ -3,8 +3,10 @@
 \name{infection}
 \alias{infection}
 \alias{infection.array}
+\alias{infection.list}
 \alias{susceptibility}
 \alias{susceptibility.array}
+\alias{susceptibility.list}
 \title{Susceptibility and Infection}
 \usage{
 infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
@@ -13,8 +15,14 @@ infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 \method{infection}{array}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE)
 
+\method{infection}{list}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE)
+
 susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE)
+
+\method{susceptibility}{list}(graph, times, normalize = TRUE, K = 1L,
+  r = 0.5, expdiscount = FALSE)
 
 \method{susceptibility}{array}(graph, times, normalize = TRUE, K = 1L,
   r = 0.5, expdiscount = FALSE)

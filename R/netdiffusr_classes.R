@@ -82,27 +82,28 @@ as_diffnet <- function(data, toa,
 #' @export
 plot_diffnet <- function(graph, cumadopt,
                          displaylabels=FALSE,
+                         undirected=TRUE,
                          vertex.col=c("blue","grey"),
                          vertex.cex=NA,
-                         label=rownames(graph),
+                         label=rownames(graph[[1]]),
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
                          mfrow.par=NULL, main="Network in time %d",
                          mai=c(0,0,1,0),
                          mar=rep(1,4) + 0.1, ...) {
-  t <- dim(graph)[3]
-  n <- dim(graph)[1]
-
-  cols <- matrix(ncol=t, nrow=n)
-  cumgraph <- matrix(0, n, n)
+  t <- length(graph)
+  n <- nrow(graph[[1]])
+  cumgraph <- Matrix::Matrix(0, n, n, sparse=TRUE)
   for(i in 1:t) {
-    cols[,i] <- ifelse(cumadopt[,i], vertex.col[1], vertex.col[2])
-    cumgraph <- cumgraph + graph[,,i]
+    cumgraph <- cumgraph + graph[[i]]
   }
 
   # Getting the coords
   fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
-  coords <- fun(cumgraph, layout.par)
+
+  # In order to be using SNA functions, we need to coerse the graph
+  # into an object from SparseM
+  coords <- fun(methods::as(cumgraph, "matrix.csc"), layout.par)
 
   # Adjusting vertex sizes
   if ((length(vertex.cex)==1) && (n > 1) && is.na(vertex.cex))
@@ -132,11 +133,14 @@ plot_diffnet <- function(graph, cumadopt,
   on.exit(par(oldpar))
   par(mfrow=mfrow.par, mai=mai, mar=mar)
 
-  times <- as.integer(dimnames(graph)[[3]])
+  times <- as.integer(names(graph))
 
   for(i in 1:t)  {
+    cols <- ifelse(cumadopt[,i], vertex.col[1], vertex.col[2])
     set.seed(curseed)
-    sna::gplot(graph[,,i],displaylabels = displaylabels, vertex.col = cols[,i], coord=coords,
+    # cgraph <- sna::as.sociomatrix.sna(adjmat_to_edgelist(graph[[i]], undirected))
+    sna::gplot(methods::as(graph[[i]], "matrix.csc"),
+               displaylabels = displaylabels, vertex.col = cols, coord=coords,
                edge.col = edge.col,vertex.cex = vertex.cex, label=label,
                main=sprintf(main, times[i]), ...)
   }
@@ -200,13 +204,13 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
                            include.grid = TRUE,
                            bty="n", ...) {
   # Step 0: Getting basic info
-  t <- dim(graph)[3]
-  n <- dim(graph)[1]
+  t <- length(graph)
+  n <- nrow(graph[[1]])
 
   # Step 1: Creating the cumulative graph
-  cumgraph <- matrix(0, n, n)
+  cumgraph <- Matrix::Matrix(0, n, n, sparse=TRUE)
   for(i in 1:t) {
-    cumgraph <- cumgraph + graph[,,i]
+    cumgraph <- cumgraph + graph[[i]]
   }
 
   # Creating the pos vector

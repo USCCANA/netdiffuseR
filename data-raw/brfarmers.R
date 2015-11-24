@@ -61,13 +61,13 @@ library(netdiffuseR)
 
 # Creating the graph object
 graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE, t=19))
-used.vertex <- rownames(graph)
+used.vertex <- rownames(graph[[1]])
 
 # Naming the array
-dimnames(graph) <- list(used.vertex, used.vertex, 1948:1966)
+names(graph) <- 1948:1966
 
 # Average indegree
-dg <- netdiffuseR::degree(graph, "indegree", undirected = FALSE)
+dg <- netdiffuseR::dgr(graph, "indegree", undirected = FALSE)
 dg <- rowMeans(dg + 1)
 dg <- dg/max(dg)
 

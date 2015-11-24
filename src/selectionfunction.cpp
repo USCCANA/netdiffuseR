@@ -4,15 +4,15 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List select_egoalter_cpp(
-  const NumericMatrix & adjmat_t0,
-  const NumericMatrix & adjmat_t1,
+DataFrame select_egoalter_cpp(
+  const arma::sp_mat & adjmat_t0,
+  const arma::sp_mat & adjmat_t1,
   const NumericVector & adopt_t0,
   const NumericVector & adopt_t1
 ) {
 
-  int n = adjmat_t0.ncol();
-  IntegerMatrix change_mat(n, n);
+  int n = adjmat_t0.n_cols;
+  arma::sp_mat change_mat(n, n);
 
   // Analazing the change from t-1 to t
   //  0: Stable
@@ -54,20 +54,20 @@ List select_egoalter_cpp(
       else if (adjmat_t1(i,j) != 0) select_mat_s(i, cat - 1) += 1;
     }
 
-  return List::create(
+  return DataFrame::create(
     _["select_a"] = select_mat_a,
     _["select_d"] = select_mat_d,
     _["select_s"] = select_mat_s);
 }
 
 
-/** *R
+/***R
 source("/home/george/Documents/usc/software/diffusiontest/playground/adjmat.R", echo = FALSE)
 
 library(microbenchmark)
 library(diffusiontest)
 
-load("~/Documents/usc/software/diffusiontest/data/trade.rda")
+load("~/Dropbox/usc/software/diffusiontest/data/trade.rda")
 load("~/Documents/usc/software/diffusiontest/data/ratify.rda")
 
 adjmat <- with(trade, edgelist_to_adjmat(

@@ -49,8 +49,8 @@
 #' rand_graph(t=5)
 #' }
 #' @keywords distribution
-rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE,
-                       self=FALSE, as.edgelist=FALSE) {
+rand_graph <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
+                       self=getOption("diffnet.self"), as.edgelist=FALSE) {
 
   # Generating the random graph
   if (t==1) graph <- rand_graph_cpp(n, p, undirected, weighted, self)
@@ -59,8 +59,12 @@ rand_graph <- function(n=10, t=1, p=0.3, undirected=TRUE, weighted=FALSE,
   if (as.edgelist) return(adjmat_to_edgelist(graph, undirected))
 
   # Naming dimensions
-  if (t>1) dimnames(graph) <- list(1:n, 1:n, 1:t)
-  else dimnames(graph) <- list(1:n, 1:n)
+  if (t==1) dimnames(graph) <- list(1:n, 1:n)
+  else {
+    names(graph) <- 1:t
+    for (i in 1:t)
+      dimnames(graph[[i]]) <- list(1:n, 1:n)
+  }
 
   return(graph)
 }

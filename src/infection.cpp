@@ -4,20 +4,21 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 arma::mat infection_cpp(
-    NumericVector graph,
+    List graph,
     const arma::colvec & times,
     bool normalize = true,
     int K = 1,
     double r = 0.5,
-    bool expdiscount = false) {
+    bool expdiscount = false,
+    int n=0, int T=0) {
 
-  // Coersing a NumericVector into a cube for ease of use
-  IntegerVector dims=graph.attr("dim");
-  const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
+//   // Coersing a NumericVector into a cube for ease of use
+//   IntegerVector dims=graph.attr("dim");
+//   const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
 
   // Variables initialization
-  const int n = graph_cube.n_rows;
-  const int T = graph_cube.n_slices;
+//   const int n = graph_cube.n_rows;
+//   const int T = graph_cube.n_slices;
   arma::colvec infect(n, arma::fill::zeros);
 
   // Variables to use within loop
@@ -61,12 +62,16 @@ arma::mat infection_cpp(
       // vectors can be reach up to T - 1
       if (t >= T) continue;
 
+      // Storing the graph
+      arma::sp_mat graph_cube = graph[k];
+
       for(int j=0;j<n;j++) {
         if (i==j) continue;
 
         tj = times(j);
         // Adding up for t+k iff a link between j and i exists
-        if (graph_cube(j,i,t) != 0) {
+        // if (graph_cube(j,i,t) != 0) {
+        if (graph_cube(j,i) != 0) {
           if (tj ==(ti+k)) {
             numerator += 1.0 / discount[k-1];
           }
@@ -89,20 +94,21 @@ arma::mat infection_cpp(
 
 // [[Rcpp::export]]
 arma::colvec susceptibility_cpp(
-    NumericVector graph,
+    List graph,
     const arma::colvec & times,
     bool normalize = true,
     int K = 1,
     double r = 0.5,
-    bool expdiscount = false) {
+    bool expdiscount = false,
+    int n=0, int T=0) {
 
   // Coersing a NumericVector into a cube for ease of use
-  IntegerVector dims=graph.attr("dim");
-  const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
+//   IntegerVector dims=graph.attr("dim");
+//   const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
 
   // Variables initialization
-  const int n = graph_cube.n_rows;
-  const int T = graph_cube.n_slices;
+//   const int n = graph_cube.n_rows;
+//   const int T = graph_cube.n_slices;
   arma::colvec suscep(n, arma::fill::zeros);
 
   // Variables to use within loop
@@ -148,6 +154,9 @@ arma::colvec susceptibility_cpp(
       // exists, or we don't know if it exists).
       if (t <= 1) continue;
 
+      // Storing the graph
+      arma::sp_mat graph_cube = graph[t - 1];
+
       for(int j=0;j<n;j++) {
         if (i==j) continue;
 
@@ -155,7 +164,8 @@ arma::colvec susceptibility_cpp(
         // Adding up for t+k iff a link between j and i exists. Notice that the
         // t - 1 is because t is in [1;T], and we actually want t-1. If t=1, then
         // in C++ it is 0.
-        if (graph_cube(i,j,t - 1) != 0) {
+        // if (graph_cube(i,j,t - 1) != 0) {
+        if (graph_cube(i,j) != 0) {
           if (tj == (ti - k)) {
             numerator += 1.0 / discount[k-1];
           }

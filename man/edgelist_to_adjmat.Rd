@@ -3,6 +3,8 @@
 \name{edgelist_to_adjmat}
 \alias{adjmat_to_edgelist}
 \alias{adjmat_to_edgelist.array}
+\alias{adjmat_to_edgelist.dgCMatrix}
+\alias{adjmat_to_edgelist.list}
 \alias{adjmat_to_edgelist.matrix}
 \alias{edgelist_to_adjmat}
 \alias{edgelist_to_adjmat.data.frame}
@@ -15,13 +17,18 @@ edgelist_to_adjmat(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   t = NULL, times.labels = NULL, simplify = TRUE, undirected = FALSE,
-  self = FALSE, multiple = FALSE, use.incomplete = TRUE, ...)
+  self = FALSE, multiple = FALSE, use.incomplete = TRUE,
+  recode.ids = TRUE, ...)
 
 adjmat_to_edgelist(adjmat, undirected = TRUE)
 
 \method{adjmat_to_edgelist}{matrix}(adjmat, undirected = TRUE)
 
+\method{adjmat_to_edgelist}{dgCMatrix}(adjmat, undirected = TRUE)
+
 \method{adjmat_to_edgelist}{array}(adjmat, undirected = TRUE)
+
+\method{adjmat_to_edgelist}{list}(adjmat, undirected = TRUE)
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
@@ -49,6 +56,9 @@ matrix, otherwise an array of adjacency matrices.}
 and will not be considered in the graph, which may reduce the size of the
 adjacency matrix (see
 details).}
+
+\item{recode.ids}{Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
+(see details).}
 
 \item{adjmat}{An \eqn{n\times n}{n * n} matrix. An adjacency matrix.}
 }
@@ -85,6 +95,11 @@ matrix. These are:
  \code{incomplete}}
  \item{Nodes and times ids coding}
 }
+
+\code{recode.ids=FALSE} is useful when the vertices ids have already been
+coded. For example, after having use \code{adjmat_to_edgelist}, ids are
+correctly encoded, so when going back (using \code{edgelist_to_adjmat})
+\code{recode.ids} should be FALSE.
 }
 \examples{
 # Base data

@@ -4,8 +4,9 @@
 \alias{rand_graph}
 \title{Erdos-Renyi (bernoulli) random graph}
 \usage{
-rand_graph(n = 10, t = 1, p = 0.3, undirected = TRUE,
-  weighted = FALSE, self = FALSE, as.edgelist = FALSE)
+rand_graph(n = 10, t = 1, p = 0.3,
+  undirected = getOption("diffnet.undirected"), weighted = FALSE,
+  self = getOption("diffnet.self"), as.edgelist = FALSE)
 }
 \arguments{
 \item{n}{Integer. Number of vertices}

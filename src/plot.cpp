@@ -168,7 +168,7 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' @export
 // [[Rcpp::export]]
 NumericMatrix edges_coords(
-    const arma::mat & graph,
+    const arma::sp_mat & graph,
     const arma::colvec & toa,
     const arma::colvec & x,
     const arma::colvec & y,
@@ -266,13 +266,13 @@ NumericMatrix edges_coords(
 set.seed(123)
 graph <- rand_graph()
 toa <- sample(1:5, 10, TRUE)
-pos <- sna::gplot.layout.random(graph, NULL)
+pos <- sna::gplot.layout.random(matrix(graph, ncol=10), NULL)
 cex <- seq(1,5,length.out = 10)
 
-arr <- edges_coords(graph, toa, pos[,1], pos[,2], cex/20)
+arr <- as.data.frame(edges_coords(graph, toa, pos[,1], pos[,2], cex/20))
 
 plot(pos, col="white", xlim= c(-2,2), ylim= c(-2,2))
-with(arr, arrows(edges[,1], edges[,2], edges[,3], edges[,4]))
-symbols(pos, circles=arr$sizes, add=TRUE, inches = FALSE, bg="lightblue")
+with(arr, arrows(x0, y0, x1, y1))
+symbols(pos, circles=cex/20, add=TRUE, inches = FALSE, bg="lightblue")
 text(pos[,1], pos[,2], labels = 1:10)
 */

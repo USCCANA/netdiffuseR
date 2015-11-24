@@ -2,12 +2,12 @@
 % Please edit documentation in R/select_egoalter.R
 \name{select_egoalter}
 \alias{select_egoalter}
-\alias{select_egoalter.array}
+\alias{select_egoalter.list}
 \title{Calculate the number of adoption changes between ego and alter.}
 \usage{
 select_egoalter(graph, adopt, period = NULL)
 
-\method{select_egoalter}{array}(graph, adopt, period = NULL)
+\method{select_egoalter}{list}(graph, adopt, period = NULL)
 }
 \arguments{
 \item{graph}{An \eqn{n\times n\times T}{n*n*T} array.}

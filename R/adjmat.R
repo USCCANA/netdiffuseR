@@ -25,6 +25,8 @@
 #' and will not be considered in the graph, which may reduce the size of the
 #' adjacency matrix (see
 #' details).
+#' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
+#' (see details).
 #' @param ... Further arguments for the method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
@@ -50,6 +52,11 @@
 #'  \code{incomplete}}
 #'  \item{Nodes and times ids coding}
 #' }
+#'
+#' \code{recode.ids=FALSE} is useful when the vertices ids have already been
+#' coded. For example, after having use \code{adjmat_to_edgelist}, ids are
+#' correctly encoded, so when going back (using \code{edgelist_to_adjmat})
+#' \code{recode.ids} should be FALSE.
 #'
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 #' (if times is NULL) or an array of these (if times is not null). For
@@ -85,10 +92,8 @@ edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 #' @rdname edgelist_to_adjmat
 #' @export
 edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
-  edgelist <- as.matrix(edgelist)
-  NextMethod("edgelist_to_adjmat")
+  edgelist_to_adjmat.matrix(as.matrix(edgelist), ...)
 }
-
 
 #' @rdname edgelist_to_adjmat
 #' @export
@@ -96,7 +101,7 @@ edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, times.labels=NULL, simplify=TRUE,
   undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, ...) {
+  use.incomplete=TRUE, recode.ids=TRUE, ...) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -127,7 +132,8 @@ edgelist_to_adjmat.matrix <- function(
   ##############################################################################
   # Step 2: Recoding nodes ids
   # Recoding nodes ids
-  dat <- recode(edgelist)
+  if (recode.ids) dat <- recode(edgelist)
+  else dat <- edgelist
 
   n <- max(dat, na.rm = TRUE)
 
@@ -150,21 +156,29 @@ edgelist_to_adjmat.matrix <- function(
 
   ##############################################################################
   # Computing the adjmat
-  adjmat <- array(dim=c(n,n,t))
+  # adjmat <- array(dim=c(n,n,t))
+  adjmat <- vector("list", t)
+
+  if (recode.ids) labs <- attr(dat, "recode")[["label"]]
+  else labs <- 1:n
+
   for(i in 1:t) {
     index <- which(times <= i)
-    adjmat[,,i] <- edgelist_to_adjmat_cpp(
+    # adjmat[,,i] <- edgelist_to_adjmat_cpp(
+    adjmat[[i]] <- edgelist_to_adjmat_cpp(
       dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
+
+    # Naming
+    dimnames(adjmat[[i]]) <- list(labs, labs)
   }
 
-  # Naming
+  # Times naming
   if (t>1 && (length(oldtimes) == 1))
     oldtimes <- 1:t
 
-  labs <- attr(dat, "recode")[["label"]]
-  dimnames(adjmat) <- list(labs,labs,oldtimes)
+  names(adjmat) <- oldtimes
 
-  if (t==1 & simplify) adjmat <- adjmat[,,1]
+  if (t==1 & simplify) adjmat <- adjmat[[1]]
 
   attr(adjmat, "incomplete") <- incomplete
 
@@ -183,13 +197,33 @@ adjmat_to_edgelist.matrix <- function(adjmat, undirected=TRUE) {
 
 #' @rdname edgelist_to_adjmat
 #' @export
+adjmat_to_edgelist.dgCMatrix <- function(adjmat, undirected=TRUE) {
+  adjmat_to_edgelist_cpp(adjmat, undirected)
+}
+
+#' @rdname edgelist_to_adjmat
+#' @export
 adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
   for (i in 1:dim(adjmat)[3]) {
     x <- adjmat_to_edgelist.matrix(adjmat[,,i], undirected)
     edgelist <- rbind(edgelist, x)
-    times <- c(times, rep(i,nrow(edgelist)))
+    times <- c(times, rep(i,nrow(x)))
+  }
+
+  return(list(edgelist, times))
+}
+
+#' @rdname edgelist_to_adjmat
+#' @export
+adjmat_to_edgelist.list <- function(adjmat, undirected=TRUE) {
+  edgelist <- matrix(ncol=2,nrow=0)
+  times <- vector('integer',0L)
+  for (i in 1:length(adjmat)) {
+    x <- adjmat_to_edgelist.dgCMatrix(adjmat[[i]], undirected)
+    edgelist <- rbind(edgelist, x)
+    times <- c(times, rep(i,nrow(x)))
   }
 
   return(list(edgelist, times))
@@ -348,19 +382,19 @@ toa_diff.numeric <- function(times, recode=TRUE, ...) {
 #' drop_isolated(adjmat)
 #' }
 #' @keywords manip
-isolated <- function(graph, undirected=TRUE) {
+isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
   UseMethod("isolated")
 }
 
 #' @export
 #' @rdname isolated
-isolated.matrix <- function(graph, undirected=TRUE) {
+isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   isolated_cpp(graph, undirected)
 }
 
 #' @export
 #' @rdname isolated
-isolated.array <- function(graph, undirected=TRUE) {
+isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   nper<- dim(graph)[3]
   n   <- dim(graph)[2]
   iso <- matrix(NA ,ncol=nper, nrow=n)
@@ -376,20 +410,20 @@ isolated.array <- function(graph, undirected=TRUE) {
 
 #' @export
 #' @rdname isolated
-drop_isolated <- function(graph, undirected=TRUE) {
+drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
   UseMethod("drop_isolated")
 }
 
 
 #' @rdname isolated
 #' @export
-drop_isolated.matrix <- function(graph, undirected=TRUE) {
+drop_isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   drop_isolated_cpp(graph, vector(0, "numeric"), undirected)
 }
 
 #' @rdname isolated
 #' @export
-drop_isolated.array <- function(graph, undirected=TRUE) {
+drop_isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   # Getting isolated vecs
   iso <- isolated.array(graph, undirected)[[2]]
   m   <- sum(iso)

@@ -5,12 +5,12 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List struct_equiv_cpp(
-    const arma::mat & gdist,
+    const arma::sp_mat & graph,
     double v = 1.0,
     bool unscaled = false,
     bool inv = false, double invrep = 0.0) {
 
-  int n = gdist.n_cols;
+  int n = graph.n_cols;
   NumericMatrix d(n,n);
 
   // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}
@@ -24,12 +24,12 @@ List struct_equiv_cpp(
       for(int k=0;k<n;k++) {
         // Summation accross all but i and j
         if (k == i || k == j) continue;
-        sumik += pow(gdist(i,k)-gdist(j,k), 2.0);
-        sumki += pow(gdist(k,i)-gdist(k,j), 2.0);
+        sumik += pow(graph(i,k)-graph(j,k), 2.0);
+        sumki += pow(graph(k,i)-graph(k,j), 2.0);
       }
 
       // Adding up the results
-      d(i,j) = pow(pow(gdist(i,j) - gdist(j,i), 2.0) + sumik + sumki, 0.5 );
+      d(i,j) = pow(pow(graph(i,j) - graph(j,i), 2.0) + sumik + sumki, 0.5 );
 
       // If only inverse required
       if (inv && unscaled) d(i,j) = 1/(d(i,j) + 1e-10);
@@ -39,7 +39,7 @@ List struct_equiv_cpp(
   }
 
   // If only distance must be computed
-  if (unscaled) return List::create(_["SE"]=d, _["d"]=d, _["gdist"]=gdist);
+  if (unscaled) return List::create(_["SE"]=d, _["d"]=d, _["gdist"]=graph);
 
   // Computing distances
   NumericMatrix SE(n,n);
@@ -73,7 +73,7 @@ List struct_equiv_cpp(
     }
   }
 
-  return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=gdist);
+  return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
 }
 
 /** *R
