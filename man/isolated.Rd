@@ -3,9 +3,13 @@
 \name{isolated}
 \alias{drop_isolated}
 \alias{drop_isolated.array}
+\alias{drop_isolated.dgCMatrix}
+\alias{drop_isolated.list}
 \alias{drop_isolated.matrix}
 \alias{isolated}
 \alias{isolated.array}
+\alias{isolated.dgCMatrix}
+\alias{isolated.list}
 \alias{isolated.matrix}
 \title{Find and remove isolated vertices}
 \usage{
@@ -13,14 +17,25 @@ isolated(graph, undirected = getOption("diffnet.undirected"))
 
 \method{isolated}{matrix}(graph, undirected = getOption("diffnet.undirected"))
 
+\method{isolated}{dgCMatrix}(graph,
+  undirected = getOption("diffnet.undirected"))
+
 \method{isolated}{array}(graph, undirected = getOption("diffnet.undirected"))
+
+\method{isolated}{list}(graph, undirected = getOption("diffnet.undirected"))
 
 drop_isolated(graph, undirected = getOption("diffnet.undirected"))
 
 \method{drop_isolated}{matrix}(graph,
   undirected = getOption("diffnet.undirected"))
 
+\method{drop_isolated}{dgCMatrix}(graph,
+  undirected = getOption("diffnet.undirected"))
+
 \method{drop_isolated}{array}(graph,
+  undirected = getOption("diffnet.undirected"))
+
+\method{drop_isolated}{list}(graph,
   undirected = getOption("diffnet.undirected"))
 }
 \arguments{
@@ -44,12 +59,26 @@ adjmat <- rand_graph()
 # Making nodes 1 and 4 isolated
 adjmat[c(1,4),] <- 0
 adjmat[,c(1,4)] <- 0
+adjmat
 
 # Finding isolated nodes
-isolated(adjmat)
+iso <- isolated(adjmat)
+iso
 
 # Removing isolated nodes
 drop_isolated(adjmat)
+
+
+# Now with a dynamic graph
+graph <- rand_graph(n=10, t=3)
+
+# Making 1 and 5 isolated
+graph <- lapply(graph, "[<-", i=c(1,5), j=1:10, value=0)
+graph <- lapply(graph, "[<-", i=1:10, j=c(1,5), value=0)
+graph
+
+isolated(graph)
+drop_isolated(graph)
 }
 }
 \keyword{manip}

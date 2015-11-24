@@ -22,8 +22,8 @@ arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true)
 
 IntegerMatrix toa_mat_cpp(const IntegerVector & year);
 
-IntegerVector isolated_cpp(const arma::sp_mat & adjmat, bool undirected=true);
+arma::icolvec isolated_cpp(const arma::sp_mat & adjmat, bool undirected=true);
 
-arma::sp_mat drop_isolated_cpp(const arma::sp_mat & adjmat, arma::colvec isolated, bool undirected=true);
+arma::sp_mat drop_isolated_cpp(const arma::sp_mat & adjmat, arma::icolvec isolated, bool undirected=true);
 
 #endif

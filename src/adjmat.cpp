@@ -176,12 +176,12 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
 }
 
 // [[Rcpp::export]]
-arma::colvec isolated_cpp(
+arma::icolvec isolated_cpp(
     const arma::sp_mat & adjmat,
     bool undirected=true) {
 
   int n = adjmat.n_cols;
-  arma::colvec isolated(n,arma::fill::ones);
+  arma::icolvec isolated(n, arma::fill::ones);
 
   // Looping through (all) the matrix. Setting the value to 0
   // whenever there's a link (for both individuals).
@@ -191,15 +191,18 @@ arma::colvec isolated_cpp(
     int m=n;
     if (undirected) m = i;
     for(int j=0;j<m;j++)
-      if (adjmat(i,j))
-        isolated(i) = 0, isolated(j) = 0;
+      if ((adjmat(i,j)!=0))
+        isolated(i)=0, isolated(j)=0;
   }
 
   return isolated;
 }
 
 // [[Rcpp::export]]
-arma::sp_mat drop_isolated_cpp(const arma::sp_mat & adjmat, arma::colvec isolated, bool undirected=true) {
+arma::sp_mat drop_isolated_cpp(
+    const arma::sp_mat & adjmat,
+    arma::icolvec isolated, bool undirected=true) {
+
   int n = adjmat.n_cols;
   if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
 
@@ -216,7 +219,7 @@ arma::sp_mat drop_isolated_cpp(const arma::sp_mat & adjmat, arma::colvec isolate
     // If an isolated was found, continue next
     if (isolated(i)) continue;
     for(int j=0;j<n;j++) {
-      if (isolated(j)) continue;
+      if (isolated(j,0)) continue;
       newadjmat(ii,ji++)=adjmat(i,j);
     }
     // Continue next

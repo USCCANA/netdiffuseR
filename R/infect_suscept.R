@@ -96,7 +96,11 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
   for(i in 1:t)
     ngraph[[i]] <- graph[,,i]
 
-  infection_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+  out <- infection_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+
+  # Naming
+  rownames(out) <- rownames(graph)
+  out
 }
 
 #' @rdname infection
@@ -105,7 +109,12 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
-  infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+
+  out <- infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+
+  # Naming
+  rownames(out) <- rownames(graph[[1]])
+  out
 }
 
 #' @rdname infection
@@ -120,7 +129,12 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
-  susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+
+  out <- susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+
+  # Naming
+  rownames(out) <- rownames(graph[[1]])
+  out
 }
 
 #' @rdname infection
@@ -134,5 +148,9 @@ susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expd
   for(i in 1:t)
     ngraph[[i]] <- graph[,,i]
 
-  susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+  out <- susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+
+  # Naming
+  rownames(out) <- rownames(graph)
+  out
 }

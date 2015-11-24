@@ -6,16 +6,18 @@
 \alias{toa_mat.numeric}
 \title{Time of adoption matrix}
 \usage{
-toa_mat(times, recode = TRUE, ...)
+toa_mat(times, recode = TRUE, labels = NULL, ...)
 
-\method{toa_mat}{numeric}(times, recode = TRUE, ...)
+\method{toa_mat}{numeric}(times, recode = TRUE, labels = NULL, ...)
 
-\method{toa_mat}{integer}(times, recode = TRUE, ...)
+\method{toa_mat}{integer}(times, recode = TRUE, labels = NULL, ...)
 }
 \arguments{
-\item{times}{Integer vector containing time of adoption of the innovation.}
+\item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}
 
-\item{recode}{Logical. When TRUE recodes time (see details).}
+\item{recode}{Logical scalar. When TRUE recodes time (see details).}
+
+\item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
 
 \item{...}{Ignored.}
 }

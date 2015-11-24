@@ -6,16 +6,18 @@
 \alias{toa_diff.numeric}
 \title{Difference in Time of Adoption (TOA) between individuals}
 \usage{
-toa_diff(times, recode = TRUE, ...)
+toa_diff(times, recode = TRUE, labels = NULL, ...)
 
-\method{toa_diff}{integer}(times, recode = TRUE, ...)
+\method{toa_diff}{integer}(times, recode = TRUE, labels = NULL, ...)
 
-\method{toa_diff}{numeric}(times, recode = TRUE, ...)
+\method{toa_diff}{numeric}(times, recode = TRUE, labels = NULL, ...)
 }
 \arguments{
-\item{times}{Integer vector containing time of adoption of the innovation.}
+\item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}
 
-\item{recode}{Logical. When TRUE recodes time (see details).}
+\item{recode}{Logical scalar. When TRUE recodes time (see details).}
+
+\item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
 
 \item{...}{Ignored.}
 }
