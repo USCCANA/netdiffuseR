@@ -26,13 +26,13 @@ library(netdiffuseR)
 ```{r DGP}
 # Generating random data
 set.seed(123)
-graph <- rand_graph(n=1000,t=5)
-toa <- sample(2000:(2000+dim(graph)[3]-1), dim(graph)[1], TRUE)
+graph <- rand_graph(n=100,t=5)
+toa <- sample(2000:(2000+length(graph)-1), dim(graph[[1]])[1], TRUE)
 
 # Threshold
 adopt <- toa_mat(toa)
 expo <- exposure(graph, adopt$cumadopt)
-sunflowerplot(threshold(expo, toa))
+plot_threshold(graph, expo, toa)
 ```
 
 
