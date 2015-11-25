@@ -37,7 +37,7 @@ as_diffnet <- function(data, toa,
 #' (one network plot for each time period)  and the set of adopter and non-adopters
 #' in the network.
 #'
-#' @param graph An array
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt \eqn{n\times T}{n*T} matrix
 #' @param displaylabels Logical. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
 #' @param vertex.col A character vector of size 2 with colors
@@ -80,7 +80,20 @@ as_diffnet <- function(data, toa,
 #' @family visualizations
 #' @keywords hplot
 #' @export
-plot_diffnet <- function(graph, cumadopt,
+plot_diffnet <- function(graph, ...) UseMethod("plot_diffnet")
+
+#' @export
+#' @rdname plot_diffnet
+plot_diffnet.array <- function(graph, ...) {
+  dn <- dimnames(graph)[[3]]
+  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  names(graph) <- dn
+  plot_diffnet.list(graph, ...)
+}
+
+#' @export
+#' @rdname plot_diffnet
+plot_diffnet.list <- function(graph, cumadopt,
                          displaylabels=FALSE,
                          undirected=TRUE,
                          vertex.col=c("blue","grey"),
@@ -154,7 +167,7 @@ plot_diffnet <- function(graph, cumadopt,
 #' Draws a graph where the coordinates are given by time of adoption, x-axis,
 #' and threshold level, y-axis.
 #'
-#' @param graph \eqn{n\times n\times T}{n * n * T} array.
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param times.recode Logical scalar. TRUE when time recoding must be done.
@@ -196,7 +209,20 @@ plot_diffnet <- function(graph, cumadopt,
 #' plot_threshold(graph, expos, toa, vertex.cex = indegree)
 #'
 #' @export
-plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=TRUE,
+plot_threshold <- function(graph, ...) UseMethod("plot_threshold")
+
+#' @export
+#' @rdname plot_threshold
+plot_threshold.array <- function(graph, ...) {
+  dn <- dimnames(graph)[[3]]
+  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  names(graph) <- dn
+  plot_threshold.list(graph, ...)
+}
+
+#' @export
+#' @rdname plot_threshold
+plot_threshold.list <- function(graph, exposure, toa, times.recode=TRUE, undirected=TRUE,
                            main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
                            vertex.cex=NA,
                            vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
@@ -274,7 +300,7 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #' network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
 #' number of individuals that lie within each cell, and draws a heatmap.
 #'
-#' @param graph an array
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param toa Times of adoption
 #' @param normalize Logical. TRUE
 #' @param K Integer. Number of time periods to consider
@@ -318,7 +344,20 @@ plot_threshold <- function(graph, exposure, toa, times.recode=TRUE, undirected=T
 #'
 #' # Visualizing distribution of suscep/infect
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
-plot_infectsuscep <- function(graph, toa, normalize=TRUE,
+plot_infectsuscep <- function(graph, ...) UseMethod("plot_infectsuscept")
+
+#' @export
+#' @rdname plot_infectsuscep
+plot_infectsuscep.array <- function(graph, ...) {
+  dn <- dimnames(graph)[[3]]
+  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  names(graph) <- dn
+  plot_infectsuscep.list(graph, ...)
+}
+
+#' @export
+#' @rdname plot_infectsuscep
+plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
                               K=1L, r=0.5, expdiscount=FALSE,
                               bins=50,nlevels=round(bins/2),
                               logscale=TRUE,

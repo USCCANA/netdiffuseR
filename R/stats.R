@@ -2,12 +2,12 @@
 #'
 #' Computes the requested degree measure for each node in the graph.
 #'
-#' @param graph Either an \eqn{n\times n}{n * n} Matrix or a \eqn{n\times n\times T}{n * n * T} array
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param cmode Character. Either "indegree", "outdegree" or "degree".
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @param self Logical. TRUE when self edges should not be considered.
 #' @return Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
-#' a matrix), or a matrix of size \eqn{n\times T}{n * T}
+#' a matrix), or a matrix of size \eqn{n\times T}{n * T}.
 #' @export
 #' @family statistics
 #' @keywords univar
@@ -116,7 +116,7 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' Calculates the level of exposure to the innovation that each node has in the
 #' graph.
 #'
-#' @param graph An array of adjacency matrices
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @param wtype Integer. Weighting type (see details).
@@ -200,7 +200,7 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #' For each period, calculates the number of adopters, the proportion of adopters,
 #' and the adoption rate.
 #'
-#' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
+#' @param cumadopt A \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @details
 #'
@@ -218,7 +218,7 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #' @export
 cumulative_adopt_count <- function(cumadopt) {
   x <- cumulative_adopt_count_cpp(cumadopt)
-  row.names(x) <- c("num", "prop", "rate")
+  dimnames(x) <- list(c("num", "prop", "rate"), colnames(cumadopt))
   return(x)
 }
 
@@ -226,7 +226,7 @@ cumulative_adopt_count <- function(cumadopt) {
 #'
 #' Computes the hazard rate of the network at each period of time.
 #'
-#' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
+#' @param cumadopt A \eqn{n\times T}{n * T}. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @details
 #' For \eqn{t>1}, hazard rate is calculated as
@@ -241,24 +241,38 @@ cumulative_adopt_count <- function(cumadopt) {
 #' @export
 hazard_rate <- function(cumadopt) {
   x <- hazard_rate_cpp(cumadopt)
-  row.names(x) <- "hazard"
+  dimnames(x) <- list("hazard", colnames(cumadopt))
   x
 }
 
-#' Calculates threshold
+#' Retrive threshold levels from the exposure matrix
 #'
 #' Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
 #'
-#' @param exposure \eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
+#' @param exposure A \eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
 #' \code{\link{exposure}}.
 #' @param times Integer vector. Indicating the time of adoption of the innovation.
 #' @param times.recode Logical. TRUE when time recoding must be done.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
 #' @family statistics
+#' @seealso Threshold can be visualized using \code{\link{plot_threshold}}
 #' @keywords univar
+#' @examples
+#' # Generating a random graph with random Times of Adoption
+#' set.seed(783)
+#' graph <- rand_graph(n=5, t=4)
+#' toa <- sample.int(4, 5, TRUE)
+#'
+#' # Computing exposure using Structural Equivalnece (wtype=1)
+#' adopt <- toa_mat(toa)
+#' expo <- exposure(graph, adopt$cumadopt, wtype = 1)
+#'
+#' # Retrieving threshold
+#' threshold(expo, toa)
 #' @export
 threshold <- function(exposure, times, times.recode=TRUE) {
   if (times.recode) times <- times - min(times) + 1L
-  threshold_cpp(exposure, times)
+  output <- threshold_cpp(exposure, times)
+  dimnames(output) <- list(rownames(exposure), "threshold")
+  output
 }
-

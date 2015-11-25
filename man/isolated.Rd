@@ -39,19 +39,23 @@ drop_isolated(graph, undirected = getOption("diffnet.undirected"))
   undirected = getOption("diffnet.undirected"))
 }
 \arguments{
-\item{graph}{Either a \eqn{n\times n}{n*n} Matrix or a \eqn{n\times n\times T}{n*n*T} array.}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{undirected}{Logical. TRUE when the graph is undirected.}
 }
 \value{
-\item{isolated}{an integer vector of size \eqn{n} with 1's where a node is isolated}
+When \code{graph} is an adjacency matrix:
+ \item{isolated}{an matrix of size \eqn{n\times 1}{n*1} with 1's where a node is isolated}
+ \item{drop_isolated}{a modified graph excluding isolated vertices.}
+
+Otherwise, when \code{graph} is a list
+ \item{isolated}{an matrix of size \eqn{n\times T}{n*T} with 1's where a node is isolated}
  \item{drop_isolated}{a modified graph excluding isolated vertices.}
 }
 \description{
 Find and remove unconnected vertices from the graph.
 }
 \examples{
-\dontrun{
 # Generating random graph
 set.seed(123)
 adjmat <- rand_graph()
@@ -80,6 +84,8 @@ graph
 isolated(graph)
 drop_isolated(graph)
 }
+\seealso{
+Other data management functions: \code{\link{edgelist_to_adjmat}}
 }
 \keyword{manip}
 

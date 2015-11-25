@@ -41,8 +41,14 @@ recode.matrix <- function(data, ...) {
   n <- length(data)
   output <- cbind(data[1:(n/2)], data[(n/2+1):n])
   data <- unique(data)
-  attr(output, "recode") <- data.frame(
+
+  # Previous order w/ codes
+  rc <- data.frame(
     code=as.integer(data), label=as.character(data),
     stringsAsFactors = FALSE)
+
+  rc <- rc[order(rc[,1]),]
+
+  attr(output, "recode") <- rc
   output
 }

@@ -19,7 +19,7 @@ struct_equiv(graph, v = 1, ...)
 \method{struct_equiv}{list}(graph, v = 1, ...)
 }
 \arguments{
-\item{graph}{Square matrix. Adjacency matrix}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{v}{Double. Cohesion constant (see details)}
 

@@ -9,8 +9,7 @@
 \alias{susceptibility.list}
 \title{Susceptibility and Infection}
 \usage{
-infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+infection(graph, ...)
 
 \method{infection}{array}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE)
@@ -18,8 +17,7 @@ infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 \method{infection}{list}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE)
 
-susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+susceptibility(graph, ...)
 
 \method{susceptibility}{list}(graph, times, normalize = TRUE, K = 1L,
   r = 0.5, expdiscount = FALSE)
@@ -28,7 +26,9 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   r = 0.5, expdiscount = FALSE)
 }
 \arguments{
-\item{graph}{Array of size \eqn{n\times n\times T}{n*n*T} as a dynamic graph}
+\item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
+
+\item{...}{Further arguments to be passed to the method.}
 
 \item{times}{Integer vector with times of adoption (see details)}
 
@@ -38,10 +38,10 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{r}{Double. Discount rate used when \code{expdiscount=TRUE}}
 
-\item{expdiscount}{Logical. When TRUE, exponential discount rate is used (see details)}
+\item{expdiscount}{Logical. When TRUE, exponential discount rate is used (see details).}
 }
 \value{
-A numeric column vector of size \eqn{n} with either infection/susceptibility rates.
+A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
 }
 \description{
 Calculates infectiousness and susceptibility for each node in the graph
@@ -100,6 +100,22 @@ it will be \eqn{w_k = k}{w(k)=k}.
 
 Note that when \eqn{k=1}, the above formulas are equal to the ones presented
 in the paper.
+}
+\examples{
+
+# Creating a random dynamic graph
+set.seed(943)
+graph <- rand_graph(n=100, t=10)
+toa <- sample.int(10, 100, TRUE)
+
+# Computing infection and susceptibility (K=1)
+infection(graph, toa)
+susceptibility(graph, toa)
+
+# Now with K=4
+infection(graph, toa, K=4)
+susceptibility(graph, toa, K=4)
+
 }
 \references{
 Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo

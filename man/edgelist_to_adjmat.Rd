@@ -18,23 +18,23 @@ edgelist_to_adjmat(edgelist, ...)
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
   t = NULL, times.labels = NULL, simplify = TRUE, undirected = FALSE,
   self = FALSE, multiple = FALSE, use.incomplete = TRUE,
-  recode.ids = TRUE, ...)
+  recode.ids = TRUE)
 
-adjmat_to_edgelist(adjmat, undirected = TRUE)
+adjmat_to_edgelist(graph, undirected = TRUE)
 
-\method{adjmat_to_edgelist}{matrix}(adjmat, undirected = TRUE)
+\method{adjmat_to_edgelist}{matrix}(graph, undirected = TRUE)
 
-\method{adjmat_to_edgelist}{dgCMatrix}(adjmat, undirected = TRUE)
+\method{adjmat_to_edgelist}{dgCMatrix}(graph, undirected = TRUE)
 
-\method{adjmat_to_edgelist}{array}(adjmat, undirected = TRUE)
+\method{adjmat_to_edgelist}{array}(graph, undirected = TRUE)
 
-\method{adjmat_to_edgelist}{list}(adjmat, undirected = TRUE)
+\method{adjmat_to_edgelist}{list}(graph, undirected = TRUE)
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
 alter -target- (see details).}
 
-\item{...}{Further arguments for the method.}
+\item{...}{Further arguments to be passed to the matrix method.}
 
 \item{weights}{Numeric vector. Strength of ties (optional).}
 
@@ -60,7 +60,7 @@ details).}
 \item{recode.ids}{Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 (see details).}
 
-\item{adjmat}{An \eqn{n\times n}{n * n} matrix. An adjacency matrix.}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
 In the case of \code{edgelist_to_adjmat} either an adjacency matrix
@@ -104,9 +104,9 @@ correctly encoded, so when going back (using \code{edgelist_to_adjmat})
 \examples{
 # Base data
 set.seed(123)
-n <- 10
+n <- 5
 edgelist <- rand_graph(n, as.edgelist=TRUE)
-times <- sample.int(10, nrow(edgelist), replace=TRUE)
+times <- sample.int(3, nrow(edgelist), replace=TRUE)
 w <- abs(rnorm(nrow(edgelist)))
 
 # Simple example
@@ -124,6 +124,9 @@ edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
 # Using times and weights
 edgelist_to_adjmat(edgelist, times = times, weights = w)
 edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+}
+\seealso{
+Other data management functions: \code{\link{isolated}}
 }
 \keyword{manip}
 

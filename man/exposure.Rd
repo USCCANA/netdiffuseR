@@ -16,7 +16,7 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
   undirected = getOption("diffnet.undirected"), normalized = TRUE)
 }
 \arguments{
-\item{graph}{An array of adjacency matrices}
+\item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}

@@ -2,17 +2,25 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_diffnet}
 \alias{plot_diffnet}
+\alias{plot_diffnet.array}
+\alias{plot_diffnet.list}
 \title{Plot the diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
-  vertex.col = c("blue", "grey"), vertex.cex = NA,
+plot_diffnet(graph, ...)
+
+\method{plot_diffnet}{array}(graph, ...)
+
+\method{plot_diffnet}{list}(graph, cumadopt, displaylabels = FALSE,
+  undirected = TRUE, vertex.col = c("blue", "grey"), vertex.cex = NA,
   label = rownames(graph[[1]]), edge.col = "gray",
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
   main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
   0.1, ...)
 }
 \arguments{
-\item{graph}{An array}
+\item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
+
+\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}}}
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix}
 
@@ -38,8 +46,6 @@ the graph are used.}
 \item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}}}
 
 \item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}}}
-
-\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}}}
 }
 \value{
 Calculated coordinates (invisible).

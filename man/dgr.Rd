@@ -31,7 +31,7 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"))
 }
 \arguments{
-\item{graph}{Either an \eqn{n\times n}{n * n} Matrix or a \eqn{n\times n\times T}{n * n * T} array}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{cmode}{Character. Either "indegree", "outdegree" or "degree".}
 
@@ -41,7 +41,7 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected"),
 }
 \value{
 Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
-a matrix), or a matrix of size \eqn{n\times T}{n * T}
+a matrix), or a matrix of size \eqn{n\times T}{n * T}.
 }
 \description{
 Computes the requested degree measure for each node in the graph.

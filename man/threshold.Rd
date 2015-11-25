@@ -2,12 +2,12 @@
 % Please edit documentation in R/stats.R
 \name{threshold}
 \alias{threshold}
-\title{Calculates threshold}
+\title{Retrive threshold levels from the exposure matrix}
 \usage{
 threshold(exposure, times, times.recode = TRUE)
 }
 \arguments{
-\item{exposure}{\eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
+\item{exposure}{A \eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
 \code{\link{exposure}}.}
 
 \item{times}{Integer vector. Indicating the time of adoption of the innovation.}
@@ -20,7 +20,22 @@ A vector of size \eqn{n} indicating the threshold for each node.
 \description{
 Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
 }
+\examples{
+# Generating a random graph with random Times of Adoption
+set.seed(783)
+graph <- rand_graph(n=5, t=4)
+toa <- sample.int(4, 5, TRUE)
+
+# Computing exposure using Structural Equivalnece (wtype=1)
+adopt <- toa_mat(toa)
+expo <- exposure(graph, adopt$cumadopt, wtype = 1)
+
+# Retrieving threshold
+threshold(expo, toa)
+}
 \seealso{
+Threshold can be visualized using \code{\link{plot_threshold}}
+
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},

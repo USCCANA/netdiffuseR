@@ -7,7 +7,7 @@
 cumulative_adopt_count(cumadopt)
 }
 \arguments{
-\item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
+\item{cumadopt}{A \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
 }
 \value{

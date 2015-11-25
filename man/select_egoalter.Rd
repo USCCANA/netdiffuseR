@@ -2,22 +2,34 @@
 % Please edit documentation in R/select_egoalter.R
 \name{select_egoalter}
 \alias{select_egoalter}
+\alias{select_egoalter.array}
 \alias{select_egoalter.list}
 \title{Calculate the number of adoption changes between ego and alter.}
 \usage{
 select_egoalter(graph, adopt, period = NULL)
 
+\method{select_egoalter}{array}(graph, adopt, period = NULL)
+
 \method{select_egoalter}{list}(graph, adopt, period = NULL)
 }
 \arguments{
-\item{graph}{An \eqn{n\times n\times T}{n*n*T} array.}
+\item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{adopt}{\eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.}
 
 \item{period}{Integer. Optional to make the count for a particular period of time.}
 }
 \value{
-An array of the count of selection changes for the 16 categories by node.
+An dataframe with \eqn{n\times (T-1)}{n * (T-1)} rows and
+\eqn{2 + 16\times 3}{2 + 16 * 3} columns. The column names are
+\item{\code{time}}{Integer represting the time period}
+\item{\code{id}}{Node id}
+\item{\code{select_a_01}, \dots, \code{select_a_16}}{Number of new links classified
+between categories 1 to 16.}
+\item{\code{select_d_01}, \dots, \code{select_d_16}}{Number of remove links classified
+between categories 1 to 16.}
+\item{\code{select_s_01}, \dots, \code{select_s_16}}{Number of unchanged links
+classified between categories 1 to 16.}
 }
 \description{
 The changes are based on 16 categories combining (ego, alter) x (adopt in \eqn{t}) x

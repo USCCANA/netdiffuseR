@@ -3,7 +3,7 @@
 #' The changes are based on 16 categories combining (ego, alter) x (adopt in \eqn{t}) x
 #' (adopt in \eqn{t-1}) (see details).
 #'
-#' @param graph An \eqn{n\times n\times T}{n*n*T} array.
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param adopt \eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.
 #' @param period Integer. Optional to make the count for a particular period of time.
 #' @details The 16 categories are classified using the table that follows. The
@@ -24,7 +24,16 @@
 #'       \tab       \tab Yes   \tab   7   \tab  8  \tab 15  \tab  16
 #' }
 #'
-#' @return An array of the count of selection changes for the 16 categories by node.
+#' @return An dataframe with \eqn{n\times (T-1)}{n * (T-1)} rows and
+#' \eqn{2 + 16\times 3}{2 + 16 * 3} columns. The column names are
+#' \item{\code{time}}{Integer represting the time period}
+#' \item{\code{id}}{Node id}
+#' \item{\code{select_a_01}, \dots, \code{select_a_16}}{Number of new links classified
+#' between categories 1 to 16.}
+#' \item{\code{select_d_01}, \dots, \code{select_d_16}}{Number of remove links classified
+#' between categories 1 to 16.}
+#' \item{\code{select_s_01}, \dots, \code{select_s_16}}{Number of unchanged links
+#' classified between categories 1 to 16.}
 #' @references
 #' Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
 #' Fujimoto, \emph{Diffusion of innovations theory applied to global tobacco control
@@ -33,6 +42,15 @@
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
 select_egoalter <- function(graph, adopt, period=NULL) UseMethod("select_egoalter")
+
+#' @rdname select_egoalter
+#' @export
+select_egoalter.array <- function(graph, adopt, period=NULL) {
+  dn <- dimnames(graph)[[3]]
+  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  names(graph) <- dn
+  select_egoalter.list(graph, adopt, period)
+}
 
 #' @rdname select_egoalter
 #' @export

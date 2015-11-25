@@ -11,7 +11,7 @@
 #'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
-#' @param adjmat An \eqn{n\times n}{n * n} matrix. An adjacency matrix.
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param weights Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Periodicity of the ties (optional).
 #' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
@@ -27,7 +27,7 @@
 #' details).
 #' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 #' (see details).
-#' @param ... Further arguments for the method.
+#' @param ... Further arguments to be passed to the matrix method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
 #'
@@ -65,9 +65,9 @@
 #' @examples
 #' # Base data
 #' set.seed(123)
-#' n <- 10
+#' n <- 5
 #' edgelist <- rand_graph(n, as.edgelist=TRUE)
-#' times <- sample.int(10, nrow(edgelist), replace=TRUE)
+#' times <- sample.int(3, nrow(edgelist), replace=TRUE)
 #' w <- abs(rnorm(nrow(edgelist)))
 #'
 #' # Simple example
@@ -86,7 +86,7 @@
 #' edgelist_to_adjmat(edgelist, times = times, weights = w)
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 #' @keywords manip
-#' @family networks
+#' @family data management functions
 edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
 
 #' @rdname edgelist_to_adjmat
@@ -101,7 +101,7 @@ edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, times.labels=NULL, simplify=TRUE,
   undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, recode.ids=TRUE, ...) {
+  use.incomplete=TRUE, recode.ids=TRUE) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -144,8 +144,8 @@ edgelist_to_adjmat.matrix <- function(
   if (length(times)) times <- times[complete]
   else times <- rep(1, m)
 
-  oldtimes <- unique(times)
-  oldtimes <- order(oldtimes)
+  oldtimes <- range(times)
+  oldtimes <- oldtimes[1]:oldtimes[2]
   times    <- times - min(times, na.rm = TRUE) + 1L
 
   if (!length(t)) t <- max(times, na.rm = TRUE)
@@ -155,58 +155,57 @@ edgelist_to_adjmat.matrix <- function(
   else weights <- rep(1, m)
 
   ##############################################################################
-  # Computing the adjmat
-  # adjmat <- array(dim=c(n,n,t))
-  adjmat <- vector("list", t)
+  # Computing the graph
+  graph <- vector("list", t)
 
   if (recode.ids) labs <- attr(dat, "recode")[["label"]]
   else labs <- 1:n
 
   for(i in 1:t) {
     index <- which(times <= i)
-    adjmat[[i]] <- edgelist_to_adjmat_cpp(
+    graph[[i]] <- edgelist_to_adjmat_cpp(
       dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
 
     # Naming
-    rownames(adjmat[[i]]) <- labs
+    dimnames(graph[[i]]) <- list(labs, labs)
   }
 
   # Times naming
   if (t>1 && (length(oldtimes) == 1))
     oldtimes <- 1:t
 
-  names(adjmat) <- oldtimes
+  names(graph) <- oldtimes
 
-  if (t==1 & simplify) adjmat <- adjmat[[1]]
+  if (t==1 & simplify) graph <- graph[[1]]
 
-  attr(adjmat, "incomplete") <- incomplete
+  attr(graph, "incomplete") <- incomplete
 
-  return(adjmat)
+  return(graph)
 }
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist <- function(adjmat, undirected=TRUE) UseMethod("adjmat_to_edgelist")
+adjmat_to_edgelist <- function(graph, undirected=TRUE) UseMethod("adjmat_to_edgelist")
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist.matrix <- function(adjmat, undirected=TRUE) {
-  adjmat_to_edgelist_cpp(adjmat, undirected)
+adjmat_to_edgelist.matrix <- function(graph, undirected=TRUE) {
+  adjmat_to_edgelist_cpp(graph, undirected)
 }
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist.dgCMatrix <- function(adjmat, undirected=TRUE) {
-  adjmat_to_edgelist_cpp(adjmat, undirected)
+adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=TRUE) {
+  adjmat_to_edgelist_cpp(graph, undirected)
 }
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
+adjmat_to_edgelist.array <- function(graph, undirected=TRUE) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
-  for (i in 1:dim(adjmat)[3]) {
-    x <- adjmat_to_edgelist.matrix(adjmat[,,i], undirected)
+  for (i in 1:dim(graph)[3]) {
+    x <- adjmat_to_edgelist.matrix(graph[,,i], undirected)
     edgelist <- rbind(edgelist, x)
     times <- c(times, rep(i,nrow(x)))
   }
@@ -216,11 +215,11 @@ adjmat_to_edgelist.array <- function(adjmat, undirected=TRUE) {
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist.list <- function(adjmat, undirected=TRUE) {
+adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
-  for (i in 1:length(adjmat)) {
-    x <- adjmat_to_edgelist.dgCMatrix(adjmat[[i]], undirected)
+  for (i in 1:length(graph)) {
+    x <- adjmat_to_edgelist.dgCMatrix(graph[[i]], undirected)
     edgelist <- rbind(edgelist, x)
     times <- c(times, rep(i,nrow(x)))
   }
@@ -365,14 +364,18 @@ toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
 #'
 #' Find and remove unconnected vertices from the graph.
 #'
-#' @param graph Either a \eqn{n\times n}{n*n} Matrix or a \eqn{n\times n\times T}{n*n*T} array.
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param undirected Logical. TRUE when the graph is undirected.
 #' @export
 #' @return
-#'  \item{isolated}{an integer vector of size \eqn{n} with 1's where a node is isolated}
+#' When \code{graph} is an adjacency matrix:
+#'  \item{isolated}{an matrix of size \eqn{n\times 1}{n*1} with 1's where a node is isolated}
+#'  \item{drop_isolated}{a modified graph excluding isolated vertices.}
+#'
+#' Otherwise, when \code{graph} is a list
+#'  \item{isolated}{an matrix of size \eqn{n\times T}{n*T} with 1's where a node is isolated}
 #'  \item{drop_isolated}{a modified graph excluding isolated vertices.}
 #' @examples
-#' \dontrun{
 #' # Generating random graph
 #' set.seed(123)
 #' adjmat <- rand_graph()
@@ -400,8 +403,8 @@ toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
 #'
 #' isolated(graph)
 #' drop_isolated(graph)
-#' }
 #' @keywords manip
+#' @family data management functions
 isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
   UseMethod("isolated")
 }

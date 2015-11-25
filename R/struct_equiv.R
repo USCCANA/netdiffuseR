@@ -2,7 +2,7 @@
 #'
 #' Computes structural equivalence between ego and alter in a network
 #'
-#' @param graph Square matrix. Adjacency matrix
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param v Double. Cohesion constant (see details)
 #' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
 #' @family statistics
@@ -61,7 +61,7 @@ struct_equiv.matrix <- function(graph, v=1, ...) {
 struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
   # In order to use the SNA package functions, we need to coerce the graph
   # Into a -matrix.csc- object,
-  geod <- sna::geodist(methods::as(graph, matrix.csc), inf.replace = 0, ...)
+  geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = 0, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
   struct_equiv_cpp(geod[["gdist"]], v)
 }

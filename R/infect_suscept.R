@@ -2,12 +2,13 @@
 #'
 #' Calculates infectiousness and susceptibility for each node in the graph
 #'
-#' @param graph Array of size \eqn{n\times n\times T}{n*n*T} as a dynamic graph
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param times Integer vector with times of adoption (see details)
 #' @param normalize Logical. Whether or not to normalize the outcome
 #' @param K Integer. Number of time periods to consider
 #' @param r Double. Discount rate used when \code{expdiscount=TRUE}
-#' @param expdiscount Logical. When TRUE, exponential discount rate is used (see details)
+#' @param expdiscount Logical. When TRUE, exponential discount rate is used (see details).
+#' @param ... Further arguments to be passed to the method.
 #' @family statistics
 #' @keywords univar
 #' @seealso The user can visualize the distribution of both statistics
@@ -77,11 +78,24 @@
 #' Myers, D. J. (2000). "The Diffusion of Collective Violence: Infectiousness,
 #' Susceptibility, and Mass Media Networks". American Journal of Sociology, 106(1),
 #' 173–208. doi:10.1086/303110
+#' @examples
+#'
+#' # Creating a random dynamic graph
+#' set.seed(943)
+#' graph <- rand_graph(n=100, t=10)
+#' toa <- sample.int(10, 100, TRUE)
+#'
+#' # Computing infection and susceptibility (K=1)
+#' infection(graph, toa)
+#' susceptibility(graph, toa)
+#'
+#' # Now with K=4
+#' infection(graph, toa, K=4)
+#' susceptibility(graph, toa, K=4)
 #'
 #' @export
-#' @return A numeric column vector of size \eqn{n} with either infection/susceptibility rates.
-#'
-infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+#' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
+infection <- function(graph, ...) {
   UseMethod("infection")
 }
 
@@ -99,7 +113,7 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
   out <- infection_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  rownames(out) <- rownames(graph)
+  dimnames(out) <- list(rownames(graph), "infection")
   out
 }
 
@@ -113,13 +127,13 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
   out <- infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  rownames(out) <- rownames(graph[[1]])
+  dimnames(out) <- list(rownames(graph[[1]]), "infection")
   out
 }
 
 #' @rdname infection
 #' @export
-susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+susceptibility <- function(graph, ...) {
   UseMethod("susceptibility")
 }
 
@@ -133,7 +147,7 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
   out <- susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  rownames(out) <- rownames(graph[[1]])
+  dimnames(out) <- list(rownames(graph[[1]]), "susceptibility")
   out
 }
 
@@ -151,6 +165,6 @@ susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expd
   out <- susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  rownames(out) <- rownames(graph)
+  dimnames(out) <- list(rownames(graph), "susceptibility")
   out
 }
