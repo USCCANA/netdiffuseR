@@ -24,7 +24,9 @@ plot_diffnet(graph, ...)
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix}
 
-\item{displaylabels}{Logical. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
+\item{displaylabels}{Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
+
+\item{undirected}{Logical scalar.}
 
 \item{vertex.col}{A character vector of size 2 with colors}
 

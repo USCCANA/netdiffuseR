@@ -28,9 +28,9 @@ library(netdiffuseR)
 ```{r}
 # Generating a random graph
 set.seed(1234)
-n <- 500
-nper <- 30
-graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
+n <- 100
+nper <- 20
+graph <- rand_graph(n,nper, p=.40, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 head(toa)
 
@@ -44,17 +44,18 @@ out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 
 ```{r, fig.height=8}
 # Generating a random graph
-set.seed(1234)
+set.seed(123)
 n <- 6
 nper <- 5
+toa  <- sample(2000:(2000+nper-1), n, TRUE)
+nper <- length(unique(toa))
 graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
-toa <- sample(2000:(2000+nper-1), n, TRUE)
 adopt <- toa_mat(toa)
 
 # Computing exposure
 expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 
-plot_threshold(graph, expos, toa)
+x<-plot_threshold(graph, expos, toa, undirected = FALSE)
 cex <- rowMeans(dgr(graph))
 cex <- cex/(max(cex) - min(cex))
 plot_threshold(graph, expos, toa, vertex.cex = cex/4)

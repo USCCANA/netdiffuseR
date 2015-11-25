@@ -15,13 +15,13 @@
 #' @param weights Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Periodicity of the ties (optional).
 #' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
-#' @param simplify Logical. When TRUE and \code{times=NULL} it will return an adjacency
+#' @param simplify Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
-#' @param undirected Logical. TRUE when the graph is undirected.
-#' @param self Logical. TRUE when self edges are excluded.
-#' @param multiple Logical. TRUE when multiple edges should not be included
+#' @param undirected Logical scalar. TRUE when the graph is undirected.
+#' @param self Logical scalar. TRUE when self edges are excluded.
+#' @param multiple Logical scalar. TRUE when multiple edges should not be included
 #' (see details).
-#' @param use.incomplete Logical. When FALSE, rows with \code{NA/NULL} values will be droped
+#' @param use.incomplete Logical scalar. When FALSE, rows with \code{NA/NULL} values will be droped
 #' and will not be considered in the graph, which may reduce the size of the
 #' adjacency matrix (see
 #' details).
@@ -99,9 +99,9 @@ edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
 #' @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
-  times=NULL, t=NULL, times.labels=NULL, simplify=TRUE,
+  times=NULL, t=NULL, simplify=TRUE,
   undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, recode.ids=TRUE) {
+  use.incomplete=TRUE, recode.ids=TRUE, ...) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")

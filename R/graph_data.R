@@ -1,0 +1,30 @@
+#' Network data formats
+#'
+#' List of accepted graph formats
+#'
+#' @name netdiffuseR-graphs
+#' @details The \pkg{netdiffuseR} package can handle different types of graph
+#' objects. Two general classes are defined accross the package's functions:
+#' static graphs, and dynamic graphs.
+#' \itemize{
+#'  \item{In the case of \strong{static graphs}, these are represented as adjacency
+#'  matrices of size \eqn{n\times n}{n * n} and can be either \code{\link{matrix}}
+#'  (dense matrices) or \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}
+#'  (sparse matrix from the \pkg{\link[Matrix:Matrix]{Matrix}} package). While
+#'  most of the package functions are defined for both classes, the default output
+#'  graph is sparse, i.e. \code{dgCMatrix}.}
+#'  \item{With respect to \strong{dynamic graphs}, these are represented by either
+#'  an array of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
+#'  with sparse matrices (class \code{dgCMatrix}) of size \eqn{n\times n}{n * n}.
+#'  Just like the static graph case, while most of the functions accept both
+#'  graph types, the default output is \code{dgCMatrix}.}
+#' }
+#'
+#' This is the reason why several methods have been defined for most of the package
+#' functions.
+#'
+#' @section Dimensions:
+#' When possible, \pkg{netdiffuseR} will try to reuse graphs dimensional names,
+#' this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
+#' and \code{\link{names}} (in the case of dynamic graphs as lists).
+NULL

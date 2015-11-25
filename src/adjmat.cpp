@@ -23,6 +23,12 @@
 
 using namespace Rcpp;
 
+void is_saquere_sp_mat(const arma::sp_mat & mat) {
+  if (mat.n_cols != mat.n_rows)
+    stop("It must be a square matrix");
+  return;
+}
+
 // [[Rcpp::export]]
 List toa_mat_cpp(const IntegerVector & year) {
 
@@ -91,10 +97,10 @@ arma::sp_mat edgelist_to_adjmat_cpp(
     // If multiple edges are not allowed.
     if (!multiple && (adjmat(ego, alter) != 0)) continue;
 
-    adjmat(ego, alter) += w[i];
+    adjmat.at(ego, alter) += w[i];
 
     // If undirected, must include in the switch
-    if (undirected) adjmat(alter, ego) += w[i];
+    if (undirected) adjmat.at(alter, ego) += w[i];
   }
 
   return adjmat;
@@ -170,7 +176,7 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
 
   for(int i=0;i<n;i++)
     for(int j=0;j<i;j++)
-      diff(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
+      diff.at(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
 
   return diff;
 }
@@ -181,6 +187,10 @@ arma::icolvec isolated_cpp(
     bool undirected=true) {
 
   int n = adjmat.n_cols;
+
+  // Checking size
+  is_saquere_sp_mat(adjmat);
+
   arma::icolvec isolated(n, arma::fill::ones);
 
   // Looping through (all) the matrix. Setting the value to 0
@@ -191,8 +201,8 @@ arma::icolvec isolated_cpp(
     int m=n;
     if (undirected) m = i;
     for(int j=0;j<m;j++)
-      if ((adjmat(i,j)!=0))
-        isolated(i)=0, isolated(j)=0;
+      if ((adjmat.at(i,j)!=0))
+        isolated[i]=0, isolated[j]=0;
   }
 
   return isolated;
@@ -204,7 +214,12 @@ arma::sp_mat drop_isolated_cpp(
     arma::icolvec isolated, bool undirected=true) {
 
   int n = adjmat.n_cols;
+
+  // Checking size
+  is_saquere_sp_mat(adjmat);
+
   if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
+  else if (isolated.n_rows != n) stop("-isolated- must have the same length as nrow(adjmat)");
 
   int m = sum(isolated);
   arma::sp_mat newadjmat(n-m,n-m);
@@ -217,10 +232,10 @@ arma::sp_mat drop_isolated_cpp(
   for(int i=0;i<n;i++) {
 
     // If an isolated was found, continue next
-    if (isolated(i)) continue;
+    if (isolated[i]) continue;
     for(int j=0;j<n;j++) {
-      if (isolated(j,0)) continue;
-      newadjmat(ii,ji++)=adjmat(i,j);
+      if (isolated[j]) continue;
+      newadjmat.at(ii,ji++)=adjmat.at(i,j);
     }
     // Continue next
     ii++,ji=0;

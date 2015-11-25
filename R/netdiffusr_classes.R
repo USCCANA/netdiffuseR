@@ -1,34 +1,45 @@
 #' Creates a \code{diffnet} class object
-#' @param data Either an adjacency matrix, an array or an edgelist
-#' @param tao Numeric vector of size \eqn{n}. Times of adoption.
+#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @param toa Numeric vector of size \eqn{n}. Times of adoption.
+#' @param weights Numeric vector of size \eqn{n}.
+#' @param times Numeric vector of size \eqn{n}.
+#' @param undirected Logical scalar.
+#' @param self Logical scalar.
+#' @param multiple Logical scalar.
+#' @param use.incomplete Logical scalar.
 #' @param recode Logical scalar. Passed to \code{\link{toa_mat}}
-as_diffnet <- function(data, toa,
-                       weights=NULL, times=NULL, undirected=FALSE,
-                       self=FALSE, multiple=FALSE,
+#' @param ... Ignored.
+#' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
+as_diffnet <- function(graph, toa,
+                       weights=NULL, times=NULL, undirected=getOption("diffnet.undirected"),
+                       self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
                        use.incomplete=FALSE,
-                       recode=TRUE, ...) {
+                       recode=getOption("diffnet.recode"), ...) {
 
   # Step 0: Figuring out if it is an edgelist
-  d <- dim(data)
+  d <- dim(graph)
   n <- d[1]
   k <- d[2]
   t <- d[3]
-  if ((n!=k) & (k>2)) stop("Invalid -data-. It should be either an edgelist or a square matrix.")
-  else if ((k==2))
+  if ((n!=k) & (k>2)) stop("Invalid -graph-. It should be either an edgelist or a square matrix.")
+  else if ((k==2)) type = "adjmat"
+
+  type = "adjmat"
 
   # Step 1: Creating the graph, first we need to see the time length
   trange <- range(toa)
   t <- trange[2]-trange[1]
 
+
   if      (type == "adjmat")   graph <- array(rep(graph, t), dim=c(n, n, t))
   else if (type == "edgelist") graph <- edgelist_to_adjmat(
-    data, weights, times, t, undirected=undirected, self=self, multiple=multiple)
+    graph, weights, times, t, undirected=undirected, self=self, multiple=multiple)
   else {
     # If its already an array, we better check for the names!
-    graph <- data
+    graph <- graph
   }
 
-  return(data)
+  return(graph)
 }
 
 #' Plot the diffusion process
@@ -39,7 +50,8 @@ as_diffnet <- function(data, toa,
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt \eqn{n\times T}{n*T} matrix
-#' @param displaylabels Logical. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
+#' @param displaylabels Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
+#' @param undirected Logical scalar.
 #' @param vertex.col A character vector of size 2 with colors
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices
 #' @param label Character vector of size \eqn{n}. If no provided, rownames of
@@ -171,6 +183,9 @@ plot_diffnet.list <- function(graph, cumadopt,
 #' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param times.recode Logical scalar. TRUE when time recoding must be done.
+#' @param undirected Logical scalar.
+#' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
+#' \code{toa} won't be plotted.
 #' @param main Character. Title of the plot
 #' @param xlab Character. x-axis label
 #' @param ylab Character. y-axis label
@@ -204,7 +219,7 @@ plot_diffnet.list <- function(graph, cumadopt,
 #' plot_threshold(graph, expos, toa)
 #'
 #' # Calculating degree (for sizing the vertices)
-#' indegree <- netdiffuseR::degree(graph, cmode="indegree")
+#' indegree <- dgr(graph, cmode="indegree")
 #' indegree <- apply(indegree, 1, mean)
 #' plot_threshold(graph, expos, toa, vertex.cex = indegree)
 #'
@@ -222,13 +237,12 @@ plot_threshold.array <- function(graph, ...) {
 
 #' @export
 #' @rdname plot_threshold
-plot_threshold.list <- function(graph, exposure, toa, times.recode=TRUE, undirected=TRUE,
-                           main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-                           vertex.cex=NA,
-                           vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
-                           edge.width = 2, edge.col = "gray", arrow.length=.20,
-                           include.grid = TRUE,
-                           bty="n", ...) {
+plot_threshold.list <- function(
+  graph, exposure, toa, times.recode=TRUE, undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
+  main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
+  vertex.cex=NA, vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
+  edge.width = 2, edge.col = "gray", arrow.length=.20,
+  include.grid = TRUE, bty="n", ...) {
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -275,7 +289,7 @@ plot_threshold.list <- function(graph, exposure, toa, times.recode=TRUE, undirec
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
-  edges <- netdiffuseR::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected)
+  edges <- netdiffuseR::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected, no.contemporary)
   edges <- as.data.frame(edges)
 
   with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
@@ -344,7 +358,7 @@ plot_threshold.list <- function(graph, exposure, toa, times.recode=TRUE, undirec
 #'
 #' # Visualizing distribution of suscep/infect
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
-plot_infectsuscep <- function(graph, ...) UseMethod("plot_infectsuscept")
+plot_infectsuscep <- function(graph, ...) UseMethod("plot_infectsuscep")
 
 #' @export
 #' @rdname plot_infectsuscep

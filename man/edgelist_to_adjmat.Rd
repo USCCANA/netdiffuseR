@@ -16,9 +16,8 @@ edgelist_to_adjmat(edgelist, ...)
 \method{edgelist_to_adjmat}{data.frame}(edgelist, ...)
 
 \method{edgelist_to_adjmat}{matrix}(edgelist, weights = NULL, times = NULL,
-  t = NULL, times.labels = NULL, simplify = TRUE, undirected = FALSE,
-  self = FALSE, multiple = FALSE, use.incomplete = TRUE,
-  recode.ids = TRUE)
+  t = NULL, simplify = TRUE, undirected = FALSE, self = FALSE,
+  multiple = FALSE, use.incomplete = TRUE, recode.ids = TRUE, ...)
 
 adjmat_to_edgelist(graph, undirected = TRUE)
 
@@ -42,17 +41,17 @@ alter -target- (see details).}
 
 \item{t}{Integer scalar. If \code{times} but want to repeat the network \code{t} times.}
 
-\item{simplify}{Logical. When TRUE and \code{times=NULL} it will return an adjacency
+\item{simplify}{Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 matrix, otherwise an array of adjacency matrices.}
 
-\item{undirected}{Logical. TRUE when the graph is undirected.}
+\item{undirected}{Logical scalar. TRUE when the graph is undirected.}
 
-\item{self}{Logical. TRUE when self edges are excluded.}
+\item{self}{Logical scalar. TRUE when self edges are excluded.}
 
-\item{multiple}{Logical. TRUE when multiple edges should not be included
+\item{multiple}{Logical scalar. TRUE when multiple edges should not be included
 (see details).}
 
-\item{use.incomplete}{Logical. When FALSE, rows with \code{NA/NULL} values will be droped
+\item{use.incomplete}{Logical scalar. When FALSE, rows with \code{NA/NULL} values will be droped
 and will not be considered in the graph, which may reduce the size of the
 adjacency matrix (see
 details).}

@@ -17,7 +17,8 @@ LazyData: true
 Imports:
     Rcpp (>= 0.12.1),
     sna,
-    Matrix, SparseM
+    Matrix, SparseM,
+    methods
 Suggests:
     knitr
 VignetteBuilder: knitr

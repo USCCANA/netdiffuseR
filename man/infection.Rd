@@ -12,18 +12,18 @@
 infection(graph, ...)
 
 \method{infection}{array}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+  expdiscount = FALSE, ...)
 
 \method{infection}{list}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+  expdiscount = FALSE, ...)
 
 susceptibility(graph, ...)
 
 \method{susceptibility}{list}(graph, times, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE)
+  r = 0.5, expdiscount = FALSE, ...)
 
 \method{susceptibility}{array}(graph, times, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE)
+  r = 0.5, expdiscount = FALSE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}

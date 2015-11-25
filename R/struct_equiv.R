@@ -81,6 +81,7 @@ struct_equiv.array <- function(graph, v=1, ...) {
 #' @export
 struct_equiv.list <- function(graph, v=1, ...) {
   t <- length(graph)
+  n <- nrow(graph[[1]])
   output <- vector("list", n)
   for(i in 1:t)
     output[[i]] <- struct_equiv.dgCMatrix(graph[[i]], v, ...)

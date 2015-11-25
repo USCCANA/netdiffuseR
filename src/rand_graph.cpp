@@ -25,7 +25,6 @@ arma::sp_mat rand_graph_cpp(
 
   arma::sp_mat graph(n, n);
 
-  double w = 0.0;
   GetRNGstate();
   for(int i=0;i<n;i++) {
     /* Setting the length of the subloop acordingly to type of graph */
@@ -37,13 +36,11 @@ arma::sp_mat rand_graph_cpp(
       if (!self && (i==j)) continue;
 
       /* Setting the value of the tie */
-      double val = unif_rand();
-      w = val;
-
-      if (val > (1-p)) {
+      double w = unif_rand();
+      if (w > (1-p)) {
         if (!weighted) w=1.0;
-        graph(i,j) = w;
-        if (undirected) graph(j,i) = w;
+        graph.at(i,j) = w;
+        if (undirected) graph.at(j,i) = w;
       }
     }
   }

@@ -200,25 +200,32 @@ NumericMatrix edges_coords(
   double mins = vertex_size.min();
   double maxs = vertex_size.max();
 
-  // Expansion factor for y
-  double yexpand = (y.max() - y.min())/(x.max() - x.min());
+  // If yexpand is too small, just throw an error
+  double xmin = x.min();
+  double xmax = x.max();
+  double ymin = y.min();
+  double ymax = y.max();
 
-//   for(int i=0;i<n;i++) {
-//     vertex_size(i) = (vertex_size(i) - mins + 1e-5)/(maxs-mins+ 1e-5)/4.0;
-//   }
+  // Expansion factor for y
+  double yexpand = 1.0;
+  if ( (ymax - ymin) > 1e-5 ) yexpand = (ymax - ymin)/(xmax - xmin);
 
   for(int i=0;i<n;i++) {
+
     // Verifying undirected or not
     int m=n;
     if (undirected) m=i;
 
     for(int j=0;j<m;j++) {
+      // And edge will be drawn iff, there's a link, !contmporary and
+      // the distance is != 0
       if (!graph(i,j)) continue;
-
       if (no_contemporary && (toa(i)==toa(j)) ) continue;
 
       // Euclidean distance
       double d = pow( pow(x(i) - x(j), 2.0) + pow( (y(i) - y(j))/yexpand, 2.0) , 0.5 );
+      if (d < 1e-15) continue;
+
       dist.push_back(d);
 
       // Computing the elevation degree

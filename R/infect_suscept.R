@@ -101,7 +101,7 @@ infection <- function(graph, ...) {
 
 #' @rdname infection
 #' @export
-infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
@@ -119,7 +119,7 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
 
 #' @rdname infection
 #' @export
-infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
@@ -139,7 +139,7 @@ susceptibility <- function(graph, ...) {
 
 #' @rdname infection
 #' @export
-susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
@@ -153,7 +153,7 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
 
 #' @rdname infection
 #' @export
-susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)

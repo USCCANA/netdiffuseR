@@ -4,18 +4,37 @@
 \alias{as_diffnet}
 \title{Creates a \code{diffnet} class object}
 \usage{
-as_diffnet(data, toa, weights = NULL, times = NULL, undirected = FALSE,
-  self = FALSE, multiple = FALSE, use.incomplete = FALSE, recode = TRUE,
-  ...)
+as_diffnet(graph, toa, weights = NULL, times = NULL,
+  undirected = getOption("diffnet.undirected"),
+  self = getOption("diffnet.self"),
+  multiple = getOption("diffnet.multiple"), use.incomplete = FALSE,
+  recode = getOption("diffnet.recode"), ...)
 }
 \arguments{
-\item{data}{Either an adjacency matrix, an array or an edgelist}
+\item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
+
+\item{toa}{Numeric vector of size \eqn{n}. Times of adoption.}
+
+\item{weights}{Numeric vector of size \eqn{n}.}
+
+\item{times}{Numeric vector of size \eqn{n}.}
+
+\item{undirected}{Logical scalar.}
+
+\item{self}{Logical scalar.}
+
+\item{multiple}{Logical scalar.}
+
+\item{use.incomplete}{Logical scalar.}
 
 \item{recode}{Logical scalar. Passed to \code{\link{toa_mat}}}
 
-\item{tao}{Numeric vector of size \eqn{n}. Times of adoption.}
+\item{...}{Ignored.}
 }
 \description{
 Creates a \code{diffnet} class object
+}
+\seealso{
+Default options are listed at \code{\link{netdiffuseR-options}}
 }
 
