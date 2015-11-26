@@ -2,33 +2,17 @@
 % Please edit documentation in R/infect_suscept.R
 \name{infection}
 \alias{infection}
-\alias{infection.array}
-\alias{infection.list}
 \alias{susceptibility}
-\alias{susceptibility.array}
-\alias{susceptibility.list}
 \title{Susceptibility and Infection}
 \usage{
-infection(graph, ...)
-
-\method{infection}{array}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE, ...)
 
-\method{infection}{list}(graph, times, normalize = TRUE, K = 1L, r = 0.5,
+susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE, ...)
-
-susceptibility(graph, ...)
-
-\method{susceptibility}{list}(graph, times, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, ...)
-
-\method{susceptibility}{array}(graph, times, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
-
-\item{...}{Further arguments to be passed to the method.}
 
 \item{times}{Integer vector with times of adoption (see details)}
 
@@ -39,6 +23,8 @@ susceptibility(graph, ...)
 \item{r}{Double. Discount rate used when \code{expdiscount=TRUE}}
 
 \item{expdiscount}{Logical. When TRUE, exponential discount rate is used (see details).}
+
+\item{...}{Further arguments to be passed to the method.}
 }
 \value{
 A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.

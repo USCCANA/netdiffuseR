@@ -87,16 +87,35 @@
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 #' @keywords manip
 #' @family data management functions
-edgelist_to_adjmat <- function(edgelist, ...) UseMethod("edgelist_to_adjmat")
+edgelist_to_adjmat <- function(
+  edgelist, weights=NULL,
+  times=NULL, t=NULL, simplify=TRUE,
+  undirected=FALSE, self=FALSE, multiple=FALSE,
+  use.incomplete=TRUE, recode.ids=TRUE, ...) {
 
-#' @rdname edgelist_to_adjmat
-#' @export
-edgelist_to_adjmat.data.frame <- function(edgelist, ...) {
+  switch (class(edgelist),
+    data.frame = edgelist_to_adjmat.data.frame(
+      edgelist, weights, times, t, simplify, undirected, self, multiple,
+      use.incomplete, recode.ids, ...
+    ),
+    matrix = edgelist_to_adjmat.matrix(
+      edgelist, weights, times, t, simplify, undirected, self, multiple,
+      use.incomplete, recode.ids, ...)
+  )
+}
+
+# @rdname edgelist_to_adjmat
+# @export
+edgelist_to_adjmat.data.frame <- function(
+  edgelist, weights=NULL,
+  times=NULL, t=NULL, simplify=TRUE,
+  undirected=FALSE, self=FALSE, multiple=FALSE,
+  use.incomplete=TRUE, recode.ids=TRUE, ...) {
   edgelist_to_adjmat.matrix(as.matrix(edgelist), ...)
 }
 
-#' @rdname edgelist_to_adjmat
-#' @export
+# @rdname edgelist_to_adjmat
+# @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
@@ -185,22 +204,30 @@ edgelist_to_adjmat.matrix <- function(
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist <- function(graph, undirected=TRUE) UseMethod("adjmat_to_edgelist")
+adjmat_to_edgelist <- function(graph, undirected=TRUE) {
 
-#' @rdname edgelist_to_adjmat
-#' @export
-adjmat_to_edgelist.matrix <- function(graph, undirected=TRUE) {
-  adjmat_to_edgelist_cpp(graph, undirected)
+  switch (class(graph),
+          list      = adjmat_to_edgelist.list(graph, undirected),
+          array     = adjmat_to_edgelist.array(graph, undirected),
+          dgCMatrix = adjmat_to_edgelist.dgCMatrix(graph, undirected),
+          matrix    = adjmat_to_edgelist.matrix(graph, undirected)
+  )
 }
 
-#' @rdname edgelist_to_adjmat
-#' @export
+# @rdname edgelist_to_adjmat
+# @export
+adjmat_to_edgelist.matrix <- function(graph, undirected=TRUE) {
+  adjmat_to_edgelist_cpp(methods::as(graph, "dgCMatrix"), undirected)
+}
+
+# @rdname edgelist_to_adjmat
+# @export
 adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=TRUE) {
   adjmat_to_edgelist_cpp(graph, undirected)
 }
 
-#' @rdname edgelist_to_adjmat
-#' @export
+# @rdname edgelist_to_adjmat
+# @export
 adjmat_to_edgelist.array <- function(graph, undirected=TRUE) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
@@ -213,8 +240,8 @@ adjmat_to_edgelist.array <- function(graph, undirected=TRUE) {
   return(list(edgelist, times))
 }
 
-#' @rdname edgelist_to_adjmat
-#' @export
+# @rdname edgelist_to_adjmat
+# @export
 adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
@@ -266,18 +293,24 @@ adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
-toa_mat <- function(times, recode=TRUE, labels=NULL, ...) UseMethod("toa_mat")
+toa_mat <- function(times, recode=TRUE, labels=NULL, ...) {
+  switch(class(times),
+    numeric = toa_mat.numeric(times, recode, labels, ...),
+    integer = toa_mat.integer(times, recode, labels, ...)
+  )
+  # UseMethod("toa_mat")
+}
 
-#' @rdname toa_mat
-#' @export
+# @rdname toa_mat
+# @export
 toa_mat.numeric <- function(times, recode=TRUE, labels=NULL, ...) {
   if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
   times <- as.integer(times)
   toa_mat.integer(times, recode)
 }
 
-#' @rdname toa_mat
-#' @export
+# @rdname toa_mat
+# @export
 toa_mat.integer <- function(times, recode=TRUE, labels=NULL, ...) {
   # Rescaling
   oldtimes <- range(times)
@@ -330,18 +363,24 @@ toa_mat.integer <- function(times, recode=TRUE, labels=NULL, ...) {
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
-toa_diff <- function(times, recode=TRUE, labels=NULL, ...) UseMethod("toa_diff")
+toa_diff <- function(times, recode=TRUE, labels=NULL, ...) {
+  switch (class(times),
+    integer = toa_diff.integer(times, recode, labels, ...),
+    numeric = toa_diff.numeric(times, recode, labels, ...)
+  )
+  # UseMethod("toa_diff")
+}
 
-#' @rdname toa_diff
-#' @export
+# @rdname toa_diff
+# @export
 toa_diff.integer <- function(times, recode=TRUE, labels=NULL,...) {
   # Rescaling
   if (recode) times <- times - min(times) + 1L
   toa_diff_cpp(times)
 }
 
-#' @rdname toa_diff
-#' @export
+# @rdname toa_diff
+# @export
 toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
   times <- as.integer(times)
   toa_diff.integer(times, recode)
@@ -406,27 +445,33 @@ toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
 #' @keywords manip
 #' @family data management functions
 isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
+  switch (class(graph),
+    matrix = isolated.matrix(graph, undirected),
+    dgCMatrix = isolated.dgCMatrix(graph, undirected),
+    array = isolated.array(graph, undirected),
+    list = isolated.list(graph, undirected)
+  )
   UseMethod("isolated")
 }
 
-#' @export
-#' @rdname isolated
+# @export
+# @rdname isolated
 isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   out <- isolated_cpp(methods::as(graph, "dgCMatrix"), undirected)
   dimnames(out) <- list(rownames(graph), "isolated")
   out
 }
 
-#' @export
-#' @rdname isolated
+# @export
+# @rdname isolated
 isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   out <- isolated_cpp(graph, undirected)
   dimnames(out) <- list(rownames(graph), "isolated")
   out
 }
 
-#' @export
-#' @rdname isolated
+# @export
+# @rdname isolated
 isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   nper <- dim(graph)[3]
   n    <- dim(graph)[2]
@@ -448,8 +493,8 @@ isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   )
 }
 
-#' @export
-#' @rdname isolated
+# @export
+# @rdname isolated
 isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
   nper<- length(graph)
   n   <- nrow(graph[[1]])
@@ -475,11 +520,17 @@ isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
 #' @export
 #' @rdname isolated
 drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
-  UseMethod("drop_isolated")
+  switch (class(graph),
+    matrix = drop_isolated.matrix(graph, undirected),
+    list = drop_isolated.list(graph, undirected),
+    dgCMatrix = drop_isolated.dgCMatrix(graph, undirected),
+    array = drop_isolated.array(graph, undirected)
+  )
+  # UseMethod("drop_isolated")
 }
 
-#' @rdname isolated
-#' @export
+# @rdname isolated
+# @export
 drop_isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   iso <- isolated(graph, undirected)
   out <- drop_isolated_cpp(methods::as(graph, "dgCMatrix"), iso, undirected)
@@ -490,8 +541,8 @@ drop_isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected
   out
 }
 
-#' @rdname isolated
-#' @export
+# @rdname isolated
+# @export
 drop_isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   iso <- isolated(graph, undirected)
   out <- drop_isolated_cpp(graph, iso, undirected)
@@ -502,8 +553,8 @@ drop_isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirec
   out
 }
 
-#' @rdname isolated
-#' @export
+# @rdname isolated
+# @export
 drop_isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   # Getting isolated vecs
   iso <- isolated.array(graph, undirected)[[2]]
@@ -524,8 +575,8 @@ drop_isolated.array <- function(graph, undirected=getOption("diffnet.undirected"
   out
 }
 
-#' @rdname isolated
-#' @export
+# @rdname isolated
+# @export
 drop_isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
   # Getting isolated vecs
   iso <- isolated.list(graph, undirected)[[2]]

@@ -203,6 +203,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// scale_free_cpp
+arma::sp_mat scale_free_cpp(int m0, int m, int t);
+RcppExport SEXP netdiffuseR_scale_free_cpp(SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type m0(m0SEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    __result = Rcpp::wrap(scale_free_cpp(m0, m, t));
+    return __result;
+END_RCPP
+}
 // select_egoalter_cpp
 DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
 RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {

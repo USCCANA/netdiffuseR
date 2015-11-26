@@ -45,19 +45,26 @@
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations" (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
 #' @export
-struct_equiv <- function(graph, v=1, ...) UseMethod("struct_equiv")
+struct_equiv <- function(graph, v=1, ...) {
+  switch (class(graph),
+    matrix = struct_equiv.matrix(graph, v, ...),
+    dgCMatrix = struct_equiv.dgCMatrix(graph, v, ...),
+    array = struct_equiv.array(graph, v, ...),
+    list = struct_equiv.list(graph, v, ...)
+  )
+}
 
 
-#' @rdname struct_equiv
-#' @export
+# @rdname struct_equiv
+# @export
 struct_equiv.matrix <- function(graph, v=1, ...) {
   geod <- sna::geodist(graph, inf.replace = 0, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
   struct_equiv_cpp(geod[["gdist"]], v)
 }
 
-#' @rdname struct_equiv
-#' @export
+# @rdname struct_equiv
+# @export
 struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
   # In order to use the SNA package functions, we need to coerce the graph
   # Into a -matrix.csc- object,
@@ -66,8 +73,8 @@ struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
   struct_equiv_cpp(geod[["gdist"]], v)
 }
 
-#' @rdname struct_equiv
-#' @export
+# @rdname struct_equiv
+# @export
 struct_equiv.array <- function(graph, v=1, ...) {
   t <- dim(graph)[3]
   output <- array(dim=dim(graph))
@@ -77,8 +84,8 @@ struct_equiv.array <- function(graph, v=1, ...) {
 }
 
 
-#' @rdname struct_equiv
-#' @export
+# @rdname struct_equiv
+# @export
 struct_equiv.list <- function(graph, v=1, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])

@@ -41,10 +41,15 @@
 #' Pages 89-97, ISSN 0277-9536
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
-select_egoalter <- function(graph, adopt, period=NULL) UseMethod("select_egoalter")
+select_egoalter <- function(graph, adopt, period=NULL) {
+  switch (class(graph),
+    array = select_egoalter.array(graph, adopt, period),
+    list = select_egoalter.list(graph, adopt, period)
+  )
+}
 
-#' @rdname select_egoalter
-#' @export
+# @rdname select_egoalter
+# @export
 select_egoalter.array <- function(graph, adopt, period=NULL) {
   dn <- dimnames(graph)[[3]]
   graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
@@ -52,8 +57,8 @@ select_egoalter.array <- function(graph, adopt, period=NULL) {
   select_egoalter.list(graph, adopt, period)
 }
 
-#' @rdname select_egoalter
-#' @export
+# @rdname select_egoalter
+# @export
 select_egoalter.list <- function(graph, adopt, period=NULL) {
 
   # Computing selection mat and coersing into a single matrix

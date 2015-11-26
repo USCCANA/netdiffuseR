@@ -3,31 +3,11 @@
 \name{dgr}
 \alias{degree}
 \alias{dgr}
-\alias{dgr.array}
-\alias{dgr.dgCMatrix}
-\alias{dgr.list}
-\alias{dgr.matrix}
 \alias{indegree}
 \alias{outrdegree}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
 dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected"),
-  self = getOption("diffnet.self"))
-
-\method{dgr}{matrix}(graph, cmode = "degree",
-  undirected = getOption("diffnet.undirected"),
-  self = getOption("diffnet.self"))
-
-\method{dgr}{dgCMatrix}(graph, cmode = "degree",
-  undirected = getOption("diffnet.undirected"),
-  self = getOption("diffnet.self"))
-
-\method{dgr}{list}(graph, cmode = "degree",
-  undirected = getOption("diffnet.undirected"),
-  self = getOption("diffnet.self"))
-
-\method{dgr}{array}(graph, cmode = "degree",
-  undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"))
 }
 \arguments{

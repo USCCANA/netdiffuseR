@@ -92,10 +92,31 @@ as_diffnet <- function(graph, toa,
 #' @family visualizations
 #' @keywords hplot
 #' @export
-plot_diffnet <- function(graph, ...) UseMethod("plot_diffnet")
+plot_diffnet <- function(
+  graph, cumadopt,
+  displaylabels=FALSE,
+  undirected=TRUE,
+  vertex.col=c("blue","grey"),
+  vertex.cex=NA,
+  label=rownames(graph[[1]]),
+  edge.col="gray",
+  mode="fruchtermanreingold", layout.par=NULL,
+  mfrow.par=NULL, main="Network in time %d",
+  mai=c(0,0,1,0),
+  mar=rep(1,4) + 0.1, ...
+) {
+  switch (class(graph),
+    array = plot_diffnet.array(
+      graph, cumadopt, displaylabels, undirected, vertex.col, vertex.cex, label,
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+    list = plot_diffnet.list(
+      graph, cumadopt, displaylabels, undirected, vertex.col, vertex.cex, label,
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...)
+  )
+}
 
-#' @export
-#' @rdname plot_diffnet
+# @export
+# @rdname plot_diffnet
 plot_diffnet.array <- function(graph, ...) {
   dn <- dimnames(graph)[[3]]
   graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
@@ -103,8 +124,8 @@ plot_diffnet.array <- function(graph, ...) {
   plot_diffnet.list(graph, ...)
 }
 
-#' @export
-#' @rdname plot_diffnet
+# @export
+# @rdname plot_diffnet
 plot_diffnet.list <- function(graph, cumadopt,
                          displaylabels=FALSE,
                          undirected=TRUE,
@@ -224,10 +245,28 @@ plot_diffnet.list <- function(graph, cumadopt,
 #' plot_threshold(graph, expos, toa, vertex.cex = indegree)
 #'
 #' @export
-plot_threshold <- function(graph, ...) UseMethod("plot_threshold")
+plot_threshold <- function(
+  graph, exposure, toa, times.recode=TRUE, undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
+  main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
+  vertex.cex=NA, vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
+  edge.width = 2, edge.col = "gray", arrow.length=.20,
+  include.grid = TRUE, bty="n", ...
+) {
+  switch (class(graph),
+    array = plot_threshold.array(
+      graph, exposure, toa, times.recode, undirected, no.contemporary, main,
+      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
+      arrow.length, include.grid, bty, ...),
+    list = plot_threshold.list(
+      graph, exposure, toa, times.recode, undirected, no.contemporary, main,
+      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
+      arrow.length, include.grid, bty, ...
+    )
+  )
+}
 
-#' @export
-#' @rdname plot_threshold
+# @export
+# @rdname plot_threshold
 plot_threshold.array <- function(graph, ...) {
   dn <- dimnames(graph)[[3]]
   graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
@@ -235,8 +274,8 @@ plot_threshold.array <- function(graph, ...) {
   plot_threshold.list(graph, ...)
 }
 
-#' @export
-#' @rdname plot_threshold
+# @export
+# @rdname plot_threshold
 plot_threshold.list <- function(
   graph, exposure, toa, times.recode=TRUE, undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
@@ -358,10 +397,25 @@ plot_threshold.list <- function(
 #'
 #' # Visualizing distribution of suscep/infect
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
-plot_infectsuscep <- function(graph, ...) UseMethod("plot_infectsuscep")
+plot_infectsuscep <- function(
+  graph, toa, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
+  logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
+  xlab="Infectiousness of ego", ylab="Susceptibility of ego",
+  sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
+  include.grid=TRUE, ...
+) {
+  switch (class(graph),
+    array = plot_infectsuscep.array(
+      graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, ...),
+    list = plot_infectsuscep.list(
+      graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, ...)
+  )
+}
 
-#' @export
-#' @rdname plot_infectsuscep
+# @export
+# @rdname plot_infectsuscep
 plot_infectsuscep.array <- function(graph, ...) {
   dn <- dimnames(graph)[[3]]
   graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
@@ -369,8 +423,8 @@ plot_infectsuscep.array <- function(graph, ...) {
   plot_infectsuscep.list(graph, ...)
 }
 
-#' @export
-#' @rdname plot_infectsuscep
+# @export
+# @rdname plot_infectsuscep
 plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
                               K=1L, r=0.5, expdiscount=FALSE,
                               bins=50,nlevels=round(bins/2),

@@ -95,12 +95,15 @@
 #'
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
-infection <- function(graph, ...) {
-  UseMethod("infection")
+infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+  switch (class(graph),
+    array = infection.array(graph, times, normalize, K, r, expdiscount, ...),
+    list = infection.list(graph, times, normalize, K, r, expdiscount, ...)
+  )
 }
 
-#' @rdname infection
-#' @export
+# @rdname infection
+# @export
 infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]
@@ -117,8 +120,8 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
   out
 }
 
-#' @rdname infection
-#' @export
+# @rdname infection
+# @export
 infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -133,12 +136,15 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 
 #' @rdname infection
 #' @export
-susceptibility <- function(graph, ...) {
-  UseMethod("susceptibility")
+susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+  switch (class(graph),
+    array = susceptibility.array(graph, times, normalize, K, r, expdiscount, ...),
+    list = susceptibility.list(graph, times, normalize, K, r, expdiscount, ...)
+  )
 }
 
-#' @rdname infection
-#' @export
+# @rdname infection
+# @export
 susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -151,8 +157,8 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
   out
 }
 
-#' @rdname infection
-#' @export
+# @rdname infection
+# @export
 susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]

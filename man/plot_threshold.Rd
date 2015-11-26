@@ -2,15 +2,9 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_threshold}
 \alias{plot_threshold}
-\alias{plot_threshold.array}
-\alias{plot_threshold.list}
 \title{Threshold level through time}
 \usage{
-plot_threshold(graph, ...)
-
-\method{plot_threshold}{array}(graph, ...)
-
-\method{plot_threshold}{list}(graph, exposure, toa, times.recode = TRUE,
+plot_threshold(graph, exposure, toa, times.recode = TRUE,
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
   ylab = "Threshold", vertex.cex = NA, vertex.col = "blue",
@@ -20,8 +14,6 @@ plot_threshold(graph, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
-
-\item{...}{Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}}
 
 \item{exposure}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
@@ -57,6 +49,8 @@ plot_threshold(graph, ...)
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn}
 
 \item{bty}{See \code{\link{par}}}
+
+\item{...}{Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,

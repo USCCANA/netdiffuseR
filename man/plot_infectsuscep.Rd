@@ -2,16 +2,10 @@
 % Please edit documentation in R/netdiffusr_classes.R
 \name{plot_infectsuscep}
 \alias{plot_infectsuscep}
-\alias{plot_infectsuscep.array}
-\alias{plot_infectsuscep.list}
 \title{Plot distribution of infect/suscep}
 \usage{
-plot_infectsuscep(graph, ...)
-
-\method{plot_infectsuscep}{array}(graph, ...)
-
-\method{plot_infectsuscep}{list}(graph, toa, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
+plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
   logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
@@ -20,8 +14,6 @@ plot_infectsuscep(graph, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
-
-\item{...}{Additional parameters to be passed to \code{\link{filled.contour}}}
 
 \item{toa}{Times of adoption}
 
@@ -50,6 +42,8 @@ plot_infectsuscep(graph, ...)
 \item{color.palette}{a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).}
 
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
+
+\item{...}{Additional parameters to be passed to \code{\link{filled.contour}}}
 }
 \value{
 A list with three elements:

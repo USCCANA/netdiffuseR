@@ -2,41 +2,12 @@
 % Please edit documentation in R/adjmat.R
 \name{isolated}
 \alias{drop_isolated}
-\alias{drop_isolated.array}
-\alias{drop_isolated.dgCMatrix}
-\alias{drop_isolated.list}
-\alias{drop_isolated.matrix}
 \alias{isolated}
-\alias{isolated.array}
-\alias{isolated.dgCMatrix}
-\alias{isolated.list}
-\alias{isolated.matrix}
 \title{Find and remove isolated vertices}
 \usage{
 isolated(graph, undirected = getOption("diffnet.undirected"))
 
-\method{isolated}{matrix}(graph, undirected = getOption("diffnet.undirected"))
-
-\method{isolated}{dgCMatrix}(graph,
-  undirected = getOption("diffnet.undirected"))
-
-\method{isolated}{array}(graph, undirected = getOption("diffnet.undirected"))
-
-\method{isolated}{list}(graph, undirected = getOption("diffnet.undirected"))
-
 drop_isolated(graph, undirected = getOption("diffnet.undirected"))
-
-\method{drop_isolated}{matrix}(graph,
-  undirected = getOption("diffnet.undirected"))
-
-\method{drop_isolated}{dgCMatrix}(graph,
-  undirected = getOption("diffnet.undirected"))
-
-\method{drop_isolated}{array}(graph,
-  undirected = getOption("diffnet.undirected"))
-
-\method{drop_isolated}{list}(graph,
-  undirected = getOption("diffnet.undirected"))
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}

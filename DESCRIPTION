@@ -17,11 +17,12 @@ LazyData: true
 Imports:
     Rcpp (>= 0.12.1),
     sna,
-    Matrix, SparseM,
+    Matrix,
+    SparseM,
     methods
 Suggests:
     knitr
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.0
 Encoding: UTF-8

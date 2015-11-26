@@ -24,11 +24,17 @@
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
 dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
-  UseMethod("dgr")
+  switch (class(graph),
+    matrix = dgr.matrix(graph, cmode, undirected, self),
+    array = dgr.array(graph, cmode, undirected, self),
+    dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self),
+    list = dgr.list(graph, cmode, undirected, self)
+  )
+  # UseMethod("dgr")
 }
 
-#' @rdname dgr
-#' @export
+# @rdname dgr
+# @export
 dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
 
   # Retrieving the number
@@ -49,8 +55,8 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
   output
 }
 
-#' @rdname dgr
-#' @export
+# @rdname dgr
+# @export
 dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
 
   # Retrieving the number
@@ -71,8 +77,8 @@ dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.u
   output
 }
 
-#' @rdname dgr
-#' @export
+# @rdname dgr
+# @export
 dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
   n <- ncol(graph[[1]])
   t <- length(graph)
@@ -91,8 +97,8 @@ dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undire
   output
 }
 
-#' @rdname dgr
-#' @export
+# @rdname dgr
+# @export
 dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
   n <- dim(graph)[1]
   t <- dim(graph)[3]
@@ -165,11 +171,15 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @keywords univar
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE)
-  UseMethod('exposure')
+exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+  switch (class(graph),
+    array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized),
+    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized)
+  )
+}
 
-#' @rdname exposure
-#' @export
+# @rdname exposure
+# @export
 exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
 
   # Preparing the data
@@ -185,8 +195,8 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   output
 }
 
-#' @rdname exposure
-#' @export
+# @rdname exposure
+# @export
 exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
   n <- nrow(graph[[1]])
   t <- length(graph)

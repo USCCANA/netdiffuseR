@@ -2,15 +2,9 @@
 % Please edit documentation in R/adjmat.R
 \name{toa_diff}
 \alias{toa_diff}
-\alias{toa_diff.integer}
-\alias{toa_diff.numeric}
 \title{Difference in Time of Adoption (TOA) between individuals}
 \usage{
 toa_diff(times, recode = TRUE, labels = NULL, ...)
-
-\method{toa_diff}{integer}(times, recode = TRUE, labels = NULL, ...)
-
-\method{toa_diff}{numeric}(times, recode = TRUE, labels = NULL, ...)
 }
 \arguments{
 \item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}

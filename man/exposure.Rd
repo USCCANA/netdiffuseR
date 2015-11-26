@@ -2,17 +2,9 @@
 % Please edit documentation in R/stats.R
 \name{exposure}
 \alias{exposure}
-\alias{exposure.array}
-\alias{exposure.list}
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, wtype = 0, v = 1,
-  undirected = getOption("diffnet.undirected"), normalized = TRUE)
-
-\method{exposure}{array}(graph, cumadopt, wtype = 0, v = 1,
-  undirected = getOption("diffnet.undirected"), normalized = TRUE)
-
-\method{exposure}{list}(graph, cumadopt, wtype = 0, v = 1,
   undirected = getOption("diffnet.undirected"), normalized = TRUE)
 }
 \arguments{

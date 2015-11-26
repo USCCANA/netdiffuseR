@@ -144,6 +144,10 @@ rand_dyn_graph_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weig
     .Call('netdiffuseR_rand_dyn_graph_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
 }
 
+scale_free_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
+    .Call('netdiffuseR_scale_free_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
+}
+
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
