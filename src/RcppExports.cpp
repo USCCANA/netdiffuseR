@@ -231,7 +231,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // degree_cpp
-arma::colvec degree_cpp(const arma::sp_mat& adjmat, const int& cmode, bool undirected, bool self);
+arma::icolvec degree_cpp(const arma::sp_mat& adjmat, const int& cmode, bool undirected, bool self);
 RcppExport SEXP netdiffuseR_degree_cpp(SEXP adjmatSEXP, SEXP cmodeSEXP, SEXP undirectedSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

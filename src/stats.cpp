@@ -19,7 +19,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
-#include "adjmat.h"
+// #include "adjmat.h"
 #include "struct_equiv.h"
 
 using namespace Rcpp;
@@ -30,35 +30,34 @@ using namespace Rcpp;
  *  2: Degree
  */
 // [[Rcpp::export]]
-arma::colvec degree_cpp(
+arma::icolvec degree_cpp(
     const arma::sp_mat & adjmat, const int & cmode=2,
     bool undirected=true, bool self=false) {
 
   int n = adjmat.n_cols;
-  arma::colvec indegree(n, arma::fill::zeros);
-  arma::colvec oudegree(n, arma::fill::zeros);
+  arma::icolvec indegree(n, arma::fill::zeros);
+  arma::icolvec oudegree(n, arma::fill::zeros);
 
+  int m;
+  double val;
   for(int i=0;i<n;i++) {
-    int m=n;
+    m=n;
     if (undirected) m = i;
     for(int j=0;j<m;j++) {
 
       // Checking out whether compute self or not
       if (!self && i==j) continue;
 
-      double val = adjmat(i,j);
+      val = adjmat.at(i,j);
 
       if (val!=0.0) {
-
-        if ((cmode!=1) | undirected) indegree(j) += val;
-        if ((cmode!=0) | undirected) oudegree(i) += val;
+        if ((cmode!=1) | undirected) indegree.at(j) += val;
+        if ((cmode!=0) | undirected) oudegree.at(i) += val;
       }
     }
   }
 
-  arma::colvec degree = indegree+oudegree;
-
-  return degree;
+  return indegree+oudegree;
 }
 
 /* **R
@@ -124,7 +123,7 @@ arma::mat exposure_cpp(
       if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
-      arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
+      arma::icolvec degree = degree_cpp(graph_t, wtype - 2, undirected);
 
       NUMERATOR = graph_t*(cumadopt.col(t) % degree);
       if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;

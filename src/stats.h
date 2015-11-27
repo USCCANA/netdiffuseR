@@ -7,7 +7,7 @@
 #define DIFFTEST_STATS_
 using namespace Rcpp;
 
-arma::colvec degree_cpp(
+arma::icolvec degree_cpp(
     const arma::sp_mat & adjmat, const int & cmode=2,
     bool undirected=true, bool self=false);
 

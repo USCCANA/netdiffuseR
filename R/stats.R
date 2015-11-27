@@ -44,9 +44,6 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
   else stop('Invalid -cmode- ',cmode,'. Should be either ',
             '"indegree", "outdegree" or "degree".')
 
-  # Performing checks
-  if (!inherits(graph, 'matrix')) stop('-graph- should be a matrix.')
-
   # Computing degree
   output <- degree_cpp(Matrix::Matrix(graph), cmode, undirected, self)
   if (length(dimnames(graph)[[1]]))
@@ -66,13 +63,9 @@ dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.u
   else stop('Invalid -cmode- ',cmode,'. Should be either ',
             '"indegree", "outdegree" or "degree".')
 
-  # Performing checks
-  if (!inherits(graph, 'dgCMatrix')) stop('-graph- should be a dgCMatrix.')
-
   # Computing degree
   output <- degree_cpp(graph, cmode, undirected, self)
-  if (length(dimnames(graph)[[1]]))
-    rownames(output) <- dimnames(graph)[[1]]
+  rownames(output) <- rownames(graph)
 
   output
 }
