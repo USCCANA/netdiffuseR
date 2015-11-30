@@ -66,7 +66,7 @@
 #' # Base data
 #' set.seed(123)
 #' n <- 5
-#' edgelist <- rand_graph(n, as.edgelist=TRUE)
+#' edgelist <- rgraph_er(n, as.edgelist=TRUE)
 #' times <- sample.int(3, nrow(edgelist), replace=TRUE)
 #' w <- abs(rnorm(nrow(edgelist)))
 #'
@@ -417,7 +417,7 @@ toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
 #' @examples
 #' # Generating random graph
 #' set.seed(123)
-#' adjmat <- rand_graph()
+#' adjmat <- rgraph_er()
 #'
 #' # Making nodes 1 and 4 isolated
 #' adjmat[c(1,4),] <- 0
@@ -433,7 +433,7 @@ toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
 #'
 #'
 #' # Now with a dynamic graph
-#' graph <- rand_graph(n=10, t=3)
+#' graph <- rgraph_er(n=10, t=3)
 #'
 #' # Making 1 and 5 isolated
 #' graph <- lapply(graph, "[<-", i=c(1,5), j=1:10, value=0)

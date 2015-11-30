@@ -13,8 +13,8 @@
 #' @keywords univar
 #' @aliases degree indegree outrdegree
 #' @examples
-#' # Creating a directed graph
-#' graph <- rand_graph(undirected=FALSE)
+#' # Creating an undirected graph
+#' graph <- rgraph_ba()
 #' graph
 #'
 #' # Comparing degree measurements
@@ -263,7 +263,7 @@ hazard_rate <- function(cumadopt) {
 #' @examples
 #' # Generating a random graph with random Times of Adoption
 #' set.seed(783)
-#' graph <- rand_graph(n=5, t=4)
+#' graph <- rgraph_er(n=5, t=4)
 #' toa <- sample.int(4, 5, TRUE)
 #'
 #' # Computing exposure using Structural Equivalnece (wtype=1)

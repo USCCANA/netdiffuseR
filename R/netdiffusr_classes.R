@@ -83,7 +83,7 @@ as_diffnet <- function(graph, toa,
 #' set.seed(1234)
 #' n <- 6
 #' nper <- 5
-#' graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+#' graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
 #' toa <- sample(2000:(2000+nper-1), n, TRUE)
 #' adopt <- toa_mat(toa)
 #'
@@ -230,7 +230,7 @@ plot_diffnet.list <- function(graph, cumadopt,
 #' set.seed(1234)
 #' n <- 6
 #' nper <- 5
-#' graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+#' graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
 #' toa <- sample(2000:(2000+nper-1), n, TRUE)
 #' adopt <- toa_mat(toa)
 #'
@@ -392,7 +392,7 @@ plot_threshold.list <- function(
 #' set.seed(1234)
 #' n <- 500
 #' nper <- 30
-#' graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
+#' graph <- rgraph_er(n,nper, p=.2, undirected = FALSE)
 #' toa <- sample(1:(1+nper-1), n, TRUE)
 #'
 #' # Visualizing distribution of suscep/infect

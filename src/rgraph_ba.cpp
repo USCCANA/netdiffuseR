@@ -4,17 +4,23 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::sp_mat scale_free_cpp(int m0 = 1, int m = 1, int t = 10) {
+arma::sp_mat rgraph_ba_cpp(
+    arma::sp_mat graph,
+    arma::colvec dgr, int m = 1, int t = 10) {
 
   // Creating the empty graph
+  int m0 = graph.n_cols;
   int n = m0 + t;
-  arma::sp_mat graph(n,n);
-  arma::colvec dgr(n, arma::fill::zeros);
-  dgr.at(0) = 2.0;
-  graph.at(0,0) = 2.0;
+
+  // Creating new graph and vector of degree
+  arma::sp_mat graph_new(n,n);
+  graph_new.submat(0,0,m0-1, m0-1) = graph;
+
+  arma::colvec dgr_new(n, arma::fill::ones);
+  dgr_new.subvec(0, m0-1) = dgr;
 
   // Start the process, K is sum(dgr)
-  int K = 2;
+  int K = sum(dgr_new);
   for(int i=0;i<t;i++) {
     // The number of conections is trucated by the number of vertices in the graph
     int m1 = m;
@@ -27,12 +33,12 @@ arma::sp_mat scale_free_cpp(int m0 = 1, int m = 1, int t = 10) {
       // Calculating probabilities of been drawn. -cump- is the cumsum of
       double cump = 0.0;
       for (int k=0; k<m0; k++) {
-        cump += dgr.at(k)/(K + 1);
+        cump += dgr_new.at(k)/(K + 1);
 
         // Links to the set of previous vertices
         if (randdraw <= cump) {
-          graph.at(m0, k) += 1.0, graph.at(k, m0) += 1.0;
-          dgr.at(k) += 1.0, dgr.at(m0) += 1.0;
+          graph_new.at(m0, k) += 1.0, graph_new.at(k, m0) += 1.0;
+          dgr_new.at(k) += 1.0, dgr_new.at(m0) += 1.0;
 
           // Sumation of degrees
           K += 2;
@@ -42,8 +48,8 @@ arma::sp_mat scale_free_cpp(int m0 = 1, int m = 1, int t = 10) {
         // Otherwise, it can link itself
         if ((k+1) == m0) {
           // printf("yes\n");
-          graph.at(m0,m0) += 2.0;
-          dgr.at(m0) += 2.0;
+          graph_new.at(m0,m0) += 2.0;
+          dgr_new.at(m0) += 2.0;
 
           // Sumation of degrees
           K += 2;
@@ -56,13 +62,23 @@ arma::sp_mat scale_free_cpp(int m0 = 1, int m = 1, int t = 10) {
     ++m0;
   }
 
-  return graph;
+  return graph_new;
 }
+
+// [[Rcpp::export]]
+arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10) {
+  int n = m0;
+  arma::sp_mat graph(n, n);
+  arma::colvec dgr(n, arma::fill::ones);
+  dgr = dgr*2;
+  return rgraph_ba_cpp(graph, dgr, m, t);
+}
+
 
 /***R
 library(Matrix)
 set.seed(123)
-graph <- scale_free_cpp(t = 5000, m=1)
+graph <- rgraph_ba_cpp(t = 500, m=1)
 # graph
 library(sna)
 library(SparseM)
@@ -77,8 +93,8 @@ all(table(deg2) == table(deg))
 library(microbenchmark)
 ig <- methods::as(graph, "matrix.csc")
 microbenchmark(
-  new= netdiffuseR:::dgr.dgCMatrix(graph),
-  old= sna:::degree(ig)
+  new= netdiffuseR::dgr(graph),
+  old= sna::degree(ig), times=1000
 )
 
 */

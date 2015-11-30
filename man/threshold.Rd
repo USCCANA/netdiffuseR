@@ -23,7 +23,7 @@ Threshold as the exposure of vertex by the time of the adoption (see \code{\link
 \examples{
 # Generating a random graph with random Times of Adoption
 set.seed(783)
-graph <- rand_graph(n=5, t=4)
+graph <- rgraph_er(n=5, t=4)
 toa <- sample.int(4, 5, TRUE)
 
 # Computing exposure using Structural Equivalnece (wtype=1)

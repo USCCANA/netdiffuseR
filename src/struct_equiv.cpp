@@ -24,17 +24,17 @@ List struct_equiv_cpp(
       for(int k=0;k<n;k++) {
         // Summation accross all but i and j
         if (k == i || k == j) continue;
-        sumik += pow(graph(i,k)-graph(j,k), 2.0);
-        sumki += pow(graph(k,i)-graph(k,j), 2.0);
+        sumik += pow(graph.at(i,k)-graph.at(j,k), 2.0);
+        sumki += pow(graph.at(k,i)-graph.at(k,j), 2.0);
       }
 
       // Adding up the results
-      d(i,j) = pow(pow(graph(i,j) - graph(j,i), 2.0) + sumik + sumki, 0.5 );
+      d.at(i,j) = pow(pow(graph.at(i,j) - graph.at(j,i), 2.0) + sumik + sumki, 0.5 );
 
       // If only inverse required
-      if (inv && unscaled) d(i,j) = 1/(d(i,j) + 1e-10);
+      if (inv && unscaled) d.at(i,j) = 1/(d.at(i,j) + 1e-10);
 
-      d(j,i) = d(i,j);
+      d.at(j,i) = d.at(i,j);
     }
   }
 
@@ -49,26 +49,26 @@ List struct_equiv_cpp(
     // Getting the max of the line
     for(int j=0;j<n;j++) {
       if (i==j) continue;
-      if (dmax[i] < d(i,j)) dmax[i] = d(i,j);
+      if (dmax[i] < d.at(i,j)) dmax[i] = d.at(i,j);
     }
 
     // Computing sum(dmax - dkj)
     double sumdmaxd = 0.0;
     for(int k=0;k<n;k++) {
       if (k==i) continue;
-      sumdmaxd += pow(dmax[i] - d(k,i), v);
+      sumdmaxd += pow(dmax[i] - d.at(k,i), v);
     }
 
     // Computing (dmax - d)/sum(dmax - d)
     for(int j=0;j<n;j++) {
       if (i==j) continue;
-      SE(i,j) = pow(dmax[i] - d(j,i), v)/(sumdmaxd + 1e-10);
+      SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-10);
     }
 
     // If inverse required
     if (inv) {
       for(int j=0;j<n;j++) {
-        SE(i,j) = 1/(SE(i,j) + 1e-10);
+        SE.at(i,j) = 1/(SE.at(i,j) + 1e-10);
       }
     }
   }

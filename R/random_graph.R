@@ -1,6 +1,6 @@
-#' Erdos-Renyi (bernoulli) random graph
+#' Random graphs
 #'
-#' Using the \eqn{G(N,p)} model, generates a random graph.
+#' Several random graphs algorithms.
 #'
 #' @param n Integer. Number of vertices
 #' @param t Integer. Number of time periods
@@ -11,7 +11,10 @@
 #' @param as.edgelist Logical. When TRUE the graph is presented as an edgelist
 #' instead of an adjacency matrix.
 #' @details
+#' \code{rgraph_er} Creates an Erdos-Renyi graph
 #'
+#' \code{rgraph_ba} Creates a Barabasi-Albert graph
+#' @section Erdos-Renyi (bernoulli):
 #' Basically, for each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
 #' with probability \eqn{p}, this is, \eqn{Pr\{Link i-j\} = Pr\{x<p\}}{%
 #' Pr{Link i-j}}, where \eqn{x} is drawn from a \eqn{Uniform(0,1)}.
@@ -22,7 +25,8 @@
 #'
 #' In the case of dynamic graphs, the algorithm is repeated \eqn{t} times, so the
 #' networks are uncorrelated.
-#'
+#' @section Barabasi-Albert:
+#' Creates an undirected random graph of size \code{t + m0}
 #' @references
 #' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 #' \url{http://barabasi.com/networksciencebook/}.
@@ -39,22 +43,25 @@
 #' set.seed(123)
 #'
 #' # Generating an directed graph
-#' rand_graph(undirected=FALSE)
+#' rgraph_er(undirected=FALSE)
 #'
 #' # Comparing P(tie)
-#' x <- rand_graph(1000, p=.1)
+#' x <- rgraph_er(1000, p=.1)
 #' sum(x)/length(x)
 #'
 #' # Several period random gram
-#' rand_graph(t=5)
+#' rgraph_er(t=5)
 #' }
 #' @keywords distribution
-rand_graph <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
+#' @concept Erdos-Renyi random graph
+#' @concept Scale-free random graph
+#' @concept Barabasi-Albert model
+rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
 
   # Generating the random graph
-  if (t==1) graph <- rand_graph_cpp(n, p, undirected, weighted, self)
-  else graph <- rand_dyn_graph_cpp(n, t, p, undirected, weighted, self)
+  if (t==1) graph <- rgraph_er_cpp(n, p, undirected, weighted, self)
+  else graph <- rgraph_er_dyn_cpp(n, t, p, undirected, weighted, self)
 
   if (as.edgelist) return(adjmat_to_edgelist(graph, undirected))
 
@@ -67,4 +74,16 @@ rand_graph <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirecte
   }
 
   return(graph)
+}
+
+#' @rdname rgraph_er
+#' @export
+rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
+  # When the graph is not null, then use it as a seed (starting point)
+  if (length(graph)) {
+    d <- dgr(graph)
+    d[d==0] <- 1
+    rgraph_ba_cpp(graph, d, m, t)
+  }
+  else rgraph_ba_new_cpp(m, t)
 }

@@ -23,10 +23,10 @@ knitr::opts_chunk$set(fig.height=5, fig.width=8, fig.align="center",
 library(netdiffuseR)
 ```
 
-```{r DGP}
+```{r DGP, eval=TRUE}
 # Generating random data
 set.seed(123)
-graph <- rand_graph(n=100,t=5)
+graph <- rgraph_er(n=100,t=5)
 toa <- sample(2000:(2000+length(graph)-1), dim(graph[[1]])[1], TRUE)
 
 # Threshold

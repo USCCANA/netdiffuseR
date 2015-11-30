@@ -82,7 +82,7 @@
 #'
 #' # Creating a random dynamic graph
 #' set.seed(943)
-#' graph <- rand_graph(n=100, t=10)
+#' graph <- rgraph_er(n=100, t=10)
 #' toa <- sample.int(10, 100, TRUE)
 #'
 #' # Computing infection and susceptibility (K=1)

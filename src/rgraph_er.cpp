@@ -19,7 +19,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::sp_mat rand_graph_cpp(
+arma::sp_mat rgraph_er_cpp(
     int n=10, double p = 0.3, bool undirected=true,
     bool weighted=false, bool self=false) {
 
@@ -50,13 +50,13 @@ arma::sp_mat rand_graph_cpp(
 }
 
 // [[Rcpp::export]]
-List rand_dyn_graph_cpp(
+List rgraph_er_dyn_cpp(
     int n=10, int t=3, double p = 0.3, bool undirected=true,
     bool weighted=false, bool self=false) {
 
   List graphs(t);
   for(int i=0;i<t;i++)
-    graphs[i] = rand_graph_cpp(n, p, undirected, weighted, self);
+    graphs[i] = rgraph_er_cpp(n, p, undirected, weighted, self);
 
   return graphs;
 

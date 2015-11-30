@@ -86,7 +86,7 @@ correctly encoded, so when going back (using \code{edgelist_to_adjmat})
 # Base data
 set.seed(123)
 n <- 5
-edgelist <- rand_graph(n, as.edgelist=TRUE)
+edgelist <- rgraph_er(n, as.edgelist=TRUE)
 times <- sample.int(3, nrow(edgelist), replace=TRUE)
 w <- abs(rnorm(nrow(edgelist)))
 

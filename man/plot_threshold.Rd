@@ -62,7 +62,7 @@ and threshold level, y-axis.
 set.seed(1234)
 n <- 6
 nper <- 5
-graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
 toa <- sample(2000:(2000+nper-1), n, TRUE)
 adopt <- toa_mat(toa)
 

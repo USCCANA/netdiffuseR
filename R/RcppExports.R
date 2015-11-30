@@ -136,16 +136,20 @@ edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_con
     .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary)
 }
 
-rand_graph_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('netdiffuseR_rand_graph_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
+rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
+    .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t)
 }
 
-rand_dyn_graph_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('netdiffuseR_rand_dyn_graph_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
+rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
+    .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
 }
 
-scale_free_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
-    .Call('netdiffuseR_scale_free_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
+rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
+    .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
+}
+
+rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
+    .Call('netdiffuseR_rgraph_er_dyn_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
 }
 
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {

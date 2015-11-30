@@ -27,8 +27,8 @@ a matrix), or a matrix of size \eqn{n\times T}{n * T}.
 Computes the requested degree measure for each node in the graph.
 }
 \examples{
-# Creating a directed graph
-graph <- rand_graph(undirected=FALSE)
+# Creating an undirected graph
+graph <- rgraph_ba()
 graph
 
 # Comparing degree measurements

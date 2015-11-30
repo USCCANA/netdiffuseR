@@ -54,7 +54,7 @@ output:
 ```{r ex1: Random graph, warning=FALSE, message=FALSE}
 library(netdiffuseR)
 set.seed(123)
-graph <- rand_graph()
+graph <- rgraph_er()
 graph
 ```
 ----------------
@@ -81,7 +81,7 @@ sna::gplot(graph)
 ```{r ex1 Degree, warning=FALSE, message=FALSE}
 # Creating a directed graph
 set.seed(123)
-graph <- rand_graph(n=4,undirected=FALSE)
+graph <- rgraph_er(n=4,undirected=FALSE)
 graph
 ```
 
@@ -114,7 +114,7 @@ isolated(graph, undirected=FALSE)
 <div class="columns-2">
 ```{r ex2: Dyn Random graph, warning=FALSE, message=FALSE}
 set.seed(1234)
-graph <- rand_graph(n=5,t=3)
+graph <- rgraph_er(n=5,t=3)
 graph
 
 # Vector of adoption times

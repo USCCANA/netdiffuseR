@@ -172,47 +172,61 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// rand_graph_cpp
-arma::sp_mat rand_graph_cpp(int n, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rand_graph_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+// rgraph_ba_cpp
+arma::sp_mat rgraph_ba_cpp(arma::sp_mat graph, arma::colvec dgr, int m, int t);
+RcppExport SEXP netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    __result = Rcpp::wrap(rand_graph_cpp(n, p, undirected, weighted, self));
-    return __result;
-END_RCPP
-}
-// rand_dyn_graph_cpp
-List rand_dyn_graph_cpp(int n, int t, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rand_dyn_graph_cpp(SEXP nSEXP, SEXP tSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type dgr(dgrSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    __result = Rcpp::wrap(rand_dyn_graph_cpp(n, t, p, undirected, weighted, self));
+    __result = Rcpp::wrap(rgraph_ba_cpp(graph, dgr, m, t));
     return __result;
 END_RCPP
 }
-// scale_free_cpp
-arma::sp_mat scale_free_cpp(int m0, int m, int t);
-RcppExport SEXP netdiffuseR_scale_free_cpp(SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP) {
+// rgraph_ba_new_cpp
+arma::sp_mat rgraph_ba_new_cpp(int m0, int m, int t);
+RcppExport SEXP netdiffuseR_rgraph_ba_new_cpp(SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< int >::type m0(m0SEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
-    __result = Rcpp::wrap(scale_free_cpp(m0, m, t));
+    __result = Rcpp::wrap(rgraph_ba_new_cpp(m0, m, t));
+    return __result;
+END_RCPP
+}
+// rgraph_er_cpp
+arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
+RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    __result = Rcpp::wrap(rgraph_er_cpp(n, p, undirected, weighted, self));
+    return __result;
+END_RCPP
+}
+// rgraph_er_dyn_cpp
+List rgraph_er_dyn_cpp(int n, int t, double p, bool undirected, bool weighted, bool self);
+RcppExport SEXP netdiffuseR_rgraph_er_dyn_cpp(SEXP nSEXP, SEXP tSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    __result = Rcpp::wrap(rgraph_er_dyn_cpp(n, t, p, undirected, weighted, self));
     return __result;
 END_RCPP
 }

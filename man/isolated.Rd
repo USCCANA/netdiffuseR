@@ -29,7 +29,7 @@ Find and remove unconnected vertices from the graph.
 \examples{
 # Generating random graph
 set.seed(123)
-adjmat <- rand_graph()
+adjmat <- rgraph_er()
 
 # Making nodes 1 and 4 isolated
 adjmat[c(1,4),] <- 0
@@ -45,7 +45,7 @@ drop_isolated(adjmat)
 
 
 # Now with a dynamic graph
-graph <- rand_graph(n=10, t=3)
+graph <- rgraph_er(n=10, t=3)
 
 # Making 1 and 5 isolated
 graph <- lapply(graph, "[<-", i=c(1,5), j=1:10, value=0)

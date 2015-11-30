@@ -65,7 +65,7 @@ This plotting function was inspired by Aral, S., & Walker, D. (2012).
 set.seed(1234)
 n <- 500
 nper <- 30
-graph <- rand_graph(n,nper, p=.2, undirected = FALSE)
+graph <- rgraph_er(n,nper, p=.2, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 
 # Visualizing distribution of suscep/infect
