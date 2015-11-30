@@ -30,34 +30,28 @@ using namespace Rcpp;
  *  2: Degree
  */
 // [[Rcpp::export]]
-arma::icolvec degree_cpp(
+arma::colvec degree_cpp(
     const arma::sp_mat & adjmat, const int & cmode=2,
     bool undirected=true, bool self=false) {
 
-  int n = adjmat.n_cols;
-  arma::icolvec indegree(n, arma::fill::zeros);
-  arma::icolvec oudegree(n, arma::fill::zeros);
+  if (cmode < 0 || cmode > 2) stop("Invalid degree");
 
-  int m;
-  double val;
-  for(int i=0;i<n;i++) {
-    m=n;
-    if (undirected) m = i;
-    for(int j=0;j<m;j++) {
-
-      // Checking out whether compute self or not
-      if (!self && i==j) continue;
-
-      val = adjmat.at(i,j);
-
-      if (val!=0.0) {
-        if ((cmode!=1) | undirected) indegree.at(j) += val;
-        if ((cmode!=0) | undirected) oudegree.at(i) += val;
-      }
-    }
+  // Calculating row/col sums
+  arma::sp_mat degree(adjmat.n_cols, 1);
+  if (cmode == 2) {
+    if (undirected) degree = sum(adjmat,0).t();
+    else degree = sum(adjmat,0).t() + sum(adjmat, 1);
   }
+  else if (cmode == 0) degree = sum(adjmat, 0).t();
+  else if (cmode == 1) degree = sum(adjmat, 1);
 
-  return indegree+oudegree;
+  // Checking if self or not
+  arma::mat loop = arma::conv_to<arma::mat>::from(adjmat.diag());
+  if (cmode == 2 && !self) degree = degree - loop;
+  else degree = degree - loop/2;
+
+  arma::mat output = arma::conv_to< arma::mat >::from(degree);
+  return output.col(0);
 }
 
 /* **R
@@ -123,7 +117,7 @@ arma::mat exposure_cpp(
       if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
-      arma::icolvec degree = degree_cpp(graph_t, wtype - 2, undirected);
+      arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
 
       NUMERATOR = graph_t*(cumadopt.col(t) % degree);
       if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;

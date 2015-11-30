@@ -19,7 +19,7 @@
 
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#include "rand_graph.h"
+// #include "rand_graph.h"
 
 using namespace Rcpp;
 
