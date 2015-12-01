@@ -30,7 +30,7 @@ library(netdiffuseR)
 set.seed(1234)
 n <- 100
 nper <- 20
-graph <- rand_graph(n,nper, p=.40, undirected = FALSE)
+graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 head(toa)
 
@@ -49,7 +49,7 @@ n <- 6
 nper <- 5
 toa  <- sample(2000:(2000+nper-1), n, TRUE)
 nper <- length(unique(toa))
-graph <- rand_graph(n,nper, p=.3, undirected = FALSE)
+graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
 adopt <- toa_mat(toa)
 
 # Computing exposure

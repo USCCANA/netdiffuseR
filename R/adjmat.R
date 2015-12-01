@@ -451,7 +451,7 @@ isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     array = isolated.array(graph, undirected),
     list = isolated.list(graph, undirected)
   )
-  UseMethod("isolated")
+  # UseMethod("isolated")
 }
 
 # @export

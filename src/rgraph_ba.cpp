@@ -20,7 +20,8 @@ arma::sp_mat rgraph_ba_cpp(
   dgr_new.subvec(0, m0-1) = dgr;
 
   // Start the process, K is sum(dgr)
-  int K = sum(dgr_new);
+  int K = sum(dgr);
+
   for(int i=0;i<t;i++) {
     // The number of conections is trucated by the number of vertices in the graph
     int m1 = m;
@@ -31,14 +32,17 @@ arma::sp_mat rgraph_ba_cpp(
       double randdraw = unif_rand();
 
       // Calculating probabilities of been drawn. -cump- is the cumsum of
+      // std::cout << "NEW LINE: "<< sum(dgr_new.subvec(0,m0)/(K + 1))<< "\t" <<
+        // dgr_new.subvec(0,m0).t()/(K + 1) << dgr_new.subvec(0,m0).t();
       double cump = 0.0;
       for (int k=0; k<m0; k++) {
+
         cump += dgr_new.at(k)/(K + 1);
 
         // Links to the set of previous vertices
         if (randdraw <= cump) {
           graph_new.at(m0, k) += 1.0, graph_new.at(k, m0) += 1.0;
-          dgr_new.at(k) += 1.0, dgr_new.at(m0) += 1.0;
+          dgr_new.at(k) += 1.0;
 
           // Sumation of degrees
           K += 2;
@@ -49,7 +53,7 @@ arma::sp_mat rgraph_ba_cpp(
         if ((k+1) == m0) {
           // printf("yes\n");
           graph_new.at(m0,m0) += 2.0;
-          dgr_new.at(m0) += 2.0;
+          dgr_new.at(m0) += 1.0;
 
           // Sumation of degrees
           K += 2;
@@ -69,6 +73,8 @@ arma::sp_mat rgraph_ba_cpp(
 arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10) {
   int n = m0;
   arma::sp_mat graph(n, n);
+  graph.diag() = arma::ones(n)*2;
+
   arma::colvec dgr(n, arma::fill::ones);
   dgr = dgr*2;
   return rgraph_ba_cpp(graph, dgr, m, t);

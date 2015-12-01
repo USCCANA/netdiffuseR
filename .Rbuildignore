@@ -5,7 +5,7 @@
 .*\.old
 ^doc$
 
-# Binari files
+# Binary files
 .*\.tar\.gz
 .*\.zip
 .*\.xls
@@ -13,4 +13,5 @@
 .*\.pdf
 
 # Misc
-^README\.Rmd$
+README[.]Rmd
+README[.]md

@@ -76,7 +76,12 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
   return(graph)
 }
 
-#' @rdname rgraph_er
+#' Barabasi-Albert model
+#' @param m0 Integer scalar. Number of initial vertices in the graph.
+#' @param m Integer scalar. Number of new edges per vertex added.
+#' @param t Integer scalar. Number of time periods (steps).
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @return A graph.
 #' @export
 rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   # When the graph is not null, then use it as a seed (starting point)
@@ -85,5 +90,5 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
     d[d==0] <- 1
     rgraph_ba_cpp(graph, d, m, t)
   }
-  else rgraph_ba_new_cpp(m, t)
+  else rgraph_ba_new_cpp(m0, m, t)
 }

@@ -254,11 +254,11 @@ plot_threshold <- function(
 ) {
   switch (class(graph),
     array = plot_threshold.array(
-      graph, exposure, toa, times.recode, undirected, no.contemporary, main,
+      graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...),
     list = plot_threshold.list(
-      graph, exposure, toa, times.recode, undirected, no.contemporary, main,
+      graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...
     )
