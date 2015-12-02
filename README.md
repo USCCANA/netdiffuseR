@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/USCCANA/diffusiontest/badge.svg?branch=master&service=github)](https://coveralls.io/github/USCCANA/diffusiontest?branch=master)
+
 diffusiontest: Network Analysis for Diffusion of Innovations
 ============================================================
 
@@ -13,7 +15,7 @@ Installation
 Using the `devtools` package, you can install `diffusiontest` dev version as follows
 
 ``` r
-devtools::install_github('srdyal/diffusiontest')
+devtools::install_github('USCCANA/diffusiontest')
 ```
 
 [1] Corresponding author tvalente at usc.edu

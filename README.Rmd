@@ -7,6 +7,8 @@ output:
     variant: markdown_github
 ---
 
+[![Coverage Status](https://coveralls.io/repos/USCCANA/diffusiontest/badge.svg?branch=master&service=github)](https://coveralls.io/github/USCCANA/diffusiontest?branch=master)
+
 # diffusiontest: Network Analysis for Diffusion of Innovations
 
 This package contains functions useful for analyzing network data for diffusion of innovations applications.
