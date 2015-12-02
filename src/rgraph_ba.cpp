@@ -1,6 +1,5 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-// #include "stats.h"
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -81,7 +80,7 @@ arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10) {
 }
 
 
-/***R
+/* **R
 library(Matrix)
 set.seed(123)
 graph <- rgraph_ba_cpp(t = 500, m=1)
