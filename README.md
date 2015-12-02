@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/USCCANA/diffusiontest/badge.svg?branch=master&service=github)](https://coveralls.io/github/USCCANA/diffusiontest?branch=master)
+[![Build Status](https://travis-ci.org/USCCANA/diffusiontest.svg?branch=master)](https://travis-ci.org/USCCANA/diffusiontest)
 
 diffusiontest: Network Analysis for Diffusion of Innovations
 ============================================================
