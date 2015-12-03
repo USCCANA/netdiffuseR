@@ -144,6 +144,10 @@ rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
 }
 
+persistant <- function(graph, i, j, n) {
+    .Call('netdiffuseR_persistant', PACKAGE = 'netdiffuseR', graph, i, j, n)
+}
+
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }

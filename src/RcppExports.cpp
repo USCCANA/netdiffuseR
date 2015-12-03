@@ -199,6 +199,20 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// persistant
+double persistant(const List& graph, int i, int j, int n);
+RcppExport SEXP netdiffuseR_persistant(SEXP graphSEXP, SEXP iSEXP, SEXP jSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const List& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    Rcpp::traits::input_parameter< int >::type j(jSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    __result = Rcpp::wrap(persistant(graph, i, j, n));
+    return __result;
+END_RCPP
+}
 // rgraph_er_cpp
 arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
 RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {

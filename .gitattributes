@@ -1,6 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Lines added from https://github.com/krlmlr/r-appveyor/blob/master/.gitattributes
+data/* binary
+src/* text=lf
+R/* text=lf
+
 # Custom for Visual Studio
 *.cs     diff=csharp
 
