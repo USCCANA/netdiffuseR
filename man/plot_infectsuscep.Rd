@@ -63,8 +63,8 @@ This plotting function was inspired by Aral, S., & Walker, D. (2012).
 \examples{
 # Generating a random graph
 set.seed(1234)
-n <- 500
-nper <- 30
+n <- 100
+nper <- 20
 graph <- rgraph_er(n,nper, p=.2, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 
@@ -80,8 +80,8 @@ of Social Networks". Science, 337(6092), 337–341.
 Infectiousness and susceptibility are computed via \code{\link{infection}} and
 \code{\link{susceptibility}}.
 
-Other visualizations: \code{\link{plot_diffnet}},
-  \code{\link{plot_threshold}}
+Other visualizations: \code{\link{hazard_rate}},
+  \code{\link{plot_diffnet}}, \code{\link{plot_threshold}}
 }
 \keyword{hplot}
 

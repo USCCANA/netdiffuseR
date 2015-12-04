@@ -77,7 +77,8 @@ adopt <- toa_mat(toa)
 plot_diffnet(graph, adopt$cumadopt)
 }
 \seealso{
-Other visualizations: \code{\link{plot_infectsuscep}},
+Other visualizations: \code{\link{hazard_rate}},
+  \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }
 \keyword{hplot}

@@ -21,8 +21,10 @@ Imports:
     SparseM,
     methods
 Suggests:
-    knitr
+    knitr,
+    testthat
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
+Suggests: testthat, knitr
 RoxygenNote: 5.0.1
 Encoding: UTF-8

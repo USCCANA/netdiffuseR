@@ -139,7 +139,7 @@ plot_diffnet.list <- function(graph, cumadopt,
                          mar=rep(1,4) + 0.1, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  cumgraph <- Matrix::Matrix(0, n, n, sparse=TRUE)
+  cumgraph <- Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
   for(i in 1:t) {
     cumgraph <- cumgraph + graph[[i]]
   }
@@ -287,7 +287,7 @@ plot_threshold.list <- function(
   n <- nrow(graph[[1]])
 
   # Step 1: Creating the cumulative graph
-  cumgraph <- Matrix::Matrix(0, n, n, sparse=TRUE)
+  cumgraph <- Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
   for(i in 1:t) {
     cumgraph <- cumgraph + graph[[i]]
   }
@@ -390,8 +390,8 @@ plot_threshold.list <- function(
 #' @examples
 #' # Generating a random graph
 #' set.seed(1234)
-#' n <- 500
-#' nper <- 30
+#' n <- 100
+#' nper <- 20
 #' graph <- rgraph_er(n,nper, p=.2, undirected = FALSE)
 #' toa <- sample(1:(1+nper-1), n, TRUE)
 #'

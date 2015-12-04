@@ -2,33 +2,72 @@
 % Please edit documentation in R/stats.R
 \name{hazard_rate}
 \alias{hazard_rate}
-\title{Graph Hazard Rate}
+\alias{plot.diffnet_hr}
+\alias{plot_hazarrate}
+\title{Network Hazard Rate}
 \usage{
-hazard_rate(cumadopt)
+hazard_rate(cumadopt, no.plot = FALSE, include.grid = TRUE, ...)
+
+\method{plot}{diffnet_hr}(x, y, main = "Hazard Rate", xlab = "Time",
+  ylab = "Hazard Rate", include.grid = TRUE, bg = "lightblue", ...)
 }
 \arguments{
 \item{cumadopt}{A \eqn{n\times T}{n * T}. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
+
+\item{no.plot}{Logical scalar. When TRUE, suppress plotting (only returns hazard rates).}
+
+\item{include.grid}{Logical scalar. When TRUE includes a grid on the plot.}
+
+\item{...}{further arguments to be passed to \code{\link{plot}}}
+
+\item{x}{An object of class \code{diffnet_hr}.}
+
+\item{y}{ignored.}
+
+\item{main}{Title of the plot}
+
+\item{xlab}{x-axis lab}
+
+\item{ylab}{y-axis lab}
+
+\item{bg}{Character scalar. Color of the points.}
 }
 \value{
-A row vector of size \eqn{T} with hazard rates for \eqn{t>1}.
+A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.
+The class of the object is only used by the S3 plot method.
 }
 \description{
-Computes the hazard rate of the network at each period of time.
+Calculate and plot the hazard rate of the network.
 }
 \details{
-For \eqn{t>1}, hazard rate is calculated as
+This function computes hazard rate, plots it and returns the hazard rate vector
+invisible (so is not printed on the console). For \eqn{t>1}, hazard rate is calculated as
 
 \deqn{\frac{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
 
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 the number of vertices in the graph.
 }
+\examples{
+# Creating a random vector of times of adoption
+toa <- sample(2000:2005, 20, TRUE)
+
+# Computing cumulative adoption matrix
+cumadopt <- toa_mat(toa)$cumadopt
+
+# Visualizing the hazard rate
+hazard_rate(cumadopt)
+}
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{infection}}, \code{\link{struct_equiv}},
   \code{\link{threshold}}
+
+Other visualizations: \code{\link{plot_diffnet}},
+  \code{\link{plot_infectsuscep}},
+  \code{\link{plot_threshold}}
 }
 \keyword{univar}
 

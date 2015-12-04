@@ -6,15 +6,17 @@
 #' getOption("diffnet.multiple")
 #' getOption("diffnet.self")
 #' @return The full list of options follows:
-#' \item{undirected}{TRUE}
+#' \item{undirected}{FALSE}
 #' \item{self}{FALSE}
 #' \item{multiple}{FALSE}
+#' \item{tol}{1e-8 (used for package testing)}
 #' @name netdiffuseR-options
 NULL
 .onLoad <- function(libname, pkgname) {
   options(
-    diffnet.undirected=TRUE,
+    diffnet.undirected=FALSE,
     diffnet.self=FALSE,
-    diffnet.multiple=FALSE
+    diffnet.multiple=FALSE,
+    diffnet.tol=1e-8
   )
 }

@@ -45,7 +45,7 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
             '"indegree", "outdegree" or "degree".')
 
   # Computing degree
-  output <- degree_cpp(Matrix::Matrix(graph), cmode, undirected, self)
+  output <- degree_cpp(methods::as(graph, "dgCMatrix"), cmode, undirected, self)
   if (length(dimnames(graph)[[1]]))
     rownames(output) <- dimnames(graph)[[1]]
 
@@ -98,7 +98,7 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
   output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,i] <- dgr(Matrix::Matrix(graph[,,i]), cmode, undirected, self)
+    output[,i] <- dgr(methods::as(graph[,,i], "dgCMatrix"), cmode, undirected, self)
 
   # Adding names
   if (length(dimnames(graph)[[3]]))
@@ -225,27 +225,61 @@ cumulative_adopt_count <- function(cumadopt) {
   return(x)
 }
 
-#' Graph Hazard Rate
+#' Network Hazard Rate
 #'
-#' Computes the hazard rate of the network at each period of time.
-#'
+#' Calculate and plot the hazard rate of the network.
+#' @aliases plot_hazarrate
 #' @param cumadopt A \eqn{n\times T}{n * T}. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
+#' @param x An object of class \code{diffnet_hr}.
+#' @param y ignored.
+#' @param main Title of the plot
+#' @param xlab x-axis lab
+#' @param ylab y-axis lab
+#' @param include.grid Logical scalar. When TRUE includes a grid on the plot.
+#' @param bg Character scalar. Color of the points.
+#' @param no.plot Logical scalar. When TRUE, suppress plotting (only returns hazard rates).
+#' @param ... further arguments to be passed to \code{\link{plot}}
 #' @details
-#' For \eqn{t>1}, hazard rate is calculated as
+#'
+#' This function computes hazard rate, plots it and returns the hazard rate vector
+#' invisible (so is not printed on the console). For \eqn{t>1}, hazard rate is calculated as
 #'
 #' \deqn{\frac{q_t - q_{t-1}}{n - q_{t-1}}}{[q(t) - q(t-1)]/[n - q(t-1)]}
 #'
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 #' the number of vertices in the graph.
-#' @return A row vector of size \eqn{T} with hazard rates for \eqn{t>1}.
+#' @return A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.
+#' The class of the object is only used by the S3 plot method.
 #' @family statistics
+#' @family visualizations
 #' @keywords univar
+#' @examples
+#' # Creating a random vector of times of adoption
+#' toa <- sample(2000:2005, 20, TRUE)
+#'
+#' # Computing cumulative adoption matrix
+#' cumadopt <- toa_mat(toa)$cumadopt
+#'
+#' # Visualizing the hazard rate
+#' hazard_rate(cumadopt)
 #' @export
-hazard_rate <- function(cumadopt) {
+hazard_rate <- function(cumadopt, no.plot=FALSE, include.grid=TRUE, ...) {
   x <- hazard_rate_cpp(cumadopt)
   dimnames(x) <- list("hazard", colnames(cumadopt))
-  x
+  class(x) <- c("diffnet_hr", class(x))
+  if (!no.plot) plot.diffnet_hr(x, include.grid=include.grid, ...)
+  invisible(x)
+}
+
+#' @rdname hazard_rate
+#' @export
+plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
+                            include.grid=TRUE, bg="lightblue",
+                            ...) {
+  plot(y=t(x), x=colnames(x), type="l", main=main, xlab=xlab, ylab=ylab, ...)
+  if (include.grid) grid()
+  points(y=t(x), x=colnames(x), pch=21, bg=bg)
 }
 
 #' Retrive threshold levels from the exposure matrix

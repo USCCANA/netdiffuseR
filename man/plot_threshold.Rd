@@ -81,7 +81,8 @@ plot_threshold(graph, expos, toa, vertex.cex = indegree)
 Use \code{\link{threshold}} to retrieve the corresponding threshold
 obtained returned by \code{\link{exposure}}.
 
-Other visualizations: \code{\link{plot_diffnet}},
+Other visualizations: \code{\link{hazard_rate}},
+  \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}}
 }
 \keyword{hplot}

@@ -5,9 +5,10 @@
 \title{\pkg{netdiffuseR} default options}
 \value{
 The full list of options follows:
-\item{undirected}{TRUE}
+\item{undirected}{FALSE}
 \item{self}{FALSE}
 \item{multiple}{FALSE}
+\item{tol}{1e-8 (used for package testing)}
 }
 \description{
 \pkg{netdiffuseR} default options
