@@ -56,7 +56,7 @@ out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 
 ### Threshold
 
-```{r, plot_threshold, fig.height=8}
+```{r, plot_threshold, fig.height=7}
 # Generating a random graph
 set.seed(123)
 n <- 6
