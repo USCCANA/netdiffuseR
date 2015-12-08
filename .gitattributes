@@ -20,3 +20,7 @@ R/* text=lf
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Images
+*.png diff=exif
+
