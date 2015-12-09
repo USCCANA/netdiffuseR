@@ -27,7 +27,6 @@
 #' details).
 #' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 #' (see details).
-#' @param ... Further arguments to be passed to the matrix method.
 #' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
 #' By default, the function will \code{\link{recode}} the edgelist before starting.
 #'
@@ -90,17 +89,17 @@
 edgelist_to_adjmat <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
-  undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, recode.ids=TRUE, ...) {
+  undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
+  use.incomplete=TRUE, recode.ids=TRUE) {
 
   switch (class(edgelist),
     data.frame = edgelist_to_adjmat.data.frame(
       edgelist, weights, times, t, simplify, undirected, self, multiple,
-      use.incomplete, recode.ids, ...
+      use.incomplete, recode.ids
     ),
     matrix = edgelist_to_adjmat.matrix(
       edgelist, weights, times, t, simplify, undirected, self, multiple,
-      use.incomplete, recode.ids, ...)
+      use.incomplete, recode.ids)
   )
 }
 
@@ -109,9 +108,12 @@ edgelist_to_adjmat <- function(
 edgelist_to_adjmat.data.frame <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
-  undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, recode.ids=TRUE, ...) {
-  edgelist_to_adjmat.matrix(as.matrix(edgelist), ...)
+  undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
+  use.incomplete=TRUE, recode.ids=TRUE) {
+
+  edgelist_to_adjmat.matrix(as.matrix(edgelist), weights, times, t, simplify,
+                            undirected, self, multiple, use.incomplete,
+                            recode.ids)
 }
 
 # @rdname edgelist_to_adjmat
@@ -119,8 +121,8 @@ edgelist_to_adjmat.data.frame <- function(
 edgelist_to_adjmat.matrix <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
-  undirected=FALSE, self=FALSE, multiple=FALSE,
-  use.incomplete=TRUE, recode.ids=TRUE, ...) {
+  undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
+  use.incomplete=TRUE, recode.ids=TRUE) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -204,7 +206,7 @@ edgelist_to_adjmat.matrix <- function(
 
 #' @rdname edgelist_to_adjmat
 #' @export
-adjmat_to_edgelist <- function(graph, undirected=TRUE) {
+adjmat_to_edgelist <- function(graph, undirected=getOption("diffnet.undirected")) {
 
   switch (class(graph),
           list      = adjmat_to_edgelist.list(graph, undirected),
@@ -216,19 +218,19 @@ adjmat_to_edgelist <- function(graph, undirected=TRUE) {
 
 # @rdname edgelist_to_adjmat
 # @export
-adjmat_to_edgelist.matrix <- function(graph, undirected=TRUE) {
+adjmat_to_edgelist.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   adjmat_to_edgelist_cpp(methods::as(graph, "dgCMatrix"), undirected)
 }
 
 # @rdname edgelist_to_adjmat
 # @export
-adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=TRUE) {
+adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")) {
   adjmat_to_edgelist_cpp(graph, undirected)
 }
 
 # @rdname edgelist_to_adjmat
 # @export
-adjmat_to_edgelist.array <- function(graph, undirected=TRUE) {
+adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
   for (i in 1:dim(graph)[3]) {
@@ -237,12 +239,12 @@ adjmat_to_edgelist.array <- function(graph, undirected=TRUE) {
     times <- c(times, rep(i,nrow(x)))
   }
 
-  return(list(edgelist, times))
+  return(list(edgelist=edgelist, times=times))
 }
 
 # @rdname edgelist_to_adjmat
 # @export
-adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
+adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirected")) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
   for (i in 1:length(graph)) {
@@ -251,7 +253,7 @@ adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
     times <- c(times, rep(i,nrow(x)))
   }
 
-  return(list(edgelist, times))
+  return(list(edgelist=edgelist, times=times))
 }
 
 # # Benchmark with the previous version
@@ -281,7 +283,6 @@ adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
 #' @param times Integer vector of size \eqn{n} containing time of adoption of the innovation.
 #' @param recode Logical scalar. When TRUE recodes time (see details).
 #' @param labels Character vector of size \eqn{n}. Labels (ids) of the vertices.
-#' @param ... Ignored.
 #' @details
 #'
 #' By construction this function requires time units to be between 1 and T, where
@@ -293,25 +294,25 @@ adjmat_to_edgelist.list <- function(graph, undirected=TRUE) {
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
-toa_mat <- function(times, recode=TRUE, labels=NULL, ...) {
+toa_mat <- function(times, recode=TRUE, labels=NULL) {
   switch(class(times),
-    numeric = toa_mat.numeric(times, recode, labels, ...),
-    integer = toa_mat.integer(times, recode, labels, ...)
+    numeric = toa_mat.numeric(times, recode, labels),
+    integer = toa_mat.integer(times, recode, labels)
   )
   # UseMethod("toa_mat")
 }
 
 # @rdname toa_mat
 # @export
-toa_mat.numeric <- function(times, recode=TRUE, labels=NULL, ...) {
+toa_mat.numeric <- function(times, recode=TRUE, labels=NULL) {
   if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
   times <- as.integer(times)
-  toa_mat.integer(times, recode)
+  toa_mat.integer(times, recode, labels)
 }
 
 # @rdname toa_mat
 # @export
-toa_mat.integer <- function(times, recode=TRUE, labels=NULL, ...) {
+toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
   # Rescaling
   oldtimes <- range(times)
   oldtimes <- oldtimes[1]:oldtimes[2]

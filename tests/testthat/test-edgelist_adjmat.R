@@ -1,6 +1,9 @@
-context("edgelist to adjmat and vice-versa")
+################################################################################
+# edgelist_to_adjmat <--> adjmat_to_edgelist
+################################################################################
+context("Read/Write graphs edgelist to adjmat and vice-versa")
 
-# Graph with attributes
+# Directed graph with attributes
 edgelist <- cbind(
   c(2:4,1),
   1:4
@@ -8,21 +11,50 @@ edgelist <- cbind(
 w <- rowMeans(edgelist)
 tim <- sample(1:4, 4, TRUE)
 
-test_that("Length of inputs in edgelist_adjmat should match (detecting error)", {
-  expect_error(edgelist_to_adjmat(edgelist, weights = w[-1]), "Error.+same length")
-  expect_error(edgelist_to_adjmat(edgelist, times = tim[-1]), "Error.+same length")
-})
+EL_digraph <- list(`edgelist matrix` = edgelist, `edgelist data.frame` = as.data.frame(edgelist))
 
 # Undirected graph, generating the data
 edgelist <- cbind(
   c(2,1,4,3),
   c(1,2,3,4)
 )
+EL_graph <- list(`edgelist matrix` = edgelist, `edgelist data.frame` = as.data.frame(edgelist))
 
-edgelist_recovered <- adjmat_to_edgelist(edgelist_to_adjmat(edgelist), undirected = FALSE)
-edgelist <- edgelist[order(edgelist[,1]),]
-test_that("Undirected edgelist-adjmat-edgelist (shoudl hold)", {
-  expect_equal(edgelist_recovered, edgelist)
-})
+#-Loop over classes
+for (g in names(EL_digraph)) {
+
+  # Arguments length
+  test_that(paste0("Length of inputs in edgelist_adjmat should match (detecting error) - ",g), {
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], weights = w[-1], undirected=FALSE), "Error.+same length")
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim[-1], undirected=FALSE), "Error.+same length")
+  })
+
+  # Back and forth
+  edgelist_recovered <- adjmat_to_edgelist(
+    edgelist_to_adjmat(EL_digraph[[g]], undirected = FALSE), undirected = FALSE)
+  EL_digraph[[g]] <- EL_digraph[[g]][order(EL_digraph[[g]][,1]),]
+  test_that(paste0("Undirected static edgelist-adjmat-edgelist (should hold) - ",g), {
+    expect_equivalent(edgelist_recovered, as.matrix(EL_digraph[[g]]))
+  })
 
 
+  # ----------------------------------------------------------------------------
+  # Dynamic graphs (explicitly)
+  # ----------------------------------------------------------------------------
+
+  # Creating the output graph
+  edgelist_recovered <- adjmat_to_edgelist(edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE))
+  ord <- order(edgelist_recovered$edgelist[,1])
+  edgelist_recovered$edgelist <-edgelist_recovered$edgelist[ord,]
+  edgelist_recovered$times <-edgelist_recovered$times[ord]
+
+  # Running the test
+  test_that(paste0("Undirected dynamic edgelist-adjmat-edgelist (should hold) - ",g), {
+    expect_equivalent(edgelist_recovered$edgelist, EL_digraph[[g]])
+  })
+
+}
+
+################################################################################
+# edgelist_to_adjmat, adjmat_to_edgelist
+################################################################################

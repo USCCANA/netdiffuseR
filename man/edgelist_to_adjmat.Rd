@@ -7,7 +7,7 @@
 \usage{
 edgelist_to_adjmat(edgelist, weights = NULL, times = NULL, t = NULL,
   simplify = TRUE, undirected = FALSE, self = FALSE, multiple = FALSE,
-  use.incomplete = TRUE, recode.ids = TRUE, ...)
+  use.incomplete = TRUE, recode.ids = TRUE)
 
 adjmat_to_edgelist(graph, undirected = TRUE)
 }
@@ -38,8 +38,6 @@ details).}
 
 \item{recode.ids}{Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 (see details).}
-
-\item{...}{Further arguments to be passed to the matrix method.}
 
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
