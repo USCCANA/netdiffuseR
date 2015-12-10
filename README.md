@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/4my2mtk5cjjuslwe?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuseR)
+[![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
 
 netdiffuseR: Network Analysis for Diffusion of Innovations
 ==========================================================
