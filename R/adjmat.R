@@ -239,6 +239,13 @@ adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undire
     times <- c(times, rep(i,nrow(x)))
   }
 
+  # Adjusting the length
+  ids <- apply(edgelist, 1, paste0, collapse="")
+  times <- tapply(times, ids, min)
+
+  edgelist <- unique(edgelist)
+  edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
+
   return(list(edgelist=edgelist, times=times))
 }
 
@@ -252,6 +259,13 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
     edgelist <- rbind(edgelist, x)
     times <- c(times, rep(i,nrow(x)))
   }
+
+  # Adjusting the length
+  ids <- apply(edgelist, 1, paste0, collapse="")
+  times <- tapply(times, ids, min)
+
+  edgelist <- unique(edgelist)
+  edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
 
   return(list(edgelist=edgelist, times=times))
 }

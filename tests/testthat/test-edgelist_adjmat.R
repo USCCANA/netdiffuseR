@@ -9,6 +9,7 @@ edgelist <- cbind(
   1:4
 )
 w <- rowMeans(edgelist)
+set.seed(123)
 tim <- sample(1:4, 4, TRUE)
 
 EL_digraph <- list(`edgelist matrix` = edgelist, `edgelist data.frame` = as.data.frame(edgelist))
@@ -39,19 +40,37 @@ for (g in names(EL_digraph)) {
 
 
   # ----------------------------------------------------------------------------
-  # Dynamic graphs (explicitly)
+  # Dynamic graphs (explicitly): As lists
   # ----------------------------------------------------------------------------
 
   # Creating the output graph
-  edgelist_recovered <- adjmat_to_edgelist(edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE))
-  ord <- order(edgelist_recovered$edgelist[,1])
+  edgelist_recovered <- adjmat_to_edgelist(
+    edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE),
+    undirected = FALSE)
+
+  ord <- order(edgelist_recovered$edgelist[,1], edgelist_recovered$edgelist[,2])
   edgelist_recovered$edgelist <-edgelist_recovered$edgelist[ord,]
   edgelist_recovered$times <-edgelist_recovered$times[ord]
 
+  ord <- order(EL_digraph[[g]][,1], EL_digraph[[g]][,2])
+  EL_digraph[[g]] <- EL_digraph[[g]][ord,]
+  tim <- tim[ord]
   # Running the test
   test_that(paste0("Undirected dynamic edgelist-adjmat-edgelist (should hold) - ",g), {
-    expect_equivalent(edgelist_recovered$edgelist, EL_digraph[[g]])
+    expect_equivalent(edgelist_recovered$edgelist, as.matrix(EL_digraph[[g]]))
   })
+
+  # ----------------------------------------------------------------------------
+  # Dynamic graphs (explicitly): As arrays
+  # ----------------------------------------------------------------------------
+  array_recovered <-
+    lapply(edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE),
+           as.matrix)
+  array_recovered <- array(unlist(array_recovered),
+                              dim=c(dim(array_recovered[[1]]), length(array_recovered))
+                              )
+
+
 
 }
 
