@@ -233,15 +233,20 @@ adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=getOption("diffnet.un
 adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
+
+  # Getting the names
+  tnames <- dimnames(graph)[[3]]
+  if (!length(tnames)) tnames <- 1:dim(graph)[3]
+
   for (i in 1:dim(graph)[3]) {
     x <- adjmat_to_edgelist.matrix(graph[,,i], undirected)
     edgelist <- rbind(edgelist, x)
-    times <- c(times, rep(i,nrow(x)))
+    times <- c(times, rep(tnames[i],nrow(x)))
   }
 
   # Adjusting the length
   ids <- apply(edgelist, 1, paste0, collapse="")
-  times <- tapply(times, ids, min)
+  times <- as.integer(unname(tapply(times, ids, min)))
 
   edgelist <- unique(edgelist)
   edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
@@ -254,15 +259,20 @@ adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undire
 adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirected")) {
   edgelist <- matrix(ncol=2,nrow=0)
   times <- vector('integer',0L)
+
+  # Getting the names
+  tnames <- names(graph)
+  if (!length(tnames)) tnames <- 1:dim(graph)[3]
+
   for (i in 1:length(graph)) {
     x <- adjmat_to_edgelist.dgCMatrix(graph[[i]], undirected)
     edgelist <- rbind(edgelist, x)
-    times <- c(times, rep(i,nrow(x)))
+    times <- c(times, rep(tnames[i],nrow(x)))
   }
 
   # Adjusting the length
   ids <- apply(edgelist, 1, paste0, collapse="")
-  times <- tapply(times, ids, min)
+  times <- as.integer(unname(tapply(times, ids, min)))
 
   edgelist <- unique(edgelist)
   edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
@@ -496,11 +506,18 @@ isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
   for(i in 1:nper)
     iso[,i] <- isolated_cpp(methods::as(graph[,,i], "dgCMatrix"), undirected)
 
-  isolated <- ifelse(apply(iso, 1, sum)==nper, 1, 0)
+  # Names
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:n
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:nper
+
+  isolated <- structure(
+    ifelse(apply(iso, 1, sum)==nper, 1, 0),
+    dim=c(dim(graph)[1],1), dimnames = list(rn, "isolated"))
 
   # Naming
-  dimnames(iso) <- list(rownames(graph), dimnames(graph)[[3]])
-  names(isolated) <- rownames(graph)
+  dimnames(iso) <- list(rn, tn)
 
   list(
     isolated_t=iso,
@@ -579,7 +596,11 @@ drop_isolated.array <- function(graph, undirected=getOption("diffnet.undirected"
   n   <- dim(graph)[1]
   t   <- dim(graph)[3]
   out <- vector("list", t)
-  names(out) <- names(graph)
+
+  # Checking time names
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:t
+  names(out) <- tn
 
   # Removing
   for(i in 1:t) {
