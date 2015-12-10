@@ -4,7 +4,7 @@
 \alias{toa_mat}
 \title{Time of adoption matrix}
 \usage{
-toa_mat(times, recode = TRUE, labels = NULL, ...)
+toa_mat(times, recode = TRUE, labels = NULL)
 }
 \arguments{
 \item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}
@@ -12,8 +12,6 @@ toa_mat(times, recode = TRUE, labels = NULL, ...)
 \item{recode}{Logical scalar. When TRUE recodes time (see details).}
 
 \item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
-
-\item{...}{Ignored.}
 }
 \value{
 A list of two \eqn{n \times T}{n x T}

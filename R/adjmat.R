@@ -388,17 +388,17 @@ toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
-toa_diff <- function(times, recode=TRUE, labels=NULL, ...) {
+toa_diff <- function(times, recode=TRUE, labels=NULL) {
   switch (class(times),
-    integer = toa_diff.integer(times, recode, labels, ...),
-    numeric = toa_diff.numeric(times, recode, labels, ...)
+    integer = toa_diff.integer(times, recode, labels),
+    numeric = toa_diff.numeric(times, recode, labels)
   )
   # UseMethod("toa_diff")
 }
 
 # @rdname toa_diff
 # @export
-toa_diff.integer <- function(times, recode=TRUE, labels=NULL,...) {
+toa_diff.integer <- function(times, recode=TRUE, labels=NULL) {
   # Rescaling
   if (recode) times <- times - min(times) + 1L
   toa_diff_cpp(times)
@@ -406,7 +406,7 @@ toa_diff.integer <- function(times, recode=TRUE, labels=NULL,...) {
 
 # @rdname toa_diff
 # @export
-toa_diff.numeric <- function(times, recode=TRUE, labels=NULL,...) {
+toa_diff.numeric <- function(times, recode=TRUE, labels=NULL) {
   times <- as.integer(times)
   toa_diff.integer(times, recode)
 }

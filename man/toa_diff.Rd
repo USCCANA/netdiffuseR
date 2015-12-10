@@ -12,8 +12,6 @@ toa_diff(times, recode = TRUE, labels = NULL, ...)
 \item{recode}{Logical scalar. When TRUE recodes time (see details).}
 
 \item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
-
-\item{...}{Ignored.}
 }
 \value{
 An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of

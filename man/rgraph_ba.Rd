@@ -21,4 +21,25 @@ A graph.
 \description{
 Barabasi-Albert model
 }
+\details{
+Creates an undirected random graph of size \code{t + m0}.
+}
+\examples{
+# Using another graph as a base graph
+graph <- rgraph_ba()
+graph
+
+graph <- rgraph_ba(graph=graph)
+}
+\seealso{
+Other simulation functions: \code{\link{rgraph_er}}
+}
+\concept{
+Scale-free random graph
+
+Barabasi-Albert model
+
+Random graph
+}
+\keyword{distribution}
 

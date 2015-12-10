@@ -112,6 +112,13 @@ test_that("Dimensions of TOA mat should be ok", {
   expect_equal(t(apply(toa$adopt, 1, cumsum)), toa$cumadopt, info = "cumadopt is the cumsum")
 })
 
+test_that("Passing labels should work", {
+  labs <- letters[1:length(times)]
+  toa <- toa_mat(times, labels=labs)
+  expect_equal(rownames(toa$adopt), labs)
+  expect_equal(rownames(toa$cumadopt), labs)
+})
+
 test_that("In toa_diff, its dim should be equal to the input mat", {
   expect_equal(dim(toa_diff(times)), c(4,4))
   expect_equal(dim(toa_diff(as.integer(times))), c(4,4))
@@ -138,7 +145,7 @@ dynadjmat <- edgelist_to_adjmat(edgelist, times=tim)
 test_that("Finding isolated nodes", {
   # Static graphs --------------------------------------------------------------
 
-  # Test with matrix
+  # Test with dgCMatrix
   iso23<-iso2<-adjmat
   iso2[2,1:4] <- 0
   iso2[1:4,2] <- 0
@@ -146,8 +153,10 @@ test_that("Finding isolated nodes", {
   iso23[c(2,3),1:4] <- 0
   iso23[1:4,c(2,3)] <- 0
 
-  expect_equal(which(isolated(iso2)==1), 2, info = "only one (list)")
-  expect_equal(which(isolated(iso23)==1), c(2,3), info = "two (list)")
+  expect_equal(which(isolated(iso2)==1), 2, info = "only one (dgCMatrix)")
+  expect_equal(which(isolated(iso23)==1), c(2,3), info = "two (dgCMatrix)")
+  expect_equal(which(isolated(as.matrix(iso2))==1), 2, info = "only one (matrix)")
+  expect_equal(which(isolated(as.matrix(iso23))==1), c(2,3), info = "two (matrix)")
 
   # Test with sparse matrix
   iso2 <- as(iso2, "dgCMatrix")
@@ -195,8 +204,10 @@ test_that("Dropping isolated nodes", {
   iso2 <- as(iso2, "dgCMatrix")
   iso23 <- as(iso23, "dgCMatrix")
 
-  expect_equal(dim(drop_isolated(iso2)), c(3,3))
-  expect_equal(dim(drop_isolated(iso23)), c(2,2))
+  expect_equal(dim(drop_isolated(iso2)), c(3,3), info = "only one (dgCMatrix)")
+  expect_equal(dim(drop_isolated(iso23)), c(2,2), info = "two (dgCMatrix)")
+  expect_equal(dim(drop_isolated(as.matrix(iso2))), c(3,3), info = "only one (matrix)")
+  expect_equal(dim(drop_isolated(as.matrix(iso23))), c(2,2), info = "two (matrix)")
 
   # Dynamic graphs -------------------------------------------------------------
 

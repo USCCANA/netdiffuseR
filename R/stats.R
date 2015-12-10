@@ -46,8 +46,11 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
 
   # Computing degree
   output <- degree_cpp(methods::as(graph, "dgCMatrix"), cmode, undirected, self)
-  if (length(dimnames(graph)[[1]]))
-    rownames(output) <- dimnames(graph)[[1]]
+
+  # Naming
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:nrow(graph)
+  rownames(output) <- rn
 
   output
 }
@@ -65,7 +68,11 @@ dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.u
 
   # Computing degree
   output <- degree_cpp(graph, cmode, undirected, self)
-  rownames(output) <- rownames(graph)
+
+  # Naming
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:nrow(graph)
+  rownames(output) <- rn
 
   output
 }
@@ -81,11 +88,14 @@ dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undire
     output[,i] <- dgr(graph[[i]], cmode, undirected, self)
 
   # Adding names
-  if (length(names(graph)))
-    colnames(output) <- names(graph)
+  cn <- names(graph)
+  if (!length(cn)) cn <- 1:length(graph)
+  colnames(output) <- cn
 
-  if (length(rownames(graph[[1]])))
-    rownames(output) <- rownames(graph[[1]])
+  # Naming
+  rn <- rownames(graph[[1]])
+  if (!length(rn)) rn <- 1:nrow(graph[[1]])
+  rownames(output) <- rn
 
   output
 }
@@ -101,11 +111,14 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
     output[,i] <- dgr(methods::as(graph[,,i], "dgCMatrix"), cmode, undirected, self)
 
   # Adding names
-  if (length(dimnames(graph)[[3]]))
-    colnames(output) <- dimnames(graph)[[3]]
+  cn <- dimnames(graph)[[3]]
+  if (!length(cn)) cn <- 1:dim(graph)[3]
+  colnames(output) <- cn
 
-  if (length(dimnames(graph)[[1]]))
-    rownames(output) <- dimnames(graph)[[1]]
+  # Naming
+  rn <- dimnames(graph)[[1]]
+  if (!length(rn)) rn <- 1:nrow(graph)
+  rownames(output) <- rn
 
   output
 }

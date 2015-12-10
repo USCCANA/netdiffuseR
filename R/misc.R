@@ -24,10 +24,10 @@ recode <- function(data, ...) UseMethod("recode")
 #' @rdname recode
 #' @export
 recode.data.frame <- function(data, ...) {
-  cn <- colnames(data)
+  dn <- dimnames(data)
   data <- recode.matrix(as.matrix(data), ...)
   output <- as.data.frame(data)
-  colnames(data) <- cn
+  dimnames(output) <- dn
   attr(output, "recode") <- attr(data, "recode")
   output
 }
@@ -37,6 +37,7 @@ recode.data.frame <- function(data, ...) {
 recode.matrix <- function(data, ...) {
 
   # Checking the size of the matrix
+  dn <- dimnames(data)
   data <- as.factor(as.character(as.vector(data)))
   n <- length(data)
   output <- cbind(data[1:(n/2)], data[(n/2+1):n])
@@ -48,6 +49,8 @@ recode.matrix <- function(data, ...) {
     stringsAsFactors = FALSE)
 
   rc <- rc[order(rc[,1]),]
+
+  dimnames(output) <- dn
 
   attr(output, "recode") <- rc
   output

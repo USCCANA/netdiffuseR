@@ -11,11 +11,7 @@
 #' @param as.edgelist Logical. When TRUE the graph is presented as an edgelist
 #' instead of an adjacency matrix.
 #' @details
-#' \code{rgraph_er} Creates an Erdos-Renyi graph
-#'
-#' \code{rgraph_ba} Creates a Barabasi-Albert graph
-#' @section Erdos-Renyi (bernoulli):
-#' Basically, for each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
+#' For each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
 #' with probability \eqn{p}, this is, \eqn{Pr\{Link i-j\} = Pr\{x<p\}}{%
 #' Pr{Link i-j}}, where \eqn{x} is drawn from a \eqn{Uniform(0,1)}.
 #'
@@ -25,8 +21,6 @@
 #'
 #' In the case of dynamic graphs, the algorithm is repeated \eqn{t} times, so the
 #' networks are uncorrelated.
-#' @section Barabasi-Albert:
-#' Creates an undirected random graph of size \code{t + m0}
 #' @references
 #' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 #' \url{http://barabasi.com/networksciencebook/}.
@@ -54,8 +48,7 @@
 #' }
 #' @keywords distribution
 #' @concept Erdos-Renyi random graph
-#' @concept Scale-free random graph
-#' @concept Barabasi-Albert model
+#' @family simulation functions
 rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
 
@@ -82,6 +75,19 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' @param t Integer scalar. Number of time periods (steps).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @return A graph.
+#' @family simulation functions
+#' @concept Scale-free random graph
+#' @concept Barabasi-Albert model
+#' @concept Random graph
+#' @keywords distribution
+#' @details
+#' Creates an undirected random graph of size \code{t + m0}.
+#' @examples
+#' # Using another graph as a base graph
+#' graph <- rgraph_ba()
+#' graph
+#'
+#' graph <- rgraph_ba(graph=graph)
 #' @export
 rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   # When the graph is not null, then use it as a seed (starting point)

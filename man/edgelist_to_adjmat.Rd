@@ -6,10 +6,12 @@
 \title{Conversion between adjacency matrix and edgelist}
 \usage{
 edgelist_to_adjmat(edgelist, weights = NULL, times = NULL, t = NULL,
-  simplify = TRUE, undirected = FALSE, self = FALSE, multiple = FALSE,
-  use.incomplete = TRUE, recode.ids = TRUE)
+  simplify = TRUE, undirected = getOption("diffnet.undirected"),
+  self = getOption("diffnet.self"),
+  multiple = getOption("diffnet.multiple"), use.incomplete = TRUE,
+  recode.ids = TRUE)
 
-adjmat_to_edgelist(graph, undirected = TRUE)
+adjmat_to_edgelist(graph, undirected = getOption("diffnet.undirected"))
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and

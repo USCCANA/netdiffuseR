@@ -32,18 +32,7 @@ adjacency matrices (if t>1).
 Several random graphs algorithms.
 }
 \details{
-\code{rgraph_er} Creates an Erdos-Renyi graph
-
-\code{rgraph_ba} Creates a Barabasi-Albert graph
-}
-\note{
-The resulting adjacency matrix is store as a dense matrix, not as a
-sparse matrix, hence the user should be careful when choosing the size of
-the network.
-}
-\section{Erdos-Renyi (bernoulli)}{
-
-Basically, for each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
+For each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created
 with probability \eqn{p}, this is, \eqn{Pr\{Link i-j\} = Pr\{x<p\}}{%
 Pr{Link i-j}}, where \eqn{x} is drawn from a \eqn{Uniform(0,1)}.
 
@@ -54,10 +43,10 @@ then the strength will be set to \eqn{x}.
 In the case of dynamic graphs, the algorithm is repeated \eqn{t} times, so the
 networks are uncorrelated.
 }
-
-\section{Barabasi-Albert}{
-
-Creates an undirected random graph of size \code{t + m0}
+\note{
+The resulting adjacency matrix is store as a dense matrix, not as a
+sparse matrix, hence the user should be careful when choosing the size of
+the network.
 }
 \examples{
 \dontrun{
@@ -79,14 +68,13 @@ rgraph_er(t=5)
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 \url{http://barabasi.com/networksciencebook/}.
 }
+\seealso{
+Other simulation functions: \code{\link{rgraph_ba}}
+}
 \concept{
 Random graph
 
 Erdos-Renyi random graph
-
-Scale-free random graph
-
-Barabasi-Albert model
 }
 \keyword{distribution}
 
