@@ -28,7 +28,8 @@ dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"
     matrix = dgr.matrix(graph, cmode, undirected, self),
     array = dgr.array(graph, cmode, undirected, self),
     dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self),
-    list = dgr.list(graph, cmode, undirected, self)
+    list = dgr.list(graph, cmode, undirected, self),
+    stopifnot_graph(graph)
   )
   # UseMethod("dgr")
 }
@@ -180,7 +181,8 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
   switch (class(graph),
     array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized),
-    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized)
+    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized),
+    stopifnot_graph(graph)
   )
 }
 
@@ -193,7 +195,7 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   t <- dim(graph)[3]
   graphl <- vector("list", t)
   for (i in 1:t)
-    graphl[[i]] <- graph[,,i]
+    graphl[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
   # Calculating the exposure, and asigning names
   output <- exposure_cpp(graphl, cumadopt, wtype, v, undirected, normalized, n, t)

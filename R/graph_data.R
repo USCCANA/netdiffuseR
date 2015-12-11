@@ -28,3 +28,6 @@
 #' this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
 #' and \code{\link{names}} (in the case of dynamic graphs as lists).
 NULL
+
+stopifnot_graph <- function(x)
+  stop("No method for graph of class -",class(x),"-. Please refer to the manual 'netdiffuseR-graphs'.")

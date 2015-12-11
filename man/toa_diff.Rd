@@ -4,7 +4,7 @@
 \alias{toa_diff}
 \title{Difference in Time of Adoption (TOA) between individuals}
 \usage{
-toa_diff(times, recode = TRUE, labels = NULL, ...)
+toa_diff(times, recode = TRUE, labels = NULL)
 }
 \arguments{
 \item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}

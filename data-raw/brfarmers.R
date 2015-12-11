@@ -84,3 +84,8 @@ expo <- exposure(graph, adopt$cumadopt)
 x <- plot_threshold(graph, expo, toa, undirected = FALSE, vertex.cex = 1/5)
 x$fitted <- loess(threshold~jit, x, parametric = FALSE)$fitted
 lines(fitted~jit, x[order(x$jit),], lwd=3, col="black")
+
+threshold(exposure(graph, adopt$cumadopt), toa)
+
+hazard_rate(adopt$cumadopt)
+

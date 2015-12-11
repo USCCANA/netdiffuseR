@@ -98,7 +98,8 @@
 infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   switch (class(graph),
     array = infection.array(graph, times, normalize, K, r, expdiscount, ...),
-    list = infection.list(graph, times, normalize, K, r, expdiscount, ...)
+    list = infection.list(graph, times, normalize, K, r, expdiscount, ...),
+    stopifnot_graph(graph)
   )
 }
 
@@ -139,7 +140,8 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
   switch (class(graph),
     array = susceptibility.array(graph, times, normalize, K, r, expdiscount, ...),
-    list = susceptibility.list(graph, times, normalize, K, r, expdiscount, ...)
+    list = susceptibility.list(graph, times, normalize, K, r, expdiscount, ...),
+    stopifnot_graph(graph)
   )
 }
 

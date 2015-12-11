@@ -44,7 +44,8 @@
 select_egoalter <- function(graph, adopt, period=NULL) {
   switch (class(graph),
     array = select_egoalter.array(graph, adopt, period),
-    list = select_egoalter.list(graph, adopt, period)
+    list = select_egoalter.list(graph, adopt, period),
+    stopifnot_graph(graph)
   )
 }
 

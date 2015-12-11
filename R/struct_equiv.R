@@ -50,7 +50,8 @@ struct_equiv <- function(graph, v=1, ...) {
     matrix = struct_equiv.matrix(graph, v, ...),
     dgCMatrix = struct_equiv.dgCMatrix(graph, v, ...),
     array = struct_equiv.array(graph, v, ...),
-    list = struct_equiv.list(graph, v, ...)
+    list = struct_equiv.list(graph, v, ...),
+    stopifnot_graph(graph)
   )
 }
 

@@ -111,7 +111,8 @@ plot_diffnet <- function(
       edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
     list = plot_diffnet.list(
       graph, cumadopt, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...)
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+    stopifnot_graph(graph)
   )
 }
 
@@ -185,7 +186,9 @@ plot_diffnet.list <- function(graph, cumadopt,
     cols <- ifelse(cumadopt[,i], vertex.col[1], vertex.col[2])
     set.seed(curseed)
     # cgraph <- sna::as.sociomatrix.sna(adjmat_to_edgelist(graph[[i]], undirected))
-    sna::gplot(methods::as(graph[[i]], "matrix.csc"),
+    if (inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "matrix.csc")
+    else g <- graph[[i]]
+    sna::gplot(g,
                displaylabels = displaylabels, vertex.col = cols, coord=coords,
                edge.col = edge.col,vertex.cex = vertex.cex, label=label,
                main=sprintf(main, times[i]), ...)
@@ -261,7 +264,8 @@ plot_threshold <- function(
       graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...
-    )
+    ),
+    stopifnot_graph(graph)
   )
 }
 
@@ -410,7 +414,8 @@ plot_infectsuscep <- function(
       xlab, ylab, sub, color.palette, include.grid, ...),
     list = plot_infectsuscep.list(
       graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, ...)
+      xlab, ylab, sub, color.palette, include.grid, ...),
+    stopifnot_graph(graph)
   )
 }
 
@@ -418,7 +423,7 @@ plot_infectsuscep <- function(
 # @rdname plot_infectsuscep
 plot_infectsuscep.array <- function(graph, ...) {
   dn <- dimnames(graph)[[3]]
-  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  graph <- lapply(1:dim(graph)[3], function(x) methods::as(graph[,,x], "dgCMatrix"))
   names(graph) <- dn
   plot_infectsuscep.list(graph, ...)
 }
