@@ -100,7 +100,7 @@ edgelist_to_adjmat <- function(
     matrix = edgelist_to_adjmat.matrix(
       edgelist, weights, times, t, simplify, undirected, self, multiple,
       use.incomplete, recode.ids),
-    stopifnot_graph(graph)
+    stop("-edgelist- should be either a data.frame, or a matrix.")
   )
 }
 
