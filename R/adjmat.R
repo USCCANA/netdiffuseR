@@ -99,7 +99,8 @@ edgelist_to_adjmat <- function(
     ),
     matrix = edgelist_to_adjmat.matrix(
       edgelist, weights, times, t, simplify, undirected, self, multiple,
-      use.incomplete, recode.ids)
+      use.incomplete, recode.ids),
+    stopifnot_graph(graph)
   )
 }
 
@@ -212,7 +213,8 @@ adjmat_to_edgelist <- function(graph, undirected=getOption("diffnet.undirected")
           list      = adjmat_to_edgelist.list(graph, undirected),
           array     = adjmat_to_edgelist.array(graph, undirected),
           dgCMatrix = adjmat_to_edgelist.dgCMatrix(graph, undirected),
-          matrix    = adjmat_to_edgelist.matrix(graph, undirected)
+          matrix    = adjmat_to_edgelist.matrix(graph, undirected),
+          stopifnot_graph(graph)
   )
 }
 
@@ -321,7 +323,8 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 toa_mat <- function(times, recode=TRUE, labels=NULL) {
   switch(class(times),
     numeric = toa_mat.numeric(times, recode, labels),
-    integer = toa_mat.integer(times, recode, labels)
+    integer = toa_mat.integer(times, recode, labels),
+    stop("No method defined for class -",class(times),"-")
   )
   # UseMethod("toa_mat")
 }
@@ -391,7 +394,8 @@ toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
 toa_diff <- function(times, recode=TRUE, labels=NULL) {
   switch (class(times),
     integer = toa_diff.integer(times, recode, labels),
-    numeric = toa_diff.numeric(times, recode, labels)
+    numeric = toa_diff.numeric(times, recode, labels),
+    stop("No method defined for class -",class(times),"-")
   )
   # UseMethod("toa_diff")
 }
@@ -474,7 +478,8 @@ isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     matrix = isolated.matrix(graph, undirected),
     dgCMatrix = isolated.dgCMatrix(graph, undirected),
     array = isolated.array(graph, undirected),
-    list = isolated.list(graph, undirected)
+    list = isolated.list(graph, undirected),
+    stopifnot_graph(graph)
   )
   # UseMethod("isolated")
 }
@@ -556,9 +561,9 @@ drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     matrix = drop_isolated.matrix(graph, undirected),
     list = drop_isolated.list(graph, undirected),
     dgCMatrix = drop_isolated.dgCMatrix(graph, undirected),
-    array = drop_isolated.array(graph, undirected)
+    array = drop_isolated.array(graph, undirected),
+    stopifnot_graph(graph)
   )
-  # UseMethod("drop_isolated")
 }
 
 # @rdname isolated

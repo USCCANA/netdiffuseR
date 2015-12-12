@@ -57,8 +57,8 @@ expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 
 x<-plot_threshold(graph, expos, toa, undirected = FALSE)
 cex <- rowMeans(dgr(graph))
-cex <- cex/(max(cex) - min(cex))
-plot_threshold(graph, expos, toa, vertex.cex = cex/4)
+cex <- (cex - min(cex) + .5)/(max(cex) - min(cex) + .5)
+plot_threshold(graph, expos, toa, vertex.cex = cex/2)
 ```
 
 \clearpage

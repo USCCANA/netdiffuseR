@@ -19,7 +19,11 @@ Imports:
     sna,
     Matrix,
     SparseM,
-    methods
+    methods,
+    grDevices,
+    graphics,
+    stats,
+    utils
 Suggests:
     testthat,
     knitr

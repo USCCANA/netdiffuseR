@@ -382,6 +382,8 @@ plot_threshold.list <- function(
 #' \item{suscep}{A numeric vector of size \eqn{n} with susceptibility levels}
 #' \item{coords}{A list containing the class marks and counts used to draw the
 #' plot via \code{\link{filled.contour}} (see \code{\link{grid_distribution}})}
+#' \item{complete}{A logical vector with \code{TRUE} when the case was included in
+#' the plot. (this is relevant whenever \code{logscale=TRUE})}
 #' @family visualizations
 #' @seealso Infectiousness and susceptibility are computed via \code{\link{infection}} and
 #' \code{\link{susceptibility}}.
@@ -447,10 +449,20 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 
   # Performing classification (linear)
   if (logscale) {
-    infect<-log(infect); infect[which(!is.finite(infect))] <- 0
-    suscep<-log(suscep); suscep[which(!is.finite(suscep))] <- 0
+    infectp<-log(infect)
+    suscepp<-log(suscep)
+
+    # Only keeping complete cases
+    complete <- is.finite(infectp) & is.finite(suscepp)
+    infectp <- infectp[complete,]
+    suscepp <- suscepp[complete,]
   }
-  coords <- netdiffuseR::grid_distribution(x=infect, y=suscep, bins)
+  else {
+    infectp <- infect
+    suscepp <- suscep
+    complete <- vector(length=length(infectp))
+  }
+  coords <- netdiffuseR::grid_distribution(x=infectp, y=suscepp, bins)
 
   # Nice plot
   n <- sum(coords$z)
@@ -462,5 +474,6 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
     }, nlevels=nlevels, ...))
   # if (include.grid) grid()
 
-  invisible(list(infect=infect, suscept=suscep, coords=coords))
+  invisible(list(infect=infect, suscept=suscep, coords=coords,
+                 complete=complete))
 }

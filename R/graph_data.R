@@ -31,3 +31,113 @@ NULL
 
 stopifnot_graph <- function(x)
   stop("No method for graph of class -",class(x),"-. Please refer to the manual 'netdiffuseR-graphs'.")
+
+#' Analyze an R object to identify the class of graph (if any)
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @details This function analyzes an R object and tries to classify it among the
+#' accepted classes in \pkg{netdiffuseR}. If the object fails to fall in one of
+#' the types of graphs the function returns with an error indicating what (and
+#' when possible, where) the problem lies.
+#' @return A list of attributes including
+#' \item{type}{Character scalar. Whether is a static or a dynamic graph}
+#' \item{nper}{Integer scalar. Number of time periods}
+#' \item{n}{Integer scalar. Number of vertices in the graph}
+#' @export
+classify_graph <- function(graph) {
+
+  # Static graphs --------------------------------------------------------------
+  if (inherits(graph, "matrix") || inherits(graph, "dgCMatrix")) { # Static graphs
+    # Step 0: Should have length
+    d <- dim(graph)
+    if (!d[1])
+      stop("Nothing to do. Empty matrix.")
+
+    # Step 1: Should be square
+    if (d[1] != d[2])
+      stop("-graph- must be a square matrix\n\tdim(graph) = c(",
+           paste0(d, collapse=","),").")
+
+    # Step 3: Should be numeric
+    m <- mode(graph)
+    if (!(m %in% c("numeric", "integer")))
+      stop("-graph- should be either numeric or integer.\n\tmode(graph) =  \"",
+           m, "\".")
+
+    return(invisible(list(
+      type="static",
+      nper=0,
+      n=d[1]
+    )))
+  }
+  # Dynamic graphs (list) ------------------------------------------------------
+  else if (inherits(graph, "list")) {
+    # Step 0: Should have length!
+    t <- length(graph)
+    if (t < 2)
+      stop("-graph- must be at least of length 2.")
+
+    # Step 1: All should be of class -dgCMatrix-
+    c <- sapply(graph, inherits, "dgCMatrix")
+    if (!all(c))
+      stop("The following elements are not of class -dgCMatrix-:\n\t",
+           paste0(which(!c), collapse=", "),".")
+
+    # Step 2.1: All must be square matrices
+    d <- lapply(graph, dim)
+    s <- sapply(d, function(x) x[1] == x[2])
+
+    # Step 2.2: It must have some people!
+    if (!d[[1]])
+      stop("Nothing to do. Empty graph.")
+
+    if (!all(s))
+      stop("The following adjmat are not square:\n\t",
+           paste0(which(!s), collapse=", "),".")
+
+    # Step 3: All must have the same dimension
+    e <- unlist(d, TRUE) == d[[1]][1]
+    if (!all(e))
+      stop("The dimensions of all slices must be equal. ",
+           "The following elements don't coincide with the first slice:\n\t",
+           paste0(which(!e), collapse=", "),".")
+
+    return(invisible(list(
+      type="dynamic",
+      nper=t,
+      n=d[[1]][1])
+    ))
+
+  }
+  # Dynamic graphs (array) -----------------------------------------------------
+  else if (inherits(graph, "array")) {
+    # Step 0: it should have length!
+    d <- dim(graph)
+    if (d[3] < 2)
+      stop("-graph- must be at least of length 2.")
+
+    # Step 1: there must be some people
+    if (!d[1])
+      stop("Nothing to do. Empty matrix.")
+
+    # Step 2: It must be square
+    if (d[1] != d[2])
+      stop("Each adjmat in -graph- must be a square matrix\n\tdim(graph) = c(",
+           paste0(d, collapse=","),").")
+
+    # Step 3: Should be numeric
+    m <- mode(graph)
+    if (!(m %in% c("numeric", "integer")))
+      stop("-graph- should be either numeric or integer.\n\tmode(graph) =  \"",
+           m, "\".")
+
+    return(invisible(list(
+      type="dynamic",
+      nper=d[3],
+      n=d[1])
+    ))
+  }
+
+  # Other case (ERROR) ---------------------------------------------------------
+  stop("Not an object allowed in netdiffuseR. It must be either:\n\t",
+       "matrix, dgCMatrix, list or array.\n", "Please refer to ?\"netdiffuseR-graphs\" ")
+}

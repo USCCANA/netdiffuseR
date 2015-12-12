@@ -51,6 +51,8 @@ A list with three elements:
 \item{suscep}{A numeric vector of size \eqn{n} with susceptibility levels}
 \item{coords}{A list containing the class marks and counts used to draw the
 plot via \code{\link{filled.contour}} (see \code{\link{grid_distribution}})}
+\item{complete}{A logical vector with \code{TRUE} when the case was included in
+the plot. (this is relevant whenever \code{logscale=TRUE})}
 }
 \description{
 After calculating infectiousness and susceptibility of each individual on the
