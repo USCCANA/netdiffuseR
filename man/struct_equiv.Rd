@@ -14,9 +14,12 @@ struct_equiv(graph, v = 1, ...)
 \item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
 }
 \value{
-When \code{graph} is an adjacency matrix, it returns a square matrix,
-otherwise, in the case of an array, an array with structural equivalence for
-each network.
+If \code{graph} is a static graph, a list with the following elements:
+\item{\code{SE}}{Numeric Matrix of size \eqn{n\times n}{n * n} with Structural equivalence}
+\item{\code{d}}{Numeric Matrix of size \eqn{n\times n}{n * n} Euclidean distances}
+\item{\code{gdis}}{Numeric Matrix of size \eqn{n\times n}{n * n} Normalized geodesic distance}
+In the case of dynamic graph, is a list of size \code{t} in which each element
+contains a list as described before.
 }
 \description{
 Computes structural equivalence between ego and alter in a network
@@ -26,17 +29,17 @@ Structure equivalence is computed as presented in Valente (1995), and Burt (1987
 in particular
 
 \deqn{%
-SE_{ij} = \frac{(dmax_i - d_{ji})^v}{\sum_{k=1}^n(dmax_i-d_{ki})^v}
+SE_{ij} = \frac{(dmax_i - d_{ji})^v}{\sum_{k\neq i}^n(dmax_i-d_{ki})^v}
 }{%
 SE(ij) = [dmax(i) - d(ji)]^v/[\sum_k (dmax(i) - d(ki))^v]
 }
 
-where \eqn{d_{ji}}{d(ji)}, Eucledian distance in terms of geodesics, is defined as
+with the summation over \eqn{k\neq i}{k!=i}, and \eqn{d_{ji}}{d(ji)}, Eucledian distance in terms of geodesics, is defined as
 
 \deqn{%
-d_{ji} = \left[(z_{ji} - z_{ij})^2 + \sum_k^n (z_{jk} - z_{ik})^2 +  \sum_k^n (z_{ki} - z_{kj})^2\right]
+d_{ji} = \left[(z_{ji} - z_{ij})^2 + \sum_k^n (z_{jk} - z_{ik})^2 +  \sum_k^n (z_{ki} - z_{kj})^2\right]^\frac{1}{2}
 }{%
-d(ji) = [(z(ji) - z(ij))^2 + \sum_k (z(jk) - z(ik))^2 +  \sum_k (z_(ki) - z_(kj))^2]
+d(ji) = [(z(ji) - z(ij))^2 + \sum_k (z(jk) - z(ik))^2 +  \sum_k (z_(ki) - z_(kj))^2]^(1/2)
 }
 
 with \eqn{z_{ij}}{z(ij)} as the geodesic (shortest path) from \eqn{i} to \eqn{j}, and

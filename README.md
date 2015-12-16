@@ -99,5 +99,13 @@ To-do list
 
 -   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 -   Populate the tests folder.
+-   What to do with the `NA`/`NULL`/`NaN`/`Inf` cases in the following functions:
+    -   `infection`, `susceptibility`
+    -   `struct_equiv`
+    -   `threshold`
+    -   `exposure`
+    -   `hazard_rate`
+    -   `toa_mat`
+-   How to include *never adopters*
 
 [1] Corresponding author tvalente at usc.edu

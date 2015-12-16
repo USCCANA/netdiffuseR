@@ -13,17 +13,17 @@
 #' in particular
 #'
 #' \deqn{%
-#' SE_{ij} = \frac{(dmax_i - d_{ji})^v}{\sum_{k=1}^n(dmax_i-d_{ki})^v}
+#' SE_{ij} = \frac{(dmax_i - d_{ji})^v}{\sum_{k\neq i}^n(dmax_i-d_{ki})^v}
 #' }{%
 #' SE(ij) = [dmax(i) - d(ji)]^v/[\sum_k (dmax(i) - d(ki))^v]
 #' }
 #'
-#' where \eqn{d_{ji}}{d(ji)}, Eucledian distance in terms of geodesics, is defined as
+#' with the summation over \eqn{k\neq i}{k!=i}, and \eqn{d_{ji}}{d(ji)}, Eucledian distance in terms of geodesics, is defined as
 #'
 #' \deqn{%
-#' d_{ji} = \left[(z_{ji} - z_{ij})^2 + \sum_k^n (z_{jk} - z_{ik})^2 +  \sum_k^n (z_{ki} - z_{kj})^2\right]
+#' d_{ji} = \left[(z_{ji} - z_{ij})^2 + \sum_k^n (z_{jk} - z_{ik})^2 +  \sum_k^n (z_{ki} - z_{kj})^2\right]^\frac{1}{2}
 #' }{%
-#' d(ji) = [(z(ji) - z(ij))^2 + \sum_k (z(jk) - z(ik))^2 +  \sum_k (z_(ki) - z_(kj))^2]
+#' d(ji) = [(z(ji) - z(ij))^2 + \sum_k (z(jk) - z(ik))^2 +  \sum_k (z_(ki) - z_(kj))^2]^(1/2)
 #' }
 #'
 #' with \eqn{z_{ij}}{z(ij)} as the geodesic (shortest path) from \eqn{i} to \eqn{j}, and
@@ -34,9 +34,12 @@
 #' the higher will be the influence that the closests alters will have over ego (see
 #' Burt's paper in the reference).
 #'
-#' @return When \code{graph} is an adjacency matrix, it returns a square matrix,
-#' otherwise, in the case of an array, an array with structural equivalence for
-#' each network.
+#' @return If \code{graph} is a static graph, a list with the following elements:
+#' \item{\code{SE}}{Numeric Matrix of size \eqn{n\times n}{n * n} with Structural equivalence}
+#' \item{\code{d}}{Numeric Matrix of size \eqn{n\times n}{n * n} Euclidean distances}
+#' \item{\code{gdis}}{Numeric Matrix of size \eqn{n\times n}{n * n} Normalized geodesic distance}
+#' In the case of dynamic graph, is a list of size \code{t} in which each element
+#' contains a list as described before.
 #'
 #' @references Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus
 #' Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.
@@ -61,7 +64,14 @@ struct_equiv <- function(graph, v=1, ...) {
 struct_equiv.matrix <- function(graph, v=1, ...) {
   geod <- sna::geodist(graph, inf.replace = 0, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
-  struct_equiv_cpp(geod[["gdist"]], v)
+  output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
+
+  # Names
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:nrow(graph)
+  output <- lapply(output, "dimnames<-", value=list(rn, rn))
+
+  return(output)
 }
 
 # @rdname struct_equiv
@@ -71,16 +81,31 @@ struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
   # Into a -matrix.csc- object,
   geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = 0, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
-  struct_equiv_cpp(geod[["gdist"]], v)
+  output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
+
+  # Names
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:nrow(graph)
+  output <- lapply(output, "dimnames<-", value=list(rn, rn))
+
+  return(output)
 }
 
 # @rdname struct_equiv
 # @export
 struct_equiv.array <- function(graph, v=1, ...) {
   t <- dim(graph)[3]
-  output <- array(dim=dim(graph))
-  for(i in 1:t)
-    output[,,i] <- struct_equiv.matrix(graph[,,i], v, ...)
+  output <- vector("list", t)
+  for(i in 1:t) {
+    output[[i]] <- struct_equiv.matrix(graph[,,i], v, ...)
+  }
+
+  # Naming
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:t
+
+  names(output) <- tn
+
   output
 }
 
@@ -90,8 +115,15 @@ struct_equiv.array <- function(graph, v=1, ...) {
 struct_equiv.list <- function(graph, v=1, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  output <- vector("list", n)
+  output <- vector("list", t)
   for(i in 1:t)
-    output[[i]] <- struct_equiv.dgCMatrix(graph[[i]], v, ...)
+    output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"), v, ...)
+
+  # Naming
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:t
+
+  names(output) <- tn
+
   output
 }
