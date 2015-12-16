@@ -34,7 +34,7 @@ Calculates infectiousness and susceptibility for each node in the graph
 }
 \details{
 Normalization, \code{normalize=TRUE}, is applied by dividing the
-resulting number from the infectiousness/susceptibility calcuation
+resulting number from the infectiousness/susceptibility stat
 by the number of individuals who adopted the innovation at
 time \eqn{t}.
 

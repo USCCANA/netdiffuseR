@@ -96,5 +96,6 @@ plot_diffnet(graph, adopt$cumadopt)
     * `exposure`
     * `hazard_rate`
     * `toa_mat`
+- How to include _never adopters_
     
 

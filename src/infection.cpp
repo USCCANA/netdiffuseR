@@ -63,7 +63,7 @@ arma::mat infection_cpp(
       if (t >= T) continue;
 
       // Storing the graph
-      arma::sp_mat graph_cube = graph[k];
+      arma::sp_mat graph_cube = graph[t];
 
       for(int j=0;j<n;j++) {
         if (i==j) continue;

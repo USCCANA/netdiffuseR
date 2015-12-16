@@ -16,7 +16,7 @@
 #' @details
 #'
 #' Normalization, \code{normalize=TRUE}, is applied by dividing the
-#' resulting number from the infectiousness/susceptibility calcuation
+#' resulting number from the infectiousness/susceptibility stat
 #' by the number of individuals who adopted the innovation at
 #' time \eqn{t}.
 #'
@@ -112,12 +112,15 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
   ngraph <- vector("list", t)
 
   for(i in 1:t)
-    ngraph[[i]] <- graph[,,i]
+    ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
   out <- infection_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  dimnames(out) <- list(rownames(graph), "infection")
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:n
+  dimnames(out) <- list(rn, "infection")
+
   out
 }
 
@@ -131,7 +134,10 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
   out <- infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  dimnames(out) <- list(rownames(graph[[1]]), "infection")
+  rn <- rownames(graph[[1]])
+  if (!length(rn)) rn <- 1:n
+  dimnames(out) <- list(rn, "infection")
+
   out
 }
 
@@ -155,7 +161,10 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
   out <- susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  dimnames(out) <- list(rownames(graph[[1]]), "susceptibility")
+  rn <- rownames(graph[[1]])
+  if (!length(rn)) rn <- 1:n
+  dimnames(out) <- list(rn, "susceptibility")
+
   out
 }
 
@@ -173,6 +182,9 @@ susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expd
   out <- susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
 
   # Naming
-  dimnames(out) <- list(rownames(graph), "susceptibility")
+  rn <- rownames(graph)
+  if (!length(rn)) rn <- 1:n
+  dimnames(out) <- list(rn, "susceptibility")
+
   out
 }

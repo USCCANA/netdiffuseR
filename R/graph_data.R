@@ -87,7 +87,7 @@ classify_graph <- function(graph) {
     s <- sapply(d, function(x) x[1] == x[2])
 
     # Step 2.2: It must have some people!
-    if (!d[[1]])
+    if (!d[[1]][1])
       stop("Nothing to do. Empty graph.")
 
     if (!all(s))
