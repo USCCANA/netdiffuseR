@@ -6,6 +6,28 @@
 
 using namespace Rcpp;
 
+// min_int_na_cpp
+double min_int_na_cpp(const IntegerVector& x);
+RcppExport SEXP netdiffuseR_min_int_na_cpp(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type x(xSEXP);
+    __result = Rcpp::wrap(min_int_na_cpp(x));
+    return __result;
+END_RCPP
+}
+// max_int_na_cpp
+double max_int_na_cpp(const IntegerVector& x);
+RcppExport SEXP netdiffuseR_max_int_na_cpp(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type x(xSEXP);
+    __result = Rcpp::wrap(max_int_na_cpp(x));
+    return __result;
+END_RCPP
+}
 // toa_mat_cpp
 List toa_mat_cpp(const IntegerVector& year);
 RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP) {

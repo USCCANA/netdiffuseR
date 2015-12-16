@@ -89,4 +89,12 @@ plot_diffnet(graph, adopt$cumadopt)
 
 - Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 - Populate the tests folder.
+- What to do with the `NA`/`NULL`/`NaN`/`Inf` cases in the following functions:
+    * `infection`, `susceptibility`
+    * `struct_equiv`
+    * `threshold`
+    * `exposure`
+    * `hazard_rate`
+    * `toa_mat`
+    
 

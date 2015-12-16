@@ -39,7 +39,7 @@ arma::mat infection_cpp(
   }
   else {
     for(int k=1;k<=K;k++)
-      discount[k-1] = pow((1.0 + r), k);
+      discount[k-1] = pow((1.0 + r), k-1.0);
   }
 
   for(int i=0;i<n;i++) {
@@ -129,7 +129,7 @@ arma::colvec susceptibility_cpp(
   }
   else {
     for(int k=1;k<=K;k++)
-      discount[k-1] = pow((1.0 + r), k);
+      discount[k-1] = pow((1.0 + r), k-1.0);
   }
 
   for(int i=0;i<n;i++) {

@@ -23,10 +23,34 @@
 
 using namespace Rcpp;
 
-void is_saquere_sp_mat(const arma::sp_mat & mat) {
+void is_square_sp_mat(const arma::sp_mat & mat) {
   if (mat.n_cols != mat.n_rows)
     stop("It must be a square matrix");
   return;
+}
+
+// [[Rcpp::export]]
+double min_int_na_cpp(const IntegerVector & x) {
+  int n =x.size();
+  double min = DBL_MAX;
+  LogicalVector isna = is_na(x);
+  for(int i=0;i<n;i++) {
+    if (isna[i]) continue;
+    if (min > x[i]) min = x[i];
+  }
+  return min;
+}
+
+// [[Rcpp::export]]
+double max_int_na_cpp(const IntegerVector & x) {
+  int n =x.size();
+  double max = -DBL_MAX;
+  LogicalVector isna = is_na(x);
+  for(int i=0;i<n;i++) {
+    if (isna[i]) continue;
+    if (max < x[i]) max = x[i];
+  }
+  return max;
 }
 
 // [[Rcpp::export]]
@@ -189,7 +213,7 @@ arma::icolvec isolated_cpp(
   int n = adjmat.n_cols;
 
   // Checking size
-  is_saquere_sp_mat(adjmat);
+  is_square_sp_mat(adjmat);
 
   arma::icolvec isolated(n, arma::fill::ones);
 
@@ -216,7 +240,7 @@ arma::sp_mat drop_isolated_cpp(
   int n = adjmat.n_cols;
 
   // Checking size
-  is_saquere_sp_mat(adjmat);
+  is_square_sp_mat(adjmat);
 
   if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
   else if (isolated.n_rows != n) stop("-isolated- must have the same length as nrow(adjmat)");

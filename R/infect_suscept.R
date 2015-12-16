@@ -168,7 +168,7 @@ susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expd
   ngraph <- vector("list", t)
 
   for(i in 1:t)
-    ngraph[[i]] <- graph[,,i]
+    ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
   out <- susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
 

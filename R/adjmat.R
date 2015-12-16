@@ -341,9 +341,9 @@ toa_mat.numeric <- function(times, recode=TRUE, labels=NULL) {
 # @export
 toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
   # Rescaling
-  oldtimes <- range(times)
+  oldtimes <- range(times, na.rm = TRUE)
   oldtimes <- oldtimes[1]:oldtimes[2]
-  if (recode) times <- times - min(times) + 1L
+  if (recode) times <- times - min(times, na.rm = TRUE) + 1L
   output <- toa_mat_cpp(times)
 
   # Naming
