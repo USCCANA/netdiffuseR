@@ -11,6 +11,14 @@ env:
 
 r_packages:
   - covr
+  - testthat
+  - RcppArmadillo
+  - SparseM
+  - sna
+
+before_install:
+  - curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
+  - sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /
 
 after_success:
   - Rscript -e 'covr::codecov()'
