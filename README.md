@@ -18,6 +18,15 @@ Using the `devtools` package, you can install `netdiffuseR` dev version as follo
 devtools::install_github('USCCANA/netdiffuseR')
 ```
 
+For the case of OSX users, there seems to be a problem when installing packages depending on `Rcpp`. This issue, developed [here](https://github.com/USCCANA/netdiffuseR/issues/3), can be solved by open the terminal and typing the following
+
+``` sh
+curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
+sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /
+```
+
+before installing the package through `devtools`.
+
 Examples
 --------
 
