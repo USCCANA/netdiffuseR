@@ -1,6 +1,10 @@
 language: r
 sudo: required
 
+os:
+  - linux
+  - osx
+
 env:
  global:
    - CRAN: http://cran.rstudio.com

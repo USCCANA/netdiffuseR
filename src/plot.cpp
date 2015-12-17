@@ -197,8 +197,6 @@ NumericMatrix edges_coords(
 
   // Rescaling the vertex sizes
   arma::colvec vertex_size(vertex_cex);
-  double mins = vertex_size.min();
-  double maxs = vertex_size.max();
 
   // If yexpand is too small, just throw an error
   double xmin = x.min();

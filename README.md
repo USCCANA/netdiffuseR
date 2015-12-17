@@ -5,7 +5,7 @@ netdiffuseR: Network Analysis for Diffusion of Innovations
 
 This package contains functions useful for analyzing network data for diffusion of innovations applications.
 
-The package was developed as part of the paper Thomas W. Valente[1], Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*, Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
+The package was developed as part of the paper Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*, Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
 Functions include selection, susceptibility & infection, etc.
 
@@ -107,5 +107,4 @@ To-do list
     -   `hazard_rate`
     -   `toa_mat`
 -   How to include *never adopters*
-
-[1] Corresponding author tvalente at usc.edu
+-   Use spells? (`select_egoalter` would use this)

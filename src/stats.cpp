@@ -233,7 +233,7 @@ arma::colvec threshold_cpp(
     ) {
 
   int n = exposure.n_rows;
-  int T = exposure.n_cols;
+  // int T = exposure.n_cols;
 
   arma::colvec threshold(n);
 
