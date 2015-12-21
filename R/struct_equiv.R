@@ -63,7 +63,7 @@ struct_equiv <- function(graph, v=1, ...) {
 # @export
 struct_equiv.matrix <- function(graph, v=1, ...) {
   geod <- sna::geodist(graph, inf.replace = 0, ...)
-  geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
+  geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
   output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
 
   # Names
@@ -80,7 +80,7 @@ struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
   # In order to use the SNA package functions, we need to coerce the graph
   # Into a -matrix.csc- object,
   geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = 0, ...)
-  geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
+  geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
   output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
 
   # Names

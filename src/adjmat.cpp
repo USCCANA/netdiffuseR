@@ -29,11 +29,11 @@ void is_square_sp_mat(const arma::sp_mat & mat) {
   return;
 }
 
-// [[Rcpp::export]]
-double min_int_na_cpp(const IntegerVector & x) {
+// Returns min from an integer vector accounting for NA objects
+double min_int_na_cpp(const IntegerVector & x, const LogicalVector & isna) {
   int n =x.size();
   double min = DBL_MAX;
-  LogicalVector isna = is_na(x);
+
   for(int i=0;i<n;i++) {
     if (isna[i]) continue;
     if (min > x[i]) min = x[i];
@@ -41,11 +41,11 @@ double min_int_na_cpp(const IntegerVector & x) {
   return min;
 }
 
-// [[Rcpp::export]]
-double max_int_na_cpp(const IntegerVector & x) {
+// Returns max from an integer vector accounting for NA objects
+double max_int_na_cpp(const IntegerVector & x, const LogicalVector & isna) {
   int n =x.size();
   double max = -DBL_MAX;
-  LogicalVector isna = is_na(x);
+
   for(int i=0;i<n;i++) {
     if (isna[i]) continue;
     if (max < x[i]) max = x[i];
@@ -56,17 +56,22 @@ double max_int_na_cpp(const IntegerVector & x) {
 // [[Rcpp::export]]
 List toa_mat_cpp(const IntegerVector & year) {
 
+  // Pin down NAs
+  LogicalVector isna = is_na(year);
+
   // Measuring time
-  int T0 = min(year);
-  int T = max(year) - T0 + 1;
+  int T0 = min_int_na_cpp(year, isna);
+  int T = max_int_na_cpp(year, isna) - T0 + 1;
   int n = year.size();
 
   // Creating output
   List out(2);
   arma::mat adopt(n,T,arma::fill::zeros);
 
-  for(int i=0;i<n;i++)
+  for(int i=0;i<n;i++) {
+    if (isna[i]) continue;
     adopt(i,year[i]-T0) = 1.0;
+  }
 
   arma::mat cumadopt = cumsum(adopt, 1);
 
@@ -197,10 +202,24 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
   int n = year.size();
 
   IntegerMatrix diff(n,n);
+  LogicalVector isna = is_na(year);
 
-  for(int i=0;i<n;i++)
-    for(int j=0;j<i;j++)
-      diff.at(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
+  for(int i=0;i<n;i++) {
+    // Checling user interrup
+    if (i % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
+    // If na, then fill the diff with NA
+    if (isna[i]) {
+      for(int j=0;j<n;j++)
+        diff(i,j) = NA_INTEGER, diff(j,i) = NA_INTEGER;
+      continue;
+    }
+    for(int j=0;j<i;j++) {
+      if (isna[j]) continue;
+      diff(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
+    }
+  }
 
   return diff;
 }

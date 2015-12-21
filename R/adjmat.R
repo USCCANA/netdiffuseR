@@ -404,7 +404,7 @@ toa_diff <- function(times, recode=TRUE, labels=NULL) {
 # @export
 toa_diff.integer <- function(times, recode=TRUE, labels=NULL) {
   # Rescaling
-  if (recode) times <- times - min(times) + 1L
+  if (recode) times <- times - min(times, na.rm = TRUE) + 1L
   toa_diff_cpp(times)
 }
 

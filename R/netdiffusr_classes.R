@@ -27,7 +27,7 @@ as_diffnet <- function(graph, toa,
   type = "adjmat"
 
   # Step 1: Creating the graph, first we need to see the time length
-  trange <- range(toa)
+  trange <- range(toa, na.rm = TRUE)
   t <- trange[2]-trange[1]
 
 
@@ -154,7 +154,7 @@ plot_diffnet.list <- function(graph, cumadopt,
 
   # Adjusting vertex sizes
   if ((length(vertex.cex)==1) && (n > 1) && is.na(vertex.cex))
-    vertex.cex <- (max(coords[,1]) - min(coords[,1]))/10*3
+    vertex.cex <- (max(coords[,1], na.rm = TRUE) - min(coords[,1], na.rm = TRUE))/10*3
 
   if ( (length(vertex.cex)==1) && (n > 1) )
     vertex.cex <- rep(vertex.cex,n)
@@ -301,9 +301,9 @@ plot_threshold.list <- function(
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, amount = .25)
-  xran <- range(toa)
+  xran <- range(toa, na.rm = TRUE)
   xlim <- xran + c(-1,1)
-  yran <- range(y)
+  yran <- c(0,1)
   ylim <- yran + (yran[2] - yran[1])*.1*c(-1,1)
 
   # Step 2: Checking colors and sizes
@@ -326,8 +326,8 @@ plot_threshold.list <- function(
   if (include.grid) grid()
 
   # Now, for y (it should be different)
-  xran <- range(xlim)
-  yran <- range(ylim)
+  xran <- range(xlim, na.rm = TRUE)
+  yran <- range(ylim, na.rm = TRUE)
   vertex.cex.y <- vertex.cex *(yran[2]-yran[1])/(xran[2]-xran[1])
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we

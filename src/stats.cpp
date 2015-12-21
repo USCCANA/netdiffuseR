@@ -76,13 +76,7 @@ arma::mat exposure_cpp(
     double v = 1.0, bool undirected=true, bool normalized=true,
     int n=0, int T=0) {
 
-//   // Coersing a NumericVector into a cube for ease of use
-//   IntegerVector dims=graph.attr("dim");
-//   const arma::cube graph_cube(graph.begin(), dims[0], dims[1], dims[2], false);
-
   // Variables initialization
-//   const int n = graph_cube.n_rows;
-//   const int T = graph_cube.n_slices;
   arma::mat exposure(n,T);
 
   // Initializing containers
@@ -238,6 +232,11 @@ arma::colvec threshold_cpp(
   arma::colvec threshold(n);
 
   for(int i=0;i<n;i++) {
+    // If NA (aka nan in Armadillo), then NA.
+    if (!arma::is_finite(times(i))) {
+      threshold(i) = arma::datum::nan;
+      continue;
+    }
     threshold(i) = exposure(i,times(i)-1);
   }
 

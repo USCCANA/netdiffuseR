@@ -67,7 +67,7 @@ used.vertex <- rownames(graph[[1]])
 names(graph) <- 1948:1966
 
 # Average indegree
-dg <- netdiffuseR::dgr(graph, "indegree", undirected = FALSE)
+dg <- dgr(graph, "indegree", undirected = FALSE)
 dg <- rowMeans(dg + 1)
 dg <- dg/max(dg)
 

@@ -323,7 +323,7 @@ plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard R
 #' threshold(expo, toa)
 #' @export
 threshold <- function(exposure, times, times.recode=TRUE) {
-  if (times.recode) times <- times - min(times) + 1L
+  if (times.recode) times <- times - min(times, na.rm = TRUE) + 1L
   output <- threshold_cpp(exposure, times)
   dimnames(output) <- list(rownames(exposure), "threshold")
   output

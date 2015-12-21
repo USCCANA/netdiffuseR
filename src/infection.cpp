@@ -43,6 +43,16 @@ arma::mat infection_cpp(
   }
 
   for(int i=0;i<n;i++) {
+    // Checling user interrup
+    if (i % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
+    // If NA (aka nan in Armadillo), then NA.
+    if (!arma::is_finite(times(i))) {
+      infect.at(i) = arma::datum::nan;
+      continue;
+    }
+
     // Capturing variables
     ti = times(i);
     if (ti == T) continue;
@@ -133,6 +143,16 @@ arma::colvec susceptibility_cpp(
   }
 
   for(int i=0;i<n;i++) {
+    // Checling user interrup
+    if (i % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
+    // If NA (aka nan in Armadillo), then NA.
+    if (!arma::is_finite(times(i))) {
+      suscep.at(i) = arma::datum::nan;
+      continue;
+    }
+
     // Capturing variables
     ti = times(i);
     if (ti == 1) continue;
