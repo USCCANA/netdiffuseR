@@ -15,8 +15,10 @@ Installation
 Using the `devtools` package, you can install `netdiffuseR` dev version as follows
 
 ``` r
-devtools::install_github('USCCANA/netdiffuseR')
+devtools::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
 ```
+
+You can skip building vignettes by setting `build_vignettes = FALSE` (so it is not required).
 
 For the case of OSX users, there seems to be a problem when installing packages depending on `Rcpp`. This issue, developed [here](https://github.com/USCCANA/netdiffuseR/issues/3), can be solved by open the terminal and typing the following
 
