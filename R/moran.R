@@ -11,17 +11,19 @@
 #' https://en.wikipedia.org/w/index.php?title=Moran%27s_I&oldid=679297766
 #' }
 #' @examples
+#' \dontrun{
 #' # Generating a small random graph
 #' set.seed(123)
 #' graph <- rgraph_ba(t = 4)
+#' w <- sna::geodist(as.matrix(w))
+#' x <- rnorm(5)
 #'
 #' # Computing Moran's I
-#' moran(graph[,1], graph)
+#' moran(x, w)
 #'
 #' # Comparing with the ape's package version
-#' \dontrun{
-#' moran(graph[,1], graph/rowSums(as.array(graph)))
-#' ape::Moran.I(graph[,1], as.matrix(graph))
+#' moran(x, w/rowSums(as.array(w)))
+#' ape::Moran.I(x, w)
 #' }
 moran <- function(x, w) {
   if (!inherits(w, "matrix") & !inherits(w, "dgCMatrix"))
@@ -36,5 +38,3 @@ moran <- function(x, w) {
   moran_cpp(x, w)
 }
 
-x <- rgraph_ba(t=4)
-apply(x, 1, function(y) moran(y, x))

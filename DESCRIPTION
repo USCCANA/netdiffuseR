@@ -26,7 +26,8 @@ Imports:
     utils
 Suggests:
     testthat,
-    knitr
+    knitr,
+    ape
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 5.0.1
