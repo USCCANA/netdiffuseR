@@ -69,8 +69,8 @@ Valente, T. W. (1995). "Network models of the diffusion of innovations"
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}}
+  \code{\link{infection}}, \code{\link{moran}},
+  \code{\link{struct_equiv}}, \code{\link{threshold}}
 }
 \keyword{univar}
 

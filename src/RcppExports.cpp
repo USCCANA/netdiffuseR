@@ -129,6 +129,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// moran_cpp
+double moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
+RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type w(wSEXP);
+    __result = Rcpp::wrap(moran_cpp(x, w));
+    return __result;
+END_RCPP
+}
 // seq_cpp
 arma::vec seq_cpp(double from, double to, int lengthout);
 RcppExport SEXP netdiffuseR_seq_cpp(SEXP fromSEXP, SEXP toSEXP, SEXP lengthoutSEXP) {

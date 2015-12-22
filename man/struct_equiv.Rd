@@ -62,7 +62,7 @@ Cresskill N.J.: Hampton Press.
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{threshold}}
+  \code{\link{moran}}, \code{\link{threshold}}
 }
 \keyword{univar}
 

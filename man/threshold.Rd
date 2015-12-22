@@ -39,7 +39,7 @@ Threshold can be visualized using \code{\link{plot_threshold}}
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{struct_equiv}}
+  \code{\link{moran}}, \code{\link{struct_equiv}}
 }
 \keyword{univar}
 

@@ -62,8 +62,8 @@ hazard_rate(cumadopt)
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{dgr}}, \code{\link{exposure}},
-  \code{\link{infection}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}}
+  \code{\link{infection}}, \code{\link{moran}},
+  \code{\link{struct_equiv}}, \code{\link{threshold}}
 
 Other visualizations: \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},

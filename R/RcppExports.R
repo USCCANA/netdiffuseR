@@ -37,6 +37,10 @@ susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, 
     .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T)
 }
 
+moran_cpp <- function(x, w) {
+    .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
+}
+
 seq_cpp <- function(from, to, lengthout) {
     .Call('netdiffuseR_seq_cpp', PACKAGE = 'netdiffuseR', from, to, lengthout)
 }

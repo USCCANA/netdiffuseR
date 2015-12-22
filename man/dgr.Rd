@@ -41,8 +41,8 @@ graph
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{exposure}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}}
+  \code{\link{infection}}, \code{\link{moran}},
+  \code{\link{struct_equiv}}, \code{\link{threshold}}
 }
 \keyword{univar}
 
