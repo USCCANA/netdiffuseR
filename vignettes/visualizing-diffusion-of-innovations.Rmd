@@ -2,7 +2,7 @@
 title: "Visualizing Diffusion of Innovations"
 author: "George G. Vega Yon"
 date: "November 17, 2015"
-output: rmarkdown::pdf_document
+output: rmarkdown::html_vignette
 header-includes: \usepackage{graphicx}
 vignette: >
   %\VignetteIndexEntry{Visualizing Diffusion of Innovations}
