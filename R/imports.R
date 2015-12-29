@@ -11,7 +11,7 @@ NULL
 
 #' @import methods
 #' @importClassesFrom Matrix dgCMatrix
-#' @importFrom Matrix Matrix
+#' @importFrom Matrix Matrix rowSums colSums
 NULL
 
 #' @importClassesFrom SparseM matrix.csc

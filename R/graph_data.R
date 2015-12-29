@@ -63,9 +63,16 @@ classify_graph <- function(graph) {
       stop("-graph- should be either numeric or integer.\n\tmode(graph) =  \"",
            m, "\".")
 
+    # Step 4: Dimension names
+    ids <- rownames(graph)
+    if (!length(ids)) ids <- 1:d[1]
+
     return(invisible(list(
       type="static",
-      nper=0,
+      class="matrix",
+      ids=ids,
+      pers=1,
+      nper=1,
       n=d[1]
     )))
   }
@@ -101,8 +108,27 @@ classify_graph <- function(graph) {
            "The following elements don't coincide with the first slice:\n\t",
            paste0(which(!e), collapse=", "),".")
 
+    # Step 4.1: Individual's ids
+    ids <- rownames(graph[[1]])
+    if (!length(ids)) ids <- 1:d[[1]][1]
+
+    # Step 4.2 Time ids
+    suppressWarnings(pers <- as.integer(names(graph)))
+    if (!length(pers)) pers <- 1:t
+    else {
+      # Step 4.2.1: Must be coersible into integer
+      if (any(is.na(pers))) stop("names(graph) should be either numeric or integer.")
+
+      # Step 4.2.1: Must keep uniqueness
+      if (length(unique(pers)) != t) stop("When coersing names(graph) into integer,",
+                                       "some slices acquired the same name.")
+    }
+
     return(invisible(list(
       type="dynamic",
+      class="list",
+      ids=ids,
+      pers=pers,
       nper=t,
       n=d[[1]][1])
     ))
@@ -130,8 +156,28 @@ classify_graph <- function(graph) {
       stop("-graph- should be either numeric or integer.\n\tmode(graph) =  \"",
            m, "\".")
 
+    # Step 4: Dimension names
+    ids <- rownames(graph)
+    if (!length(ids)) ids <- 1:d[1]
+
+    pers <- dimnames(graph)[[3]]
+    if (!length(pers)) pers <- 1:d[3]
+    else {
+      # Step 4.2.1: Must be coersible into integer
+      suppressWarnings(altpers <- as.integer(floor(pers)))
+      if (any(is.na(alters))) stop("names(graph) should be either numeric or integer.")
+
+      # Step 4.2.1: Must keep uniqueness
+      if (unique(alters) != nper) stop("When coersing names(graph) into integer,",
+                                       "some slices acquired the same name.")
+      pers <- alters
+    }
+
     return(invisible(list(
       type="dynamic",
+      class="array",
+      ids=ids,
+      pers=pers,
       nper=d[3],
       n=d[1])
     ))

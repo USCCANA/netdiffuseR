@@ -1,45 +1,177 @@
 #' Creates a \code{diffnet} class object
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
+#' @param recode Logical scalar. Passed to \code{\link{toa_mat}}.
 #' @param weights Numeric vector of size \eqn{n}.
 #' @param times Numeric vector of size \eqn{n}.
 #' @param undirected Logical scalar.
 #' @param self Logical scalar.
 #' @param multiple Logical scalar.
 #' @param use.incomplete Logical scalar.
-#' @param recode Logical scalar. Passed to \code{\link{toa_mat}}
 #' @param ... Ignored.
+#' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
-as_diffnet <- function(graph, toa,
+#' @examples
+#' # Creating a random graph
+#' set.seed(123)
+#' graph <- rgraph_ba(t=9)
+#' graph <- lapply(1:5, function(x) graph)
+#'
+#' # Pretty TOA
+#' names(graph) <- 2001L:2005L
+#' toa <- sample(c(2001L:2005L,NA), 10, TRUE)
+#'
+#' # Creating diffnet object
+#' diffnet <- as_diffnet(graph, toa)
+#' diffnet
+#' summary(diffnet)
+as_diffnet <- function(graph, toa, recode=TRUE,
                        weights=NULL, times=NULL, undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-                       use.incomplete=FALSE,
-                       recode=getOption("diffnet.recode"), ...) {
+                       use.incomplete=FALSE, ...) {
 
-  # Step 0: Figuring out if it is an edgelist
-  d <- dim(graph)
-  n <- d[1]
-  k <- d[2]
-  t <- d[3]
-  if ((n!=k) & (k>2)) stop("Invalid -graph-. It should be either an edgelist or a square matrix.")
-  else if ((k==2)) type = "adjmat"
+  # Step 1.1: Check graph ------------------------------------------------------
+  meta <- classify_graph(graph)
+  if (meta$type=="static") stop("-graph- should be dynamic.")
 
-  type = "adjmat"
-
-  # Step 1: Creating the graph, first we need to see the time length
-  trange <- range(toa, na.rm = TRUE)
-  t <- trange[2]-trange[1]
-
-
-  if      (type == "adjmat")   graph <- array(rep(graph, t), dim=c(n, n, t))
-  else if (type == "edgelist") graph <- edgelist_to_adjmat(
-    graph, weights, times, t, undirected=undirected, self=self, multiple=multiple)
-  else {
-    # If its already an array, we better check for the names!
-    graph <- graph
+  # Step 1.2: Change the class (or set the names)
+  if (meta$class=="array") {
+    graph <- lapply(1:meta$nper, function(x) {
+      x <- methods::as(graph[,,x], "dgCMatrix")
+      dimnames(x) <- with(meta, list(ids, ids))
+    })
+    names(graph) <- meta$pers
+  } else { # Setting names (if not before)
+    if (!length(names(graph)))
+      names(graph) <- meta$pers
+    for(i in 1:meta$nper)
+      dimnames(graph[[i]]) <- with(meta, list(ids, ids))
   }
 
-  return(graph)
+  # Step 1.3: Checking that lengths fit
+  if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths.\n",
+                                "-toa- should be of length n (number of vertices).")
+
+  # Step 1.4: Checking class of TOA and coersing if necesary
+  if (!inherits(toa, "integer")) {
+    warning("Coersing -toa- into integer.")
+    toa <- as.integer(toa)
+  }
+
+  # Step 1.5: Checking names of toa
+  if (!length(names(toa)))
+    names(toa) <- meta$ids
+
+  # Step 2: Creating Time of adoption matrix -----------------------------------
+  mat <- toa_mat(toa, recode=recode)
+
+  # Step 3: Compleating attributes and building the object
+  meta$self       <- self
+  meta$undirected <- undirected
+  meta$multiple   <- multiple
+
+  # Creating
+  return(structure(list(
+    graph = graph,
+    toa   = toa,
+    adopt = mat$adopt,
+    cumadopt = mat$cumadopt,
+    meta = meta
+  ), class="diffnet"))
+}
+
+#' @export
+#' @rdname as_diffnet
+print.diffnet <- function(x, ...) {
+  with(x, cat(
+    "Dynamic network of class -diffnet-",
+    paste(" # of nodes        :", meta$n),
+    paste(" # of time periods :", meta$nper),
+    paste(" Adoption rate     :",
+          formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f")
+          ),
+    paste(" Type              :", ifelse(meta$undirected, "undirected", "directed")),
+    sep="\n"
+    )
+  )
+  invisible(x)
+}
+
+#' @export
+#' @rdname as_diffnet
+summary.diffnet <- function(object, ...) {
+  # To make notation nicer
+  meta <- object$meta
+
+  # Computing density
+  d <- unlist(lapply(object$graph, function(x) {
+    x <-
+    if (meta$undirected) {
+      sum(rowSums(x))/(meta$n * (meta$n-1))/2
+    } else {
+      (sum(rowSums(x)) + sum(colSums(x)))/(meta$n * (meta$n-1))
+    }
+  }))
+
+  # Computing moran's I
+  m <- vector("numeric", meta$nper)
+  for (i in 1:meta$nper) {
+    g <- 1/sna::geodist(as.matrix(object$graph[[i]]), meta$n)$gdist
+    diag(g) <- 0
+    m[i] <- moran(object$cumadopt[,i], g)
+  }
+
+  # Computing adopters, cumadopt and hazard rate
+  ad <- colSums(object$adopt)
+  ca <- t(cumulative_adopt_count(object$cumadopt))[,-3]
+  hr <- t(hazard_rate(object$cumadopt, no.plot = TRUE))
+
+  # Left censoring
+  lc <- sum(object$toa == meta$pers[1], na.rm = TRUE)
+  rc <- sum(is.na(object$toa), na.rm=TRUE)
+
+  out <- data.frame(
+    adopt = ad,
+    cum_adopt = ca[,1],
+    cum_adopt_pcent = ca[,2],
+    hazard = hr,
+    density=d,
+    moran = m
+  )
+
+  # Function to print data.frames differently
+  header <- c(" Period ","Adopters","Cum Adopt.", "Cum Adopt. %",
+              "Hazard Rate","Density", "Moran's I")
+  slen   <- nchar(header)
+  hline  <- paste(sapply(sapply(slen, rep.int, x="-"), paste0, collapse=""),
+                  collapse=" ")
+  rule   <- paste0(rep("-", sum(slen) + length(slen) - 1), collapse="")
+
+  # Quick Formatting function
+  qf <- function(x, digits=2) sprintf(paste0("%.",digits,"f"), x)
+
+  cat("Diffusion network summary statistics\n",rule,"\n",sep="")
+  cat(header,"\n")
+  cat(hline, "\n")
+  for (i in 1:meta$nper) {
+    cat(sprintf(
+      paste0("%",slen,"s", collapse=" "),
+      qf(meta$pers[i],0), qf(out[i,1],0), qf(out[i,2],0), qf(out[i,3]),
+      ifelse(i==1, "-",qf(out[i,2:4])), qf(out[i,5]), qf(out[i,6])
+    ), "\n")
+  }
+
+
+  # print(out, digits=2)
+
+  cat(
+    rule,
+    paste(" Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)),
+    paste(" Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)),
+    sep="\n"
+  )
+
+  invisible(out)
 }
 
 #' Plot the diffusion process
