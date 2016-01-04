@@ -100,6 +100,9 @@ context("Time of Adoption (toa_mat, toa_dif)")
 
 times <- c(2001, 2004, 2003, 2008)
 
+graph <- lapply(2001:2008, function(x) rgraph_er(4))
+diffnet <- as_diffnet(graph, times)
+
 test_that("Should warn about -times- not been integer", {
   expect_warning(toa_mat(times), "will be coersed to integer")
 })
@@ -125,7 +128,19 @@ test_that("In toa_diff, its dim should be equal to the input mat", {
   expect_equal(toa_diff(times), toa_diff(as.integer(times)))
 })
 
+test_that("Checking toa_mat output", {
 
+  # Manual calc
+  mat <- matrix(0, nrow=4, ncol=8)
+  dimnames(mat) <- list(1:4, 2001:2008)
+  amat <- list(adopt=mat, cumadopt=mat)
+  for (i in 1:4) {
+    amat$adopt[i,times[i] - 2000] <- 1
+    amat$cumadopt[i,] <- cumsum(amat$adopt[i,])
+  }
+
+  expect_equal(amat, toa_mat(diffnet))
+})
 
 ################################################################################
 # Isolated
@@ -141,6 +156,7 @@ set.seed(123)
 tim <- sample(1:4, 4, TRUE)
 adjmat <- edgelist_to_adjmat(edgelist)
 dynadjmat <- edgelist_to_adjmat(edgelist, times=tim)
+diffnet <- as_diffnet(dynadjmat, tim)
 
 test_that("Finding isolated nodes", {
   # Static graphs --------------------------------------------------------------

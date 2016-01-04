@@ -13,6 +13,8 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   graphar <- unlist(lapply(graph, as.matrix))
   graphar <- array(graphar, dim = c(11,11,3))
 
+  diffnet <- as_diffnet(graph, toa)
+
   # List
   coords <- plot_diffnet(graph, toa_mat(toa)$cumadopt)
   expect_equal(dim(coords), c(11,2), info = "applying to list")
@@ -20,6 +22,10 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   # Array
   coords <- plot_diffnet(graphar, toa_mat(toa)$cumadopt)
   expect_equal(dim(coords), c(11,2), info = "applying to array")
+
+  # Diffnet
+  coords <- plot_diffnet(diffnet)
+  expect_equal(dim(coords), c(11,2), info = "applying to diffnet")
 })
 
 ################################################################################
@@ -31,26 +37,33 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   set.seed(123)
   n <- 6
   nper <- 5
-  graph <- lapply(1:nper, function(x) rgraph_ba(m0 = 1,m=1, t=n-1))
-  graphar <- array(unlist(lapply(graph, as.matrix)), dim=c(n,n,nper))
 
   toa <- sample(2000:(2000+nper-1), n, TRUE)
   adopt <- toa_mat(toa)
 
+  graph <- lapply(1:nper, function(x) rgraph_ba(m0 = 1,m=1, t=n-1))
+  graphar <- array(unlist(lapply(graph, as.matrix)), dim=c(n,n,nper))
+  diffnet <- as_diffnet(graph, toa)
+
   # Computing exposure
   expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
   exposar <- exposure(graphar, adopt$cumadopt, undirected = FALSE)
+  exposdn <- exposure(diffnet)
 
   # Generating graph + number
   set.seed(123)
   th   <- plot_threshold(graph, expos, toa)
   set.seed(123)
   thar <- plot_threshold(graphar, exposar, toa)
+  set.seed(123)
+  thdn <- plot_threshold(diffnet)
 
 
-  expect_equal(as.matrix(th["threshold"]), threshold(expos, toa))
-  expect_equal(as.matrix(thar["threshold"]), threshold(expos, toa))
-  expect_equal(th, thar)
+  expect_equivalent(as.matrix(th["threshold"]), threshold(expos, toa))
+  expect_equivalent(as.matrix(thar["threshold"]), threshold(expos, toa))
+  expect_equivalent(as.matrix(thdn["threshold"]), threshold(expos, toa))
+  expect_equivalent(th, thar)
+  expect_equivalent(th, thdn)
 })
 
 ################################################################################
@@ -67,8 +80,11 @@ test_that("Returning threshold equal to the infect/suscept funs", {
 
   toa <- sample(2000:(2000+nper-1), n, TRUE)
 
+  diffnet <- as_diffnet(graph, toa)
+
   infsus <- plot_infectsuscep(graph, toa, logscale  = FALSE)
   infsusar <- plot_infectsuscep(graphar, toa, logscale  = FALSE)
+  infsusdn <- plot_infectsuscep(diffnet, logscale  = FALSE)
 
   infect <- infection(graph, toa)
   suscep <- susceptibility(graph, toa)
@@ -76,7 +92,11 @@ test_that("Returning threshold equal to the infect/suscept funs", {
   expect_equal(infsus, infsusar)
   expect_equal(infsus$infect, infect)
   expect_equal(infsus$suscept, suscep)
+
   expect_equal(infsusar$infect, infect)
   expect_equal(infsusar$suscept, suscep)
+
+  expect_equal(infsusdn$infect, infect)
+  expect_equal(infsusdn$suscept, suscep)
 
 })

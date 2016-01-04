@@ -6,14 +6,14 @@
 \alias{plot_hazarrate}
 \title{Network Hazard Rate}
 \usage{
-hazard_rate(cumadopt, no.plot = FALSE, include.grid = TRUE, ...)
+hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
 \method{plot}{diffnet_hr}(x, y, main = "Hazard Rate", xlab = "Time",
   ylab = "Hazard Rate", include.grid = TRUE, bg = "lightblue", ...)
 }
 \arguments{
-\item{cumadopt}{A \eqn{n\times T}{n * T}. Cumulative adoption matrix obtained from
-\code{\link{toa_mat}}}
+\item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
+\code{\link{toa_mat}}) or a \code{\link{diffnet}} object.}
 
 \item{no.plot}{Logical scalar. When TRUE, suppress plotting (only returns hazard rates).}
 

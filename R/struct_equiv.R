@@ -54,6 +54,7 @@ struct_equiv <- function(graph, v=1, ...) {
     dgCMatrix = struct_equiv.dgCMatrix(graph, v, ...),
     array = struct_equiv.array(graph, v, ...),
     list = struct_equiv.list(graph, v, ...),
+    diffnet = struct_equiv.list(graph$graph, v, ...),
     stopifnot_graph(graph)
   )
 }

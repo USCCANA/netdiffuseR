@@ -46,16 +46,64 @@ set.seed(1234)
 n <- 100
 nper <- 20
 graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
-toa <- sample(1:(1+nper-1), n, TRUE)
+toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 ```
 
-    ## [1] 19  7  8  1 17 14
+    ## [1] 20  7  9  1 17 14
+
+``` r
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa)
+diffnet
+```
+
+    ## Dynamic network of class -diffnet-
+    ##  # of nodes        : 100
+    ##  # of time periods : 20
+    ##  Adoption rate     : 0.95
+    ##  Type              : directed
+
+``` r
+summary(diffnet)
+```
+
+    ## Diffusion network summary statistics
+    ## -----------------------------------------------------------------------
+    ##  Period  Adopters Cum Adopt. Cum Adopt. % Hazard Rate Density Moran's I 
+    ## -------- -------- ---------- ------------ ----------- ------- --------- 
+    ##        1        3          3         0.03           -    0.80     -0.01 
+    ##        2        8         11         0.11       11.00    0.81     -0.01 
+    ##        3        4         15         0.15       15.00    0.81     -0.01 
+    ##        4        1         16         0.16       16.00    0.79     -0.01 
+    ##        5        2         18         0.18       18.00    0.79     -0.01 
+    ##        6        5         23         0.23       23.00    0.81     -0.01 
+    ##        7        6         29         0.29       29.00    0.82     -0.02 
+    ##        8        1         30         0.30       30.00    0.80     -0.01 
+    ##        9        6         36         0.36       36.00    0.81     -0.01 
+    ##       10        5         41         0.41       41.00    0.78     -0.01 
+    ##       11        2         43         0.43       43.00    0.80     -0.01 
+    ##       12        6         49         0.49       49.00    0.80     -0.01 
+    ##       13        4         53         0.53       53.00    0.79     -0.01 
+    ##       14        7         60         0.60       60.00    0.80     -0.01 
+    ##       15        7         67         0.67       67.00    0.80     -0.01 
+    ##       16        3         70         0.70       70.00    0.80     -0.01 
+    ##       17       10         80         0.80       80.00    0.79     -0.01 
+    ##       18        4         84         0.84       84.00    0.79     -0.01 
+    ##       19        2         86         0.86       86.00    0.81     -0.01 
+    ##       20        9         95         0.95       95.00    0.81     -0.01 
+    ## -----------------------------------------------------------------------
+    ##  Left censoring  : 0.03 (3)
+    ##  Right centoring : 0.05 (5)
 
 ``` r
 # Visualizing distribution of suscep/infect
-out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
+
+out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
 ```
+
+    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, normalize, K, :
+    ## When applying logscale some observations are missing.
 
 ![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
 
@@ -66,16 +114,18 @@ out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 set.seed(123)
 n <- 6
 nper <- 5
-toa  <- sample(2000:(2000+nper-1), n, TRUE)
+toa  <- sample(c(2000:(2000+nper-1), NA), n, TRUE)
 nper <- length(unique(toa))
 graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
-adopt <- toa_mat(toa)
+
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa, undirected = FALSE)
 
 # Computing exposure
-expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+expos <- exposure(diffnet)
 
 # Threshold with fixed vertex size
-plot_threshold(graph, expos, toa, undirected = FALSE)
+plot_threshold(diffnet)
 ```
 
 ![](README_files/figure-markdown_github/plot_threshold-1.png)
@@ -84,7 +134,7 @@ plot_threshold(graph, expos, toa, undirected = FALSE)
 # Threshold with vertex size = avg degree
 cex <- rowMeans(dgr(graph))
 cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
-plot_threshold(graph, expos, toa, vertex.cex = cex)
+plot_threshold(diffnet, vertex.cex = cex)
 ```
 
 ![](README_files/figure-markdown_github/plot_threshold-2.png)
@@ -92,7 +142,7 @@ plot_threshold(graph, expos, toa, vertex.cex = cex)
 ### Diffusion process
 
 ``` r
-plot_diffnet(graph, adopt$cumadopt)
+plot_diffnet(diffnet)
 ```
 
     ## Loading required package: SparseM
@@ -110,12 +160,4 @@ To-do list
 
 -   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 -   Populate the tests folder.
--   What to do with the `NA`/`NULL`/`NaN`/`Inf` cases in the following functions:
-    -   `infection`, `susceptibility`
-    -   `struct_equiv`
-    -   `threshold`
-    -   `exposure`
-    -   `hazard_rate`
-    -   `toa_mat`
--   How to include *never adopters*
 -   Use spells? (`select_egoalter` would use this)

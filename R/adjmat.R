@@ -306,7 +306,8 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 #' Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during
 #' which an individual had already adopted the innovation.
 #'
-#' @param times Integer vector of size \eqn{n} containing time of adoption of the innovation.
+#' @param obj Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
+#' or a \code{\link{diffnet}} object.
 #' @param recode Logical scalar. When TRUE recodes time (see details).
 #' @param labels Character vector of size \eqn{n}. Labels (ids) of the vertices.
 #' @details
@@ -320,11 +321,12 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
-toa_mat <- function(times, recode=TRUE, labels=NULL) {
-  switch(class(times),
-    numeric = toa_mat.numeric(times, recode, labels),
-    integer = toa_mat.integer(times, recode, labels),
-    stop("No method defined for class -",class(times),"-")
+toa_mat <- function(obj, recode=TRUE, labels=NULL) {
+  switch(class(obj),
+    numeric = toa_mat.numeric(obj, recode, labels),
+    integer = toa_mat.integer(obj, recode, labels),
+    diffnet = obj[c("adopt","cumadopt")],
+    stop("No method defined for class -",class(obj),"-")
   )
   # UseMethod("toa_mat")
 }
@@ -391,11 +393,12 @@ toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
-toa_diff <- function(times, recode=TRUE, labels=NULL) {
-  switch (class(times),
-    integer = toa_diff.integer(times, recode, labels),
-    numeric = toa_diff.numeric(times, recode, labels),
-    stop("No method defined for class -",class(times),"-")
+toa_diff <- function(obj, recode=TRUE, labels=NULL) {
+  switch (class(obj),
+    integer = toa_diff.integer(obj, recode, labels),
+    numeric = toa_diff.numeric(obj, recode, labels),
+    diffnet = toa_diff.integer(obj$toa, recode, labels),
+    stop("No method defined for class -",class(obj),"-")
   )
   # UseMethod("toa_diff")
 }
@@ -479,6 +482,7 @@ isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     dgCMatrix = isolated.dgCMatrix(graph, undirected),
     array = isolated.array(graph, undirected),
     list = isolated.list(graph, undirected),
+    diffnet = isolated.list(graph$graph, graph$meta$undirected),
     stopifnot_graph(graph)
   )
   # UseMethod("isolated")
@@ -560,6 +564,7 @@ drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
   switch (class(graph),
     matrix = drop_isolated.matrix(graph, undirected),
     list = drop_isolated.list(graph, undirected),
+    diffnet = drop_isolated.list(graph$graph, graph$meta$undirected),
     dgCMatrix = drop_isolated.dgCMatrix(graph, undirected),
     array = drop_isolated.array(graph, undirected),
     stopifnot_graph(graph)

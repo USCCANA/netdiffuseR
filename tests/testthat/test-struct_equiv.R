@@ -5,13 +5,14 @@ rn <- LETTERS[1:4]
 graph <- matrix(c(0,0,1,0,1,0,1,0,0,1,0,1,0,0,0,0), ncol=4,
                 dimnames = list(rn, rn))
 
-
+dyngraph <- lapply(1:3,function(x) methods::as(graph, "dgCMatrix"))
 # Static graphs
 x <- list(
   `static matrix`=struct_equiv(graph),
   `static dgCMatrix`= struct_equiv(methods::as(graph, "dgCMatrix")),
   `dynamic array` = struct_equiv(array(graph, dim = c(4,4,3), dimnames = list(rn, rn, 1:3))),
-  `dynamic list` = struct_equiv(lapply(1:3,function(x) methods::as(graph, "dgCMatrix")))
+  `dynamic list` = struct_equiv(dyngraph),
+  `dynamic diffnet` = struct_equiv(as_diffnet(dyngraph, c(1,1,3,2)))
 )
 
 # `Manual` calculations

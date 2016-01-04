@@ -96,9 +96,15 @@
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
 infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+
+  if (missing(times))
+    if (!inherits(graph, "diffnet"))
+      stop("-times- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = infection.array(graph, times, normalize, K, r, expdiscount, ...),
     list = infection.list(graph, times, normalize, K, r, expdiscount, ...),
+    diffnet = infection.list(graph$graph, graph$toa, normalize, K, r, expdiscount, ...),
     stopifnot_graph(graph)
   )
 }
@@ -144,9 +150,14 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 #' @rdname infection
 #' @export
 susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+  if (missing(times))
+    if (!inherits(graph, "diffnet"))
+      stop("-times- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = susceptibility.array(graph, times, normalize, K, r, expdiscount, ...),
     list = susceptibility.list(graph, times, normalize, K, r, expdiscount, ...),
+    diffnet = susceptibility.list(graph$graph, graph$toa, normalize, K, r, expdiscount, ...),
     stopifnot_graph(graph)
   )
 }

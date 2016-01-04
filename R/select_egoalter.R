@@ -42,9 +42,15 @@
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
 select_egoalter <- function(graph, adopt, period=NULL) {
+
+  if (missing(adopt))
+    if (!inherits(graph, "diffnet"))
+      stop("-adopt- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = select_egoalter.array(graph, adopt, period),
     list = select_egoalter.list(graph, adopt, period),
+    list = select_egoalter.list(graph$graph, graph$adopt, period),
     stopifnot_graph(graph)
   )
 }

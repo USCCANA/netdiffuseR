@@ -34,9 +34,17 @@ graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 head(toa)
 
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa)
+
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 ```
+
+```{r}
+plot_infectsuscep(diffnet, K=1, logscale = TRUE)
+```
+
 
 \clearpage
 

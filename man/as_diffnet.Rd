@@ -2,6 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{as_diffnet}
 \alias{as_diffnet}
+\alias{diffnet}
+\alias{diffnet-class}
 \alias{print.diffnet}
 \alias{summary.diffnet}
 \title{Creates a \code{diffnet} class object}
@@ -35,11 +37,16 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL, times = NULL,
 \item{use.incomplete}{Logical scalar.}
 
 \item{...}{Ignored.}
+
+\item{x}{A \code{diffnet} object.}
+
+\item{object}{A \code{diffnet} object.}
 }
 \description{
 Creates a \code{diffnet} class object
 }
 \examples{
+
 # Creating a random graph
 set.seed(123)
 graph <- rgraph_ba(t=9)

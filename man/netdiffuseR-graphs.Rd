@@ -18,15 +18,24 @@ static graphs, and dynamic graphs.
  most of the package functions are defined for both classes, the default output
  graph is sparse, i.e. \code{dgCMatrix}.}
  \item{With respect to \strong{dynamic graphs}, these are represented by either
- an array of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
+ a \code{\link{diffnet}} object, an array of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
  with sparse matrices (class \code{dgCMatrix}) of size \eqn{n\times n}{n * n}.
  Just like the static graph case, while most of the functions accept both
  graph types, the default output is \code{dgCMatrix}.}
 }
-
-This is the reason why several methods have been defined for most of the package
-functions.
 }
+\section{diffnet objects}{
+
+ In the case of \code{diffnet}-class objects, the following arguments can be omitted
+ when calling fuictions suitable for graph objects:
+ \itemize{
+   \item{\code{toa}: Time of Adoption vector}
+   \item{\code{adopt}: Adoption Matrix}
+   \item{\code{cumadopt}: Cumulative Adoption Matrix}
+   \item{\code{undirected}: Whether the graph is directed or not}
+ }
+}
+
 \section{Dimensions}{
 
 When possible, \pkg{netdiffuseR} will try to reuse graphs dimensional names,

@@ -4,15 +4,17 @@
 \alias{threshold}
 \title{Retrive threshold levels from the exposure matrix}
 \usage{
-threshold(exposure, times, times.recode = TRUE)
+threshold(obj, times, times.recode = TRUE, ...)
 }
 \arguments{
-\item{exposure}{A \eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
-\code{\link{exposure}}.}
+\item{obj}{Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
+\code{\link{exposure}}) or a \code{diffnet} object.}
 
 \item{times}{Integer vector. Indicating the time of adoption of the innovation.}
 
 \item{times.recode}{Logical. TRUE when time recoding must be done.}
+
+\item{...}{Further arguments to be passed to \code{\link{exposure}}.}
 }
 \value{
 A vector of size \eqn{n} indicating the threshold for each node.

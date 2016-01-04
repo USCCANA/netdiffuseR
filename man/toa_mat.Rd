@@ -4,10 +4,11 @@
 \alias{toa_mat}
 \title{Time of adoption matrix}
 \usage{
-toa_mat(times, recode = TRUE, labels = NULL)
+toa_mat(obj, recode = TRUE, labels = NULL)
 }
 \arguments{
-\item{times}{Integer vector of size \eqn{n} containing time of adoption of the innovation.}
+\item{obj}{Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
+or a \code{\link{diffnet}} object.}
 
 \item{recode}{Logical scalar. When TRUE recodes time (see details).}
 

@@ -58,11 +58,17 @@ set.seed(1234)
 n <- 100
 nper <- 20
 graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
-toa <- sample(1:(1+nper-1), n, TRUE)
+toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa)
+diffnet
+summary(diffnet)
+
 # Visualizing distribution of suscep/infect
-out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
+
+out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
 ```
 
 ### Threshold
@@ -72,27 +78,29 @@ out <- plot_infectsuscep(graph, toa, K=1, logscale = TRUE)
 set.seed(123)
 n <- 6
 nper <- 5
-toa  <- sample(2000:(2000+nper-1), n, TRUE)
+toa  <- sample(c(2000:(2000+nper-1), NA), n, TRUE)
 nper <- length(unique(toa))
 graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
-adopt <- toa_mat(toa)
+
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa, undirected = FALSE)
 
 # Computing exposure
-expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+expos <- exposure(diffnet)
 
 # Threshold with fixed vertex size
-plot_threshold(graph, expos, toa, undirected = FALSE)
+plot_threshold(diffnet)
 
 # Threshold with vertex size = avg degree
 cex <- rowMeans(dgr(graph))
 cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
-plot_threshold(graph, expos, toa, vertex.cex = cex)
+plot_threshold(diffnet, vertex.cex = cex)
 ```
 
 ### Diffusion process
 
 ```{r plot_diffnet}
-plot_diffnet(graph, adopt$cumadopt)
+plot_diffnet(diffnet)
 ```
 
 
@@ -100,14 +108,6 @@ plot_diffnet(graph, adopt$cumadopt)
 
 - Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 - Populate the tests folder.
-- What to do with the `NA`/`NULL`/`NaN`/`Inf` cases in the following functions:
-    * `infection`, `susceptibility`
-    * `struct_equiv`
-    * `threshold`
-    * `exposure`
-    * `hazard_rate`
-    * `toa_mat`
-- How to include _never adopters_
 - Use spells? (`select_egoalter` would use this)
     
 

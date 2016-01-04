@@ -4,11 +4,11 @@
 \alias{cumulative_adopt_count}
 \title{Cummulative count of adopters}
 \usage{
-cumulative_adopt_count(cumadopt)
+cumulative_adopt_count(obj)
 }
 \arguments{
-\item{cumadopt}{A \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
-\code{\link{toa_mat}}}
+\item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
+\code{\link{toa_mat}}) or a \code{\link{diffnet}} object.}
 }
 \value{
 A 3xT matrix, where its rows contain the number of adoptes, the proportion of

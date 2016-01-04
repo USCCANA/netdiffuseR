@@ -24,14 +24,16 @@
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
 dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+
   switch (class(graph),
     matrix = dgr.matrix(graph, cmode, undirected, self),
     array = dgr.array(graph, cmode, undirected, self),
     dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self),
     list = dgr.list(graph, cmode, undirected, self),
+    diffnet = dgr.list(graph$graph, cmode, undirected = graph$meta$undirected),
     stopifnot_graph(graph)
   )
-  # UseMethod("dgr")
+
 }
 
 # @rdname dgr
@@ -179,9 +181,15 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @return A matrix of size nxT with exposure for each node.
 #' @export
 exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+
+  if (missing(cumadopt))
+    if (!inherits(graph, "diffnet"))
+      stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized),
     list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized),
+    diffnet = exposure.list(graph$graph, graph$cumadopt, wtype, v, graph$meta$undirected, normalized),
     stopifnot_graph(graph)
   )
 }
@@ -218,8 +226,8 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #' For each period, calculates the number of adopters, the proportion of adopters,
 #' and the adoption rate.
 #'
-#' @param cumadopt A \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
-#' \code{\link{toa_mat}}
+#' @param obj A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
+#' \code{\link{toa_mat}}) or a \code{\link{diffnet}} object.
 #' @details
 #'
 #' The rate of adoption--returned in the 3rd row out the resulting
@@ -234,9 +242,12 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #' @family statistics
 #' @keywords univar
 #' @export
-cumulative_adopt_count <- function(cumadopt) {
-  x <- cumulative_adopt_count_cpp(cumadopt)
-  dimnames(x) <- list(c("num", "prop", "rate"), colnames(cumadopt))
+cumulative_adopt_count <- function(obj) {
+
+  if (inherits(obj, "diffnet")) obj <- obj$cumadopt
+
+  x <- cumulative_adopt_count_cpp(obj)
+  dimnames(x) <- list(c("num", "prop", "rate"), colnames(obj))
   return(x)
 }
 
@@ -244,8 +255,8 @@ cumulative_adopt_count <- function(cumadopt) {
 #'
 #' Calculate and plot the hazard rate of the network.
 #' @aliases plot_hazarrate
-#' @param cumadopt A \eqn{n\times T}{n * T}. Cumulative adoption matrix obtained from
-#' \code{\link{toa_mat}}
+#' @param obj A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
+#' \code{\link{toa_mat}}) or a \code{\link{diffnet}} object.
 #' @param x An object of class \code{diffnet_hr}.
 #' @param y ignored.
 #' @param main Title of the plot
@@ -279,9 +290,12 @@ cumulative_adopt_count <- function(cumadopt) {
 #' # Visualizing the hazard rate
 #' hazard_rate(cumadopt)
 #' @export
-hazard_rate <- function(cumadopt, no.plot=FALSE, include.grid=TRUE, ...) {
-  x <- hazard_rate_cpp(cumadopt)
-  dimnames(x) <- list("hazard", colnames(cumadopt))
+hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
+
+  if (inherits(obj, "diffnet")) obj <- obj$cumadopt
+
+  x <- hazard_rate_cpp(obj)
+  dimnames(x) <- list("hazard", colnames(obj))
   class(x) <- c("diffnet_hr", class(x))
   if (!no.plot) plot.diffnet_hr(x, include.grid=include.grid, ...)
   invisible(x)
@@ -301,10 +315,11 @@ plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard R
 #'
 #' Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
 #'
-#' @param exposure A \eqn{n\times T}{n * T} matrix. Exposure to the innovation obtained from
-#' \code{\link{exposure}}.
+#' @param obj Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
+#' \code{\link{exposure}}) or a \code{diffnet} object.
 #' @param times Integer vector. Indicating the time of adoption of the innovation.
 #' @param times.recode Logical. TRUE when time recoding must be done.
+#' @param ... Further arguments to be passed to \code{\link{exposure}}.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
 #' @family statistics
 #' @seealso Threshold can be visualized using \code{\link{plot_threshold}}
@@ -322,9 +337,18 @@ plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard R
 #' # Retrieving threshold
 #' threshold(expo, toa)
 #' @export
-threshold <- function(exposure, times, times.recode=TRUE) {
+threshold <- function(obj, times, times.recode=TRUE, ...) {
+
+  if (inherits(obj, "diffnet")) {
+    times <- obj$toa
+    obj <- exposure.list(obj$graph, obj$cumadopt, ...)
+  } else {
+    if (missing(times))
+      stop("-times- should be provided when -obj- is not of class 'diffnet'")
+  }
+
   if (times.recode) times <- times - min(times, na.rm = TRUE) + 1L
-  output <- threshold_cpp(exposure, times)
-  dimnames(output) <- list(rownames(exposure), "threshold")
+  output <- threshold_cpp(obj, times)
+  dimnames(output) <- list(rownames(obj), "threshold")
   output
 }

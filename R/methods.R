@@ -9,9 +9,13 @@
 #' @param multiple Logical scalar.
 #' @param use.incomplete Logical scalar.
 #' @param ... Ignored.
+#' @param x A \code{diffnet} object.
+#' @param object A \code{diffnet} object.
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
+#' @aliases diffnet diffnet-class
 #' @examples
+#'
 #' # Creating a random graph
 #' set.seed(123)
 #' graph <- rgraph_ba(t=9)
@@ -34,7 +38,30 @@ as_diffnet <- function(graph, toa, recode=TRUE,
   meta <- classify_graph(graph)
   if (meta$type=="static") stop("-graph- should be dynamic.")
 
-  # Step 1.2: Change the class (or set the names)
+  # Step 1.2: Checking that lengths fit
+  if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths.\n",
+                                "-toa- should be of length n (number of vertices).")
+
+  # Step 2.1: Checking class of TOA and coersing if necesary
+  if (!inherits(toa, "integer")) {
+    warning("Coersing -toa- into integer.")
+    toa <- as.integer(toa)
+  }
+
+  # Step 2.2: Checking names of toa
+  if (!length(names(toa)))
+    names(toa) <- meta$ids
+
+  # Step 3.1: Creating Time of adoption matrix -----------------------------------
+  mat <- toa_mat(toa, recode=recode, labels = meta$ids)
+
+  # Step 3.2: Verifying dimensions and fixing meta$pers
+  if (length(graph) != ncol(mat[[1]]))
+    stop("Range of -toa- and slices in -graph- do not coincide.")
+
+  meta$pers <- as.integer(colnames(mat$adopt))
+
+  # Step 4.1: Change the class (or set the names) of the graph
   if (meta$class=="array") {
     graph <- lapply(1:meta$nper, function(x) {
       x <- methods::as(graph[,,x], "dgCMatrix")
@@ -48,29 +75,11 @@ as_diffnet <- function(graph, toa, recode=TRUE,
       dimnames(graph[[i]]) <- with(meta, list(ids, ids))
   }
 
-  # Step 1.3: Checking that lengths fit
-  if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths.\n",
-                                "-toa- should be of length n (number of vertices).")
-
-  # Step 1.4: Checking class of TOA and coersing if necesary
-  if (!inherits(toa, "integer")) {
-    warning("Coersing -toa- into integer.")
-    toa <- as.integer(toa)
-  }
-
-  # Step 1.5: Checking names of toa
-  if (!length(names(toa)))
-    names(toa) <- meta$ids
-
-  # Step 2: Creating Time of adoption matrix -----------------------------------
-  mat <- toa_mat(toa, recode=recode)
-
-  # Step 3: Compleating attributes and building the object
+  # Step 5: Compleating attributes and building the object and returning
   meta$self       <- self
   meta$undirected <- undirected
   meta$multiple   <- multiple
 
-  # Creating
   return(structure(list(
     graph = graph,
     toa   = toa,
@@ -244,6 +253,10 @@ plot_diffnet <- function(
     list = plot_diffnet.list(
       graph, cumadopt, displaylabels, undirected, vertex.col, vertex.cex, label,
       edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+    diffnet = plot_diffnet.list(
+      graph$graph, graph$cumadopt, displaylabels, graph$meta$undirected,
+      vertex.col, vertex.cex, label=graph$meta$ids,
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
     stopifnot_graph(graph)
   )
 }
@@ -387,6 +400,11 @@ plot_threshold <- function(
   edge.width = 2, edge.col = "gray", arrow.length=.20,
   include.grid = TRUE, bty="n", ...
 ) {
+
+  if (missing(exposure))
+    if (!inherits(graph, "diffnet"))
+      stop("-exposure- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = plot_threshold.array(
       graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
@@ -395,8 +413,12 @@ plot_threshold <- function(
     list = plot_threshold.list(
       graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, ...
-    ),
+      arrow.length, include.grid, bty, ...),
+    diffnet = plot_threshold.list(
+      graph$graph, with(graph, exposure.list(graph, cumadopt)),
+      graph$toa, times.recode, graph$meta$undirected, no.contemporary, main, xlab, ylab,
+      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
+      arrow.length, include.grid, bty, ...),
     stopifnot_graph(graph)
   )
 }
@@ -542,12 +564,18 @@ plot_infectsuscep <- function(
   sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
   include.grid=TRUE, ...
 ) {
+  if (!inherits(graph, "diffnet") && missing(toa))
+    stop("-toa- should be provided when -graph- is not of class 'diffnet'")
+
   switch (class(graph),
     array = plot_infectsuscep.array(
       graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
       xlab, ylab, sub, color.palette, include.grid, ...),
     list = plot_infectsuscep.list(
       graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, ...),
+    diffnet = plot_infectsuscep.list(
+      graph$graph, graph$toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
       xlab, ylab, sub, color.palette, include.grid, ...),
     stopifnot_graph(graph)
   )
@@ -586,6 +614,7 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 
     # Only keeping complete cases
     complete <- is.finite(infectp) & is.finite(suscepp)
+    if (any(!complete)) warning("When applying logscale some observations are missing.")
     infectp <- infectp[complete,]
     suscepp <- suscepp[complete,]
   }
@@ -594,7 +623,14 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
     suscepp <- suscep
     complete <- vector(length=length(infectp))
   }
-  coords <- netdiffuseR::grid_distribution(x=infectp, y=suscepp, bins)
+
+  if (!length(infectp)) {
+    if (logscale) warning("Can't apply logscale (undefined values).")
+    logscale <- FALSE
+    coords <- netdiffuseR::grid_distribution(x=infect, y=suscep, bins)
+  } else {
+    coords <- netdiffuseR::grid_distribution(x=infectp, y=suscepp, bins)
+  }
 
   # Nice plot
   n <- sum(coords$z)

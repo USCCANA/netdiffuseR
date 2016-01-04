@@ -12,7 +12,9 @@ graph <- rbind(
 )
 dimnames(graph) <- list(letters[1:3],letters[1:3])
 
-EL_digraph <- list(`matrix` = graph, `dgCMatrix` = as(graph, "dgCMatrix"))
+EL_digraph <- list(
+  `matrix` = graph,
+  `dgCMatrix` = as(graph, "dgCMatrix"))
 
 oldopt <- getOption("diffnet.undirected")
 options(diffnet.undirected=FALSE)
@@ -66,7 +68,10 @@ listgraph <- list(`2001`=listgraph, `2002`=listgraph, `2003`=listgraph)
 arraygraph <- array(graph, dim = c(dim(graph), 3),
                dimnames=list(rownames(graph), colnames(graph), 2001:2003))
 
-EL_digraph <- list(`array` = arraygraph, `list` = listgraph)
+toa <- c(2001,2001, 2003)
+
+EL_digraph <- list(`array` = arraygraph, `list` = listgraph,
+                   `diffnet`=as_diffnet(listgraph, toa))
 
 oldopt <- getOption("diffnet.undirected")
 options(diffnet.undirected=FALSE)
@@ -88,13 +93,15 @@ graph <- rbind(
 )
 
 dimnames(graph) <- list(letters[1:3],letters[1:3])
+toa <- c(2001,2001, 2003)
 
 listgraph <- as(graph, "dgCMatrix")
 listgraph <- list(`2001`=listgraph, `2002`=listgraph, `2003`=listgraph)
 arraygraph <- array(graph, dim = c(dim(graph), 3),
                     dimnames=list(rownames(graph), colnames(graph), 2001:2003))
 
-EL_digraph <- list(`array` = arraygraph, `list` = listgraph)
+EL_digraph <- list(`array` = arraygraph, `list` = listgraph,
+                   `diffnet`=as_diffnet(listgraph, toa))
 
 # Comparing outputs for different classes
 test_that("Either as an array or as a list, dgr should work (directed)", {
