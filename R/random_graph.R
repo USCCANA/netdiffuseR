@@ -116,6 +116,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 
 #' Rewires a graph
 #' @inheritParams rgraph_ws
+#' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
 #' @export
 rewire_graph <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,

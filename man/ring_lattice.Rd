@@ -14,8 +14,8 @@ ring_lattice(n, k)
 \item{k}{Integer scalar. Degree of each vertex.}
 }
 \value{
-A sparse matrix of class \code{\link{dgCMatrix}} of size
-\eqn{n\tines n}{n * n}.
+A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
+\eqn{n\times n}{n * n}.
 }
 \description{
 Ring lattice graph

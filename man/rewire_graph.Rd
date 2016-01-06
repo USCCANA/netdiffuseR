@@ -17,6 +17,8 @@ rewire_graph(graph, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
 \item{self}{Logical scalar. When \code{TRUE}, allows loops (self edges).}
 
 \item{multiple}{Logical scalar. When \code{TRUE} allows multiple edges.}
+
+\item{undirected}{Logical scalar. \code{TRUE} when the graph is undirected.}
 }
 \description{
 Rewires a graph
