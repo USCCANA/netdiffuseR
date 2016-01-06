@@ -256,6 +256,34 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// ring_lattice
+arma::sp_mat ring_lattice(int n, int k);
+RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    __result = Rcpp::wrap(ring_lattice(n, k));
+    return __result;
+END_RCPP
+}
+// rewire_graph_cpp
+arma::sp_mat rewire_graph_cpp(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
+RcppExport SEXP netdiffuseR_rewire_graph_cpp(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type both_ends(both_endsSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    __result = Rcpp::wrap(rewire_graph_cpp(graph, p, both_ends, self, multiple, undirected));
+    return __result;
+END_RCPP
+}
 // select_egoalter_cpp
 DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
 RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {

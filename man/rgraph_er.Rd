@@ -2,7 +2,7 @@
 % Please edit documentation in R/random_graph.R
 \name{rgraph_er}
 \alias{rgraph_er}
-\title{Random graphs}
+\title{Erdos-Reyi model}
 \usage{
 rgraph_er(n = 10, t = 1, p = 0.3,
   undirected = getOption("diffnet.undirected"), weighted = FALSE,

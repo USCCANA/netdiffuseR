@@ -160,6 +160,24 @@ rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weigh
     .Call('netdiffuseR_rgraph_er_dyn_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
 }
 
+#' Ring lattice graph
+#' Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
+#' as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
+#' @param n Integer scalar. Size of the graph.
+#' @param k Integer scalar. Degree of each vertex.
+#' @return A sparse matrix of class \code{\link{dgCMatrix}} of size
+#' \eqn{n\tines n}{n * n}.
+#' @references Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
+#' “small-world” networks. Nature, 393(6684), 440–2. http://doi.org/10.1038/30918
+#' @export
+ring_lattice <- function(n, k) {
+    .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k)
+}
+
+rewire_graph_cpp <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {
+    .Call('netdiffuseR_rewire_graph_cpp', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
+}
+
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }

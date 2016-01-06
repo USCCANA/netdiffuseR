@@ -561,7 +561,7 @@ isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
 #' @export
 #' @rdname isolated
 drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
-  switch (class(graph),
+  out <- switch (class(graph),
     matrix = drop_isolated.matrix(graph, undirected),
     list = drop_isolated.list(graph, undirected),
     diffnet = drop_isolated.list(graph$graph, graph$meta$undirected),
@@ -569,6 +569,13 @@ drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     array = drop_isolated.array(graph, undirected),
     stopifnot_graph(graph)
   )
+
+  if (inherits(graph, "diffnet")) {
+    graph$graph <- out
+    return(graph)
+  }
+
+  return(out)
 }
 
 # @rdname isolated
@@ -627,8 +634,8 @@ drop_isolated.list <- function(graph, undirected=getOption("diffnet.undirected")
   # Getting isolated vecs
   iso <- isolated.list(graph, undirected)[[2]]
   ison <- rownames(iso[which(iso==0),,drop=FALSE])
-  m   <- sum(iso)
-  n   <- nrow(graph[[1]])
+  # m   <- sum(iso)
+  # n   <- nrow(graph[[1]])
   t   <- length(graph)
   out <- vector("list", t)
   names(out) <- names(graph)

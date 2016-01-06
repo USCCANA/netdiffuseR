@@ -1,4 +1,4 @@
-#' Random graphs
+#' Erdos-Reyi model
 #'
 #' Several random graphs algorithms.
 #'
@@ -97,4 +97,93 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
     rgraph_ba_cpp(graph, d, m, t)
   }
   else rgraph_ba_new_cpp(m0, m, t)
+}
+
+#' Watts-Strogatz model
+#' @param n Integer scalar. Set the size of the graph.
+#' @param k Integer scalar. Set the initial degree of the ring (must be less than \eqn{n}).
+#' @param p Numeric scalar. Set the probability of changing an edge.
+#' @param both.ends Logical scalar. When \code{TRUE} rewires both ends.
+#' @param self Logical scalar. When \code{TRUE}, allows loops (self edges).
+#' @param multiple Logical scalar. When \code{TRUE} allows multiple edges.
+#' @return A random graph of size \eqn{n\times n}{n*n} following the small-world
+#' model.
+#' @export
+rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
+  rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
+                   self, multiple, TRUE)
+}
+
+#' Rewires a graph
+#' @inheritParams rgraph_ws
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
+#' @export
+rewire_graph <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
+                         undirected=getOption("diffnet.undirected")) {
+  out <- switch(class(graph),
+    dgCMatrix = rewire_graph.dgCMatrix(graph, p, both.ends, self, multiple, undirected),
+    list = rewire_graph.list(graph, p, both.ends, self, multiple, undirected),
+    matrix = rewire_graph.dgCMatrix(
+      methods::as(graph, "dgCMatrix"), p, both.ends, self, multiple, undirected),
+    diffnet = rewire_graph.list(graph$graph, p, both.ends, self, multiple,
+                                graph$meta$undirected),
+    array = rewire_graph.array(graph, p, both.ends, self, multiple, undirected),
+    stopifnot_graph(graph)
+  )
+
+  # If diffnet, then it must return the same object but rewired
+  if (inherits(graph, "diffnet")) {
+    graph$graph <- out
+    return(graph)
+  }
+
+  return(out)
+}
+
+# @rdname rewire_graph
+rewire_graph.list <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
+                              undirected=getOption("diffnet.undirected")) {
+  t   <- length(graph)
+  out <- vector("list", t)
+
+  # Names
+  names(ngraph) <- names(graph)
+
+  for (i in 1:t) {
+    out[[i]] <- rewire_graph_cpp(graph[[i]], p, both.ends, self, multiple,
+                                    undirected)
+    # Names
+    dimnames(out[[i]]) <- dimnames(graph[[i]])
+  }
+
+  out
+}
+
+# @rdname rewire_graph
+rewire_graph.dgCMatrix <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
+                         undirected=getOption("diffnet.undirected")) {
+  out <- rewire_graph_cpp(graph, p, both.ends, self, multiple, undirected)
+  dimnames(out) <- dimnames(graph)
+}
+
+# @rdname rewire_graph
+rewire_graph.array <-function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
+                              undirected=getOption("diffnet.undirected")) {
+  n   <- dim(graph)[1]
+  t   <- dim(graph)[3]
+  out <- vector("list", t)
+
+  # Checking time names
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:t
+  names(out) <- tn
+
+  # Rewiring
+  for(i in 1:t) {
+    out[[i]] <- rewire_graph_cpp(
+      methods::as(graph[,,i], "dgCMatrix"), p, both.ends, self, multiple, undirected)
+    dimnames(out[[i]]) <- dimnames(graph[,,i])
+  }
+
+  out
 }
