@@ -21,6 +21,6 @@ NULL
 
 #' @importFrom grDevices grey
 #' @importFrom graphics grid par plot points symbols text
-#' @importFrom stats complete.cases
+#' @importFrom stats complete.cases runif
 #' @importFrom utils getFromNamespace head
 NULL

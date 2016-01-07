@@ -20,9 +20,9 @@ plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
 
 \item{undirected}{Logical scalar.}
 
-\item{vertex.col}{A character vector of size 2 with colors}
+\item{vertex.col}{A character vector of size 3 with colors names.}
 
-\item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices}
+\item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices.}
 
 \item{label}{Character vector of size \eqn{n}. If no provided, rownames of
 the graph are used.}
@@ -64,6 +64,12 @@ the function creates a new graph accumulating links through time.
 The \code{mfrow.par} sets how to arrange the plots on the device. If \eqn{T=5}
 and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 of the device and the last two in the bottom.
+
+The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
+and adopters. The new adopters (default color \code{"red"}) have a different
+color that the adopters when the graph is at their time of adoption, hence,
+when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
+be plotted in red.
 }
 \examples{
 #' # Generating a random graph

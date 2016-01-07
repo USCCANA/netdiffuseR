@@ -90,7 +90,7 @@ rdiffnet <- function(n, t,
   diag(sgraph) <- 0
 
   # Step 0.1: Setting the seed nodes
-  cumadopt <- matrix(0, ncol=t, nrow=n)
+  cumadopt <- matrix(0L, ncol=t, nrow=n)
   toa   <- matrix(NA, ncol=1, nrow= n)
   if (seed.nodes %in% c("central","marginal")) {
     d <- dgr(sgraph)
@@ -98,25 +98,25 @@ rdiffnet <- function(n, t,
     d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
     d <- d[1:floor(n*seed.p.adopt)]
     d <- as.numeric(d)
-    cumadopt[d, ] <- 1
-    toa[d] <- 1
+    cumadopt[d, ] <- 1L
+    toa[d] <- 1L
   } else if (seed.nodes == "random") {
     toa[sample.int(n, floor(n*seed.p.adopt))] <- 1
   }
 
   # Step 1.0: Repeat
   graph      <- vector("list", t)
-  graph[[1]] <- sgraph
+  graph[[1L]] <- sgraph
   if (rewire) {
-    for (i in 2:t) {
-      rewire.args$graph <- graph[[i-1]]
+    for (i in 2L:t) {
+      rewire.args$graph <- graph[[i-1L]]
       graph[[i]] <- do.call(rewire_graph, rewire.args)
     }
   } else {
-    graph <- lapply(1:t, function(x) sgraph)
+    graph <- lapply(1L:t, function(x) sgraph)
   }
 
-  names(graph) <- 1:t
+  names(graph) <- 1L:t
 
   # Step 3.0: Thresholds
   thr <- sapply(1:n, threshold.dist)
@@ -125,7 +125,7 @@ rdiffnet <- function(n, t,
     expo <- exposure(graph, cumadopt)
     whoadopts <- which( (expo[,i] >= thr) & is.na(toa))
     toa[whoadopts] <- i
-    cumadopt[whoadopts, i:t] <- 1
+    cumadopt[whoadopts, i:t] <- 1L
   }
   reachedt <- max(toa, na.rm=TRUE)
 
@@ -134,6 +134,6 @@ rdiffnet <- function(n, t,
     graph <- graph[1:reachedt]
   }
 
-  as_diffnet(graph, toa, recode=FALSE)
+  as_diffnet(graph, as.integer(toa), recode=FALSE)
 }
 

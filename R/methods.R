@@ -202,7 +202,7 @@ summary.diffnet <- function(object, ...) {
     cat(sprintf(
       paste0("%",slen,"s", collapse=" "),
       qf(meta$pers[i],0), qf(out[i,1],0), qf(out[i,2],0), qf(out[i,3]),
-      ifelse(i==1, "-",qf(out[i,2:4])), qf(out[i,5]), qf(out[i,6])
+      ifelse(i==1, "-",qf(out[i,4])), qf(out[i,5]), qf(out[i,6])
     ), "\n")
   }
 
@@ -229,8 +229,8 @@ summary.diffnet <- function(object, ...) {
 #' @param cumadopt \eqn{n\times T}{n*T} matrix
 #' @param displaylabels Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
 #' @param undirected Logical scalar.
-#' @param vertex.col A character vector of size 2 with colors
-#' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices
+#' @param vertex.col A character vector of size 3 with colors names.
+#' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
 #' @param label Character vector of size \eqn{n}. If no provided, rownames of
 #' the graph are used.
 #' @param edge.col Character. Color of the edge
@@ -254,6 +254,12 @@ summary.diffnet <- function(object, ...) {
 #' The \code{mfrow.par} sets how to arrange the plots on the device. If \eqn{T=5}
 #' and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 #' of the device and the last two in the bottom.
+#'
+#' The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
+#' and adopters. The new adopters (default color \code{"red"}) have a different
+#' color that the adopters when the graph is at their time of adoption, hence,
+#' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
+#' be plotted in red.
 #'
 #' @examples
 #' #' # Generating a random graph
