@@ -121,8 +121,14 @@ arma::sp_mat rewire_graph_cpp(
     }
 
     // Checking for self
-    while ( (!self && (newj==newk)) | (!multiple && (graph.at(newj, newk) != 0) )) /*| (!multiple && ( graph.at(newj,newk) ))*/
+    int wcount = 0;
+    while ( (!self && (newj==newk)) | (!multiple && (graph.at(newj, newk) != 0) )) { /*| (!multiple && ( graph.at(newj,newk) ))*/
       newk = floor( (n-1)*unif_rand() );
+
+      // In the case that the individual actually is connected to everyone and
+      // multiple is not allowed, this is needed to break out the loop
+      if (++wcount >= n) break;
+    }
 
     // Setting zeros
     newgraph.at(j,k) = 0;

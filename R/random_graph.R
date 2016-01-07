@@ -94,10 +94,118 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   if (length(graph)) {
     d <- dgr(graph)
     d[d==0] <- 1
-    rgraph_ba_cpp(graph, d, m, t)
+
+    # Parsing the class
+    out <- switch(class(graph),
+           matrix = rgraph_ba_cpp(methods::as(graph, "dgCMatrix"), d, m, t),
+           dgCMatrix =rgraph_ba_cpp(graph, d, m, t),
+           list = lapply(graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t)),
+           diffnet = lapply(graph$graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t)),
+           array = {
+             out <- vector("list", dim(graph)[3])
+             for (i in 1:dim(graph)[3])
+               out[[i]] <- rgraph_ba_cpp(methods::as(graph[,,i], "dgCMatrix"),
+                                         d[,i], m, t)
+             out
+           },
+           stopifnot_graph(graph)
+           )
+
+    # If it is a static graph
+    if (inherits(graph, c("dgCMatrix", "matrix"))) {
+
+      n    <- nrow(graph)
+      nnew <- nrow(out)
+
+      rn <- rownames(graph)
+      if (!length(rn)) rn <- 1:n
+
+      ids <- c(rn, (n+1):nnew)
+
+      dimnames(out) <- list(ids, ids)
+      return(out)
+    }
+
+    # If it is a dynamic graph
+    if (inherits(graph, "diffnet")) {
+      names(out) <- graph$meta$pers
+
+      graph$graph <- out
+
+      # TOA MAT
+      n <- graph$meta$n
+      nnew <- nrow(out[[1]])
+
+      # Meta attributes
+      graph$meta$n <- nnew
+      graph$meta$ids <- c(graph$meta$ids, (n+1):nnew)
+
+      graph$adopt <- rbind(
+        graph$adopt,
+        matrix(0, nrow=nnew-n, ncol=graph$meta$nper)
+      )
+      graph$cumadopt <- rbind(
+        graph$cumadopt,
+        matrix(0, nrow=nnew-n, ncol=graph$meta$nper)
+      )
+
+      graph$toa <- c(graph$toa, rep(NA, nnew-n))
+      names(graph$toa) <- graph$meta$ids
+
+      # Names
+      dimnames(graph$adopt) <- list(graph$meta$ids, graph$meta$pers)
+      dimnames(graph$cumadopt) <- list(graph$meta$ids, graph$meta$pers)
+
+      for (i in 1:length(out))
+        dimnames(graph$graph[[i]]) <- list(graph$meta$ids, graph$meta$ids)
+
+      return(graph)
+
+    } else if (inherits(graph, "list")) {
+
+      tn <- names(graph)
+      if (!length(tn)) tn <- 1:length(graph)
+      names(out) <- tn
+
+      n <- nrow(graph[[1]])
+      nnew <- nrow(out[[1]])
+
+      rn <- rownames(graph[[1]])
+      if (!length(rn)) rn <- 1:n
+
+      ids <- c(rn, (n+1):nnew)
+      for (i in 1:length(out))
+        dimnames(out[[i]]) <- list(ids, ids)
+
+      return(out)
+    } else { # In the case of an array
+      n <- nrow(graph)
+      nnew <- nrow(out[[1]])
+      rn <- rownames(graph)
+
+      if (!length(rn)) rn <- 1:n
+      ids <- c(rn, (n+1):nnew)
+
+      tn <- dimnames(graph)[[3]]
+      if (!length(tn)) tn <- 1:dim(graph)[3]
+      names(out) <- tn
+
+      for (i in 1:length(out))
+        dimnames(out[[i]]) <- list(ids, ids)
+
+      return(out)
+    }
+
   }
-  else rgraph_ba_new_cpp(m0, m, t)
+  else {
+    out <- rgraph_ba_new_cpp(m0, m, t)
+    ids <- 1:(m0+t)
+    dimnames(out) <- list(ids, ids)
+    return(out)
+  }
 }
+
+
 
 #' Watts-Strogatz model
 #' @param n Integer scalar. Set the size of the graph.
@@ -148,13 +256,17 @@ rewire_graph.list <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FA
   out <- vector("list", t)
 
   # Names
-  names(ngraph) <- names(graph)
+  tn <- names(graph)
+  if (!length(tn)) tn <- 1:t
+  names(out) <- tn
 
   for (i in 1:t) {
     out[[i]] <- rewire_graph_cpp(graph[[i]], p, both.ends, self, multiple,
                                     undirected)
     # Names
-    dimnames(out[[i]]) <- dimnames(graph[[i]])
+    rn <- rownames(graph[[i]])
+    if (!length(rn)) rn <- 1:nrow(graph[[i]])
+    dimnames(out[[i]]) <- list(rn, rn)
   }
 
   out
@@ -164,7 +276,11 @@ rewire_graph.list <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FA
 rewire_graph.dgCMatrix <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected")) {
   out <- rewire_graph_cpp(graph, p, both.ends, self, multiple, undirected)
-  dimnames(out) <- dimnames(graph)
+
+  rn <- rownames(out)
+  if (!length(rn)) rn <- 1:nrow(out)
+  dimnames(out) <- list(rn, rn)
+  out
 }
 
 # @rdname rewire_graph
@@ -183,7 +299,11 @@ rewire_graph.array <-function(graph, p, both.ends=FALSE, self=FALSE, multiple=FA
   for(i in 1:t) {
     out[[i]] <- rewire_graph_cpp(
       methods::as(graph[,,i], "dgCMatrix"), p, both.ends, self, multiple, undirected)
-    dimnames(out[[i]]) <- dimnames(graph[,,i])
+
+    rn <- rownames(graph[,,i])
+    if (!length(rn)) rn <- 1:n
+
+    dimnames(out[[i]]) <- list(rn, rn)
   }
 
   out

@@ -65,7 +65,7 @@ classify_graph <- function(graph) {
 
     # Step 3: Should be numeric
     m <- mode(graph)
-    if (!(m %in% c("numeric", "integer")))
+    if (!inherits(graph, "dgCMatrix") && !(m %in% c("numeric", "integer")))
       stop("-graph- should be either numeric or integer.\n\tmode(graph) =  \"",
            m, "\".")
 

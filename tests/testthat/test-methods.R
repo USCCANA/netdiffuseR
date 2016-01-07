@@ -100,3 +100,16 @@ test_that("Returning threshold equal to the infect/suscept funs", {
   expect_equal(infsusdn$suscept, suscep)
 
 })
+
+# Printing and summary of diffnet! ---------------------------------------------
+test_that("diffnet print and summary", {
+  diffnet <- lapply(1:3, rgraph_ba, m0=1,t=9)
+  toa <- sample(c(2001:2003, NA), 10, TRUE)
+  diffnet_und <- as_diffnet(diffnet, toa, undirected = TRUE)
+  diffnet_dir <- as_diffnet(diffnet, toa, undirected = FALSE)
+
+  expect_output(diffnet_und, "type.+ undirected", ignore.case=TRUE)
+  expect_output(diffnet_dir, "type.+ directed", ignore.case=TRUE)
+
+  expect_output(summary(diffnet_und), "Diffusion network summary")
+})
