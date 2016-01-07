@@ -2,6 +2,7 @@
 % Please edit documentation in R/random_graph.R
 \name{rgraph_ba}
 \alias{rgraph_ba}
+\alias{scale-free}
 \title{Barabasi-Albert model}
 \usage{
 rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL)
@@ -31,8 +32,17 @@ graph
 
 graph <- rgraph_ba(graph=graph)
 }
+\references{
+Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
+Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
+
+Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
+Retrieved from \url{http://barabasi.com/networksciencebook/}
+}
 \seealso{
-Other simulation functions: \code{\link{rgraph_er}}
+Other simulation functions: \code{\link{rdiffnet}},
+  \code{\link{rewire_graph}}, \code{\link{rgraph_er}},
+  \code{\link{rgraph_ws}}
 }
 \concept{
 Scale-free random graph

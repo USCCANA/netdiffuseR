@@ -25,8 +25,8 @@ Threshold as the exposure of vertex by the time of the adoption (see \code{\link
 \examples{
 # Generating a random graph with random Times of Adoption
 set.seed(783)
-graph <- rgraph_er(n=5, t=4)
 toa <- sample.int(4, 5, TRUE)
+graph <- rgraph_er(n=5, t=max(toa) - min(toa) + 1)
 
 # Computing exposure using Structural Equivalnece (wtype=1)
 adopt <- toa_mat(toa)
@@ -34,6 +34,10 @@ expo <- exposure(graph, adopt$cumadopt, wtype = 1)
 
 # Retrieving threshold
 threshold(expo, toa)
+
+# We can do the same by creating a diffnet object
+diffnet <- as_diffnet(graph, toa)
+threshold(diffnet, wtype=1)
 }
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}

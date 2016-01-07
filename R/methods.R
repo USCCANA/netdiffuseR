@@ -7,11 +7,24 @@
 #' @param self Logical scalar.
 #' @param multiple Logical scalar.
 #' @param use.incomplete Logical scalar.
-#' @param ... Ignored.
+#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
+#' is ignored.
 #' @param x A \code{diffnet} object.
 #' @param object A \code{diffnet} object.
+#' @param y Ignored.
+#' @param t Integer scalar indicating the time slice to plot.
+#' @param displaylabels Logical scalar. When TRUE, \code{plot} shows vertex labels.
+#' @param vertex.col Character scalar/vector. Color of the vertices.
+#' @param vertex.cex Numeric scalar/vector. Size of the vertices.
+#' @param edge.col Character scalar/vector. Color of the edges.
+#' @param mode Character scalar. Name of the layout algorithm to implement (see details).
+#' @param layout.par Layout parameters (see details).
+#' @param main Character. A title template to be passed to sprintf.
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
+#' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
+#' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
+#' the (\pkg{sna}) package.
 #' @aliases diffnet diffnet-class
 #' @examples
 #'
@@ -86,6 +99,30 @@ as_diffnet <- function(graph, toa, recode=TRUE,
     cumadopt = mat$cumadopt,
     meta = meta
   ), class="diffnet"))
+}
+
+#' @export
+#' @rdname as_diffnet
+plot.diffnet <- function(
+  x,y=NULL, t=1, displaylabels = FALSE, vertex.col = c("blue", "grey"),
+  vertex.cex = NA, edge.col = "gray", mode = "fruchtermanreingold",
+  layout.par = NULL, main = "Diffusion network in time %d", ...) {
+
+  # Extracting the graph to be plotted
+  graph <- methods::as(x$graph[[t]], "matrix.csc")
+
+  # Setting the colors
+  cols <- with(x, ifelse(cumadopt[,t], vertex.col[1], vertex.col[2]))
+
+  # Calcularing layout
+  fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
+  coords <- fun(graph, layout.par)
+
+  sna::gplot(graph, displaylabels=displaylabels, vertex.col=cols,
+             coord=coords, edge.col=edge.col, label=x$meta$ids,
+             main=sprintf(main, t), ...)
+
+  invisible(coords)
 }
 
 #' @export
@@ -236,7 +273,7 @@ plot_diffnet <- function(
   graph, cumadopt,
   displaylabels=FALSE,
   undirected=TRUE,
-  vertex.col=c("blue","grey"),
+  vertex.col=c("grey", "red", "blue"),
   vertex.cex=NA,
   label=rownames(graph[[1]]),
   edge.col="gray",
@@ -274,7 +311,7 @@ plot_diffnet.array <- function(graph, ...) {
 plot_diffnet.list <- function(graph, cumadopt,
                          displaylabels=FALSE,
                          undirected=TRUE,
-                         vertex.col=c("blue","grey"),
+                         vertex.col=c("grey", "red", "blue"),
                          vertex.cex=NA,
                          label=rownames(graph[[1]]),
                          edge.col="gray",
@@ -321,13 +358,15 @@ plot_diffnet.list <- function(graph, cumadopt,
   # Plotting
   curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
   par(mfrow=mfrow.par, mai=mai, mar=mar)
 
   times <- as.integer(names(graph))
 
   for(i in 1:t)  {
-    cols <- ifelse(cumadopt[,i], vertex.col[1], vertex.col[2])
+    # Colors, new adopters are painted differently
+    cols <- ifelse(!cumadopt[,i], vertex.col[1],
+                   ifelse(!cumadopt[,i-1*(i!=1)] | rep(i,n) == 1, vertex.col[2], vertex.col[3]))
+
     set.seed(curseed)
     # cgraph <- sna::as.sociomatrix.sna(adjmat_to_edgelist(graph[[i]], undirected))
     if (inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "matrix.csc")
@@ -338,6 +377,7 @@ plot_diffnet.list <- function(graph, cumadopt,
                main=sprintf(main, times[i]), ...)
   }
 
+  par(oldpar)
   invisible(coords)
 
 }

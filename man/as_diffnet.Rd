@@ -4,6 +4,7 @@
 \alias{as_diffnet}
 \alias{diffnet}
 \alias{diffnet-class}
+\alias{plot.diffnet}
 \alias{print.diffnet}
 \alias{summary.diffnet}
 \title{Creates a \code{diffnet} class object}
@@ -12,6 +13,11 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), use.incomplete = FALSE, ...)
+
+\method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
+  vertex.col = c("blue", "grey"), vertex.cex = NA, edge.col = "gray",
+  mode = "fruchtermanreingold", layout.par = NULL,
+  main = "Diffusion network in time \%d", ...)
 
 \method{print}{diffnet}(x, ...)
 
@@ -34,14 +40,38 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL,
 
 \item{use.incomplete}{Logical scalar.}
 
-\item{...}{Ignored.}
+\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
+is ignored.}
 
 \item{x}{A \code{diffnet} object.}
+
+\item{y}{Ignored.}
+
+\item{t}{Integer scalar indicating the time slice to plot.}
+
+\item{displaylabels}{Logical scalar. When TRUE, \code{plot} shows vertex labels.}
+
+\item{vertex.col}{Character scalar/vector. Color of the vertices.}
+
+\item{vertex.cex}{Numeric scalar/vector. Size of the vertices.}
+
+\item{edge.col}{Character scalar/vector. Color of the edges.}
+
+\item{mode}{Character scalar. Name of the layout algorithm to implement (see details).}
+
+\item{layout.par}{Layout parameters (see details).}
+
+\item{main}{Character. A title template to be passed to sprintf.}
 
 \item{object}{A \code{diffnet} object.}
 }
 \description{
 Creates a \code{diffnet} class object
+}
+\details{
+Plotting is done via the function \code{\link[sna:gplot]{gplot}},
+and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
+the (\pkg{sna}) package.
 }
 \examples{
 

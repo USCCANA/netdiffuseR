@@ -4,7 +4,7 @@
 \alias{degree}
 \alias{dgr}
 \alias{indegree}
-\alias{outrdegree}
+\alias{outdegree}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
 dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected"),

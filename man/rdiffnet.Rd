@@ -6,14 +6,20 @@
 \usage{
 rdiffnet(n, t, seed.nodes = "marginal", seed.p.adopt = 0.2,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(p = 0.2), threshold.dist = function(x) runif(1))
+  rewire.args = list(p = 0.1, undirected = TRUE),
+  threshold.dist = function(x) runif(1))
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
 
 \item{t}{Integer scalar. Time lenght.}
 
+\item{seed.nodes}{Character scalar. Type of seed nodes (early adoptes).}
+
 \item{seed.p.adopt}{Numeric scalar. Proportion of early adopters.}
+
+\item{seed.graph}{Character scalar. Type of algorithm used to generate the
+seed graph (see details).}
 
 \item{rgraph.args}{List. Arguments to be passed to rgraph.}
 
@@ -24,16 +30,31 @@ rdiffnet(n, t, seed.nodes = "marginal", seed.p.adopt = 0.2,
 
 \item{threshold.dist}{Function. Applied via \code{\link{sapply}}, sets the
 adoption threshold for each node.}
-
-\item{seeds.nodes}{Character scalar. Type of seed nodes (early adoptes).}
 }
 \value{
 A random \code{\link{diffnet}} class object.
 }
 \description{
-Generates a random diffnet network
+Simulates a diffusion network by creating a random dynamic network and
+adoption threshold levels.
 }
 \details{
+Instead of randomizing whether an individual adopts the innovation or not, this
+toy model randomizes threshold levels, seed adopters and network structure, so
+an individual adopts the innovation in time \eqn{T} iff his exposure is above or
+equal to his threshold. The simulation is done in the following steps:
+
+\enumerate{
+ \item Using \code{seed.graph}, a baseline graph is created.
+ \item Given the baseline graph, the set of initial adopters is defined
+ using \code{seed.nodes}.
+ \item Afterwards, if \code{rewire=TRUE} \eqn{t-1} slices of the network are created
+ by iteratively rewiring the baseline graph.
+ \item The \code{threshold.dist} function is applied to each node in the graph.
+ \item Simulation starts at \eqn{t=2} asigning adopters in each time period
+ accordingly to each vertex's threshold and exposure.
+}
+
 \code{seed.nodes} can be \code{"marginal"}, \code{"central"} or \code{"random"},
 So each of these values sets the initial adopters using the vertices with lowest
 degree, with highest degree or completely randomly. The number of early adoptes
@@ -42,12 +63,12 @@ is set as \code{seed.p.adopt * n}.
 The argument \code{seed.graph} allows the user to set the algorithm used to
 generate the first network (network in t=1). This can be either "scale-free"
 (Barabasi-Albert model using the \code{\link{rgraph_ba}} function),
-\code{"bernoulli"} (Erdos-Reyi model using the \code{\link{rgraph_re}} function),
+\code{"bernoulli"} (Erdos-Reyi model using the \code{\link{rgraph_er}} function),
 or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
 function). The list \code{rgraph.args} passes arguments to the chosen algorithm.
 
 When \code{rewire=TRUE}, the networks that follow t=1 will be generated using the
-\code{\link{require_graph}} function as \eqn{G(t) = G(t-1)}.
+\code{\link{rewire_graph}} function as \eqn{G(t) = G(t-1)}.
 
 Finally, \code{threshold.dist} sets the threshold for each vertex in the graph.
 It is applied using \code{sapply} as follows
@@ -60,5 +81,10 @@ By default sets the threshold to be random for each node in the graph.
 z <- rdiffnet(50,10)
 z
 summary(z)
+}
+\seealso{
+Other simulation functions: \code{\link{rewire_graph}},
+  \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
+  \code{\link{rgraph_ws}}
 }
 

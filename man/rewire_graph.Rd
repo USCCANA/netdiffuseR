@@ -23,4 +23,9 @@ rewire_graph(graph, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
 \description{
 Rewires a graph
 }
+\seealso{
+Other simulation functions: \code{\link{rdiffnet}},
+  \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
+  \code{\link{rgraph_ws}}
+}
 

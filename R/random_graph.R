@@ -27,7 +27,8 @@
 #' @return A graph represented by an adjacency matrix (if t=1), or an array of
 #' adjacency matrices (if t>1).
 #' @export
-#' @concept Random graph
+#' @aliases bernoilli
+#' @concept Bernoulli Random graph
 #' @note The resulting adjacency matrix is store as a dense matrix, not as a
 #' sparse matrix, hence the user should be careful when choosing the size of
 #' the network.
@@ -76,6 +77,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @return A graph.
 #' @family simulation functions
+#' @aliases scale-free
 #' @concept Scale-free random graph
 #' @concept Barabasi-Albert model
 #' @concept Random graph
@@ -89,6 +91,12 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #'
 #' graph <- rgraph_ba(graph=graph)
 #' @export
+#' @references
+#' Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
+#' Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
+#'
+#' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
+#' Retrieved from \url{http://barabasi.com/networksciencebook/}
 rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   # When the graph is not null, then use it as a seed (starting point)
   if (length(graph)) {
@@ -216,7 +224,15 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' @param multiple Logical scalar. When \code{TRUE} allows multiple edges.
 #' @return A random graph of size \eqn{n\times n}{n*n} following the small-world
 #' model.
+#' @family simulation functions
+#' @aliases small-world
 #' @export
+#' @references
+#' Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
+#' networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
+#'
+#' Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
+#' SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
 rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
   rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
                    self, multiple, TRUE)
@@ -226,6 +242,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 #' @inheritParams rgraph_ws
 #' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
+#' @family simulation functions
 #' @export
 rewire_graph <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected")) {

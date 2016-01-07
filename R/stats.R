@@ -11,7 +11,7 @@
 #' @export
 #' @family statistics
 #' @keywords univar
-#' @aliases degree indegree outrdegree
+#' @aliases degree indegree outdegree
 #' @examples
 #' # Creating an undirected graph
 #' graph <- rgraph_ba()
@@ -327,8 +327,8 @@ plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard R
 #' @examples
 #' # Generating a random graph with random Times of Adoption
 #' set.seed(783)
-#' graph <- rgraph_er(n=5, t=4)
 #' toa <- sample.int(4, 5, TRUE)
+#' graph <- rgraph_er(n=5, t=max(toa) - min(toa) + 1)
 #'
 #' # Computing exposure using Structural Equivalnece (wtype=1)
 #' adopt <- toa_mat(toa)
@@ -336,6 +336,10 @@ plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard R
 #'
 #' # Retrieving threshold
 #' threshold(expo, toa)
+#'
+#' # We can do the same by creating a diffnet object
+#' diffnet <- as_diffnet(graph, toa)
+#' threshold(diffnet, wtype=1)
 #' @export
 threshold <- function(obj, times, times.recode=TRUE, ...) {
 

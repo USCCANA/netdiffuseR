@@ -76,6 +76,10 @@ arma::mat exposure_cpp(
     double v = 1.0, bool undirected=true, bool normalized=true,
     int n=0, int T=0) {
 
+  // Checking dimensions
+  if (graph.size() != cumadopt.n_cols)
+    stop("The length of -graph- and number of columns in -cumadopt- do not coincide.");
+
   // Variables initialization
   arma::mat exposure(n,T);
 
@@ -89,10 +93,11 @@ arma::mat exposure_cpp(
 
   // Filling the first and last with zeros
   // may skip this in the future.
-  exposure.col(0).fill(0.0);
-  exposure.col(T-1).fill(0.0);
+//   exposure.col(0).fill(0.0);
+//   exposure.col(T-1).fill(0.0);
 
-  for(int t=0;t<(T-1);t++) {
+  // for(int t=0;t<(T-1);t++) {
+  for(int t=0;t<T;t++) {
     // graph_t = graph_cube.slice(t);
     arma::sp_mat graph_t = graph[t];
     // Computing weights
@@ -121,8 +126,10 @@ arma::mat exposure_cpp(
     }
 
     // Filling the output
-    if (normalized) exposure.col(t+1) = NUMERATOR / DENOMINATOR;
-    else exposure.col(t+1) = NUMERATOR;
+//     if (normalized) exposure.col(t+1) = NUMERATOR / DENOMINATOR;
+//     else exposure.col(t+1) = NUMERATOR;
+    if (normalized) exposure.col(t) = NUMERATOR / DENOMINATOR;
+    else exposure.col(t) = NUMERATOR;
 
   }
 
