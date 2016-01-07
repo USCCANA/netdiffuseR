@@ -1,5 +1,6 @@
 library(foreign)
 
+# Preparing the data -----------------------------------------------------------
 x <- read.dta("data-raw/brfarmers.dta")
 
 #               storage  display     value
@@ -63,29 +64,22 @@ library(netdiffuseR)
 graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE, t=19))
 used.vertex <- rownames(graph[[1]])
 
-# Naming the array
-names(graph) <- 1948:1966
-
-# Average indegree
-dg <- dgr(graph, "indegree", undirected = FALSE)
-dg <- rowMeans(dg + 1)
-dg <- dg/max(dg)
-
 # Difussion
 toa <- brfarmers$yr[brfarmers$id %in% used.vertex]
-adopt <- toa_mat(toa)
-plot_diffnet(graph, adopt$cumadopt, displayisolates = FALSE, displaylabels=FALSE, mai = c(0,0,0,0), vertex.cex = 2)
+
+# Creating a diffnet -----------------------------------------------------------
+diffnet <- as_diffnet(graph, toa)
+
+plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE, mai = c(0,0,0,0), vertex.cex = 2)
 
 # Infection
-x <- plot_infectsuscep(graph, toa, K=10, logscale = TRUE, bins=20)
+x <- plot_infectsuscep(diffnet, K=10, logscale = TRUE, bins=20)
 
 # Threshold
-expo <- exposure(graph, adopt$cumadopt)
-x <- plot_threshold(graph, expo, toa, undirected = FALSE, vertex.cex = 1/5)
+x <- plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
 x$fitted <- loess(threshold~jit, x, parametric = FALSE)$fitted
 lines(fitted~jit, x[order(x$jit),], lwd=3, col="black")
 
-threshold(exposure(graph, adopt$cumadopt), toa)
-
-hazard_rate(adopt$cumadopt)
+threshold(diffnet)
+hazard_rate(diffnet)
 

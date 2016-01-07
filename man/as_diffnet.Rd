@@ -8,7 +8,7 @@
 \alias{summary.diffnet}
 \title{Creates a \code{diffnet} class object}
 \usage{
-as_diffnet(graph, toa, recode = TRUE, weights = NULL, times = NULL,
+as_diffnet(graph, toa, recode = TRUE, weights = NULL,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), use.incomplete = FALSE, ...)
@@ -25,8 +25,6 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL, times = NULL,
 \item{recode}{Logical scalar. Passed to \code{\link{toa_mat}}.}
 
 \item{weights}{Numeric vector of size \eqn{n}.}
-
-\item{times}{Numeric vector of size \eqn{n}.}
 
 \item{undirected}{Logical scalar.}
 

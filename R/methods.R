@@ -3,7 +3,6 @@
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param recode Logical scalar. Passed to \code{\link{toa_mat}}.
 #' @param weights Numeric vector of size \eqn{n}.
-#' @param times Numeric vector of size \eqn{n}.
 #' @param undirected Logical scalar.
 #' @param self Logical scalar.
 #' @param multiple Logical scalar.
@@ -30,7 +29,7 @@
 #' diffnet
 #' summary(diffnet)
 as_diffnet <- function(graph, toa, recode=TRUE,
-                       weights=NULL, times=NULL, undirected=getOption("diffnet.undirected"),
+                       weights=NULL, undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
                        use.incomplete=FALSE, ...) {
 
@@ -56,7 +55,7 @@ as_diffnet <- function(graph, toa, recode=TRUE,
   mat <- toa_mat(toa, recode=recode, labels = meta$ids)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
-  if (length(graph) != ncol(mat[[1]]))
+  if (length(graph) < ncol(mat[[1]]))
     stop("Range of -toa- and slices in -graph- do not coincide.")
 
   meta$pers <- as.integer(colnames(mat$adopt))
