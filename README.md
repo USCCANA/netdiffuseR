@@ -7,10 +7,12 @@ This package contains functions useful for analyzing network data for diffusion 
 
 The package was developed as part of the paper Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*, Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
-Functions include selection, susceptibility & infection, etc.
+From the description: Statistical analysis, visualization and simulation of network diffusion of innovations. The package implements algorithms for calculating stats such as innovation threshold levels, infectiousness (contagion) and susceptibility, and hazard rates as presented in Burt (1987), Valente (1995), and Myers (2000) (among others).
 
 Installation
 ------------
+
+Infectiousness and Susceptibility
 
 Using the `devtools` package, you can install `netdiffuseR` dev version as follows
 
@@ -45,7 +47,7 @@ library(netdiffuseR)
 set.seed(1234)
 n <- 100
 nper <- 20
-graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
+graph <- rgraph_er(n, nper, .5)
 toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 ```
@@ -72,34 +74,33 @@ summary(diffnet)
     ## -----------------------------------------------------------------------
     ##  Period  Adopters Cum Adopt. Cum Adopt. % Hazard Rate Density Moran's I 
     ## -------- -------- ---------- ------------ ----------- ------- --------- 
-    ##        1        3          3         0.03           -    0.80     -0.01 
-    ##        2        8         11         0.11        0.08    0.81     -0.01 
-    ##        3        4         15         0.15        0.04    0.81     -0.01 
-    ##        4        1         16         0.16        0.01    0.79     -0.01 
-    ##        5        2         18         0.18        0.02    0.79     -0.01 
-    ##        6        5         23         0.23        0.06    0.81     -0.01 
-    ##        7        6         29         0.29        0.08    0.82     -0.02 
-    ##        8        1         30         0.30        0.01    0.80     -0.01 
-    ##        9        6         36         0.36        0.09    0.81     -0.01 
-    ##       10        5         41         0.41        0.08    0.78     -0.01 
-    ##       11        2         43         0.43        0.03    0.80     -0.01 
-    ##       12        6         49         0.49        0.11    0.80     -0.01 
-    ##       13        4         53         0.53        0.08    0.79     -0.01 
-    ##       14        7         60         0.60        0.15    0.80     -0.01 
-    ##       15        7         67         0.67        0.17    0.80     -0.01 
-    ##       16        3         70         0.70        0.09    0.80     -0.01 
-    ##       17       10         80         0.80        0.33    0.79     -0.01 
-    ##       18        4         84         0.84        0.20    0.79     -0.01 
-    ##       19        2         86         0.86        0.12    0.81     -0.01 
-    ##       20        9         95         0.95        0.64    0.81     -0.01 
+    ##        1        3          3         0.03           -    1.00     -0.01 
+    ##        2        8         11         0.11        0.08    1.01     -0.01 
+    ##        3        4         15         0.15        0.04    1.02     -0.00 
+    ##        4        1         16         0.16        0.01    0.98     -0.01 
+    ##        5        2         18         0.18        0.02    0.99     -0.01 
+    ##        6        5         23         0.23        0.06    0.99     -0.01 
+    ##        7        6         29         0.29        0.08    1.02     -0.01 
+    ##        8        1         30         0.30        0.01    1.01     -0.01 
+    ##        9        6         36         0.36        0.09    1.01     -0.01 
+    ##       10        5         41         0.41        0.08    0.98     -0.01 
+    ##       11        2         43         0.43        0.03    0.99     -0.02 
+    ##       12        6         49         0.49        0.11    0.99     -0.01 
+    ##       13        4         53         0.53        0.08    1.00     -0.01 
+    ##       14        7         60         0.60        0.15    1.00     -0.01 
+    ##       15        7         67         0.67        0.17    0.99     -0.01 
+    ##       16        3         70         0.70        0.09    1.01     -0.01 
+    ##       17       10         80         0.80        0.33    0.99     -0.01 
+    ##       18        4         84         0.84        0.20    0.99     -0.01 
+    ##       19        2         86         0.86        0.12    1.01     -0.01 
+    ##       20        9         95         0.95        0.64    1.01     -0.01 
     ## -----------------------------------------------------------------------
     ##  Left censoring  : 0.03 (3)
     ##  Right centoring : 0.05 (5)
 
 ``` r
 # Visualizing distribution of suscep/infect
-
-out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
 ```
 
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, normalize, K, :
@@ -111,18 +112,13 @@ out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
 ``` r
 # Generating a random graph
 set.seed(123)
-n <- 6
-nper <- 5
-toa  <- sample(c(2000:(2000+nper-1), NA), n, TRUE)
-nper <- length(unique(toa))
-graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
+diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
+```
 
-# Creating a diffnet object
-diffnet <- as_diffnet(graph, toa, undirected = FALSE)
+    ## Warning in rdiffnet(50, 20, rgraph.args = list(m = 4)): Less periods than
+    ## wanted, only 8 instead of 20
 
-# Computing exposure
-expos <- exposure(diffnet)
-
+``` r
 # Threshold with fixed vertex size
 plot_threshold(diffnet)
 ```
@@ -131,16 +127,24 @@ plot_threshold(diffnet)
 
 ``` r
 # Threshold with vertex size = avg degree
-cex <- rowMeans(dgr(graph))
+cex <- rowMeans(dgr(diffnet))
 cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
 plot_threshold(diffnet, vertex.cex = cex)
 ```
 
 ![](README_files/figure-markdown_github/plot_threshold-2.png)
- \#\#\# Diffusion process
+ \#\#\# Hazard rate
 
 ``` r
-plot_diffnet(diffnet)
+hazard_rate(diffnet)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+### Diffusion process
+
+``` r
+plot_diffnet(diffnet, vertex.cex = 2)
 ```
 
     ## Loading required package: SparseM
