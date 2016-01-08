@@ -13,17 +13,17 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
 \item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
 
-\item{wtype}{Integer. Weighting type (see details).}
+\item{wtype}{Integer scalar. Weighting type (see details).}
 
-\item{v}{Double. Constant for Structural Equivalence.}
+\item{v}{Numeric scalar. Constant for Structural Equivalence.}
 
-\item{undirected}{Logical. TRUE if the graph is undirected.}
+\item{undirected}{Logical scalar. TRUE if the graph is undirected.}
 
-\item{normalized}{Logical. When true, the exposure will be between zero
+\item{normalized}{Logical scalar. When true, the exposure will be between zero
 and one (see details).}
 }
 \value{
-A matrix of size nxT with exposure for each node.
+A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 }
 \description{
 Calculates the level of exposure to the innovation that each node has in the

@@ -1,6 +1,6 @@
-#' Erdos-Reyi model
+#' Erdos-Renyi model
 #'
-#' Several random graphs algorithms.
+#' Generates a bernoulli random graph.
 #'
 #' @param n Integer. Number of vertices
 #' @param t Integer. Number of time periods
@@ -24,8 +24,8 @@
 #' @references
 #' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 #' \url{http://barabasi.com/networksciencebook/}.
-#' @return A graph represented by an adjacency matrix (if t=1), or an array of
-#' adjacency matrices (if t>1).
+#' @return A graph represented by an adjacency matrix (if \code{t=1}), or an array of
+#' adjacency matrices (if \code{t>1}).
 #' @export
 #' @aliases bernoilli
 #' @concept Bernoulli Random graph
@@ -71,11 +71,15 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 }
 
 #' Barabasi-Albert model
+#'
+#' Generates a scale-free random graph.
+#'
 #' @param m0 Integer scalar. Number of initial vertices in the graph.
 #' @param m Integer scalar. Number of new edges per vertex added.
 #' @param t Integer scalar. Number of time periods (steps).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @return A graph.
+#' @return If \code{graph} is not provided, a static graph, otherwise an expanded
+#' graph (\code{t} aditional vertices) of the same class as \code{graph}.
 #' @family simulation functions
 #' @aliases scale-free
 #' @concept Scale-free random graph
@@ -216,6 +220,9 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 
 
 #' Watts-Strogatz model
+#'
+#' Generates a small-world random graph.
+#'
 #' @param n Integer scalar. Set the size of the graph.
 #' @param k Integer scalar. Set the initial degree of the ring (must be less than \eqn{n}).
 #' @param p Numeric scalar. Set the probability of changing an edge.
@@ -239,6 +246,10 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 }
 
 #' Rewires a graph
+#'
+#' By changing the endpoints of the edges, this is the workhorse of the
+#' function \code{\link{rgraph_ws}}.
+#'
 #' @inheritParams rgraph_ws
 #' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})

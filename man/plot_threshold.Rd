@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{plot_threshold}
 \alias{plot_threshold}
-\title{Threshold level through time}
+\title{Threshold levels through time}
 \usage{
 plot_threshold(graph, exposure, toa, times.recode = TRUE,
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
@@ -26,11 +26,11 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE,
 \item{no.contemporary}{Logical scalar. When TRUE, edges for vertices with the same
 \code{toa} won't be plotted.}
 
-\item{main}{Character. Title of the plot}
+\item{main}{Character scalar. Title of the plot.}
 
-\item{xlab}{Character. x-axis label}
+\item{xlab}{Character scalar. x-axis label.}
 
-\item{ylab}{Character. y-axis label}
+\item{ylab}{Character scalar. y-axis label.}
 
 \item{vertex.cex}{Numeric vector of size \eqn{n}. Relative size of the vertices}
 

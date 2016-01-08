@@ -17,10 +17,11 @@ rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL)
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
-A graph.
+If \code{graph} is not provided, a static graph, otherwise an expanded
+graph (\code{t} aditional vertices) of the same class as \code{graph}.
 }
 \description{
-Barabasi-Albert model
+Generates a scale-free random graph.
 }
 \details{
 Creates an undirected random graph of size \code{t + m0}.

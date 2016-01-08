@@ -1,15 +1,17 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.16.1.6
-Date: 2016-01-06
+Version: 0.16.1.7
+Date: 2016-01-07
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
   person("Tim", "Hayes", email="timothybhayes@gmail.com", role=c("aut"), comment="Package's first version"),
   person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"), comment="R original code"))
-Description: This package contains functions useful for analyzing
-    network data for diffusion of innovations applications.
-    Functions include selection, susceptibility & infection, etc.
+Description: Statistical analysis, visualization and simulation of
+  network diffusion of innovations. The package implements algorithms for
+  calculating stats such as innovation threshold levels, infectiousness
+  (contagion) and susceptibility, and hazard rates as presented in Burt (1987),
+  Valente (1995), and Myers (2000) (among others).
 Depends:
     R (>= 3.1.1)
 License: MIT + file LICENSE

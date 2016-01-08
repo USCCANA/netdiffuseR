@@ -5,7 +5,7 @@
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param adopt \eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.
-#' @param period Integer. Optional to make the count for a particular period of time.
+#' @param period Integer scalar. Optional to make the count for a particular period of time.
 #' @details The 16 categories are classified using the table that follows. The
 #' first two Yes/No columns represent Ego's adoption of the innovation in \eqn{t-1}
 #' and \eqn{t}; while the first two Yes/No rows represent Alter's adoption of the

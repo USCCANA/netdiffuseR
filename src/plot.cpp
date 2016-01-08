@@ -15,7 +15,7 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 
 //' Distribution over a grid
 //'
-//' Distribution of pairs over a grid of fix size (number of elements)
+//' Distribution of pairs over a grid of fix size.
 //'
 //' @param x Numeric vector of size \eqn{n}
 //' @param y Numeric vector of size \eqn{n}

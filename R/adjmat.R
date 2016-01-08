@@ -27,10 +27,12 @@
 #' details).
 #' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 #' (see details).
-#' @details The edgelist must be coded from 1:n (otherwise it may cause an error).
-#' By default, the function will \code{\link{recode}} the edgelist before starting.
+#' @details The edgelist must be coded from \code{1:n} (otherwise it may cause an error).
+#' Anticipating this, by default, the function will \code{\link{recode}} the
+#' edgelist before starting. The user can keep track after the recording by checking
+#' the resulting element's \code{\link{row.names}}.
 #'
-#' When multiple edges are included, each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
+#' When multiple edges are included, \code{multiple=TRUE},each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
 #' as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
 #' times, the adjacency matrix element \code{(i,j)} will be 2.
 #'
@@ -572,6 +574,13 @@ drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
 
   if (inherits(graph, "diffnet")) {
     graph$graph <- out
+    graph$meta$n <- nrow(out[[1]])
+    graph$meta$ids <- row.names(out[[1]])
+
+    toa <- toa_mat(out)
+    graph$adopt <- toa$adopt
+    graph$cumadopt <- toa$cumadopt
+
     return(graph)
   }
 

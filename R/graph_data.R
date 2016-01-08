@@ -29,10 +29,11 @@
 #'    \item{\code{undirected}: Whether the graph is directed or not}
 #'  }
 #'
-#' @section Dimensions:
+#' @section Objects' names:
 #' When possible, \pkg{netdiffuseR} will try to reuse graphs dimensional names,
 #' this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
-#' and \code{\link{names}} (in the case of dynamic graphs as lists).
+#' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
+#' when no names are provided, these will be created from scratch.
 NULL
 
 stopifnot_graph <- function(x)
@@ -44,15 +45,24 @@ stopifnot_graph <- function(x)
 #' accepted classes in \pkg{netdiffuseR}. If the object fails to fall in one of
 #' the types of graphs the function returns with an error indicating what (and
 #' when possible, where) the problem lies.
-#' @return A list of attributes including
+#'
+#' The function was designed to be used with \code{\link{as_diffnet}}.
+#' @seealso \code{\link{as_diffnet}}, \code{\link{netdiffuseR-graphs}}
+#' @return Whe the object is considered to be a graph, a list of attributes including
 #' \item{type}{Character scalar. Whether is a static or a dynamic graph}
+#' \item{class}{Character scalar. The class of the original object}
+#' \item{ids}{Character vector. Labels of the vertices}
+#' \item{pers}{Integer vector. Labels of the time periods}
 #' \item{nper}{Integer scalar. Number of time periods}
 #' \item{n}{Integer scalar. Number of vertices in the graph}
+#' Otherwise returns with error.
 #' @export
 classify_graph <- function(graph) {
 
-  # Static graphs --------------------------------------------------------------
-  if (inherits(graph, "matrix") || inherits(graph, "dgCMatrix")) { # Static graphs
+  # Diffnet object
+  if (inherits(graph, "diffnet")) {
+    return(classify_graph(graph$graph))
+  } else if (inherits(graph, "matrix") || inherits(graph, "dgCMatrix")) { # Static graphs
     # Step 0: Should have length
     d <- dim(graph)
     if (!d[1])

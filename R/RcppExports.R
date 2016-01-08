@@ -47,7 +47,7 @@ seq_cpp <- function(from, to, lengthout) {
 
 #' Distribution over a grid
 #'
-#' Distribution of pairs over a grid of fix size (number of elements)
+#' Distribution of pairs over a grid of fix size.
 #'
 #' @param x Numeric vector of size \eqn{n}
 #' @param y Numeric vector of size \eqn{n}
@@ -161,14 +161,17 @@ rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weigh
 }
 
 #' Ring lattice graph
+#'
 #' Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
 #' as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 #' @param n Integer scalar. Size of the graph.
 #' @param k Integer scalar. Degree of each vertex.
+#' @details Since the created graph is undirected, the degree of each node always
+#' even. So if \code{k=3}, then the degree will be \code{2}.
 #' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
 #' \eqn{n\times n}{n * n}.
 #' @references Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
-#' “small-world” networks. Nature, 393(6684), 440–2. http://doi.org/10.1038/30918
+#' “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
 #' @export
 ring_lattice <- function(n, k) {
     .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k)

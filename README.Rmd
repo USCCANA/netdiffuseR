@@ -18,9 +18,15 @@ Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theo
 Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536
 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
-Functions include selection, susceptibility & infection, etc.
+From the description: Statistical analysis, visualization and simulation of
+  network diffusion of innovations. The package implements algorithms for
+  calculating stats such as innovation threshold levels, infectiousness
+  (contagion) and susceptibility, and hazard rates as presented in Burt (1987),
+  Valente (1995), and Myers (2000) (among others).
 
 ## Installation
+Infectiousness and Susceptibility
+
 
 Using the `devtools` package, you can install `netdiffuseR` dev version as follows
 
@@ -57,7 +63,7 @@ library(netdiffuseR)
 set.seed(1234)
 n <- 100
 nper <- 20
-graph <- rgraph_er(n,nper, p=.40, undirected = FALSE)
+graph <- rgraph_er(n, nper, .5)
 toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 
@@ -67,8 +73,7 @@ diffnet
 summary(diffnet)
 
 # Visualizing distribution of suscep/infect
-
-out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
 ```
 
 ### Threshold
@@ -76,31 +81,28 @@ out <- plot_infectsuscep(diffnet, K=1, logscale = TRUE)
 ```{r, plot_threshold, fig.height=7}
 # Generating a random graph
 set.seed(123)
-n <- 6
-nper <- 5
-toa  <- sample(c(2000:(2000+nper-1), NA), n, TRUE)
-nper <- length(unique(toa))
-graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
-
-# Creating a diffnet object
-diffnet <- as_diffnet(graph, toa, undirected = FALSE)
-
-# Computing exposure
-expos <- exposure(diffnet)
+diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
 
 # Threshold with fixed vertex size
 plot_threshold(diffnet)
 
 # Threshold with vertex size = avg degree
-cex <- rowMeans(dgr(graph))
+cex <- rowMeans(dgr(diffnet))
 cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
 plot_threshold(diffnet, vertex.cex = cex)
 ```
 
+### Hazard rate
+
+```{r}
+hazard_rate(diffnet)
+```
+
+
 ### Diffusion process
 
 ```{r plot_diffnet}
-plot_diffnet(diffnet)
+plot_diffnet(diffnet, vertex.cex = 2)
 ```
 
 

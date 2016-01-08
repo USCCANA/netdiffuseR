@@ -5,10 +5,9 @@
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param times Integer vector with times of adoption (see details)
 #' @param normalize Logical. Whether or not to normalize the outcome
-#' @param K Integer. Number of time periods to consider
-#' @param r Double. Discount rate used when \code{expdiscount=TRUE}
-#' @param expdiscount Logical. When TRUE, exponential discount rate is used (see details).
-#' @param ... Further arguments to be passed to the method.
+#' @param K Integer scalar. Number of time periods to consider
+#' @param r Numeric scalar. Discount rate used when \code{expdiscount=TRUE}
+#' @param expdiscount Logical scalar. When TRUE, exponential discount rate is used (see details).
 #' @family statistics
 #' @keywords univar
 #' @seealso The user can visualize the distribution of both statistics
@@ -95,23 +94,23 @@
 #'
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
-infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
 
   if (missing(times))
     if (!inherits(graph, "diffnet"))
       stop("-times- should be provided when -graph- is not of class 'diffnet'")
 
   switch (class(graph),
-    array = infection.array(graph, times, normalize, K, r, expdiscount, ...),
-    list = infection.list(graph, times, normalize, K, r, expdiscount, ...),
-    diffnet = infection.list(graph$graph, graph$toa, normalize, K, r, expdiscount, ...),
+    array = infection.array(graph, times, normalize, K, r, expdiscount),
+    list = infection.list(graph, times, normalize, K, r, expdiscount),
+    diffnet = infection.list(graph$graph, graph$toa, normalize, K, r, expdiscount),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
@@ -132,7 +131,7 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
 
 # @rdname infection
 # @export
-infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
@@ -149,22 +148,22 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
 
 #' @rdname infection
 #' @export
-susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   if (missing(times))
     if (!inherits(graph, "diffnet"))
       stop("-times- should be provided when -graph- is not of class 'diffnet'")
 
   switch (class(graph),
-    array = susceptibility.array(graph, times, normalize, K, r, expdiscount, ...),
-    list = susceptibility.list(graph, times, normalize, K, r, expdiscount, ...),
-    diffnet = susceptibility.list(graph$graph, graph$toa, normalize, K, r, expdiscount, ...),
+    array = susceptibility.array(graph, times, normalize, K, r, expdiscount),
+    list = susceptibility.list(graph, times, normalize, K, r, expdiscount),
+    diffnet = susceptibility.list(graph$graph, graph$toa, normalize, K, r, expdiscount),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   times <- times - min(times, na.rm = TRUE) + 1L
@@ -181,7 +180,7 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdi
 
 # @rdname infection
 # @export
-susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, ...) {
+susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
   times <- times - min(times, na.rm = TRUE) + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)

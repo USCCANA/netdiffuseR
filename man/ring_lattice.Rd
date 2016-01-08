@@ -2,9 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{ring_lattice}
 \alias{ring_lattice}
-\title{Ring lattice graph
-Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
-as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.}
+\title{Ring lattice graph}
 \usage{
 ring_lattice(n, k)
 }
@@ -18,12 +16,15 @@ A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
 \eqn{n\times n}{n * n}.
 }
 \description{
-Ring lattice graph
 Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
 as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 }
+\details{
+Since the created graph is undirected, the degree of each node always
+even. So if \code{k=3}, then the degree will be \code{2}.
+}
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
-“small-world” networks. Nature, 393(6684), 440–2. http://doi.org/10.1038/30918
+“small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
 }
 

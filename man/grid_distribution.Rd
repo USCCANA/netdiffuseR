@@ -21,7 +21,7 @@ Returns a list with three elements
 of the elements in terms of frecuency}
 }
 \description{
-Distribution of pairs over a grid of fix size (number of elements)
+Distribution of pairs over a grid of fix size.
 }
 \details{
 This function ment for internal use only.

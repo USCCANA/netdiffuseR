@@ -6,10 +6,10 @@
 \title{Susceptibility and Infection}
 \usage{
 infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, ...)
+  expdiscount = FALSE)
 
 susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, ...)
+  expdiscount = FALSE)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -18,13 +18,11 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{normalize}{Logical. Whether or not to normalize the outcome}
 
-\item{K}{Integer. Number of time periods to consider}
+\item{K}{Integer scalar. Number of time periods to consider}
 
-\item{r}{Double. Discount rate used when \code{expdiscount=TRUE}}
+\item{r}{Numeric scalar. Discount rate used when \code{expdiscount=TRUE}}
 
-\item{expdiscount}{Logical. When TRUE, exponential discount rate is used (see details).}
-
-\item{...}{Further arguments to be passed to the method.}
+\item{expdiscount}{Logical scalar. When TRUE, exponential discount rate is used (see details).}
 }
 \value{
 A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.

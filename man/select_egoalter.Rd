@@ -11,7 +11,7 @@ select_egoalter(graph, adopt, period = NULL)
 
 \item{adopt}{\eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.}
 
-\item{period}{Integer. Optional to make the count for a particular period of time.}
+\item{period}{Integer scalar. Optional to make the count for a particular period of time.}
 }
 \value{
 An dataframe with \eqn{n\times (T-1)}{n * (T-1)} rows and

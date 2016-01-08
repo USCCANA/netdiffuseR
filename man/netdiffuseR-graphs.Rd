@@ -36,10 +36,11 @@ static graphs, and dynamic graphs.
  }
 }
 
-\section{Dimensions}{
+\section{Objects' names}{
 
 When possible, \pkg{netdiffuseR} will try to reuse graphs dimensional names,
 this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
-and \code{\link{names}} (in the case of dynamic graphs as lists).
+and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
+when no names are provided, these will be created from scratch.
 }
 

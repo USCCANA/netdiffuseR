@@ -15,35 +15,35 @@ plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{toa}{Times of adoption}
+\item{toa}{Integer vector of size \eqn{T}. Passed to infection/susceptibility.}
 
-\item{normalize}{Logical. TRUE}
+\item{normalize}{Logical scalar.  Passed to infection/susceptibility.}
 
-\item{K}{Integer. Number of time periods to consider}
+\item{K}{Integer scalar.  Passed to infection/susceptibility.}
 
-\item{r}{Double. Rate}
+\item{r}{Numeric scalar.  Passed to infection/susceptibility.}
 
-\item{expdiscount}{Logical.}
+\item{expdiscount}{Logical scalar.  Passed to infection/susceptibility.}
 
 \item{bins}{Integer scalar. Size of the grid (\eqn{n}).}
 
-\item{nlevels}{Integer. Number of levels to plot (see \code{\link{filled.contour}}).}
+\item{nlevels}{Integer scalar. Number of levels to plot (see \code{\link{filled.contour}}).}
 
-\item{logscale}{Logical. When TRUE the axis of the plot will be presented in log-scale.}
+\item{logscale}{Logical scalar. When TRUE the axis of the plot will be presented in log-scale.}
 
-\item{main}{Character. Title of the graph.}
+\item{main}{Character scalar. Title of the graph.}
 
-\item{xlab}{Character. Title of the x-axis.}
+\item{xlab}{Character scalar. Title of the x-axis.}
 
-\item{ylab}{Character. Title of the y-axis.}
+\item{ylab}{Character scalar. Title of the y-axis.}
 
-\item{sub}{Character. Subtitle of the graph.}
+\item{sub}{Character scalar. Subtitle of the graph.}
 
 \item{color.palette}{a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).}
 
-\item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
+\item{include.grid}{Logical scalar. When TRUE, the grid of the graph is drawn.}
 
-\item{...}{Additional parameters to be passed to \code{\link{filled.contour}}}
+\item{...}{Additional parameters to be passed to \code{\link{filled.contour}.}}
 }
 \value{
 A list with three elements:

@@ -3,7 +3,7 @@
 \name{rgraph_er}
 \alias{bernoilli}
 \alias{rgraph_er}
-\title{Erdos-Reyi model}
+\title{Erdos-Renyi model}
 \usage{
 rgraph_er(n = 10, t = 1, p = 0.3,
   undirected = getOption("diffnet.undirected"), weighted = FALSE,
@@ -26,11 +26,11 @@ rgraph_er(n = 10, t = 1, p = 0.3,
 instead of an adjacency matrix.}
 }
 \value{
-A graph represented by an adjacency matrix (if t=1), or an array of
-adjacency matrices (if t>1).
+A graph represented by an adjacency matrix (if \code{t=1}), or an array of
+adjacency matrices (if \code{t>1}).
 }
 \description{
-Several random graphs algorithms.
+Generates a bernoulli random graph.
 }
 \details{
 For each pair of nodes \eqn{\{i,j\}}{{i,j}}, an edge is created

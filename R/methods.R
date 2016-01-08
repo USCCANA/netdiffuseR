@@ -1,4 +1,9 @@
 #' Creates a \code{diffnet} class object
+#'
+#' \code{diffnet} objects contain difussion of innovation networks. With adjacency
+#' matrices and time of adoption (toa) vector as its main components, most of the
+#' package's functions have methods for this class of objects.
+#'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param recode Logical scalar. Passed to \code{\link{toa_mat}}.
@@ -41,10 +46,36 @@
 #' diffnet <- as_diffnet(graph, toa)
 #' diffnet
 #' summary(diffnet)
+#' @return
+#' A list of class \code{diffnet} with the following elements:
+#' \item{graph}{A list of length \eqn{T}. Containing sparse square matrices of size \eqn{n}
+#' and class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+#' \item{toa}{An integer vector of size \eqn{T} with times of adoption.}
+#' \item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
+#' by \code{\link{toa_mat}}.}
+#' \item{meta}{A list of length 9 with the following elements:
+#' \itemize{
+#'  \item \code{type}: Character scalar equal to \code{"dynamic"}.
+#'  \item \code{class}: Character scalar equal to \code{"list"}.
+#'  \item \code{ids}: Character vector of size \eqn{n} with vertices' labels.
+#'  \item \code{pers}: Integer vector of size \eqn{T}.
+#'  \item \code{nper}: Integer scalar equal to \eqn{T}.
+#'  \item \code{n}: Integer scalar equal to \eqn{n}.
+#'  \item \code{self}: Logical scalar.
+#'  \item \code{undirected}: Logical scalar.
+#'  \item \code{multiple}: Logical scalar.
+#' }
+#' }
 as_diffnet <- function(graph, toa, recode=TRUE,
                        weights=NULL, undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-                       use.incomplete=FALSE, ...) {
+                       use.incomplete=FALSE) {
+
+  # Step 0.0: Check if its diffnet!
+  if (inherits(graph, "diffnet")) {
+    message("Nothing to do, the graph is already of class \"diffnet\".")
+    return(graph)
+  }
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
@@ -152,9 +183,9 @@ summary.diffnet <- function(object, ...) {
   d <- unlist(lapply(object$graph, function(x) {
     x <-
     if (meta$undirected) {
-      sum(rowSums(x))/(meta$n * (meta$n-1))/2
+      sum(Matrix::rowSums(x))/(meta$n * (meta$n-1))/2
     } else {
-      (sum(rowSums(x)) + sum(colSums(x)))/(meta$n * (meta$n-1))
+      (sum(Matrix::rowSums(x)) + sum(Matrix::colSums(x)))/(meta$n * (meta$n-1))
     }
   }))
 
@@ -226,21 +257,21 @@ summary.diffnet <- function(object, ...) {
 #' in the network.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param cumadopt \eqn{n\times T}{n*T} matrix
+#' @param cumadopt \eqn{n\times T}{n*T} matrix.
 #' @param displaylabels Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
 #' @param undirected Logical scalar.
 #' @param vertex.col A character vector of size 3 with colors names.
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
 #' @param label Character vector of size \eqn{n}. If no provided, rownames of
 #' the graph are used.
-#' @param edge.col Character. Color of the edge
-#' @param mode Character. Name of the layout algorithm to implement (see details)
-#' @param layout.par Layout parameters (see details)
-#' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}
-#' @param main Characetr. A title template to be passed to \code{\link{sprintf}}
-#' @param mai Numeric vector of size 4. To be passed to \code{\link{par}}
-#' @param mar Numeric vector of size 4. To be passed to \code{\link{par}}
-#' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}}
+#' @param edge.col Character scalar/vector. Color of the edge.
+#' @param mode Character scalar. Name of the layout algorithm to implement (see details).
+#' @param layout.par Layout parameters (see details).
+#' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}
+#' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
+#' @param mai Numeric vector of size 4. To be passed to \code{\link{par}.}
+#' @param mar Numeric vector of size 4. To be passed to \code{\link{par}.}
+#' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
 #' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
@@ -256,13 +287,13 @@ summary.diffnet <- function(object, ...) {
 #' of the device and the last two in the bottom.
 #'
 #' The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
-#' and adopters. The new adopters (default color \code{"red"}) have a different
+#' and adopters respectively. The new adopters (default color \code{"red"}) have a different
 #' color that the adopters when the graph is at their time of adoption, hence,
 #' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 #' be plotted in red.
 #'
 #' @examples
-#' #' # Generating a random graph
+#' # Generating a random graph
 #' set.seed(1234)
 #' n <- 6
 #' nper <- 5
@@ -271,7 +302,7 @@ summary.diffnet <- function(object, ...) {
 #' adopt <- toa_mat(toa)
 #'
 #' plot_diffnet(graph, adopt$cumadopt)
-#' @return Calculated coordinates (invisible).
+#' @return Calculated coordinates for the grouped graph (invisible).
 #' @family visualizations
 #' @keywords hplot
 #' @export
@@ -388,7 +419,7 @@ plot_diffnet.list <- function(graph, cumadopt,
 
 }
 
-#' Threshold level through time
+#' Threshold levels through time
 #'
 #' Draws a graph where the coordinates are given by time of adoption, x-axis,
 #' and threshold level, y-axis.
@@ -400,9 +431,9 @@ plot_diffnet.list <- function(graph, cumadopt,
 #' @param undirected Logical scalar.
 #' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
 #' \code{toa} won't be plotted.
-#' @param main Character. Title of the plot
-#' @param xlab Character. x-axis label
-#' @param ylab Character. y-axis label
+#' @param main Character scalar. Title of the plot.
+#' @param xlab Character scalar. x-axis label.
+#' @param ylab Character scalar. y-axis label.
 #' @param vertex.cex Numeric vector of size \eqn{n}. Relative size of the vertices
 #' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices
 #' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices
@@ -557,21 +588,21 @@ plot_threshold.list <- function(
 #' number of individuals that lie within each cell, and draws a heatmap.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param toa Times of adoption
-#' @param normalize Logical. TRUE
-#' @param K Integer. Number of time periods to consider
-#' @param r Double. Rate
-#' @param expdiscount Logical.
+#' @param toa Integer vector of size \eqn{T}. Passed to infection/susceptibility.
+#' @param normalize Logical scalar.  Passed to infection/susceptibility.
+#' @param K Integer scalar.  Passed to infection/susceptibility.
+#' @param r Numeric scalar.  Passed to infection/susceptibility.
+#' @param expdiscount Logical scalar.  Passed to infection/susceptibility.
 #' @param bins Integer scalar. Size of the grid (\eqn{n}).
-#' @param nlevels Integer. Number of levels to plot (see \code{\link{filled.contour}}).
-#' @param logscale Logical. When TRUE the axis of the plot will be presented in log-scale.
-#' @param main Character. Title of the graph.
-#' @param xlab Character. Title of the x-axis.
-#' @param ylab Character. Title of the y-axis.
-#' @param sub Character. Subtitle of the graph.
+#' @param nlevels Integer scalar. Number of levels to plot (see \code{\link{filled.contour}}).
+#' @param logscale Logical scalar. When TRUE the axis of the plot will be presented in log-scale.
+#' @param main Character scalar. Title of the graph.
+#' @param xlab Character scalar. Title of the x-axis.
+#' @param ylab Character scalar. Title of the y-axis.
+#' @param sub Character scalar. Subtitle of the graph.
 #' @param color.palette a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).
-#' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
-#' @param ... Additional parameters to be passed to \code{\link{filled.contour}}
+#' @param include.grid Logical scalar. When TRUE, the grid of the graph is drawn.
+#' @param ... Additional parameters to be passed to \code{\link{filled.contour}.}
 #' @details
 #'
 #' This plotting function was inspired by Aral, S., & Walker, D. (2012).

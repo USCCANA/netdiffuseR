@@ -10,10 +10,14 @@ classify_graph(graph)
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
-A list of attributes including
+Whe the object is considered to be a graph, a list of attributes including
 \item{type}{Character scalar. Whether is a static or a dynamic graph}
+\item{class}{Character scalar. The class of the original object}
+\item{ids}{Character vector. Labels of the vertices}
+\item{pers}{Integer vector. Labels of the time periods}
 \item{nper}{Integer scalar. Number of time periods}
 \item{n}{Integer scalar. Number of vertices in the graph}
+Otherwise returns with error.
 }
 \description{
 Analyze an R object to identify the class of graph (if any)
@@ -23,5 +27,10 @@ This function analyzes an R object and tries to classify it among the
 accepted classes in \pkg{netdiffuseR}. If the object fails to fall in one of
 the types of graphs the function returns with an error indicating what (and
 when possible, where) the problem lies.
+
+The function was designed to be used with \code{\link{as_diffnet}}.
+}
+\seealso{
+\code{\link{as_diffnet}}, \code{\link{netdiffuseR-graphs}}
 }
 

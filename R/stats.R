@@ -134,10 +134,10 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
-#' @param wtype Integer. Weighting type (see details).
-#' @param v Double. Constant for Structural Equivalence.
-#' @param undirected Logical. TRUE if the graph is undirected.
-#' @param normalized Logical. When true, the exposure will be between zero
+#' @param wtype Integer scalar. Weighting type (see details).
+#' @param v Numeric scalar. Constant for Structural Equivalence.
+#' @param undirected Logical scalar. TRUE if the graph is undirected.
+#' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
 #' @details
 #'
@@ -178,7 +178,7 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #'
 #' @family statistics
 #' @keywords univar
-#' @return A matrix of size nxT with exposure for each node.
+#' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
 exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
 
@@ -237,7 +237,7 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #'
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 #' it is only calculated fot \eqn{t>1}.
-#' @return A 3xT matrix, where its rows contain the number of adoptes, the proportion of
+#' @return A \eqn{3\times T}{3 * T} matrix, where its rows contain the number of adoptes, the proportion of
 #' adopters and the rate of adoption respectively, for earch period of time.
 #' @family statistics
 #' @keywords univar
@@ -259,9 +259,9 @@ cumulative_adopt_count <- function(obj) {
 #' \code{\link{toa_mat}}) or a \code{\link{diffnet}} object.
 #' @param x An object of class \code{diffnet_hr}.
 #' @param y ignored.
-#' @param main Title of the plot
-#' @param xlab x-axis lab
-#' @param ylab y-axis lab
+#' @param main Character scalar. Title of the plot
+#' @param xlab Character scalar. x-axis lab
+#' @param ylab Character scalar. y-axis lab
 #' @param include.grid Logical scalar. When TRUE includes a grid on the plot.
 #' @param bg Character scalar. Color of the points.
 #' @param no.plot Logical scalar. When TRUE, suppress plotting (only returns hazard rates).

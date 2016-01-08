@@ -9,7 +9,7 @@ struct_equiv(graph, v = 1, ...)
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{v}{Double. Cohesion constant (see details)}
+\item{v}{Numeric scalar. Cohesion constant (see details)}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
 }

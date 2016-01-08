@@ -21,7 +21,8 @@ rewire_graph(graph, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
 \item{undirected}{Logical scalar. \code{TRUE} when the graph is undirected.}
 }
 \description{
-Rewires a graph
+By changing the endpoints of the edges, this is the workhorse of the
+function \code{\link{rgraph_ws}}.
 }
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},

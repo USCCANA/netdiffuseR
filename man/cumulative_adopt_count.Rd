@@ -11,7 +11,7 @@ cumulative_adopt_count(obj)
 \code{\link{toa_mat}}) or a \code{\link{diffnet}} object.}
 }
 \value{
-A 3xT matrix, where its rows contain the number of adoptes, the proportion of
+A \eqn{3\times T}{3 * T} matrix, where its rows contain the number of adoptes, the proportion of
 adopters and the rate of adoption respectively, for earch period of time.
 }
 \description{

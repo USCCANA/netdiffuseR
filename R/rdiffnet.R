@@ -5,7 +5,7 @@
 #'
 #' @export
 #' @param n Integer scalar. Number of vertices.
-#' @param t Integer scalar. Time lenght.
+#' @param t Integer scalar. Time length.
 #' @param seed.nodes Character scalar. Type of seed nodes (early adoptes).
 #' @param seed.p.adopt Numeric scalar. Proportion of early adopters.
 #' @param seed.graph Character scalar. Type of algorithm used to generate the
@@ -43,7 +43,7 @@
 #'
 #' The argument \code{seed.graph} allows the user to set the algorithm used to
 #' generate the first network (network in t=1). This can be either "scale-free"
-#' (Barabasi-Albert model using the \code{\link{rgraph_ba}} function),
+#' (Barabasi-Albert model using the \code{\link{rgraph_ba}} function, the default),
 #' \code{"bernoulli"} (Erdos-Reyi model using the \code{\link{rgraph_er}} function),
 #' or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
 #' function). The list \code{rgraph.args} passes arguments to the chosen algorithm.

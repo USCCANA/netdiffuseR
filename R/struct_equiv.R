@@ -3,7 +3,7 @@
 #' Computes structural equivalence between ego and alter in a network
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param v Double. Cohesion constant (see details)
+#' @param v Numeric scalar. Cohesion constant (see details)
 #' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
 #' @family statistics
 #' @keywords univar

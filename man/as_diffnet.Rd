@@ -12,7 +12,7 @@
 as_diffnet(graph, toa, recode = TRUE, weights = NULL,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
-  multiple = getOption("diffnet.multiple"), use.incomplete = FALSE, ...)
+  multiple = getOption("diffnet.multiple"), use.incomplete = FALSE)
 
 \method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
   vertex.col = c("blue", "grey"), vertex.cex = NA, edge.col = "gray",
@@ -40,9 +40,6 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL,
 
 \item{use.incomplete}{Logical scalar.}
 
-\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
-is ignored.}
-
 \item{x}{A \code{diffnet} object.}
 
 \item{y}{Ignored.}
@@ -63,10 +60,36 @@ is ignored.}
 
 \item{main}{Character. A title template to be passed to sprintf.}
 
+\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
+is ignored.}
+
 \item{object}{A \code{diffnet} object.}
 }
+\value{
+A list of class \code{diffnet} with the following elements:
+\item{graph}{A list of length \eqn{T}. Containing sparse square matrices of size \eqn{n}
+and class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{toa}{An integer vector of size \eqn{T} with times of adoption.}
+\item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
+by \code{\link{toa_mat}}.}
+\item{meta}{A list of length 9 with the following elements:
+\itemize{
+ \item \code{type}: Character scalar equal to \code{"dynamic"}.
+ \item \code{class}: Character scalar equal to \code{"list"}.
+ \item \code{ids}: Character vector of size \eqn{n} with vertices' labels.
+ \item \code{pers}: Integer vector of size \eqn{T}.
+ \item \code{nper}: Integer scalar equal to \eqn{T}.
+ \item \code{n}: Integer scalar equal to \eqn{n}.
+ \item \code{self}: Logical scalar.
+ \item \code{undirected}: Logical scalar.
+ \item \code{multiple}: Logical scalar.
+}
+}
+}
 \description{
-Creates a \code{diffnet} class object
+\code{diffnet} objects contain difussion of innovation networks. With adjacency
+matrices and time of adoption (toa) vector as its main components, most of the
+package's functions have methods for this class of objects.
 }
 \details{
 Plotting is done via the function \code{\link[sna:gplot]{gplot}},

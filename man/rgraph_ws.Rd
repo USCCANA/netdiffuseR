@@ -25,7 +25,7 @@ A random graph of size \eqn{n\times n}{n*n} following the small-world
 model.
 }
 \description{
-Watts-Strogatz model
+Generates a small-world random graph.
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"

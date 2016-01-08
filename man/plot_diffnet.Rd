@@ -14,7 +14,7 @@ plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{cumadopt}{\eqn{n\times T}{n*T} matrix}
+\item{cumadopt}{\eqn{n\times T}{n*T} matrix.}
 
 \item{displaylabels}{Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
 
@@ -27,24 +27,24 @@ plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
 \item{label}{Character vector of size \eqn{n}. If no provided, rownames of
 the graph are used.}
 
-\item{edge.col}{Character. Color of the edge}
+\item{edge.col}{Character scalar/vector. Color of the edge.}
 
-\item{mode}{Character. Name of the layout algorithm to implement (see details)}
+\item{mode}{Character scalar. Name of the layout algorithm to implement (see details).}
 
-\item{layout.par}{Layout parameters (see details)}
+\item{layout.par}{Layout parameters (see details).}
 
-\item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}}}
+\item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}}
 
-\item{main}{Characetr. A title template to be passed to \code{\link{sprintf}}}
+\item{main}{Character scalar. A title template to be passed to \code{\link{sprintf}.}}
 
-\item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}}}
+\item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
 
-\item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}}}
+\item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
 
-\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}}}
+\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}}
 }
 \value{
-Calculated coordinates (invisible).
+Calculated coordinates for the grouped graph (invisible).
 }
 \description{
 Creates a colored network plot showing the structure of the graph through time
@@ -66,13 +66,13 @@ and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 of the device and the last two in the bottom.
 
 The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
-and adopters. The new adopters (default color \code{"red"}) have a different
+and adopters respectively. The new adopters (default color \code{"red"}) have a different
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 be plotted in red.
 }
 \examples{
-#' # Generating a random graph
+# Generating a random graph
 set.seed(1234)
 n <- 6
 nper <- 5

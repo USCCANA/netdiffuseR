@@ -12,7 +12,7 @@ rdiffnet(n, t, seed.nodes = "marginal", seed.p.adopt = 0.2,
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
 
-\item{t}{Integer scalar. Time lenght.}
+\item{t}{Integer scalar. Time length.}
 
 \item{seed.nodes}{Character scalar. Type of seed nodes (early adoptes).}
 
@@ -62,7 +62,7 @@ is set as \code{seed.p.adopt * n}.
 
 The argument \code{seed.graph} allows the user to set the algorithm used to
 generate the first network (network in t=1). This can be either "scale-free"
-(Barabasi-Albert model using the \code{\link{rgraph_ba}} function),
+(Barabasi-Albert model using the \code{\link{rgraph_ba}} function, the default),
 \code{"bernoulli"} (Erdos-Reyi model using the \code{\link{rgraph_er}} function),
 or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
 function). The list \code{rgraph.args} passes arguments to the chosen algorithm.

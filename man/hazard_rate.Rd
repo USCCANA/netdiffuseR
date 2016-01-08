@@ -25,11 +25,11 @@ hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
 \item{y}{ignored.}
 
-\item{main}{Title of the plot}
+\item{main}{Character scalar. Title of the plot}
 
-\item{xlab}{x-axis lab}
+\item{xlab}{Character scalar. x-axis lab}
 
-\item{ylab}{y-axis lab}
+\item{ylab}{Character scalar. y-axis lab}
 
 \item{bg}{Character scalar. Color of the points.}
 }
