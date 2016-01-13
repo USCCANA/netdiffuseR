@@ -4,7 +4,7 @@
 \alias{rdiffnet}
 \title{Random diffnet network}
 \usage{
-rdiffnet(n, t, seed.nodes = "marginal", seed.p.adopt = 0.2,
+rdiffnet(n, t, seed.nodes = "marginal", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
   rewire.args = list(p = 0.1, undirected = TRUE),
   threshold.dist = function(x) runif(1))

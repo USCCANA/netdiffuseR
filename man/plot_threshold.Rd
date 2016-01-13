@@ -82,7 +82,7 @@ Use \code{\link{threshold}} to retrieve the corresponding threshold
 obtained returned by \code{\link{exposure}}.
 
 Other visualizations: \code{\link{hazard_rate}},
-  \code{\link{plot_diffnet}},
+  \code{\link{plot_adopters}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}}
 }
 \keyword{hplot}

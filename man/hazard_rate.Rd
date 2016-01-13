@@ -3,13 +3,19 @@
 \name{hazard_rate}
 \alias{hazard_rate}
 \alias{plot.diffnet_hr}
+\alias{plot_hazard}
 \alias{plot_hazarrate}
 \title{Network Hazard Rate}
 \usage{
 hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
-\method{plot}{diffnet_hr}(x, y, main = "Hazard Rate", xlab = "Time",
-  ylab = "Hazard Rate", include.grid = TRUE, bg = "lightblue", ...)
+plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
+  include.grid = TRUE, bg = "lightblue", add = FALSE, ylim = c(0, 1),
+  ...)
+
+\method{plot}{diffnet_hr}(x, y = NULL, main = "Hazard Rate",
+  xlab = "Time", ylab = "Hazard Rate", include.grid = TRUE,
+  bg = "lightblue", add = FALSE, ylim = c(0, 1), ...)
 }
 \arguments{
 \item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
@@ -19,11 +25,9 @@ hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
 \item{include.grid}{Logical scalar. When TRUE includes a grid on the plot.}
 
-\item{...}{further arguments to be passed to \code{\link{plot}}}
+\item{...}{further arguments to be passed to \code{\link{par}}}
 
 \item{x}{An object of class \code{diffnet_hr}.}
-
-\item{y}{ignored.}
 
 \item{main}{Character scalar. Title of the plot}
 
@@ -32,6 +36,12 @@ hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 \item{ylab}{Character scalar. y-axis lab}
 
 \item{bg}{Character scalar. Color of the points.}
+
+\item{add}{Logical scalar. When TRUE it adds the hazard rate to the current plot.}
+
+\item{ylim}{Numeric vector. See \code{\link{plot}}.}
+
+\item{y}{ignored.}
 }
 \value{
 A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.
@@ -48,6 +58,8 @@ invisible (so is not printed on the console). For \eqn{t>1}, hazard rate is calc
 
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 the number of vertices in the graph.
+
+The \code{plot_hazard} function is an alias for the \code{plot.diffnet_hr} method.
 }
 \examples{
 # Creating a random vector of times of adoption
@@ -65,7 +77,8 @@ Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{infection}}, \code{\link{moran}},
   \code{\link{struct_equiv}}, \code{\link{threshold}}
 
-Other visualizations: \code{\link{plot_diffnet}},
+Other visualizations: \code{\link{plot_adopters}},
+  \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }

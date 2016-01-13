@@ -9,14 +9,14 @@
 \alias{summary.diffnet}
 \title{Creates a \code{diffnet} class object}
 \usage{
-as_diffnet(graph, toa, recode = TRUE, weights = NULL,
-  undirected = getOption("diffnet.undirected"),
+as_diffnet(graph, toa, recode = TRUE, stack.toa.right = TRUE,
+  weights = NULL, undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), use.incomplete = FALSE)
 
 \method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
-  vertex.col = c("blue", "grey"), vertex.cex = NA, edge.col = "gray",
-  mode = "fruchtermanreingold", layout.par = NULL,
+  vertex.col = c("blue", "grey"), vertex.cex = "degree",
+  edge.col = "gray", mode = "fruchtermanreingold", layout.par = NULL,
   main = "Diffusion network in time \%d", ...)
 
 \method{print}{diffnet}(x, ...)
@@ -29,6 +29,9 @@ as_diffnet(graph, toa, recode = TRUE, weights = NULL,
 \item{toa}{Numeric vector of size \eqn{n}. Times of adoption.}
 
 \item{recode}{Logical scalar. Passed to \code{\link{toa_mat}}.}
+
+\item{stack.toa.right}{Logical scalar. When the range of \code{toa} is smaller than
+the number of slices in graph, TRUE stacks the toa to the right (see details).}
 
 \item{weights}{Numeric vector of size \eqn{n}.}
 
@@ -95,6 +98,37 @@ package's functions have methods for this class of objects.
 Plotting is done via the function \code{\link[sna:gplot]{gplot}},
 and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
 the (\pkg{sna}) package.
+
+\code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
+scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
+degree of the selected slice and will be normalized as
+
+\deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2 + .5}
+
+where \code{d=sqrt(dgr(graph))}.
+
+When \code{max(toa) - min(toa) <} number of slices in the graph,
+\code{stack.toa.right=TRUE} tells the function to assume that \code{max(toa)}
+coincides with the last slice of the graph. So, assuming that the range of
+the times of adoption is smaller than the set of graphs, we have two cases:
+\enumerate{
+\item \code{stack.toa.right=TRUE}, then we have
+
+\code{0------------------------T}
+
+\code{||||||||||||||||||||||||||}: graph time line
+
+\code{.....|||||||||||||||||||||}: toa range
+
+\item \code{stack.toa.right=FALSE}, then we have
+
+\code{0------------------------T}
+
+\code{||||||||||||||||||||||||||}: graph time line
+
+\code{|||||||||||||||||||||.....}: toa range
+}
 }
 \examples{
 

@@ -103,7 +103,12 @@ infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FAL
   switch (class(graph),
     array = infection.array(graph, times, normalize, K, r, expdiscount),
     list = infection.list(graph, times, normalize, K, r, expdiscount),
-    diffnet = infection.list(graph$graph, graph$toa, normalize, K, r, expdiscount),
+    diffnet = {
+      # In the case of diffnet, we have to normalize the time data differently
+      times <- graph$toa - min(graph$meta$pers) + 1L
+      infection.list(graph$graph, times, normalize, K, r, expdiscount,
+                     recode.time=FALSE)
+      },
     stopifnot_graph(graph)
   )
 }
@@ -131,10 +136,11 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
 
 # @rdname infection
 # @export
-infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
+                           expdiscount=FALSE, recode.time=TRUE) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  times <- times - min(times, na.rm = TRUE) + 1L
+  if (recode.time) times <- times - min(times, na.rm = TRUE) + 1L
 
   out <- infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 
@@ -156,17 +162,23 @@ susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscoun
   switch (class(graph),
     array = susceptibility.array(graph, times, normalize, K, r, expdiscount),
     list = susceptibility.list(graph, times, normalize, K, r, expdiscount),
-    diffnet = susceptibility.list(graph$graph, graph$toa, normalize, K, r, expdiscount),
+    diffnet = {
+      # In the case of diffnet, we have to normalize the time data differently
+      times <- graph$toa - min(graph$meta$pers) + 1L
+      susceptibility.list(graph$graph, times, normalize, K, r, expdiscount,
+                          recode.time=FALSE)
+      },
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
+                                expdiscount=FALSE, recode.time=TRUE) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  times <- times - min(times, na.rm = TRUE) + 1L
+  if (recode.time) times <- times - min(times, na.rm = TRUE) + 1L
 
   out <- susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
 

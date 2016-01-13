@@ -116,7 +116,7 @@ diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
 ```
 
     ## Warning in rdiffnet(50, 20, rgraph.args = list(m = 4)): Less periods than
-    ## wanted, only 8 instead of 20
+    ## wanted, only 18 instead of 20
 
 ``` r
 # Threshold with fixed vertex size
@@ -164,3 +164,4 @@ To-do list
 -   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 -   Populate the tests folder.
 -   Use spells? (`select_egoalter` would use this)
+-   Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).

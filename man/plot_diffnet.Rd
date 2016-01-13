@@ -4,9 +4,9 @@
 \alias{plot_diffnet}
 \title{Plot the diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
-  vertex.col = c("grey", "red", "blue"), vertex.cex = NA,
-  label = rownames(graph[[1]]), edge.col = "gray",
+plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
+  undirected = TRUE, vertex.col = c("grey", "red", "blue"),
+  vertex.cex = "degree", label = rownames(graph[[1]]), edge.col = "gray",
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
   main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
   0.1, ...)
@@ -15,6 +15,8 @@ plot_diffnet(graph, cumadopt, displaylabels = FALSE, undirected = TRUE,
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix.}
+
+\item{slices}{Integer vector. Indicates what slices to plot. By default all are plotted.}
 
 \item{displaylabels}{Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
 
@@ -70,6 +72,15 @@ and adopters respectively. The new adopters (default color \code{"red"}) have a 
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 be plotted in red.
+
+\code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
+scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
+degree of the cumulated graph and will be normalized as
+
+\deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2  + .5}
+
+where \code{d=sqrt(dgr(graph))}.
 }
 \examples{
 # Generating a random graph
@@ -84,6 +95,7 @@ plot_diffnet(graph, adopt$cumadopt)
 }
 \seealso{
 Other visualizations: \code{\link{hazard_rate}},
+  \code{\link{plot_adopters}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }

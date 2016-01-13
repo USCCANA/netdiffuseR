@@ -63,7 +63,7 @@
 #' z
 #' summary(z)
 rdiffnet <- function(n, t,
-                     seed.nodes="marginal", seed.p.adopt=0.2,
+                     seed.nodes="marginal", seed.p.adopt=0.05,
                      seed.graph="scale-free", rgraph.args=list(),
                      rewire=TRUE, rewire.args=list(p=.1, undirected=TRUE),
                      threshold.dist=function(x) runif(1)
@@ -101,8 +101,11 @@ rdiffnet <- function(n, t,
     cumadopt[d, ] <- 1L
     toa[d] <- 1L
   } else if (seed.nodes == "random") {
-    toa[sample.int(n, floor(n*seed.p.adopt))] <- 1
-  }
+    d <- sample.int(n, floor(n*seed.p.adopt))
+    toa[d] <- 1
+    cumadopt[d,] <- 1L
+  } else
+    stop("Invalid -seed.nodes- option. It must be either \"central\", \"marginal\", or \"random\"")
 
   # Step 1.0: Repeat
   graph      <- vector("list", t)
@@ -122,14 +125,16 @@ rdiffnet <- function(n, t,
   thr <- sapply(1:n, threshold.dist)
 
   for (i in 2:t) {
-    expo <- exposure(graph, cumadopt)
-    whoadopts <- which( (expo[,i] >= thr) & is.na(toa))
+    expo <- exposure(graph[i], cumadopt[,i,drop=FALSE])
+    whoadopts <- which( (expo >= thr) & is.na(toa))
     toa[whoadopts] <- i
     cumadopt[whoadopts, i:t] <- 1L
   }
   reachedt <- max(toa, na.rm=TRUE)
 
-  if (reachedt < t) {
+  if (reachedt == 1) {
+    stop("No diffusion in this network (Ups!) try changing the seed or the parameters.")
+  } else if (reachedt < t) {
     warning("Less periods than wanted, only ",reachedt," instead of ",t)
     graph <- graph[1:reachedt]
   }

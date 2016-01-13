@@ -111,5 +111,5 @@ plot_diffnet(diffnet, vertex.cex = 2)
 - Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
 - Populate the tests folder.
 - Use spells? (`select_egoalter` would use this)
-    
+- Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
 

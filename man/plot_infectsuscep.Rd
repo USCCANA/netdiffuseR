@@ -83,7 +83,8 @@ Infectiousness and susceptibility are computed via \code{\link{infection}} and
 \code{\link{susceptibility}}.
 
 Other visualizations: \code{\link{hazard_rate}},
-  \code{\link{plot_diffnet}}, \code{\link{plot_threshold}}
+  \code{\link{plot_adopters}}, \code{\link{plot_diffnet}},
+  \code{\link{plot_threshold}}
 }
 \keyword{hplot}
 

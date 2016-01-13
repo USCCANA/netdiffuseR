@@ -205,9 +205,16 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   for (i in 1:t)
     graphl[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
+  # Dimnames
+  rn <- rownames(cumadopt)
+  if (!length(rn)) rn <- 1:nrow(cumadopt)
+
+  tn <- colnames(cumadopt)
+  if (!length(tn)) tn <- 1:ncol(cumadopt)
+
   # Calculating the exposure, and asigning names
   output <- exposure_cpp(graphl, cumadopt, wtype, v, undirected, normalized, n, t)
-  dimnames(output) <- list(rownames(graph), dimnames(graph)[[3]])
+  dimnames(output) <- list(rn, tn)
   output
 }
 
@@ -217,7 +224,14 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
   n <- nrow(graph[[1]])
   t <- length(graph)
   output <- exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized, n, t)
-  dimnames(output) <- list(rownames(graph[[1]]), names(graph))
+
+  rn <- rownames(cumadopt)
+  if (!length(rn)) rn <- 1:nrow(cumadopt)
+
+  tn <- colnames(cumadopt)
+  if (!length(tn)) tn <- 1:ncol(cumadopt)
+
+  dimnames(output) <- list(rn, tn)
   output
 }
 
@@ -265,7 +279,9 @@ cumulative_adopt_count <- function(obj) {
 #' @param include.grid Logical scalar. When TRUE includes a grid on the plot.
 #' @param bg Character scalar. Color of the points.
 #' @param no.plot Logical scalar. When TRUE, suppress plotting (only returns hazard rates).
-#' @param ... further arguments to be passed to \code{\link{plot}}
+#' @param add Logical scalar. When TRUE it adds the hazard rate to the current plot.
+#' @param ylim Numeric vector. See \code{\link{plot}}.
+#' @param ... further arguments to be passed to \code{\link{par}}
 #' @details
 #'
 #' This function computes hazard rate, plots it and returns the hazard rate vector
@@ -275,6 +291,8 @@ cumulative_adopt_count <- function(obj) {
 #'
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 #' the number of vertices in the graph.
+#'
+#' The \code{plot_hazard} function is an alias for the \code{plot.diffnet_hr} method.
 #' @return A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.
 #' The class of the object is only used by the S3 plot method.
 #' @family statistics
@@ -303,12 +321,29 @@ hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 
 #' @rdname hazard_rate
 #' @export
-plot.diffnet_hr <- function(x,y, main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
-                            include.grid=TRUE, bg="lightblue",
+plot_hazard <- function(x,main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
+                        include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1),
+                        ...) {
+  hr <- hazard_rate(x, no.plot = TRUE)
+  plot.diffnet_hr(x=hr, main=main, xlab=xlab, ylab=ylab, include.grid=include.grid, bg=bg,
+                  add=add, ylim=ylim, ...)
+}
+
+#' @rdname hazard_rate
+#' @export
+plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
+                            include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1),
                             ...) {
-  plot(y=t(x), x=colnames(x), type="l", main=main, xlab=xlab, ylab=ylab, ...)
-  if (include.grid) grid()
+
+  if (add) {
+    lines(y=t(x), x=colnames(x), type="l", ...)
+  } else {
+    plot(y=t(x), x=colnames(x), type="l", main=main, xlab=xlab, ylab=ylab,
+         ylim=ylim, ...)
+    if (include.grid) grid()
+  }
   points(y=t(x), x=colnames(x), pch=21, bg=bg)
+  invisible(x)
 }
 
 #' Retrive threshold levels from the exposure matrix
@@ -351,7 +386,8 @@ threshold <- function(obj, times, times.recode=TRUE, ...) {
       stop("-times- should be provided when -obj- is not of class 'diffnet'")
   }
 
-  if (times.recode) times <- times - min(times, na.rm = TRUE) + 1L
+  pers <- as.integer(colnames(obj))
+  if (times.recode) times <- times - min(pers) + 1L
   output <- threshold_cpp(obj, times)
   dimnames(output) <- list(rownames(obj), "threshold")
   output

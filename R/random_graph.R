@@ -27,7 +27,7 @@
 #' @return A graph represented by an adjacency matrix (if \code{t=1}), or an array of
 #' adjacency matrices (if \code{t>1}).
 #' @export
-#' @aliases bernoilli
+#' @aliases bernoulli
 #' @concept Bernoulli Random graph
 #' @note The resulting adjacency matrix is store as a dense matrix, not as a
 #' sparse matrix, hence the user should be careful when choosing the size of

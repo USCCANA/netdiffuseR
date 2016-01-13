@@ -1,7 +1,13 @@
+rm(list=ls())
 library(foreign)
 
 # Preparing the data -----------------------------------------------------------
-x <- read.dta("data-raw/brfarmers.dta")
+brfarmers <- read.dta("data-raw/brfarmers.dta")
+
+# Subsetting
+netvars <- names(brfarmers)[grepl("^net", names(brfarmers))]
+othervars <- c("id", "yr", "adopt", "village")
+brfarmers <- brfarmers[, c(netvars, othervars)]
 
 #               storage  display     value
 # variable name   type   format      label      variable label
@@ -20,66 +26,68 @@ x <- read.dta("data-raw/brfarmers.dta")
 
 # Influential graph
 # Rogers et al. (1970)
-brfarmers <- subset(x, select=c(
-  idold, net31, net32, net33, net21, net22, net23, net11, net12, net13, yr, village))
 brfarmers$yr <- as.integer(brfarmers$yr) + 1900L
+brfarmers$adopt <- as.integer(brfarmers$adopt) + 1900L
 
 # Creating an ID
-surveyed        <- with(brfarmers, idold + village*100L)
-brfarmers$id    <- surveyed
-brfarmers$net31 <- with(brfarmers, net31 + village*100L)
-brfarmers$net32 <- with(brfarmers, net32 + village*100L)
-brfarmers$net33 <- with(brfarmers, net33 + village*100L)
-brfarmers$net21 <- with(brfarmers, net21 + village*100L)
-brfarmers$net22 <- with(brfarmers, net22 + village*100L)
-brfarmers$net23 <- with(brfarmers, net23 + village*100L)
-brfarmers$net11 <- with(brfarmers, net11 + village*100L)
-brfarmers$net12 <- with(brfarmers, net12 + village*100L)
-brfarmers$net13 <- with(brfarmers, net13 + village*100L)
+brfarmers$id <- with(brfarmers, id + village*100L)
+surveyed <- brfarmers$id
 
-# Removing farmes that are not part of the experiment
-brfarmers$net31[which(!(brfarmers$net31 %in% surveyed))]  <- NA
-brfarmers$net32[which(!(brfarmers$net32 %in% surveyed))]  <- NA
-brfarmers$net33[which(!(brfarmers$net33 %in% surveyed))]  <- NA
-brfarmers$net21[which(!(brfarmers$net21 %in% surveyed))]  <- NA
-brfarmers$net22[which(!(brfarmers$net22 %in% surveyed))]  <- NA
-brfarmers$net23[which(!(brfarmers$net23 %in% surveyed))]  <- NA
-brfarmers$net11[which(!(brfarmers$net11 %in% surveyed))]  <- NA
-brfarmers$net12[which(!(brfarmers$net12 %in% surveyed))]  <- NA
-brfarmers$net13[which(!(brfarmers$net13 %in% surveyed))]  <- NA
+for (i in netvars)
+  brfarmers[[i]] <- brfarmers[[i]] + brfarmers$village*100
 
-# Reshaping and droping lost
+# Removing farmes that are not part of the experiment, i.e. weren't
+# surveyed.
+
+for (i in netvars)
+  brfarmers[[i]][which(!(brfarmers[[i]] %in% surveyed))] <- NA
+
+# Reshaping data
 brfarmers.long <- reshape(
   brfarmers, v.names= "net",
-  varying = c("net31", "net32", "net33", "net21", "net22", "net23", "net11", "net12", "net13"),
+  varying = netvars,
   timevar = "level", idvar="id", direction="long", drop = c("idold"))
-
-# brfarmers.long <- subset(brfarmers.long, !is.na(net))
-
-length(unique(unlist(subset(brfarmers.long, select=c(id,net)))))
 
 library(netdiffuseR)
 
-# Creating the graph object
-graph <- with(brfarmers.long, edgelist_to_adjmat(cbind(id, net), undirected=TRUE, use.incomplete=FALSE, t=19))
+# Coersing the edgelist to an adjacency matrix. Here we are assuming that the
+# network is constant through time.
+graph <- with(
+  brfarmers.long,
+  edgelist_to_adjmat(cbind(id, net), time=yr, undirected=FALSE, use.incomplete=FALSE)
+  )
+
+# We have an extra year which we won't use
+# graph <- graph[-length(graph)]
+
+# Here we are retrieving the set of individuals who actually were used in the
+# network (as these are not isolated nodes)
 used.vertex <- rownames(graph[[1]])
 
-# Difussion
-toa <- brfarmers$yr[brfarmers$id %in% used.vertex]
+# Create the vector (subset) of times of adoption using only the individuals
+# that are included in the adjacency matrix
+toa <- brfarmers$adopt[brfarmers$id %in% used.vertex]
 
 # Creating a diffnet -----------------------------------------------------------
 diffnet <- as_diffnet(graph, toa)
 
-plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE, mai = c(0,0,0,0), vertex.cex = 2)
+# Applying the methods
+diffnet
+summary(diffnet)
 
-# Infection
-x <- plot_infectsuscep(diffnet, K=10, logscale = TRUE, bins=20)
+plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE, slices=c(1,2,11,10,15,16,19,20),
+             mai = c(0,0,0,0), vertex.cex = "indegree")
 
-# Threshold
-x <- plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
-x$fitted <- loess(threshold~jit, x, parametric = FALSE)$fitted
-lines(fitted~jit, x[order(x$jit),], lwd=3, col="black")
+# Redoing
+graph <- with(
+  brfarmers.long,
+  edgelist_to_adjmat(cbind(id, net), undirected=FALSE, use.incomplete=FALSE, t=20)
+)
+diffnet <- as_diffnet(graph, toa)
 
-threshold(diffnet)
-hazard_rate(diffnet)
+# Nice plots
+plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=40)
+plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
+plot_adopters(diffnet)
+plot_hazard(diffnet)
 
