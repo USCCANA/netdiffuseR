@@ -54,23 +54,21 @@ double max_int_na_cpp(const IntegerVector & x, const LogicalVector & isna) {
 }
 
 // [[Rcpp::export]]
-List toa_mat_cpp(const IntegerVector & year) {
+List toa_mat_cpp(const IntegerVector & year, int t0, int t1) {
 
   // Pin down NAs
   LogicalVector isna = is_na(year);
 
   // Measuring time
-  int T0 = min_int_na_cpp(year, isna);
-  int T = max_int_na_cpp(year, isna) - T0 + 1;
   int n = year.size();
 
   // Creating output
   List out(2);
-  arma::mat adopt(n,T,arma::fill::zeros);
+  arma::mat adopt(n,t1 - t0 + 1, arma::fill::zeros);
 
   for(int i=0;i<n;i++) {
     if (isna[i]) continue;
-    adopt(i,year[i]-T0) = 1.0;
+    adopt(i,year[i]-t0) = 1.0;
   }
 
   arma::mat cumadopt = cumsum(adopt, 1);

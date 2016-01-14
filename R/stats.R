@@ -278,6 +278,8 @@ cumulative_adopt_count <- function(obj) {
 #' @param ylab Character scalar. y-axis lab
 #' @param include.grid Logical scalar. When TRUE includes a grid on the plot.
 #' @param bg Character scalar. Color of the points.
+#' @param pch Integer scalar. See \code{\link{par}}.
+#' @param type Character scalar. See \code{\link{par}}.
 #' @param no.plot Logical scalar. When TRUE, suppress plotting (only returns hazard rates).
 #' @param add Logical scalar. When TRUE it adds the hazard rate to the current plot.
 #' @param ylim Numeric vector. See \code{\link{plot}}.
@@ -321,28 +323,29 @@ hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 
 #' @rdname hazard_rate
 #' @export
-plot_hazard <- function(x,main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
-                        include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1),
+plot_hazard <- function(x,main="Hazard Rate", xlab="Time", ylab="Hazard Rate", type="b",
+                        include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1), pch=21,
                         ...) {
   hr <- hazard_rate(x, no.plot = TRUE)
-  plot.diffnet_hr(x=hr, main=main, xlab=xlab, ylab=ylab, include.grid=include.grid, bg=bg,
-                  add=add, ylim=ylim, ...)
+  plot.diffnet_hr(x=hr, main=main, xlab=xlab, ylab=ylab, type=type, include.grid=include.grid, bg=bg,
+                  add=add, ylim=ylim, pch=pch, ...)
 }
 
 #' @rdname hazard_rate
 #' @export
-plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time", ylab="Hazard Rate",
-                            include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1),
+plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
+                            ylab="Hazard Rate", type="b",
+                            include.grid=TRUE, bg="lightblue", pch=21, add=FALSE, ylim=c(0,1),
                             ...) {
 
   if (add) {
-    lines(y=t(x), x=colnames(x), type="l", ...)
+    lines(y=t(x), x=colnames(x), type=type, bg=bg, pch=pch, ...)
   } else {
-    plot(y=t(x), x=colnames(x), type="l", main=main, xlab=xlab, ylab=ylab,
-         ylim=ylim, ...)
+    plot(y=t(x), x=colnames(x), type=type, main=main, xlab=xlab, ylab=ylab,
+         ylim=ylim, bg=bg, pch=pch,...)
     if (include.grid) grid()
   }
-  points(y=t(x), x=colnames(x), pch=21, bg=bg)
+
   invisible(x)
 }
 
@@ -353,7 +356,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time", ylab="Haz
 #' @param obj Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
 #' \code{\link{exposure}}) or a \code{diffnet} object.
 #' @param times Integer vector. Indicating the time of adoption of the innovation.
-#' @param times.recode Logical. TRUE when time recoding must be done.
+#' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param ... Further arguments to be passed to \code{\link{exposure}}.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
 #' @family statistics
@@ -376,9 +379,10 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time", ylab="Haz
 #' diffnet <- as_diffnet(graph, toa)
 #' threshold(diffnet, wtype=1)
 #' @export
-threshold <- function(obj, times, times.recode=TRUE, ...) {
+threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
 
   if (inherits(obj, "diffnet")) {
+    t0 <- min(obj$pers)
     times <- obj$toa
     obj <- exposure.list(obj$graph, obj$cumadopt, ...)
   } else {
@@ -386,8 +390,7 @@ threshold <- function(obj, times, times.recode=TRUE, ...) {
       stop("-times- should be provided when -obj- is not of class 'diffnet'")
   }
 
-  pers <- as.integer(colnames(obj))
-  if (times.recode) times <- times - min(pers) + 1L
+  times <- times - t0 + 1L
   output <- threshold_cpp(obj, times)
   dimnames(output) <- list(rownames(obj), "threshold")
   output

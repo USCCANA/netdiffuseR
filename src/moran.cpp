@@ -18,6 +18,6 @@ double moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
   double numer = accu((xcent * xcent.t()) % w);
   double denom = accu(pow(xcent, 2.0));
 
-  return (n/wsum)*(numer/denom);
+  return (n/wsum)*(numer/(denom + 1e-15));
 }
 

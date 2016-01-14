@@ -4,7 +4,7 @@
 \alias{threshold}
 \title{Retrive threshold levels from the exposure matrix}
 \usage{
-threshold(obj, times, times.recode = TRUE, ...)
+threshold(obj, times, t0 = min(times, na.rm = TRUE), ...)
 }
 \arguments{
 \item{obj}{Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
@@ -12,7 +12,7 @@ threshold(obj, times, times.recode = TRUE, ...)
 
 \item{times}{Integer vector. Indicating the time of adoption of the innovation.}
 
-\item{times.recode}{Logical. TRUE when time recoding must be done.}
+\item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
 \item{...}{Further arguments to be passed to \code{\link{exposure}}.}
 }

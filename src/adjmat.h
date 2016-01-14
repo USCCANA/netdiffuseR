@@ -20,7 +20,7 @@ arma::mat adjmat_to_edgelist_cpp(
 
 arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true);
 
-IntegerMatrix toa_mat_cpp(const IntegerVector & year);
+IntegerMatrix toa_mat_cpp(const IntegerVector & year, int t0, int t1);
 
 arma::icolvec isolated_cpp(const arma::sp_mat & adjmat, bool undirected=true);
 

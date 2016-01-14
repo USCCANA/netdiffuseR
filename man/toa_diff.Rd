@@ -4,13 +4,13 @@
 \alias{toa_diff}
 \title{Difference in Time of Adoption (TOA) between individuals}
 \usage{
-toa_diff(obj, recode = TRUE, labels = NULL)
+toa_diff(obj, t0 = NULL, labels = NULL)
 }
 \arguments{
 \item{obj}{Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
 or a \code{\link{diffnet}} object.}
 
-\item{recode}{Logical scalar. When TRUE recodes time (see details).}
+\item{t0}{Integer scalar. Sets the lower bound of the time window (e.g. 1955).}
 
 \item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
 }

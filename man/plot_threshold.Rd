@@ -4,10 +4,10 @@
 \alias{plot_threshold}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, exposure, toa, times.recode = TRUE,
+plot_threshold(graph, exposure, toa, t0 = min(toa, na.rm = TRUE),
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
-  ylab = "Threshold", vertex.cex = NA, vertex.col = "blue",
+  ylab = "Threshold", vertex.cex = "degree", vertex.col = "blue",
   vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,
   edge.col = "gray", arrow.length = 0.2, include.grid = TRUE, bty = "n",
   ...)
@@ -19,7 +19,7 @@ plot_threshold(graph, exposure, toa, times.recode = TRUE,
 
 \item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
 
-\item{times.recode}{Logical scalar. TRUE when time recoding must be done.}
+\item{t0}{Integer scalar. Passed to \code{\link{threshold}}.}
 
 \item{undirected}{Logical scalar.}
 
@@ -72,9 +72,7 @@ expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 plot_threshold(graph, expos, toa)
 
 # Calculating degree (for sizing the vertices)
-indegree <- dgr(graph, cmode="indegree")
-indegree <- apply(indegree, 1, mean)
-plot_threshold(graph, expos, toa, vertex.cex = indegree)
+plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 
 }
 \seealso{

@@ -69,23 +69,26 @@ used.vertex <- rownames(graph[[1]])
 toa <- brfarmers$adopt[brfarmers$id %in% used.vertex]
 
 # Creating a diffnet -----------------------------------------------------------
-diffnet <- as_diffnet(graph, toa)
+diffnet <- as_diffnet(graph, toa, t0=1946, t1=1966)
 
 # Applying the methods
 diffnet
 summary(diffnet)
 
-plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE, slices=c(1,2,11,10,15,16,19,20),
-             mai = c(0,0,0,0), vertex.cex = "indegree")
+d <- sqrt(dgr(diffnet$graph[[21]]))
+d <- (d - min(d) + 1)/(max(d) - min(d) + 1)*2
+plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE, slices=c(1,5,9,13,17,21),
+             mai = c(0,0,0,0), vertex.cex = d)
 
 # Redoing
 graph <- with(
   brfarmers.long,
-  edgelist_to_adjmat(cbind(id, net), undirected=FALSE, use.incomplete=FALSE, t=20)
+  edgelist_to_adjmat(cbind(id, net), undirected=FALSE, use.incomplete=FALSE, t=21)
 )
-diffnet <- as_diffnet(graph, toa)
+diffnet <- as_diffnet(graph, toa, t0=1946, t1=1966)
 
 # Nice plots
+plot(diffnet, t=19)
 plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=40)
 plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
 plot_adopters(diffnet)

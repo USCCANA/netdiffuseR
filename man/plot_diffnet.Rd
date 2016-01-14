@@ -9,7 +9,7 @@ plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
   vertex.cex = "degree", label = rownames(graph[[1]]), edge.col = "gray",
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
   main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
-  0.1, ...)
+  0.1, gmode = ifelse(undirected, "graph", "digraph"), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -42,6 +42,8 @@ the graph are used.}
 \item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
 
 \item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
+
+\item{gmode}{Character scalar. See \code{\link[sna:gplot]{gplot}.}}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}}
 }
@@ -78,9 +80,9 @@ scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
 \code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
 degree of the cumulated graph and will be normalized as
 
-\deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2  + .5}
+\deqn{vertex.cex = [d - \min(d) + .1]/[\max(d) - \min(d) + .1]\times 2}{vertex.cex = [d - min(d) + .1]/[max(d) - min(d) + .1]* 2}
 
-where \code{d=sqrt(dgr(graph))}.
+where \eqn{d=\sqrt{dgr(graph)}}{d=sqrt(dgr(graph))}.
 }
 \examples{
 # Generating a random graph

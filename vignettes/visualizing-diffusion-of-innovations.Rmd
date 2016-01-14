@@ -64,9 +64,7 @@ adopt <- toa_mat(toa)
 expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 
 x<-plot_threshold(graph, expos, toa, undirected = FALSE)
-cex <- rowMeans(dgr(graph))
-cex <- (cex - min(cex) + .5)/(max(cex) - min(cex) + .5)
-plot_threshold(graph, expos, toa, vertex.cex = cex/2)
+plot_threshold(graph, expos, toa, vertex.cex = 1/4)
 
 # Not everybody adopted!
 toa[2] <- NA
@@ -76,10 +74,8 @@ adopt <- toa_mat(toa)
 # Computing exposure
 expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
 
-x<-plot_threshold(graph, expos, toa, undirected = FALSE)
-cex <- rowMeans(dgr(graph))
-cex <- (cex - min(cex) + .5)/(max(cex) - min(cex) + .5)
-plot_threshold(graph, expos, toa, vertex.cex = cex/2)
+plot_threshold(graph, expos, toa, undirected = FALSE)
+plot_threshold(graph, expos, toa, vertex.cex = 1/4)
 ```
 
 \clearpage

@@ -5,10 +5,10 @@
 #' package's functions have methods for this class of objects.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
-#' @param recode Logical scalar. Passed to \code{\link{toa_mat}}.
-#' @param stack.toa.right Logical scalar. When the range of \code{toa} is smaller than
-#' the number of slices in graph, TRUE stacks the toa to the right (see details).
+#' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
+#' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param weights Numeric vector of size \eqn{n}.
 #' @param undirected Logical scalar.
 #' @param self Logical scalar.
@@ -27,6 +27,8 @@
 #' @param mode Character scalar. Name of the layout algorithm to implement (see details).
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
+#' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
+#' @param value Replacement.
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -42,29 +44,14 @@
 #'
 #' where \code{d=sqrt(dgr(graph))}.
 #'
-#' When \code{max(toa) - min(toa) <} number of slices in the graph,
-#' \code{stack.toa.right=TRUE} tells the function to assume that \code{max(toa)}
-#' coincides with the last slice of the graph. So, assuming that the range of
-#' the times of adoption is smaller than the set of graphs, we have two cases:
-#' \enumerate{
-#' \item \code{stack.toa.right=TRUE}, then we have
+#' @section Auxiliary functions:
 #'
-#' \code{0------------------------T}
-#'
-#' \code{||||||||||||||||||||||||||}: graph time line
-#'
-#' \code{.....|||||||||||||||||||||}: toa range
-#'
-#' \item \code{stack.toa.right=FALSE}, then we have
-#'
-#' \code{0------------------------T}
-#'
-#' \code{||||||||||||||||||||||||||}: graph time line
-#'
-#' \code{|||||||||||||||||||||.....}: toa range
-#' }
-#'
-#'
+#' \code{toa(graph)} Works as an alias of \code{graph$toa}. While this function
+#' may not be very useful, the replacement method, \code{toa<-} used as \code{toa(graph)<-...},
+#' is the right way of modifying times of adoption as when the \code{toa} vector
+#' is changed the method performs several checks on the time ranges, and
+#' recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
+#'#'
 #' @aliases diffnet diffnet-class
 #' @examples
 #'
@@ -101,7 +88,7 @@
 #'  \item \code{multiple}: Logical scalar.
 #' }
 #' }
-as_diffnet <- function(graph, toa, recode=TRUE, stack.toa.right=TRUE,
+as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
                        weights=NULL, undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
                        use.incomplete=FALSE) {
@@ -132,7 +119,7 @@ as_diffnet <- function(graph, toa, recode=TRUE, stack.toa.right=TRUE,
     names(toa) <- meta$ids
 
   # Step 3.1: Creating Time of adoption matrix -----------------------------------
-  mat <- toa_mat(toa, recode=recode, labels = meta$ids)
+  mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
   tdiff <- length(graph) - ncol(mat[[1]])
@@ -140,35 +127,11 @@ as_diffnet <- function(graph, toa, recode=TRUE, stack.toa.right=TRUE,
     stop("Range of -toa- is bigger than the number of slices in -graph- (",
          ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
          "There must be at least as many slices as range of toa.")
-  else if (tdiff > 0) {
-    # When there are more slices than time periods we have to increase the
-    # length of the matrices from toa mat.
-    warning("Range of -toa- is not equal to the number of slices in -graph- (",
-            ncol(mat[[1]]), " and ", length(graph), " respectively). ",
-            "toa will be stacked to the ",
-            ifelse(stack.toa.right,"right", "left"), " (see ?as_diffnet).")
-
-    firsttime <- as.integer(colnames(mat[[1]])[1])
-    lasttime  <- as.integer(colnames(mat[[1]])[ncol(mat[[1]])])
-    ntoamat   <- ncol(mat[[i]])
-    # Adding columns to toa
-    for (i in 1:2) {
-      if (stack.toa.right) {
-        mat[[i]] <- cbind(
-          matrix(0, ncol=tdiff, nrow(mat[[i]])),
-          mat[[i]])
-        # Names to the new columns
-        colnames(mat[[i]])[1:tdiff] <- (firsttime - tdiff):(firsttime-1)
-      } else {
-        mat[[i]] <- cbind(
-          mat[[i]],
-          matrix(0, ncol=tdiff, nrow(mat[[i]])))
-        # Names to the new columns
-        colnames(mat[[i]])[(ntoamat + 1):(ntoamat + tdiff)] <-
-          (lasttime+1):(lasttime + tdiff)
-      }
-    }
-  }
+  else if (tdiff > 0)
+    stop("Range of -toa- is smaller than the number of slices in -graph- (",
+         ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
+         "Please provide lower and upper boundaries for the values in -toa- ",
+         "using -t0- and -t- (see ?toa_mat).")
 
   meta$pers <- as.integer(colnames(mat$adopt))
 
@@ -196,14 +159,60 @@ as_diffnet <- function(graph, toa, recode=TRUE, stack.toa.right=TRUE,
     toa   = toa,
     adopt = mat$adopt,
     cumadopt = mat$cumadopt,
+    vertex.attrs = NULL,
+    edge.attrs = NULL,
     meta = meta
   ), class="diffnet"))
 }
+
+#' @rdname as_diffnet
+#' @export
+toa <- function(graph) {
+  if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
+  graph$toa
+}
+
+#' @rdname as_diffnet
+#' @export
+`toa<-` <- function(graph, i, value) {
+  if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
+  if (missing(i)) i <- 1:graph$meta$n
+
+  # Checking values of the data: normalizing
+  test <- !(value %in% graph$meta$pers)
+  if (any(test)) stop("Some elements of -value- (",
+                      paste0(head(value[test], 20), collapse=", "),
+                      ifelse(length(value[test]) > 20,", ...", "")
+                      ,") are not within the range of the original graph.")
+
+  # Changing the value of toa
+  graph$toa[i] <- value
+
+  # Recalculating adopt and cumadopt
+  mat <- toa_mat(graph$toa, t0=graph$meta$pers[1], t1=graph$meta$pers[graph$meta$nper])
+
+  # checking stack
+  nper <- ncol(mat[[1]])
+  graph$adopt    <- mat$adopt
+  graph$cumadopt <- mat$cumadopt
+
+  graph
+
+}
+
+# vertex.attrs <- function(x)
+# edge.attrs <- function(x)
+#
+# `[<-.diffnet` <- function(graph, v, value) {
+#   graph$vertex.attrs[v] <- value
+#   graph
+# }
 
 #' @export
 #' @rdname as_diffnet
 plot.diffnet <- function(
   x,y=NULL, t=1, displaylabels = FALSE, vertex.col = c("blue", "grey"),
+  gmode=ifelse(x$meta$undirected, "graph", "digraph"),
   vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
   layout.par = NULL, main = "Diffusion network in time %d", ...) {
 
@@ -220,17 +229,19 @@ plot.diffnet <- function(
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(x$graph[[t]])
+      vertex.cex <- dgr(x$graph[[t]], undirected = x$meta$undirected)
       vertex.cex <- sqrt(vertex.cex)
       r <- range(vertex.cex)
-      vertex.cex <- vertex.cex/(r[2] - r[1])*2
+
+      # If all the vertices have the same degree
+      vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)*2
     } else {
       stop("Invalid -vertex.cex-")
     }
 
   sna::gplot(graph, displaylabels=displaylabels, vertex.col=cols,
              coord=coords, edge.col=edge.col, label=x$meta$ids,
-             main=sprintf(main, t), vertex.cex=vertex.cex, ...)
+             main=sprintf(main, x$meta$pers[t]), vertex.cex=vertex.cex, gmode=gmode, ...)
 
   invisible(coords)
 }
@@ -351,6 +362,7 @@ summary.diffnet <- function(object, ...) {
 #' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
 #' @param mai Numeric vector of size 4. To be passed to \code{\link{par}.}
 #' @param mar Numeric vector of size 4. To be passed to \code{\link{par}.}
+#' @param gmode Character scalar. See \code{\link[sna:gplot]{gplot}.}
 #' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -377,9 +389,9 @@ summary.diffnet <- function(object, ...) {
 #' \code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
 #' degree of the cumulated graph and will be normalized as
 #'
-#' \deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2  + .5}
+#' \deqn{vertex.cex = [d - \min(d) + .1]/[\max(d) - \min(d) + .1]\times 2}{vertex.cex = [d - min(d) + .1]/[max(d) - min(d) + .1]* 2}
 #'
-#' where \code{d=sqrt(dgr(graph))}.
+#' where \eqn{d=\sqrt{dgr(graph)}}{d=sqrt(dgr(graph))}.
 #'
 #' @examples
 #' # Generating a random graph
@@ -407,7 +419,7 @@ plot_diffnet <- function(
   mode="fruchtermanreingold", layout.par=NULL,
   mfrow.par=NULL, main="Network in time %d",
   mai=c(0,0,1,0),
-  mar=rep(1,4) + 0.1, ...
+  mar=rep(1,4) + 0.1, gmode=ifelse(undirected, "graph", "digraph"),...
 ) {
   switch (class(graph),
     array = plot_diffnet.array(
@@ -445,7 +457,8 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
                          mode="fruchtermanreingold", layout.par=NULL,
                          mfrow.par=NULL, main="Network in time %d",
                          mai=c(0,0,1,0),
-                         mar=rep(1,4) + 0.1, ...) {
+                         mar=rep(1,4) + 0.1,
+                         gmode=ifelse(undirected, "graph", "digraph"), ...) {
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
@@ -469,7 +482,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(cumgraph)
+      vertex.cex <- dgr(cumgraph, undirected=undirected)
       vertex.cex <- sqrt(vertex.cex)
       r <- range(vertex.cex)
       vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)*2
@@ -513,7 +526,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
     sna::gplot(g,
                displaylabels = displaylabels, vertex.col = cols, coord=coords,
                edge.col = edge.col,vertex.cex = vertex.cex, label=label,
-               main=sprintf(main, times[i]), ...)
+               main=sprintf(main, times[i]), gmode=gmode, ...)
   }
 
   par(oldpar)
@@ -529,7 +542,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
-#' @param times.recode Logical scalar. TRUE when time recoding must be done.
+#' @param t0 Integer scalar. Passed to \code{\link{threshold}}.
 #' @param undirected Logical scalar.
 #' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
 #' \code{toa} won't be plotted.
@@ -566,16 +579,14 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' plot_threshold(graph, expos, toa)
 #'
 #' # Calculating degree (for sizing the vertices)
-#' indegree <- dgr(graph, cmode="indegree")
-#' indegree <- apply(indegree, 1, mean)
-#' plot_threshold(graph, expos, toa, vertex.cex = indegree)
+#' plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 #'
 #' @export
 plot_threshold <- function(
-  graph, exposure, toa, times.recode=TRUE,
+  graph, exposure, toa, t0=min(toa, na.rm = TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex=NA, vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
+  vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
   edge.width = 2, edge.col = "gray", arrow.length=.20,
   include.grid = TRUE, bty="n", ...
 ) {
@@ -586,11 +597,11 @@ plot_threshold <- function(
 
   switch (class(graph),
     array = plot_threshold.array(
-      graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
+      graph, exposure, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...),
     list = plot_threshold.list(
-      graph, exposure, toa, times.recode, undirected, no.contemporary, main, xlab, ylab,
+      graph, exposure, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...),
     diffnet = {
@@ -601,7 +612,7 @@ plot_threshold <- function(
 
       plot_threshold.list(
       graph$graph, with(graph, exposure.list(graph, cumadopt)),
-      graph$toa, times.recode=TRUE, graph$meta$undirected, no.contemporary, main, xlab, ylab,
+      graph$toa, t0=graph$meta$pers[1], graph$meta$undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...)
       },
@@ -621,10 +632,10 @@ plot_threshold.array <- function(graph, ...) {
 # @export
 # @rdname plot_threshold
 plot_threshold.list <- function(
-  graph, exposure=NULL, toa, times.recode=TRUE,
+  graph, exposure=NULL, toa, t0=min(toa, na.rm=TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex=NA, vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
+  vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
   edge.width = 2, edge.col = "gray", arrow.length=.20,
   include.grid = TRUE, bty="n", ...) {
   # Step 0: Getting basic info
@@ -638,7 +649,7 @@ plot_threshold.list <- function(
   }
 
   # Creating the pos vector
-  y <- threshold(exposure, toa, times.recode)
+  y <- threshold(exposure, toa, t0)
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, amount = .25)
@@ -649,15 +660,21 @@ plot_threshold.list <- function(
 
   # Step 2: Checking colors and sizes
 
-  # Adjusting size of the vertices
-  if ((length(vertex.cex)==1) && (n > 1) && is.na(vertex.cex))
-    vertex.cex <- (xran[2] - xran[1])/10/3
+  # Computing sizes
+  if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character")) {
+    if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
+      vertex.cex <- dgr(cumgraph, undirected = undirected)
+      vertex.cex <- sqrt(vertex.cex)
+      r <- range(vertex.cex)
 
-  if ( (length(vertex.cex)==1) && (n > 1) )
-    vertex.cex <- rep(vertex.cex,n)
-
-  if ( (length(vertex.col)==1) && (n > 1) )
-    vertex.col <- rep(vertex.col,n)
+      # If all the vertices have the same degree
+      vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)/4
+    } else {
+      stop("Invalid -vertex.cex-")
+    }
+  } else if (length(vertex.cex)==1) {
+    vertex.cex <- rep(vertex.cex, n)
+  } else if (inherits(vertex.cex, "character")) stop("Invalid value for -vertex.cex-.")
 
   # Plotting
   oldpar <- par(no.readonly = TRUE)
@@ -856,10 +873,23 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 #' @param ylab Character scalar. Name of the y-axis.
 #' @param main Character scalar. Title of the plot
 #' @param ... Further arguments passed to \code{\link{matplot}}.
+#' @param include.grid Logical scalar. When TRUE, the grid of the graph is drawn
 #' @family visualizations
+#' @examples
+#' # Generating a random diffnet
+#' set.seed(832)
+#' diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
+#'
+#' plot_adopters(diffnet)
+#'
+#' # Alternatively, we can use a TOA Matrix
+#' toa <- sample(c(NA, 2010,2015), 20, TRUE)
+#' mat <- toa_mat(toa)
+#' plot_adopters(mat$cumadopt)
+#' @return List of matrices as described in \code{\link{cumulative_adopt_count}}
 #' @export
 plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
-                          add=FALSE, include.legend=TRUE,
+                          add=FALSE, include.legend=TRUE, include.grid=TRUE,
                           pch=c(21,21), type=c("b", "b"),
                           ylim=if (!freq) c(0,1) else NULL, lty=c(1,1), col=c("black","black"),
                           bg = c("lightblue","gray"),
@@ -881,6 +911,8 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
     adopt    <- cumadopt["num",] - c(0,cumadopt["num",1:(ncol(cumadopt)-1)])
     n        <- nrow(obj)
   }
+
+  out <- cumadopt
 
   # In the case that the user wants pcent (the default)
   if (!freq) {
@@ -913,12 +945,16 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
           bg=bg,...)
 
   # If not been added
-  if (!add & include.legend) {
-    legend("topleft", bty="n", legend = c("Cumulative adopters", "Adopters")[test],
-           fill = bg)
+  if (!add) {
+    if (include.legend)
+      legend("topleft", bty="n",
+             legend = c("Cumulative adopters", "Adopters")[test], fill = bg)
+
+    if (include.grid)
+      grid()
   }
 
-  # return(out)
+  invisible(out)
 }
 
 # x <- cumulative_adopt_count(diffnet)

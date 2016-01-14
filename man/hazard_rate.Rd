@@ -10,12 +10,12 @@
 hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
 plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
-  include.grid = TRUE, bg = "lightblue", add = FALSE, ylim = c(0, 1),
-  ...)
+  type = "b", include.grid = TRUE, bg = "lightblue", add = FALSE,
+  ylim = c(0, 1), pch = 21, ...)
 
 \method{plot}{diffnet_hr}(x, y = NULL, main = "Hazard Rate",
-  xlab = "Time", ylab = "Hazard Rate", include.grid = TRUE,
-  bg = "lightblue", add = FALSE, ylim = c(0, 1), ...)
+  xlab = "Time", ylab = "Hazard Rate", type = "b", include.grid = TRUE,
+  bg = "lightblue", pch = 21, add = FALSE, ylim = c(0, 1), ...)
 }
 \arguments{
 \item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
@@ -35,11 +35,15 @@ plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
 
 \item{ylab}{Character scalar. y-axis lab}
 
+\item{type}{Character scalar. See \code{\link{par}}.}
+
 \item{bg}{Character scalar. Color of the points.}
 
 \item{add}{Logical scalar. When TRUE it adds the hazard rate to the current plot.}
 
 \item{ylim}{Numeric vector. See \code{\link{plot}}.}
+
+\item{pch}{Integer scalar. See \code{\link{par}}.}
 
 \item{y}{ignored.}
 }

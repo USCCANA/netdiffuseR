@@ -310,23 +310,52 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 #'
 #' @param obj Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
 #' or a \code{\link{diffnet}} object.
-#' @param recode Logical scalar. When TRUE recodes time (see details).
 #' @param labels Character vector of size \eqn{n}. Labels (ids) of the vertices.
+#' @param t0 Integer scalar. Sets the lower bound of the time window (e.g. 1955).
+#' @param t1 Integer scalar. Sets the upper bound of the time window (e.g. 2000).
 #' @details
 #'
-#' By construction this function requires time units to be between 1 and T, where
-#' T is the length (number) of time periods. By default a recoding of time is
-#' performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
+#' In order to be able to work with time ranges other than \eqn{1,\dots, T}{1,..., T}
+#' the function receives as input the boundary labels of the time windows through
+#' the variables \code{t0} and \code{t}. While by default the function assumes that
+#' the the boundaries are given by the range of the \code{times} vector, the user
+#' can set a personalized time range exceeding the one given by the \code{times}
+#' vector. For instance, times of adoption may range between 2001 and 2005 but the
+#' actual data, the network, is observed between 2000 and 2005 (so there is not
+#' left censoring in the data), hence, the user could write:
+#'
+#' \preformatted{
+#' adopmats <- toa_mat(times, t0=2000, t1=2005)
+#' }
+#'
+#' That way the resulting \code{cumadopt} and \code{adopt} matrices would have
+#' 2005 - 2000 + 1 = 6 columns instead of 2005 - 2001 + 1 = 5 columns, with the
+#' first column of the two matrices containing only zeros (as the first adoption
+#' happend after the year 2000).
+#' @examples
+#' # Random set of times of adoptions
+#' times <- sample(c(NA, 2001:2005), 10, TRUE)
+#'
+#' toa_mat(times)
+#'
+#' # Now, suppose that we observe the graph from 2000 to 2006
+#' toa_mat(times, t0=2000, t1=2006)
 #'
 #' @export
 #' @return A list of two \eqn{n \times T}{n x T}
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
-toa_mat <- function(obj, recode=TRUE, labels=NULL) {
+toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
+
+  if (!inherits(obj, "diffnet")) {
+    if (!length(t0)) t0 <- min(obj, na.rm = TRUE)
+    if (!length(t1)) t1 <- max(obj, na.rm = TRUE)
+  }
+
   switch(class(obj),
-    numeric = toa_mat.numeric(obj, recode, labels),
-    integer = toa_mat.integer(obj, recode, labels),
+    numeric = toa_mat.numeric(obj, labels, t0, t1),
+    integer = toa_mat.integer(obj, labels, t0, t1),
     diffnet = obj[c("adopt","cumadopt")],
     stop("No method defined for class -",class(obj),"-")
   )
@@ -335,20 +364,27 @@ toa_mat <- function(obj, recode=TRUE, labels=NULL) {
 
 # @rdname toa_mat
 # @export
-toa_mat.numeric <- function(times, recode=TRUE, labels=NULL) {
+toa_mat.numeric <- function(times, labels=NULL,
+                            t0 = min(times, na.rm = TRUE),
+                            t1 = max(times, na.rm=TRUE)) {
   if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
+
+  # Coersing into integer
   times <- as.integer(times)
-  toa_mat.integer(times, recode, labels)
+  t0 <- as.integer(t0)
+  t1 <- as.integer(t1)
+
+  toa_mat.integer(times, labels, t0, t1)
 }
 
 # @rdname toa_mat
 # @export
-toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
+toa_mat.integer <- function(times, labels=NULL,
+                            t0 = min(times, na.rm = TRUE),
+                            t1 = max(times, na.rm=TRUE)) {
   # Rescaling
-  oldtimes <- range(times, na.rm = TRUE)
-  oldtimes <- oldtimes[1]:oldtimes[2]
-  if (recode) times <- times - min(times, na.rm = TRUE) + 1L
-  output <- toa_mat_cpp(times)
+  oldtimes <- t0:t1
+  output <- toa_mat_cpp(times, t0, t1)
 
   # Naming
   if (length(labels)) {
@@ -395,30 +431,36 @@ toa_mat.integer <- function(times, recode=TRUE, labels=NULL) {
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
-toa_diff <- function(obj, recode=TRUE, labels=NULL) {
-  switch (class(obj),
-    integer = toa_diff.integer(obj, recode, labels),
-    numeric = toa_diff.numeric(obj, recode, labels),
-    diffnet = toa_diff.integer(obj$toa, recode, labels),
-    stop("No method defined for class -",class(obj),"-")
-  )
-  # UseMethod("toa_diff")
+toa_diff <- function(obj, t0=NULL, labels=NULL) {
+
+  # Calculating t0 (if it was not provided)
+  if (!inherits(obj, "diffnet") && !length(t0))
+    t0 <- as.integer(min(obj, na.rm = TRUE))
+  else
+    t0 <- obj$meta$pers[1]
+
+  # Computing the difference
+  if (inherits(obj, "integer")) {
+    out <- toa_diff_cpp(obj - t0 + 1L)
+  } else if (inherits(obj, "numeric")) {
+    warning("coersing -obj- to integer.")
+    out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
+  } else if (inherits(obj, "diffnet")) {
+    out <- toa_diff_cpp(obj$toa - t0 + 1L)
+  } else stop("No method defined for class -",class(obj),"-")
+
+  out
 }
 
 # @rdname toa_diff
 # @export
-toa_diff.integer <- function(times, recode=TRUE, labels=NULL) {
+toa_diff.integer <- function(times, t0, labels) {
   # Rescaling
-  if (recode) times <- times - min(times, na.rm = TRUE) + 1L
+  times <- times - t0 + 1L
   toa_diff_cpp(times)
 }
 
-# @rdname toa_diff
-# @export
-toa_diff.numeric <- function(times, recode=TRUE, labels=NULL) {
-  times <- as.integer(times)
-  toa_diff.integer(times, recode)
-}
+
 
 # set.seed(123)
 # x <- sample(2000:2005, 10, TRUE)
@@ -577,7 +619,7 @@ drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
     graph$meta$n <- nrow(out[[1]])
     graph$meta$ids <- row.names(out[[1]])
 
-    toa <- toa_mat(out)
+    toa <- toa_mat(out, t0=graph$meta$pers[1], t1=graph$meta$pers[graph$meta$nper])
     graph$adopt <- toa$adopt
     graph$cumadopt <- toa$cumadopt
 

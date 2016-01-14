@@ -1,6 +1,6 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.16.1.13
+Version: 0.16.1.13.2
 Date: 2016-01-13
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),

@@ -4,15 +4,17 @@
 \alias{toa_mat}
 \title{Time of adoption matrix}
 \usage{
-toa_mat(obj, recode = TRUE, labels = NULL)
+toa_mat(obj, labels = NULL, t0 = NULL, t1 = NULL)
 }
 \arguments{
 \item{obj}{Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
 or a \code{\link{diffnet}} object.}
 
-\item{recode}{Logical scalar. When TRUE recodes time (see details).}
-
 \item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
+
+\item{t0}{Integer scalar. Sets the lower bound of the time window (e.g. 1955).}
+
+\item{t1}{Integer scalar. Sets the upper bound of the time window (e.g. 2000).}
 }
 \value{
 A list of two \eqn{n \times T}{n x T}
@@ -24,9 +26,33 @@ Creates two matrices indicating the time of adoption (TOA) of the innovation, an
 which an individual had already adopted the innovation.
 }
 \details{
-By construction this function requires time units to be between 1 and T, where
-T is the length (number) of time periods. By default a recoding of time is
-performed as \eqn{time'=time - min(time) + 1}{time'=time - min(time) + 1}.
+In order to be able to work with time ranges other than \eqn{1,\dots, T}{1,..., T}
+the function receives as input the boundary labels of the time windows through
+the variables \code{t0} and \code{t}. While by default the function assumes that
+the the boundaries are given by the range of the \code{times} vector, the user
+can set a personalized time range exceeding the one given by the \code{times}
+vector. For instance, times of adoption may range between 2001 and 2005 but the
+actual data, the network, is observed between 2000 and 2005 (so there is not
+left censoring in the data), hence, the user could write:
+
+\preformatted{
+adopmats <- toa_mat(times, t0=2000, t1=2005)
+}
+
+That way the resulting \code{cumadopt} and \code{adopt} matrices would have
+2005 - 2000 + 1 = 6 columns instead of 2005 - 2001 + 1 = 5 columns, with the
+first column of the two matrices containing only zeros (as the first adoption
+happend after the year 2000).
+}
+\examples{
+# Random set of times of adoptions
+times <- sample(c(NA, 2001:2005), 10, TRUE)
+
+toa_mat(times)
+
+# Now, suppose that we observe the graph from 2000 to 2006
+toa_mat(times, t0=2000, t1=2006)
+
 }
 \keyword{manip}
 

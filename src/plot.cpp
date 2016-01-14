@@ -33,15 +33,14 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 //' \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
 //' of the elements in terms of frecuency}
 //' @section Examples:
-//' \code{# Generating random vectors of size 100}
+//' \preformatted{
+//' # Generating random vectors of size 100
+//' x <- rnorm(100)
+//' y <- rnorm(100)
 //'
-//' \code{x <- rnorm(100)}
-//'
-//' \code{y <- rnorm(100)}
-//'
-//' \code{# Calculating distribution}
-//'
-//' \code{grid_distribution(x,y,20)}
+//' # Calculating distribution
+//' grid_distribution(x,y,20)
+//' }
 // [[Rcpp::export]]
 List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100) {
 

@@ -5,10 +5,10 @@
 \title{Visualize adopters and cumulative adopters}
 \usage{
 plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
-  add = FALSE, include.legend = TRUE, pch = c(21, 21), type = c("b",
-  "b"), ylim = if (!freq) c(0, 1) else NULL, lty = c(1, 1),
-  col = c("black", "black"), bg = c("lightblue", "gray"), xlab = "Time",
-  ylab = ifelse(freq, "Frequency", "Proportion"),
+  add = FALSE, include.legend = TRUE, include.grid = TRUE, pch = c(21,
+  21), type = c("b", "b"), ylim = if (!freq) c(0, 1) else NULL, lty = c(1,
+  1), col = c("black", "black"), bg = c("lightblue", "gray"),
+  xlab = "Time", ylab = ifelse(freq, "Frequency", "Proportion"),
   main = "Adopters and Cumulative Adopters", ...)
 }
 \arguments{
@@ -21,6 +21,8 @@ plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
 \item{add}{Logical scalar. When TRUE lines and dots are added to the current graph.}
 
 \item{include.legend}{Logical scalar. When TRUE a legend of the graph is plotted.}
+
+\item{include.grid}{Logical scalar. When TRUE, the grid of the graph is drawn}
 
 \item{pch}{Integer vector of length 2. See \code{\link{matplot}}.}
 
@@ -42,8 +44,23 @@ plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
 
 \item{...}{Further arguments passed to \code{\link{matplot}}.}
 }
+\value{
+List of matrices as described in \code{\link{cumulative_adopt_count}}
+}
 \description{
 Visualize adopters and cumulative adopters
+}
+\examples{
+# Generating a random diffnet
+set.seed(832)
+diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
+
+plot_adopters(diffnet)
+
+# Alternatively, we can use a TOA Matrix
+toa <- sample(c(NA, 2010,2015), 20, TRUE)
+mat <- toa_mat(toa)
+plot_adopters(mat$cumadopt)
 }
 \seealso{
 Other visualizations: \code{\link{hazard_rate}},

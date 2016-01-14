@@ -39,12 +39,14 @@
 #' \code{seed.nodes} can be \code{"marginal"}, \code{"central"} or \code{"random"},
 #' So each of these values sets the initial adopters using the vertices with lowest
 #' degree, with highest degree or completely randomly. The number of early adoptes
-#' is set as \code{seed.p.adopt * n}.
+#' is set as \code{seed.p.adopt * n}. Please note that when marginal nodes are
+#' set as seed it may be the case that no diffusion process is attained as the
+#' chosen set of first adopters can be isolated.
 #'
 #' The argument \code{seed.graph} allows the user to set the algorithm used to
 #' generate the first network (network in t=1). This can be either "scale-free"
 #' (Barabasi-Albert model using the \code{\link{rgraph_ba}} function, the default),
-#' \code{"bernoulli"} (Erdos-Reyi model using the \code{\link{rgraph_er}} function),
+#' \code{"bernoulli"} (Erdos-Renyi model using the \code{\link{rgraph_er}} function),
 #' or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
 #' function). The list \code{rgraph.args} passes arguments to the chosen algorithm.
 #'
@@ -54,7 +56,9 @@
 #' Finally, \code{threshold.dist} sets the threshold for each vertex in the graph.
 #' It is applied using \code{sapply} as follows
 #'
-#' \code{sapply(1:n, threshold.dist)}
+#' \preformatted{
+#' sapply(1:n, threshold.dist)
+#' }
 #'
 #' By default sets the threshold to be random for each node in the graph.
 #'
@@ -63,7 +67,7 @@
 #' z
 #' summary(z)
 rdiffnet <- function(n, t,
-                     seed.nodes="marginal", seed.p.adopt=0.05,
+                     seed.nodes="random", seed.p.adopt=0.05,
                      seed.graph="scale-free", rgraph.args=list(),
                      rewire=TRUE, rewire.args=list(p=.1, undirected=TRUE),
                      threshold.dist=function(x) runif(1)
@@ -134,11 +138,8 @@ rdiffnet <- function(n, t,
 
   if (reachedt == 1) {
     stop("No diffusion in this network (Ups!) try changing the seed or the parameters.")
-  } else if (reachedt < t) {
-    warning("Less periods than wanted, only ",reachedt," instead of ",t)
-    graph <- graph[1:reachedt]
   }
 
-  as_diffnet(graph, as.integer(toa), recode=FALSE)
+  as_diffnet(graph, as.integer(toa), undirected=FALSE, t0=1, t1=t)
 }
 

@@ -7,13 +7,15 @@
 using namespace Rcpp;
 
 // toa_mat_cpp
-List toa_mat_cpp(const IntegerVector& year);
-RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP) {
+List toa_mat_cpp(const IntegerVector& year, int t0, int t1);
+RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP, SEXP t0SEXP, SEXP t1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const IntegerVector& >::type year(yearSEXP);
-    __result = Rcpp::wrap(toa_mat_cpp(year));
+    Rcpp::traits::input_parameter< int >::type t0(t0SEXP);
+    Rcpp::traits::input_parameter< int >::type t1(t1SEXP);
+    __result = Rcpp::wrap(toa_mat_cpp(year, t0, t1));
     return __result;
 END_RCPP
 }

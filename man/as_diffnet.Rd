@@ -7,16 +7,23 @@
 \alias{plot.diffnet}
 \alias{print.diffnet}
 \alias{summary.diffnet}
+\alias{toa}
+\alias{toa<-}
 \title{Creates a \code{diffnet} class object}
 \usage{
-as_diffnet(graph, toa, recode = TRUE, stack.toa.right = TRUE,
-  weights = NULL, undirected = getOption("diffnet.undirected"),
+as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
+  TRUE), weights = NULL, undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), use.incomplete = FALSE)
 
+toa(graph)
+
+toa(graph, i) <- value
+
 \method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
-  vertex.col = c("blue", "grey"), vertex.cex = "degree",
-  edge.col = "gray", mode = "fruchtermanreingold", layout.par = NULL,
+  vertex.col = c("blue", "grey"), gmode = ifelse(x$meta$undirected, "graph",
+  "digraph"), vertex.cex = "degree", edge.col = "gray",
+  mode = "fruchtermanreingold", layout.par = NULL,
   main = "Diffusion network in time \%d", ...)
 
 \method{print}{diffnet}(x, ...)
@@ -28,10 +35,9 @@ as_diffnet(graph, toa, recode = TRUE, stack.toa.right = TRUE,
 
 \item{toa}{Numeric vector of size \eqn{n}. Times of adoption.}
 
-\item{recode}{Logical scalar. Passed to \code{\link{toa_mat}}.}
+\item{t0}{Integer scalar. Passed to \code{\link{toa_mat}}.}
 
-\item{stack.toa.right}{Logical scalar. When the range of \code{toa} is smaller than
-the number of slices in graph, TRUE stacks the toa to the right (see details).}
+\item{t1}{Integer scalar. Passed to \code{\link{toa_mat}}.}
 
 \item{weights}{Numeric vector of size \eqn{n}.}
 
@@ -43,6 +49,10 @@ the number of slices in graph, TRUE stacks the toa to the right (see details).}
 
 \item{use.incomplete}{Logical scalar.}
 
+\item{i}{Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.}
+
+\item{value}{Replacement.}
+
 \item{x}{A \code{diffnet} object.}
 
 \item{y}{Ignored.}
@@ -52,6 +62,8 @@ the number of slices in graph, TRUE stacks the toa to the right (see details).}
 \item{displaylabels}{Logical scalar. When TRUE, \code{plot} shows vertex labels.}
 
 \item{vertex.col}{Character scalar/vector. Color of the vertices.}
+
+\item{gmode}{Character scalar. Passed to \code{\link[sna:gplot]{gplot}.}}
 
 \item{vertex.cex}{Numeric scalar/vector. Size of the vertices.}
 
@@ -107,28 +119,16 @@ degree of the selected slice and will be normalized as
 \deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2 + .5}
 
 where \code{d=sqrt(dgr(graph))}.
-
-When \code{max(toa) - min(toa) <} number of slices in the graph,
-\code{stack.toa.right=TRUE} tells the function to assume that \code{max(toa)}
-coincides with the last slice of the graph. So, assuming that the range of
-the times of adoption is smaller than the set of graphs, we have two cases:
-\enumerate{
-\item \code{stack.toa.right=TRUE}, then we have
-
-\code{0------------------------T}
-
-\code{||||||||||||||||||||||||||}: graph time line
-
-\code{.....|||||||||||||||||||||}: toa range
-
-\item \code{stack.toa.right=FALSE}, then we have
-
-\code{0------------------------T}
-
-\code{||||||||||||||||||||||||||}: graph time line
-
-\code{|||||||||||||||||||||.....}: toa range
 }
+\section{Auxiliary functions}{
+
+
+\code{toa(graph)} Works as an alias of \code{graph$toa}. While this function
+may not be very useful, the replacement method, \code{toa<-} used as \code{toa(graph)<-...},
+is the right way of modifying times of adoption as when the \code{toa} vector
+is changed the method performs several checks on the time ranges, and
+recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
+#'
 }
 \examples{
 
