@@ -12,10 +12,7 @@ env:
 r_packages:
   - covr
   - testthat
-  - RcppArmadillo
-  - SparseM
-  - sna
-  - rmarkdown
+  - ape
   - knitr
 
 before_install:

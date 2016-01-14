@@ -1,0 +1,60 @@
+rm(list=ls())
+library(foreign)
+
+# Preparing the data -----------------------------------------------------------
+medInnovations <- read.dta("data-raw/mi_v2.dta")
+
+# Creating unique ids (including for the network data)
+othervars <- c("id", "toa", "city")
+netvars <- names(medInnovations)[grepl("^net", names(medInnovations))]
+for (i in c("id", netvars))
+  medInnovations[[i]] <- medInnovations[[i]] + medInnovations$city*1000
+
+# Leaving unsurveyed individuals with NA
+surveyed <- medInnovations$id
+for (i in netvars)
+  medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
+
+# Reshaping data
+medInnovations.long <- reshape(
+  medInnovations[,c(othervars, netvars)], v.names= "net",
+  varying = netvars,
+  timevar = "level", idvar="id", direction="long")
+
+
+library(netdiffuseR)
+
+# Coersing the edgelist to an adjacency matrix. Here we are assuming that the
+# network is constant through time.
+graph <- with(
+  medInnovations.long,
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE)
+)
+
+# Here we are retrieving the set of individuals who actually were used in the
+# network (as these are not isolated nodes)
+used.vertex <- rownames(graph[[1]])
+
+# Create the vector (subset) of times of adoption using only the individuals
+# that are included in the adjacency matrix
+toa <- medInnovations$toa[medInnovations$id %in% used.vertex]
+
+# Creating a diffnet -----------------------------------------------------------
+diffnet <- as_diffnet(graph, toa)
+
+# Applying the methods
+diffnet
+summary(diffnet)
+
+d <- sqrt(dgr(diffnet$graph[[diffnet$meta$nper]]))
+d <- (d - min(d) + 1)/(max(d) - min(d) + 1)*2
+plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE,
+             slices=seq(1, diffnet$meta$nper, length.out = 6),
+             mai = c(0,0,0,0), vertex.cex = d)
+
+# Nice plots
+plot(diffnet, t=18)
+plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=40)
+plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
+plot_adopters(diffnet)
+plot_hazard(diffnet)
