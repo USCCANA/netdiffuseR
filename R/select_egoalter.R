@@ -68,7 +68,7 @@ select_egoalter.array <- function(graph, adopt, period=NULL) {
 # @export
 select_egoalter.list <- function(graph, adopt, period=NULL) {
 
-  # Computing selection mat and coersing into a single matrix
+  # Computing selection mat and coercing into a single matrix
   n <- dim(graph[[1]])[1]
   t <- length(graph)
   if (length(period) && !(period %in% 2:t))

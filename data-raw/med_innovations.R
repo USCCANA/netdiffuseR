@@ -24,7 +24,7 @@ medInnovations.long <- reshape(
 
 library(netdiffuseR)
 
-# Coersing the edgelist to an adjacency matrix. Here we are assuming that the
+# Coercing the edgelist to an adjacency matrix. Here we are assuming that the
 # network is constant through time.
 graph <- with(
   medInnovations.long,

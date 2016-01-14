@@ -382,7 +382,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
 
   if (inherits(obj, "diffnet")) {
-    t0 <- min(obj$pers)
+    t0 <- min(obj$meta$pers)
     times <- obj$toa
     obj <- exposure.list(obj$graph, obj$cumadopt, ...)
   } else {

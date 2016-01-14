@@ -9,11 +9,13 @@ env:
  global:
    - CRAN: http://cran.rstudio.com
 
+r_binary_packages:
+  - knitr
+  - ape
+
 r_packages:
   - covr
   - testthat
-  - ape
-  - knitr
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2 && sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; rm gfortran-4.8.2-darwin13.tar.bz2 ; fi

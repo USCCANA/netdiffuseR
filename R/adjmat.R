@@ -369,7 +369,7 @@ toa_mat.numeric <- function(times, labels=NULL,
                             t1 = max(times, na.rm=TRUE)) {
   if (inherits(times, 'numeric')) warning('-x- numeric. will be coersed to integer.')
 
-  # Coersing into integer
+  # Coercing into integer
   times <- as.integer(times)
   t0 <- as.integer(t0)
   t1 <- as.integer(t1)
@@ -443,7 +443,7 @@ toa_diff <- function(obj, t0=NULL, labels=NULL) {
   if (inherits(obj, "integer")) {
     out <- toa_diff_cpp(obj - t0 + 1L)
   } else if (inherits(obj, "numeric")) {
-    warning("coersing -obj- to integer.")
+    warning("coercing -obj- to integer.")
     out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
   } else if (inherits(obj, "diffnet")) {
     out <- toa_diff_cpp(obj$toa - t0 + 1L)

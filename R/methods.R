@@ -108,9 +108,9 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
                                 meta$n, " and ", length(toa), " respectively). ",
                                 "-toa- should be of length n (number of vertices).")
 
-  # Step 2.1: Checking class of TOA and coersing if necesary
+  # Step 2.1: Checking class of TOA and coercing if necesary
   if (!inherits(toa, "integer")) {
-    warning("Coersing -toa- into integer.")
+    warning("Coercing -toa- into integer.")
     toa <- as.integer(toa)
   }
 

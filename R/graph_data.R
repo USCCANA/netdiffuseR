@@ -132,11 +132,11 @@ classify_graph <- function(graph) {
     suppressWarnings(pers <- as.integer(names(graph)))
     if (!length(pers)) pers <- 1:t
     else {
-      # Step 4.2.1: Must be coersible into integer
+      # Step 4.2.1: Must be coercible into integer
       if (any(is.na(pers))) stop("names(graph) should be either numeric or integer.")
 
       # Step 4.2.1: Must keep uniqueness
-      if (length(unique(pers)) != t) stop("When coersing names(graph) into integer,",
+      if (length(unique(pers)) != t) stop("When coercing names(graph) into integer,",
                                        "some slices acquired the same name.")
     }
 
@@ -179,12 +179,12 @@ classify_graph <- function(graph) {
     pers <- dimnames(graph)[[3]]
     if (!length(pers)) pers <- 1:d[3]
     else {
-      # Step 4.2.1: Must be coersible into integer
+      # Step 4.2.1: Must be coercible into integer
       suppressWarnings(alters <- as.integer(floor(pers)))
       if (any(is.na(alters))) stop("names(graph) should be either numeric or integer.")
 
       # Step 4.2.1: Must keep uniqueness
-      if (unique(alters) != length(pers)) stop("When coersing names(graph) into integer,",
+      if (unique(alters) != length(pers)) stop("When coercing names(graph) into integer,",
                                        "some slices acquired the same name.")
       pers <- alters
     }
