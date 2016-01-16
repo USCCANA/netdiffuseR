@@ -111,7 +111,7 @@ rdiffnet <- function(n, t,
   } else
     stop("Invalid -seed.nodes- option. It must be either \"central\", \"marginal\", or \"random\"")
 
-  # Step 1.0: Repeat
+  # Step 1.0: Rewiring or not
   graph      <- vector("list", t)
   graph[[1L]] <- sgraph
   if (rewire) {

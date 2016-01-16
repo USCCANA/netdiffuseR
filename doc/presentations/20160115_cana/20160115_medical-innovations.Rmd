@@ -1,0 +1,229 @@
+---
+title: "netdiffuseR showcase: Medical Innovations"
+author: "George G. Vega Yon"
+date: "January 13, 2016"
+output: pdf_document
+---
+
+```{r Setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(out.width = ".7\\linewidth", fig.align = "center")
+```
+
+# Data preprocessing
+
+Reading the data from an stata file.
+
+```{r Loading pkgs and reading the data}
+library(foreign)
+library(netdiffuseR)
+
+medInnovations <- read.dta("../../../data-raw/mi_v2.dta")
+# medInnovations <- read.dta("data-raw/mi_v2.dta")
+```
+
+Now that we have the data in R, we can start working with it, in particular, we want to do the following things:
+
+- Create a unique id for each individual in the network.
+- Remove unsurveyed individuals (we don't have additional covariates for them).
+- Reshaping the data to long format (so we can use it as a panel), and furthermore, as an edgelist.
+
+```{r Preparing data for netdiffuseR}
+# Creating unique ids (including for the network data)
+othervars <- c("id", "toa", "city")
+netvars <- names(medInnovations)[grepl("^net", names(medInnovations))]
+for (i in c("id", netvars))
+  medInnovations[[i]] <- medInnovations[[i]] + medInnovations$city*1000
+
+# Leaving unsurveyed individuals with NA
+surveyed <- medInnovations$id
+for (i in netvars)
+  medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
+
+# Reshaping data (so we have an edgelist)
+medInnovations.long <- reshape(
+  medInnovations[,c(othervars, netvars)], v.names= "net",
+  varying = netvars,
+  timevar = "level", idvar="id", direction="long")
+```
+
+
+Once we have the data in long format, we can coerce it into an `diffnet` object. This is done by reading the edgelist, obtaining the times of adoption vector and applying the `as_diffnet` function.
+
+```{r Importing data to netdiffuseR}
+# Coersing the edgelist to an adjacency matrix. Here we are assuming that the
+# network is constant through time.
+graph <- with(
+  medInnovations.long,
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE)
+)
+
+# Here we are retrieving the set of individuals who actually were used in the
+# network (as these are not isolated nodes)
+used.vertex <- rownames(graph[[1]])
+medInnovations <- subset(medInnovations, id %in% used.vertex)
+
+# Create the vector (subset) of times of adoption using only the individuals
+# that are included in the adjacency matrix
+toa <- medInnovations$toa
+
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, toa)
+```
+
+Once a `diffnet` object, we can apply the usual generic R functions:
+
+```{r Checking-the-methods}
+plot(diffnet, t=diffnet$meta$nper)
+diffnet
+summary(diffnet)
+```
+
+And the ones included in the package:
+
+```{r graphs, out.width=".7\\linewidth"}
+plot_diffnet(diffnet, slices=c(1,4,8,12,16,18))
+plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=20)
+plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
+plot_adopters(diffnet)
+plot_hazard(diffnet)
+```
+
+# Fitting probability of adoption
+
+In this section we use the diffnet object to create a set of variables that we'll be using in a probit model traying to understand the adoption process. First we setup the data for the `glm` function of the package `stats`
+
+```{r}
+# Creating a data set
+d <- data.frame(
+  id = diffnet$meta$ids,
+  threshold(diffnet),infection(diffnet, K=3),susceptibility(diffnet, K=3),
+  toa=diffnet$toa, indeg=rowMeans(dgr(diffnet, "degree")),
+  expo=exposure(diffnet, w=1),
+  adopt=toa_mat(diffnet)$cumadopt
+)
+
+# Creating dummies per city and home hospital
+cities <- unique(medInnovations$city)
+for (i in sort(cities)) {
+  d[[sprintf("city%02d",i)]] <- as.integer(medInnovations$city == i)
+}
+
+home <- unique(medInnovations$home)
+for (i in sort(home)) {
+  d[[sprintf("home%02d",i)]] <- as.integer(medInnovations$home == i)
+}
+
+special <- unique(medInnovations$special)
+for (i in sort(special)) {
+  d[[sprintf("spe%02d",i)]] <- as.integer(medInnovations$special == i)
+}
+
+# Joining with other variables
+d <- merge(
+  d,
+  subset(medInnovations, select=c(
+    nojourn, proage, friends, id, proage2, social))
+  )
+
+# head(d)
+
+# Expanding the data
+d.long <- reshape(
+  d,
+  varying = list(paste("adopt", 1:18,sep="."), paste("expo", 1:18, sep=".")),
+  idvar="id", direction="long")
+
+d.long <- d.long[with(d.long, order(id, time)),]
+d.long <- subset(d.long, toa >= time)
+
+# head(d.long, 36)
+```
+
+\pagebreak
+
+## Model 1: Variables affecting adoption
+
+```{r Adoption Probit}
+mod1 <- glm(adopt.1 ~ 
+              indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
+              friends + proage2 + susceptibility + social +
+#               home02 + home03 + home04 + home06 + home07 + home08 +
+#                 home09 + home10 + home11 + home12 + 
+              spe02 + spe03 + spe04,
+    data=d.long, family = binomial(link="logit"))
+mod1
+```
+
+\pagebreak
+
+## Model 2: Variables affecting threshold
+
+```{r Threshold OLS}
+mod2 <- glm(threshold ~
+              indeg + city02 + city03 + city04 + proage + nojourn +
+              friends + proage2 + social +
+#               home02 + home03 + home04 + home06 + home07 + home08 +
+#                 home09 + home10 + home11 + home12 + 
+              spe02 + spe03 + spe04,
+            data=d, family = gaussian())
+mod2
+```
+
+\pagebreak
+
+## Models 3 and 4: Variables affecting susceptibility and ifectiousness
+
+```{r Susceptibility OLS}
+mod3.1 <- glm(susceptibility ~ 
+              indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
+              friends + proage2 + social +
+#               home02 + home03 + home04 + home06 + home07 + home08 +
+#                 home09 + home10 + home11 + home12 + 
+              spe02 + spe03 + spe04,
+    data=d, family = gaussian())
+mod3.1
+```
+
+\pagebreak
+
+```{r Infection OLS}
+mod3.2 <- glm(infection ~ 
+              indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
+              friends + proage2 + social +
+#               home02 + home03 + home04 + home06 + home07 + home08 +
+#                 home09 + home10 + home11 + home12 + 
+              spe02 + spe03 + spe04,
+    data=d, family = gaussian())
+mod3.1
+```
+
+Finally, we can compare all the models
+
+```{r results='asis', echo=FALSE}
+texreg::texreg(list(mod1, mod2, mod3.1, mod3.2), 
+               custom.model.names = c("Adoption", "Threshold", "Susceptibility", "Infectiousness") )
+```
+
+
+```{r ergm example, include=FALSE}
+# Working with the `ergm` package
+library(ergm)
+
+net <- network(as.matrix(diffnet$graph[[18]]))
+set.vertex.attribute(net, "threshold", threshold(diffnet)[,1])
+set.vertex.attribute(net, "infection", infection(diffnet, K=3)[,1])
+set.vertex.attribute(net, "susceptibility", susceptibility(diffnet, K=3)[,1])
+set.vertex.attribute(net, "toa", diffnet$toa)
+
+
+```
+
+```{r RSiena example, include=FALSE}
+# Working with the `RSiena` package
+library(RSiena)
+
+
+
+```
+

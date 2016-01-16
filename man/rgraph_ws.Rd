@@ -22,7 +22,7 @@ rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE)
 }
 \value{
 A random graph of size \eqn{n\times n}{n*n} following the small-world
-model.
+model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 }
 \description{
 Generates a small-world random graph.

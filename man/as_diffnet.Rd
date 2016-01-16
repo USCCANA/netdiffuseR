@@ -119,6 +119,10 @@ degree of the selected slice and will be normalized as
 \deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2 + .5}
 
 where \code{d=sqrt(dgr(graph))}.
+
+In the case of the \code{summary} method, Moran's I is calculated over the
+cumulative adoption matrix using as weighting matrix the inverse of the geodesic
+distance matrix. All this via \code{\link{moran}}.
 }
 \section{Auxiliary functions}{
 

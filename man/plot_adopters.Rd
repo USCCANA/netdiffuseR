@@ -6,7 +6,7 @@
 \usage{
 plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
   add = FALSE, include.legend = TRUE, include.grid = TRUE, pch = c(21,
-  21), type = c("b", "b"), ylim = if (!freq) c(0, 1) else NULL, lty = c(1,
+  24), type = c("b", "b"), ylim = if (!freq) c(0, 1) else NULL, lty = c(1,
   1), col = c("black", "black"), bg = c("lightblue", "gray"),
   xlab = "Time", ylab = ifelse(freq, "Frequency", "Proportion"),
   main = "Adopters and Cumulative Adopters", ...)
@@ -52,7 +52,7 @@ Visualize adopters and cumulative adopters
 }
 \examples{
 # Generating a random diffnet
-set.seed(832)
+set.seed(8321)
 diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 
 plot_adopters(diffnet)

@@ -9,6 +9,8 @@ The package was developed as part of the paper Thomas W. Valente, Stephanie R. D
 
 From the description: Statistical analysis, visualization and simulation of network diffusion of innovations. The package implements algorithms for calculating stats such as innovation threshold levels, infectiousness (contagion) and susceptibility, and hazard rates as presented in Burt (1987), Valente (1995), and Myers (2000) (among others).
 
+**Acknowledgements**: netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+
 Installation
 ------------
 
@@ -97,6 +99,7 @@ summary(diffnet)
     ## -----------------------------------------------------------------------
     ##  Left censoring  : 0.03 (3)
     ##  Right centoring : 0.05 (5)
+    ##  # of nodes      : 100
 
 ``` r
 # Visualizing distribution of suscep/infect
@@ -113,12 +116,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
 # Generating a random graph
 set.seed(123)
 diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
-```
 
-    ## Warning in rdiffnet(50, 20, rgraph.args = list(m = 4)): Less periods than
-    ## wanted, only 18 instead of 20
-
-``` r
 # Threshold with fixed vertex size
 plot_threshold(diffnet)
 ```

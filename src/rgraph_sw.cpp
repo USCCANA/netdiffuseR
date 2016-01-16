@@ -102,9 +102,7 @@ arma::sp_mat rewire_graph_cpp(
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
-    double randdraw = unif_rand();
-
-    if (randdraw > p) continue;
+    if (unif_rand() > p) continue;
 
     // Indexes
     int j = indexes.at(i, 0);
@@ -115,31 +113,42 @@ arma::sp_mat rewire_graph_cpp(
 
     // New end(s)
     int newk, newj;
-    if (both_ends) { // Randomizing both
-      newk = floor( (n-1)*unif_rand() );
-      newj = floor( (n-1)*unif_rand() );
-    } else { // Randomizing only one end
-      newk = floor( (n-1)*unif_rand() );
-      newj = j;
-    }
 
-    // Checking for self
+    // If rewiring is in both sides, then we start from the left
+    if (both_ends) newj = floor( (n-1)*unif_rand() );
+    else newj = j;
+
+    // Checking for conditions
     int wcount = 0;
-    while ( (!self && (newj==newk)) | (!multiple && (graph.at(newj, newk) != 0) )) { /*| (!multiple && ( graph.at(newj,newk) ))*/
+    bool conditions = true;
+    arma::uvec picked(n, arma::fill::zeros);
+
+    while (conditions) {
       newk = floor( (n-1)*unif_rand() );
 
       // In the case that the individual actually is connected to everyone and
       // multiple is not allowed, this is needed to break out the loop
-      if (++wcount >= n) break;
+      if (picked.at(newk)) {
+        if (++wcount >= n*2) break;
+        continue;
+      } else picked.at(newk) = 1;
+
+      if (undirected && newj > newk) continue;
+
+      if (!self && newj == newk) continue;
+      if (!multiple && (graph.at(newj, newk) != 0)) continue;
+
+      conditions = false;
     }
 
     // Setting zeros
+    double w = newgraph.at(j,k);
     newgraph.at(j,k) = 0;
     if (undirected) newgraph.at(k,j) = 0;
 
     // Adding up
-    newgraph.at(newj,newk) += 1.0;
-    if (undirected) newgraph.at(newk,newj) += 1.0;
+    newgraph.at(newj,newk) += w;
+    if (undirected) newgraph.at(newk,newj) += w;
 
   }
   return newgraph;

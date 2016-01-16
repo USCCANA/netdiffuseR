@@ -19,6 +19,9 @@ rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL)
 \value{
 If \code{graph} is not provided, a static graph, otherwise an expanded
 graph (\code{t} aditional vertices) of the same class as \code{graph}.
+
+The resulting graph will have \code{graph$meta$undirected = FALSE} if it is of
+class \code{diffnet} and \code{attr(graph, "undirected")=FALSE} otherwise.
 }
 \description{
 Generates a scale-free random graph.

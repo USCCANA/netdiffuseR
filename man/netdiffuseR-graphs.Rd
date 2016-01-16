@@ -18,7 +18,7 @@ static graphs, and dynamic graphs.
  most of the package functions are defined for both classes, the default output
  graph is sparse, i.e. \code{dgCMatrix}.}
  \item{With respect to \strong{dynamic graphs}, these are represented by either
- a \code{\link{diffnet}} object, an array of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
+ a \code{\link{diffnet}} object, an \code{\link{array}} of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
  with sparse matrices (class \code{dgCMatrix}) of size \eqn{n\times n}{n * n}.
  Just like the static graph case, while most of the functions accept both
  graph types, the default output is \code{dgCMatrix}.}

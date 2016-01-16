@@ -18,4 +18,8 @@ You can access to the project website at
 \details{
 Network Analysis for Diffusion of Innovations
 }
+\section{Acknowledgements}{
+
+netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+}
 

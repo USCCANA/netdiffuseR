@@ -1,3 +1,20 @@
+# Auxiliar function to check if there's any attribute of undirectedness
+checkingUndirected <- function(graph, warn=TRUE, default=getOption("diffnet.undirected")) {
+
+  # Ifendifying the class of graph
+  if (inherits(graph, "diffnet")) undirected <- graph$meta$undirected
+  else undirected <- attr(graph, "undirected")
+
+  if (warn)
+    if (length(undirected) && undirected != FALSE)
+      warning("The entered -graph- will now be directed.")
+
+  if (!length(undirected)) undirected <- default
+
+  invisible(undirected)
+
+}
+
 #' Erdos-Renyi model
 #'
 #' Generates a bernoulli random graph.
@@ -57,7 +74,11 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
   if (t==1) graph <- rgraph_er_cpp(n, p, undirected, weighted, self)
   else graph <- rgraph_er_dyn_cpp(n, t, p, undirected, weighted, self)
 
-  if (as.edgelist) return(adjmat_to_edgelist(graph, undirected))
+  if (as.edgelist) {
+    graph <- adjmat_to_edgelist(graph, undirected)
+    attr(graph, "undirected") <- undirected
+    return(graph)
+  }
 
   # Naming dimensions
   if (t==1) dimnames(graph) <- list(1:n, 1:n)
@@ -66,6 +87,9 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
     for (i in 1:t)
       dimnames(graph[[i]]) <- list(1:n, 1:n)
   }
+
+  attr(graph, "undirected") <- undirected
+  return(graph)
 
   return(graph)
 }
@@ -80,6 +104,9 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @return If \code{graph} is not provided, a static graph, otherwise an expanded
 #' graph (\code{t} aditional vertices) of the same class as \code{graph}.
+#'
+#' The resulting graph will have \code{graph$meta$undirected = FALSE} if it is of
+#' class \code{diffnet} and \code{attr(graph, "undirected")=FALSE} otherwise.
 #' @family simulation functions
 #' @aliases scale-free
 #' @concept Scale-free random graph
@@ -107,6 +134,9 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
     d <- dgr(graph)
     d[d==0] <- 1
 
+    # Checking undirected (if exists)
+    checkingUndirected(graph)
+
     # Parsing the class
     out <- switch(class(graph),
            matrix = rgraph_ba_cpp(methods::as(graph, "dgCMatrix"), d, m, t),
@@ -123,6 +153,9 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
            stopifnot_graph(graph)
            )
 
+    # BA is undirected by definition
+    attr(out, "undirected") <- FALSE
+
     # If it is a static graph
     if (inherits(graph, c("dgCMatrix", "matrix"))) {
 
@@ -136,10 +169,11 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 
       dimnames(out) <- list(ids, ids)
       return(out)
-    }
+    } else if (inherits(graph, "diffnet")) { # If it is a dynamic graph
+      # BA is undirected by definition
+      attr(out, "undirected") <- NULL
+      graph$meta$undirected <- FALSE
 
-    # If it is a dynamic graph
-    if (inherits(graph, "diffnet")) {
       names(out) <- graph$meta$pers
 
       graph$graph <- out
@@ -207,11 +241,11 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 
       return(out)
     }
-
-  }
-  else {
+  } else {
     out <- rgraph_ba_new_cpp(m0, m, t)
     ids <- 1:(m0+t)
+
+    attr(out, "undirected") <- FALSE
     dimnames(out) <- list(ids, ids)
     return(out)
   }
@@ -230,7 +264,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' @param self Logical scalar. When \code{TRUE}, allows loops (self edges).
 #' @param multiple Logical scalar. When \code{TRUE} allows multiple edges.
 #' @return A random graph of size \eqn{n\times n}{n*n} following the small-world
-#' model.
+#' model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 #' @family simulation functions
 #' @aliases small-world
 #' @export
@@ -241,8 +275,12 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
 #' SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
 rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
-  rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
+  out <- rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
                    self, multiple, TRUE)
+
+  # WS model is directed
+  attr(out, "undirected") <- FALSE
+  out
 }
 
 #' Rewires a graph
@@ -253,26 +291,39 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 #' @inheritParams rgraph_ws
 #' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
+#' @details Rewiring assumes a weighted network, hence \eqn{G(i,j) = k = G(i',j')},
+#' where \eqn{i',j'} are the new end points of the edge and \eqn{k} may not be equal
+#' to one.
 #' @family simulation functions
 #' @export
 rewire_graph <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected")) {
+
+  # Checking undirected (if exists)
+  checkingUndirected(graph)
+
   out <- switch(class(graph),
     dgCMatrix = rewire_graph.dgCMatrix(graph, p, both.ends, self, multiple, undirected),
     list = rewire_graph.list(graph, p, both.ends, self, multiple, undirected),
     matrix = rewire_graph.dgCMatrix(
       methods::as(graph, "dgCMatrix"), p, both.ends, self, multiple, undirected),
-    diffnet = rewire_graph.list(graph$graph, p, both.ends, self, multiple,
-                                graph$meta$undirected),
+    diffnet = {
+      rewire_graph.list(graph$graph, p, both.ends, self, multiple,
+                                graph$meta$undirected)
+      },
     array = rewire_graph.array(graph, p, both.ends, self, multiple, undirected),
     stopifnot_graph(graph)
   )
 
-  # If diffnet, then it must return the same object but rewired
+  # If diffnet, then it must return the same object but rewired, and change
+  # the attribute of directed or not
   if (inherits(graph, "diffnet")) {
+    graph$meta$undirected <- undirected
     graph$graph <- out
     return(graph)
   }
+
+  attr(out, "undirected") <- FALSE
 
   return(out)
 }

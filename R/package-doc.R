@@ -13,6 +13,9 @@
 #' You can access to the project website at
 #' \url{https://github.com/USCCANA/netdiffuseR}
 #'
+#' @section Acknowledgements:
+#' netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+#'
 #' @docType package
 #' @name netdiffuseR
 #'

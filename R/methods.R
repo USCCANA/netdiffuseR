@@ -44,6 +44,10 @@
 #'
 #' where \code{d=sqrt(dgr(graph))}.
 #'
+#' In the case of the \code{summary} method, Moran's I is calculated over the
+#' cumulative adoption matrix using as weighting matrix the inverse of the geodesic
+#' distance matrix. All this via \code{\link{moran}}.
+#'
 #' @section Auxiliary functions:
 #'
 #' \code{toa(graph)} Works as an alias of \code{graph$toa}. While this function
@@ -282,7 +286,8 @@ summary.diffnet <- function(object, ...) {
   # Computing moran's I
   m <- vector("numeric", meta$nper)
   for (i in 1:meta$nper) {
-    g <- 1/(1e-15 + sna::geodist(as.matrix(object$graph[[i]]), meta$n)$gdist)
+    g <- 1/(1e-15 + sna::geodist(as.matrix(object$graph[[i]]), meta$n,
+            count.paths=FALSE)$gdist)
     diag(g) <- 0
     m[i] <- moran(object$cumadopt[,i], g)
   }
@@ -334,6 +339,7 @@ summary.diffnet <- function(object, ...) {
     rule,
     paste(" Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)),
     paste(" Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)),
+    paste(" # of nodes      :", sprintf("%d",meta$n)),
     sep="\n"
   )
 
@@ -877,7 +883,7 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 #' @family visualizations
 #' @examples
 #' # Generating a random diffnet
-#' set.seed(832)
+#' set.seed(8321)
 #' diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 #'
 #' plot_adopters(diffnet)
@@ -890,7 +896,7 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 #' @export
 plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
                           add=FALSE, include.legend=TRUE, include.grid=TRUE,
-                          pch=c(21,21), type=c("b", "b"),
+                          pch=c(21,24), type=c("b", "b"),
                           ylim=if (!freq) c(0,1) else NULL, lty=c(1,1), col=c("black","black"),
                           bg = c("lightblue","gray"),
                           xlab="Time", ylab=ifelse(freq, "Frequency", "Proportion"),

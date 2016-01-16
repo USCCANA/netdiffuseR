@@ -13,7 +13,7 @@ test_that("Barabasi-Albert model: generic test", {
   graph_big <- rgraph_ba(t = 3, graph = graph)
 
   expect_is(graph, "dgCMatrix")
-  expect_equal(graph, graph_big[1:11, 1:11], info="Groing graph")
+  expect_equivalent(graph, graph_big[1:11, 1:11], info="Groing graph")
 })
 
 test_that("Barabasi-Albert model: methods", {
@@ -36,7 +36,7 @@ test_that("Barabasi-Albert model: methods", {
   set.seed(123); x_dn <- rgraph_ba(t=2, graph=diffnet)$graph
   set.seed(123); x_ar <- rgraph_ba(t=2, graph=graphar)
 
-  expect_equal(x_dn, x_ar)
+  expect_equivalent(x_dn, x_ar)
 
 
 })
@@ -89,4 +89,26 @@ test_that("Rewiring methods", {
   expect_equal(graphar, graphdn)
 
 
+})
+
+test_that("Rewiring must hold graph's density", {
+  set.seed(1231)
+
+  ntimes <- 10
+
+  # BA model
+  for (i in 1:ntimes) {
+    for (j in 1:ntimes) {
+      graph <- rgraph_ba(t=9)
+      expect_equal(sum(graph), sum(rewire_graph(graph, p=.5, undirected = FALSE)))
+    }
+  }
+
+  # Bernoulli
+  for (i in 1:ntimes) {
+    for (j in 1:ntimes) {
+      graph <- rgraph_er(undirected = TRUE)
+      expect_equal(sum(graph), sum(rewire_graph(graph, p=.5, undirected = TRUE)))
+    }
+  }
 })

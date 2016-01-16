@@ -24,6 +24,11 @@ rewire_graph(graph, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
 By changing the endpoints of the edges, this is the workhorse of the
 function \code{\link{rgraph_ws}}.
 }
+\details{
+Rewiring assumes a weighted network, hence \eqn{G(i,j) = k = G(i',j')},
+where \eqn{i',j'} are the new end points of the edge and \eqn{k} may not be equal
+to one.
+}
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},

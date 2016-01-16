@@ -23,6 +23,8 @@ From the description: Statistical analysis, visualization and simulation of
   calculating stats such as innovation threshold levels, infectiousness
   (contagion) and susceptibility, and hazard rates as presented in Burt (1987),
   Valente (1995), and Myers (2000) (among others).
+  
+__Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health. 
 
 ## Installation
 Infectiousness and Susceptibility
@@ -112,4 +114,5 @@ plot_diffnet(diffnet, vertex.cex = 2)
 - Populate the tests folder.
 - Use spells? (`select_egoalter` would use this)
 - Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
+- Double check all functions using adjacency matrix values.
 
