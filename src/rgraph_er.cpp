@@ -27,6 +27,10 @@ arma::sp_mat rgraph_er_cpp(
 
   GetRNGstate();
   for(int i=0;i<n;i++) {
+    // Checling user interrup
+    if (i % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
     /* Setting the length of the subloop acordingly to type of graph */
     int m = n;
     if (undirected) m=i;

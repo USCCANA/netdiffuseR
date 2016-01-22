@@ -5,7 +5,7 @@
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, wtype = 0, v = 1,
-  undirected = getOption("diffnet.undirected"), normalized = TRUE)
+  undirected = getOption("diffnet.undirected"), normalized = TRUE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -21,6 +21,10 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
 
 \item{normalized}{Logical scalar. When true, the exposure will be between zero
 and one (see details).}
+
+\item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
+
+\item{v}{Numeric scalar. Passed to \code{\link{struct_equiv}}}
 }
 \value{
 A matrix of size \eqn{n\times T}{n * T} with exposure for each node.

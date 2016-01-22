@@ -143,6 +143,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// egonet_attrs_cpp
+List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec E, NumericMatrix attrs, bool outer, bool self, bool valued);
+RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP ESEXP, SEXP attrsSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec >::type E(ESEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type attrs(attrsSEXP);
+    Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
+    __result = Rcpp::wrap(egonet_attrs_cpp(graph, E, attrs, outer, self, valued));
+    return __result;
+END_RCPP
+}
 // seq_cpp
 arma::vec seq_cpp(double from, double to, int lengthout);
 RcppExport SEXP netdiffuseR_seq_cpp(SEXP fromSEXP, SEXP toSEXP, SEXP lengthoutSEXP) {

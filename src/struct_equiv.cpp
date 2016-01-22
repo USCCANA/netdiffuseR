@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List struct_equiv_cpp(
-    const arma::sp_mat & graph,
+    const arma::sp_mat & graph, // Must be a geodesic distances graph
     double v = 1.0,
     bool unscaled = false,
     bool inv = false, double invrep = 0.0) {

@@ -41,6 +41,10 @@ moran_cpp <- function(x, w) {
     .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
 }
 
+egonet_attrs_cpp <- function(graph, E, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
+    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, E, attrs, outer, self, valued)
+}
+
 seq_cpp <- function(from, to, lengthout) {
     .Call('netdiffuseR_seq_cpp', PACKAGE = 'netdiffuseR', from, to, lengthout)
 }

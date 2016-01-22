@@ -1,7 +1,7 @@
 rm(list=ls())
 library(netdiffuseR)
 set.seed(123)
-diffnet <- rdiffnet(10000, 20, seed.graph = "small-world")
+diffnet <- rdiffnet(20, 5, seed.graph = "small-world", rewire.args = list(p=.2))
 
 
 get_egonet_attrs <- function(...) UseMethod("get_egonet_attrs")
@@ -9,6 +9,7 @@ get_egonet_attrs <- function(...) UseMethod("get_egonet_attrs")
 get_egonet_attrs.default <-function(graph, attrs, i=1:ncol(graph), what=c("indegree")) {
   lapply(i, function(x) {
     index <- graph[x,]
+    print(index)
     attrs[index]
     })
 }
@@ -25,4 +26,4 @@ get_egonet_attrs.diffnet <- function(graph, i=1:graph$meta$n, t=1:length(graph$g
 }
 
 # plot(diffnet, vertex.cex = 1, displaylabels = TRUE)
-x <- get_egonet_attrs(diffnet, i=1:1000)
+x <- get_egonet_attrs(diffnet, i=6)

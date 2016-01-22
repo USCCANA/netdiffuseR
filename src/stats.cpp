@@ -108,12 +108,14 @@ arma::mat exposure_cpp(
     }
     else if (wtype == 1) {// SE
 
+      NUMERATOR = graph_t*cumadopt.col(t);
+      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
       // Calculating the inverse of the SE distance
-      se = struct_equiv_cpp(graph_t, v, false, true);
-      semat       = (as< arma::mat >(se["SE"]));
-
-      NUMERATOR   = semat * cumadopt.col(t);
-      if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
+//       se = struct_equiv_cpp(graph_t, v, false, true);
+//       semat       = (as< arma::mat >(se["SE"]));
+//
+//       NUMERATOR   = semat * cumadopt.col(t);
+//       if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
       arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);

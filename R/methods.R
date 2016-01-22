@@ -93,6 +93,8 @@
 #' }
 #' }
 as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
+                       vertex.dyn.att = NULL, vertex.static.att= NULL,
+                       graph.att = NULL,
                        weights=NULL, undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
                        use.incomplete=FALSE) {
@@ -111,6 +113,35 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
   if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths (",
                                 meta$n, " and ", length(toa), " respectively). ",
                                 "-toa- should be of length n (number of vertices).")
+
+  # Vertex attrs
+  if (length(vertex.dyn.att)) {
+    attlen <- lapply(vertex.dyn.att, nrow)
+    if (any(attlen != meta$n)) stop("-graph- and -vertex.dyn.att- have different lengths (",
+                                    meta$n, " and ", paste(attlen, collapse=", "), "respectively). ",
+                                    "-vertex.dyn.att- should have n rows.")
+
+    # Coercing into matrices
+    cnames <- colnames(vertex.dyn.att[[1]])
+    vertex.dyn.att <- lapply(vertex.dyn.att, function(x) {
+      x<-as.matrix(x)
+      dimnames(x) <- list(meta$ids, cnames)
+      x
+    })
+
+  } else vertex.dyn.att <- vector("list", meta$nper)
+
+  if (length(vertex.static.att)) {
+    attlen <- nrow(vertex.static.att)
+    if (attlen != meta$n) stop("-graph- and -vertex.static.att- have different lengths (",
+                               meta$n, " and ", attlen, "respectively). ",
+                               "-vertex.static.att- should have n rows.")
+
+    # Coercing into matrix
+    cnames <- colnames(vertex.static.att)
+    vertex.static.att <- as.matrix(vertex.static.att)
+    dimnames(vertex.static.att) <- list(meta$ids, cnames)
+  }
 
   # Step 2.1: Checking class of TOA and coercing if necesary
   if (!inherits(toa, "integer")) {
@@ -163,22 +194,42 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
     toa   = toa,
     adopt = mat$adopt,
     cumadopt = mat$cumadopt,
-    vertex.attrs = NULL,
-    edge.attrs = NULL,
+    # Attributes
+    vertex.static.att = vertex.static.att,
+    vertex.dyn.att    = vertex.dyn.att,
+    graph.att         = graph.att,
     meta = meta
   ), class="diffnet"))
 }
 
+#' @export
+#' @rdname as_diffnet
+diffnet.attrs <- function(x, att.type="vertex", as.df=FALSE) {
+  nper <- x$meta$nper
+  n    <- x$meta$n
+
+  # Expanding graph static attr
+  attrs <- cbind(toa=x$toa, x$vertex.static.att, x$graph.att)
+  out <- lapply(x$meta$pers, function(y) {
+    cbind(per=y,attrs,x$vertex.dyn.att[[y]])
+    })
+
+  if (as.df) return(do.call(rbind, out))
+
+  names(out) <- x$meta$pers
+  out
+}
+
 #' @rdname as_diffnet
 #' @export
-toa <- function(graph) {
+diffnet.toa <- function(graph) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
   graph$toa
 }
 
 #' @rdname as_diffnet
 #' @export
-`toa<-` <- function(graph, i, value) {
+`diffnet.toa<-` <- function(graph, i, value) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
   if (missing(i)) i <- 1:graph$meta$n
 
@@ -269,7 +320,10 @@ print.diffnet <- function(x, ...) {
 
 #' @export
 #' @rdname as_diffnet
-summary.diffnet <- function(object, ...) {
+summary.diffnet <- function(object, slices=NULL,...) {
+  # Subsetting
+  if (!length(slices)) slices <- object$meta$pers
+
   # To make notation nicer
   meta <- object$meta
 

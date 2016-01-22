@@ -93,6 +93,10 @@ rdiffnet <- function(n, t,
 
   diag(sgraph) <- 0
 
+  # Number of initial adopters
+  if (n*seed.p.adopt < 1) warning("Set of initial adopters set to 1.")
+  n0 <- max(1, n*seed.p.adopt)
+
   # Step 0.1: Setting the seed nodes
   cumadopt <- matrix(0L, ncol=t, nrow=n)
   toa   <- matrix(NA, ncol=1, nrow= n)
@@ -100,12 +104,12 @@ rdiffnet <- function(n, t,
     d <- dgr(sgraph)
     decre <- ifelse(seed.nodes == "central", TRUE, FALSE)
     d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
-    d <- d[1:floor(n*seed.p.adopt)]
+    d <- d[1:floor(n0)]
     d <- as.numeric(d)
     cumadopt[d, ] <- 1L
     toa[d] <- 1L
   } else if (seed.nodes == "random") {
-    d <- sample.int(n, floor(n*seed.p.adopt))
+    d <- sample.int(n, floor(n0))
     toa[d] <- 1
     cumadopt[d,] <- 1L
   } else
@@ -140,6 +144,7 @@ rdiffnet <- function(n, t,
     stop("No diffusion in this network (Ups!) try changing the seed or the parameters.")
   }
 
-  as_diffnet(graph, as.integer(toa), undirected=FALSE, t0=1, t1=t)
+  as_diffnet(graph, as.integer(toa), undirected=FALSE, t0=1, t1=t,
+             vertex.static.att = cbind(real_threshold=thr))
 }
 

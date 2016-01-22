@@ -4,21 +4,26 @@
 \alias{as_diffnet}
 \alias{diffnet}
 \alias{diffnet-class}
+\alias{diffnet.attrs}
+\alias{diffnet.toa}
+\alias{diffnet.toa<-}
 \alias{plot.diffnet}
 \alias{print.diffnet}
 \alias{summary.diffnet}
-\alias{toa}
-\alias{toa<-}
 \title{Creates a \code{diffnet} class object}
 \usage{
 as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
-  TRUE), weights = NULL, undirected = getOption("diffnet.undirected"),
+  TRUE), vertex.dyn.att = NULL, vertex.static.att = NULL,
+  graph.att = NULL, weights = NULL,
+  undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), use.incomplete = FALSE)
 
-toa(graph)
+diffnet.attrs(x, att.type = "vertex", as.df = FALSE)
 
-toa(graph, i) <- value
+diffnet.toa(graph)
+
+diffnet.toa(graph, i) <- value
 
 \method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
   vertex.col = c("blue", "grey"), gmode = ifelse(x$meta$undirected, "graph",
@@ -28,7 +33,7 @@ toa(graph, i) <- value
 
 \method{print}{diffnet}(x, ...)
 
-\method{summary}{diffnet}(object, ...)
+\method{summary}{diffnet}(object, slices = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -49,11 +54,11 @@ toa(graph, i) <- value
 
 \item{use.incomplete}{Logical scalar.}
 
+\item{x}{A \code{diffnet} object.}
+
 \item{i}{Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.}
 
 \item{value}{Replacement.}
-
-\item{x}{A \code{diffnet} object.}
 
 \item{y}{Ignored.}
 

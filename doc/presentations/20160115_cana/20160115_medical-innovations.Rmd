@@ -2,12 +2,14 @@
 title: "netdiffuseR showcase: Medical Innovations"
 author: "George G. Vega Yon"
 date: "January 13, 2016"
-output: pdf_document
+output:
+  pdf_document:
+    keep_tex: true
 ---
 
 ```{r Setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(out.width = ".7\\linewidth", fig.align = "center")
+# opts_chunk$set(out.width = ".7\\linewidth")
 ```
 
 # Data preprocessing
@@ -18,8 +20,8 @@ Reading the data from an stata file.
 library(foreign)
 library(netdiffuseR)
 
-medInnovations <- read.dta("../../../data-raw/mi_v2.dta")
-# medInnovations <- read.dta("data-raw/mi_v2.dta")
+# medInnovations <- read.dta("../../../data-raw/mi_v2.dta")
+medInnovations <- read.dta("data-raw/mi_v2.dta")
 ```
 
 Now that we have the data in R, we can start working with it, in particular, we want to do the following things:
@@ -103,7 +105,7 @@ d <- data.frame(
   adopt=toa_mat(diffnet)$cumadopt
 )
 
-# Creating dummies per city and home hospital
+# Creating dummies per city, home hospital and year
 cities <- unique(medInnovations$city)
 for (i in sort(cities)) {
   d[[sprintf("city%02d",i)]] <- as.integer(medInnovations$city == i)
@@ -114,9 +116,14 @@ for (i in sort(home)) {
   d[[sprintf("home%02d",i)]] <- as.integer(medInnovations$home == i)
 }
 
-special <- unique(medInnovations$special)
-for (i in sort(special)) {
+spe <- unique(medInnovations$special)
+for (i in sort(spe)) {
   d[[sprintf("spe%02d",i)]] <- as.integer(medInnovations$special == i)
+}
+
+month <- unique(medInnovations$toa)
+for (i in sort(month)) {
+  d[[sprintf("month%02d",i)]] <- as.integer(medInnovations$toa == i)
 }
 
 # Joining with other variables
@@ -142,24 +149,56 @@ d.long <- subset(d.long, toa >= time)
 
 \pagebreak
 
-## Model 1: Variables affecting adoption
+## General model: All cities together (no interaction term)
 
 ```{r Adoption Probit}
-mod1 <- glm(adopt.1 ~ 
-              indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
-              friends + proage2 + susceptibility + social +
-#               home02 + home03 + home04 + home06 + home07 + home08 +
-#                 home09 + home10 + home11 + home12 + 
-              spe02 + spe03 + spe04,
-    data=d.long, family = binomial(link="logit"))
-mod1
+# Model with all
+mod_all_all <- as.formula(paste(
+  "adopt.1 ~ expo.1 + nojourn + susceptibility", # proage + proage2 + friends + social
+  paste0("city0", 2:4, collapse=" + "),
+  paste0(sprintf("month%02d", sort(month)[-1]), collapse=" + "),
+  paste0(sprintf("spe%02d", sort(spe)[-1]), collapse=" + "),
+  paste0(sprintf("home%02d", sort(home)[-1]), collapse=" + "), 
+  sep = " + "
+))
+
+out_all_all <- glm(mod_all_all, data=d.long, family = binomial(link="logit"))
+
+# Model without year
+mod_all_noyear <- as.formula(paste(
+  "adopt.1 ~ expo.1 + nojourn + susceptibility", # proage + proage2 + friends + social
+  paste0("city0", 2:4, collapse=" + "),
+  # paste0(sprintf("month%02d", sort(month)[-1]), collapse=" + "),
+  paste0(sprintf("spe%02d", sort(spe)[-1]), collapse=" + "),
+  paste0(sprintf("home%02d", sort(home)[-1]), collapse=" + "), 
+  sep = " + "
+))
+
+out_all_noyear <- glm(mod_all_noyear, data=d.long, family = binomial(link="logit"))
+
+# Model without year or city
+mod_all_noyearnocity <- as.formula(paste(
+  "adopt.1 ~ expo.1 + nojourn + susceptibility", # proage + proage2 + friends + social
+  # paste0("city0", 2:4, collapse=" + "),
+  # paste0(sprintf("month%02d", sort(month)[-1]), collapse=" + "),
+  paste0(sprintf("spe%02d", sort(spe)[-1]), collapse=" + "),
+  paste0(sprintf("home%02d", sort(home)[-1]), collapse=" + "), 
+  sep = " + "
+))
+
+out_all_noyearnocity <- glm(mod_all_noyearnocity, data=d.long, family = binomial(link="logit"))
 ```
 
-\pagebreak
+```{r Printing output, results='asis'}
+texreg::texreg(
+  list(out_all_all, out_all_noyear, out_all_noyearnocity), single.row=TRUE,
+  custom.model.names = c("Full", "Without year", "Without year and city")
+)
+```
 
+
+```{r Threshold OLS, include=FALSE}
 ## Model 2: Variables affecting threshold
-
-```{r Threshold OLS}
 mod2 <- glm(threshold ~
               indeg + city02 + city03 + city04 + proage + nojourn +
               friends + proage2 + social +
@@ -170,11 +209,8 @@ mod2 <- glm(threshold ~
 mod2
 ```
 
-\pagebreak
-
+```{r Susceptibility OLS, include=FALSE}
 ## Models 3 and 4: Variables affecting susceptibility and ifectiousness
-
-```{r Susceptibility OLS}
 mod3.1 <- glm(susceptibility ~ 
               indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
               friends + proage2 + social +
@@ -185,9 +221,7 @@ mod3.1 <- glm(susceptibility ~
 mod3.1
 ```
 
-\pagebreak
-
-```{r Infection OLS}
+```{r Infection OLS, include=FALSE}
 mod3.2 <- glm(infection ~ 
               indeg + expo.1 + city02 + city03 + city04 + proage + nojourn +
               friends + proage2 + social +
@@ -198,11 +232,9 @@ mod3.2 <- glm(infection ~
 mod3.1
 ```
 
-Finally, we can compare all the models
-
-```{r results='asis', echo=FALSE}
-texreg::texreg(list(mod1, mod2, mod3.1, mod3.2), 
-               custom.model.names = c("Adoption", "Threshold", "Susceptibility", "Infectiousness") )
+```{r results='asis', include=FALSE}
+# texreg::texreg(list(mod1, mod2, mod3.1, mod3.2), 
+               # custom.model.names = c("Adoption", "Threshold", "Susceptibility", "Infectiousness") )
 ```
 
 
@@ -225,5 +257,15 @@ library(RSiena)
 
 
 
+```
+
+
+```{r}
+library(boot)
+
+# Computing the boot hazard rate
+x <- boot(diffnet$cumadopt, function(x,i) hazard_rate(x[i,], no.plot = TRUE), R=1000)
+y <- colMeans(x$t)
+z <- t(apply(x$t, 2, function(x) quantile(x, c(.05,.5,.95))))
 ```
 

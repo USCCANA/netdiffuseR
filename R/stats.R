@@ -139,6 +139,8 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @param undirected Logical scalar. TRUE if the graph is undirected.
 #' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
+#' @param v Numeric scalar. Passed to \code{\link{struct_equiv}}
+#' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
 #' @details
 #'
 #' When \code{wtype=0} (default), exposure is defined as follows
@@ -180,23 +182,25 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @keywords univar
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+exposure <- function(graph, cumadopt, wtype = 0, v = 1.0,
+                     undirected=getOption("diffnet.undirected"), normalized=TRUE,
+                     ...) {
 
   if (missing(cumadopt))
     if (!inherits(graph, "diffnet"))
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
 
   switch (class(graph),
-    array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized),
-    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized),
-    diffnet = exposure.list(graph$graph, graph$cumadopt, wtype, v, graph$meta$undirected, normalized),
+    array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized, ...),
+    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized, ...),
+    diffnet = exposure.list(graph$graph, graph$cumadopt, wtype, v, graph$meta$undirected, normalized, ...),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname exposure
 # @export
-exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE, ...) {
 
   # Preparing the data
   n <- nrow(graph)
@@ -204,6 +208,15 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   graphl <- vector("list", t)
   for (i in 1:t)
     graphl[[i]] <- methods::as(graph[,,i], "dgCMatrix")
+
+  # Computing struct equiv
+  if (wtype==1) {
+    graph <- lapply(struct_equiv(graph, v, ...), function(x) {
+      z <- x$SE^(-1)
+      z[!is.finite(z)] <- 0
+      methods::as(z, "dgCMatrix")
+    })
+  }
 
   # Dimnames
   rn <- rownames(cumadopt)
@@ -220,7 +233,17 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
 
 # @rdname exposure
 # @export
-exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE) {
+exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE, ...) {
+
+  # Computing struct equiv
+  if (wtype==1) {
+    graph <- lapply(struct_equiv(graph, v, ...), function(x) {
+      z <- x$SE^(-1)
+      z[!is.finite(z)] <- 0
+      methods::as(z, "dgCMatrix")
+    })
+  }
+
   n <- nrow(graph[[1]])
   t <- length(graph)
   output <- exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized, n, t)
@@ -294,6 +317,34 @@ cumulative_adopt_count <- function(obj) {
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 #' the number of vertices in the graph.
 #'
+#' By definition, hazard rate ++++, formally we have
+#'
+#' \deqn{%
+#' \lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
+#' }{%
+#' \lambda(t-1)= lim (t -> +0) [F(t+h)-F(t)]/h * 1/[1-F(t)] %
+#' }
+#'
+#' Then, by approximating \eqn{h=1}, we can rewrite the equation as
+#'
+#' \deqn{%
+#' \lambda(t)=\frac{F(t+1)-F(t)}{1-F(t)} %
+#' }{%
+#' \lambda(t-1)= [F(t+1)-F(t)]/[1-F(t)] %
+#' }
+#'
+#' Furthermore, we can estimate \eqn{F(t)}, the probability of not having adopted
+#' the innovation in time \eqn{t}, as the proportion of adopters in that time, this
+#' is \eqn{F(t) \sim q_t/n}{F(t) ~ q(t)/n}, so now we have
+#'
+#' \deqn{%
+#' \lambda(t)=\frac{q_{t+1}/n-q_t/n}{1-q_t/n} = \frac{q_{t+1} - q_t}{n - q_t} %
+#' }{%
+#' \lambda(t-1)= [q(t+1)/n-q(t)/n]/[1-q(t)/n] = [q(t+1) - q(t)]/[n - q(t)] %
+#' }
+#'
+#' As showed above.
+#'
 #' The \code{plot_hazard} function is an alias for the \code{plot.diffnet_hr} method.
 #' @return A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.
 #' The class of the object is only used by the S3 plot method.
@@ -309,6 +360,9 @@ cumulative_adopt_count <- function(obj) {
 #'
 #' # Visualizing the hazard rate
 #' hazard_rate(cumadopt)
+#' @references
+#' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
+#' MIT Press.
 #' @export
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 

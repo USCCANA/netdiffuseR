@@ -63,6 +63,34 @@ invisible (so is not printed on the console). For \eqn{t>1}, hazard rate is calc
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 the number of vertices in the graph.
 
+By definition, hazard rate ++++, formally we have
+
+\deqn{%
+\lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
+}{%
+\lambda(t-1)= lim (t -> +0) [F(t+h)-F(t)]/h * 1/[1-F(t)] %
+}
+
+Then, by approximating \eqn{h=1}, we can rewrite the equation as
+
+\deqn{%
+\lambda(t)=\frac{F(t+1)-F(t)}{1-F(t)} %
+}{%
+\lambda(t-1)= [F(t+1)-F(t)]/[1-F(t)] %
+}
+
+Furthermore, we can estimate \eqn{F(t)}, the probability of not having adopted
+the innovation in time \eqn{t}, as the proportion of adopters in that time, this
+is \eqn{F(t) \sim q_t/n}{F(t) ~ q(t)/n}, so now we have
+
+\deqn{%
+\lambda(t)=\frac{q_{t+1}/n-q_t/n}{1-q_t/n} = \frac{q_{t+1} - q_t}{n - q_t} %
+}{%
+\lambda(t-1)= [q(t+1)/n-q(t)/n]/[1-q(t)/n] = [q(t+1) - q(t)]/[n - q(t)] %
+}
+
+As showed above.
+
 The \code{plot_hazard} function is an alias for the \code{plot.diffnet_hr} method.
 }
 \examples{
@@ -74,6 +102,10 @@ cumadopt <- toa_mat(toa)$cumadopt
 
 # Visualizing the hazard rate
 hazard_rate(cumadopt)
+}
+\references{
+Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
+MIT Press.
 }
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},

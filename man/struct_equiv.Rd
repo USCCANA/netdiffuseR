@@ -4,14 +4,16 @@
 \alias{struct_equiv}
 \title{Structural Equivalence}
 \usage{
-struct_equiv(graph, v = 1, ...)
+struct_equiv(graph, v = 1, inf.replace = 0, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{v}{Numeric scalar. Cohesion constant (see details)}
+\item{v}{Numeric scalar. Cohesion constant (see details).}
 
-\item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
+\item{inf.replace}{Logical scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.}
+
+\item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}.}
 }
 \value{
 If \code{graph} is a static graph, a list with the following elements:

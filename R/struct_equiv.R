@@ -3,8 +3,9 @@
 #' Computes structural equivalence between ego and alter in a network
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param v Numeric scalar. Cohesion constant (see details)
-#' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
+#' @param v Numeric scalar. Cohesion constant (see details).
+#' @param inf.replace Logical scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.
+#' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}.
 #' @family statistics
 #' @keywords univar
 #' @details
@@ -48,13 +49,13 @@
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations" (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
 #' @export
-struct_equiv <- function(graph, v=1, ...) {
+struct_equiv <- function(graph, v=1, inf.replace = 0,...) {
   switch (class(graph),
-    matrix = struct_equiv.matrix(graph, v, ...),
-    dgCMatrix = struct_equiv.dgCMatrix(graph, v, ...),
-    array = struct_equiv.array(graph, v, ...),
-    list = struct_equiv.list(graph, v, ...),
-    diffnet = struct_equiv.list(graph$graph, v, ...),
+    matrix = struct_equiv.matrix(graph, v, inf.replace,...),
+    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, ...),
+    array = struct_equiv.array(graph, v, inf.replace, ...),
+    list = struct_equiv.list(graph, v, inf.replace, ...),
+    diffnet = struct_equiv.list(graph$graph, v, inf.replace, ...),
     stopifnot_graph(graph)
   )
 }
@@ -62,8 +63,8 @@ struct_equiv <- function(graph, v=1, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.matrix <- function(graph, v=1, ...) {
-  geod <- sna::geodist(graph, inf.replace = 0, ...)
+struct_equiv.matrix <- function(graph, v, inf.replace,...) {
+  geod <- sna::geodist(graph, inf.replace = inf.replace, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
   output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
 
@@ -77,10 +78,10 @@ struct_equiv.matrix <- function(graph, v=1, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
+struct_equiv.dgCMatrix <- function(graph, v, inf.replace,...) {
   # In order to use the SNA package functions, we need to coerce the graph
   # Into a -matrix.csc- object,
-  geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = 0, ...)
+  geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = inf.replace, ...)
   geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
   output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
 
@@ -94,11 +95,11 @@ struct_equiv.dgCMatrix <- function(graph, v=1, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.array <- function(graph, v=1, ...) {
+struct_equiv.array <- function(graph, v, inf.replace,...) {
   t <- dim(graph)[3]
   output <- vector("list", t)
   for(i in 1:t) {
-    output[[i]] <- struct_equiv.matrix(graph[,,i], v, ...)
+    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, ...)
   }
 
   # Naming
@@ -113,12 +114,12 @@ struct_equiv.array <- function(graph, v=1, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.list <- function(graph, v=1, ...) {
+struct_equiv.list <- function(graph, v, inf.replace, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   output <- vector("list", t)
   for(i in 1:t)
-    output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"), v, ...)
+    output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"), v, inf.replace, ...)
 
   # Naming
   tn <- dimnames(graph)[[3]]

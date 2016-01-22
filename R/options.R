@@ -17,6 +17,7 @@ NULL
     diffnet.undirected=FALSE,
     diffnet.self=FALSE,
     diffnet.multiple=FALSE,
-    diffnet.tol=1e-8
+    diffnet.tol=1e-8,
+    diffnet.valued=FALSE
   )
 }

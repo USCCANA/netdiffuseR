@@ -22,6 +22,10 @@ arma::sp_mat rgraph_ba_cpp(
   int K = sum(dgr);
 
   for(int i=0;i<t;i++) {
+    // Checling user interrup
+    if (i % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
     // The number of conections is trucated by the number of vertices in the graph
     int m1 = m;
     if (m > m0) m1 = m0;
