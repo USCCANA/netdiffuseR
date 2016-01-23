@@ -9,8 +9,36 @@ egonet_attrs(graph, attrs, E = NULL, outer = TRUE,
 }
 \arguments{
 \item{graph}{Any kind of graph}
+
+\item{attrs}{Numeric matrix with \eqn{n} rows.}
+
+\item{E}{Integer vector. Set of vertices from which the attributes will be retrieved.}
+
+\item{outer}{Logical scalar. When TRUE builds ego nets using outer edges.}
+
+\item{self}{Logical scalar. When FALSE ignores ego's own attributes.}
+
+\item{valued}{Logical scalar. When TRUE stores the value of the edge, otherwise includes a one.}
 }
 \description{
-Retrieve alter's attributes
+For a given set of vertices \eqn{E}, retrieves each vertex's ego network alter's
+attributes.
+}
+\details{
+FUNCTION ON DEVELOPMENT, CURRENTLY WORKING ONLY FOR DIFFNET OBJECTS
+}
+\examples{
+# Creating a random graph
+set.seed(1001)
+diffnet <- rdiffnet(150, 20, seed.graph="small-world")
+
+# Adding attributes
+indeg <- dgr(diffnet, cmode="indegree")
+diffnet.attrs(diffnet, "vertex", "dyn") <-
+ lapply(1:20, function(x) cbind(indeg=indeg[,x]))
+
+# Retrieving egonet's attributes (vertices 1 and 20)
+egonet_attrs(diffnet, E=c(1,20))
+
 }
 

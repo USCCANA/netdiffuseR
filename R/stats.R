@@ -135,11 +135,10 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @param wtype Integer scalar. Weighting type (see details).
-#' @param v Numeric scalar. Constant for Structural Equivalence.
 #' @param undirected Logical scalar. TRUE if the graph is undirected.
 #' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
-#' @param v Numeric scalar. Passed to \code{\link{struct_equiv}}
+#' @param v Numeric scalar.  Constant for Structural Equivalence, passed to \code{\link{struct_equiv}}
 #' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
 #' @details
 #'

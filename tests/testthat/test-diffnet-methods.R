@@ -113,3 +113,18 @@ test_that("diffnet print and summary", {
 
   expect_output(summary(diffnet_und), "Diffusion network summary")
 })
+
+test_that("summary.diffnet with slices", {
+  set.seed(1313)
+
+  for (i in 1:10) {
+    net <- tryCatch(rdiffnet(30,5, seed.graph = "small-world"), error=function(e) invisible(e))
+    if (inherits(net, "error")) next
+
+    slices <- c(1,2,5)
+    out1 <- summary(net, no.print=TRUE)
+    out2 <- summary(net, slices=slices, no.print=TRUE)
+
+    expect_equal(out1[slices,], out2)
+  }
+})

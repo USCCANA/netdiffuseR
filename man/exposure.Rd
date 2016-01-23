@@ -15,7 +15,7 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
 
 \item{wtype}{Integer scalar. Weighting type (see details).}
 
-\item{v}{Numeric scalar. Constant for Structural Equivalence.}
+\item{v}{Numeric scalar.  Constant for Structural Equivalence, passed to \code{\link{struct_equiv}}}
 
 \item{undirected}{Logical scalar. TRUE if the graph is undirected.}
 
@@ -23,8 +23,6 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
 and one (see details).}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
-
-\item{v}{Numeric scalar. Passed to \code{\link{struct_equiv}}}
 }
 \value{
 A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
