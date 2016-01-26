@@ -4,11 +4,11 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List egonet_attrs_cpp(
-    const arma::sp_mat & graph, const arma::uvec E, NumericMatrix attrs,
+    const arma::sp_mat & graph, const arma::uvec V, NumericMatrix attrs,
     bool outer=true, bool self=true, bool valued=true) {
 
   // General variables
-  int N = E.n_elem;
+  int N = V.n_elem;
   int k = attrs.ncol();
 
   // Column names
@@ -28,7 +28,12 @@ List egonet_attrs_cpp(
   else tgraph = graph;
 
   List data(N);
-  for (int e=0;e<N;e++) {
+
+  for (int v=0;v<N;v++) {
+    // Index
+    int e = V.at(v);
+
+    // std::cout << v << " at "<< e << "/" << N << "\n";
 
     // Analyzing the case when is undirected
     int rm = 0;
@@ -65,8 +70,9 @@ List egonet_attrs_cpp(
 
     colnames(out) = cnames;
 
-    data[e] = out;
+    data[v] = out;
   }
+
 
   return data;
 }

@@ -1,20 +1,3 @@
-# Auxiliar function to check if there's any attribute of undirectedness
-checkingUndirected <- function(graph, warn=TRUE, default=getOption("diffnet.undirected")) {
-
-  # Ifendifying the class of graph
-  if (inherits(graph, "diffnet")) undirected <- graph$meta$undirected
-  else undirected <- attr(graph, "undirected")
-
-  if (warn)
-    if (length(undirected) && undirected != FALSE)
-      warning("The entered -graph- will now be directed.")
-
-  if (!length(undirected)) undirected <- default
-
-  invisible(undirected)
-
-}
-
 #' Erdos-Renyi model
 #'
 #' Generates a bernoulli random graph.
@@ -67,6 +50,7 @@ checkingUndirected <- function(graph, warn=TRUE, default=getOption("diffnet.undi
 #' @keywords distribution
 #' @concept Erdos-Renyi random graph
 #' @family simulation functions
+#' @include graph_data.R
 rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
 

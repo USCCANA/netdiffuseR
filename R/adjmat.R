@@ -88,6 +88,7 @@
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
 #' @keywords manip
 #' @family data management functions
+#' @include graph_data.R
 edgelist_to_adjmat <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
@@ -346,6 +347,7 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
+#' @include graph_data.R
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
   if (!inherits(obj, "diffnet")) {
@@ -357,7 +359,7 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
     numeric = toa_mat.numeric(obj, labels, t0, t1),
     integer = toa_mat.integer(obj, labels, t0, t1),
     diffnet = obj[c("adopt","cumadopt")],
-    stop("No method defined for class -",class(obj),"-")
+    stopifnot_graph(obj)
   )
   # UseMethod("toa_mat")
 }
@@ -431,6 +433,7 @@ toa_mat.integer <- function(times, labels=NULL,
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
+#' @include graph_data.R
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)

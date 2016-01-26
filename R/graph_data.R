@@ -34,6 +34,7 @@
 #' this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
 #' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 #' when no names are provided, these will be created from scratch.
+#' @include imports.R
 NULL
 
 stopifnot_graph <- function(x)
@@ -202,4 +203,21 @@ classify_graph <- function(graph) {
   # Other case (ERROR) ---------------------------------------------------------
   stop("Not an object allowed in netdiffuseR. It must be either:\n\t",
        "matrix, dgCMatrix, list or array.\n", "Please refer to ?\"netdiffuseR-graphs\" ")
+}
+
+# Auxiliar function to check if there's any attribute of undirectedness
+checkingUndirected <- function(graph, warn=TRUE, default=getOption("diffnet.undirected")) {
+
+  # Ifendifying the class of graph
+  if (inherits(graph, "diffnet")) undirected <- graph$meta$undirected
+  else undirected <- attr(graph, "undirected")
+
+  if (warn)
+    if (length(undirected) && undirected != FALSE)
+      warning("The entered -graph- will now be directed.")
+
+  if (!length(undirected)) undirected <- default
+
+  invisible(undirected)
+
 }

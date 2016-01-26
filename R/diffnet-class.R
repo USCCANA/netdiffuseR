@@ -360,7 +360,7 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 
 #' @rdname as_diffnet
 #' @export
-`diffnet.attrs<-` <- function(graph, value, element="vertex", attr.class="static") {
+`diffnet.attrs<-` <- function(graph, element="vertex", attr.class="static", value) {
   # Checking class
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
 

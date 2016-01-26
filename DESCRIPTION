@@ -1,17 +1,17 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.16.1.22
-Date: 2016-01-22
+Version: 0.16.1.25
+Date: 2016-01-25
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
   person("Tim", "Hayes", email="timothybhayes@gmail.com", role=c("aut"), comment="Package's first version"),
   person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"), comment="R original code"))
 Description: Statistical analysis, visualization and simulation of network
-  diffusion of innovations. The package implements algorithms for calculating
-  stats such as innovation threshold levels, infectiousness (contagion) and
-  susceptibility, and hazard rates as presented in Burt (1987), Valente
-  (1995), and Myers (2000) (among others).
+    diffusion of innovations. The package implements algorithms for calculating
+    stats such as innovation threshold levels, infectiousness (contagion) and
+    susceptibility, and hazard rates as presented in Burt (1987), Valente
+    (1995), and Myers (2000) (among others).
 Depends:
     R (>= 3.1.1)
 License: MIT + file LICENSE
@@ -36,3 +36,21 @@ RoxygenNote: 5.0.1
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
+Collate:
+    'RcppExports.R'
+    'imports.R'
+    'graph_data.R'
+    'adjmat.R'
+    'diffnet-class.R'
+    'diffnet-methods.R'
+    'egonets.R'
+    'infect_suscept.R'
+    'misc.R'
+    'moran.R'
+    'options.R'
+    'package-doc.R'
+    'random_graph.R'
+    'rdiffnet.R'
+    'select_egoalter.R'
+    'stats.R'
+    'struct_equiv.R'

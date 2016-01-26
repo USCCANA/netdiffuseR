@@ -13,10 +13,6 @@ adjmat_to_edgelist_cpp <- function(adjmat, undirected = TRUE) {
     .Call('netdiffuseR_adjmat_to_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
-adjmat_to_dyn_edgelist_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('netdiffuseR_adjmat_to_dyn_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
-}
-
 toa_diff_cpp <- function(year) {
     .Call('netdiffuseR_toa_diff_cpp', PACKAGE = 'netdiffuseR', year)
 }
@@ -41,8 +37,8 @@ moran_cpp <- function(x, w) {
     .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
 }
 
-egonet_attrs_cpp <- function(graph, E, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
-    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, E, attrs, outer, self, valued)
+egonet_attrs_cpp <- function(graph, V, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
+    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, attrs, outer, self, valued)
 }
 
 seq_cpp <- function(from, to, lengthout) {
@@ -149,10 +145,6 @@ rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
 
 rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
-}
-
-persistant <- function(graph, i, j, n) {
-    .Call('netdiffuseR_persistant', PACKAGE = 'netdiffuseR', graph, i, j, n)
 }
 
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {

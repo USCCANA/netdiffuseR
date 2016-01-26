@@ -47,18 +47,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// adjmat_to_dyn_edgelist_cpp
-arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected);
-RcppExport SEXP netdiffuseR_adjmat_to_dyn_edgelist_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericVector >::type adjmat(adjmatSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    __result = Rcpp::wrap(adjmat_to_dyn_edgelist_cpp(adjmat, undirected));
-    return __result;
-END_RCPP
-}
 // toa_diff_cpp
 IntegerMatrix toa_diff_cpp(const IntegerVector& year);
 RcppExport SEXP netdiffuseR_toa_diff_cpp(SEXP yearSEXP) {
@@ -144,18 +132,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // egonet_attrs_cpp
-List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec E, NumericMatrix attrs, bool outer, bool self, bool valued);
-RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP ESEXP, SEXP attrsSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
+List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, NumericMatrix attrs, bool outer, bool self, bool valued);
+RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP attrsSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec >::type E(ESEXP);
+    Rcpp::traits::input_parameter< const arma::uvec >::type V(VSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type attrs(attrsSEXP);
     Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    __result = Rcpp::wrap(egonet_attrs_cpp(graph, E, attrs, outer, self, valued));
+    __result = Rcpp::wrap(egonet_attrs_cpp(graph, V, attrs, outer, self, valued));
     return __result;
 END_RCPP
 }
@@ -226,20 +214,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     __result = Rcpp::wrap(rgraph_ba_new_cpp(m0, m, t));
-    return __result;
-END_RCPP
-}
-// persistant
-double persistant(const List& graph, int i, int j, int n);
-RcppExport SEXP netdiffuseR_persistant(SEXP graphSEXP, SEXP iSEXP, SEXP jSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< const List& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< int >::type i(iSEXP);
-    Rcpp::traits::input_parameter< int >::type j(jSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    __result = Rcpp::wrap(persistant(graph, i, j, n));
     return __result;
 END_RCPP
 }

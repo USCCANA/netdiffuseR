@@ -18,7 +18,7 @@ arma::sp_mat edgelist_to_adjmat_cpp(
 arma::mat adjmat_to_edgelist_cpp(
     const arma::sp_mat & adjmat, bool undirected = true);
 
-arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true);
+// arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true);
 
 IntegerMatrix toa_mat_cpp(const IntegerVector & year, int t0, int t1);
 
