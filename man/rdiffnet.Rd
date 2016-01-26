@@ -86,6 +86,9 @@ z <- rdiffnet(50,10)
 z
 summary(z)
 }
+\author{
+Vega Yon
+}
 \seealso{
 Other simulation functions: \code{\link{rewire_graph}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},

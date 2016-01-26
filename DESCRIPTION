@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.16.1.25
-Date: 2016-01-25
+Version: 0.16.1.26
+Date: 2016-01-26
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
@@ -29,7 +29,10 @@ Imports:
 Suggests:
     testthat,
     knitr,
-    ape
+    ape,
+    RSiena,
+    igraph,
+    survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 5.0.1

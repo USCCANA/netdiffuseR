@@ -35,5 +35,8 @@ times <- sample(2000:2005, 10, TRUE)
 # Computing the TOA differences
 toa_diff(times)
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \keyword{manip}
 

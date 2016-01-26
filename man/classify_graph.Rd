@@ -10,7 +10,7 @@ classify_graph(graph)
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
-Whe the object is considered to be a graph, a list of attributes including
+Whe the object fits any of the accepted graph formats, a list of attributes including
 \item{type}{Character scalar. Whether is a static or a dynamic graph}
 \item{class}{Character scalar. The class of the original object}
 \item{ids}{Character vector. Labels of the vertices}
@@ -29,6 +29,9 @@ the types of graphs the function returns with an error indicating what (and
 when possible, where) the problem lies.
 
 The function was designed to be used with \code{\link{as_diffnet}}.
+}
+\author{
+Vega Yon
 }
 \seealso{
 \code{\link{as_diffnet}}, \code{\link{netdiffuseR-graphs}}

@@ -65,6 +65,9 @@ sum(x)/length(x)
 rgraph_er(t=5)
 }
 }
+\author{
+Vega Yon
+}
 \references{
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 \url{http://barabasi.com/networksciencebook/}.

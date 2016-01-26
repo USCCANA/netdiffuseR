@@ -40,6 +40,9 @@ recoded_edgelist
 # Retrieving the "recode" attribute
 attr(recoded_edgelist, "recode")
 }
+\author{
+Vega Yon
+}
 \seealso{
 \code{\link{edgelist_to_adjmat}}
 }

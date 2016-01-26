@@ -38,6 +38,9 @@ graph
    Degree=dgr(graph, "degree", undirected = FALSE)
  )
 }
+\author{
+Vega Yon
+}
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{exposure}}, \code{\link{hazard_rate}},

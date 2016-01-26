@@ -27,6 +27,9 @@ model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 \description{
 Generates a small-world random graph.
 }
+\author{
+Vega Yon
+}
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
 networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}

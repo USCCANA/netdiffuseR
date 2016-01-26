@@ -64,8 +64,8 @@
 #' or linear. When \code{expdiscount=TRUE}, \eqn{w_k = (1 + r)^{k-1}}{w(k) = (1+r)^(k-1)}, otherwise
 #' it will be \eqn{w_k = k}{w(k)=k}.
 #'
-#' Note that when \eqn{k=1}, the above formulas are equal to the ones presented
-#' in the paper.
+#' Note that when \eqn{K=1}, the above formulas are equal to the ones presented
+#' in Valente et al. (2015).
 #'
 #' @references
 #' Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
@@ -94,6 +94,7 @@
 #'
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
+#' @author Vega Yon
 infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
 
   if (missing(times))

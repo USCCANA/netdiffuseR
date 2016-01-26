@@ -66,6 +66,7 @@
 #' z <- rdiffnet(50,10)
 #' z
 #' summary(z)
+#' @author Vega Yon
 rdiffnet <- function(n, t,
                      seed.nodes="random", seed.p.adopt=0.05,
                      seed.graph="scale-free", rgraph.args=list(),

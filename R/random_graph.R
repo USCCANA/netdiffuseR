@@ -51,6 +51,7 @@
 #' @concept Erdos-Renyi random graph
 #' @family simulation functions
 #' @include graph_data.R
+#' @author Vega Yon
 rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
 
@@ -112,6 +113,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #'
 #' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
 #' Retrieved from \url{http://barabasi.com/networksciencebook/}
+#' @author Vega Yon
 rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   # When the graph is not null, then use it as a seed (starting point)
   if (length(graph)) {
@@ -258,6 +260,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #'
 #' Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
 #' SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
+#' @author Vega Yon
 rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
   out <- rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
                    self, multiple, TRUE)
@@ -280,6 +283,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 #' to one.
 #' @family simulation functions
 #' @export
+#' @author Vega Yon
 rewire_graph <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected")) {
 

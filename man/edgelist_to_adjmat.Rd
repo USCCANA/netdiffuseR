@@ -19,7 +19,7 @@ alter -target- (see details).}
 
 \item{weights}{Numeric vector. Strength of ties (optional).}
 
-\item{times}{Integer vector. Periodicity of the ties (optional).}
+\item{times}{Integer vector. Starting time of the ties (optional).}
 
 \item{t}{Integer scalar. If \code{times} but want to repeat the network \code{t} times.}
 
@@ -33,7 +33,8 @@ matrix, otherwise an array of adjacency matrices.}
 \item{multiple}{Logical scalar. TRUE when multiple edges should not be included
 (see details).}
 
-\item{use.incomplete}{Logical scalar. When FALSE, rows with \code{NA/NULL} values will be droped
+\item{use.incomplete}{Logical scalar. When FALSE, rows with \code{NA/NULL} values
+(isolated vertices) will be droped
 and will not be considered in the graph, which may reduce the size of the
 adjacency matrix (see
 details).}
@@ -52,10 +53,12 @@ In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 Generates adjacency matrix from an edgelist and viceversa.
 }
 \details{
-The edgelist must be coded from \code{1:n} (otherwise it may cause an error).
-Anticipating this, by default, the function will \code{\link{recode}} the
+When converting from edglist to adjmat the function will \code{\link{recode}} the
 edgelist before starting. The user can keep track after the recording by checking
-the resulting element's \code{\link{row.names}}.
+the resulting adjacency matrices' \code{\link{row.names}}. In the case that the
+user decides skipping the recoding (because wants to keep vertices index numbers,
+implying that the resulting graph will have isolated vertices), he can override
+this by setting \code{recode.ids=FALSE} (see example).
 
 When multiple edges are included, \code{multiple=TRUE},each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
 as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
@@ -107,6 +110,22 @@ edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
 # Using times and weights
 edgelist_to_adjmat(edgelist, times = times, weights = w)
 edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+
+# Not recoding ----------------------------------------------------
+# Notice that vertices 3, 4 and 5 are not present in this graph.
+graph <- matrix(c(
+ 1,2,6,
+ 6,6,7
+), ncol=2)
+
+# Generates an adjmat of size 4 x 4
+edgelist_to_adjmat(graph)
+
+# Generates an adjmat of size 7 x 7
+edgelist_to_adjmat(graph, recode.ids=FALSE)
+}
+\author{
+Vega Yon, Dyal, Hayes & Valente
 }
 \seealso{
 Other data management functions: \code{\link{isolated}}

@@ -23,6 +23,7 @@
 #'    Out=dgr(graph, "outdegree", undirected = FALSE),
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
+#' @author Vega Yon
 dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
 
   switch (class(graph),
@@ -181,6 +182,7 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @keywords univar
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
+#' @author Vega Yon, Dyal, Hayes & Valente
 exposure <- function(graph, cumadopt, wtype = 0, v = 1.0,
                      undirected=getOption("diffnet.undirected"), normalized=TRUE,
                      ...) {
@@ -278,6 +280,7 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 #' @family statistics
 #' @keywords univar
 #' @export
+#' @author Vega Yon, Dyal, Hayes & Valente
 cumulative_adopt_count <- function(obj) {
 
   if (inherits(obj, "diffnet")) obj <- obj$cumadopt
@@ -296,8 +299,8 @@ cumulative_adopt_count <- function(obj) {
 #' @param x An object of class \code{diffnet_hr}.
 #' @param y ignored.
 #' @param main Character scalar. Title of the plot
-#' @param xlab Character scalar. x-axis lab
-#' @param ylab Character scalar. y-axis lab
+#' @param xlab Character scalar. x-axis label.
+#' @param ylab Character scalar. y-axis label.
 #' @param include.grid Logical scalar. When TRUE includes a grid on the plot.
 #' @param bg Character scalar. Color of the points.
 #' @param pch Integer scalar. See \code{\link{par}}.
@@ -316,7 +319,7 @@ cumulative_adopt_count <- function(obj) {
 #' where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 #' the number of vertices in the graph.
 #'
-#' By definition, hazard rate ++++, formally we have
+#' In survival analysis, hazard rate is defined formally as
 #'
 #' \deqn{%
 #' \lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
@@ -363,6 +366,7 @@ cumulative_adopt_count <- function(obj) {
 #' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
 #' MIT Press.
 #' @export
+#' @author Vega Yon, Dyal, Hayes & Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 
   if (inherits(obj, "diffnet")) obj <- obj$cumadopt
@@ -432,6 +436,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' diffnet <- as_diffnet(graph, toa)
 #' threshold(diffnet, wtype=1)
 #' @export
+#' @author Vega Yon, Dyal, Hayes & Valente
 threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
 
   if (inherits(obj, "diffnet")) {

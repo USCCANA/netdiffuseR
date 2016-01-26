@@ -98,7 +98,7 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' \item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
 #' \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
 #' of radians}
-#' \item{dist}{Relavide distance between ego and alters' center.}
+#' \item{dist}{Relavtide distance between ego and alters' center.}
 #' With \eqn{m} as the number of resulting edges.
 #' @details
 #'

@@ -29,6 +29,9 @@ Rewiring assumes a weighted network, hence \eqn{G(i,j) = k = G(i',j')},
 where \eqn{i',j'} are the new end points of the edge and \eqn{k} may not be equal
 to one.
 }
+\author{
+Vega Yon
+}
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},

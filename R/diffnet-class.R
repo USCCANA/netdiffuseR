@@ -9,11 +9,9 @@
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
-#' @param weights Numeric vector of size \eqn{n}.
 #' @param undirected Logical scalar.
 #' @param self Logical scalar.
 #' @param multiple Logical scalar.
-#' @param use.incomplete Logical scalar.
 #' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
 #' is ignored.
 #' @param x A \code{diffnet} object.
@@ -77,16 +75,19 @@
 #'  \item Further columns depending on the vertex and graph attributes.
 #' }
 #'
+#' Each vertex static attributes' are repeated \eqn{T} times in total so that these
+#' can be binded (\code{rbind}) to dynamic attributes.
+#'
 #' When \code{as.df=TRUE}, this convenience function is useful as it can be used
 #' to create event history (panel data) datasets used for model fitting.
 #'
 #' Conversely, the replacement method allows including new vertex or graph
 #' attributes either dynamic or static (see examples below).
 #'
-#' \code{diffnet.toa(graph)} Works as an alias of \code{graph$toa}. While this function
-#' may not be very useful, the replacement method, \code{diffnet.toa<-} used as \code{diffnet.toa(graph)<-...},
-#' is the right way of modifying times of adoption as when the \code{toa} vector
-#' is changed the method performs several checks on the time ranges, and
+#' \code{diffnet.toa(graph)} works as an alias of \code{graph$toa}.
+#' The replacement method, \code{diffnet.toa<-} used as \code{diffnet.toa(graph)<-...},
+#' is the right way of modifying times of adoption as when doing so it
+#'  performs several checks on the time ranges, and
 #' recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
 #'
 #'
@@ -149,12 +150,11 @@
 #'  \item \code{multiple}: Logical scalar.
 #' }
 #' }
+#' @author Vega Yon
 as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
                        vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
-                       graph.attrs = NULL,
-                       weights=NULL, undirected=getOption("diffnet.undirected"),
-                       self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-                       use.incomplete=FALSE) {
+                       graph.attrs = NULL, undirected=getOption("diffnet.undirected"),
+                       self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple")) {
 
   # Step 0.0: Check if its diffnet!
   if (inherits(graph, "diffnet")) {

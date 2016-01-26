@@ -48,6 +48,9 @@ alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t
       \tab       \tab Yes   \tab   7   \tab  8  \tab 15  \tab  16
 }
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \references{
 Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
 Fujimoto, \emph{Diffusion of innovations theory applied to global tobacco control

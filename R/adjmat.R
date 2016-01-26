@@ -13,7 +13,7 @@
 #' alter -target- (see details).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param weights Numeric vector. Strength of ties (optional).
-#' @param times Integer vector. Periodicity of the ties (optional).
+#' @param times Integer vector. Starting time of the ties (optional).
 #' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
 #' @param simplify Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
@@ -21,16 +21,21 @@
 #' @param self Logical scalar. TRUE when self edges are excluded.
 #' @param multiple Logical scalar. TRUE when multiple edges should not be included
 #' (see details).
-#' @param use.incomplete Logical scalar. When FALSE, rows with \code{NA/NULL} values will be droped
+#' @param use.incomplete Logical scalar. When FALSE, rows with \code{NA/NULL} values
+#' (isolated vertices) will be droped
 #' and will not be considered in the graph, which may reduce the size of the
 #' adjacency matrix (see
 #' details).
 #' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 #' (see details).
-#' @details The edgelist must be coded from \code{1:n} (otherwise it may cause an error).
-#' Anticipating this, by default, the function will \code{\link{recode}} the
+#' @details
+#'
+#' When converting from edglist to adjmat the function will \code{\link{recode}} the
 #' edgelist before starting. The user can keep track after the recording by checking
-#' the resulting element's \code{\link{row.names}}.
+#' the resulting adjacency matrices' \code{\link{row.names}}. In the case that the
+#' user decides skipping the recoding (because wants to keep vertices index numbers,
+#' implying that the resulting graph will have isolated vertices), he can override
+#' this by setting \code{recode.ids=FALSE} (see example).
 #'
 #' When multiple edges are included, \code{multiple=TRUE},each vertex between \eqn{\{i,j\}}{{i,j}} will be counted
 #' as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
@@ -86,9 +91,23 @@
 #' # Using times and weights
 #' edgelist_to_adjmat(edgelist, times = times, weights = w)
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+#'
+#' # Not recoding ----------------------------------------------------
+#' # Notice that vertices 3, 4 and 5 are not present in this graph.
+#' graph <- matrix(c(
+#'  1,2,6,
+#'  6,6,7
+#' ), ncol=2)
+#'
+#' # Generates an adjmat of size 4 x 4
+#' edgelist_to_adjmat(graph)
+#'
+#' # Generates an adjmat of size 7 x 7
+#' edgelist_to_adjmat(graph, recode.ids=FALSE)
 #' @keywords manip
 #' @family data management functions
 #' @include graph_data.R
+#' @author Vega Yon, Dyal, Hayes & Valente
 edgelist_to_adjmat <- function(
   edgelist, weights=NULL,
   times=NULL, t=NULL, simplify=TRUE,
@@ -348,6 +367,7 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
 #' @include graph_data.R
+#' @author Vega Yon, Dyal, Hayes & Valente
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
   if (!inherits(obj, "diffnet")) {
@@ -434,6 +454,7 @@ toa_mat.integer <- function(times, labels=NULL,
 #' toa_diff(times)
 #' @keywords manip
 #' @include graph_data.R
+#' @author Vega Yon, Dyal, Hayes & Valente
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)
@@ -523,6 +544,7 @@ toa_diff.integer <- function(times, t0, labels) {
 #' drop_isolated(graph)
 #' @keywords manip
 #' @family data management functions
+#' @author Vega Yon
 isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
   switch (class(graph),
     matrix = isolated.matrix(graph, undirected),

@@ -35,6 +35,7 @@
 #' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 #' when no names are provided, these will be created from scratch.
 #' @include imports.R
+#' @author Vega Yon
 NULL
 
 stopifnot_graph <- function(x)
@@ -49,7 +50,7 @@ stopifnot_graph <- function(x)
 #'
 #' The function was designed to be used with \code{\link{as_diffnet}}.
 #' @seealso \code{\link{as_diffnet}}, \code{\link{netdiffuseR-graphs}}
-#' @return Whe the object is considered to be a graph, a list of attributes including
+#' @return Whe the object fits any of the accepted graph formats, a list of attributes including
 #' \item{type}{Character scalar. Whether is a static or a dynamic graph}
 #' \item{class}{Character scalar. The class of the original object}
 #' \item{ids}{Character vector. Labels of the vertices}
@@ -57,6 +58,7 @@ stopifnot_graph <- function(x)
 #' \item{nper}{Integer scalar. Number of time periods}
 #' \item{n}{Integer scalar. Number of vertices in the graph}
 #' Otherwise returns with error.
+#' @author Vega Yon
 #' @export
 classify_graph <- function(graph) {
 

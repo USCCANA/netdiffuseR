@@ -8,8 +8,10 @@ plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
   undirected = TRUE, vertex.col = c("grey", "red", "blue"),
   vertex.cex = "degree", label = rownames(graph[[1]]), edge.col = "gray",
   mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
-  main = "Network in time \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
-  0.1, gmode = ifelse(undirected, "graph", "digraph"), ...)
+  main = "Network in period \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
+  0.1, gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x =
+  "center", legend = c("Non adopters", "New adopters", "Adopters"), pch = 21,
+  bty = "n", cex = 1.2, horiz = TRUE), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -44,6 +46,8 @@ the graph are used.}
 \item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
 
 \item{gmode}{Character scalar. See \code{\link[sna:gplot]{gplot}.}}
+
+\item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}}
 }
@@ -94,6 +98,9 @@ toa <- sample(2000:(2000+nper-1), n, TRUE)
 adopt <- toa_mat(toa)
 
 plot_diffnet(graph, adopt$cumadopt)
+}
+\author{
+Vega Yon
 }
 \seealso{
 Other visualizations: \code{\link{hazard_rate}},

@@ -11,6 +11,7 @@
 #' \item{multiple}{FALSE}
 #' \item{tol}{1e-8 (used for package testing)}
 #' @name netdiffuseR-options
+#' @author Vega Yon
 NULL
 .onLoad <- function(libname, pkgname) {
   options(

@@ -180,6 +180,7 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
 #' @param mar Numeric vector of size 4. To be passed to \code{\link{par}.}
 #' @param gmode Character scalar. See \code{\link[sna:gplot]{gplot}.}
 #' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}
+#' @param lgd List of arguments to be passed to \code{\link{legend}}.
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
 #' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
@@ -223,6 +224,7 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
 #' @family visualizations
 #' @keywords hplot
 #' @export
+#' @author Vega Yon
 plot_diffnet <- function(
   graph, cumadopt,
   slices=NULL,
@@ -233,21 +235,23 @@ plot_diffnet <- function(
   label=rownames(graph[[1]]),
   edge.col="gray",
   mode="fruchtermanreingold", layout.par=NULL,
-  mfrow.par=NULL, main="Network in time %d",
+  mfrow.par=NULL, main="Network in period %d",
   mai=c(0,0,1,0),
-  mar=rep(1,4) + 0.1, gmode=ifelse(undirected, "graph", "digraph"),...
+  mar=rep(1,4) + 0.1, gmode=ifelse(undirected, "graph", "digraph"),
+  lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+             bty="n", cex=1.2, horiz=TRUE), ...
 ) {
   switch (class(graph),
     array = plot_diffnet.array(
       graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, ...),
     list = plot_diffnet.list(
       graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, ...),
     diffnet = plot_diffnet.list(
       graph$graph, graph$cumadopt, slices, displaylabels, graph$meta$undirected,
       vertex.col, vertex.cex, label=graph$meta$ids,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, ...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd,...),
     stopifnot_graph(graph)
   )
 }
@@ -271,10 +275,12 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
                          label=rownames(graph[[1]]),
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
-                         mfrow.par=NULL, main="Network in time %d",
+                         mfrow.par=NULL, main="Network in period %d",
                          mai=c(0,0,1,0),
                          mar=rep(1,4) + 0.1,
-                         gmode=ifelse(undirected, "graph", "digraph"), ...) {
+                         gmode=ifelse(undirected, "graph", "digraph"),
+                         lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+                                    bty="n", cex=1.2, horiz=TRUE), ...) {
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
@@ -324,10 +330,22 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
     else mfrow.par <- c(ceiling(t/4),4)
   }
 
+  test <- prod(mfrow.par)-t
+  if (test) {
+    marlayout <- matrix(1:prod(mfrow.par), ncol=mfrow.par[2], byrow = TRUE)
+    marlayout[nrow(marlayout),(ncol(marlayout) - test + 1):ncol(marlayout)] <- t + 1
+    lgd$horiz <- FALSE
+  } else {
+    marlayout <- rbind(matrix(1:prod(mfrow.par), ncol=mfrow.par[2], byrow = TRUE),
+                       prod(mfrow.par)+1)
+  }
+
   # Plotting
   curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
-  par(mfrow=mfrow.par, mai=mai, mar=mar)
+  # par(mfrow=mfrow.par, mai=mai, mar=mar)
+  par(mai=mai, mar=mar)
+  layout(marlayout)
 
   times <- as.integer(names(graph))
   for(i in 1:t)  {
@@ -344,6 +362,19 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
                edge.col = edge.col,vertex.cex = vertex.cex, label=label,
                main=sprintf(main, times[i]), gmode=gmode, ...)
   }
+
+  # Legend
+  plot.new()
+  plot.window(xlim=c(0,1), ylim=c(0,1))
+
+  lgd$pt.bg  <- vertex.col
+
+  do.call(legend, lgd)
+
+#   with(lgd,
+#     legend(pos, pt.bg = vertex.col,
+#            legend = text, pch=pch, bty=bty, cex=cex, horiz = horiz)
+#   )
 
   par(oldpar)
   invisible(coords)
@@ -398,6 +429,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 #'
 #' @export
+#' @author Vega Yon
 plot_threshold <- function(
   graph, exposure, toa, t0=min(toa, na.rm = TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
@@ -577,6 +609,7 @@ plot_threshold.list <- function(
 #'
 #' # Visualizing distribution of suscep/infect
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
+#' @author Vega Yon
 plot_infectsuscep <- function(
   graph, toa, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
@@ -704,6 +737,7 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
 #' plot_adopters(mat$cumadopt)
 #' @return List of matrices as described in \code{\link{cumulative_adopt_count}}
 #' @export
+#' @author Vega Yon
 plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
                           add=FALSE, include.legend=TRUE, include.grid=TRUE,
                           pch=c(21,24), type=c("b", "b"),

@@ -55,6 +55,9 @@ graph
 isolated(graph)
 drop_isolated(graph)
 }
+\author{
+Vega Yon
+}
 \seealso{
 Other data management functions: \code{\link{edgelist_to_adjmat}}
 }

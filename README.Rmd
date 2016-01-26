@@ -94,6 +94,13 @@ cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
 plot_threshold(diffnet, vertex.cex = cex)
 ```
 
+### Adoption rate
+
+```{r}
+plot_adopters(diffnet)
+```
+
+
 ### Hazard rate
 
 ```{r}
@@ -104,7 +111,7 @@ hazard_rate(diffnet)
 ### Diffusion process
 
 ```{r plot_diffnet}
-plot_diffnet(diffnet, vertex.cex = 2)
+plot_diffnet(diffnet, vertex.cex = 2, slices=c(1,7,15,20))
 ```
 
 

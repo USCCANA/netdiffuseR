@@ -22,4 +22,7 @@ getOption("diffnet.undirected")
 getOption("diffnet.multiple")
 getOption("diffnet.self")
 }
+\author{
+Vega Yon
+}
 

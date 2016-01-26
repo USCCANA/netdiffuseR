@@ -109,8 +109,9 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, normalize, K, :
     ## When applying logscale some observations are missing.
 
-![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
- \#\#\# Threshold
+![](README_files/figure-markdown_github/plot_infectsuscept-1.png)<!-- -->
+
+### Threshold
 
 ``` r
 # Generating a random graph
@@ -121,7 +122,7 @@ diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
 plot_threshold(diffnet)
 ```
 
-![](README_files/figure-markdown_github/plot_threshold-1.png)
+![](README_files/figure-markdown_github/plot_threshold-1.png)<!-- -->
 
 ``` r
 # Threshold with vertex size = avg degree
@@ -130,19 +131,28 @@ cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
 plot_threshold(diffnet, vertex.cex = cex)
 ```
 
-![](README_files/figure-markdown_github/plot_threshold-2.png)
- \#\#\# Hazard rate
+![](README_files/figure-markdown_github/plot_threshold-2.png)<!-- -->
+
+### Adoption rate
+
+``` r
+plot_adopters(diffnet)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->
+
+### Hazard rate
 
 ``` r
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)<!-- -->
 
 ### Diffusion process
 
 ``` r
-plot_diffnet(diffnet, vertex.cex = 2)
+plot_diffnet(diffnet, vertex.cex = 2, slices=c(1,7,15,20))
 ```
 
     ## Loading required package: SparseM
@@ -154,7 +164,7 @@ plot_diffnet(diffnet, vertex.cex = 2)
     ## 
     ##     backsolve
 
-![](README_files/figure-markdown_github/plot_diffnet-1.png)
+![](README_files/figure-markdown_github/plot_diffnet-1.png)<!-- -->
 
 To-do list
 ----------
@@ -163,3 +173,4 @@ To-do list
 -   Populate the tests folder.
 -   Use spells? (`select_egoalter` would use this)
 -   Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
+-   Double check all functions using adjacency matrix values.

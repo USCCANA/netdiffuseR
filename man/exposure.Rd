@@ -60,6 +60,9 @@ each node.
 Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
 numerator of the above formulas.
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 Equivalence". American Journal of Sociology, 92(6), 1287.

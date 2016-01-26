@@ -49,6 +49,7 @@
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations" (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
 #' @export
+#' @author Vega Yon, Dyal, Hayes & Valente
 struct_equiv <- function(graph, v=1, inf.replace = 0,...) {
   switch (class(graph),
     matrix = struct_equiv.matrix(graph, v, inf.replace,...),

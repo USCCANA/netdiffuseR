@@ -52,6 +52,9 @@ Here, the value of \eqn{v} is interpreted as cohesion level. The higher its valu
 the higher will be the influence that the closests alters will have over ego (see
 Burt's paper in the reference).
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus
 Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.

@@ -36,6 +36,9 @@ graph
 
 graph <- rgraph_ba(graph=graph)
 }
+\author{
+Vega Yon
+}
 \references{
 Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
 Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}

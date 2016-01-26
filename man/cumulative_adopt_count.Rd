@@ -27,6 +27,9 @@ matrix--is calculated as
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 it is only calculated fot \eqn{t>1}.
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \seealso{
 Other statistics: \code{\link{dgr}},
   \code{\link{exposure}}, \code{\link{hazard_rate}},

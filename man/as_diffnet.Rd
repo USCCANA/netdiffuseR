@@ -16,10 +16,9 @@
 \usage{
 as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   TRUE), vertex.dyn.attrs = NULL, vertex.static.attrs = NULL,
-  graph.attrs = NULL, weights = NULL,
-  undirected = getOption("diffnet.undirected"),
+  graph.attrs = NULL, undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
-  multiple = getOption("diffnet.multiple"), use.incomplete = FALSE)
+  multiple = getOption("diffnet.multiple"))
 
 diffnet.subset.slices(graph, slices)
 
@@ -57,15 +56,11 @@ diffnet.toa(graph, i) <- value
 
 \item{graph.attrs}{Numeric matrix with a single row.}
 
-\item{weights}{Numeric vector of size \eqn{n}.}
-
 \item{undirected}{Logical scalar.}
 
 \item{self}{Logical scalar.}
 
 \item{multiple}{Logical scalar.}
-
-\item{use.incomplete}{Logical scalar.}
 
 \item{slices}{Integer vector.}
 
@@ -179,16 +174,19 @@ returns a list of length \eqn{T} with matrices with the following columns:
  \item Further columns depending on the vertex and graph attributes.
 }
 
+Each vertex static attributes' are repeated \eqn{T} times in total so that these
+can be binded (\code{rbind}) to dynamic attributes.
+
 When \code{as.df=TRUE}, this convenience function is useful as it can be used
 to create event history (panel data) datasets used for model fitting.
 
 Conversely, the replacement method allows including new vertex or graph
 attributes either dynamic or static (see examples below).
 
-\code{diffnet.toa(graph)} Works as an alias of \code{graph$toa}. While this function
-may not be very useful, the replacement method, \code{diffnet.toa<-} used as \code{diffnet.toa(graph)<-...},
-is the right way of modifying times of adoption as when the \code{toa} vector
-is changed the method performs several checks on the time ranges, and
+\code{diffnet.toa(graph)} works as an alias of \code{graph$toa}.
+The replacement method, \code{diffnet.toa<-} used as \code{diffnet.toa(graph)<-...},
+is the right way of modifying times of adoption as when doing so it
+ performs several checks on the time ranges, and
 recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
 }
 \examples{
@@ -223,6 +221,9 @@ diffnet.attrs(diffnet, "vertex", "static", as.df = TRUE)
 # Now as a data.frame (all of them)
 diffnet.attrs(diffnet, as.df = TRUE)
 
+}
+\author{
+Vega Yon
 }
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}

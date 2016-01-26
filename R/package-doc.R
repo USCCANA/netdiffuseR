@@ -19,4 +19,6 @@
 #' @docType package
 #' @name netdiffuseR
 #'
+#' @author Vega Yon, Dyal, Hayes & Valente
+#'
 NULL

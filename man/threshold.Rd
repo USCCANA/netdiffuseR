@@ -39,6 +39,9 @@ threshold(expo, toa)
 diffnet <- as_diffnet(graph, toa)
 threshold(diffnet, wtype=1)
 }
+\author{
+Vega Yon, Dyal, Hayes & Valente
+}
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}
 

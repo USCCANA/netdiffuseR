@@ -33,6 +33,9 @@ moran(x, w/rowSums(as.array(w)))
 ape::Moran.I(x, w)
 }
 }
+\author{
+Vega Yon
+}
 \references{
 Moran's I. (2015, September 3). In Wikipedia, The Free Encyclopedia.
 Retrieved 06:23, December 22, 2015, from

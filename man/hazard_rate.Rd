@@ -31,9 +31,9 @@ plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
 
 \item{main}{Character scalar. Title of the plot}
 
-\item{xlab}{Character scalar. x-axis lab}
+\item{xlab}{Character scalar. x-axis label.}
 
-\item{ylab}{Character scalar. y-axis lab}
+\item{ylab}{Character scalar. y-axis label.}
 
 \item{type}{Character scalar. See \code{\link{par}}.}
 
@@ -63,7 +63,7 @@ invisible (so is not printed on the console). For \eqn{t>1}, hazard rate is calc
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}, and \eqn{n} is
 the number of vertices in the graph.
 
-By definition, hazard rate ++++, formally we have
+In survival analysis, hazard rate is defined formally as
 
 \deqn{%
 \lambda(t)=\lim_{h\to +0}\frac{F(t+h)-F(t)}{h}\frac{1}{1-F(t)} %
@@ -102,6 +102,9 @@ cumadopt <- toa_mat(toa)$cumadopt
 
 # Visualizing the hazard rate
 hazard_rate(cumadopt)
+}
+\author{
+Vega Yon, Dyal, Hayes & Valente
 }
 \references{
 Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
