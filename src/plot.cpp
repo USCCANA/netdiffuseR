@@ -2,7 +2,6 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
-// [[Rcpp::export]]
 arma::vec seq_cpp(double from, double to, int lengthout) {
   arma::vec out(lengthout);
   double step = (to - from)/(lengthout - 1);

@@ -147,19 +147,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// seq_cpp
-arma::vec seq_cpp(double from, double to, int lengthout);
-RcppExport SEXP netdiffuseR_seq_cpp(SEXP fromSEXP, SEXP toSEXP, SEXP lengthoutSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< double >::type from(fromSEXP);
-    Rcpp::traits::input_parameter< double >::type to(toSEXP);
-    Rcpp::traits::input_parameter< int >::type lengthout(lengthoutSEXP);
-    __result = Rcpp::wrap(seq_cpp(from, to, lengthout));
-    return __result;
-END_RCPP
-}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {

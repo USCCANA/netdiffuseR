@@ -4,8 +4,8 @@
 \alias{egonet_attrs}
 \title{Retrieve alter's attributes (network effects)}
 \usage{
-egonet_attrs(graph, attrs, V = NULL, outer = TRUE, fun = function(x) x,
-  as.df = FALSE, self = getOption("diffnet.self"),
+egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
+  fun = function(x) x, as.df = FALSE, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"))
 }
 \arguments{
@@ -15,7 +15,7 @@ egonet_attrs(graph, attrs, V = NULL, outer = TRUE, fun = function(x) x,
 
 \item{V}{Integer vector. Set of vertices from which the attributes will be retrieved.}
 
-\item{outer}{Logical scalar. When TRUE builds ego nets using outer edges.}
+\item{direction}{Character scalar. Either \code{"outgoing"}, \code{"incomming"}.}
 
 \item{fun}{Function. Applied to each}
 
@@ -44,8 +44,13 @@ columns:
 \item{...}{Further attributes contained in \code{attrs}}
 }
 \description{
-For a given set of vertices \eqn{V}, retrieves each vertex's ego network alter's
-attributes.
+For a given set of vertices V, retrieves each vertex's ego network alter's
+attributes. This function enables users to calculate exposure on variables
+other than the attribute that is diffusing.  Further, it enables the
+specification of alternative functions from which to characterize ego's
+personal network including take the mean, maximum, minimum, median, or
+sum of the alters' attributes. These measure may be static or dynamic over
+the interval of diffusion and they may be binary or valued.
 }
 \details{
 By indexing inner/outer edges, this function retrieves ego network attributes

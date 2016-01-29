@@ -1,6 +1,5 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-// #include "adjmat.h"
 using namespace Rcpp;
 
 // [[Rcpp::export]]

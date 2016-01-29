@@ -1,12 +1,17 @@
 #' Retrieve alter's attributes (network effects)
 #'
-#' For a given set of vertices \eqn{V}, retrieves each vertex's ego network alter's
-#' attributes.
+#' For a given set of vertices V, retrieves each vertex's ego network alter's
+#' attributes. This function enables users to calculate exposure on variables
+#' other than the attribute that is diffusing.  Further, it enables the
+#' specification of alternative functions from which to characterize ego's
+#' personal network including take the mean, maximum, minimum, median, or
+#' sum of the alters' attributes. These measure may be static or dynamic over
+#' the interval of diffusion and they may be binary or valued.
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param attrs If \code{graph} is static, Numeric matrix with \eqn{n} rows, otherwise a list of numeric matrices with \eqn{n} rows.
 #' @param V Integer vector. Set of vertices from which the attributes will be retrieved.
-#' @param outer Logical scalar. When TRUE builds ego nets using outer edges.
+#' @param direction Character scalar. Either \code{"outgoing"}, \code{"incomming"}.
 #' @param self Logical scalar. When FALSE ignores ego's own attributes.
 #' @param valued Logical scalar. When TRUE stores the value of the edge, otherwise includes a one.
 #' @param fun Function. Applied to each
@@ -88,12 +93,16 @@
 #' @author Vega Yon
 egonet_attrs <- function(
   graph, attrs, V=NULL,
-  outer = TRUE,
+  direction = "outgoing",
   fun = function(x) x,
   as.df = FALSE,
   self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued")
 ) {
+
+  if (direction == "incomming") outer <- FALSE
+  else if (direction == "outgoing") outer <- TRUE
+  else stop("-direction- must be either 'incomming' or 'outgoing'")
 
   # Checking if no dim has been specified
   if (!inherits(graph, "diffnet"))
@@ -111,12 +120,7 @@ egonet_attrs <- function(
              " elements, must have as many elements as time periods ",
              graph$meta$nper,".")
     }
-  } else stopifnot_graph(graph)
-
-
-
-  # Indices go from 0 to n-1
-  V <- V - 1
+  } # else stopifnot_graph(graph)
 
   switch(
     class(graph),
@@ -153,7 +157,7 @@ egonet_attrs.list <- function(graph, attrs, V, outer, fun, as.df, self, valued) 
   if (!length(tn)) tn <- 1:nper
 
   out <- lapply(1:nper, function(x) {
-      egonet_attrs_cpp(graph[[x]], as.integer(V),attrs[[x]], outer, self, valued)
+      egonet_attrs_cpp(graph[[x]], as.integer(V)-1L,attrs[[x]], outer, self, valued)
   })
 
   # Adding names to V

@@ -41,10 +41,6 @@ egonet_attrs_cpp <- function(graph, V, attrs, outer = TRUE, self = TRUE, valued 
     .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, attrs, outer, self, valued)
 }
 
-seq_cpp <- function(from, to, lengthout) {
-    .Call('netdiffuseR_seq_cpp', PACKAGE = 'netdiffuseR', from, to, lengthout)
-}
-
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.

@@ -52,7 +52,14 @@ A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diff
 The class of the object is only used by the S3 plot method.
 }
 \description{
-Calculate and plot the hazard rate of the network.
+The hazard rate is the instantaneous probability of adoption at each time
+representing the likelihood members will adopt at that time (Allison 1984).
+The shape of the hazard rate indicates the pattern of new adopters over time.
+Rapid diffusion with convex cumulative adoption curves will have hazard functions
+that peak early and decay over time whereas slow concave cumulative adoption
+curves will have hazard functions that are low early and rise over time.
+Smooth hazard curves indicate constant adoption whereas those that oscillate
+indicate variability in adoption behavior over time.
 }
 \details{
 This function computes hazard rate, plots it and returns the hazard rate vector
@@ -107,8 +114,11 @@ hazard_rate(cumadopt)
 Vega Yon, Dyal, Hayes & Valente
 }
 \references{
-Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
-MIT Press.
+Allison, P. (1984). Event history analysis regression for longitudinal event
+data. Beverly Hills: Sage Publications.
+
+Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
+(2nd ed.). Cambridge: MIT Press.
 }
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},

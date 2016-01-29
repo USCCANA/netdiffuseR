@@ -292,7 +292,14 @@ cumulative_adopt_count <- function(obj) {
 
 #' Network Hazard Rate
 #'
-#' Calculate and plot the hazard rate of the network.
+#' The hazard rate is the instantaneous probability of adoption at each time
+#' representing the likelihood members will adopt at that time (Allison 1984).
+#' The shape of the hazard rate indicates the pattern of new adopters over time.
+#' Rapid diffusion with convex cumulative adoption curves will have hazard functions
+#' that peak early and decay over time whereas slow concave cumulative adoption
+#' curves will have hazard functions that are low early and rise over time.
+#' Smooth hazard curves indicate constant adoption whereas those that oscillate
+#' indicate variability in adoption behavior over time.
 #' @aliases plot_hazarrate
 #' @param obj A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}) or a \code{\link{diffnet}} object.
@@ -363,8 +370,11 @@ cumulative_adopt_count <- function(obj) {
 #' # Visualizing the hazard rate
 #' hazard_rate(cumadopt)
 #' @references
-#' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data.
-#' MIT Press.
+#' Allison, P. (1984). Event history analysis regression for longitudinal event
+#' data. Beverly Hills: Sage Publications.
+#'
+#' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
+#' (2nd ed.). Cambridge: MIT Press.
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {

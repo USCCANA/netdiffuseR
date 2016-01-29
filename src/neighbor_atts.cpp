@@ -33,8 +33,6 @@ List egonet_attrs_cpp(
     // Index
     int e = V.at(v);
 
-    // std::cout << v << " at "<< e << "/" << N << "\n";
-
     // Analyzing the case when is undirected
     int rm = 0;
     if (graph.at(e,e) && !self) rm = 1;

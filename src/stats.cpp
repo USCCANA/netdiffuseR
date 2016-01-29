@@ -19,9 +19,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
-// #include "adjmat.h"
-#include "struct_equiv.h"
-
 using namespace Rcpp;
 
 /* cmode:
