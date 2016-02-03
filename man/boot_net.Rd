@@ -2,14 +2,19 @@
 % Please edit documentation in R/boot.R
 \name{boot_net}
 \alias{boot_net}
+\alias{hist.diffnet_boot}
 \alias{print.diffnet_boot}
-\title{Bootstrapping}
+\title{Structure dependence test}
 \usage{
 boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
   getOption("diffnet.undirected")), ncpus = getOption("boot.ncpus", 1L),
   cl = NULL)
 
 \method{print}{diffnet_boot}(x, ...)
+
+\method{hist}{diffnet_boot}(x,
+  main = "Distribution of Statistic on rewired network",
+  xlab = "Values of t", breaks = 20, annotated = TRUE, ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}
@@ -27,7 +32,15 @@ from the \pkg{parallel} package.}
 
 \item{x}{A \code{diffnet_boot} class object.}
 
-\item{...}{Ignored.}
+\item{...}{Ignored in the \code{print} method. Otherwise, arguments passed to \code{\link{hist}}.}
+
+\item{main}{Character scalar. Title of the histogram.}
+
+\item{xlab}{Character scalar. x-axis label.}
+
+\item{breaks}{Passed to \code{\link{hist}}.}
+
+\item{annotated}{Logical scalar. When TRUE marks the observed data average and the simulated data average.}
 }
 \value{
 An object of class \code{diffnet_bot}. As in \code{boot}
@@ -38,8 +51,28 @@ function of the \pkg{boot} package, a list with the following elements:
 \item{graph}{The graph passed to \code{boot_net}.}
 \item{seed}{The value of \code{.Random.seed} wheb \code{boot_net} started to work.}
 \item{statistic}{The function \code{statistic} passed to \code{boot_net}}
+
+The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 }
 \description{
-Bootstrapping
+Test whether or not a network estimates can be considered as structure dependent, i.e.
+a function of the network structure. By rewiring the graph and calculating
+a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
+against the empirical distribution of it obtained from rewiring the network.
+}
+\details{
+From the \code{print} method, p-value for the null of the statistic been
+equal between graph and its rewired versions is computed following Davidson
+& MacKinnon
+
+\deqn{p(\tau)=2\times\min\left(EDF(\tau), 1-EDF(\tau)\right)}{p(t) = 2*min[EDF(t), 1-EDF(t)]}
+
+Where \eqn{EDF} is the Empirical Distribution Function.
+}
+\author{
+Vega Yon
+}
+\references{
+On development.
 }
 

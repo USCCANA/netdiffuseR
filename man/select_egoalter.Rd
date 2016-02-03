@@ -26,17 +26,13 @@ between categories 1 to 16.}
 classified between categories 1 to 16.}
 }
 \description{
-The changes are based on 16 categories combining (ego, alter) x (adopt in \eqn{t}) x
-(adopt in \eqn{t-1}) (see details).
+This function calculates the 16 possible configurations between ego and alter
+over two time points in terms of their behavior and tie changes.  From time
+one to time two, given a binary state of behavior, ego and alter can be
+related in 16 different ways.
 }
 \details{
-The 16 categories are classified using the table that follows. The
-first two Yes/No columns represent Ego's adoption of the innovation in \eqn{t-1}
-and \eqn{t}; while the first two Yes/No rows represent Alter's adoption of the
-innovation in \eqn{t-1} and t respectively. So for example, number 4 means that
-while neither of the two had addopted the innovation in \eqn{t-1}, both have in \eqn{t}.
-At the same time, number 12 means that ego adopted the innovation in \eqn{t}, but
-alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
+The 16 possibilities are summarized in this matrix:
 
 \tabular{rrrcccc}{
       \tab       \tab       \tab Alter \tab     \tab     \tab     \cr
@@ -47,6 +43,14 @@ alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t
       \tab Yes   \tab No    \tab   5   \tab  6  \tab 13  \tab  14 \cr
       \tab       \tab Yes   \tab   7   \tab  8  \tab 15  \tab  16
 }
+
+The
+first two Yes/No columns represent Ego's adoption of the innovation in \eqn{t-1}
+and \eqn{t}; while the first two Yes/No rows represent Alter's adoption of the
+innovation in \eqn{t-1} and t respectively. So for example, number 4 means that
+while neither of the two had addopted the innovation in \eqn{t-1}, both have in \eqn{t}.
+At the same time, number 12 means that ego adopted the innovation in \eqn{t}, but
+alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
 }
 \author{
 Vega Yon, Dyal, Hayes & Valente

@@ -7,7 +7,7 @@
 
 #' Conversion between adjacency matrix and edgelist
 #'
-#' Generates adjacency matrix from an edgelist and viceversa.
+#' Generates adjacency matrix from an edgelist and vice versa.
 #'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
@@ -405,16 +405,16 @@ toa_mat.integer <- function(times, labels=NULL,
                             t0 = min(times, na.rm = TRUE),
                             t1 = max(times, na.rm=TRUE)) {
   # Rescaling
-  oldtimes <- t0:t1
   output <- toa_mat_cpp(times, t0, t1)
 
   # Naming
-  if (length(labels)) {
-    rownames(output$cumadopt) <- labels
-    rownames(output$adopt) <- labels
-  }
-  colnames(output$cumadopt) <- oldtimes
-  colnames(output$adopt) <- oldtimes
+  cn <- t0:t1
+  if (length(labels)) rn <- labels
+  else rn <- 1:length(times)
+
+  dimnames(output[[1]]) <- list(rn, cn)
+  dimnames(output[[2]]) <- list(rn, cn)
+
   output
 }
 

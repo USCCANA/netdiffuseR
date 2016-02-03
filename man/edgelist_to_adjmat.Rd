@@ -50,7 +50,7 @@ In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 \code{adjmat_to_edgelist} the output is an edgelist.
 }
 \description{
-Generates adjacency matrix from an edgelist and viceversa.
+Generates adjacency matrix from an edgelist and vice versa.
 }
 \details{
 When converting from edglist to adjmat the function will \code{\link{recode}} the

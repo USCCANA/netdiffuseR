@@ -1,11 +1,11 @@
 #' Retrieve alter's attributes (network effects)
 #'
-#' For a given set of vertices V, retrieves each vertex's ego network alter's
+#' For a given set of vertices V, retrieves each vertex's alter's
 #' attributes. This function enables users to calculate exposure on variables
 #' other than the attribute that is diffusing.  Further, it enables the
-#' specification of alternative functions from which to characterize ego's
-#' personal network including take the mean, maximum, minimum, median, or
-#' sum of the alters' attributes. These measure may be static or dynamic over
+#' specification of alternative functions to use to characterize ego's
+#' personal network including calculating the mean, maximum, minimum, median, or
+#' sum of the alters' attributes. These measures may be static or dynamic over
 #' the interval of diffusion and they may be binary or valued.
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).

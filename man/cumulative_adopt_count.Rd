@@ -15,7 +15,7 @@ A \eqn{3\times T}{3 * T} matrix, where its rows contain the number of adoptes, t
 adopters and the rate of adoption respectively, for earch period of time.
 }
 \description{
-For each period, calculates the number of adopters, the proportion of adopters,
+For each time period, calculates the number of adopters, the proportion of adopters,
 and the adoption rate.
 }
 \details{

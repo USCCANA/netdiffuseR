@@ -15,6 +15,10 @@ r_packages:
   - testthat
   - knitr
   - rmarkdown
+  - Rsiena
+  - igraph
+  - survival
+
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2 && sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; rm gfortran-4.8.2-darwin13.tar.bz2 ; fi

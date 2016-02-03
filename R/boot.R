@@ -1,4 +1,10 @@
-#' Bootstrapping
+#' Structure dependence test
+#'
+#' Test whether or not a network estimates can be considered as structure dependent, i.e.
+#' a function of the network structure. By rewiring the graph and calculating
+#' a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
+#' against the empirical distribution of it obtained from rewiring the network.
+#'
 #' @param graph A \code{\link{diffnet}} graph.
 #' @param statistic A function that returns either a scalar or a vector.
 #' @param R Integer scalar. Number of repetitions.
@@ -7,7 +13,11 @@
 #' from the \pkg{parallel} package.
 #' @param cl An object of class \code{c("SOCKcluster", "cluster")}
 #' @param x A \code{diffnet_boot} class object.
-#' @param ... Ignored.
+#' @param ... Ignored in the \code{print} method. Otherwise, arguments passed to \code{\link{hist}}.
+#' @param main Character scalar. Title of the histogram.
+#' @param xlab Character scalar. x-axis label.
+#' @param breaks Passed to \code{\link{hist}}.
+#' @param annotated Logical scalar. When TRUE marks the observed data average and the simulated data average.
 #' @return An object of class \code{diffnet_bot}. As in \code{boot}
 #' function of the \pkg{boot} package, a list with the following elements:
 #' \item{t0}{The observed value of statistic applied to data.}
@@ -16,6 +26,20 @@
 #' \item{graph}{The graph passed to \code{boot_net}.}
 #' \item{seed}{The value of \code{.Random.seed} wheb \code{boot_net} started to work.}
 #' \item{statistic}{The function \code{statistic} passed to \code{boot_net}}
+#'
+#' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
+#' @details
+#' From the \code{print} method, p-value for the null of the statistic been
+#' equal between graph and its rewired versions is computed following Davidson
+#' & MacKinnon
+#'
+#' \deqn{p(\tau)=2\times\min\left(EDF(\tau), 1-EDF(\tau)\right)}{p(t) = 2*min[EDF(t), 1-EDF(t)]}
+#'
+#' Where \eqn{EDF} is the Empirical Distribution Function.
+#' @export
+#' @references
+#' On development.
+#' @author Vega Yon
 boot_net <- function(
   graph,
   statistic,
@@ -69,12 +93,45 @@ print.diffnet_boot <- function(x, ...) {
     tmean <- colMeans(t, na.rm = TRUE)
 
     # Calc pval
-    test  <- sum(t < t0)/R
-    if (test > .5) test  <- 1-test
-    cat("boot graph\n",
-        "t0         = ", t0, "\n",
-        "t          = ", tmean, "\n",
-        "P(t != t0) = ", sprintf("%.5f",test))
+    # To be conservative, in a two tail test we use the min of the two
+    # So, following davidson & mckinnon Confidence intrval section,
+    # p(tau) = 2 * min[F(tau), 1-F(tau)]
+    test <- 2*min(mean(t < t0), mean(t > t0))
+    cat("Network Rewiring graph (",nrow(t),"simulations)\n",paste(rep("-",80), collapse=""),"\n",
+        " H0: t - t0 = 0\n",
+        " t0      = ", t0, "\n",
+        " t       = ", tmean, "\n",
+        " p-value = ", sprintf("%.5f",test), sep="")
   })
   invisible(x)
 }
+
+#' @export
+#' @rdname boot_net
+hist.diffnet_boot <- function(
+  x,
+  main="Distribution of Statistic on rewired network",
+  xlab="Values of t",
+  breaks=20,
+  annotated=TRUE,
+  ...) {
+  out <- hist(x$t, main=main, xlab=xlab, breaks=breaks, ...)
+
+  # Adding margin note
+  if (annotated) {
+    mt <- mean(x$t, na.rm=TRUE)
+    mtext(expression(atop(plain("") %up% plain("")), t[0]),
+          side = 1, at=x$t0)
+    mtext(expression(atop(plain("") %up% plain("")), t[]),
+          side = 1, at=mt)
+  }
+  out
+}
+# #' @rdname boot_net
+# boot_thr <- boot_net(net, function(x) {
+#   t <- threshold(x)
+#   cbind(mean=mean(t, na.rm=TRUE), sd=sd(t, na.rm = TRUE))
+# }
+# , nsim)
+#
+# ttest<-(boot_thr$t[1,] - mean(threshold(net), na.rm=TRUE))/boot_thr$t[2,]

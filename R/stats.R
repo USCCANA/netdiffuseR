@@ -41,6 +41,10 @@ dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"
 # @export
 dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
 
+  # Checking dimensions
+  dm <- dim(graph)
+  if (dm[1] != dm[2]) stop("-graph- must be a square matrix.")
+
   # Retrieving the number
   if      (cmode=="indegree")  cmode <- 0
   else if (cmode=="outdegree") cmode <- 1
@@ -62,6 +66,10 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
 # @rdname dgr
 # @export
 dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+
+  # Checking dimensions
+  dm <- dim(graph)
+  if (dm[1] != dm[2]) stop("-graph- must be a square matrix.")
 
   # Retrieving the number
   if      (cmode=="indegree")  cmode <- 0
@@ -129,8 +137,12 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 
 #' Ego exposure
 #'
-#' Calculates the level of exposure to the innovation that each node has in the
-#' graph.
+#' Calculates exposure to adoption over time via multiple different types of weight
+#' matrices.  The basic  model is exposure to adoption by immediate neighbors
+#' (outdegree) at the time period prior to ego’s adoption. This exposure can be
+#' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties, (4)
+#' attribute weighted (5) network-metric weighted (e.g., central nodes have more
+#' influence), and attribute-weighted (e.g., based on homophily or tie strength).
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
@@ -261,7 +273,7 @@ exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOpt
 
 #' Cummulative count of adopters
 #'
-#' For each period, calculates the number of adopters, the proportion of adopters,
+#' For each time period, calculates the number of adopters, the proportion of adopters,
 #' and the adoption rate.
 #'
 #' @param obj A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from

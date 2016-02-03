@@ -9,6 +9,7 @@
 #' @param r Numeric scalar. Discount rate used when \code{expdiscount=TRUE}
 #' @param expdiscount Logical scalar. When TRUE, exponential discount rate is used (see details).
 #' @family statistics
+#' @aliases susceptibility
 #' @keywords univar
 #' @seealso The user can visualize the distribution of both statistics
 #' by using the function \code{\link{plot_infectsuscep}}
