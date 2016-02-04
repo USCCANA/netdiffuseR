@@ -26,6 +26,8 @@
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
+#' @param j Ignored.
+#' @param drop Ignored
 #' @param value In the case of \code{diffnet.toa}, replacement, otherwise see below.
 #' @param vertex.dyn.attrs List of length \eqn{T}. Contains matrices with vertex attributes.
 #' @param vertex.static.attrs Numeric matrix with \eqn{n} rows.

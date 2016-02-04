@@ -42,6 +42,12 @@ surveyed <- medInnovations$id
 for (i in netvars)
   medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
 
+# Adding autoedges to farmers that are isolated, we need to do this otherwize
+# these will be dropped when calling the function -edgelist_to_adjmat-. Notice
+# that this does not imply that the graph will have autoedges. (see manual)
+isolated <- which(apply(medInnovations[, netvars], 1, function(x) all(is.na(x))))
+medInnovations[isolated, netvars[1]] <- medInnovations$id[isolated]
+
 # Reshaping data (so we have an edgelist)
 medInnovations.long <- reshape(
   medInnovations[,c(othervars, netvars)], v.names= "net",

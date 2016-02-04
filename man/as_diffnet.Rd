@@ -42,7 +42,7 @@ diffnet.toa(graph, i) <- value
 
 \method{summary}{diffnet}(object, slices = NULL, no.print = FALSE, ...)
 
-\method{[}{diffnet}(x, i)
+\method{[}{diffnet}(x, i, j, drop = FALSE)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -106,6 +106,10 @@ is ignored.}
 \item{object}{A \code{diffnet} object.}
 
 \item{no.print}{Logical scalar. When TRUE suppress screen messages.}
+
+\item{j}{Ignored.}
+
+\item{drop}{Ignored}
 }
 \value{
 A list of class \code{diffnet} with the following elements:

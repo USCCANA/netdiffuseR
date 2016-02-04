@@ -22,7 +22,7 @@
 #' @param multiple Logical scalar. TRUE when multiple edges should not be included
 #' (see details).
 #' @param use.incomplete Logical scalar. When FALSE, rows with \code{NA/NULL} values
-#' (isolated vertices) will be droped
+#' (isolated vertices unless have autolink) will be droped
 #' and will not be considered in the graph, which may reduce the size of the
 #' adjacency matrix (see
 #' details).
@@ -46,11 +46,11 @@
 #' edges in which a vertex participates have incomplete information in any of the
 #' variables (a NA, NULL or NaN value, see \code{\link{complete.cases}}), it
 #' will be dropped from the graph, thus, reducing the size of the adjacency
-#' matrix by not including isolated vertices.
-#'
-#' Notice that the best way of adding isolated vertices is to include them in the
+#' matrix by not including isolated vertices. Notice that the \emph{best way of adding %
+#' isolated vertices} is to include them in the
 #' edgelist as connecting to themselves. The option \code{self=FALSE} will not
-#' drop the isolated vertices but the algorithm will include them on the graph.
+#' drop the isolated vertices (but the adjacency matrix will have a 0-diagonal)
+#' but the algorithm will include them on the graph.
 #'
 #' The function performs several checks before starting to create the adjacency
 #' matrix. These are:
@@ -67,6 +67,8 @@
 #' coded. For example, after having use \code{adjmat_to_edgelist}, ids are
 #' correctly encoded, so when going back (using \code{edgelist_to_adjmat})
 #' \code{recode.ids} should be FALSE.
+#'
+#'
 #'
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 #' (if times is NULL) or an array of these (if times is not null). For

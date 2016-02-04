@@ -396,16 +396,16 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param main Character scalar. Title of the plot.
 #' @param xlab Character scalar. x-axis label.
 #' @param ylab Character scalar. y-axis label.
-#' @param vertex.cex Numeric vector of size \eqn{n}. Relative size of the vertices
-#' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices
-#' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices
-#' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}
-#' @param edge.width Numeric. Width of the edges
-#' @param edge.col Character. Color of the edges
-#' @param arrow.length Numeric value to be passed to \code{\link{arrows}}
-#' @param include.grid Logical. When TRUE, the grid of the graph is drawn
-#' @param bty See \code{\link{par}}
-#' @param ... Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}
+#' @param vertex.cex Numeric vector of size \eqn{n}. Relative size of the vertices.
+#' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
+#' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices.
+#' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
+#' @param edge.width Numeric. Width of the edges.
+#' @param edge.col Character. Color of the edges.
+#' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
+#' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
+#' @param bty See \code{\link{par}}.
+#' @param ... Additional arguments passed to \code{\link{plot}}.
 #' @family visualizations
 #' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
 #' obtained returned by \code{\link{exposure}}.
@@ -525,7 +525,7 @@ plot_threshold.list <- function(
   } else if (inherits(vertex.cex, "character")) stop("Invalid value for -vertex.cex-.")
 
   # Plotting
-  oldpar <- par(no.readonly = TRUE)
+  # oldpar <- par(no.readonly = TRUE)
   plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main, ...)
 
   # Should there be a grid??
@@ -551,7 +551,7 @@ plot_threshold.list <- function(
   if (!length(vertex.label)) vertex.label <- 1:n
   text(x=jit, y=y+vertex.cex.y, labels = vertex.label, pos=vertex.lab.pos)
 
-  par(oldpar)
+  # par(oldpar)
 
   invisible(data.frame(toa=toa,threshold=y, jit=jit))
 
@@ -814,7 +814,7 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 
 #' @rdname as_diffnet
 #' @export
-`[.diffnet` <- function(x, i) {
+`[.diffnet` <- function(x, i, j, drop=FALSE) {
 
   # Checking range/list of ids or names
   if (inherits(i, "character")) {

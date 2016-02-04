@@ -32,25 +32,25 @@ plot_threshold(graph, exposure, toa, t0 = min(toa, na.rm = TRUE),
 
 \item{ylab}{Character scalar. y-axis label.}
 
-\item{vertex.cex}{Numeric vector of size \eqn{n}. Relative size of the vertices}
+\item{vertex.cex}{Numeric vector of size \eqn{n}. Relative size of the vertices.}
 
-\item{vertex.col}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices}
+\item{vertex.col}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.}
 
-\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices}
+\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
 
-\item{vertex.lab.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}}
+\item{vertex.lab.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
 
-\item{edge.width}{Numeric. Width of the edges}
+\item{edge.width}{Numeric. Width of the edges.}
 
-\item{edge.col}{Character. Color of the edges}
+\item{edge.col}{Character. Color of the edges.}
 
-\item{arrow.length}{Numeric value to be passed to \code{\link{arrows}}}
+\item{arrow.length}{Numeric value to be passed to \code{\link{arrows}}.}
 
-\item{include.grid}{Logical. When TRUE, the grid of the graph is drawn}
+\item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
 
-\item{bty}{See \code{\link{par}}}
+\item{bty}{See \code{\link{par}}.}
 
-\item{...}{Additional arguments passed to \code{plot} via \code{\link[sna:gplot]{gplot}}}
+\item{...}{Additional arguments passed to \code{\link{plot}}.}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,

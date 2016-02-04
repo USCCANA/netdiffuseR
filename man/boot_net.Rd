@@ -12,7 +12,7 @@ boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
 \method{print}{diffnet_boot}(x, ...)
 
 \method{hist}{diffnet_boot}(x,
-  main = "Distribution of Statistic on rewired network",
+  main = "Distribution of Statistic on\\nrewired network",
   xlab = "Values of t", breaks = 20, annotated = TRUE, ...)
 }
 \arguments{

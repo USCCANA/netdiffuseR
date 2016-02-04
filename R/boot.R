@@ -117,7 +117,10 @@ print.diffnet_boot <- function(x, ...) {
     # So, following davidson & mckinnon Confidence intrval section,
     # p(tau) = 2 * min[F(tau), 1-F(tau)]
     test <- 2*min(mean(boot$t < boot$t0), mean(boot$t > boot$t0))
-    cat("Network Rewiring graph (",nrow(boot$t)," simulations)\n",paste(rep("-",80), collapse=""),"\n",
+    cat("Network Rewiring graph (",nrow(boot$t)," simulations)\n",
+        "# nodes           : ", x$graph$meta$n,"\n",
+        "# of time periods : ", x$graph$meta$nper,"\n",
+        paste(rep("-",80), collapse=""),"\n",
         " H0: t - t0 = 0\n",
         " t0      = ", boot$t0, "\n",
         " t       = ", tmean, "\n",
@@ -130,7 +133,7 @@ print.diffnet_boot <- function(x, ...) {
 #' @rdname boot_net
 hist.diffnet_boot <- function(
   x,
-  main="Distribution of Statistic on rewired network",
+  main="Distribution of Statistic on\nrewired network",
   xlab="Values of t",
   breaks=20,
   annotated=TRUE,
