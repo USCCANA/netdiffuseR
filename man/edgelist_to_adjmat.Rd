@@ -71,6 +71,10 @@ variables (a NA, NULL or NaN value, see \code{\link{complete.cases}}), it
 will be dropped from the graph, thus, reducing the size of the adjacency
 matrix by not including isolated vertices.
 
+Notice that the best way of adding isolated vertices is to include them in the
+edgelist as connecting to themselves. The option \code{self=FALSE} will not
+drop the isolated vertices but the algorithm will include them on the graph.
+
 The function performs several checks before starting to create the adjacency
 matrix. These are:
 \itemize{

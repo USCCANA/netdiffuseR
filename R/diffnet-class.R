@@ -467,4 +467,3 @@ diffnet.toa <- function(graph) {
 
 }
 
-

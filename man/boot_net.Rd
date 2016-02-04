@@ -7,8 +7,7 @@
 \title{Structure dependence test}
 \usage{
 boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
-  getOption("diffnet.undirected")), ncpus = getOption("boot.ncpus", 1L),
-  cl = NULL)
+  getOption("diffnet.undirected"), both.ends = TRUE), ...)
 
 \method{print}{diffnet_boot}(x, ...)
 
@@ -25,14 +24,9 @@ boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
 
 \item{rewire.args}{List. Arguments to be passed to \code{\link{rewire_graph}}}
 
-\item{ncpus}{Integer scalar. Number of CPU, passed to \code{\link[parallel:makeCluster]{makeCluster}}
-from the \pkg{parallel} package.}
-
-\item{cl}{An object of class \code{c("SOCKcluster", "cluster")}}
+\item{...}{Further arguments passed to the method (see details).}
 
 \item{x}{A \code{diffnet_boot} class object.}
-
-\item{...}{Ignored in the \code{print} method. Otherwise, arguments passed to \code{\link{hist}}.}
 
 \item{main}{Character scalar. Title of the histogram.}
 
@@ -43,14 +37,10 @@ from the \pkg{parallel} package.}
 \item{annotated}{Logical scalar. When TRUE marks the observed data average and the simulated data average.}
 }
 \value{
-An object of class \code{diffnet_bot}. As in \code{boot}
-function of the \pkg{boot} package, a list with the following elements:
-\item{t0}{The observed value of statistic applied to data.}
-\item{t}{A matrix with R rows each of which is a bootstrap replicate of the result of calling statistic.}
-\item{R}{The value of R as passed to \code{boot_net}.}
+A list of class \code{diffnet_bot} containing the following:
 \item{graph}{The graph passed to \code{boot_net}.}
-\item{seed}{The value of \code{.Random.seed} wheb \code{boot_net} started to work.}
-\item{statistic}{The function \code{statistic} passed to \code{boot_net}}
+\item{statistic}{The function \code{statistic} passed to \code{boot_net}.}
+\item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 
 The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 }
@@ -61,13 +51,52 @@ a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
 against the empirical distribution of it obtained from rewiring the network.
 }
 \details{
+\code{boot_net} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
+\pkg{boot} package. As a difference, instead of resampling data the function performs
+rewiring of the graph in each repetition using \code{\link{rewire_graph}} and applies
+the function defined by the user in \code{statistic}.
+
+In \code{boot_net} \code{\dots} are passed to \code{boot}, otherwise are passed
+to the corresponding method (\code{\link{hist}} for instance).
+
 From the \code{print} method, p-value for the null of the statistic been
 equal between graph and its rewired versions is computed following Davidson
 & MacKinnon
 
-\deqn{p(\tau)=2\times\min\left(EDF(\tau), 1-EDF(\tau)\right)}{p(t) = 2*min[EDF(t), 1-EDF(t)]}
+\deqn{%
+p(\tau)=2\times\min\left(\mbox{Pr}(t\leq\tau), \mbox{Pr}(t\geq\tau)\right) %
+}{ %
+p(tau) = 2*min[Pr(t<=tau), Pr(t>=tau)] %
+}
 
-Where \eqn{EDF} is the Empirical Distribution Function.
+Where \eqn{\mbox{Pr}\{\cdot\}}{Pr(.)} is approximated using the
+Empirical Distribution Function retrieved from the simulations.
+}
+\examples{
+# Creating a random graph
+set.seed(881)
+diffnet <- rdiffnet(100, 10)
+
+# Testing structure-dependency of threshold
+res <- boot_net(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
+res
+hist(res)
+
+# Adding a legend
+legend("topright", bty="n",
+ legend=c(
+   expression(t[0]:~Baseline),
+   expression(t:~Rewired~average)
+ )
+ )
+
+# Running in parallel fashion
+\dontrun{
+res <- boot_net(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100,
+ncpus=4, parallel="multicore")
+res
+hist(res)
+}
 }
 \author{
 Vega Yon

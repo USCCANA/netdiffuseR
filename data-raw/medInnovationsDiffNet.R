@@ -15,6 +15,10 @@ surveyed <- medInnovations$id
 for (i in netvars)
   medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
 
+# Adding autoedges to farmers that are isolated
+isolated <- which(apply(medInnovations[, netvars], 1, function(x) all(is.na(x))))
+medInnovations[isolated, netvars[1]] <- medInnovations$id[isolated]
+
 # Reshaping data
 medInnovations.long <- reshape(
   medInnovations[,c(othervars, netvars)], v.names= "net",
@@ -40,21 +44,30 @@ used.vertex <- rownames(graph[[1]])
 toa <- medInnovations$toa[medInnovations$id %in% used.vertex]
 
 # Creating a diffnet -----------------------------------------------------------
-diffnet <- as_diffnet(graph, toa)
+medInnovationsDiffNet <- as_diffnet(graph, toa)
+diffnet.attrs(medInnovationsDiffNet) <-
+  subset(medInnovations, id %in% used.vertex)
 
-# Applying the methods
-diffnet
-summary(diffnet)
+# # Applying the methods
+# diffnet
+# summary(diffnet)
+#
+# d <- sqrt(dgr(diffnet$graph[[diffnet$meta$nper]]))
+# d <- (d - min(d) + 1)/(max(d) - min(d) + 1)*2
+# plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE,
+#              slices=seq(1, diffnet$meta$nper, length.out = 6),
+#              mai = c(0,0,0,0), vertex.cex = d)
+#
+# # Nice plots
+# plot(diffnet, t=18)
+# plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=40)
+# plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
+# plot_adopters(diffnet)
+# plot_hazard(diffnet)
 
-d <- sqrt(dgr(diffnet$graph[[diffnet$meta$nper]]))
-d <- (d - min(d) + 1)/(max(d) - min(d) + 1)*2
-plot_diffnet(diffnet, displayisolates = FALSE, displaylabels=FALSE,
-             slices=seq(1, diffnet$meta$nper, length.out = 6),
-             mai = c(0,0,0,0), vertex.cex = d)
+save(medInnovationsDiffNet, file="data/medInnovationsDiffNet.rdata")
 
-# Nice plots
-plot(diffnet, t=18)
-plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=40)
-plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
-plot_adopters(diffnet)
-plot_hazard(diffnet)
+# z<-boot_net(
+#   medInnovationsDiffNet,
+#   function(x) mean(threshold(x), na.rm = TRUE),
+#   R=1000, ncpus=8, parallel="multicore")

@@ -48,6 +48,10 @@
 #' will be dropped from the graph, thus, reducing the size of the adjacency
 #' matrix by not including isolated vertices.
 #'
+#' Notice that the best way of adding isolated vertices is to include them in the
+#' edgelist as connecting to themselves. The option \code{self=FALSE} will not
+#' drop the isolated vertices but the algorithm will include them on the graph.
+#'
 #' The function performs several checks before starting to create the adjacency
 #' matrix. These are:
 #' \itemize{
@@ -378,7 +382,7 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
   switch(class(obj),
     numeric = toa_mat.numeric(obj, labels, t0, t1),
     integer = toa_mat.integer(obj, labels, t0, t1),
-    diffnet = obj[c("adopt","cumadopt")],
+    diffnet = with(obj, list(adopt=adopt,cumadopt=cumadopt)),
     stopifnot_graph(obj)
   )
   # UseMethod("toa_mat")
