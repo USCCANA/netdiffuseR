@@ -38,6 +38,7 @@
 #' or static (\code{"static"}).
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param no.print Logical scalar. When TRUE suppress screen messages.
+#' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -55,7 +56,21 @@
 #'
 #' In the case of the \code{summary} method, Moran's I is calculated over the
 #' cumulative adoption matrix using as weighting matrix the inverse of the geodesic
-#' distance matrix. All this via \code{\link{moran}}.
+#' distance matrix. All this via \code{\link{moran}}. For each time period \code{t},
+#' this is calculated as:
+#'
+#' \preformatted{
+#'  m = moran(C[,t], G^(-1))
+#' }
+#'
+#' Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
+#' \code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
+#' and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
+#' Moran's I is not reported. This can be useful when the graph is particuarly
+#' large (tens of thousands of vertices) as when doing so geodesic distances are
+#' not calculated, which avoids allocating a square matrix of size \eqn{n} on
+#' the memory. As a difference from the adjacency matrices, the matrix with the
+#' geodesic distances can't be stored as a sparse matrix (saving space).
 #'
 #' @section Auxiliary functions:
 #'

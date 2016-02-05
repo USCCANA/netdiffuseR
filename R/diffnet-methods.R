@@ -67,7 +67,8 @@ print.diffnet <- function(x, ...) {
 
 #' @export
 #' @rdname as_diffnet
-summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
+summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
+                            skip.moran=FALSE, ...) {
   # Subsetting
   if (!length(slices)) slices <- 1:object$meta$nper
 
@@ -92,14 +93,15 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
   }))
 
   # Computing moran's I
-  m <- vector("numeric", length(slices))
-  for (i in 1:length(slices)) {
-    g <- 1/(1e-15 + sna::geodist(as.matrix(object$graph[[slices[i]]]), meta$n,
-            count.paths=FALSE)$gdist)
-    diag(g) <- 0
-    m[i] <- moran(object$cumadopt[,slices[i]], g)
+  if (!skip.moran) {
+    m <- vector("numeric", length(slices))
+    for (i in 1:length(slices)) {
+      g <- 1/(1e-15 + sna::geodist(as.matrix(object$graph[[slices[i]]]), meta$n,
+              count.paths=FALSE)$gdist)
+      diag(g) <- 0
+      m[i] <- moran(object$cumadopt[,slices[i]], g)
+    }
   }
-
   # Computing adopters, cumadopt and hazard rate
   ad <- colSums(object$adopt[,slices,drop=FALSE])
   ca <- t(cumulative_adopt_count(object$cumadopt))[slices,-3, drop=FALSE]
@@ -114,15 +116,16 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
     cum_adopt = ca[,1],
     cum_adopt_pcent = ca[,2],
     hazard = hr,
-    density=d,
-    moran = m
+    density=d
   )
+
+  if (!skip.moran) out$moran <- m
 
   if (no.print) return(out)
 
   # Function to print data.frames differently
   header <- c(" Period ","Adopters","Cum Adopt.", "Cum Adopt. %",
-              "Hazard Rate","Density", "Moran's I")
+              "Hazard Rate","Density", if (!skip.moran) "Moran's I" else NULL)
   slen   <- nchar(header)
   hline  <- paste(sapply(sapply(slen, rep.int, x="-"), paste0, collapse=""),
                   collapse=" ")
@@ -138,7 +141,7 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE, ...) {
     cat(sprintf(
       paste0("%",slen,"s", collapse=" "),
       qf(meta$pers[slices[i]],0), qf(out[i,1],0), qf(out[i,2],0), qf(out[i,3]),
-      ifelse(i==1, "-",qf(out[i,4])), qf(out[i,5]), qf(out[i,6])
+      ifelse(i==1, "-",qf(out[i,4])), qf(out[i,5]), if (!skip.moran) qf(out[i,6]) else ""
     ), "\n")
   }
 

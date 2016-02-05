@@ -40,7 +40,8 @@ diffnet.toa(graph, i) <- value
 
 \method{print}{diffnet}(x, ...)
 
-\method{summary}{diffnet}(object, slices = NULL, no.print = FALSE, ...)
+\method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
+  skip.moran = FALSE, ...)
 
 \method{[}{diffnet}(x, i, j, drop = FALSE)
 }
@@ -107,6 +108,8 @@ is ignored.}
 
 \item{no.print}{Logical scalar. When TRUE suppress screen messages.}
 
+\item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
+
 \item{j}{Ignored.}
 
 \item{drop}{Ignored}
@@ -158,7 +161,21 @@ where \code{d=sqrt(dgr(graph))}.
 
 In the case of the \code{summary} method, Moran's I is calculated over the
 cumulative adoption matrix using as weighting matrix the inverse of the geodesic
-distance matrix. All this via \code{\link{moran}}.
+distance matrix. All this via \code{\link{moran}}. For each time period \code{t},
+this is calculated as:
+
+\preformatted{
+ m = moran(C[,t], G^(-1))
+}
+
+Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
+\code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
+and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
+Moran's I is not reported. This can be useful when the graph is particuarly
+large (tens of thousands of vertices) as when doing so geodesic distances are
+not calculated, which avoids allocating a square matrix of size \eqn{n} on
+the memory. As a difference from the adjacency matrices, the matrix with the
+geodesic distances can't be stored as a sparse matrix (saving space).
 }
 \section{Auxiliary functions}{
 
