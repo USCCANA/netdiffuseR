@@ -15,7 +15,7 @@ test_that("Simple extraction throught clases", {
     cbind(d=rowMeans(dgr(diffnet)))
 
   diffnet.attrs(diffnet, attr.class = "static") <-
-    cbind(threshold(diffnet, wtype=1))
+    cbind(threshold(diffnet))
 
   # Computing egonets
   en_diffnet <- egonet_attrs(diffnet, fun=function(x) {

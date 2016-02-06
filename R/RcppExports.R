@@ -180,8 +180,8 @@ degree_cpp <- function(adjmat, cmode = 2L, undirected = TRUE, self = FALSE) {
     .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat, cmode, undirected, self)
 }
 
-exposure_cpp <- function(graph, cumadopt, wtype = 0L, v = 1.0, undirected = TRUE, normalized = TRUE, n = 0L, T = 0L) {
-    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, wtype, v, undirected, normalized, n, T)
+exposure_cpp <- function(graph, cumadopt, attrs, outgoing = TRUE, valued = TRUE, normalized = TRUE) {
+    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, attrs, outgoing, valued, normalized)
 }
 
 cumulative_adopt_count_cpp <- function(cumadopt) {

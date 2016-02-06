@@ -174,3 +174,4 @@ To-do list
 -   Use spells? (`select_egoalter` would use this)
 -   Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
 -   Double check all functions using adjacency matrix values.
+-   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.

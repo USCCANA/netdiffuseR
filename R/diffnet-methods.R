@@ -55,7 +55,7 @@ print.diffnet <- function(x, ...) {
     "Dynamic network of class -diffnet-",
     paste(" # of nodes        :", meta$n),
     paste(" # of time periods :", meta$nper),
-    paste(" Adoption rate     :",
+    paste(" Final prevalence  :",
           formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f")
           ),
     paste(" Type              :", ifelse(meta$undirected, "undirected", "directed")),
@@ -390,7 +390,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' and threshold level, y-axis.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param exposure \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
+#' @param expo \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param t0 Integer scalar. Passed to \code{\link{threshold}}.
 #' @param undirected Logical scalar.
@@ -424,7 +424,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' adopt <- toa_mat(toa)
 #'
 #' # Computing exposure
-#' expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+#' expos <- exposure(graph, adopt$cumadopt)
 #'
 #' plot_threshold(graph, expos, toa)
 #'
@@ -434,7 +434,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @export
 #' @author Vega Yon
 plot_threshold <- function(
-  graph, exposure, toa, t0=min(toa, na.rm = TRUE),
+  graph, expo, toa, t0=min(toa, na.rm = TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
   vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
@@ -442,17 +442,20 @@ plot_threshold <- function(
   include.grid = TRUE, bty="n", ...
 ) {
 
-  if (missing(exposure))
-    if (!inherits(graph, "diffnet"))
-      stop("-exposure- should be provided when -graph- is not of class 'diffnet'")
+  if (missing(expo))
+    if (!inherits(graph, "diffnet")) {
+      stop("-expo- should be provided when -graph- is not of class 'diffnet'")
+    } else {
+      expo <- exposure(graph)
+    }
 
   switch (class(graph),
     array = plot_threshold.array(
-      graph, exposure, toa, t0, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...),
     list = plot_threshold.list(
-      graph, exposure, toa, t0, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...),
     diffnet = {
@@ -462,7 +465,7 @@ plot_threshold <- function(
       # graph$toa <- graph$toa - min(graph$meta$pers) + 1L
 
       plot_threshold.list(
-      graph$graph, with(graph, exposure.list(graph, cumadopt)),
+      graph$graph, expo,
       graph$toa, t0=graph$meta$pers[1], graph$meta$undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, ...)
@@ -483,7 +486,7 @@ plot_threshold.array <- function(graph, ...) {
 # @export
 # @rdname plot_threshold
 plot_threshold.list <- function(
-  graph, exposure=NULL, toa, t0=min(toa, na.rm=TRUE),
+  graph, expo=NULL, toa, t0=min(toa, na.rm=TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
   vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
@@ -500,7 +503,7 @@ plot_threshold.list <- function(
   }
 
   # Creating the pos vector
-  y <- threshold(exposure, toa, t0)
+  y <- threshold(expo, toa, t0)
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, amount = .25)
@@ -582,6 +585,8 @@ plot_threshold.list <- function(
 #' @param color.palette a color palette function to be used to assign colors in the plot (see \code{\link{filled.contour}}).
 #' @param include.grid Logical scalar. When TRUE, the grid of the graph is drawn.
 #' @param ... Additional parameters to be passed to \code{\link{filled.contour}.}
+#' @param exclude.zeros Logical scalar. When TRUE, observations with zero values
+#' in infect or suscept are excluded from the graph. This is done explicitly when \code{logscale=TRUE}.
 #' @details
 #'
 #' This plotting function was inspired by Aral, S., & Walker, D. (2012).
@@ -618,7 +623,7 @@ plot_infectsuscep <- function(
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
   xlab="Infectiousness of ego", ylab="Susceptibility of ego",
   sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
-  include.grid=TRUE, ...
+  include.grid=TRUE, exclude.zeros=FALSE,...
 ) {
   if (!inherits(graph, "diffnet") && missing(toa))
     stop("-toa- should be provided when -graph- is not of class 'diffnet'")
@@ -626,10 +631,10 @@ plot_infectsuscep <- function(
   switch (class(graph),
     array = plot_infectsuscep.array(
       graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, ...),
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...),
     list = plot_infectsuscep.list(
       graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, ...),
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...),
     diffnet = {
       # If graph is diffnet, then we should do something different (because the
       # first toa may not be the firts one as toa may be stacked to the right.
@@ -638,7 +643,7 @@ plot_infectsuscep <- function(
 
       plot_infectsuscep.list(
       graph$graph, graph$toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, ...)
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...)
       },
     stopifnot_graph(graph)
   )
@@ -664,7 +669,7 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
                               ylab="Susceptibility of ego",
                               sub=ifelse(logscale, "(in log-scale)", NA),
                               color.palette=function(n) grey(n:1/n),
-                              include.grid=TRUE,
+                              include.grid=TRUE, exclude.zeros=FALSE,
                               ...) {
   # Computing infect and suscept
   infect <- infection(graph, toa, normalize, K, r, expdiscount)
@@ -687,20 +692,43 @@ plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
     complete <- vector(length=length(infectp))
   }
 
-  if (!length(infectp)) {
-    if (logscale) warning("Can't apply logscale (undefined values).")
-    logscale <- FALSE
-    coords <- netdiffuseR::grid_distribution(x=infect, y=suscep, bins)
-  } else {
-    coords <- netdiffuseR::grid_distribution(x=infectp, y=suscepp, bins)
+  if ((!length(infectp) | !length(suscepp)) & logscale)
+    stop("Can't apply logscale (undefined values).")
+
+  # If excluding zeros
+  include <- rep(TRUE,length(toa))
+  if (exclude.zeros) {
+    include[!infectp | !suscepp] <- FALSE
   }
+
+  # Computing infect & suscept
+  coords <- netdiffuseR::grid_distribution(x=infectp[include], y=suscepp[include], bins)
+
 
   # Nice plot
   n <- sum(coords$z)
   with(coords, filled.contour(
-    x,y,z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, color.palette =color.palette,
+    x,y,
+    z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, color.palette =color.palette,
+    xlim=range(pretty(x)), ylim=range(pretty(y)),
     plot.axes={
-      axis(1);axis(2)
+
+      # Preparing the tickmarks for the axis
+      xticks  <- pretty(x)
+      yticks  <- pretty(y)
+      if (logscale) {
+        xlticks <- exp(xticks)
+        ylticks <- exp(yticks)
+      } else {
+        xlticks <- xticks
+        ylticks <- yticks
+      }
+
+      # Drawing the axis
+      axis(1, xticks, sprintf("%.2f",xlticks))
+      axis(2, yticks, sprintf("%.2f",ylticks))
+
+      # Putting the grid
       if (include.grid) grid()
     }, nlevels=nlevels, ...))
   # if (include.grid) grid()

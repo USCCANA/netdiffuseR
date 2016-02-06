@@ -4,8 +4,8 @@
 \alias{exposure}
 \title{Ego exposure}
 \usage{
-exposure(graph, cumadopt, wtype = 0, v = 1,
-  undirected = getOption("diffnet.undirected"), normalized = TRUE, ...)
+exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
+  valued = getOption("diffnet.valued"), normalized = TRUE)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -13,16 +13,16 @@ exposure(graph, cumadopt, wtype = 0, v = 1,
 \item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
 
-\item{wtype}{Integer scalar. Weighting type (see details).}
+\item{attrs}{A numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).}
 
-\item{v}{Numeric scalar.  Constant for Structural Equivalence, passed to \code{\link{struct_equiv}}}
+\item{alt.graph}{A dynamic graph that should be used instead of \code{graph} (see details).}
 
-\item{undirected}{Logical scalar. TRUE if the graph is undirected.}
+\item{outgoing}{Logical scalar. When TRUE, computed using outgoing ties.}
+
+\item{valued}{Logical scalar. When FALSE, values of \code{graph} are set to one.}
 
 \item{normalized}{Logical scalar. When true, the exposure will be between zero
 and one (see details).}
-
-\item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}}
 }
 \value{
 A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
@@ -36,6 +36,8 @@ attribute weighted (5) network-metric weighted (e.g., central nodes have more
 influence), and attribute-weighted (e.g., based on homophily or tie strength).
 }
 \details{
+DETAILS NOT UP TO DATE.
+
 When \code{wtype=0} (default), exposure is defined as follows
 
 \deqn{E_{n(t)}=\frac{S_{nn}\times A_{n(t)}}{S_{n+}}}{%

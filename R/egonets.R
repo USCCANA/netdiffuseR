@@ -125,7 +125,7 @@ egonet_attrs <- function(
   switch(
     class(graph),
     diffnet = egonet_attrs.list(
-      graph$graph, attrs, if (!length(V)) graph$meta$ids else V, outer, fun, as.df, self, valued),
+      graph$graph, attrs, if (!length(V)) 1:graph$meta$n else V, outer, fun, as.df, self, valued),
     list      = egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, valued),
     matrix    = egonet_attrs_cpp(methods::as(graph, "dgCMatrix"), V, attrs, outer, self, valued),
     dgCMatrix = egonet_attrs_cpp(graph, V, attrs, outer, self, valued),

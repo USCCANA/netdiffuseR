@@ -46,8 +46,8 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   diffnet <- as_diffnet(graph, toa)
 
   # Computing exposure
-  expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
-  exposar <- exposure(graphar, adopt$cumadopt, undirected = FALSE)
+  expos <- exposure(graph, adopt$cumadopt)
+  exposar <- exposure(graphar, adopt$cumadopt)
   exposdn <- exposure(diffnet)
 
   # Generating graph + number

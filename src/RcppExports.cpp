@@ -292,20 +292,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // exposure_cpp
-arma::mat exposure_cpp(List graph, const arma::mat& cumadopt, int wtype, double v, bool undirected, bool normalized, int n, int T);
-RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP wtypeSEXP, SEXP vSEXP, SEXP undirectedSEXP, SEXP normalizedSEXP, SEXP nSEXP, SEXP TSEXP) {
+arma::mat exposure_cpp(List graph, arma::mat cumadopt, arma::mat attrs, bool outgoing, bool valued, bool normalized);
+RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP attrsSEXP, SEXP outgoingSEXP, SEXP valuedSEXP, SEXP normalizedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< List >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type cumadopt(cumadoptSEXP);
-    Rcpp::traits::input_parameter< int >::type wtype(wtypeSEXP);
-    Rcpp::traits::input_parameter< double >::type v(vSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cumadopt(cumadoptSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type attrs(attrsSEXP);
+    Rcpp::traits::input_parameter< bool >::type outgoing(outgoingSEXP);
+    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
     Rcpp::traits::input_parameter< bool >::type normalized(normalizedSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type T(TSEXP);
-    __result = Rcpp::wrap(exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized, n, T));
+    __result = Rcpp::wrap(exposure_cpp(graph, cumadopt, attrs, outgoing, valued, normalized));
     return __result;
 END_RCPP
 }

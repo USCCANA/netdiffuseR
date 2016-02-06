@@ -76,6 +76,7 @@ summary(diffnet)
 
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros = TRUE)
 ```
 
 ### Threshold
@@ -122,4 +123,5 @@ plot_diffnet(diffnet, vertex.cex = 2, slices=c(1,7,15,20))
 - Use spells? (`select_egoalter` would use this)
 - Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
 - Double check all functions using adjacency matrix values.
+- Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
 

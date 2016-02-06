@@ -2,14 +2,17 @@
 title: "netdiffuseR showcase: Medical Innovations"
 author: "George G. Vega Yon"
 date: "January 13, 2016"
-output:
-  pdf_document:
-    keep_tex: true
+output: rmarkdown::html_vignette
+header-includes: \usepackage{graphicx}
+vignette: >
+  %\VignetteIndexEntry{Visualizing Diffusion of Innovations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
 
 ```{r Setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(out.width = ".7\\linewidth", fig.align = "center", fig.width = 7, fig.height = 7)
+opts_chunk$set(out.width = 600, fig.align = "center", fig.width = 7, fig.height = 7)
 ```
 
 # Data preprocessing
@@ -91,9 +94,8 @@ summary(diffnet)
 
 And the ones included in the package:
 
-```{r graphs, out.width=".7\\linewidth"}
+```{r graphs}
 plot_diffnet(diffnet, slices=c(1,4,8,12,16,18))
-plot_infectsuscep(diffnet, K=5, logscale = TRUE, bins=20)
 plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
 plot_adopters(diffnet)
 plot_hazard(diffnet)
@@ -101,10 +103,10 @@ plot_hazard(diffnet)
 
 # Statistical test
 
-Now, we want to know if the threshold model fits here. In order to do so we will use the structure dependency test built in the package, `boot_net`. We will apply this both in a aggregated level and by city. Firts we need to subset the data:
+Now, we want to know if the threshold model fits here. In order to do so we will use the structure dependency test built in the package, `boot_net`. We will apply this both in a aggregated level and by city. First we need to subset the data:
 
 ```{r Subsetting}
-# Getting cities ids so we can subset the vertices and run the test in differetn
+# Get cities ids so we can subset the vertices and run the test by city.
 city <- diffnet$vertex.static.attrs[,"city"]
 
 # Subsetting diffnet, notice that we can use either indices or ids to create a
@@ -127,7 +129,12 @@ plot_threshold(diffnet_city4, vertex.label = "", main="Threshold and ToA\nin Cit
 par(oldpar)
 ```
 
-Now we run the test for each city. Observe that we can use the __parallel__ package to speedup the test as we will do in the first two cities using 2 and four cores respectively (this is done thanks to the __boot__ package).
+```{r}
+plot_infectsuscep(diffnet_city1, K=5, logscale = TRUE, bins=20)
+```
+
+
+Now we run the test for each city. Observe that we can use the __parallel__ package to speedup the test as we will do in the first two cities using two and four cores respectively (this is done thanks to the __boot__ package).
 
 ```{r Stat-test}
 # Defining the statistic
@@ -150,15 +157,21 @@ test4
 testall
 ```
 
-From we can see, City 1 is the only place where threshold seems to be struture dependent, as after simulating 2,000 networks (by rewiring each one of these so all have the same number of vertices and density) the average threshold of the rewired networks and the observed network are statistically different. Now we can make an histogram of the outcomes by city:
+This shows that City 1 is the only place where threshold seems to be struture dependent, as after simulating 2,000 networks (by rewiring each one of these so all have the same number of vertices and density) the average threshold of the rewired networks and the observed network are statistically different. Now we can make an histogram of the outcomes by city:
 
 ```{r Histograms}
+# To make it nicer, we change the parameters in using par
+# (see ?par)
 oldpar <- par(no.readonly = TRUE)
 par(mfrow=c(2,2))
+
+# Now we use the hist method for the -diffnet_boot- class
 hist(test1, main="Distribution of Statistic on rewired\nnetwork (City 1)")
 hist(test2, main="Distribution of Statistic on rewired\nnetwork (City 2)")
 hist(test3, main="Distribution of Statistic on rewired\nnetwork (City 3)")
 hist(test4, main="Distribution of Statistic on rewired\nnetwork (City 4)")
+
+# Returning to the previous graphical parameters
 par(oldpar)
 ```
 

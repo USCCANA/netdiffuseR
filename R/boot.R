@@ -121,10 +121,10 @@ print.diffnet_boot <- function(x, ...) {
         "# nodes           : ", x$graph$meta$n,"\n",
         "# of time periods : ", x$graph$meta$nper,"\n",
         paste(rep("-",80), collapse=""),"\n",
-        " H0: t - t0 = 0\n",
-        " t0      = ", boot$t0, "\n",
-        " t       = ", tmean, "\n",
-        " p-value = ", sprintf("%.5f",test), sep="")
+        " H0: t - t0 = 0 (No structure dependency)\n",
+        "   t0 (observed) = ", boot$t0, "\n",
+        "   t (simulated) = ", tmean, "\n",
+        "   p-value = ", sprintf("%.5f",test), sep="")
   })
   invisible(x)
 }

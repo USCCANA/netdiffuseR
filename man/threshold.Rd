@@ -28,16 +28,18 @@ set.seed(783)
 toa <- sample.int(4, 5, TRUE)
 graph <- rgraph_er(n=5, t=max(toa) - min(toa) + 1)
 
-# Computing exposure using Structural Equivalnece (wtype=1)
+# Computing exposure using Structural Equivalnece
 adopt <- toa_mat(toa)
-expo <- exposure(graph, adopt$cumadopt, wtype = 1)
+se <- struct_equiv(graph)
+se <- lapply(se, function(x) methods::as((x$SE)^(-1), "dgCMatrix"))
+expo <- exposure(graph, adopt$cumadopt, alt.graph=se)
 
 # Retrieving threshold
 threshold(expo, toa)
 
 # We can do the same by creating a diffnet object
 diffnet <- as_diffnet(graph, toa)
-threshold(diffnet, wtype=1)
+threshold(diffnet, alt.graph=se)
 }
 \author{
 Vega Yon, Dyal, Hayes & Valente

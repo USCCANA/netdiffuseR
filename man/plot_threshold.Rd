@@ -4,7 +4,7 @@
 \alias{plot_threshold}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, exposure, toa, t0 = min(toa, na.rm = TRUE),
+plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE),
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
   ylab = "Threshold", vertex.cex = "degree", vertex.col = "blue",
@@ -15,7 +15,7 @@ plot_threshold(graph, exposure, toa, t0 = min(toa, na.rm = TRUE),
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{exposure}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
+\item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
 \item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
 
@@ -67,7 +67,7 @@ toa <- sample(2000:(2000+nper-1), n, TRUE)
 adopt <- toa_mat(toa)
 
 # Computing exposure
-expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+expos <- exposure(graph, adopt$cumadopt)
 
 plot_threshold(graph, expos, toa)
 

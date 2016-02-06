@@ -61,7 +61,7 @@ graph <- rgraph_er(n,nper, p=.3, undirected = FALSE)
 adopt <- toa_mat(toa)
 
 # Computing exposure
-expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+expos <- exposure(graph, adopt$cumadopt)
 
 x<-plot_threshold(graph, expos, toa, undirected = FALSE)
 plot_threshold(graph, expos, toa, vertex.cex = 1/4)
@@ -72,7 +72,7 @@ toa[2] <- NA
 adopt <- toa_mat(toa)
 
 # Computing exposure
-expos <- exposure(graph, adopt$cumadopt, undirected = FALSE)
+expos <- exposure(graph, adopt$cumadopt)
 
 plot_threshold(graph, expos, toa, undirected = FALSE)
 plot_threshold(graph, expos, toa, vertex.cex = 1/4)

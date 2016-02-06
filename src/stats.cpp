@@ -69,6 +69,54 @@ arma::colvec degree_cpp(
 
 // [[Rcpp::export]]
 arma::mat exposure_cpp(
+  List graph,
+  arma::mat cumadopt,
+  arma::mat attrs,
+  bool outgoing = true,
+  bool valued = true,
+  bool normalized = true
+) {
+
+  // Getting parameters
+  int T = graph.size();
+  int n = cumadopt.n_rows;
+
+  // Creating output and auxiliar objects
+  arma::mat exposure(n,T);
+  arma::colvec NUMERATOR(n);
+  arma::colvec DENOMINATOR(n);
+
+  for (int t=0;t<T;t++) {
+    arma::sp_mat graph_t = graph[t];
+
+    // Checking if need to fill with ones
+    if (!valued) {
+      graph_t = arma::spones(graph_t);
+      graph_t.diag().zeros();
+    }
+
+    // Checking if incomming
+    if (!outgoing) graph_t = graph_t.t();
+
+    // Computing numerator
+    NUMERATOR = graph_t * (attrs.col(t) % cumadopt.col(t));
+
+    // Exposure for the time period
+    if (normalized) {
+      DENOMINATOR = graph_t * attrs.col(t) + 1e-15;
+      exposure.col(t) = NUMERATOR / DENOMINATOR;
+    } else {
+      exposure.col(t) = NUMERATOR;
+    }
+  }
+
+  // Returning
+  return exposure;
+}
+
+/*
+// [[Rcpp::export]]
+arma::mat exposure_cpp(
     List graph, const arma::mat & cumadopt, int wtype = 0,
     double v = 1.0, bool undirected=true, bool normalized=true,
     int n=0, int T=0) {
@@ -79,40 +127,17 @@ arma::mat exposure_cpp(
 
   // Variables initialization
   arma::mat exposure(n,T);
-
-  // Initializing containers
-  List se(3);
-  arma::mat semat(n,n);
-
   arma::colvec NUMERATOR(n);
   arma::colvec DENOMINATOR(n);
-  // arma::mat graph_t(n,n);
 
-  // Filling the first and last with zeros
-  // may skip this in the future.
-//   exposure.col(0).fill(0.0);
-//   exposure.col(T-1).fill(0.0);
-
-  // for(int t=0;t<(T-1);t++) {
   for(int t=0;t<T;t++) {
-    // graph_t = graph_cube.slice(t);
+
     arma::sp_mat graph_t = graph[t];
+
     // Computing weights
-
-    if (wtype==0) { // Unweighted
+    if (wtype==0 || wtype == 1) { // Unweighted or SE
       NUMERATOR = graph_t*cumadopt.col(t);
       if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
-    }
-    else if (wtype == 1) {// SE
-
-      NUMERATOR = graph_t*cumadopt.col(t);
-      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
-      // Calculating the inverse of the SE distance
-//       se = struct_equiv_cpp(graph_t, v, false, true);
-//       semat       = (as< arma::mat >(se["SE"]));
-//
-//       NUMERATOR   = semat * cumadopt.col(t);
-//       if (normalized) DENOMINATOR = sum(semat, 1) + 1e-15;
     }
     else if (wtype > 1 && wtype <= 4) { // Degree
       arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
@@ -125,8 +150,6 @@ arma::mat exposure_cpp(
     }
 
     // Filling the output
-//     if (normalized) exposure.col(t+1) = NUMERATOR / DENOMINATOR;
-//     else exposure.col(t+1) = NUMERATOR;
     if (normalized) exposure.col(t) = NUMERATOR / DENOMINATOR;
     else exposure.col(t) = NUMERATOR;
 
@@ -134,7 +157,7 @@ arma::mat exposure_cpp(
 
   return exposure;
 }
-
+*/
 
 /** *R
 library(sna)

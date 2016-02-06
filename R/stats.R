@@ -147,13 +147,14 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
-#' @param wtype Integer scalar. Weighting type (see details).
-#' @param undirected Logical scalar. TRUE if the graph is undirected.
+#' @param attrs A numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
+#' @param alt.graph A dynamic graph that should be used instead of \code{graph} (see details).
+#' @param outgoing Logical scalar. When TRUE, computed using outgoing ties.
+#' @param valued Logical scalar. When FALSE, values of \code{graph} are set to one.
 #' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
-#' @param v Numeric scalar.  Constant for Structural Equivalence, passed to \code{\link{struct_equiv}}
-#' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}
 #' @details
+#' DETAILS NOT UP TO DATE.
 #'
 #' When \code{wtype=0} (default), exposure is defined as follows
 #'
@@ -195,25 +196,38 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
-exposure <- function(graph, cumadopt, wtype = 0, v = 1.0,
-                     undirected=getOption("diffnet.undirected"), normalized=TRUE,
-                     ...) {
+exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRUE,
+                     valued=getOption("diffnet.valued"), normalized=TRUE) {
 
+  # Checking cumadopt mat
   if (missing(cumadopt))
-    if (!inherits(graph, "diffnet"))
+    if (!inherits(graph, "diffnet")) {
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
+    } else {
+      cumadopt <- graph$cumadopt
+    }
+
+  # Checking attrs
+  if (!length(attrs)) {
+    attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))
+  }
+
+  # Checking alt graph
+  if (length(alt.graph)) graph <- alt.graph
 
   switch (class(graph),
-    array = exposure.array(graph, cumadopt, wtype, v, undirected, normalized, ...),
-    list = exposure.list(graph, cumadopt, wtype, v, undirected, normalized, ...),
-    diffnet = exposure.list(graph$graph, graph$cumadopt, wtype, v, graph$meta$undirected, normalized, ...),
+    array = exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized),
+    list = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
+    diffnet = exposure.list(graph$graph, cumadopt, attrs, outgoing, valued, normalized),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname exposure
 # @export
-exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE, ...) {
+exposure.array <- function(
+  graph, cumadopt, attrs,
+  outgoing, valued, normalized) {
 
   # Preparing the data
   n <- nrow(graph)
@@ -222,14 +236,13 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   for (i in 1:t)
     graphl[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  # Computing struct equiv
-  if (wtype==1) {
-    graph <- lapply(struct_equiv(graph, v, ...), function(x) {
-      z <- x$SE^(-1)
-      z[!is.finite(z)] <- 0
-      methods::as(z, "dgCMatrix")
-    })
-  }
+  # attrs can be either
+  #  degree, indegree, outdegree, or a user defined vector.
+  #  by default is user equal to 1
+  da <- dim(attrs)
+  if (!length(da)) stop("-attrs- must be a matrix of size n by T.")
+  if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                     "It must be of size that -cumadopt-.")
 
   # Dimnames
   rn <- rownames(cumadopt)
@@ -239,27 +252,28 @@ exposure.array <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOp
   if (!length(tn)) tn <- 1:ncol(cumadopt)
 
   # Calculating the exposure, and asigning names
-  output <- exposure_cpp(graphl, cumadopt, wtype, v, undirected, normalized, n, t)
+  output <- exposure_cpp(graphl, cumadopt, attrs, outgoing, valued, normalized)
   dimnames(output) <- list(rn, tn)
   output
 }
 
 # @rdname exposure
 # @export
-exposure.list <- function(graph, cumadopt, wtype = 0, v = 1.0, undirected=getOption("diffnet.undirected"), normalized=TRUE, ...) {
+exposure.list <- function(
+  graph, cumadopt, attrs,
+  outgoing, valued, normalized) {
 
-  # Computing struct equiv
-  if (wtype==1) {
-    graph <- lapply(struct_equiv(graph, v, ...), function(x) {
-      z <- x$SE^(-1)
-      z[!is.finite(z)] <- 0
-      methods::as(z, "dgCMatrix")
-    })
-  }
+  # attrs can be either
+  #  degree, indegree, outdegree, or a user defined vector.
+  #  by default is user equal to 1
+  da <- dim(attrs)
+  if (!length(da)) stop("-attrs- must be a matrix of size n by T.")
+  if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                     "It must be of size that -cumadopt-.")
 
   n <- nrow(graph[[1]])
   t <- length(graph)
-  output <- exposure_cpp(graph, cumadopt, wtype, v, undirected, normalized, n, t)
+  output <- exposure_cpp(graph, cumadopt, attrs, outgoing, valued, normalized)
 
   rn <- rownames(cumadopt)
   if (!length(rn)) rn <- 1:nrow(cumadopt)
@@ -447,16 +461,18 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' toa <- sample.int(4, 5, TRUE)
 #' graph <- rgraph_er(n=5, t=max(toa) - min(toa) + 1)
 #'
-#' # Computing exposure using Structural Equivalnece (wtype=1)
+#' # Computing exposure using Structural Equivalnece
 #' adopt <- toa_mat(toa)
-#' expo <- exposure(graph, adopt$cumadopt, wtype = 1)
+#' se <- struct_equiv(graph)
+#' se <- lapply(se, function(x) methods::as((x$SE)^(-1), "dgCMatrix"))
+#' expo <- exposure(graph, adopt$cumadopt, alt.graph=se)
 #'
 #' # Retrieving threshold
 #' threshold(expo, toa)
 #'
 #' # We can do the same by creating a diffnet object
 #' diffnet <- as_diffnet(graph, toa)
-#' threshold(diffnet, wtype=1)
+#' threshold(diffnet, alt.graph=se)
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
 threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
@@ -464,7 +480,7 @@ threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
   if (inherits(obj, "diffnet")) {
     t0 <- min(obj$meta$pers)
     times <- obj$toa
-    obj <- exposure.list(obj$graph, obj$cumadopt, ...)
+    obj <- exposure(obj, ...)
   } else {
     if (missing(times))
       stop("-times- should be provided when -obj- is not of class 'diffnet'")
