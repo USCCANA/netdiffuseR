@@ -9,6 +9,11 @@ env:
  global:
    - CRAN: http://cran.rstudio.com
 
+matrix:
+  include:
+    - os: osx
+      sudo: required
+
 r_packages:
   - ape
   - covr
