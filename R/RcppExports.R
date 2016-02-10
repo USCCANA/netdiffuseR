@@ -25,12 +25,12 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
-infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L) {
-    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T)
+infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L, valued = FALSE) {
+    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T, valued)
 }
 
-susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L) {
-    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T)
+susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L, valued = FALSE) {
+    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T, valued)
 }
 
 moran_cpp <- function(x, w) {
@@ -176,8 +176,8 @@ select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
-degree_cpp <- function(adjmat, cmode = 2L, undirected = TRUE, self = FALSE) {
-    .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat, cmode, undirected, self)
+degree_cpp <- function(adjmat0, cmode = 2L, undirected = TRUE, self = FALSE, valued = FALSE) {
+    .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat0, cmode, undirected, self, valued)
 }
 
 exposure_cpp <- function(graph, cumadopt, attrs, outgoing = TRUE, valued = TRUE, normalized = TRUE) {

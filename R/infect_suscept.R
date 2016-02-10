@@ -3,11 +3,13 @@
 #' Calculates infectiousness and susceptibility for each node in the graph
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param times Integer vector with times of adoption (see details)
+#' @param toa Integer vector with times of adoption (see details)
+#' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param normalize Logical. Whether or not to normalize the outcome
 #' @param K Integer scalar. Number of time periods to consider
 #' @param r Numeric scalar. Discount rate used when \code{expdiscount=TRUE}
 #' @param expdiscount Logical scalar. When TRUE, exponential discount rate is used (see details).
+#' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 #' @family statistics
 #' @aliases susceptibility
 #' @keywords univar
@@ -96,29 +98,34 @@
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
 #' @author Vega Yon
-infection <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
+infection <- function(graph, toa, t0=NULL,
+                      normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE,
+                      valued=getOption("diffnet.valued", FALSE)) {
 
-  if (missing(times))
-    if (!inherits(graph, "diffnet"))
-      stop("-times- should be provided when -graph- is not of class 'diffnet'")
+  # Checking the times argument
+  if (missing(toa))
+    if (!inherits(graph, "diffnet")) {
+      stop("-toa- should be provided when -graph- is not of class 'diffnet'")
+    } else {
+      toa <- graph$toa
+      t0    <- min(graph$meta$pers)
+    }
+
+  # Checking baseline time
+  if (!length(t0)) t0 <- min(toa, na.rm=TRUE)
 
   switch (class(graph),
-    array = infection.array(graph, times, normalize, K, r, expdiscount),
-    list = infection.list(graph, times, normalize, K, r, expdiscount),
-    diffnet = {
-      # In the case of diffnet, we have to normalize the time data differently
-      times <- graph$toa - min(graph$meta$pers) + 1L
-      infection.list(graph$graph, times, normalize, K, r, expdiscount,
-                     recode.time=FALSE)
-      },
+    array = infection.array(graph, toa, t0, normalize, K, r, expdiscount, valued),
+    list = infection.list(graph, toa, t0, normalize, K, r, expdiscount, valued),
+    diffnet = infection.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
-  times <- times - min(times, na.rm = TRUE) + 1L
+infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+  toa <- toa - t0 + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
   ngraph <- vector("list", t)
@@ -126,7 +133,7 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- infection_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+  out <- infection_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued)
 
   # Naming
   rn <- rownames(graph)
@@ -138,13 +145,12 @@ infection.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscou
 
 # @rdname infection
 # @export
-infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
-                           expdiscount=FALSE, recode.time=TRUE) {
+infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  if (recode.time) times <- times - min(times, na.rm = TRUE) + 1L
+  toa <- toa - t0 + 1L
 
-  out <- infection_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+  out <- infection_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -156,33 +162,36 @@ infection.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
 
 #' @rdname infection
 #' @export
-susceptibility <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
-  if (missing(times))
-    if (!inherits(graph, "diffnet"))
-      stop("-times- should be provided when -graph- is not of class 'diffnet'")
+susceptibility <- function(graph, toa, t0=NULL, normalize=TRUE, K=1L, r=0.5,
+                           expdiscount=FALSE, valued=getOption("diffnet.valued",FALSE)) {
+  # Checking the toa argument
+  if (missing(toa))
+    if (!inherits(graph, "diffnet")) {
+      stop("-toa- should be provided when -graph- is not of class 'diffnet'")
+    } else {
+      toa <- graph$toa
+      t0    <- min(graph$meta$pers)
+    }
+
+  # Checking baseline time
+  if (!length(t0)) t0 <- min(toa, na.rm=TRUE)
 
   switch (class(graph),
-    array = susceptibility.array(graph, times, normalize, K, r, expdiscount),
-    list = susceptibility.list(graph, times, normalize, K, r, expdiscount),
-    diffnet = {
-      # In the case of diffnet, we have to normalize the time data differently
-      times <- graph$toa - min(graph$meta$pers) + 1L
-      susceptibility.list(graph$graph, times, normalize, K, r, expdiscount,
-                          recode.time=FALSE)
-      },
+    array = susceptibility.array(graph, toa, t0, normalize, K, r, expdiscount, valued),
+    list = susceptibility.list(graph, toa, t0, normalize, K, r, expdiscount, valued),
+    diffnet = susceptibility.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
-                                expdiscount=FALSE, recode.time=TRUE) {
+susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
   t <- length(graph)
   n <- nrow(graph[[1]])
-  if (recode.time) times <- times - min(times, na.rm = TRUE) + 1L
+  toa <- toa - t0 + 1L
 
-  out <- susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, t)
+  out <- susceptibility_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -194,8 +203,8 @@ susceptibility.list <- function(graph, times, normalize=TRUE, K=1L, r=0.5,
 
 # @rdname infection
 # @export
-susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE) {
-  times <- times - min(times, na.rm = TRUE) + 1L
+susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+  toa <- toa - t0 + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
   ngraph <- vector("list", t)
@@ -203,7 +212,7 @@ susceptibility.array <- function(graph, times, normalize=TRUE, K=1L, r=0.5, expd
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- susceptibility_cpp(ngraph, times, normalize, K, r, expdiscount, n, t)
+  out <- susceptibility_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued)
 
   # Naming
   rn <- rownames(graph)

@@ -39,6 +39,7 @@
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param no.print Logical scalar. When TRUE suppress screen messages.
 #' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
+#' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},

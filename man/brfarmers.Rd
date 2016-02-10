@@ -156,14 +156,28 @@
    \item{study}{ --- MISSING INFO --- }
  }}
 \source{
-SOURCE?
+The Brazilian Farmers data were collected as part of a USAID-funded study of farming
+practicing in the three countries, India, Nigeria, and Brazil.
+There was only one wave of data that contained survey questions regarding
+social networks, and only in Brazil did diffusion of the studied farming
+innovations reach an appreciable saturation level- that was for hybrid seed
+corn. The data were stored along with hundreds of other datasets by the
+University of Wisconsin library and I, Tom Valente, paid a fee to have the
+disks mailed to me in the early 1990s.
 }
 \usage{
 brfarmers
 }
 \description{
-692 respondents farmers on 11 communities. Data on the adoption of Hybrid corn
-with a time span of 20 years. Collected during 1966
+From Valente (1995) \dQuote{In the mid-1960s, Rogers and others conducted
+an ambitious \sQuote{three country study} to determine influences on adoption
+of farm practices in Nigeria, India and Brazil. [...] Only in Brazil, and
+only for hybrid corn, did adoption of the innovation reach more than a small
+proportion of the farmers.}
+}
+\details{
+The dataset has 692 respondents (farmers) from 11 communities. Collected
+during 1966, it spans 20 years of farming pracitices.
 }
 \references{
 Rogers, E. M., Ascroft, J. R., & Röling, N. (1970). Diffusion of Innovation
@@ -172,6 +186,12 @@ East Lansing.
 
 Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 Cresskill N.J.: Hampton Press.
+}
+\seealso{
+Other diffusion datasets: \code{\link{brfarmersDiffNet}},
+  \code{\link{diffusion-data}}, \code{\link{kp}},
+  \code{\link{medInnovationsDiffNet}},
+  \code{\link{medInnovations}}
 }
 \keyword{datasets}
 

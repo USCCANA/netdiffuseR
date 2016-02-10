@@ -68,14 +68,25 @@
    \item{study}{}
 }}
 \source{
-Coleman et al.
+The Medical Innovation data were stored in file cabinets in a basement
+building at Columbia University. Ron Burt (1987) acquired an NSF grant to
+develop network diffusion models and retrieve the original surveys and enter
+them into a database. He distributed copies of the data on diskette and sent
+one to me, Tom Valente, and I imported onto a PC environment.
 }
 \usage{
 medInnovations
 }
 \description{
-125 respondents doctors. 4 communities. Innovation: Adoption of Tetracycline.
-Time span of 18 months collected in 1955.
+From Valente (1995) \dQuote{Coleman, Katz and Menzel from Columbia University's Bureau of Applied Research
+studied the adoption of tetracycline by physiciams in four Illinois communities
+in 1954.[...] Tetracycline was a powerful and useful antibiotic just introduced in
+the mid-1950s}
+}
+\details{
+The collected dataset has 125 respondents (doctors), and spans 17 months of data
+collected in 1955. Time of adoption of non-adopters has been set to month
+18 (see the manual entry titled \code{\link[netdiffuseR:diffusion-data]{Difussion Network Datasets}}).
 }
 \references{
 Coleman, J., Katz, E., & Menzel, H. (1966). Medical innovation: A diffusion
@@ -83,6 +94,11 @@ study (2nd ed.). New York: Bobbs-Merrill
 
 Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 Cresskill N.J.: Hampton Press.
+}
+\seealso{
+Other diffusion datasets: \code{\link{brfarmersDiffNet}},
+  \code{\link{brfarmers}}, \code{\link{diffusion-data}},
+  \code{\link{kp}}, \code{\link{medInnovationsDiffNet}}
 }
 \keyword{datasets}
 

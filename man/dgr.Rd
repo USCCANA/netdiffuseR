@@ -7,17 +7,20 @@
 \alias{outdegree}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
-dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected"),
-  self = getOption("diffnet.self"))
+dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
+  FALSE), self = getOption("diffnet.self", FALSE),
+  valued = getOption("diffnet.valued", FALSE))
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{cmode}{Character. Either "indegree", "outdegree" or "degree".}
+\item{cmode}{Character scalar. Either "indegree", "outdegree" or "degree".}
 
-\item{undirected}{Logical. TRUE when the graph is undirected.}
+\item{undirected}{Logical scalar. TRUE when the graph is undirected.}
 
-\item{self}{Logical. TRUE when self edges should not be considered.}
+\item{self}{Logical scalar.. TRUE when self edges should not be considered.}
+
+\item{valued}{Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.}
 }
 \value{
 Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is

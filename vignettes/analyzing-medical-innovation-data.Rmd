@@ -5,7 +5,7 @@ date: "January 13, 2016"
 output: rmarkdown::html_vignette
 header-includes: \usepackage{graphicx}
 vignette: >
-  %\VignetteIndexEntry{Visualizing Diffusion of Innovations}
+  %\VignetteIndexEntry{netdiffuseR showcase: Medical Innovations}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -17,13 +17,12 @@ opts_chunk$set(out.width = 600, fig.align = "center", fig.width = 7, fig.height 
 
 # Data preprocessing
 
-Reading the data from an stata file.
+Loading the raw dataset from the package[^diffnetdata].
+
+[^diffnetdata]: Note that there is a `diffnet` version of the same dataset in the package, `medInnovationsDiffNet`.
 
 ```{r Loading pkgs and reading the data}
-library(foreign)
 library(netdiffuseR)
-
-# medInnovations <- read.dta("../../../data-raw/mi_v2.dta")
 data(medInnovations)
 ```
 
@@ -134,7 +133,7 @@ plot_infectsuscep(diffnet_city1, K=5, logscale = TRUE, bins=20)
 ```
 
 
-Now we run the test for each city. Observe that we can use the __parallel__ package to speedup the test as we will do in the first two cities using two and four cores respectively (this is done thanks to the __boot__ package).
+Now we run the test for each city. Observe that we can use the __parallel__ package to speedup the test as we will do in the first two cities using two cores (this is done thanks to the __boot__ package).
 
 ```{r Stat-test}
 # Defining the statistic
@@ -142,12 +141,12 @@ avgthr <- function(x) mean(threshold(x), na.rm = TRUE)
 
 # Running the test by city
 test1   <- boot_net(diffnet_city1, avgthr, 2000, ncpus=2, parallel="multicore")
-test2   <- boot_net(diffnet_city2, avgthr, 2000, ncpus=4, parallel="multicore")
+test2   <- boot_net(diffnet_city2, avgthr, 2000, ncpus=2, parallel="multicore")
 test3   <- boot_net(diffnet_city3, avgthr, 2000)
 test4   <- boot_net(diffnet_city4, avgthr, 2000)
 
 # Running the test aggregated
-testall <- boot_net(diffnet, avgthr, 2000, ncpus=4, parallel="multicore")
+testall <- boot_net(diffnet, avgthr, 2000, ncpus=2, parallel="multicore")
 
 # Printing the outcomes
 test1

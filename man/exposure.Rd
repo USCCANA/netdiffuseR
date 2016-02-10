@@ -36,35 +36,52 @@ attribute weighted (5) network-metric weighted (e.g., central nodes have more
 influence), and attribute-weighted (e.g., based on homophily or tie strength).
 }
 \details{
-DETAILS NOT UP TO DATE.
+Exposure is calculated as follows:
 
-When \code{wtype=0} (default), exposure is defined as follows
+\deqn{ %
+E_t = \left(S_t \times \left[x_t \circ A_t\right]\right) / (S_t \times x_t) %
+}{%
+E(t) = (S(t) \%*\% [x(t) * A(t)]) / [S(t) \%*\% x(t)]
+}
 
-\deqn{E_{n(t)}=\frac{S_{nn}\times A_{n(t)}}{S_{n+}}}{%
-      E(n,t)  =[     S(n,n) x     A(n,t)] / S(n+)}
+Where \eqn{S_t}{S(t)} is the graph in time \eqn{t}, \eqn{x_t}{x(t)} is an attribute
+vector of size \eqn{n} at time \eqn{t}, \eqn{A_t}{A(t)} is the t-th column of
+the cumulative adopters matrix (a vector of length \eqn{n} with \eqn{a_{ti}=1}{a(t,i)=1}
+if \eqn{i} has adopted at or prior to \eqn{t}), \eqn{\circ}{*} is the kronecker
+product (element-wise), and \eqn{\times}{\%*\%} is the matrix product.
 
-where \eqn{E_{n(t)}}{E(n,t)} is the exposure of the network at time t,
-\eqn{S_{nn}}{S(n,n)} is the social network, \eqn{A_{n(t)}}{A(n,t)} is the
-cumulative adoption matrix at time t, and \eqn{S_{n+}}{S(n+)} is the row-wide
-sum of the graph.
+By default the graph used for this calculation, \eqn{S}, is the social network. Alternatively,
+in the case of \code{diffnet} objects, the user can provide an alaternative
+graph using \code{alt.graph}. An example of this would be using \eqn{1/SE},
+the element-wise inverse of the structural equivalence matrix (see example below).
 
-If \code{wtype=1} (Structural Equivalence), exposure is now computed as:
+If the user does not specifies a particular weighting attribute in \code{attrs},
+the function sets this as a matrix of ones. Otherwise the function will return
+an attribute weighted exposure. See the examples section for a demonstration using
+degree.
 
-\deqn{E_{n(t)}=\frac{SE_{nn}^{-1}\times A_{n(t)}}{SE_{n+}^{-1}}}{%
-      E(n,t)  =[     SE(n,n)^[-1] x     A(n,t)] / SE(n+)^[-1]}
+When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
+case of a social network exposure will be computed based on the incomming ties.
+}
+\examples{
+# Calculating the exposure based on Structural Equivalence ------------------
+set.seed(113132)
+graph <- rdiffnet(100, 10)
 
-where SE stands for Structural Equivalence (see \code{\link{struct_equiv}}).
-Otherwise, for any value above of \code{wtype}--2, 3 or 4, which stands for
-indegree, outdegree and degree respectively-- is calculated accordingly to
+SE <- lapply(struct_equiv(graph), "[[", "SE")
+SE <- lapply(SE, function(x) 1/(x + 1e-15))
+eSE <- exposure(graph, alt.graph=SE)
+eNO <- exposure(graph)
+any(eSE != eNO) # Different outputs
 
-\deqn{E_{n(t)}=\frac{S_{nn}\times (A_{n(t)} / D_n)}{S_{n+}}}{%
-      E(n,t)  =[     S(n,n) x     [A(n,t)/D(n)] / S(n+)}
+# Weighted Exposure using degree --------------------------------------------
+eDE <- exposure(graph, attrs=dgr(graph))
+any(eNO != eDE) # Different outputs
 
-where \eqn{D_n}{D(n)} is a column vector of size n containing the degree of
-each node.
+# Comparing using incomming edges -------------------------------------------
+eIN <- exposure(graph, outgoing=FALSE)
+any(eIN != eNO) # Different outputs
 
-Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
-numerator of the above formulas.
 }
 \author{
 Vega Yon, Dyal, Hayes & Valente

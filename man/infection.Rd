@@ -5,16 +5,18 @@
 \alias{susceptibility}
 \title{Susceptibility and Infection}
 \usage{
-infection(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+infection(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE))
 
-susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE)
+susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
+  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE))
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{times}{Integer vector with times of adoption (see details)}
+\item{toa}{Integer vector with times of adoption (see details)}
+
+\item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
 \item{normalize}{Logical. Whether or not to normalize the outcome}
 
@@ -23,6 +25,8 @@ susceptibility(graph, times, normalize = TRUE, K = 1L, r = 0.5,
 \item{r}{Numeric scalar. Discount rate used when \code{expdiscount=TRUE}}
 
 \item{expdiscount}{Logical scalar. When TRUE, exponential discount rate is used (see details).}
+
+\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
 }
 \value{
 A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.

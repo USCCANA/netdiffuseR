@@ -4,12 +4,14 @@
 \alias{moran}
 \title{Computes Moran's I correlation index}
 \usage{
-moran(x, w)
+moran(x, w, normalize.w = TRUE)
 }
 \arguments{
 \item{x}{Numeric vector of size \eqn{n}.}
 
 \item{w}{Numeric matrix of size \eqn{n\times n}{n * n}. Weights.}
+
+\item{normalize.w}{Logical scalar. When TRUE normalizes rowsums to one (or zero).}
 }
 \value{
 Numeric scalar with Moran's I.

@@ -4,18 +4,21 @@
 \alias{plot_infectsuscep}
 \title{Plot distribution of infect/suscep}
 \usage{
-plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
+plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
+  r = 0.5, expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
   logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
   sub = ifelse(logscale, "(in log-scale)", NA), color.palette = function(n)
-  grey(n:1/n), include.grid = TRUE, exclude.zeros = FALSE, ...)
+  grey(n:1/n), include.grid = TRUE, exclude.zeros = FALSE,
+  valued = getOption("diffnet.valued", FALSE), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{toa}{Integer vector of size \eqn{T}. Passed to infection/susceptibility.}
+
+\item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
 \item{normalize}{Logical scalar.  Passed to infection/susceptibility.}
 
@@ -43,7 +46,9 @@ plot_infectsuscep(graph, toa, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{include.grid}{Logical scalar. When TRUE, the grid of the graph is drawn.}
 
-\item{exclude.zeros}{Logical scalar. When TRUE, observations with zero values
+\item{exclude.zeros}{Logical scalar. When TRUE, observations with zero values}
+
+\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 in infect or suscept are excluded from the graph. This is done explicitly when \code{logscale=TRUE}.}
 
 \item{...}{Additional parameters to be passed to \code{\link{filled.contour}.}}

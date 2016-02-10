@@ -18,3 +18,4 @@ README[.]md
 ^README\_files$
 [.]travis[.]yml
 ^appveyor\.yml$
+vignettes/simulating.+\.Rmd$

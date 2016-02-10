@@ -1,6 +1,7 @@
 #' Computes Moran's I correlation index
 #' @param x Numeric vector of size \eqn{n}.
 #' @param w Numeric matrix of size \eqn{n\times n}{n * n}. Weights.
+#' @param normalize.w Logical scalar. When TRUE normalizes rowsums to one (or zero).
 #' @export
 #' @family statistics
 #' @return Numeric scalar with Moran's I.
@@ -26,7 +27,7 @@
 #' ape::Moran.I(x, w)
 #' }
 #' @author Vega Yon
-moran <- function(x, w) {
+moran <- function(x, w, normalize.w=TRUE) {
   if (!inherits(w, "matrix") & !inherits(w, "dgCMatrix"))
     stop("-w- must be either a matrix or a dgCMatrix.")
 
@@ -35,6 +36,9 @@ moran <- function(x, w) {
 
   if (inherits(w, "matrix"))
     w <- methods::as(w, "dgCMatrix")
+
+  if (normalize.w)
+    w <- w/(rowSums(w) + 1e-15)
 
   moran_cpp(x, w)
 }

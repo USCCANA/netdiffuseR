@@ -1,7 +1,13 @@
 #' Brazilian Farmers
 #'
-#' 692 respondents farmers on 11 communities. Data on the adoption of Hybrid corn
-#' with a time span of 20 years. Collected during 1966
+#' From Valente (1995) \dQuote{In the mid-1960s, Rogers and others conducted
+#' an ambitious \sQuote{three country study} to determine influences on adoption
+#' of farm practices in Nigeria, India and Brazil. [...] Only in Brazil, and
+#' only for hybrid corn, did adoption of the innovation reach more than a small
+#' proportion of the farmers.}
+#'
+#' The dataset has 692 respondents (farmers) from 11 communities. Collected
+#' during 1966, it spans 20 years of farming pracitices.
 #'
 #' @format A data frame with 692 rows and 148 columns:
 #' \describe{
@@ -154,7 +160,16 @@
 #'    \item{test}{ --- MISSING INFO --- }
 #'    \item{study}{ --- MISSING INFO --- }
 #'  }
-#' @source SOURCE?
+#' @source
+#' The Brazilian Farmers data were collected as part of a USAID-funded study of farming
+#' practicing in the three countries, India, Nigeria, and Brazil.
+#' There was only one wave of data that contained survey questions regarding
+#' social networks, and only in Brazil did diffusion of the studied farming
+#' innovations reach an appreciable saturation level- that was for hybrid seed
+#' corn. The data were stored along with hundreds of other datasets by the
+#' University of Wisconsin library and I, Tom Valente, paid a fee to have the
+#' disks mailed to me in the early 1990s.
+#'
 #' @references
 #'
 #' Rogers, E. M., Ascroft, J. R., & Röling, N. (1970). Diffusion of Innovation
@@ -163,6 +178,7 @@
 #'
 #' Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
+#' @family diffusion datasets
 "brfarmers"
 
 #' \code{diffnet} version of the Brazilian Farmers data
@@ -171,19 +187,35 @@
 #' in the graph are static and described in \code{\link{brfarmers}}.
 #'
 #' @format A \code{\link{diffnet}} class object.
+#' @family diffusion datasets
 "brfarmersDiffNet"
 
 #' Korean Family Planning
 #'
-#' 1047 respondents women
-#' 25 communities
-#' Family Planning
-#' Length of diffusion 11 years
-#' Year of collection 1973
-#' Years span
+#' From Valente (1995) \dQuote{Scholars at Seoul National University's School
+#' of Public Health (Park, Chung, Han & Lee, 1974) collected data on the
+#' adoption of family planning methods among all married women of child-bearing
+#' age 25 in Korea villages in 1973 (N = 1,047)}
 #'
-#' @source Rogers & Kincaid 1981
-#' @references TOM
+#' The dataset has 1,047 respondents (women) from 25 communities. Collected
+#' during 1973 it spans 11 years of data.
+#'
+#' @source
+#' The Korean Family Planning data were
+#' stored on a Vax tape that Rogers had given to Marc Granovetter who then gave
+#' it to his colleague Roland Soong (see Granovetter & Soong, 1983).  Granovetter
+#' instructed Song to send the tape to me and I had it loaded on the Vax machine
+#' at USC in 1990 and was able to download the data to a PC. The first two datasets
+#' were acquired for my dissertation (Valente, 1991) and the third added as I
+#' completed my book on Network Models of the Diffusion of Innovations (Valente,
+#' 1995; also see Valente, 2005).
+#' @references
+#' Everett M. Rogers, & Kincaid, D. L. (1981). Communication Networks: Toward a
+#' New Paradigm for Research. (C. Macmillan, Ed.). New York; London: Free Press.
+#'
+#' Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
+#' Cresskill N.J.: Hampton Press.
+#' @family diffusion datasets
 #' @name kp
 NULL
 
@@ -191,8 +223,15 @@ NULL
 
 #' Medical Innovation
 #'
-#' 125 respondents doctors. 4 communities. Innovation: Adoption of Tetracycline.
-#' Time span of 18 months collected in 1955.
+#' From Valente (1995) \dQuote{Coleman, Katz and Menzel from Columbia University's Bureau of Applied Research
+#' studied the adoption of tetracycline by physiciams in four Illinois communities
+#' in 1954.[...] Tetracycline was a powerful and useful antibiotic just introduced in
+#' the mid-1950s}
+#'
+#'
+#' The collected dataset has 125 respondents (doctors), and spans 17 months of data
+#' collected in 1955. Time of adoption of non-adopters has been set to month
+#' 18 (see the manual entry titled \code{\link[netdiffuseR:diffusion-data]{Difussion Network Datasets}}).
 #'
 #' @format A data frame with 125 rows and 59 columns:
 #' \describe{
@@ -257,13 +296,19 @@ NULL
 #'    \item{toa}{}
 #'    \item{study}{}
 #' }
-#' @source Coleman et al.
+#' @source
+#' The Medical Innovation data were stored in file cabinets in a basement
+#' building at Columbia University. Ron Burt (1987) acquired an NSF grant to
+#' develop network diffusion models and retrieve the original surveys and enter
+#' them into a database. He distributed copies of the data on diskette and sent
+#' one to me, Tom Valente, and I imported onto a PC environment.
 #' @references
 #' Coleman, J., Katz, E., & Menzel, H. (1966). Medical innovation: A diffusion
 #' study (2nd ed.). New York: Bobbs-Merrill
 #'
 #' Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
+#' @family diffusion datasets
 "medInnovations"
 
 
@@ -273,4 +318,80 @@ NULL
 #' in the graph are static and described in \code{\link{medInnovations}}.
 #'
 #' @format A \code{\link{diffnet}} class object.
+#' @family diffusion datasets
 "medInnovationsDiffNet"
+
+#' Diffusion Network Datasets
+#'
+#' @details
+#' The three classic network diffusion datasets included in netdiffuseR are the
+#' medical innovation data originally collected by Coleman, Katz & Menzel (1966);
+#' the Brazilian Farmers collected as part of the three country study implemented
+#' by Everett Rogers (Rogers, Ascroft, & Röling, 1970), and Korean Family Planning
+#' data collected by researchers at the Seoul National University's School of
+#' Public (Rogers & Kincaid, 1981). The table below summarizes the three datasets:
+#'
+#' \tabular{lccc}{
+#'		\tab	\bold{Medical Innovation}	\tab	\bold{Brazilian Farmers}	\tab	\bold{Korean Family Planning}	\cr
+#'	\emph{Country}	\tab	USA	\tab	Brazil	\tab	Korean	\cr
+#'	\emph{# Respondents}	\tab	125 Doctors	\tab	692 Farmers	\tab	1,047 Women	\cr
+#'	\emph{# Communities}	\tab	4	\tab	11	\tab	25	\cr
+#'	\emph{Innovation}	\tab	Tetracycline	\tab	Hybrid Corn Seed	\tab	Family Planning	\cr
+#'	\emph{Time for Diffusion}	\tab	18 Months	\tab	20 Years	\tab	11 Years	\cr
+#'	\emph{Year Data Collected}	\tab	1955-1956	\tab	1966	\tab	1973	\cr
+#'	\emph{Ave. Time to 50\%}	\tab	6	\tab	16	\tab	7	\cr
+#'	\emph{Highest Saturation}	\tab	0.89	\tab	0.98	\tab	0.83	\cr
+#'	\emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\cr
+#'	\emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\cr
+#'	}
+#'
+#' @section Right censored data:
+#' By convention, non-adopting actors are coded as one plus the last observed time
+#' of adoption.  Prior empirical event history approaches have used this approach
+#' (Valente, 2005; Marsden and Podolny, 1990) and studies have shown that
+#' omitting such observations leads to biased results (van den Bulte & Iyengar,
+#' 2011).
+#'
+#' @references
+#' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus
+#' Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.
+#' \url{http://doi.org/10.1086/228667}
+#'
+#' Coleman, J., Katz, E., & Menzel, H. (1966). Medical innovation: A diffusion
+#' study (2nd ed.). New York: Bobbs-Merrill
+#'
+#' Granovetter, M., & Soong, R. (1983). Threshold models of diffusion and
+#' collective behavior. The Journal of Mathematical Sociology, 9(October 2013),
+#' 165–179. \url{http://doi.org/10.1080/0022250X.1983.9989941}
+#'
+#' Rogers, E. M., Ascroft, J. R., & Röling, N. (1970). Diffusion of Innovation
+#' in Brazil, Nigeria, and India. Unpublished Report. Michigan State University,
+#' East Lansing.
+#'
+#' Everett M. Rogers, & Kincaid, D. L. (1981). Communication Networks: Toward a
+#' New Paradigm for Research. (C. Macmillan, Ed.). New York; London: Free Press.
+#'
+#' Mardsen, P., & Podolny, J. (1990). Dynamic Analysis of Network Diffusion Processes,
+#' J. Weesie, H. Flap, eds. Social Networks Through Time, 197–214.
+#'
+#' Marsden, P. V., & Friedkin, N. E. (1993). Network Studies of Social Influence.
+#' Sociological Methods & Research, 22(1), 127–151.
+#' \url{http://doi.org/10.1177/0049124193022001006}
+#'
+#' Van den Bulte, C., & Iyengar, R. (2011). Tricked by Truncation: Spurious
+#' Duration Dependence and Social Contagion in Hazard Models. Marketing Science,
+#' 30(2), 233–248. \url{http://doi.org/10.1287/mksc.1100.0615}
+#'
+#' Valente, T. W. (1991). Thresholds and the critical mass: Mathematical models
+#' of the diffusion of innovations. University of Southern California.
+#'
+#' Valente, T. W. (1995). "Network models of the diffusion of innovations" (2nd ed.).
+#' Cresskill N.J.: Hampton Press.
+#'
+#' Valente, T. W. (2005). Network Models and Methods for Studying the Diffusion of Innovations.
+#' In Models and Methods in Social Network Analysis, Volume 28 of Structural
+#' Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University Press.
+#' @family diffusion datasets
+#' @name diffusion-data
+#' @author Valente, T.W.
+NULL

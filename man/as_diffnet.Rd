@@ -41,7 +41,7 @@ diffnet.toa(graph, i) <- value
 \method{print}{diffnet}(x, ...)
 
 \method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
-  skip.moran = FALSE, ...)
+  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
 
 \method{[}{diffnet}(x, i, j, drop = FALSE)
 }
@@ -109,6 +109,8 @@ is ignored.}
 \item{no.print}{Logical scalar. When TRUE suppress screen messages.}
 
 \item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
+
+\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
 
 \item{j}{Ignored.}
 

@@ -68,9 +68,14 @@ print.diffnet <- function(x, ...) {
 #' @export
 #' @rdname as_diffnet
 summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
-                            skip.moran=FALSE, ...) {
+                            skip.moran=FALSE, valued=getOption("diffnet.valued",FALSE), ...) {
   # Subsetting
   if (!length(slices)) slices <- 1:object$meta$nper
+
+  # If no valued
+  if (!valued)
+    for (i in 1:object$meta$nper)
+      object$graph[[i]]@x <- rep(1, length(object$graph[[i]]@x))
 
   # Checking that the time period is actually within
   test <- !(slices %in% 1:object$meta$nper)
@@ -84,12 +89,8 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 
   # Computing density
   d <- unlist(lapply(object$graph[slices], function(x) {
-    x <-
-    if (meta$undirected) {
-      sum(Matrix::rowSums(x))/(meta$n * (meta$n-1))/2
-    } else {
-      (sum(Matrix::rowSums(x)) + sum(Matrix::colSums(x)))/(meta$n * (meta$n-1))
-    }
+    nelements <- length(x@x)
+    x <-nelements/(meta$n * (meta$n-1))
   }))
 
   # Computing moran's I
@@ -571,6 +572,7 @@ plot_threshold.list <- function(
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param toa Integer vector of size \eqn{T}. Passed to infection/susceptibility.
+#' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param normalize Logical scalar.  Passed to infection/susceptibility.
 #' @param K Integer scalar.  Passed to infection/susceptibility.
 #' @param r Numeric scalar.  Passed to infection/susceptibility.
@@ -586,6 +588,7 @@ plot_threshold.list <- function(
 #' @param include.grid Logical scalar. When TRUE, the grid of the graph is drawn.
 #' @param ... Additional parameters to be passed to \code{\link{filled.contour}.}
 #' @param exclude.zeros Logical scalar. When TRUE, observations with zero values
+#' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 #' in infect or suscept are excluded from the graph. This is done explicitly when \code{logscale=TRUE}.
 #' @details
 #'
@@ -619,32 +622,34 @@ plot_threshold.list <- function(
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
 #' @author Vega Yon
 plot_infectsuscep <- function(
-  graph, toa, normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
+  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
   xlab="Infectiousness of ego", ylab="Susceptibility of ego",
   sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
-  include.grid=TRUE, exclude.zeros=FALSE,...
+  include.grid=TRUE, exclude.zeros=FALSE, valued=getOption("diffnet.valued",FALSE), ...
 ) {
-  if (!inherits(graph, "diffnet") && missing(toa))
-    stop("-toa- should be provided when -graph- is not of class 'diffnet'")
+
+  # Checking the times argument
+  if (missing(toa))
+    if (!inherits(graph, "diffnet")) {
+      stop("-toa- should be provided when -graph- is not of class 'diffnet'")
+    } else {
+      toa <- graph$toa
+      t0    <- min(graph$meta$pers)
+    }
+
+  if (!length(t0)) t0 <- min(toa, na.rm = TRUE)
 
   switch (class(graph),
     array = plot_infectsuscep.array(
-      graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...),
+      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued, ...),
     list = plot_infectsuscep.list(
-      graph, toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...),
-    diffnet = {
-      # If graph is diffnet, then we should do something different (because the
-      # first toa may not be the firts one as toa may be stacked to the right.
-      # see ?as_diffnet)
-      graph$toa <- graph$toa - min(graph$meta$pers) + 1L
-
-      plot_infectsuscep.list(
-      graph$graph, graph$toa, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, ...)
-      },
+      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
+    diffnet = plot_infectsuscep.list(
+      graph$graph, graph$toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
     stopifnot_graph(graph)
   )
 }
@@ -660,20 +665,20 @@ plot_infectsuscep.array <- function(graph, ...) {
 
 # @export
 # @rdname plot_infectsuscep
-plot_infectsuscep.list <- function(graph, toa, normalize=TRUE,
-                              K=1L, r=0.5, expdiscount=FALSE,
-                              bins=50,nlevels=round(bins/2),
-                              logscale=TRUE,
-                              main="Distribution of Infectiousness and\nSusceptibility",
-                              xlab="Infectiousness of ego",
-                              ylab="Susceptibility of ego",
-                              sub=ifelse(logscale, "(in log-scale)", NA),
-                              color.palette=function(n) grey(n:1/n),
-                              include.grid=TRUE, exclude.zeros=FALSE,
+plot_infectsuscep.list <- function(graph, toa, t0, normalize,
+                              K, r, expdiscount,
+                              bins,nlevels,
+                              logscale,
+                              main,
+                              xlab,
+                              ylab,
+                              sub,
+                              color.palette,
+                              include.grid, exclude.zeros, valued,
                               ...) {
   # Computing infect and suscept
-  infect <- infection(graph, toa, normalize, K, r, expdiscount)
-  suscep <- susceptibility(graph, toa, normalize, K, r, expdiscount)
+  infect <- infection(graph, toa, t0, normalize, K, r, expdiscount, valued)
+  suscep <- susceptibility(graph, toa, t0, normalize, K, r, expdiscount, valued)
 
   # Performing classification (linear)
   if (logscale) {
@@ -891,6 +896,73 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
   x$meta$n   <- length(index)
 
   return(x)
+}
+
+#' \code{diffnet} Arithmetic Operators
+#'
+#' Addition, substraction and network power of diffnet objects
+#'
+#' @param x A \code{diffnet} class object.
+#' @param y Integer scalar. Power of the network
+#' @param valued Logical scalar. When FALSE all non-zero entries of the adjacency
+#' matrices are set to one.
+#'
+#' @details Using binary operators, ease data management process with diffnet.
+#'
+#' By default the binary operator \code{^} assumes that the graph is valued,
+#' hence the power is computed using a weighted edges. Otherwise, if more control
+#' is needed, the user can use \code{graph_power} instead.
+#'
+#' @return A diffnet class object
+#'
+#' @examples
+#' # Computing two-steps away threshold with the Brazilian farmers data --------
+#' data(brfarmersDiffNet)
+#'
+#' expo1 <- threshold(brfarmersDiffNet)
+#' expo2 <- threshold(brfarmersDiffNet^2)
+#'
+#' # Computing correlation
+#' cor(expo1,expo2)
+#'
+#' # Drawing a qqplot
+#' qqplot(expo1, expo2)
+#'
+#' # Working with inverse ------------------------------------------------------
+#' brf2_step <- brfarmersDiffNet^2
+#' brf2_step <- 1/brf2_step
+#'
+#' ba <- rdiffnet(10,5, seed.graph="scale-free", rgraph.args=list(m=4))
+#'
+#' @export
+#' @name diffnet-arithmetic
+`^.diffnet` <- function(x,y) {
+  for (i in 1:x$meta$nper) {
+    g <- x$graph[[i]]
+    for (p in 1:y)
+      x$graph[[i]] <- x$graph[[i]] %*% g
+  }
+  x
+}
+
+#' @rdname diffnet-arithmetic
+#' @export
+graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
+  # If no valued
+  if (!valued)
+    for (i in 1:x$meta$nper)
+      x$graph[[i]]@x <- rep(1, length(x$graph[[i]]@x))
+
+  x^y
+}
+
+#' @rdname diffnet-arithmetic
+#' @export
+`/.diffnet` <- function(y, x) {
+  for (i in 1:x$meta$nper)
+    x$graph[[i]]@x <- y/(x$graph[[i]]@x)
+
+  x
 }
 
 # #' @export

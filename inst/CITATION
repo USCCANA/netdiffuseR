@@ -10,4 +10,4 @@ bibentry(bibtype = "Manual",
           person("Thomas", "Valente")),
          year = year,
          note = note,
-         url = "https://github.com/srdyal/diffusiontest")
+         url = "https://github.com/USCCANA/netdiffuseR")

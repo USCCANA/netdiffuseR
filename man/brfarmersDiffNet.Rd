@@ -12,5 +12,11 @@ brfarmersDiffNet
 A directed dynamic graph with 692 vertices and 21 time periods. The attributes
 in the graph are static and described in \code{\link{brfarmers}}.
 }
+\seealso{
+Other diffusion datasets: \code{\link{brfarmers}},
+  \code{\link{diffusion-data}}, \code{\link{kp}},
+  \code{\link{medInnovationsDiffNet}},
+  \code{\link{medInnovations}}
+}
 \keyword{datasets}
 

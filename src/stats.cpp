@@ -28,10 +28,16 @@ using namespace Rcpp;
  */
 // [[Rcpp::export]]
 arma::colvec degree_cpp(
-    const arma::sp_mat & adjmat, const int & cmode=2,
-    bool undirected=true, bool self=false) {
+    const arma::sp_mat & adjmat0, const int & cmode=2,
+    bool undirected=true, bool self=false, bool valued=false) {
 
   if (cmode < 0 || cmode > 2) stop("Invalid degree");
+
+  // Checking if it is valued or not
+  int n = adjmat0.n_cols;
+  arma::sp_mat adjmat(n,n);
+  if (!valued) adjmat = arma::spones(adjmat0);
+  else adjmat = adjmat0;
 
   // Calculating row/col sums
   arma::sp_mat degree(adjmat.n_cols, 1);
@@ -44,8 +50,10 @@ arma::colvec degree_cpp(
 
   // Checking if self or not
   arma::mat loop = arma::conv_to<arma::mat>::from(adjmat.diag());
-  if (cmode == 2 && !self) degree = degree - loop;
-  else degree = degree - loop/2;
+  if (!self) {
+    if (cmode == 2) degree = degree - loop*2;
+    else degree = degree - loop;
+  }
 
   arma::mat output = arma::conv_to< arma::mat >::from(degree);
   return output.col(0);
@@ -283,4 +291,14 @@ exp_mat <- exposure(graph, adopt$cumadopt)$unweight
 
 threshold_cpp(exp_mat, tadopt)
 
+*/
+/*
+// [[Rcpp::export]]
+double graph_density(arma::sp_mat graph, bool undirected=false) {
+  int n = graph.n_cols;
+  double dens = 0.0;
+
+  return graph.n_nonzero / (n * (n-1));
+
+}
 */

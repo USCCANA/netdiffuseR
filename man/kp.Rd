@@ -4,17 +4,36 @@
 \alias{kp}
 \title{Korean Family Planning}
 \source{
-Rogers & Kincaid 1981
+The Korean Family Planning data were
+stored on a Vax tape that Rogers had given to Marc Granovetter who then gave
+it to his colleague Roland Soong (see Granovetter & Soong, 1983).  Granovetter
+instructed Song to send the tape to me and I had it loaded on the Vax machine
+at USC in 1990 and was able to download the data to a PC. The first two datasets
+were acquired for my dissertation (Valente, 1991) and the third added as I
+completed my book on Network Models of the Diffusion of Innovations (Valente,
+1995; also see Valente, 2005).
 }
 \description{
-1047 respondents women
-25 communities
-Family Planning
-Length of diffusion 11 years
-Year of collection 1973
-Years span
+From Valente (1995) \dQuote{Scholars at Seoul National University's School
+of Public Health (Park, Chung, Han & Lee, 1974) collected data on the
+adoption of family planning methods among all married women of child-bearing
+age 25 in Korea villages in 1973 (N = 1,047)}
+}
+\details{
+The dataset has 1,047 respondents (women) from 25 communities. Collected
+during 1973 it spans 11 years of data.
 }
 \references{
-TOM
+Everett M. Rogers, & Kincaid, D. L. (1981). Communication Networks: Toward a
+New Paradigm for Research. (C. Macmillan, Ed.). New York; London: Free Press.
+
+Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
+Cresskill N.J.: Hampton Press.
+}
+\seealso{
+Other diffusion datasets: \code{\link{brfarmersDiffNet}},
+  \code{\link{brfarmers}}, \code{\link{diffusion-data}},
+  \code{\link{medInnovationsDiffNet}},
+  \code{\link{medInnovations}}
 }
 

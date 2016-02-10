@@ -3,9 +3,10 @@
 #' Computes the requested degree measure for each node in the graph.
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param cmode Character. Either "indegree", "outdegree" or "degree".
-#' @param undirected Logical. TRUE when the graph is undirected.
-#' @param self Logical. TRUE when self edges should not be considered.
+#' @param cmode Character scalar. Either "indegree", "outdegree" or "degree".
+#' @param undirected Logical scalar. TRUE when the graph is undirected.
+#' @param self Logical scalar.. TRUE when self edges should not be considered.
+#' @param valued Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.
 #' @return Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
 #' a matrix), or a matrix of size \eqn{n\times T}{n * T}.
 #' @export
@@ -24,14 +25,15 @@
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
 #' @author Vega Yon
-dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected", FALSE), self=getOption("diffnet.self",FALSE),
+                valued=getOption("diffnet.valued", FALSE)) {
 
   switch (class(graph),
-    matrix = dgr.matrix(graph, cmode, undirected, self),
-    array = dgr.array(graph, cmode, undirected, self),
-    dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self),
-    list = dgr.list(graph, cmode, undirected, self),
-    diffnet = dgr.list(graph$graph, cmode, undirected = graph$meta$undirected),
+    matrix = dgr.matrix(graph, cmode, undirected, self, valued),
+    array = dgr.array(graph, cmode, undirected, self, valued),
+    dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self, valued),
+    list = dgr.list(graph, cmode, undirected, self, valued),
+    diffnet = dgr.list(graph$graph, cmode, undirected = graph$meta$undirected, self, valued),
     stopifnot_graph(graph)
   )
 
@@ -39,7 +41,8 @@ dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"
 
 # @rdname dgr
 # @export
-dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+dgr.matrix <- function(
+  graph, cmode, undirected, self, valued) {
 
   # Checking dimensions
   dm <- dim(graph)
@@ -53,7 +56,8 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
             '"indegree", "outdegree" or "degree".')
 
   # Computing degree
-  output <- degree_cpp(methods::as(graph, "dgCMatrix"), cmode, undirected, self)
+  output <- degree_cpp(methods::as(graph, "dgCMatrix"), cmode, undirected, self,
+                       valued)
 
   # Naming
   rn <- rownames(graph)
@@ -65,7 +69,7 @@ dgr.matrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undi
 
 # @rdname dgr
 # @export
-dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+dgr.dgCMatrix <- function(graph, cmode, undirected, self, valued) {
 
   # Checking dimensions
   dm <- dim(graph)
@@ -79,7 +83,7 @@ dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.u
             '"indegree", "outdegree" or "degree".')
 
   # Computing degree
-  output <- degree_cpp(graph, cmode, undirected, self)
+  output <- degree_cpp(graph, cmode, undirected, self, valued)
 
   # Naming
   rn <- rownames(graph)
@@ -91,13 +95,13 @@ dgr.dgCMatrix <- function(graph, cmode="degree", undirected=getOption("diffnet.u
 
 # @rdname dgr
 # @export
-dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+dgr.list <- function(graph, cmode, undirected, self, valued) {
   n <- ncol(graph[[1]])
   t <- length(graph)
   output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,i] <- dgr(graph[[i]], cmode, undirected, self)
+    output[,i] <- dgr(graph[[i]], cmode, undirected, self, valued)
 
   # Adding names
   cn <- names(graph)
@@ -114,13 +118,13 @@ dgr.list <- function(graph, cmode="degree", undirected=getOption("diffnet.undire
 
 # @rdname dgr
 # @export
-dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self")) {
+dgr.array <- function(graph, cmode, undirected, self, valued) {
   n <- dim(graph)[1]
   t <- dim(graph)[3]
   output <- matrix(ncol=t, nrow=n)
 
   for(i in 1:t)
-    output[,i] <- dgr(methods::as(graph[,,i], "dgCMatrix"), cmode, undirected, self)
+    output[,i] <- dgr(methods::as(graph[,,i], "dgCMatrix"), cmode, undirected, self, valued)
 
   # Adding names
   cn <- dimnames(graph)[[3]]
@@ -154,35 +158,33 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
 #' @details
-#' DETAILS NOT UP TO DATE.
+#' Exposure is calculated as follows:
 #'
-#' When \code{wtype=0} (default), exposure is defined as follows
+#' \deqn{ %
+#' E_t = \left(S_t \times \left[x_t \circ A_t\right]\right) / (S_t \times x_t) %
+#' }{%
+#' E(t) = (S(t) \%*\% [x(t) * A(t)]) / [S(t) \%*\% x(t)]
+#' }
 #'
-#' \deqn{E_{n(t)}=\frac{S_{nn}\times A_{n(t)}}{S_{n+}}}{%
-#'       E(n,t)  =[     S(n,n) x     A(n,t)] / S(n+)}
+#' Where \eqn{S_t}{S(t)} is the graph in time \eqn{t}, \eqn{x_t}{x(t)} is an attribute
+#' vector of size \eqn{n} at time \eqn{t}, \eqn{A_t}{A(t)} is the t-th column of
+#' the cumulative adopters matrix (a vector of length \eqn{n} with \eqn{a_{ti}=1}{a(t,i)=1}
+#' if \eqn{i} has adopted at or prior to \eqn{t}), \eqn{\circ}{*} is the kronecker
+#' product (element-wise), and \eqn{\times}{\%*\%} is the matrix product.
 #'
-#' where \eqn{E_{n(t)}}{E(n,t)} is the exposure of the network at time t,
-#' \eqn{S_{nn}}{S(n,n)} is the social network, \eqn{A_{n(t)}}{A(n,t)} is the
-#' cumulative adoption matrix at time t, and \eqn{S_{n+}}{S(n+)} is the row-wide
-#' sum of the graph.
+#' By default the graph used for this calculation, \eqn{S}, is the social network. Alternatively,
+#' in the case of \code{diffnet} objects, the user can provide an alaternative
+#' graph using \code{alt.graph}. An example of this would be using \eqn{1/SE},
+#' the element-wise inverse of the structural equivalence matrix (see example below).
 #'
-#' If \code{wtype=1} (Structural Equivalence), exposure is now computed as:
+#' If the user does not specifies a particular weighting attribute in \code{attrs},
+#' the function sets this as a matrix of ones. Otherwise the function will return
+#' an attribute weighted exposure. See the examples section for a demonstration using
+#' degree.
 #'
-#' \deqn{E_{n(t)}=\frac{SE_{nn}^{-1}\times A_{n(t)}}{SE_{n+}^{-1}}}{%
-#'       E(n,t)  =[     SE(n,n)^[-1] x     A(n,t)] / SE(n+)^[-1]}
+#' When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
+#' case of a social network exposure will be computed based on the incomming ties.
 #'
-#' where SE stands for Structural Equivalence (see \code{\link{struct_equiv}}).
-#' Otherwise, for any value above of \code{wtype}--2, 3 or 4, which stands for
-#' indegree, outdegree and degree respectively-- is calculated accordingly to
-#'
-#' \deqn{E_{n(t)}=\frac{S_{nn}\times (A_{n(t)} / D_n)}{S_{n+}}}{%
-#'       E(n,t)  =[     S(n,n) x     [A(n,t)/D(n)] / S(n+)}
-#'
-#' where \eqn{D_n}{D(n)} is a column vector of size n containing the degree of
-#' each node.
-#'
-#' Finally, note that whenever \code{normalized=TRUE}, the resulting output is only the
-#' numerator of the above formulas.
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 #' Equivalence". American Journal of Sociology, 92(6), 1287.
@@ -190,6 +192,25 @@ dgr.array <- function(graph, cmode="degree", undirected=getOption("diffnet.undir
 #'
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations"
 #'  (2nd ed.). Cresskill N.J.: Hampton Press.
+#'
+#' @examples
+#' # Calculating the exposure based on Structural Equivalence ------------------
+#' set.seed(113132)
+#' graph <- rdiffnet(100, 10)
+#'
+#' SE <- lapply(struct_equiv(graph), "[[", "SE")
+#' SE <- lapply(SE, function(x) 1/(x + 1e-15))
+#' eSE <- exposure(graph, alt.graph=SE)
+#' eNO <- exposure(graph)
+#' any(eSE != eNO) # Different outputs
+#'
+#' # Weighted Exposure using degree --------------------------------------------
+#' eDE <- exposure(graph, attrs=dgr(graph))
+#' any(eNO != eDE) # Different outputs
+#'
+#' # Comparing using incomming edges -------------------------------------------
+#' eIN <- exposure(graph, outgoing=FALSE)
+#' any(eIN != eNO) # Different outputs
 #'
 #' @family statistics
 #' @keywords univar
@@ -205,6 +226,7 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRU
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
     } else {
       cumadopt <- graph$cumadopt
+      graph    <- graph$graph
     }
 
   # Checking attrs
@@ -216,9 +238,9 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRU
   if (length(alt.graph)) graph <- alt.graph
 
   switch (class(graph),
-    array = exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized),
-    list = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
-    diffnet = exposure.list(graph$graph, cumadopt, attrs, outgoing, valued, normalized),
+    array   = exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized),
+    list    = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
+    diffnet = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
     stopifnot_graph(graph)
   )
 }
@@ -273,6 +295,13 @@ exposure.list <- function(
 
   n <- nrow(graph[[1]])
   t <- length(graph)
+
+  # Coercing into dgCMatrices
+  test <- !sapply(graph, inherits, what="dgCMatrix")
+  if (any(test))
+    graph[which(test)] <- lapply(graph[which(test)],
+                                 function(x) methods::as(x, "dgCMatrix"))
+
   output <- exposure_cpp(graph, cumadopt, attrs, outgoing, valued, normalized)
 
   rn <- rownames(cumadopt)

@@ -65,7 +65,7 @@ diffnet
     ## Dynamic network of class -diffnet-
     ##  # of nodes        : 100
     ##  # of time periods : 20
-    ##  Adoption rate     : 0.95
+    ##  Final prevalence  : 0.95
     ##  Type              : directed
 
 ``` r
@@ -76,26 +76,26 @@ summary(diffnet)
     ## -----------------------------------------------------------------------
     ##  Period  Adopters Cum Adopt. Cum Adopt. % Hazard Rate Density Moran's I 
     ## -------- -------- ---------- ------------ ----------- ------- --------- 
-    ##        1        3          3         0.03           -    1.00     -0.01 
-    ##        2        8         11         0.11        0.08    1.01     -0.01 
-    ##        3        4         15         0.15        0.04    1.02     -0.00 
-    ##        4        1         16         0.16        0.01    0.98     -0.01 
-    ##        5        2         18         0.18        0.02    0.99     -0.01 
-    ##        6        5         23         0.23        0.06    0.99     -0.01 
-    ##        7        6         29         0.29        0.08    1.02     -0.01 
-    ##        8        1         30         0.30        0.01    1.01     -0.01 
-    ##        9        6         36         0.36        0.09    1.01     -0.01 
-    ##       10        5         41         0.41        0.08    0.98     -0.01 
-    ##       11        2         43         0.43        0.03    0.99     -0.02 
-    ##       12        6         49         0.49        0.11    0.99     -0.01 
-    ##       13        4         53         0.53        0.08    1.00     -0.01 
-    ##       14        7         60         0.60        0.15    1.00     -0.01 
-    ##       15        7         67         0.67        0.17    0.99     -0.01 
-    ##       16        3         70         0.70        0.09    1.01     -0.01 
-    ##       17       10         80         0.80        0.33    0.99     -0.01 
-    ##       18        4         84         0.84        0.20    0.99     -0.01 
-    ##       19        2         86         0.86        0.12    1.01     -0.01 
-    ##       20        9         95         0.95        0.64    1.01     -0.01 
+    ##        1        3          3         0.03           -    0.50     -0.01 
+    ##        2        8         11         0.11        0.08    0.50     -0.01 
+    ##        3        4         15         0.15        0.04    0.51     -0.00 
+    ##        4        1         16         0.16        0.01    0.49     -0.01 
+    ##        5        2         18         0.18        0.02    0.50     -0.01 
+    ##        6        5         23         0.23        0.06    0.50     -0.01 
+    ##        7        6         29         0.29        0.08    0.51     -0.01 
+    ##        8        1         30         0.30        0.01    0.50     -0.01 
+    ##        9        6         36         0.36        0.09    0.50     -0.01 
+    ##       10        5         41         0.41        0.08    0.49     -0.01 
+    ##       11        2         43         0.43        0.03    0.50     -0.02 
+    ##       12        6         49         0.49        0.11    0.50     -0.01 
+    ##       13        4         53         0.53        0.08    0.50     -0.01 
+    ##       14        7         60         0.60        0.15    0.50     -0.01 
+    ##       15        7         67         0.67        0.17    0.50     -0.01 
+    ##       16        3         70         0.70        0.09    0.50     -0.01 
+    ##       17       10         80         0.80        0.33    0.49     -0.01 
+    ##       18        4         84         0.84        0.20    0.50     -0.01 
+    ##       19        2         86         0.86        0.12    0.50     -0.01 
+    ##       20        9         95         0.95        0.64    0.50     -0.01 
     ## -----------------------------------------------------------------------
     ##  Left censoring  : 0.03 (3)
     ##  Right centoring : 0.05 (5)
@@ -110,6 +110,12 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
     ## When applying logscale some observations are missing.
 
 ![](README_files/figure-markdown_github/plot_infectsuscept-1.png)<!-- -->
+
+``` r
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros = TRUE)
+```
+
+![](README_files/figure-markdown_github/plot_infectsuscept-2.png)<!-- -->
 
 ### Threshold
 
@@ -175,3 +181,4 @@ To-do list
 -   Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
 -   Double check all functions using adjacency matrix values.
 -   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
+-   Implement the Bass model
