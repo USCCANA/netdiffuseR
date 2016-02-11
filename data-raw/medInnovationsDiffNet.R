@@ -34,7 +34,7 @@ library(netdiffuseR)
 # network is constant through time.
 graph <- with(
   medInnovations.long,
-  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE)
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE, multiple=TRUE)
 )
 
 # Here we are retrieving the set of individuals who actually were used in the

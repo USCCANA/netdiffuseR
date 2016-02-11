@@ -63,9 +63,9 @@
    \item{dichot}{dichotomous personal preference}
    \item{expect}{adoption month expected}
    \item{recall}{recalls adopting}
-   \item{commun}{}
-   \item{toa}{}
-   \item{study}{}
+   \item{commun}{Number of community}
+   \item{toa}{Time of Adoption}
+   \item{study}{Number of study in Valente (1995)}
 }}
 \source{
 The Medical Innovation data were stored in file cabinets in a basement
@@ -98,7 +98,8 @@ Cresskill N.J.: Hampton Press.
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{brfarmers}}, \code{\link{diffusion-data}},
-  \code{\link{kp}}, \code{\link{medInnovationsDiffNet}}
+  \code{\link{kfamilyDiffNet}}, \code{\link{kfamily}},
+  \code{\link{medInnovationsDiffNet}}
 }
 \keyword{datasets}
 

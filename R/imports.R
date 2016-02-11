@@ -20,7 +20,7 @@ NULL
 # Importing from R CORE packages -----------------------------------------------
 
 #' @importFrom grDevices grey
-#' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window
+#' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window hist mtext
 #' @importFrom stats complete.cases runif
 #' @importFrom utils getFromNamespace head
 #' @importFrom boot boot

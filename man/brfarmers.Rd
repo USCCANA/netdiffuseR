@@ -150,10 +150,10 @@
    \item{net13}{nomination practice C}
    \item{net41}{nomination coop comm proj}
    \item{id}{ --- MISSING INFO --- }
-   \item{commun}{ --- MISSING INFO --- }
-   \item{toa}{ --- MISSING INFO --- }
+   \item{commun}{Number of community}
+   \item{toa}{Time of Adoption}
    \item{test}{ --- MISSING INFO --- }
-   \item{study}{ --- MISSING INFO --- }
+   \item{study}{Number of study in Valente (1995)}
  }}
 \source{
 The Brazilian Farmers data were collected as part of a USAID-funded study of farming
@@ -189,7 +189,8 @@ Cresskill N.J.: Hampton Press.
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{diffusion-data}}, \code{\link{kp}},
+  \code{\link{diffusion-data}},
+  \code{\link{kfamilyDiffNet}}, \code{\link{kfamily}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}
 }

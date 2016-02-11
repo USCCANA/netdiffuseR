@@ -25,6 +25,10 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
+egonet_attrs_cpp <- function(graph, V, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
+    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, attrs, outer, self, valued)
+}
+
 infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L, valued = FALSE) {
     .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, T, valued)
 }
@@ -35,10 +39,6 @@ susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, 
 
 moran_cpp <- function(x, w) {
     .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
-}
-
-egonet_attrs_cpp <- function(graph, V, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
-    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, attrs, outer, self, valued)
 }
 
 #' Distribution over a grid
@@ -192,8 +192,8 @@ hazard_rate_cpp <- function(cumadopt) {
     .Call('netdiffuseR_hazard_rate_cpp', PACKAGE = 'netdiffuseR', cumadopt)
 }
 
-threshold_cpp <- function(exposure, times) {
-    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, times)
+threshold_cpp <- function(exposure, toa) {
+    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, toa)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {

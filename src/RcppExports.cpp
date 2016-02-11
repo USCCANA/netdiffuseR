@@ -83,6 +83,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// egonet_attrs_cpp
+List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, NumericMatrix attrs, bool outer, bool self, bool valued);
+RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP attrsSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec >::type V(VSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type attrs(attrsSEXP);
+    Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
+    __result = Rcpp::wrap(egonet_attrs_cpp(graph, V, attrs, outer, self, valued));
+    return __result;
+END_RCPP
+}
 // infection_cpp
 arma::mat infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, int T, bool valued);
 RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP TSEXP, SEXP valuedSEXP) {
@@ -130,22 +146,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type w(wSEXP);
     __result = Rcpp::wrap(moran_cpp(x, w));
-    return __result;
-END_RCPP
-}
-// egonet_attrs_cpp
-List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, NumericMatrix attrs, bool outer, bool self, bool valued);
-RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP attrsSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec >::type V(VSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type attrs(attrsSEXP);
-    Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    __result = Rcpp::wrap(egonet_attrs_cpp(graph, V, attrs, outer, self, valued));
     return __result;
 END_RCPP
 }
@@ -333,14 +333,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // threshold_cpp
-arma::colvec threshold_cpp(const arma::mat& exposure, const arma::vec& times);
-RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP timesSEXP) {
+arma::colvec threshold_cpp(const arma::mat& exposure, const arma::vec& toa);
+RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP toaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::mat& >::type exposure(exposureSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type times(timesSEXP);
-    __result = Rcpp::wrap(threshold_cpp(exposure, times));
+    Rcpp::traits::input_parameter< const arma::vec& >::type toa(toaSEXP);
+    __result = Rcpp::wrap(threshold_cpp(exposure, toa));
     return __result;
 END_RCPP
 }

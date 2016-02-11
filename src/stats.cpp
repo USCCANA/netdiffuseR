@@ -260,7 +260,7 @@ new = hazard_rate_cpp(adoptmat$cumadopt)
 // [[Rcpp::export]]
 arma::colvec threshold_cpp(
     const arma::mat & exposure,
-    const arma::vec & times
+    const arma::vec & toa
     ) {
 
   int n = exposure.n_rows;
@@ -270,11 +270,11 @@ arma::colvec threshold_cpp(
 
   for(int i=0;i<n;i++) {
     // If NA (aka nan in Armadillo), then NA.
-    if (!arma::is_finite(times(i))) {
+    if (!arma::is_finite(toa(i))) {
       threshold(i) = arma::datum::nan;
       continue;
     }
-    threshold(i) = exposure(i,times(i)-1);
+    threshold(i) = exposure(i,toa(i)-1);
   }
 
   return threshold;

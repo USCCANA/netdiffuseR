@@ -1,7 +1,10 @@
+/*******************************************************************************
+* rgraph_ba.h header function for rgraph_ba.cpp
+*******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#ifndef NETDIFFUSER_RAND_GRAPH_
-#define NETDIFFUSER_RAND_GRAPH_
+#ifndef NETDIFFUSER_RGRAPH_BA_
+#define NETDIFFUSER_RGRAPH_BA_
 using namespace Rcpp;
 
 arma::sp_mat rgraph_ba_cpp(

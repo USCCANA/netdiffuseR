@@ -1,10 +1,10 @@
 /*******************************************************************************
-* adjmat.h header function for adjmat.cpp
+* rgraph_er.h header function for rgraph_er.cpp
 *******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#ifndef DIFFTEST_RAND_GRAPH_
-#define DIFFTEST_RAND_GRAPH_
+#ifndef NETDIFFUSER_RGRAPH_ER_
+#define NETDIFFUSER_RGRAPH_ER_
 using namespace Rcpp;
 
 arma::sp_mat rgraph_er_cpp(

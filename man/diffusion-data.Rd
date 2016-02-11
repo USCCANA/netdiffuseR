@@ -27,6 +27,9 @@ Public (Rogers & Kincaid, 1981). The table below summarizes the three datasets:
 \emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\cr
 \emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\cr
 }
+
+All datasets include a column called \emph{study} which is coded as
+(1) Medical Innovation (2) Brazilian Farmers, (3) Korean Family Planning.
 }
 \section{Right censored data}{
 
@@ -81,7 +84,8 @@ Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University P
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{kp}},
+  \code{\link{brfarmers}}, \code{\link{kfamilyDiffNet}},
+  \code{\link{kfamily}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}
 }

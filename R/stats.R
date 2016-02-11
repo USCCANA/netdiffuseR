@@ -14,16 +14,25 @@
 #' @keywords univar
 #' @aliases degree indegree outdegree
 #' @examples
+#'
+#' # Comparing degree measurements ---------------------------------------------
 #' # Creating an undirected graph
 #' graph <- rgraph_ba()
 #' graph
 #'
-#' # Comparing degree measurements
-#'  data.frame(
+#' data.frame(
 #'    In=dgr(graph, "indegree", undirected = FALSE),
 #'    Out=dgr(graph, "outdegree", undirected = FALSE),
 #'    Degree=dgr(graph, "degree", undirected = FALSE)
 #'  )
+#'
+#' # Testing on Korean Family Planning (weighted graph) ------------------------
+#' data(kfamilyDiffNet)
+#' d_unvalued <- dgr(kfamilyDiffNet, valued=FALSE)
+#' d_valued   <- dgr(kfamilyDiffNet, valued=TRUE)
+#'
+#' any(d_valued!=d_unvalued)
+#'
 #' @author Vega Yon
 dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected", FALSE), self=getOption("diffnet.self",FALSE),
                 valued=getOption("diffnet.valued", FALSE)) {

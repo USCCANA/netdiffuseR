@@ -59,7 +59,7 @@ library(netdiffuseR)
 # network is constant through time.
 graph <- with(
   brfarmers.long,
-  edgelist_to_adjmat(cbind(id, net), t=1966-1946+1, undirected=FALSE, use.incomplete=FALSE)
+  edgelist_to_adjmat(cbind(id, net), t=1966-1946+1, undirected=FALSE, use.incomplete=FALSE, multiple=TRUE)
   )
 
 # We have an extra year which we won't use

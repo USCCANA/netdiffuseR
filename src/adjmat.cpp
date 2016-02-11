@@ -8,13 +8,6 @@
  network data. Importing edgelist as adjacency matrices and generating auxiliary
  matrices used for the model.
 
- This file contains the following functions:
-   - toa_mat_cpp: Creates an adoption matrix of size nxT
-   - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
-   - adjmat_to_edgelist_cpp: The converse of the previous function
-   - toa_diff_cpp: Creates a Time of Adoption Matrix of size nxT
-   - isolated_cpp: Identifies the isolated nodes in a network
-   - drop_isolated_cpp: Removes isolated networks from an adjmat
 *******************************************************************************/
 
 // [[Rcpp::depends(RcppArmadillo)]]
@@ -139,6 +132,8 @@ arma::mat adjmat_to_edgelist_cpp(const arma::sp_mat & adjmat, bool undirected = 
   std::vector< double > alter;
 
   int n = adjmat.n_cols;
+
+  // CAN BE REWRITTEN ACCESSING VALUES OF THE SPMAT DIRECTLY
 
   for(int i=0;i<n;i++) {
     /* Setting the length of the subloop acordingly to type of graph */

@@ -30,16 +30,25 @@ a matrix), or a matrix of size \eqn{n\times T}{n * T}.
 Computes the requested degree measure for each node in the graph.
 }
 \examples{
+
+# Comparing degree measurements ---------------------------------------------
 # Creating an undirected graph
 graph <- rgraph_ba()
 graph
 
-# Comparing degree measurements
- data.frame(
+data.frame(
    In=dgr(graph, "indegree", undirected = FALSE),
    Out=dgr(graph, "outdegree", undirected = FALSE),
    Degree=dgr(graph, "degree", undirected = FALSE)
  )
+
+# Testing on Korean Family Planning (weighted graph) ------------------------
+data(kfamilyDiffNet)
+d_unvalued <- dgr(kfamilyDiffNet, valued=FALSE)
+d_valued   <- dgr(kfamilyDiffNet, valued=TRUE)
+
+any(d_valued!=d_unvalued)
+
 }
 \author{
 Vega Yon
