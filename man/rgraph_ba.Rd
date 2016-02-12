@@ -44,7 +44,7 @@ Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
 Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
 
 Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
-Retrieved from \url{http://barabasi.com/networksciencebook/}
+Retrieved from \url{http://barabasi.com/book/network-science}
 }
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},

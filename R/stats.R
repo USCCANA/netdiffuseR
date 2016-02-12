@@ -152,7 +152,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' Calculates exposure to adoption over time via multiple different types of weight
 #' matrices.  The basic  model is exposure to adoption by immediate neighbors
-#' (outdegree) at the time period prior to ego’s adoption. This exposure can be
+#' (outdegree) at the time period prior to ego’s adoption. This exposure can also be
 #' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties, (4)
 #' attribute weighted (5) network-metric weighted (e.g., central nodes have more
 #' influence), and attribute-weighted (e.g., based on homophily or tie strength).
@@ -482,7 +482,8 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 
 #' Retrive threshold levels from the exposure matrix
 #'
-#' Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
+#' Thresholds are each vertexes exposure at the time of adoption.
+#' Substantively it is the proportion of adopters required for each ego to adopt. (see \code{\link{exposure}}).
 #'
 #' @param obj Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
 #' \code{\link{exposure}}) or a \code{diffnet} object.

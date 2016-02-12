@@ -20,7 +20,8 @@ threshold(obj, times, t0 = min(times, na.rm = TRUE), ...)
 A vector of size \eqn{n} indicating the threshold for each node.
 }
 \description{
-Threshold as the exposure of vertex by the time of the adoption (see \code{\link{exposure}}).
+Thresholds are each vertexes exposure at the time of adoption.
+Substantively it is the proportion of adopters required for each ego to adopt. (see \code{\link{exposure}}).
 }
 \examples{
 # Generating a random graph with random Times of Adoption

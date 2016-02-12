@@ -13,7 +13,9 @@ boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
 
 \method{hist}{diffnet_boot}(x,
   main = "Distribution of Statistic on\\nrewired network",
-  xlab = "Values of t", breaks = 20, annotated = TRUE, ...)
+  xlab = expression(Values ~ of ~ beta), breaks = 20, annotated = TRUE,
+  b0 = expression(atop(plain("") \%up\% plain("")), beta[0]),
+  b = expression(atop(plain("") \%up\% plain("")), beta[]), ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}
@@ -35,6 +37,10 @@ boot_net(graph, statistic, R, rewire.args = list(p = 1, undirected =
 \item{breaks}{Passed to \code{\link{hist}}.}
 
 \item{annotated}{Logical scalar. When TRUE marks the observed data average and the simulated data average.}
+
+\item{b0}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.}
+
+\item{b}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.}
 }
 \value{
 A list of class \code{diffnet_bot} containing the following:
@@ -45,15 +51,15 @@ A list of class \code{diffnet_bot} containing the following:
 The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 }
 \description{
-Test whether or not a network estimates can be considered as structure dependent, i.e.
+Test whether or not a network estimates can be considered structurally dependent, i.e.
 a function of the network structure. By rewiring the graph and calculating
 a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
 against the empirical distribution of it obtained from rewiring the network.
 }
 \details{
 \code{boot_net} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
-\pkg{boot} package. As a difference, instead of resampling data the function performs
-rewiring of the graph in each repetition using \code{\link{rewire_graph}} and applies
+\pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
+rewires the original graph using \code{\link{rewire_graph}} and applies
 the function defined by the user in \code{statistic}.
 
 In \code{boot_net} \code{\dots} are passed to \code{boot}, otherwise are passed

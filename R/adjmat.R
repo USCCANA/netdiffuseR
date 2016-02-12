@@ -331,8 +331,10 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
 
 #' Time of adoption matrix
 #'
-#' Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during
-#' which an individual had already adopted the innovation.
+#' Creates two matrices recording times of adoption of the innovation. One matrix
+#' records the time period of adoption for each node with zeros elsewhere. The
+#' second records the cumulative time of adoption such that there are ones for
+#' the time of adoption and every time period thereafter.
 #'
 #' @param obj Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
 #' or a \code{\link{diffnet}} object.

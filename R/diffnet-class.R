@@ -77,7 +77,7 @@
 #'
 #' \code{diffnet.subset.slices} retrieves a subsection, in terms of time periods,
 #' of the graph. When doing so, it modifies the \code{toa} vector as well as the
-#' \code{adopt} and \code{cumadopt} matrices collapsing network tinming. For example,
+#' \code{adopt} and \code{cumadopt} matrices collapsing network tinmming. For example,
 #' if a network goes from time 1 to 20 and we set \code{slices=3:10}, all individuals
 #' who adopted prior to time 3 will be set as adopters at time 3, and all individuals
 #' who adopted after time 10 will be set as adopters at time 10, changing the

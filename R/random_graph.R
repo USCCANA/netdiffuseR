@@ -112,7 +112,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
 #'
 #' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
-#' Retrieved from \url{http://barabasi.com/networksciencebook/}
+#' Retrieved from \url{http://barabasi.com/book/network-science}
 #' @author Vega Yon
 rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
   # When the graph is not null, then use it as a seed (starting point)

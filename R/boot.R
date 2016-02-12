@@ -1,6 +1,6 @@
 #' Structure dependence test
 #'
-#' Test whether or not a network estimates can be considered as structure dependent, i.e.
+#' Test whether or not a network estimates can be considered structurally dependent, i.e.
 #' a function of the network structure. By rewiring the graph and calculating
 #' a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
 #' against the empirical distribution of it obtained from rewiring the network.
@@ -23,8 +23,8 @@
 #' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #' @details
 #' \code{boot_net} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
-#' \pkg{boot} package. As a difference, instead of resampling data the function performs
-#' rewiring of the graph in each repetition using \code{\link{rewire_graph}} and applies
+#' \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
+#' rewires the original graph using \code{\link{rewire_graph}} and applies
 #' the function defined by the user in \code{statistic}.
 #'
 #' In \code{boot_net} \code{\dots} are passed to \code{boot}, otherwise are passed
@@ -130,13 +130,17 @@ print.diffnet_boot <- function(x, ...) {
 }
 
 #' @export
+#' @param b0 Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.
+#' @param b Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.
 #' @rdname boot_net
 hist.diffnet_boot <- function(
   x,
   main="Distribution of Statistic on\nrewired network",
-  xlab="Values of t",
+  xlab=expression(Values~of~beta),
   breaks=20,
   annotated=TRUE,
+  b0=expression(atop(plain("") %up% plain("")), beta[0]),
+  b =expression(atop(plain("") %up% plain("")), beta[]),
   ...) {
 
   out <- hist(x$boot$t,  breaks=breaks, plot=FALSE,...)
@@ -151,10 +155,8 @@ hist.diffnet_boot <- function(
 
   # Adding margin note
   if (annotated) {
-    mtext(expression(atop(plain("") %up% plain("")), t[0]),
-          side = 1, at=x$boot$t0)
-    mtext(expression(atop(plain("") %up% plain("")), t[]),
-          side = 1, at=mt)
+    mtext(b0, side = 1, at=x$boot$t0)
+    mtext(b, side = 1, at=mt)
   }
   invisible(out)
 }

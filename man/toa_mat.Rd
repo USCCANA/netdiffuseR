@@ -22,8 +22,10 @@ A list of two \eqn{n \times T}{n x T}
  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 }
 \description{
-Creates two matrices indicating the time of adoption (TOA) of the innovation, and times during
-which an individual had already adopted the innovation.
+Creates two matrices recording times of adoption of the innovation. One matrix
+records the time period of adoption for each node with zeros elsewhere. The
+second records the cumulative time of adoption such that there are ones for
+the time of adoption and every time period thereafter.
 }
 \details{
 In order to be able to work with time ranges other than \eqn{1,\dots, T}{1,..., T}

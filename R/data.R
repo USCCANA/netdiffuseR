@@ -195,7 +195,7 @@
 #' From Valente (1995) \dQuote{Scholars at Seoul National University's School
 #' of Public Health (Park, Chung, Han & Lee, 1974) collected data on the
 #' adoption of family planning methods among all married women of child-bearing
-#' age 25 in Korea villages in 1973 (N = 1,047)}
+#' age 25 in Korea villages in 1973 (N = 1,047).}
 #'
 #' The dataset has 1,047 respondents (women) from 25 communities. Collected
 #' during 1973 it spans 11 years of data.
@@ -263,7 +263,7 @@
 #'    \item{pill2}{Detailed knowledge of Pill}
 #'    \item{pill3}{Attitudes toward Pill}
 #'    \item{pill4}{Knowledge of Pill used by neighbors}
-#'    \item{pill5}{nowledge of place of service for Pill}
+#'    \item{pill5}{Knowledge of place of service for Pill}
 #'    \item{vase1}{Awareness of Vasectomy}
 #'    \item{vase2}{Detailed knowledge of Vasectomy}
 #'    \item{vase3}{Attitudes toward Vasectomy}
@@ -431,19 +431,19 @@
 #'    \item{rfampl3}{Advice on FP sought by 3}
 #'    \item{rfampl4}{Advice on FP sought by 4}
 #'    \item{rfampl5}{Advice on FP sought by 5}
-#'    \item{rfampll}{Leadership score indegree FP}
+#'    \item{rfampll}{Leadership score - indegree FP}
 #'    \item{rabort1}{Advice on abortion sought by 1}
 #'    \item{rabort2}{Advice on abortion sought by 2}
 #'    \item{rabort3}{Advice on abortion sought by 3}
 #'    \item{rabort4}{Advice on abortion sought by 4}
 #'    \item{rabort5}{Advice on abortion sought by 5}
-#'    \item{rabortl}{Leadership score indegree abortion}
+#'    \item{rabortl}{Leadership score - indegree abortion}
 #'    \item{rhealth1}{Advice on health sought by 1}
 #'    \item{rhealth2}{Advice on health sought by}
 #'    \item{rhealth3}{Advice on health sought by}
 #'    \item{rhealth4}{Advice on health sought by}
 #'    \item{rhealth5}{Advice on health sought by}
-#'    \item{rhealthl}{Leadership score indegree health}
+#'    \item{rhealthl}{Leadership score - indegree health}
 #'    \item{recno5}{rec no NA}
 #'    \item{studno5}{study no NA}
 #'    \item{area5}{village}
@@ -453,13 +453,13 @@
 #'    \item{rgoods3}{Advice on purchases sought by 3}
 #'    \item{rgoods4}{Advice on purchases sought by 4}
 #'    \item{rgoods5}{Advice on purchases sought by 5}
-#'    \item{rgoodsl}{Leadership score indegree purchases}
+#'    \item{rgoodsl}{Leadership score - indegree purchases}
 #'    \item{reduc1}{Advice on education sought by 1}
 #'    \item{reduc2}{Advice on education sought by 2}
 #'    \item{reduc3}{Advice on education sought by 3}
 #'    \item{reduc4}{Advice on education sought by 4}
 #'    \item{reduc5}{Advice on education sought by 5}
-#'    \item{reducl}{Leadership score indegree education}
+#'    \item{reducl}{Leadership score - indegree education}
 #'    \item{hub1}{Husbands friend 1}
 #'    \item{hub2}{Husbands friend 2}
 #'    \item{hub3}{Husbands friend 3}
