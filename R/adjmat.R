@@ -135,10 +135,10 @@ edgelist_to_adjmat <- function(
 # @rdname edgelist_to_adjmat
 # @export
 edgelist_to_adjmat.data.frame <- function(
-  edgelist, weights=NULL,
-  times=NULL, t=NULL, simplify=TRUE,
-  undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-  use.incomplete=TRUE, recode.ids=TRUE) {
+  edgelist, weights,
+  times, t, simplify,
+  undirected, self, multiple,
+  use.incomplete, recode.ids) {
 
   edgelist_to_adjmat.matrix(as.matrix(edgelist), weights, times, t, simplify,
                             undirected, self, multiple, use.incomplete,
@@ -148,10 +148,10 @@ edgelist_to_adjmat.data.frame <- function(
 # @rdname edgelist_to_adjmat
 # @export
 edgelist_to_adjmat.matrix <- function(
-  edgelist, weights=NULL,
-  times=NULL, t=NULL, simplify=TRUE,
-  undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-  use.incomplete=TRUE, recode.ids=TRUE) {
+  edgelist, weights,
+  times, t, simplify,
+  undirected, self, multiple,
+  use.incomplete, recode.ids) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
@@ -182,7 +182,17 @@ edgelist_to_adjmat.matrix <- function(
   ##############################################################################
   # Step 2: Recoding nodes ids
   # Recoding nodes ids
-  if (recode.ids) dat <- recode(edgelist)
+  if (recode.ids) {
+    # Recoding
+    dat <- recode(edgelist)
+
+    # Retrieving codes + labels. If use.incomplete == FALSE, then the edgelist
+    # has already been filtered
+    recodedids <- attr(dat, "recode")
+    if (use.incomplete) dat <- dat[complete,]
+    attr(dat, "recode") <- recodedids
+    rm(recodedids)
+  }
   else dat <- edgelist
 
   n <- max(dat, na.rm = TRUE)
@@ -190,7 +200,7 @@ edgelist_to_adjmat.matrix <- function(
   ##############################################################################
   # Step 3: Preparing -times- and -weights- considering complete cases.
   # Times + recoding
-  m <- nrow(edgelist)
+  m <- nrow(dat)
   if (length(times)) times <- times[complete]
   else times <- rep(1, m)
 

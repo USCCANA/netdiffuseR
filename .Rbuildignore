@@ -11,7 +11,6 @@
 .*\.xls
 .*\.doc
 .*\.pdf
-
 # Misc
 README[.]Rmd
 README[.]md
@@ -19,3 +18,4 @@ README[.]md
 [.]travis[.]yml
 ^appveyor\.yml$
 vignettes/simulating.+\.Rmd$
+^NEWS\.md$

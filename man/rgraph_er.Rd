@@ -70,7 +70,7 @@ Vega Yon
 }
 \references{
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
-\url{http://barabasi.com/networksciencebook/}.
+\url{http://barabasi.com/book/network-science}.
 }
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},

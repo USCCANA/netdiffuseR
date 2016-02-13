@@ -1,11 +1,11 @@
 ---
-title: "Introduction to netdiffuseR"
+title: "Simulating diffusion networks: Using the `rdiffnet` function"
 author: "George G. Vega Yon"
 date: "November 17, 2015"
 output: rmarkdown::html_vignette
 header-includes: \usepackage{graphicx}
 vignette: >
-  %\VignetteIndexEntry{Visualizing Diffusion of Innovations}
+  %\VignetteIndexEntry{Simulating diffusion networks: Using the `rdiffnet` function}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---

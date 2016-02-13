@@ -1,22 +1,22 @@
 context("Network boot")
 
-test_that("boot_net should be reproducible (serial version)", {
+test_that("struct_test should be reproducible (serial version)", {
 
   # Generating data
   set.seed(1231)
   graph <- rdiffnet(200, 10)
 
   set.seed(1313)
-  b1 <- boot_net(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500)
+  b1 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500)
   set.seed(1313)
-  b2 <- boot_net(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500)
+  b2 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500)
 
   expect_equal(b1, b2)
 
 })
 
 
-test_that("boot_net should be reproducible (parallel version)", {
+test_that("struct_test should be reproducible (parallel version)", {
 
   # Generating data
   set.seed(1231)
@@ -28,10 +28,10 @@ test_that("boot_net should be reproducible (parallel version)", {
   oldrng <- RNGkind()[1]
   RNGkind("L'Ecuyer-CMRG")
   set.seed(1313)
-  b1 <- boot_net(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500, ncpus=2,
+  b1 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500, ncpus=2,
                  parallel="multicore")
   set.seed(1313)
-  b2 <- boot_net(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500, ncpus=2,
+  b2 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=500, ncpus=2,
                  parallel="multicore")
 
   # Returning to the old RNG. Obs that the seeds are not the same (bug?)

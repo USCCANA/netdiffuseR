@@ -51,6 +51,9 @@ recode.matrix <- function(data, ...) {
 
   rc <- rc[order(rc[,1]),]
 
+  # Removing NA
+  rc <- rc[!is.na(rc$code),]
+
   dimnames(output) <- dn
 
   attr(output, "recode") <- rc

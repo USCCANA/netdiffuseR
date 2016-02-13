@@ -16,23 +16,22 @@
 #' @param breaks Passed to \code{\link{hist}}.
 #' @param annotated Logical scalar. When TRUE marks the observed data average and the simulated data average.
 #' @return A list of class \code{diffnet_bot} containing the following:
-#' \item{graph}{The graph passed to \code{boot_net}.}
-#' \item{statistic}{The function \code{statistic} passed to \code{boot_net}.}
+#' \item{graph}{The graph passed to \code{struct_test}.}
+#' \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 #'
 #' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #' @details
-#' \code{boot_net} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
+#' \code{struct_test} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
 #' \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
 #' rewires the original graph using \code{\link{rewire_graph}} and applies
 #' the function defined by the user in \code{statistic}.
 #'
-#' In \code{boot_net} \code{\dots} are passed to \code{boot}, otherwise are passed
+#' In \code{struct_test} \code{\dots} are passed to \code{boot}, otherwise are passed
 #' to the corresponding method (\code{\link{hist}} for instance).
 #'
 #' From the \code{print} method, p-value for the null of the statistic been
-#' equal between graph and its rewired versions is computed following Davidson
-#' & MacKinnon
+#' equal between graph and its rewired versions is computed as follows
 #'
 #' \deqn{%
 #' p(\tau)=2\times\min\left(\mbox{Pr}(t\leq\tau), \mbox{Pr}(t\geq\tau)\right) %
@@ -42,16 +41,22 @@
 #'
 #' Where \eqn{\mbox{Pr}\{\cdot\}}{Pr(.)} is approximated using the
 #' Empirical Distribution Function retrieved from the simulations.
+#'
+#' The test is actually on development by Vega Yon and Valente. A copy of the
+#' working paper can be distributed upon request to \email{g.vegayon@gmail.com}
 #' @export
 #' @references
-#' On development.
+#' Vega Yon, George G. and Valente, Thomas W. (On development).
+#'
+#' Davidson, R., & MacKinnon, J. G. (2004). Econometric Theory and Methods. New York:
+#' Oxford University Press.
 #' @examples
 #' # Creating a random graph
 #' set.seed(881)
 #' diffnet <- rdiffnet(100, 10)
 #'
 #' # Testing structure-dependency of threshold
-#' res <- boot_net(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
+#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
 #' res
 #' hist(res)
 #'
@@ -65,13 +70,13 @@
 #'
 #' # Running in parallel fashion
 #' \dontrun{
-#' res <- boot_net(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100,
+#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100,
 #' ncpus=4, parallel="multicore")
 #' res
 #' hist(res)
 #' }
 #' @author Vega Yon
-boot_net <- function(
+struct_test <- function(
   graph,
   statistic,
   R,
@@ -103,12 +108,12 @@ boot_net <- function(
     boot=boot_res
   )
 
-  return(structure(out, class="diffnet_boot"))
+  return(structure(out, class="diffnet_struct_test"))
 }
 
 #' @export
-#' @rdname boot_net
-print.diffnet_boot <- function(x, ...) {
+#' @rdname struct_test
+print.diffnet_struct_test <- function(x, ...) {
   with(x,  {
     tmean <- colMeans(boot$t, na.rm = TRUE)
 
@@ -132,15 +137,15 @@ print.diffnet_boot <- function(x, ...) {
 #' @export
 #' @param b0 Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.
 #' @param b Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.
-#' @rdname boot_net
-hist.diffnet_boot <- function(
+#' @rdname struct_test
+hist.diffnet_struct_test <- function(
   x,
   main="Distribution of Statistic on\nrewired network",
-  xlab=expression(Values~of~beta),
+  xlab=expression(Values~of~t),
   breaks=20,
   annotated=TRUE,
-  b0=expression(atop(plain("") %up% plain("")), beta[0]),
-  b =expression(atop(plain("") %up% plain("")), beta[]),
+  b0=expression(atop(plain("") %up% plain("")), t[0]),
+  b =expression(atop(plain("") %up% plain("")), t[]),
   ...) {
 
   out <- hist(x$boot$t,  breaks=breaks, plot=FALSE,...)
@@ -160,8 +165,8 @@ hist.diffnet_boot <- function(
   }
   invisible(out)
 }
-# #' @rdname boot_net
-# boot_thr <- boot_net(net, function(x) {
+# #' @rdname struct_test
+# boot_thr <- struct_test(net, function(x) {
 #   t <- threshold(x)
 #   cbind(mean=mean(t, na.rm=TRUE), sd=sd(t, na.rm = TRUE))
 # }

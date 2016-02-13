@@ -47,7 +47,6 @@ Collate:
     'imports.R'
     'graph_data.R'
     'adjmat.R'
-    'boot.R'
     'data.R'
     'diffnet-class.R'
     'diffnet-methods.R'
@@ -62,3 +61,4 @@ Collate:
     'select_egoalter.R'
     'stats.R'
     'struct_equiv.R'
+    'struct_test.R'

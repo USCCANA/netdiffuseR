@@ -12,7 +12,7 @@ vignette: >
 
 ```{r Setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(out.width = 600, fig.align = "center", fig.width = 7, fig.height = 7)
+opts_chunk$set(out.width = 600, fig.align = "center", fig.width = 7, fig.height = 7) 
 ```
 
 # Data preprocessing
@@ -44,12 +44,6 @@ surveyed <- medInnovations$id
 for (i in netvars)
   medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
 
-# Adding autoedges to farmers that are isolated, we need to do this otherwize
-# these will be dropped when calling the function -edgelist_to_adjmat-. Notice
-# that this does not imply that the graph will have autoedges. (see manual)
-isolated <- which(apply(medInnovations[, netvars], 1, function(x) all(is.na(x))))
-medInnovations[isolated, netvars[1]] <- medInnovations$id[isolated]
-
 # Reshaping data (so we have an edgelist)
 medInnovations.long <- reshape(
   medInnovations[,c(othervars, netvars)], v.names= "net",
@@ -65,20 +59,27 @@ Once we have the data in long format, we can coerce it into an `diffnet` object.
 # network is constant through time.
 graph <- with(
   medInnovations.long,
-  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE)
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=TRUE)
 )
+```
 
+Notice that we have included `use.incomplete=TRUE`, so, if any element of our edgelist had an `NA`, `NULL` or related value, it would still be included in the adjacency matrix. This is specially important if, for example, there are isolated nodes in the data, as if we had not set `use.incomplete=TRUE` those would had been discarded. In such cases the function allows you to identify discarded nodes by accessing either to the rownames of the adjacency matrix (as the example that follows) or to the `incomplete` attribute that is attached to the output of the function.
+
+```{r}
 # Here we are retrieving the set of individuals who actually were used in the
 # network (as these are not isolated nodes)
 used.vertex <- rownames(graph[[1]])
-medInnovations <- subset(medInnovations, id %in% used.vertex)
+```
 
-# Create the vector (subset) of times of adoption using only the individuals
-# that are included in the adjacency matrix
-toa <- medInnovations$toa
+Now we can create our `diffnet` object. Notice that `medInnovations` happens to be sorted in the same way as the elements in the adjacency matrix. You can check this by accessing the `used.vertex` and sorting `medInnovations` in that order.
+
+```{r}
+# Just to be sure. Sorting the data!
+orddata <- as.numeric(as.factor(used.vertex))
+medInnovations <- medInnovations[orddata,]
 
 # Creating a diffnet object
-diffnet <- as_diffnet(graph, toa, vertex.static.attrs = medInnovations)
+diffnet <- as_diffnet(graph, medInnovations$toa, vertex.static.attrs = medInnovations)
 ```
 
 # Methods
@@ -102,7 +103,7 @@ plot_hazard(diffnet)
 
 # Statistical test
 
-Now, we want to know if the threshold model fits here. In order to do so we will use the structure dependency test built in the package, `boot_net`. We will apply this both in a aggregated level and by city. First we need to subset the data:
+Now, we want to know if the threshold model fits here. In order to do so we will use the structure dependency test built in the package, `struct_test`. We will apply this both in a aggregated level and by city. First we need to subset the data:
 
 ```{r Subsetting}
 # Get cities ids so we can subset the vertices and run the test by city.
@@ -140,13 +141,13 @@ Now we run the test for each city. Observe that we can use the __parallel__ pack
 avgthr <- function(x) mean(threshold(x), na.rm = TRUE)
 
 # Running the test by city
-test1   <- boot_net(diffnet_city1, avgthr, 2000, ncpus=2, parallel="multicore")
-test2   <- boot_net(diffnet_city2, avgthr, 2000, ncpus=2, parallel="multicore")
-test3   <- boot_net(diffnet_city3, avgthr, 2000)
-test4   <- boot_net(diffnet_city4, avgthr, 2000)
+test1   <- struct_test(diffnet_city1, avgthr, 2000, ncpus=2, parallel="multicore")
+test2   <- struct_test(diffnet_city2, avgthr, 2000, ncpus=2, parallel="multicore")
+test3   <- struct_test(diffnet_city3, avgthr, 2000)
+test4   <- struct_test(diffnet_city4, avgthr, 2000)
 
 # Running the test aggregated
-testall <- boot_net(diffnet, avgthr, 2000, ncpus=2, parallel="multicore")
+testall <- struct_test(diffnet, avgthr, 2000, ncpus=2, parallel="multicore")
 
 # Printing the outcomes
 test1

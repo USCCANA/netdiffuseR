@@ -23,7 +23,7 @@
 #' networks are uncorrelated.
 #' @references
 #' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
-#' \url{http://barabasi.com/networksciencebook/}.
+#' \url{http://barabasi.com/book/network-science}.
 #' @return A graph represented by an adjacency matrix (if \code{t=1}), or an array of
 #' adjacency matrices (if \code{t>1}).
 #' @export
