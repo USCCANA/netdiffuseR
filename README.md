@@ -7,16 +7,30 @@ This package contains functions useful for analyzing network data for diffusion 
 
 The package was developed as part of the paper Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*, Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
-From the description: Statistical analysis, visualization and simulation of network diffusion of innovations. The package implements algorithms for calculating stats such as innovation threshold levels, infectiousness (contagion) and susceptibility, and hazard rates as presented in Burt (1987), Valente (1995), and Myers (2000) (among others).
+From the description: Empirical statistical analysis, visualization and simulation of network models of the diffusion of innovations. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995) <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among others.
 
 **Acknowledgements**: netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+
+News
+----
+
+-   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
+-   \[2016-02-18\] We will be offering a worshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/wp-content/uploads/2015/09/2016_Sunbelt_Workshops_FINAL_01-27-16.pdf)).
 
 Installation
 ------------
 
-Infectiousness and Susceptibility
+### CRAN version
 
-Using the `devtools` package, you can install `netdiffuseR` dev version as follows
+To get the CRAN (stable) version of the package, simple type
+
+``` r
+install.packages("netdiffuseR")
+```
+
+### Bleeding edge version
+
+If you want the latest (unstable) version of **netdiffuseR**, using the `devtools` package, you can install `netdiffuseR` dev version as follows
 
 ``` r
 devtools::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
@@ -182,3 +196,4 @@ To-do list
 -   Double check all functions using adjacency matrix values.
 -   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
 -   Implement the Bass model
+-   Include function to import survey data (as shown on the vignettes)
