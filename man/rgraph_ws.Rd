@@ -32,7 +32,7 @@ Vega Yon
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
-networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
+networks. Nature, 393(6684), 440–2. \url{http://dx.doi.org/10.1038/30918}
 
 Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
 SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}

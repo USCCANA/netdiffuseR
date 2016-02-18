@@ -19,3 +19,4 @@ README[.]md
 ^appveyor\.yml$
 vignettes/simulating.+\.Rmd$
 ^NEWS\.md$
+^cran-comments\.md$

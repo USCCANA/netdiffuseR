@@ -32,7 +32,7 @@ arma::mat infection_cpp(
 
   // The discount can be either exponential (1 + r)^(k-1), or
   // lineal in the form of k.
-  double discount[K];
+  double * discount = new double[K];
   if (!expdiscount) {
     for(int k=1;k<=K;k++)
       discount[k-1] = k;
@@ -133,7 +133,7 @@ arma::colvec susceptibility_cpp(
 
   // The discount can be either exponential (1 + r)^(k-1), or
   // lineal in the form of k.
-  double discount[K];
+  double * discount = new double[K];
   if (!expdiscount) {
     for(int k=1;k<=K;k++)
       discount[k-1] = k;

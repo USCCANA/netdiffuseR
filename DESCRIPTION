@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 0.16.2.12
-Date: 2016-02-12
+Version: 1.16.2
+Date: 2016-02-17
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
@@ -12,8 +12,10 @@ Description: Empirical statistical analysis, visualization and simulation
     algorithms for calculating network diffusion statistics such as transmission
     rate, hazard rates, exposure models, network threshold levels, infectiousness
     (contagion), and susceptibility. The package is inspired by work published
-    in Valente, et al., (2015); Valente (1995), Myers (2000), Iyengar and others
-    (2011), Burt (1987); among others.
+    in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>;
+    Valente (1995) <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>,
+    Iyengar and others (2011) <DOI:10.1287/mksc.1100.0566>,
+    Burt (1987) <DOI:10.1086/228667>; among others.
 Depends:
     R (>= 3.1.1)
 License: MIT + file LICENSE
