@@ -106,7 +106,7 @@ summary(diffnet)
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
 ```
 
-    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, normalize, K, :
+    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
     ## When applying logscale some observations are missing.
 
 ![](README_files/figure-markdown_github/plot_infectsuscept-1.png)<!-- -->
