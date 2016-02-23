@@ -4,21 +4,17 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List egonet_attrs_cpp(
-    const arma::sp_mat & graph, const arma::uvec V, NumericMatrix attrs,
+    const arma::sp_mat & graph, const arma::uvec V,
     bool outer=true, bool self=true, bool valued=true) {
 
   // General variables
   int N = V.n_elem;
-  int k = attrs.ncol();
 
   // Column names
-  CharacterVector cnames(k+2);
-  CharacterVector mnames = colnames(attrs);
+  CharacterVector cnames(2);
 
   cnames[0] = "value";
   cnames[1] = "id";
-  for(int i=2;i<(k+2);i++)
-    cnames[i] = mnames[i-2];
 
   // Depending on inner or outer edges:
   //  - outer: Accounts for the rows
@@ -40,7 +36,7 @@ List egonet_attrs_cpp(
     // Individual specific variables
     arma::sp_mat g = tgraph.col(e);
     int n = g.n_nonzero;
-    NumericMatrix out(n-rm,k+2);
+    NumericMatrix out(n-rm,2);
     // We add two so:
     //  - we can include the value of the edge
     //  - we cna include the id number of the vertex (wich goes from 1 to n)
@@ -56,11 +52,7 @@ List egonet_attrs_cpp(
 
       // Edge value
       if (valued) out(nloop,0) = g.values[i];
-      else out(nloop,0) += 1.0;
-
-      for (int j=0;j<k;j++) {
-        out(nloop,j+2) = attrs(g.row_indices[i],j);
-      }
+      else out(nloop,0) = 1.0;
 
       // Increasing after success
       nloop++;
@@ -88,9 +80,9 @@ diffnet_attrs <- function(diffnet) {
 
 
 
-onestep_attrs <- egonet_attrs_cpp(graph,1:n, mat, self = FALSE)
+onestep_attrs <- egonet_attrs_cpp(graph,1:n-1, self = FALSE)
 # twostep_attrs <- nsteps_attrs_cpp(graph %*% graph,1:n, mat, self = FALSE)
-
+stop()
 # Computing the degree weighted rand
 w <- lapply(onestep_attrs, function(x) {
     (t(x[,4]) %*% x[,5])/sum(x[,5])

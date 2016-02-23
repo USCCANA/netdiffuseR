@@ -85,7 +85,7 @@
 #' integer range without gaps.
 #'
 #' \code{diffnet.attrs} Allows retriving network attributes. In particular, by default
-#' returns a list of length \eqn{T} with matrices with the following columns:
+#' returns a list of length \eqn{T} with data frames with the following columns:
 #'
 #' \enumerate{
 #'  \item \code{per} Indicating the time period to which the observation corresponds.
@@ -130,9 +130,9 @@
 #' # ATTRIBUTES ----------------------------------------------------------------
 #'
 #' # Adding new attributes to the network
-#' diffnet.attrs(diffnet, "vertex", "static") <- cbind(posnum=1:diffnet$meta$n)
+#' diffnet.attrs(diffnet, "vertex", "static") <- data.frame(posnum=1:diffnet$meta$n)
 #' diffnet.attrs(diffnet, "vertex", "dyn") <-
-#'  lapply(1:diffnet$meta$nper, function(x) cbind(rand=runif(diffnet$meta$n)))
+#'  lapply(1:diffnet$meta$nper, function(x) data.frame(rand=runif(diffnet$meta$n)))
 #'
 #' # Retrieving attributes
 #' diffnet.attrs(diffnet, "vertex", "static")
@@ -150,9 +150,9 @@
 #' \item{toa}{An integer vector of size \eqn{T} with times of adoption.}
 #' \item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
 #' by \code{\link{toa_mat}}.}
-#' \item{vertex.static.attrs}{If not NULL, a matrix with \eqn{n} rows with vertex static
+#' \item{vertex.static.attrs}{If not NULL, a data frame with \eqn{n} rows with vertex static
 #' attributes.}
-#' \item{vertex.dyn.attrs}{A list of length \eqn{T} with matrices containing vertex attributes
+#' \item{vertex.dyn.attrs}{A list of length \eqn{T} with data frames containing vertex attributes
 #' throught time (dynamic).}
 #' \item{graph.attrs}{If not NULL, a numeric matrix with 1 row containing graph attributes.}
 #' \item{meta}{A list of length 9 with the following elements:
@@ -171,7 +171,8 @@
 #' @author Vega Yon
 as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
                        vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
-                       graph.attrs = NULL, undirected=getOption("diffnet.undirected"),
+                       graph.attrs = NULL,
+                       undirected=getOption("diffnet.undirected"),
                        self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple")) {
 
   # Step 0.0: Check if its diffnet!
@@ -191,18 +192,23 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
   # Vertex attrs
   if (length(vertex.dyn.attrs)) {
+
     attlen <- lapply(vertex.dyn.attrs, nrow)
     if (any(attlen != meta$n)) stop("-graph- and -vertex.dyn.attrs- have different lengths (",
                                     meta$n, " and ", paste(attlen, collapse=", "), "respectively). ",
                                     "-vertex.dyn.attrs- should have n rows.")
 
-    # Coercing into matrices
+    # Coercing into data.frames
     cnames <- colnames(vertex.dyn.attrs[[1]])
     if (!length(cnames))
       cnames <- sprintf("v.dyn.att%03d", 1:ncol(vertex.dyn.attrs[[1]]))
 
+    # Checking if it is a data.frame or not
+    if (!inherits(vertex.dyn.attrs[[1]], "data.frame"))
+      warning("-vertex.dyn.attrs- will be corerced to a data.frame.")
+
     vertex.dyn.attrs <- lapply(vertex.dyn.attrs, function(x) {
-      x<-as.matrix(x)
+      if (!inherits(x, "data.frame")) x <- as.data.frame(x)
       dimnames(x) <- list(meta$ids, cnames)
       x
     })
@@ -220,7 +226,12 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
     if (!length(cnames))
       cnames <- sprintf("v.static.att%03d", 1:ncol(vertex.static.attrs))
 
-    vertex.static.attrs <- as.matrix(vertex.static.attrs)
+    # Checking if it is a data.frame or not
+    if (!inherits(vertex.static.attrs, "data.frame")) {
+      warning("-vertex.static.attrs- will be corerced to a data.frame.")
+      vertex.static.attrs <- as.data.frame(vertex.static.attrs)
+    }
+
     dimnames(vertex.static.attrs) <- list(meta$ids, cnames)
   }
 
@@ -344,6 +355,9 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
   pers <- graph$meta$pers
   n    <- graph$meta$n
 
+  # Only for diffnet objects
+  if (!inherits(graph, "diffnet")) stopifnot_graph(graph)
+
   # Checking elements
   if (any(!(element %in% c("vertex", "graph"))))
     stop("-element- should only have 'vertex', and/or 'graph'.")
@@ -361,6 +375,11 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
     if ("dyn"    %in% attr.class) v.dyn    <- graph$vertex.dyn.attrs
     if ("static" %in% attr.class) v.static <- graph$vertex.static.attrs
   }
+
+  # Parsing attributes
+  if (!length(g.static)) g.static <- as.data.frame(matrix(ncol=0, nrow=n))
+  if (!length(v.static)) v.static <- as.data.frame(matrix(ncol=0, nrow=n))
+  if (!length(v.dyn[[1]])) v.dyn <- lapply(1:nper, function(y) as.data.frame(matrix(ncol=0, nrow=n)))
 
   attrs <- cbind(toa=graph$toa, v.static, g.static)
   out <- lapply(1:nper, function(y) {
@@ -390,6 +409,7 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
     stop("-attr.class- should be either 'dyn' or 'static'.")
 
   if (("vertex" == element) && ("static" == attr.class)) {
+    # Checking object class
     if (!(class(value) %in%  c("data.frame","matrix")))
       stop("-value- should be either a matrix or a data.frame.")
 
@@ -409,11 +429,18 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
     if (!length(cnames))
       cnames <- sprintf("v.static.att%03d", 1:ncol(value) + k)
 
-    value <- as.matrix(value)
+    # Checking if it is a data.frame or not
+    if (!inherits(value, "data.frame")) {
+      warning("-value- will be corerced to a data.frame.")
+      value <- as.data.frame(value)
+    }
+
     dimnames(value) <- list(graph$meta$ids, cnames)
 
     # Adding the values
-    graph$vertex.static.attrs <- cbind(graph$vertex.static.attrs, value)
+    if (length(graph$vertex.static.attrs)) graph$vertex.static.attrs <- cbind(graph$vertex.static.attrs, value)
+    else graph$vertex.static.attrs <- value
+
   } else if (("vertex" == element) && ("dyn" == attr.class)) {
 
     # Checking the length of the attributes
@@ -429,21 +456,30 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
     # Coercing into matrices
     cnames <- colnames(value[[1]])
 
-    if (length(graph$vertex.dyn.attrs)) k <- ncol(graph$vertex.dyn.attrs)
+    if (length(graph$vertex.dyn.attrs[[1]])) k <- ncol(graph$vertex.dyn.attrs)
     else k <- 0
 
     if (!length(cnames))
       cnames <- sprintf("v.static.att%03d", 1:ncol(value[[1]]) + k)
 
+    # Checking if it is a data.frame or not
+    if (!inherits(value[[1]], "data.frame"))
+      warning("-value- will be corerced to a data.frame.")
+
     value <- lapply(value, function(y) {
-      y<-as.matrix(y)
+      if (!inherits(y, "data.frame")) y <- as.data.frame(y)
       dimnames(y) <- list(graph$meta$ids, cnames)
       y
     })
 
     # Adding the values
-    for (i in 1:graph$meta$nper)
-      graph$vertex.dyn.attrs[[i]] <- cbind(graph$vertex.dyn.attrs[[i]], value[[i]])
+    if (k) {
+      for (i in 1:graph$meta$nper)
+        graph$vertex.dyn.attrs[[i]] <- cbind(graph$vertex.dyn.attrs[[i]], value[[i]])
+    } else {
+      for (i in 1:graph$meta$nper)
+        graph$vertex.dyn.attrs[[i]] <- value[[i]]
+    }
   }
 
   graph

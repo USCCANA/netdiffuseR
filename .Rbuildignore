@@ -4,6 +4,7 @@
 ^playground$
 .*\.old
 ^doc$
+.*\.Rhistory$
 
 # Binary files
 .*\.tar\.gz

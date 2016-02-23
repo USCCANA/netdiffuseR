@@ -35,10 +35,10 @@ columns:
 \item{...}{Further attributes contained in \code{attrs}}
 
 On the other hand, if \code{graph} is dynamic, the output is list of length
-\eqn{T} of lists of length \code{length(V)} with matrices having the following
+\eqn{T} of lists of length \code{length(V)} with data frames having the following
 columns:
 
-\item{value}{Either the corresponding value of the diagonal matrix or a one.}
+\item{value}{The corresponding value of the adjacency matrix.}
 \item{id}{Alter's id}
 \item{per}{Time id}
 \item{...}{Further attributes contained in \code{attrs}}

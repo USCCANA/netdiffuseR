@@ -160,6 +160,6 @@ rdiffnet <- function(n, t,
   }
 
   as_diffnet(graph, as.integer(toa), undirected=FALSE, t0=1, t1=t,
-             vertex.static.attrs = cbind(real_threshold=thr))
+             vertex.static.attrs = data.frame(real_threshold=thr))
 }
 

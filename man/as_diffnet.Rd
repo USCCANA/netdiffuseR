@@ -123,9 +123,9 @@ and class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 \item{toa}{An integer vector of size \eqn{T} with times of adoption.}
 \item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
 by \code{\link{toa_mat}}.}
-\item{vertex.static.attrs}{If not NULL, a matrix with \eqn{n} rows with vertex static
+\item{vertex.static.attrs}{If not NULL, a data frame with \eqn{n} rows with vertex static
 attributes.}
-\item{vertex.dyn.attrs}{A list of length \eqn{T} with matrices containing vertex attributes
+\item{vertex.dyn.attrs}{A list of length \eqn{T} with data frames containing vertex attributes
 throught time (dynamic).}
 \item{graph.attrs}{If not NULL, a numeric matrix with 1 row containing graph attributes.}
 \item{meta}{A list of length 9 with the following elements:
@@ -192,7 +192,7 @@ adoption and cumulative adoption matrices. Importantly, \code{slice} must be an
 integer range without gaps.
 
 \code{diffnet.attrs} Allows retriving network attributes. In particular, by default
-returns a list of length \eqn{T} with matrices with the following columns:
+returns a list of length \eqn{T} with data frames with the following columns:
 
 \enumerate{
  \item \code{per} Indicating the time period to which the observation corresponds.
@@ -234,9 +234,9 @@ summary(diffnet)
 # ATTRIBUTES ----------------------------------------------------------------
 
 # Adding new attributes to the network
-diffnet.attrs(diffnet, "vertex", "static") <- cbind(posnum=1:diffnet$meta$n)
+diffnet.attrs(diffnet, "vertex", "static") <- data.frame(posnum=1:diffnet$meta$n)
 diffnet.attrs(diffnet, "vertex", "dyn") <-
- lapply(1:diffnet$meta$nper, function(x) cbind(rand=runif(diffnet$meta$n)))
+ lapply(1:diffnet$meta$nper, function(x) data.frame(rand=runif(diffnet$meta$n)))
 
 # Retrieving attributes
 diffnet.attrs(diffnet, "vertex", "static")

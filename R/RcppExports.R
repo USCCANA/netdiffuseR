@@ -25,8 +25,8 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
-egonet_attrs_cpp <- function(graph, V, attrs, outer = TRUE, self = TRUE, valued = TRUE) {
-    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, attrs, outer, self, valued)
+egonet_attrs_cpp <- function(graph, V, outer = TRUE, self = TRUE, valued = TRUE) {
+    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, valued)
 }
 
 infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, T = 0L, valued = FALSE) {
