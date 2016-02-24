@@ -1,7 +1,7 @@
 ---
 title: "README"
 author: "George G. Vega Yon"
-date: "September 9, 2015"
+date: paste("Compiled on", Sys.date())
 output: 
   md_document:
     variant: markdown_github

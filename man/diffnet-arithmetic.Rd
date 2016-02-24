@@ -54,4 +54,8 @@ brf2_step <- 1/brf2_step
 ba <- rdiffnet(10,5, seed.graph="scale-free", rgraph.args=list(m=4))
 
 }
+\seealso{
+Other diffnet methods: \code{\link{as.array.diffnet}},
+  \code{\link{as_diffnet}}
+}
 

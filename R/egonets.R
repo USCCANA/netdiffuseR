@@ -136,6 +136,9 @@ egonet_attrs <- function(
 
 egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, valued) {
 
+  # Filling V
+  if (!length(V)) V <- seq_len(nrow(graph))
+
   ids <- egonet_attrs_cpp(graph, as.integer(V)-1L, outer, self, valued)
   lapply(ids, function(w) cbind(
     value = w[,"value"],
@@ -149,7 +152,10 @@ egonet_attrs.array <- function(graph, attrs, V, outer, fun, as.df, self, valued)
   dn <- dimnames(graph)[[3]]
   if (!length(dn)) dn <- 1:dim(graph)[3]
 
-  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
+  # Filling V
+  if (!length(V)) V <- seq_len(nrow(graph))
+
+  graph <- lapply(1:dim(graph)[3], function(x) methods::as(graph[,,x], "dgCMatrix"))
   names(graph) <- dn
 
   egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, valued)
@@ -161,6 +167,9 @@ egonet_attrs.list <- function(graph, attrs, V, outer, fun, as.df, self, valued) 
   nper <- length(graph)
   if (nper != length(attrs))
     stop("-graph- and -attrs- must have the same length")
+
+  # Checking V
+  if (!length(V)) V <- seq_len(nrow(graph[[1]]))
 
   # Period times
   tn <- names(graph)

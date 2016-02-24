@@ -26,9 +26,9 @@ for (g in names(EL_digraph)) {
 
   # Arguments length
   test_that(paste0("Length of inputs in edgelist_adjmat should match (detecting error) - ",g), {
-    expect_error(edgelist_to_adjmat(EL_digraph[[g]], weights = w[-1], undirected=FALSE), "Error.+same length")
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], w = w[-1], undirected=FALSE), "Error.+same length")
     expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim[-1], undirected=FALSE), "Error.+same length")
-    expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim, weights = w[-1], undirected=FALSE), "Error.+same length")
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim, w = w[-1], undirected=FALSE), "Error.+same length")
   })
 
   #-----------------------------------------------------------------------------

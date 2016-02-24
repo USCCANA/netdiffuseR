@@ -15,8 +15,8 @@ in the graph are static and described in \code{\link{medInnovations}}.
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{brfarmers}}, \code{\link{diffusion-data}},
-  \code{\link{kfamilyDiffNet}}, \code{\link{kfamily}},
-  \code{\link{medInnovations}}
+  \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
+  \code{\link{kfamily}}, \code{\link{medInnovations}}
 }
 \keyword{datasets}
 

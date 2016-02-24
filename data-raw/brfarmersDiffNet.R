@@ -43,9 +43,9 @@ for (i in netvars)
 for (i in netvars)
   brfarmers[[i]][which(!(brfarmers[[i]] %in% surveyed))] <- NA
 
-# Adding autoedges to farmers that are isolated
-isolated <- which(apply(brfarmers[, netvars], 1, function(x) all(is.na(x))))
-brfarmers[isolated, netvars[1]] <- brfarmers$id[isolated]
+# # Adding autoedges to farmers that are isolated
+# isolated <- which(apply(brfarmers[, netvars], 1, function(x) all(is.na(x))))
+# brfarmers[isolated, netvars[1]] <- brfarmers$id[isolated]
 
 # Reshaping data
 brfarmers.long <- reshape(
@@ -59,23 +59,28 @@ library(netdiffuseR)
 # network is constant through time.
 graph <- with(
   brfarmers.long,
-  edgelist_to_adjmat(cbind(id, net), t=1966-1946+1, undirected=FALSE, use.incomplete=FALSE, multiple=TRUE)
+  edgelist_to_adjmat(cbind(id, net), t=1966-1946+1, undirected=FALSE, keep.isolates = TRUE, multiple=TRUE)
   )
 
 # We have an extra year which we won't use
 # graph <- graph[-length(graph)]
 
-# Here we are retrieving the set of individuals who actually were used in the
-# network (as these are not isolated nodes)
-used.vertex <- rownames(graph[[1]])
-
-# Create the vector (subset) of times of adoption using only the individuals
-# that are included in the adjacency matrix
-toa <- brfarmers$adopt[brfarmers$id %in% used.vertex]
+# [2016-02-24]: keep.isolates working
+# # Here we are retrieving the set of individuals who actually were used in the
+# # network (as these are not isolated nodes)
+# used.vertex <- rownames(graph[[1]])
+#
+# # Create the vector (subset) of times of adoption using only the individuals
+# # that are included in the adjacency matrix
+# toa <- brfarmers$adopt[brfarmers$id %in% used.vertex]
+toa <- brfarmers$adopt
 
 # Creating a diffnet -----------------------------------------------------------
 brfarmersDiffNet <- as_diffnet(graph, toa, t0=1946, t1=1966)
-diffnet.attrs(brfarmersDiffNet, "vertex", "static") <- as.matrix(subset(brfarmers, id %in% used.vertex))
+
+# [2016-02-24]: keep.isolates working
+# diffnet.attrs(brfarmersDiffNet2, "vertex", "static") <- as.matrix(subset(brfarmers, id %in% used.vertex))
+diffnet.attrs(brfarmersDiffNet, "vertex", "static") <- subset(brfarmers, select=c(-id,-toa))
 
 # # Applying the methods
 # diffnet

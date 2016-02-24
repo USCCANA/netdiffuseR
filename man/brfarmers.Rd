@@ -189,7 +189,7 @@ Cresskill N.J.: Hampton Press.
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{diffusion-data}},
+  \code{\link{diffusion-data}}, \code{\link{fakesurvey}},
   \code{\link{kfamilyDiffNet}}, \code{\link{kfamily}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}

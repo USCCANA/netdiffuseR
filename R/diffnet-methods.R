@@ -936,6 +936,7 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 #'
 #' @export
 #' @name diffnet-arithmetic
+#' @family diffnet methods
 `^.diffnet` <- function(x,y) {
   for (i in 1:x$meta$nper) {
     g <- x$graph[[i]]
@@ -970,3 +971,43 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 # subset.diffnet <- function(x, subset, ...) {
 #
 # }
+
+
+
+#' Coerce a diffnet graph into an array
+#'
+#' @param x A diffnet object.
+#' @param ... Ignored.
+#' @details
+#' The function takes the list of sparse matrices stored in \code{x} and creates
+#' an array with them. Attributes and other elements from the diffnet object are
+#' dropped.
+#'
+#' \code{dimnames} are obtained from the metadata of the diffnet object.
+#'
+#' @return A three-dimensional array of \eqn{T} matrices of size \eqn{n\times n}{n * n}.
+#' @seealso \code{\link{diffnet}}.
+#' @family diffnet methods
+#' @examples
+#' # Creating a random diffnet object
+#' set.seed(847)
+#' mydiffnet <- rdiffnet(20, 4)
+#'
+#' # Coercing it into an array
+#' as.array(mydiffnet)
+#' @export
+as.array.diffnet <- function(x, ...) {
+  # Coercing into matrices
+  z <- lapply(x$graph, function(y) {
+    as.matrix(y)
+  })
+
+  # Creating the array
+  out <- with(x$meta, array(dim=c(n, n, nper)))
+  for (i in 1:length(z))
+    out[,,i] <- z[[i]]
+
+  # Naming dimensions
+  dimnames(out) <- with(x$meta, list(ids, ids, pers))
+  out
+}

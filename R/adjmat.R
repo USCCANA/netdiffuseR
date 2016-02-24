@@ -12,7 +12,7 @@
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param weights Numeric vector. Strength of ties (optional).
+#' @param w Numeric vector. Strength of ties (optional).
 #' @param times Integer vector. Starting time of the ties (optional).
 #' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
 #' @param simplify Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
@@ -21,11 +21,8 @@
 #' @param self Logical scalar. TRUE when self edges are excluded.
 #' @param multiple Logical scalar. TRUE when multiple edges should not be included
 #' (see details).
-#' @param use.incomplete Logical scalar. When FALSE, rows with \code{NA/NULL} values
-#' (isolated vertices unless have autolink) will be droped
-#' and will not be considered in the graph, which may reduce the size of the
-#' adjacency matrix (see
-#' details).
+#' @param keep.isolates Logical scalar. When FALSE, rows with \code{NA/NULL} values
+#' (isolated vertices unless have autolink) will be droped (see details).
 #' @param recode.ids Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 #' (see details).
 #' @details
@@ -41,23 +38,16 @@
 #' as many times it appears in the edgelist. So if a vertex \eqn{\{i,j\}}{{i,j}} appears 2
 #' times, the adjacency matrix element \code{(i,j)} will be 2.
 #'
-#' Including incomplete cases, \code{use.incomplete=TRUE}, can lead to an adjacency matrix
-#' with isolated vertices. Otherwise, when \code{use.incomplete=FALSE}, if all the
-#' edges in which a vertex participates have incomplete information in any of the
-#' variables (a NA, NULL or NaN value, see \code{\link{complete.cases}}), it
-#' will be dropped from the graph, thus, reducing the size of the adjacency
-#' matrix by not including isolated vertices. Notice that the \emph{best way of adding %
-#' isolated vertices} is to include them in the
-#' edgelist as connecting to themselves. The option \code{self=FALSE} will not
-#' drop the isolated vertices (but the adjacency matrix will have a 0-diagonal)
-#' but the algorithm will include them on the graph.
+#' Edges with incomplete information (missing data on \code{w} or \code{times}) are
+#' not included on the graph. Incomplete cases are tagged using \code{\link{complete.cases}}
+#' and can be retrieved by the user by accessing the attribute \code{incomplete}.
 #'
 #' The function performs several checks before starting to create the adjacency
 #' matrix. These are:
 #' \itemize{
 #'  \item{Dimensions of the inputs, such as number of columns and length of vectors}
 #'  \item{Having complete cases. If anly edge has a non-numeric value such as NAs or
-#'  NULL in any variable (including \code{times} and \code{weights}), it will be
+#'  NULL in either \code{times} or \code{w}, it will be
 #'  removed. A full list of such edges can be retrieved from the attribute
 #'  \code{incomplete}}
 #'  \item{Nodes and times ids coding}
@@ -86,7 +76,7 @@
 #' edgelist_to_adjmat(edgelist)
 #' edgelist_to_adjmat(edgelist, undirected = TRUE)
 #'
-#' # Using weights
+#' # Using w
 #' edgelist_to_adjmat(edgelist, w)
 #' edgelist_to_adjmat(edgelist, w, undirected = TRUE)
 #'
@@ -94,9 +84,9 @@
 #' edgelist_to_adjmat(edgelist, times = times)
 #' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
 #'
-#' # Using times and weights
-#' edgelist_to_adjmat(edgelist, times = times, weights = w)
-#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, weights = w)
+#' # Using times and w
+#' edgelist_to_adjmat(edgelist, times = times, w = w)
+#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, w = w)
 #'
 #' # Not recoding ----------------------------------------------------
 #' # Notice that vertices 3, 4 and 5 are not present in this graph.
@@ -115,19 +105,19 @@
 #' @include graph_data.R
 #' @author Vega Yon, Dyal, Hayes & Valente
 edgelist_to_adjmat <- function(
-  edgelist, weights=NULL,
+  edgelist, w=NULL,
   times=NULL, t=NULL, simplify=TRUE,
   undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
-  use.incomplete=TRUE, recode.ids=TRUE) {
+  keep.isolates=TRUE, recode.ids=TRUE) {
 
   switch (class(edgelist),
     data.frame = edgelist_to_adjmat.data.frame(
-      edgelist, weights, times, t, simplify, undirected, self, multiple,
-      use.incomplete, recode.ids
+      edgelist, w, times, t, simplify, undirected, self, multiple,
+      keep.isolates, recode.ids
     ),
     matrix = edgelist_to_adjmat.matrix(
-      edgelist, weights, times, t, simplify, undirected, self, multiple,
-      use.incomplete, recode.ids),
+      edgelist, w, times, t, simplify, undirected, self, multiple,
+      keep.isolates, recode.ids),
     stop("-edgelist- should be either a data.frame, or a matrix.")
   )
 }
@@ -135,49 +125,56 @@ edgelist_to_adjmat <- function(
 # @rdname edgelist_to_adjmat
 # @export
 edgelist_to_adjmat.data.frame <- function(
-  edgelist, weights,
+  edgelist, w,
   times, t, simplify,
   undirected, self, multiple,
-  use.incomplete, recode.ids) {
+  keep.isolates, recode.ids) {
 
-  edgelist_to_adjmat.matrix(as.matrix(edgelist), weights, times, t, simplify,
-                            undirected, self, multiple, use.incomplete,
+  edgelist_to_adjmat.matrix(as.matrix(edgelist), w, times, t, simplify,
+                            undirected, self, multiple, keep.isolates,
                             recode.ids)
 }
 
 # @rdname edgelist_to_adjmat
 # @export
 edgelist_to_adjmat.matrix <- function(
-  edgelist, weights,
+  edgelist, w,
   times, t, simplify,
   undirected, self, multiple,
-  use.incomplete, recode.ids) {
+  keep.isolates, recode.ids) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
   if (length(times) && nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
-  if (length(weights) && nrow(edgelist) != length(weights)) stop("-weights- should have the same length as number of rows in -edgelist-")
+  if (length(w) && nrow(edgelist) != length(w)) stop("-w- should have the same length as number of rows in -edgelist-")
 
   ##############################################################################
   # Step 1: Incomplete cases.
   # Finding incomplete cases. This is always done since we need to provide a
   # complete list of variables to the C++ function, otherwise it will throw
   # an error.
-  complete <- complete.cases(cbind(edgelist, times, weights))
+  if (length(times) | length(w)) complete <- complete.cases(cbind(times, w))
+  else complete <- rep(TRUE, nrow(edgelist))
+  edgelist <- edgelist[complete,]
+
   incomplete <- which(!complete)
+
+  # Getting the list of isolated vertices
+  not.isolated <- which(!is.na(edgelist[,1]) & !is.na(edgelist[,2]))
 
   # If the user chooses to drop incomplete, then what changes is the selection
   # of ids in the graph.
-  # Times and weights MUST be removed since wont be used in the C++ function
+  # Times and w MUST be removed since wont be used in the C++ function
   if (length(incomplete))
-    warning("Some vertices had NA/NULL values:\n\t",
+    warning("Some vertices had NA/NULL values on -times- or -w-:\n\t",
             paste0(head(incomplete,20), collapse = ", "),
             ifelse(length(incomplete)>20,", ...", ""),
             "\nThe complete list will be stored as an attribute of the resulting",
             " adjacency matrix, namely, -incomplete-.")
 
+
   # If no.incomplete is activated, then the vectors should be fixed
-  if (!use.incomplete) edgelist <- edgelist[complete,,drop=FALSE]
+  if (!keep.isolates) edgelist <- edgelist[not.isolated,,drop=FALSE]
 
   ##############################################################################
   # Step 2: Recoding nodes ids
@@ -189,7 +186,7 @@ edgelist_to_adjmat.matrix <- function(
     # Retrieving codes + labels. If use.incomplete == FALSE, then the edgelist
     # has already been filtered
     recodedids <- attr(dat, "recode")
-    if (use.incomplete) dat <- dat[complete,]
+    if (keep.isolates) dat <- dat[not.isolated,]
     attr(dat, "recode") <- recodedids
     rm(recodedids)
   }
@@ -198,10 +195,10 @@ edgelist_to_adjmat.matrix <- function(
   n <- max(dat, na.rm = TRUE)
 
   ##############################################################################
-  # Step 3: Preparing -times- and -weights- considering complete cases.
+  # Step 3: Preparing -times- and -w- considering complete cases.
   # Times + recoding
   m <- nrow(dat)
-  if (length(times)) times <- times[complete]
+  if (length(times)) times <- times[complete][not.isolated]
   else times <- rep(1, m)
 
   oldtimes <- range(times)
@@ -211,8 +208,8 @@ edgelist_to_adjmat.matrix <- function(
   if (!length(t)) t <- max(times, na.rm = TRUE)
 
   # Weights
-  if (length(weights)) weights <- weights[complete]
-  else weights <- rep(1, m)
+  if (length(w)) w <- w[complete][not.isolated]
+  else w <- rep(1, m)
 
   ##############################################################################
   # Computing the graph
@@ -224,7 +221,7 @@ edgelist_to_adjmat.matrix <- function(
   for(i in 1:t) {
     index <- which(times <= i)
     graph[[i]] <- edgelist_to_adjmat_cpp(
-      dat[index,,drop=FALSE], weights[index], n, undirected, self, multiple)
+      dat[index,,drop=FALSE], w[index], n, undirected, self, multiple)
 
     # Naming
     dimnames(graph[[i]]) <- list(labs, labs)

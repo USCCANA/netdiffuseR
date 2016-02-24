@@ -231,6 +231,9 @@ diffnet <- as_diffnet(graph, toa)
 diffnet
 summary(diffnet)
 
+# Plotting slice 4
+plot(diffnet, t=4)
+
 # ATTRIBUTES ----------------------------------------------------------------
 
 # Adding new attributes to the network
@@ -253,5 +256,8 @@ Vega Yon
 }
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}
+
+Other diffnet methods: \code{\link{as.array.diffnet}},
+  \code{\link{diffnet-arithmetic}}
 }
 

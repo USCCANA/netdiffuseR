@@ -15,11 +15,12 @@ surveyed <- medInnovations$id
 for (i in netvars)
   medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
 
-# Adding autoedges to farmers that are isolated, we need to do this otherwize
-# these will be dropped when calling the function -edgelist_to_adjmat-. Notice
-# that this does not imply that the graph will have autoedges. (see manual)
-isolated <- which(apply(medInnovations[, netvars], 1, function(x) all(is.na(x))))
-medInnovations[isolated, netvars[1]] <- medInnovations$id[isolated]
+# [2016-02-24]: keep.isolates working
+# # Adding autoedges to farmers that are isolated, we need to do this otherwize
+# # these will be dropped when calling the function -edgelist_to_adjmat-. Notice
+# # that this does not imply that the graph will have autoedges. (see manual)
+# isolated <- which(apply(medInnovations[, netvars], 1, function(x) all(is.na(x))))
+# medInnovations[isolated, netvars[1]] <- medInnovations$id[isolated]
 
 # Reshaping data
 medInnovations.long <- reshape(
@@ -34,21 +35,26 @@ library(netdiffuseR)
 # network is constant through time.
 graph <- with(
   medInnovations.long,
-  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=FALSE, multiple=TRUE)
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, keep.isolates = TRUE, multiple=TRUE)
 )
 
-# Here we are retrieving the set of individuals who actually were used in the
-# network (as these are not isolated nodes)
-used.vertex <- rownames(graph[[1]])
-
-# Create the vector (subset) of times of adoption using only the individuals
-# that are included in the adjacency matrix
-toa <- medInnovations$toa[medInnovations$id %in% used.vertex]
+# [2016-02-24]: keep.isolates working
+# # Here we are retrieving the set of individuals who actually were used in the
+# # network (as these are not isolated nodes)
+# used.vertex <- rownames(graph[[1]])
+#
+# # Create the vector (subset) of times of adoption using only the individuals
+# # that are included in the adjacency matrix
+# toa <- medInnovations$toa[medInnovations$id %in% used.vertex]
+toa <- medInnovations$toa
 
 # Creating a diffnet -----------------------------------------------------------
 medInnovationsDiffNet <- as_diffnet(graph, toa)
+# [2016-02-24]: keep.isolates working
+# diffnet.attrs(medInnovationsDiffNet) <-
+#   subset(medInnovations, id %in% used.vertex)
 diffnet.attrs(medInnovationsDiffNet) <-
-  subset(medInnovations, id %in% used.vertex)
+  subset(medInnovations, select=c(-id,-toa))
 
 # # Applying the methods
 # diffnet

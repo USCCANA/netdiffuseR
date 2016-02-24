@@ -109,7 +109,7 @@
 #' recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
 #'
 #'
-#'
+#' @family diffnet methods
 #' @aliases diffnet diffnet-class
 #' @examples
 #'
@@ -126,6 +126,9 @@
 #' diffnet <- as_diffnet(graph, toa)
 #' diffnet
 #' summary(diffnet)
+#'
+#' # Plotting slice 4
+#' plot(diffnet, t=4)
 #'
 #' # ATTRIBUTES ----------------------------------------------------------------
 #'
@@ -388,7 +391,7 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 
   if (as.df) {
     out <- do.call(rbind, out)
-    return(data.frame(out, id=rownames(out), row.names = NULL))
+    return(data.frame(out, id=rep(graph$meta$ids, nper), row.names = NULL))
   }
 
   names(out) <- graph$meta$pers

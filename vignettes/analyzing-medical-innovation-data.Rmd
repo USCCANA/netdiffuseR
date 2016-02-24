@@ -1,7 +1,7 @@
 ---
 title: "netdiffuseR showcase: Medical Innovations"
 author: "George G. Vega Yon"
-date: "January 13, 2016"
+date: "February 24, 2016"
 output: rmarkdown::html_vignette
 header-includes: \usepackage{graphicx}
 vignette: >
@@ -59,27 +59,22 @@ Once we have the data in long format, we can coerce it into an `diffnet` object.
 # network is constant through time.
 graph <- with(
   medInnovations.long,
-  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, use.incomplete=TRUE)
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, keep.isolates = TRUE)
 )
 ```
 
-Notice that we have included `use.incomplete=TRUE`, so, if any element of our edgelist had an `NA`, `NULL` or related value, it would still be included in the adjacency matrix. This is specially important if, for example, there are isolated nodes in the data, as if we had not set `use.incomplete=TRUE` those would had been discarded. In such cases the function allows you to identify discarded nodes by accessing either to the rownames of the adjacency matrix (as the example that follows) or to the `incomplete` attribute that is attached to the output of the function.
+Notice that we have included `keep.isolates=TRUE`, so, if any element of our edgelist had an `NA`, `NULL` or related value, it would still be included in the adjacency matrix. This is specially important if, for example, there are isolated nodes in the data, as if we had not set `keep.isolates=TRUE` those would had been discarded.
 
-```{r}
-# Here we are retrieving the set of individuals who actually were used in the
-# network (as these are not isolated nodes)
-used.vertex <- rownames(graph[[1]])
-```
-
-Now we can create our `diffnet` object. Notice that `medInnovations` happens to be sorted in the same way as the elements in the adjacency matrix. You can check this by accessing the `used.vertex` and sorting `medInnovations` in that order.
+Now we can create our `diffnet` object. Notice that `medInnovations` happens to be sorted in the same way as the elements in the adjacency matrix. You can check this by accessing the `rownames` and sorting `medInnovations` in that order.
 
 ```{r}
 # Just to be sure. Sorting the data!
-orddata <- as.numeric(as.factor(used.vertex))
+orddata <- as.numeric(as.factor(rownames(graph[[1]])))
 medInnovations <- medInnovations[orddata,]
 
 # Creating a diffnet object
-diffnet <- as_diffnet(graph, medInnovations$toa, vertex.static.attrs = medInnovations)
+diffnet <- as_diffnet(graph, medInnovations$toa, 
+                      vertex.static.attrs = subset(medInnovations, select=c(-id, -toa)))
 ```
 
 # Methods

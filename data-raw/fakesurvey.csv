@@ -1,0 +1,10 @@
+id,toa,group,net1,net2,net3,age,gender,note
+1,1,1,NA,NA,NA,30,M,No nominations
+2,5,1,3,1,NA,35,F,Nothing weird
+3,5,1,NA,2,NA,31,F,Only nominates in net2
+4,3,1,6,5,NA,30,M,Nominates someone who wasn't interview
+5,2,1,4,4,3,40,F,Nominates 4 two times
+1,4,2,3,4,8,29,F,Only nominates outsiders
+2,3,2,3,NA,NA,35,M,Isolated
+5,3,2,10,1,NA,50,M,Nothing weird
+10,NA,2,5,1,NA,19,F,Non-adopter

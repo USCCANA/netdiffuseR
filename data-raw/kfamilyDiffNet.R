@@ -26,9 +26,10 @@ for (i in netvars)
 
 length(table(unlist(kfamily[,netvars])))
 
-# Adding autoedges to farmers that are isolated
-isolated <- which(apply(kfamily[, netvars], 1, function(x) all(is.na(x))))
-kfamily[isolated, netvars[1]] <- kfamily$id[isolated]
+# [2016-02-24]: keep.isolates working
+# # Adding autoedges to farmers that are isolated
+# isolated <- which(apply(kfamily[, netvars], 1, function(x) all(is.na(x))))
+# kfamily[isolated, netvars[1]] <- kfamily$id[isolated]
 
 length(table(unlist(kfamily[,netvars])))
 
@@ -45,19 +46,23 @@ library(netdiffuseR)
 graph <- with(
   kfamily.long,
   edgelist_to_adjmat(cbind(id, net), t=11, undirected=FALSE,
-                     use.incomplete=FALSE, multiple=TRUE)
+                     keep.isolates = TRUE, multiple=TRUE)
 )
 
-# Here we are retrieving the set of individuals who actually were used in the
-# network (as these are not isolated nodes)
-used.vertex <- rownames(graph[[1]])
-
-# Create the vector (subset) of times of adoption using only the individuals
-# that are included in the adjacency matrix
-toa <- kfamily$toa[kfamily$id %in% used.vertex]
+# [2016-02-24]: keep.isolates working
+# # Here we are retrieving the set of individuals who actually were used in the
+# # network (as these are not isolated nodes)
+# used.vertex <- rownames(graph[[1]])
+#
+# # Create the vector (subset) of times of adoption using only the individuals
+# # that are included in the adjacency matrix
+# toa <- kfamily$toa[kfamily$id %in% used.vertex]
+toa <- kfamily$toa
 
 # Creating a diffnet -----------------------------------------------------------
 kfamilyDiffNet <- as_diffnet(graph, toa)
-diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- as.matrix(subset(kfamily, id %in% used.vertex))
+# [2016-02-24]: keep.isolates working
+# diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- as.matrix(subset(kfamily, id %in% used.vertex))
+diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- subset(kfamily, select=c(-id,-toa))
 
 save(kfamilyDiffNet, file="data/kfamilyDiffNet.rdata")
