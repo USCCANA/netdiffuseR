@@ -27,8 +27,8 @@ for (g in names(EL_digraph)) {
   # Arguments length
   test_that(paste0("Length of inputs in edgelist_adjmat should match (detecting error) - ",g), {
     expect_error(edgelist_to_adjmat(EL_digraph[[g]], w = w[-1], undirected=FALSE), "Error.+same length")
-    expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim[-1], undirected=FALSE), "Error.+same length")
-    expect_error(edgelist_to_adjmat(EL_digraph[[g]], times = tim, w = w[-1], undirected=FALSE), "Error.+same length")
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], t0 = tim[-1], undirected=FALSE), "Error.+same length")
+    expect_error(edgelist_to_adjmat(EL_digraph[[g]], t0 = tim, w = w[-1], undirected=FALSE), "Error.+same length")
   })
 
   #-----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ for (g in names(EL_digraph)) {
 
   # Creating the output graph
   edgelist_recovered <- adjmat_to_edgelist(
-    edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE),
+    edgelist_to_adjmat(EL_digraph[[g]], t0 = tim, undirected = FALSE),
     undirected = FALSE)
 
   ord <- order(edgelist_recovered$edgelist[,1], edgelist_recovered$edgelist[,2])
@@ -75,7 +75,7 @@ for (g in names(EL_digraph)) {
   # Dynamic graphs (explicitly): As arrays
   # ----------------------------------------------------------------------------
   array_recovered <-
-    lapply(edgelist_to_adjmat(EL_digraph[[g]], times = tim, undirected = FALSE),
+    lapply(edgelist_to_adjmat(EL_digraph[[g]], t0 = tim, undirected = FALSE),
            as.matrix)
 
   dn <- list(rownames(array_recovered[[1]]), colnames(array_recovered[[1]]),
@@ -155,7 +155,7 @@ edgelist <- cbind(
 set.seed(123)
 tim <- sample(1:4, 4, TRUE)
 adjmat <- edgelist_to_adjmat(edgelist)
-dynadjmat <- edgelist_to_adjmat(edgelist, times=tim)
+dynadjmat <- edgelist_to_adjmat(edgelist, t0=tim)
 diffnet <- as_diffnet(dynadjmat, tim)
 
 test_that("Finding isolated nodes", {

@@ -54,7 +54,7 @@ print.diffnet <- function(x, ...) {
   with(x, cat(
     "Dynamic network of class -diffnet-",
     paste(" # of nodes        :", meta$n),
-    paste(" # of time periods :", meta$nper),
+    paste(" # of time periods :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Final prevalence  :",
           formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f")
           ),

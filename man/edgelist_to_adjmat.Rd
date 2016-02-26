@@ -5,7 +5,7 @@
 \alias{edgelist_to_adjmat}
 \title{Conversion between adjacency matrix and edgelist}
 \usage{
-edgelist_to_adjmat(edgelist, w = NULL, times = NULL, t = NULL,
+edgelist_to_adjmat(edgelist, w = NULL, t0 = NULL, t1 = NULL, t = NULL,
   simplify = TRUE, undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), keep.isolates = TRUE,
@@ -19,9 +19,11 @@ alter -target- (see details).}
 
 \item{w}{Numeric vector. Strength of ties (optional).}
 
-\item{times}{Integer vector. Starting time of the ties (optional).}
+\item{t0}{Integer vector. Starting time of the ties (optional).}
 
-\item{t}{Integer scalar. If \code{times} but want to repeat the network \code{t} times.}
+\item{t1}{Integer vector. Finishing time of the ties (optional).}
+
+\item{t}{Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).}
 
 \item{simplify}{Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 matrix, otherwise an array of adjacency matrices.}
@@ -98,12 +100,12 @@ edgelist_to_adjmat(edgelist, w)
 edgelist_to_adjmat(edgelist, w, undirected = TRUE)
 
 # Using times
-edgelist_to_adjmat(edgelist, times = times)
-edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+edgelist_to_adjmat(edgelist, t0 = times)
+edgelist_to_adjmat(edgelist, t0 = times, undirected = TRUE)
 
 # Using times and w
-edgelist_to_adjmat(edgelist, times = times, w = w)
-edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, w = w)
+edgelist_to_adjmat(edgelist, t0 = times, w = w)
+edgelist_to_adjmat(edgelist, t0 = times, undirected = TRUE, w = w)
 
 # Not recoding ----------------------------------------------------
 # Notice that vertices 3, 4 and 5 are not present in this graph.
@@ -117,6 +119,21 @@ edgelist_to_adjmat(graph)
 
 # Generates an adjmat of size 7 x 7
 edgelist_to_adjmat(graph, recode.ids=FALSE)
+
+# Dynamic with spells -------------------------------------------------------
+edgelist <- rbind(
+   c(1,2,NA,1990),
+   c(2,3,NA,1991),
+   c(3,4,1991,1992),
+   c(4,1,1992,1993),
+   c(1,2,1993,1993)
+)
+
+graph <- edgelist_to_adjmat(edgelist[,1:2], t0=edgelist[,3], t1=edgelist[,4])
+
+# Creating a diffnet object with it so we can apply the plot_diffnet function
+diffnet <- as_diffnet(graph, toa=1:4)
+plot_diffnet(diffnet, displaylabels=TRUE)
 }
 \author{
 Vega Yon, Dyal, Hayes & Valente

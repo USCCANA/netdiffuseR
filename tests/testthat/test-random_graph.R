@@ -107,8 +107,9 @@ test_that("Rewiring must hold graph's density", {
   # Bernoulli
   for (i in 1:ntimes) {
     for (j in 1:ntimes) {
-      graph <- rgraph_er(undirected = TRUE)
-      expect_equal(sum(graph), sum(rewire_graph(graph, p=.5, undirected = TRUE)))
+      graph  <- rgraph_er(undirected = TRUE)
+      suppressWarnings(graphr <- rewire_graph(graph, p=.5, undirected = TRUE))
+      expect_equal(sum(graph), sum(graphr))
     }
   }
 })

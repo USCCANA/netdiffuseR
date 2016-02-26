@@ -15,6 +15,9 @@
 
 * Fixed bug in `diffnet.attrs(..., as.df=TRUE)`. ids were wrongly retrieved. 
 
+* In `edgelist_to_adjmat` `times` has been replaced by `t0` and `t1`. So now
+  the user can import graphs with spells.
+
 # netdiffuseR 1.16.2 (CRAN release)
 
 * First CRAN version.

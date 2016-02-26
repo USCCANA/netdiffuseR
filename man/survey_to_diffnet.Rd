@@ -25,7 +25,7 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
 \item{no.unsurveyed}{Logical scalar. When TRUE the nominated individuals
 that do not show in \code{idvar} are set to \code{NA} (see details).}
 
-\item{t}{Integer scalar. If \code{times} but want to repeat the network \code{t} times.}
+\item{t}{Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).}
 
 \item{undirected}{Logical scalar. TRUE when the graph is undirected.}
 

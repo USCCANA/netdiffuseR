@@ -13,8 +13,9 @@
 #' alter -target- (see details).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param w Numeric vector. Strength of ties (optional).
-#' @param times Integer vector. Starting time of the ties (optional).
-#' @param t Integer scalar. If \code{times} but want to repeat the network \code{t} times.
+#' @param t0 Integer vector. Starting time of the ties (optional).
+#' @param t1 Integer vector. Finishing time of the ties (optional).
+#' @param t Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).
 #' @param simplify Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
 #' @param undirected Logical scalar. TRUE when the graph is undirected.
@@ -81,12 +82,12 @@
 #' edgelist_to_adjmat(edgelist, w, undirected = TRUE)
 #'
 #' # Using times
-#' edgelist_to_adjmat(edgelist, times = times)
-#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE)
+#' edgelist_to_adjmat(edgelist, t0 = times)
+#' edgelist_to_adjmat(edgelist, t0 = times, undirected = TRUE)
 #'
 #' # Using times and w
-#' edgelist_to_adjmat(edgelist, times = times, w = w)
-#' edgelist_to_adjmat(edgelist, times = times, undirected = TRUE, w = w)
+#' edgelist_to_adjmat(edgelist, t0 = times, w = w)
+#' edgelist_to_adjmat(edgelist, t0 = times, undirected = TRUE, w = w)
 #'
 #' # Not recoding ----------------------------------------------------
 #' # Notice that vertices 3, 4 and 5 are not present in this graph.
@@ -100,23 +101,38 @@
 #'
 #' # Generates an adjmat of size 7 x 7
 #' edgelist_to_adjmat(graph, recode.ids=FALSE)
+#'
+#' # Dynamic with spells -------------------------------------------------------
+#' edgelist <- rbind(
+#'    c(1,2,NA,1990),
+#'    c(2,3,NA,1991),
+#'    c(3,4,1991,1992),
+#'    c(4,1,1992,1993),
+#'    c(1,2,1993,1993)
+#' )
+#'
+#' graph <- edgelist_to_adjmat(edgelist[,1:2], t0=edgelist[,3], t1=edgelist[,4])
+#'
+#' # Creating a diffnet object with it so we can apply the plot_diffnet function
+#' diffnet <- as_diffnet(graph, toa=1:4)
+#' plot_diffnet(diffnet, displaylabels=TRUE)
 #' @keywords manip
 #' @family data management functions
 #' @include graph_data.R
 #' @author Vega Yon, Dyal, Hayes & Valente
 edgelist_to_adjmat <- function(
   edgelist, w=NULL,
-  times=NULL, t=NULL, simplify=TRUE,
+  t0=NULL, t1=NULL, t=NULL, simplify=TRUE,
   undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
   keep.isolates=TRUE, recode.ids=TRUE) {
 
   switch (class(edgelist),
     data.frame = edgelist_to_adjmat.data.frame(
-      edgelist, w, times, t, simplify, undirected, self, multiple,
+      edgelist, w, t0, t1, t, simplify, undirected, self, multiple,
       keep.isolates, recode.ids
     ),
     matrix = edgelist_to_adjmat.matrix(
-      edgelist, w, times, t, simplify, undirected, self, multiple,
+      edgelist, w, t0, t1, t, simplify, undirected, self, multiple,
       keep.isolates, recode.ids),
     stop("-edgelist- should be either a data.frame, or a matrix.")
   )
@@ -126,11 +142,11 @@ edgelist_to_adjmat <- function(
 # @export
 edgelist_to_adjmat.data.frame <- function(
   edgelist, w,
-  times, t, simplify,
+  t0,t1, t, simplify,
   undirected, self, multiple,
   keep.isolates, recode.ids) {
 
-  edgelist_to_adjmat.matrix(as.matrix(edgelist), w, times, t, simplify,
+  edgelist_to_adjmat.matrix(as.matrix(edgelist), w, t0,t1, t, simplify,
                             undirected, self, multiple, keep.isolates,
                             recode.ids)
 }
@@ -139,13 +155,15 @@ edgelist_to_adjmat.data.frame <- function(
 # @export
 edgelist_to_adjmat.matrix <- function(
   edgelist, w,
-  times, t, simplify,
+  t0, t1,
+  t, simplify,
   undirected, self, multiple,
   keep.isolates, recode.ids) {
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
-  if (length(times) && nrow(edgelist) != length(times)) stop("-times- should have the same length as number of rows in -edgelist-")
+  if (length(t0) && nrow(edgelist) != length(t0)) stop("-t0- should have the same length as number of rows in -edgelist-")
+  if (length(t1) && nrow(edgelist) != length(t1)) stop("-t1- should have the same length as number of rows in -edgelist-")
   if (length(w) && nrow(edgelist) != length(w)) stop("-w- should have the same length as number of rows in -edgelist-")
 
   ##############################################################################
@@ -153,7 +171,7 @@ edgelist_to_adjmat.matrix <- function(
   # Finding incomplete cases. This is always done since we need to provide a
   # complete list of variables to the C++ function, otherwise it will throw
   # an error.
-  if (length(times) | length(w)) complete <- complete.cases(cbind(times, w))
+  if (length(w)) complete <- complete.cases( w)
   else complete <- rep(TRUE, nrow(edgelist))
   edgelist <- edgelist[complete,]
 
@@ -198,14 +216,24 @@ edgelist_to_adjmat.matrix <- function(
   # Step 3: Preparing -times- and -w- considering complete cases.
   # Times + recoding
   m <- nrow(dat)
-  if (length(times)) times <- times[complete][not.isolated]
-  else times <- rep(1, m)
+  if (length(t0)) t0 <- t0[complete][not.isolated]
+  else t0 <- rep(NA, m)
 
-  oldtimes <- range(times)
+  if (length(t1)) t1 <- t1[complete][not.isolated]
+  else t1 <- rep(NA, m)
+
+  oldtimes <- range(c(t0,t1), na.rm=TRUE)
+  if (all(!is.finite(oldtimes))) oldtimes <- rep(1,2)
   oldtimes <- oldtimes[1]:oldtimes[2]
-  times    <- times - min(times, na.rm = TRUE) + 1L
 
-  if (!length(t)) t <- max(times, na.rm = TRUE)
+  t0    <- t0 - oldtimes[1] + 1L
+  t1    <- t1 - oldtimes[1] + 1L
+
+  # Replacing NAs
+  t0[is.na(t0)] <- 1
+  t1[is.na(t1)] <- length(oldtimes)
+
+  if (!length(t)) t <- max(c(t0,t1))
 
   # Weights
   if (length(w)) w <- w[complete][not.isolated]
@@ -219,7 +247,7 @@ edgelist_to_adjmat.matrix <- function(
   else labs <- 1:n
 
   for(i in 1:t) {
-    index <- which(times <= i)
+    index <- which((t0 <= i) & (i <= t1))
     graph[[i]] <- edgelist_to_adjmat_cpp(
       dat[index,,drop=FALSE], w[index], n, undirected, self, multiple)
 
