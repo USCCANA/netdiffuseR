@@ -8,7 +8,19 @@ inst/doc
 *.o
 *.xls*
 *.doc*
+*.ppt*
+
+*.ods
 
 *.zip
 *.gz
 *.tar
+
+# Tempfiles
+*.dta
+*.ods
+*.log
+*.out
+*.tex
+
+playground/
