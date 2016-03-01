@@ -231,9 +231,8 @@ edgelist_to_adjmat.matrix <- function(
 
   # Replacing NAs
   t0[is.na(t0)] <- 1
-  t1[is.na(t1)] <- length(oldtimes)
-
-  if (!length(t)) t <- max(c(t0,t1))
+  if (!length(t)) t <- max(c(t0,t1), na.rm=TRUE)
+  t1[is.na(t1)] <- t
 
   # Weights
   if (length(w)) w <- w[complete][not.isolated]

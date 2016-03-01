@@ -5,7 +5,7 @@
 \title{Convert survey-like data to a diffnet object}
 \usage{
 survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
-  no.unsurveyed = TRUE, t = NULL,
+  no.unsurveyed = TRUE, timevar = NULL, t = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
   multiple = getOption("diffnet.multiple", FALSE), keep.isolates = TRUE,
@@ -24,6 +24,8 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
 
 \item{no.unsurveyed}{Logical scalar. When TRUE the nominated individuals
 that do not show in \code{idvar} are set to \code{NA} (see details).}
+
+\item{timevar}{Character sacalar. In the case of longitudinal data, name of the time var.}
 
 \item{t}{Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).}
 
@@ -76,6 +78,10 @@ and the variables in \code{netvars} as follows:
 }
 
 Where \code{z = 10^nchar(max(dat[[idvar]]))}.
+
+For longitudinal data, it is assumed that the \code{toavar} holds the same
+information through time, this is, time-invariable. This as the package does
+not yet support variable times of adoption.
 }
 \examples{
 # Loading a fake survey (data frame)
@@ -92,6 +98,16 @@ dn2 <- survey_to_diffnet(fakesurvey, "id", c("net1", "net2", "net3"), "toa",
 # dn1 has an extra vertex than dn2
 dn1
 dn2
+
+# Loading a longitudinal survey data (two waves) ----------------------------
+data(fakesurveyDyn)
+
+groupvar <- "group"
+x <- survey_to_diffnet(
+   fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group" ,
+   timevar = "time", keep.isolates = TRUE)
+
+plot_diffnet(x, vertex.cex = 1.5, displaylabels = TRUE)
 
 # Reproducing medInnovationsDiffNet object ----------------------------------
 data(medInnovations)

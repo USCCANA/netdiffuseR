@@ -868,3 +868,27 @@ NULL
 #' @family diffusion datasets
 #' @author Vega Yon
 "fakesurvey"
+
+#' Fake longitudinal survey data
+#'
+#' This data frame is used to ilustrate some of the functions of the package,
+#' in particular, the \code{\link{survey_to_diffnet}} function.
+#'
+#' @format A data frame with 18 rows and 10 variables
+#' \describe{
+#'  \item{id}{Unique id at group level}
+#'  \item{toa}{Time of adoption}
+#'  \item{group}{Group id}
+#'  \item{net1}{Network nomination 1}
+#'  \item{net2}{Network nomination 2}
+#'  \item{net3}{Network nomination 3}
+#'  \item{age}{Age of the respondent}
+#'  \item{gender}{Gende of the respondent}
+#'  \item{note}{Descroption of the respondent}
+#'  \item{time}{Timing of the wave}
+#' }
+#'
+#' @source Generated for the package.
+#' @family diffusion datasets
+#' @author Vega Yon
+"fakesurveyDyn"

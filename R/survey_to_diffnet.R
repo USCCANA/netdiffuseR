@@ -10,6 +10,7 @@
 #' @param idvar Character scalar. Name of the id variable.
 #' @param netvars Character vector. Names of the network nomination variables.
 #' @param toavar Character scalar. Name of the time of adoption variable.
+#' @param timevar Character sacalar. In the case of longitudinal data, name of the time var.
 #' @param groupvar Character scalar. Name of cohort variable (e.g. city).
 #' @param no.unsurveyed Logical scalar. When TRUE the nominated individuals
 #' that do not show in \code{idvar} are set to \code{NA} (see details).
@@ -41,6 +42,10 @@
 #'
 #' Where \code{z = 10^nchar(max(dat[[idvar]]))}.
 #'
+#' For longitudinal data, it is assumed that the \code{toavar} holds the same
+#' information through time, this is, time-invariable. This as the package does
+#' not yet support variable times of adoption.
+#'
 #' @export
 #' @return A \code{\link{diffnet}} object.
 #' @seealso \code{\link{fakesurvey}}
@@ -61,6 +66,16 @@
 #' # dn1 has an extra vertex than dn2
 #' dn1
 #' dn2
+#'
+#' # Loading a longitudinal survey data (two waves) ----------------------------
+#' data(fakesurveyDyn)
+#'
+#' groupvar <- "group"
+#' x <- survey_to_diffnet(
+#'    fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group" ,
+#'    timevar = "time", keep.isolates = TRUE)
+#'
+#' plot_diffnet(x, vertex.cex = 1.5, displaylabels = TRUE)
 #'
 #' # Reproducing medInnovationsDiffNet object ----------------------------------
 #' data(medInnovations)
@@ -86,6 +101,7 @@ survey_to_diffnet <- function(
   dat, idvar, netvars, toavar,
   groupvar=NULL,
   no.unsurveyed=TRUE,
+  timevar=NULL,
   t = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
@@ -93,8 +109,16 @@ survey_to_diffnet <- function(
   keep.isolates=TRUE, recode.ids=TRUE,
   ...) {
 
+  # Creating a varlist
+  varlist <- c(idvar, groupvar, netvars, toavar, timevar)
+
+  # Are all in the dataset??
+  test <- varlist %in% colnames(dat)
+  if (any(!test))
+    stop("Variables -", paste(varlist[!test], collapse = "-, -"),"- can't be found on -dat-.")
+
   # Coercing data into numeric variables
-  for (x in c(idvar, groupvar, netvars, toavar)) {
+  for (x in varlist) {
     cl <- class(dat[[x]])
     if (cl == "integer") next
     else if (cl == "numeric") {
@@ -120,30 +144,102 @@ survey_to_diffnet <- function(
       dat[[x]][which(!(dat[[x]] %in% surveyed))] <- NA
   }
 
+  # Analyzing time data
+  if (length(timevar)) {
+    # Checking if data is complete
+    test <- complete.cases(dat[[timevar]])
+    if (any(!test)) {
+      test <- which(!test)
+      test <- paste0(test, collapse=", ")
+      stop("Some elements of -timevar- have missing data:\n\t",
+           ifelse(nchar(test) > 80, paste(strtrim(test,80), "..."), test),".")
+    }
+
+    timevar <- dat[[timevar]]
+    tran <- range(timevar, na.rm=TRUE)
+    tran <- tran[1]:tran[2]
+  } else {
+    timevar <- rep(1, nrow(dat))
+    tran    <- 1
+  }
+
   # Reshaping data (so we have an edgelist)
-  dat.long <- reshape(
-    dat[,c(idvar, netvars)], v.names= "net",
-    varying = netvars,
-    idvar="id", direction="long")
+  dat.long     <- NULL
+  t0           <- NULL
+  vertex.attrs <- vector("list", length(tran))
+  colstoexport <- which(!(colnames(dat) %in% c(toavar)))
+  for (i in 1:length(tran)) {
+    subs            <- dat[timevar == tran[i],]
+    vertex.attrs[[i]] <- subs[,colstoexport]
 
-  # Computing the times of adoption
-  rtoa <- range(dat[[toavar]], na.rm = TRUE)
-  t    <- rtoa[2] - rtoa[1] + 1
+    # Reshaping
+    subs <- reshape(
+      subs[,c(idvar, netvars)], v.names= "net",
+      varying = netvars,
+      idvar="id", direction="long")
 
-  graph <- with(
-    dat.long,
-    edgelist_to_adjmat(edgelist = cbind(id, net), t = t,
-                       undirected=undirected, self=self, multiple = multiple,
-                       keep.isolates = keep.isolates, recode.ids = recode.ids)
-  )
+    # Creating edgelist
+    dat.long <- rbind(dat.long, subs)
 
-  used.vertex <- rownames(graph[[1]])
+    # Times for dyn networks
+    t0 <- c(t0, rep(tran[i], nrow(subs)))
+  }
+  t1 <- t0
 
-  colstoexport <- which(!(colnames(dat) %in% c(idvar, toavar)))
-  used <- which(dat[[idvar]] %in% used.vertex)
-  as_diffnet(
-    graph=graph, toa=dat[[toavar]][used],
-    vertex.static.attrs = dat[used,colstoexport],
-    ...
-  )
+  # If the time range equals 1, then it implies that the graph data is static
+  if (length(tran) == 1) {
+    # Computing the times of adoption
+    rtoa <- range(dat[[toavar]], na.rm = TRUE)
+    t    <- rtoa[2] - rtoa[1] + 1
+
+    # Creating the adjacency matrix
+    graph <- with(
+      dat.long,
+      edgelist_to_adjmat(edgelist = cbind(id, net), t = t,
+                         undirected=undirected, self=self, multiple = multiple,
+                         keep.isolates = keep.isolates, recode.ids = recode.ids)
+    )
+  } else {
+    # Creating the adjacency matrix
+    graph <- with(
+      dat.long,
+      edgelist_to_adjmat(edgelist = cbind(id, net), t0 = t0, t1=t1,
+                         undirected=undirected, self=self, multiple = multiple,
+                         keep.isolates = keep.isolates, recode.ids = recode.ids)
+    )
+  }
+
+  # Used vertices
+  used.vertex <- data.frame(rownames(graph[[1]]))
+  colnames(used.vertex) <- idvar
+  for (i in 1:length(tran)) {
+    vertex.attrs[[i]] <- merge(
+      used.vertex, vertex.attrs[[i]],
+      all.x=TRUE, sort=FALSE)
+
+    # Removing the idvar
+    test <- colnames(vertex.attrs[[i]]) %in% idvar
+    vertex.attrs[[i]] <- vertex.attrs[[i]][,which(!test)]
+  }
+
+  # Times of adoption
+  dat <- unique(dat[,c(idvar, toavar)])
+
+  toavar <- merge(used.vertex, dat, all.x=TRUE, sort=FALSE)[[toavar]]
+  if (length(toavar) != nrow(used.vertex))
+    stop("It seems that -toavar- is not time-invariant.")
+
+  if (length(tran) == 1) {
+    as_diffnet(
+      graph=graph, toa=toavar,
+      vertex.static.attrs = vertex.attrs[[1]],
+      ...
+    )
+  } else {
+    as_diffnet(
+      graph=graph, toa=toavar,
+      vertex.dyn.attrs = vertex.attrs,
+      ...
+    )
+  }
 }
