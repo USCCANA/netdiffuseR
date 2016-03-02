@@ -32,6 +32,8 @@ __Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA1
 
 ## News
 
+Changelog can be view [here](NEWS.md).
+
 * [2016-02-18] __netdiffuseR__ vers 1.16.2 is now on CRAN!
 * [2016-02-18] We will be offering a worshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/wp-content/uploads/2015/09/2016_Sunbelt_Workshops_FINAL_01-27-16.pdf)).
 

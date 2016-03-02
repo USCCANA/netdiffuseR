@@ -14,6 +14,8 @@ From the description: Empirical statistical analysis, visualization and simulati
 News
 ----
 
+Changelog can be view [here](NEWS.md).
+
 -   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
 -   \[2016-02-18\] We will be offering a worshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/wp-content/uploads/2015/09/2016_Sunbelt_Workshops_FINAL_01-27-16.pdf)).
 
@@ -78,7 +80,7 @@ diffnet
 
     ## Dynamic network of class -diffnet-
     ##  # of nodes        : 100
-    ##  # of time periods : 20
+    ##  # of time periods : 20 (1 - 20)
     ##  Final prevalence  : 0.95
     ##  Type              : directed
 

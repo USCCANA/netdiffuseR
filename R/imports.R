@@ -21,7 +21,7 @@ NULL
 
 #' @importFrom grDevices grey
 #' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window hist mtext
-#' @importFrom stats complete.cases runif
+#' @importFrom stats complete.cases runif reshape
 #' @importFrom utils getFromNamespace head
 #' @importFrom boot boot
 NULL

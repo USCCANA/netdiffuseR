@@ -200,6 +200,7 @@ edgelist_to_adjmat.matrix <- function(
   if (recode.ids) {
     # Recoding
     dat <- recode(edgelist)
+    n <- max(dat, na.rm = TRUE)
 
     # Retrieving codes + labels. If use.incomplete == FALSE, then the edgelist
     # has already been filtered
@@ -208,9 +209,10 @@ edgelist_to_adjmat.matrix <- function(
     attr(dat, "recode") <- recodedids
     rm(recodedids)
   }
-  else dat <- edgelist
-
-  n <- max(dat, na.rm = TRUE)
+  else {
+    dat <- edgelist
+    n <- max(dat, na.rm = TRUE)
+  }
 
   ##############################################################################
   # Step 3: Preparing -times- and -w- considering complete cases.

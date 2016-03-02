@@ -3,11 +3,14 @@
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`,  
   `diffnet.attrs<-` and `egonet_attrs` as
-  these use attributes directly.
+  these use attributes directly. (Requested by Tom)
   
 * In `edgelist_to_adjmat` `use.incomplete` has been replaced by `keep.isolated`
   which makes more sense for naming. Incomplete cases on `times` or `weights` are
-  still ignored (as these cannot be processed by the c++ 'engine').
+  still ignored (as these cannot be processed by the c++ 'engine'). (Reported by Tom)
+  
+* Bug fixed on `edgelist_to_adjmat`: Counting number of vertices is now done
+  right after `recode`. (Reported by Tom)
   
 * New function: `survey_to_diffnet`. This function allows importing network
   nomination data (in survey fashion) of both types, cross-section and panel
