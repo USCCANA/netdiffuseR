@@ -217,6 +217,23 @@ read_ucinet <- function(x) {
   if (grepl("nm[= ,]+[0-9]+", lines[1])) nm <- as.integer(gregexec(lines[1], "nm[= ,]+([0-9]+)")[[1]][[1]][2])
   else nm <- 1L
 
+  # Others: row labels embedded, col labels embedded, labels embedded, diagonal = presen
+  if (grepl("row\\s+labels\\s+embedded", lines[1])) row_labels_embedded <- TRUE
+  else row_labels_embedded <- FALSE
+
+  if (grepl("col\\s+labels\\s+embedded", lines[1])) col_labels_embedded <- TRUE
+  else col_labels_embedded <- FALSE
+
+  if (grepl("(?<!(col|row))\\s+labels\\s+embedded", lines[1], perl = TRUE)) col_labels_embedded <- TRUE
+  else col_labels_embedded <- FALSE
+
+  if (grepl("diagonal[= ,]+[a-z]+", lines[1])) diagonal <- gregexec(lines[1], "diagonal[= ,]+([a-z]+)")[[1]][[1]][2]
+  else diagonal <- "present"
+
+  # Creating meta
+  meta <- list(n=n, format=format, nm=nm, row_labels_embedded=row_labels_embedded,
+               col_labels_embedded=col_labels_embedded, diagonal=diagonal)
+
   # ----------------------------------------------------------------------------
   # Finding start/end of the tags
   tags <- which(grepl("[a-zA-Z]+:", lines))
@@ -265,6 +282,6 @@ read_ucinet <- function(x) {
   # ----------------------------------------------------------------------------
   # Out for data
   return(
-    list(adjmat=dat, meta=list(tags=tags, n=n, format=format, nm=nm))
+    list(adjmat=dat, meta=meta)
     )
 }

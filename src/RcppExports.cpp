@@ -332,14 +332,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // threshold_cpp
-arma::colvec threshold_cpp(const arma::mat& exposure, const arma::vec& toa);
-RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP toaSEXP) {
+arma::colvec threshold_cpp(const arma::mat& exposure, const arma::vec& toa, bool include_censored);
+RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP toaSEXP, SEXP include_censoredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::mat& >::type exposure(exposureSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type toa(toaSEXP);
-    __result = Rcpp::wrap(threshold_cpp(exposure, toa));
+    Rcpp::traits::input_parameter< bool >::type include_censored(include_censoredSEXP);
+    __result = Rcpp::wrap(threshold_cpp(exposure, toa, include_censored));
     return __result;
 END_RCPP
 }

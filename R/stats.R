@@ -194,6 +194,11 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
 #' case of a social network exposure will be computed based on the incomming ties.
 #'
+#' If \code{normalize=FALSE} then denominator, \eqn{S_t \times x_t}{S(t) \%*\% x(t)},
+#' is not included. This can be useful when, for example, exposure needs to be
+#' computed as a count instead of a proportion. A good example of this can be
+#' found at the examples section of the function \code{\link{rdiffnet}}.
+#'
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 #' Equivalence". American Journal of Sociology, 92(6), 1287.
@@ -487,13 +492,18 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #'
 #' @param obj Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
 #' \code{\link{exposure}}) or a \code{diffnet} object.
-#' @param times Integer vector. Indicating the time of adoption of the innovation.
+#' @param toa Integer vector. Indicating the time of adoption of the innovation.
 #' @param t0 Integer scalar. See \code{\link{toa_mat}}.
+#' @param include_censored Logical scalar. When \code{TRUE} (default), threshold
+#' levels are not reported for observations adopting in the first time period.
 #' @param ... Further arguments to be passed to \code{\link{exposure}}.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
 #' @family statistics
 #' @seealso Threshold can be visualized using \code{\link{plot_threshold}}
 #' @keywords univar
+#' @details By default exposure is not computed for vertices adopting at the
+#' first time period, \code{include_censored=FALSE}, as estimating threshold for
+#' left censored data may yield biased outcomes.
 #' @examples
 #' # Generating a random graph with random Times of Adoption
 #' set.seed(783)
@@ -514,19 +524,19 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' threshold(diffnet, alt.graph=se)
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
-threshold <- function(obj, times, t0=min(times, na.rm = TRUE), ...) {
+threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE, ...) {
 
   if (inherits(obj, "diffnet")) {
     t0 <- min(obj$meta$pers)
-    times <- obj$toa
+    toa <- obj$toa
     obj <- exposure(obj, ...)
   } else {
-    if (missing(times))
-      stop("-times- should be provided when -obj- is not of class 'diffnet'")
+    if (missing(toa))
+      stop("-toa- should be provided when -obj- is not of class 'diffnet'")
   }
 
-  times <- times - t0 + 1L
-  output <- threshold_cpp(obj, times)
+  toa <- toa - t0 + 1L
+  output <- threshold_cpp(obj, toa, include_censored)
   dimnames(output) <- list(rownames(obj), "threshold")
   output
 }

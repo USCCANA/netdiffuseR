@@ -4,15 +4,19 @@
 \alias{threshold}
 \title{Retrive threshold levels from the exposure matrix}
 \usage{
-threshold(obj, times, t0 = min(times, na.rm = TRUE), ...)
+threshold(obj, toa, t0 = min(toa, na.rm = TRUE), include_censored = FALSE,
+  ...)
 }
 \arguments{
 \item{obj}{Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
 \code{\link{exposure}}) or a \code{diffnet} object.}
 
-\item{times}{Integer vector. Indicating the time of adoption of the innovation.}
+\item{toa}{Integer vector. Indicating the time of adoption of the innovation.}
 
 \item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
+
+\item{include_censored}{Logical scalar. When \code{TRUE} (default), threshold
+levels are not reported for observations adopting in the first time period.}
 
 \item{...}{Further arguments to be passed to \code{\link{exposure}}.}
 }
@@ -22,6 +26,11 @@ A vector of size \eqn{n} indicating the threshold for each node.
 \description{
 Thresholds are each vertexes exposure at the time of adoption.
 Substantively it is the proportion of adopters required for each ego to adopt. (see \code{\link{exposure}}).
+}
+\details{
+By default exposure is not computed for vertices adopting at the
+first time period, \code{include_censored=FALSE}, as estimating threshold for
+left censored data may yield biased outcomes.
 }
 \examples{
 # Generating a random graph with random Times of Adoption

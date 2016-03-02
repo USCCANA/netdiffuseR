@@ -112,7 +112,7 @@ is ignored.}
 
 \item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
 
-\item{j}{Ignored.}
+\item{j}{Integer vector. Passed to \code{diffnet.subset.slices}.}
 
 \item{drop}{Ignored}
 }

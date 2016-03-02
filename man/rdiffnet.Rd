@@ -32,7 +32,7 @@ seed graph (see details).}
 \item{threshold.dist}{Function. Applied via \code{\link{sapply}}, sets the
 adoption threshold for each node.}
 
-\item{exposure.args}{List. Arguments to be passed to \code{link{exposure}}.}
+\item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
 }
 \value{
 A random \code{\link{diffnet}} class object.

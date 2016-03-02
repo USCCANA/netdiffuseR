@@ -16,7 +16,7 @@
 #' @param rewire.args List. Arguments to be passed to \code{\link{rewire_graph}}.
 #' @param threshold.dist Function. Applied via \code{\link{sapply}}, sets the
 #' adoption threshold for each node.
-#' @param exposure.args List. Arguments to be passed to \code{link{exposure}}.
+#' @param exposure.args List. Arguments to be passed to \code{\link{exposure}}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details

@@ -26,7 +26,7 @@
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
-#' @param j Ignored.
+#' @param j Integer vector. Passed to \code{diffnet.subset.slices}.
 #' @param drop Ignored
 #' @param value In the case of \code{diffnet.toa}, replacement, otherwise see below.
 #' @param vertex.dyn.attrs List of length \eqn{T}. Contains matrices with vertex attributes.
@@ -311,7 +311,7 @@ diffnet.subset.slices <- function(graph, slices) {
   # Subset must be continuous...
   test <- (slices[-1] - slices[-length(slices)]) > 1
   if (any(test))
-    stop("-slices- must be a integer range without gaps.")
+    stop("-slices- must be an integer range without gaps.")
 
   # Ordering
   slices  <- sort(slices)

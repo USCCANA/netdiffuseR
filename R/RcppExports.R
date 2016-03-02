@@ -192,8 +192,8 @@ hazard_rate_cpp <- function(cumadopt) {
     .Call('netdiffuseR_hazard_rate_cpp', PACKAGE = 'netdiffuseR', cumadopt)
 }
 
-threshold_cpp <- function(exposure, toa) {
-    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, toa)
+threshold_cpp <- function(exposure, toa, include_censored = FALSE) {
+    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, toa, include_censored)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {

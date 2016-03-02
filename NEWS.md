@@ -1,4 +1,4 @@
-# netdiffuseR 1.16.2.XXX (beta)
+# netdiffuseR 1.16.3.XXX (beta)
 
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`,  
@@ -22,6 +22,18 @@
   the user can import graphs with spells.
   
 * New functions: `read_pajek` and `read_ucinet`. Still on development.
+
+* New functions: `nvertices` and `nedges` return the number of vertices and
+  edges that a graph has. This can be applied to any class of graph accepted
+  by the package.
+  
+* Added new elements to the `diffnet_struct_test` class: `p.value`, `t0`,
+  `mean_t`, and `R`. All these were available before either to be computed
+  or retrieved from the `boot` list at the class.
+  
+* New argument for `threshold`. Now, by default, threshold levels are not computed
+  for adopters in the first time period as this can be a biased estimate. If
+  the user wants to compute such, he/she can set `include_censored=TRUE`.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

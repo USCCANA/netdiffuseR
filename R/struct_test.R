@@ -17,6 +17,10 @@
 #' @param annotated Logical scalar. When TRUE marks the observed data average and the simulated data average.
 #' @return A list of class \code{diffnet_bot} containing the following:
 #' \item{graph}{The graph passed to \code{struct_test}.}
+#' \item{p.value}{The resulting p-value of the test (see details).}
+#' \item{t0}{The observed value of the statistic.}
+#' \item{mean_t}{The average value of the statistic applied to the simulated networks.}
+#' \item{R}{Number of simulations.}
 #' \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 #'
@@ -101,11 +105,21 @@ struct_test <- function(
   # The t0 must be applied with no rewiring!
   boot_res$t0 <- statistic(graph)
 
+  # Calc pval
+  # To be conservative, in a two tail test we use the min of the two
+  # So, following davidson & mckinnon Confidence intrval section,
+  # p(tau) = 2 * min[F(tau), 1-F(tau)]
+  p.value <- 2*min(mean(boot_res$t < boot_res$t0), mean(boot_res$t > boot_res$t0))
+
   # Creating the object
   out <- list(
-    graph = graph,
-    statistic = statistic,
-    boot=boot_res
+    graph       = graph,
+    p.value     = p.value,
+    t0          = boot_res$t0,
+    mean_t      = colMeans(boot_res$t, na.rm = TRUE),
+    R           = R,
+    statistic   = statistic,
+    boot        = boot_res
   )
 
   return(structure(out, class="diffnet_struct_test"))
@@ -117,19 +131,14 @@ print.diffnet_struct_test <- function(x, ...) {
   with(x,  {
     tmean <- colMeans(boot$t, na.rm = TRUE)
 
-    # Calc pval
-    # To be conservative, in a two tail test we use the min of the two
-    # So, following davidson & mckinnon Confidence intrval section,
-    # p(tau) = 2 * min[F(tau), 1-F(tau)]
-    test <- 2*min(mean(boot$t < boot$t0), mean(boot$t > boot$t0))
     cat("Network Rewiring graph (",nrow(boot$t)," simulations)\n",
         "# nodes           : ", x$graph$meta$n,"\n",
         "# of time periods : ", x$graph$meta$nper,"\n",
         paste(rep("-",80), collapse=""),"\n",
         " H0: t - t0 = 0 (No structure dependency)\n",
-        "   t0 (observed) = ", boot$t0, "\n",
-        "   t (simulated) = ", tmean, "\n",
-        "   p-value = ", sprintf("%.5f",test), sep="")
+        "   t0 (observed) = ", t0, "\n",
+        "   t (simulated) = ", mean_t, "\n",
+        "   p-value = ", sprintf("%.5f", p.value), sep="")
   })
   invisible(x)
 }

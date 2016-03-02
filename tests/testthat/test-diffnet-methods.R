@@ -128,3 +128,23 @@ test_that("summary.diffnet with slices", {
     expect_equal(out1[slices,], out2)
   }
 })
+
+
+# Subsetting a diffnet object --------------------------------------------------
+test_that("Subsetting diffnet objects", {
+  # Generating the data
+  set.seed(101)
+  graph <- rdiffnet(100, 10, seed.nodes = "central")
+
+  # Testing i subset
+  i <- sample.int(100, 50)
+  j <- 3:8
+
+  subg_i <- graph[i,]
+  subg_j <- graph[,j]
+
+  expect_equal(subg_j[i,], subg_i[,j], info = "The order doesn't matters")
+  expect_equal(graph[i,j], subg_i[,j], info = "The order doesn't matters 2")
+  expect_error(graph[-1,],"Not all -i- in")
+  expect_error(graph[,c(1, 6:10)], "slices- must be an integer")
+})

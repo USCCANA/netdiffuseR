@@ -852,12 +852,24 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 #' @export
 `[.diffnet` <- function(x, i, j, drop=FALSE) {
 
+  # Subsetting j
+  if (!missing(j)) {
+    x <- diffnet.subset.slices(x, j)
+  }
+
+  if (missing(i)) i <- x$meta$ids
+
   # Checking range/list of ids or names
   if (inherits(i, "character")) {
     test <- which(!(i %in% x$meta$ids))
   } else if (inherits(i, "numeric") || inherits(i, "integer")) {
     i <- as.integer(i)
     test <- which(!(i %in% 1L:x$meta$n))
+  } else if (inherits(i, "logical")) {
+    i <- which(i)
+    test <- which(!(i %in% 1L:x$meta$n))
+  } else {
+    stop("Index -i- should be either integer, character or logical.")
   }
 
   # If any of the elements is not in diffnet, then
@@ -1011,3 +1023,92 @@ as.array.diffnet <- function(x, ...) {
   dimnames(out) <- with(x$meta, list(ids, ids, pers))
   out
 }
+
+
+#' Count the number of vertices/edges in a graph
+#'
+#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @return For \code{nvertices}, an integer scalar equal to the number
+#' of vertices in the graph. Otherwise, from \code{nedges}, either a list
+#' of size \eqn{t} with the counts of edges (non-zero elements in the adjacency matrices) at
+#' each time period, or, when \code{graph} is static, a single scalar with
+#' such number.
+#' @details
+#' \code{nnodes} and \code{nlinks} are just aliases for \code{nvertices} and
+#' \code{nedges} respectively.
+#' @export
+#' @examples
+#' # Creating a dynamic graph (we will use this for all the classes) -----------
+#' set.seed(13133)
+#' diffnet <- rdiffnet(100, 4)
+#'
+#' # Lets use the first time period as a static graph
+#' graph_mat <- diffnet$graph[[1]]
+#' graph_dgCMatrix <- methods::as(graph_mat, "dgCMatrix")
+#'
+#' # Now lets generate the other dynamic graphs
+#' graph_list  <- diffnet$graph
+#' graph_array <- as.array(diffnet) # using the as.array method for diffnet objects
+#'
+#' # Now we can compare vertices counts
+#' nvertices(diffnet)
+#' nvertices(graph_list)
+#' nvertices(graph_array)
+#'
+#' nvertices(graph_mat)
+#' nvertices(graph_dgCMatrix)
+#'
+#' # ... and edges count
+#' nedges(diffnet)
+#' nedges(graph_list)
+#' nedges(graph_array)
+#'
+#' nedges(graph_mat)
+#' nedges(graph_dgCMatrix)
+nvertices <- function(graph) {
+  switch(class(graph),
+         array     = nrow(graph),
+         matrix    = nrow(graph),
+         dgCMatrix = nrow(graph),
+         list      = nrow(graph[[1]]),
+         diffnet   = graph$meta$n,
+         stopifnot_graph(graph)
+         )
+}
+
+#' @rdname nvertices
+#' @export
+nnodes <- nvertices
+
+#' @export
+#' @rdname nvertices
+nedges <- function(graph) {
+  switch (class(graph),
+    array     = {
+      # Computing and coercing into a list
+      x <- as.list(apply(graph, 3, function(x) sum(x!=0)))
+
+      # Naming
+      tnames <- names(x)
+      if (!length(tnames)) names(x) <- 1:length(x)
+      x
+      },
+    matrix    = sum(graph != 0),
+    dgCMatrix = length(graph@i),
+    list      = {
+      # Computing
+      x <- lapply(graph, function(x) length(x@i))
+
+      # Naming
+      tnames <- names(x)
+      if (!length(tnames)) names(x) <- 1:length(x)
+      x
+      },
+    diffnet   = lapply(graph$graph, function(x) length(x@i)),
+    stopifnot_graph(graph)
+  )
+}
+
+#' @export
+#' @rdname nvertices
+nlinks <- nedges

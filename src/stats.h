@@ -20,6 +20,6 @@ arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt);
 arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt);
 
 arma::colvec threshold_cpp(const arma::mat & exposure,
-                           const arma::vec & toa);
+                           const arma::vec & toa, bool include_censored=false);
 
 #endif

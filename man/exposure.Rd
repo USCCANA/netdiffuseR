@@ -62,6 +62,11 @@ degree.
 
 When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
 case of a social network exposure will be computed based on the incomming ties.
+
+If \code{normalize=FALSE} then denominator, \eqn{S_t \times x_t}{S(t) \%*\% x(t)},
+is not included. This can be useful when, for example, exposure needs to be
+computed as a count instead of a proportion. A good example of this can be
+found at the examples section of the function \code{\link{rdiffnet}}.
 }
 \examples{
 # Calculating the exposure based on Structural Equivalence ------------------

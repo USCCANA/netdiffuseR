@@ -45,6 +45,10 @@ struct_test(graph, statistic, R, rewire.args = list(p = 1, undirected =
 \value{
 A list of class \code{diffnet_bot} containing the following:
 \item{graph}{The graph passed to \code{struct_test}.}
+\item{p.value}{The resulting p-value of the test (see details).}
+\item{t0}{The observed value of the statistic.}
+\item{mean_t}{The average value of the statistic applied to the simulated networks.}
+\item{R}{Number of simulations.}
 \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 

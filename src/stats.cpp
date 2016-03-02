@@ -260,7 +260,8 @@ new = hazard_rate_cpp(adoptmat$cumadopt)
 // [[Rcpp::export]]
 arma::colvec threshold_cpp(
     const arma::mat & exposure,
-    const arma::vec & toa
+    const arma::vec & toa,
+    bool include_censored = false
     ) {
 
   int n = exposure.n_rows;
@@ -274,6 +275,13 @@ arma::colvec threshold_cpp(
       threshold(i) = arma::datum::nan;
       continue;
     }
+
+    // If left censored and specified, then don't compute
+    if ((toa(i)==1) & !include_censored) {
+      threshold(i) = arma::datum::nan;
+      continue;
+    }
+
     threshold(i) = exposure(i,toa(i)-1);
   }
 
