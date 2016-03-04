@@ -1,4 +1,4 @@
-# netdiffuseR 1.16.3.XXX (beta)
+# netdiffuseR 1.16.3.X (beta)
 
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`,  
