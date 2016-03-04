@@ -9,7 +9,9 @@ test_that("Simple extraction throught clases", {
 
   # Adding attributes
   diffnet.attrs(diffnet, attr.class = "dyn") <-
-    lapply(1:t, function(x) cbind(unif=runif(n), bool=runif(n) > .5))
+    lapply(1:t, function(x) cbind(unif=runif(n)))
+  diffnet.attrs(diffnet, attr.class = "dyn") <-
+    lapply(1:t, function(x) cbind(bool=runif(n) > .5))
 
   diffnet.attrs(diffnet, attr.class = "static") <-
     cbind(d=rowMeans(dgr(diffnet)))

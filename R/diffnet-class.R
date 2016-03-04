@@ -26,8 +26,6 @@
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
-#' @param j Integer vector. Passed to \code{diffnet.subset.slices}.
-#' @param drop Ignored
 #' @param value In the case of \code{diffnet.toa}, replacement, otherwise see below.
 #' @param vertex.dyn.attrs List of length \eqn{T}. Contains matrices with vertex attributes.
 #' @param vertex.static.attrs Numeric matrix with \eqn{n} rows.
@@ -132,11 +130,6 @@
 #'
 #' # ATTRIBUTES ----------------------------------------------------------------
 #'
-#' # Adding new attributes to the network
-#' diffnet.attrs(diffnet, "vertex", "static") <- data.frame(posnum=1:diffnet$meta$n)
-#' diffnet.attrs(diffnet, "vertex", "dyn") <-
-#'  lapply(1:diffnet$meta$nper, function(x) data.frame(rand=runif(diffnet$meta$n)))
-#'
 #' # Retrieving attributes
 #' diffnet.attrs(diffnet, "vertex", "static")
 #'
@@ -215,8 +208,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
       dimnames(x) <- list(meta$ids, cnames)
       x
     })
-
-  } else vertex.dyn.attrs <- vector("list", meta$nper)
+  }
 
   if (length(vertex.static.attrs)) {
     attlen <- nrow(vertex.static.attrs)
@@ -283,6 +275,25 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
   meta$self       <- self
   meta$undirected <- undirected
   meta$multiple   <- multiple
+
+  # Checking attributes (last step)
+  if (!length(vertex.dyn.attrs)) {
+    vertex.dyn.attrs <-
+      lapply(meta$pers, function(x) {
+        as.data.frame(
+          matrix(ncol=0, nrow=meta$n, dimnames = list(meta$ids, NULL))
+          )
+      })
+
+    # Labeling
+    names(vertex.dyn.attrs) <- meta$pers
+  }
+
+  if (!length(vertex.static.attrs)) {
+    vertex.static.attrs <- as.data.frame(
+      matrix(ncol=0, nrow=meta$n, dimnames = list(meta$ids, NULL))
+    )
+  }
 
   return(structure(list(
     graph = graph,
@@ -401,6 +412,9 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 #' @rdname as_diffnet
 #' @export
 `diffnet.attrs<-` <- function(graph, element="vertex", attr.class="static", value) {
+
+  .Deprecated("[[<-.diffnet")
+
   # Checking class
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
 
@@ -446,24 +460,57 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 
   } else if (("vertex" == element) && ("dyn" == attr.class)) {
 
-    # Checking the length of the attributes
-    if (length(value) != graph$meta$nper)
-      stop("The length -value-, ",length(value),
-           ", must coincide with the number of periods, ",graph$meta$nper,".")
+    # Act depending on the class of object
+    gdim <- unlist(graph$meta[c("n", "nper")])
+    if (inherits(value, "matrix") | inherits(value, "data.frame")) {
 
-    attlen <- lapply(value, nrow)
-    if (any(attlen != graph$meta$n)) stop("-graph- and -value- have different lengths (",
-                                          graph$meta$n, " and ", paste(attlen, collapse=", "), "respectively). ",
-                                    "-value- should have n rows.")
+      # Checking dimensions
+      test <- which(dim(value) != gdim)
+      if (length(test))
+        stop("Incorrect dimensions. The -value- must be a data.frame/matrix of size ",
+             gdim[1], "x", gdim[2])
+
+      # Coercing into a list
+      value <- lapply(seq_len(gdim[2]), function(x) value[,x, drop=FALSE])
+
+    } else if (inherits(value, "list")) {
+      # Checking all elements are data.frames/matrices
+      test <- which(sapply(value, function(x)
+        (!inherits(x, "matrix") & !inherits(x, "data.frame"))))
+
+      if (length(test))
+        stop("Some elements of -value- have incorrect class:\n\t",
+             paste(test, collapse = ", "), ".")
+
+      # Checking if all elements have the right dimension
+      test <- which(sapply(value, function(x) nrow(x) != gdim[1]))
+      if (length(test))
+        stop("Some of the elements of -value- have incorrect number of rows:\n\t",
+             paste(test, collapse=", "), ".")
+
+    } else {
+      stop("-value- should be either a matrix/data.frame of size n*T, or a list ",
+           "of size T with vectors of length n.")
+    }
+
+    # # Checking the length of the attributes
+    # if (length(value) != graph$meta$nper)
+    #   stop("The length -value-, ",length(value),
+    #        ", must coincide with the number of periods, ",graph$meta$nper,".")
+    #
+    # attlen <- lapply(value, nrow)
+    # if (any(attlen != graph$meta$n)) stop("-graph- and -value- have different lengths (",
+    #                                       graph$meta$n, " and ", paste(attlen, collapse=", "), "respectively). ",
+    #                                 "-value- should have n rows.")
 
     # Coercing into matrices
     cnames <- colnames(value[[1]])
 
-    if (length(graph$vertex.dyn.attrs[[1]])) k <- ncol(graph$vertex.dyn.attrs)
+    if (length(graph$vertex.dyn.attrs[[1]])) k <- ncol(graph$vertex.dyn.attrs[[1]])
     else k <- 0
 
     if (!length(cnames))
-      cnames <- sprintf("v.static.att%03d", 1:ncol(value[[1]]) + k)
+      cnames <- sprintf("v.static.att%03d", k + 1)
 
     # Checking if it is a data.frame or not
     if (!inherits(value[[1]], "data.frame"))

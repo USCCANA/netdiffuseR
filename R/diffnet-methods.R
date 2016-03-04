@@ -848,67 +848,6 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 # cumsum(z)
 # x["num",]
 
-#' @rdname as_diffnet
-#' @export
-`[.diffnet` <- function(x, i, j, drop=FALSE) {
-
-  # Subsetting j
-  if (!missing(j)) {
-    x <- diffnet.subset.slices(x, j)
-  }
-
-  if (missing(i)) i <- x$meta$ids
-
-  # Checking range/list of ids or names
-  if (inherits(i, "character")) {
-    test <- which(!(i %in% x$meta$ids))
-  } else if (inherits(i, "numeric") || inherits(i, "integer")) {
-    i <- as.integer(i)
-    test <- which(!(i %in% 1L:x$meta$n))
-  } else if (inherits(i, "logical")) {
-    i <- which(i)
-    test <- which(!(i %in% 1L:x$meta$n))
-  } else {
-    stop("Index -i- should be either integer, character or logical.")
-  }
-
-  # If any of the elements is not in diffnet, then
-  # return error.
-  if (length(test))
-    stop("Not all -i- in the set of vertices -ids-:\n\t",
-         paste0(
-           c(head(i[test], 20),
-             if (length(test)>20) "..." else NULL),
-           collapse=", "
-         ))
-
-  # Getting the indexes
-  index <- if (inherits(i, "character")) {
-    which(x$meta$id %in% i)
-  } else {
-    which(1:x$meta$n %in% i)
-  }
-
-  # Subsetting
-  # 1.0: graph and attributes
-  ndynattrs <- length(unlist(x$vertex.dyn.attrs)) > 0
-  for (i in 1:x$meta$nper) {
-    x$graph[[i]] <- x$graph[[i]][index, index, drop=FALSE]
-    if (ndynattrs) x$vertex.dyn.attrs[[i]] <- x$vertex.dyn.attrs[[i]][index,,drop=FALSE]
-  }
-
-  # 2.0: Matrices
-  x$adopt               <- x$adopt[index,,drop=FALSE]
-  x$cumadopt            <- x$cumadopt[index,,drop=FALSE]
-  x$vertex.static.attrs <- x$vertex.static.attrs[index,,drop=FALSE]
-  x$toa                 <- x$toa[index]
-
-  # 3.0: Attrubytes
-  x$meta$ids <- x$meta$ids[index]
-  x$meta$n   <- length(index)
-
-  return(x)
-}
 
 #' \code{diffnet} Arithmetic Operators
 #'

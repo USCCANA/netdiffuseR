@@ -9,6 +9,8 @@
 #' @param j Index of the j-th column of the adjacency matrix (see details)
 #' @param k Index of the k-th slice of the adjacency matrix (see details).
 #' @param value Value to assign (see details)
+#' @param drop Logical scalar. When \code{TRUE} returns an adjacency matrix, otherwise
+#' a filtered diffnet object.
 #' @details
 #' The \code{[[.diffnet} methods provides access to the diffnet attributes
 #' data frames, static and dynamic. By providing the \code{name} of the corresponding
@@ -21,9 +23,10 @@
 #' \tabular{llr}{
 #' \strong{Class}    \tab \strong{Dimension}   \tab \strong{Inferred} \cr
 #' \code{matrix}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
-#' \code{matrix}     \tab \eqn{n\times 1}{n*T} \tab Static            \cr
+#' \code{matrix}     \tab \eqn{n\times 1}{n*1} \tab Static            \cr
 #' \code{data.frame} \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 #' \code{data.frame} \tab \eqn{n\times 1}{n*1} \tab Static            \cr
+#' \code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 #' \code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
 #' }
 #' *: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
@@ -38,6 +41,7 @@
 #' with the only difference that, instead of time period labels and a logical vector
 #' of length \code{T}, vertices ids labels and a logical vector of length \code{n}
 #' should be provided.
+#'
 #' @return In the case of the asignning methods, a diffnet object. Otherwise,
 #' for \code{[[.diffnet} a vector extracted from one of the attributes data frames,
 #' and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
@@ -54,37 +58,201 @@
 #' graph[["real_threshold"]]
 #'
 #' # Accessing to subsets of the adjacency matrix
-#' graph[1,,1]
-#' graph[,,1]
+#' graph[1,,1:3, drop=TRUE]
+#' graph[,,1:3, drop=TRUE]
+#'
+#' # ... Now, as diffnet objects (the default)
+#' graph[1,,1:3, drop=FALSE]
+#' graph[,,1:3, drop=FALSE]
 #'
 #' # Changing values in the adjacency matrix
-#' graph[1,,]
+#' graph[1, , , drop=TRUE]
 #' graph[1,,] <- -5
-#' graph[1,,]
+#' graph[1, , , drop=TRUE]
+#'
+#' # Adding attributes (dynamic) -----------------------------------------------
+#' # Preparing the data
+#' set.seed(1313)
+#' x <- rdiffnet(20, 5)
+#'
+#' # Calculating exposure, and storing it diffe
+#' expoM <- exposure(x)
+#' expoL <- lapply(seq_len(x$meta$nper), function(x) expoM[,x,drop=FALSE])
+#' expoD <- do.call(rbind, expoL)
+#'
+#' # Adding data (all these are equivalent)
+#' x[["expoM"]] <- expoM
+#' x[["expoL"]] <- expoL
+#' x[["expoD"]] <- expoD
+#'
+#' # Lets compare
+#' identical(x[["expoM"]], x[["expoL"]]) # TRUE
+#' identical(x[["expoM"]], x[["expoD"]]) # TRUE
+NULL
+
+#' Infer whether \code{value} is dynamic or static.
+#'
+#' Intended for internal use only, this function is used in \code{\link{diffnet_index}}
+#' methods.
+#'
+#' @param value Either a matrix, data frame or a list. Attribute values.
+#' @param meta A list. A diffnet object's meta data.
+#'
+#' @return The value object either as a data frame (if static) or as a list
+#' of data frames (if dynamic). If \code{value} does not follows the permitted
+#' types of \code{\link{diffnet_index}}, then returns with error.
+#'
 #' @export
+diffnet_check_attr_class <- function(value, meta) {
+  # Processing meta
+  n <- meta$n
+  t <- meta$nper
+
+  if (inherits(value, "matrix") | inherits(value, "data.frame")) {
+    # Static case
+    vdim <- dim(value)
+    if (all(vdim == c(n, t)))    { # Dynamic Matrix
+
+      # Coercing into a list
+      value <- lapply(seq_len(t), function(x) value[, x, drop=TRUE])
+      return(value)
+
+    } else if (all(vdim == c(n, 1L))) { # Static Matrix
+
+      # Coercing into a vector
+      return(value[,1,drop=TRUE])
+
+    } else if (all(vdim == c(n*t, 1L))) { # Dynamic Matrix
+
+      # Coercing into a list
+      value <- lapply(seq_len(t), function(x)
+        value[((x-1)*n + 1):(x*n),,drop=TRUE]
+        )
+      return(value)
+
+    } else {
+      stop("data.frame/matrix has incorrect size (", vdim[1], " x ", vdim[2],"). ",
+           "Please refer to the manual to see accepted values.")
+    }
+
+  } else if (inherits(value, "list")) {
+
+    # Checking classes of the elements
+    isdf <- sapply(value, inherits, what="data.frame")
+    test <- which(!isdf & !sapply(value, inherits, what="matrix"))
+
+    if (length(test)) {
+      stop("Not all the elements in the list are data.frame/matrix:\n\t",
+           paste0(test, collapse=", "), ".")
+    }
+
+    # Checking the dimensions of the elements
+    test <- which(sapply(value, function(x) !all(dim(x) == c(n,1))))
+
+    if (length(test)) {
+      stop("Not all elements in the list have the right dimension (",n," x 1):\n\t",
+           paste0(test, collapse=", "), ".")
+    }
+
+    # Corecing non df to dfs, and then coercing into vectors
+    value[!isdf] <- lapply(value[!isdf], as.data.frame)
+    value <- lapply(value, "[[", 1)
+
+    return(value)
+
+  } else {
+    stop("-value- must be either a list, a data frame or a matrix.")
+  }
+}
 
 #' @export
 #' @rdname diffnet_index
 `[[.diffnet` <- function(x, name) {
-    x$vertex.static.attrs[[name]]
+
+  # Checking names
+  if (name %in% colnames(x$vertex.static.attrs)) {
+    return(x$vertex.static.attrs[[name]])
+  } else if (name %in% colnames(x$vertex.dyn.attrs[[1]])) {
+
+    return({
+      lapply(x$vertex.dyn.attrs, "[[", name)
+    })
+
+  } else {
+    stop("No dynamic or static attribute with such name.")
+  }
+
 }
 
 #' @export
 #' @rdname diffnet_index
 `[[<-.diffnet` <- function(x, i, j, value) {
-  x$vertex.static.attrs[[i]][j] <- value
+  # If j index is specified, then the addition is made to a subset
+  if (missing(j)) j <- seq_len(x$meta$n)
+
+  # Checking and preparing the data
+  meta <- x$meta
+  if (length(j) < meta$n) meta$n <- length(j)
+  value <- diffnet_check_attr_class(value, meta)
+
+  # Adding the attribute
+  if (!inherits(value, "list")) {
+    x$vertex.static.attrs[[i]][j] <- value
+  } else {
+    # Checking if is empty or not
+    for (l in meta$pers)
+      x$vertex.dyn.attrs[[l]][[i]][j] <- value[[l]]
+  }
   x
 }
 
 #' @export
 #' @rdname diffnet_index
-`[.diffnet` <- function(x, i, j, k) {
-  # Checking ids
-  if (missing(i)) i <- seq_len(x$meta$n)
-  if (missing(j)) j <- seq_len(x$meta$n)
-  if (missing(k)) k <- seq_len(x$meta$nper)
+`[.diffnet` <- function(x, i, j, k, drop=FALSE) {
 
-  lapply(x$graph[k], "[", i=i, j=j, drop=FALSE)
+  # Checking drop
+  if (drop) { # So it requires the adjmat
+    # Checking ids
+    if (missing(i)) i <- seq_len(x$meta$n)
+    if (missing(j)) j <- seq_len(x$meta$n)
+  } else { # So its subsetting the diffnet
+    if      (missing(i)  & missing(j) ) i <- j <- seq_len(x$meta$n)
+    else if (missing(i)  & !missing(j)) i <- j
+    else if (!missing(i) & missing(j) ) j <- i
+    else if (!missing(i) & !missing(j))
+      if (identical(i, j))
+        stop("Whe subsetting a diffnet and -i- and -j- are provided these should,",
+             "be identical.")
+  }
+
+  # Slices
+  if (missing(k)) k <- seq_len(x$meta$nper)
+  else x <- diffnet.subset.slices(x, k)
+
+  # Subsetting
+  if (drop) return(lapply(x$graph, "[", i=i, j=j, drop=FALSE))
+  else {
+    x$graph <- lapply(x$graph, "[", i=i, j=j, drop=FALSE)
+
+    # Subsetting
+    # 1.0: graph and attributes
+    if (length(unlist(x$vertex.dyn.attrs)))
+      for (l in 1:x$meta$nper)
+         x$vertex.dyn.attrs[[l]] <- x$vertex.dyn.attrs[[l]][i,,drop=FALSE]
+
+
+    # 2.0: Matrices
+    x$adopt               <- x$adopt[i,,drop=FALSE]
+    x$cumadopt            <- x$cumadopt[i,,drop=FALSE]
+    x$vertex.static.attrs <- x$vertex.static.attrs[i,,drop=FALSE]
+    x$toa                 <- x$toa[i]
+
+    # 3.0: Attrubytes
+    x$meta$ids <- x$meta$ids[i]
+    x$meta$n   <- length(x$meta$ids)
+
+    return(x)
+  }
 }
 
 #' @export

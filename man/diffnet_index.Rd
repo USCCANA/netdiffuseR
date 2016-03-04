@@ -6,13 +6,13 @@
 \alias{[[.diffnet}
 \alias{[[<-.diffnet}
 \alias{diffnet_index}
-\title{Indexing diffnet objects}
+\title{Indexing diffnet objects (on development)}
 \usage{
 \method{[[}{diffnet}(x, name)
 
 \method{[[}{diffnet}(x, i, j) <- value
 
-\method{[}{diffnet}(x, i, j, drop = FALSE)
+\method{[}{diffnet}(x, i, j, k, drop = FALSE)
 
 \method{[}{diffnet}(x, i, j, k) <- value
 }
@@ -28,6 +28,9 @@
 \item{value}{Value to assign (see details)}
 
 \item{k}{Index of the k-th slice of the adjacency matrix (see details).}
+
+\item{drop}{Logical scalar. When \code{TRUE} returns an adjacency matrix, otherwise
+a filtered diffnet object.}
 }
 \value{
 In the case of the asignning methods, a diffnet object. Otherwise,
@@ -51,9 +54,10 @@ we have the following possible cases:
 \tabular{llr}{
 \strong{Class}    \tab \strong{Dimension}   \tab \strong{Inferred} \cr
 \code{matrix}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
-\code{matrix}     \tab \eqn{n\times 1}{n*T} \tab Static            \cr
+\code{matrix}     \tab \eqn{n\times 1}{n*1} \tab Static            \cr
 \code{data.frame} \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 \code{data.frame} \tab \eqn{n\times 1}{n*1} \tab Static            \cr
+\code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 \code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
 }
 *: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
@@ -79,12 +83,35 @@ graph <- rdiffnet(10,5)
 graph[["real_threshold"]]
 
 # Accessing to subsets of the adjacency matrix
-graph[1,,1]
-graph[,,1]
+graph[1,,1:3, drop=TRUE]
+graph[,,1:3, drop=TRUE]
+
+# ... Now, as diffnet objects (the default)
+graph[1,,1:3, drop=FALSE]
+graph[,,1:3, drop=FALSE]
 
 # Changing values in the adjacency matrix
-graph[1,,]
+graph[1, , , drop=TRUE]
 graph[1,,] <- -5
-graph[1,,]
+graph[1, , , drop=TRUE]
+
+# Adding attributes (dynamic) -----------------------------------------------
+# Preparing the data
+set.seed(1313)
+x <- rdiffnet(20, 5)
+
+# Calculating exposure, and storing it diffe
+expoM <- exposure(x)
+expoL <- lapply(seq_len(x$meta$nper), function(x) expoM[,x,drop=FALSE])
+expoD <- do.call(rbind, expoL)
+
+# Adding data (all these are equivalent)
+x[["expoM"]] <- expoM
+x[["expoL"]] <- expoL
+x[["expoD"]] <- expoD
+
+# Lets compare
+identical(x[["expoM"]], x[["expoL"]]) # TRUE
+identical(x[["expoM"]], x[["expoD"]]) # TRUE
 }
 
