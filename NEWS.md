@@ -37,6 +37,9 @@
 * New argument for `threshold`. Now, by default, threshold levels are not computed
   for adopters in the first time period as this can be a biased estimate. If
   the user wants to compute such, he/she can set `include_censored=TRUE`.
+  
+* New indexing methods via `[[.diffnet`, `[[<-.diffnet`, for network attributes
+  and `[.diffnet` and `[<-.diffnet` for adjacency matrix.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

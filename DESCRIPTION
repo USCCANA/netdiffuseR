@@ -52,6 +52,7 @@ Collate:
     'adjmat.R'
     'data.R'
     'diffnet-class.R'
+    'diffnet-indexing.R'
     'diffnet-methods.R'
     'egonets.R'
     'infect_suscept.R'
