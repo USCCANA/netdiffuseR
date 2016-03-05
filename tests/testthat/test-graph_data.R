@@ -17,7 +17,7 @@ test_that("Graph class analysis", {
   expect_error(classify_graph(matrix(nrow = 0, ncol=0)), "Empty")
   expect_error(classify_graph(matrix(nrow = 2, ncol=1)), "square")
   expect_error(classify_graph(matrix(TRUE,nrow = 2, ncol=2)), "numeric")
-  expect_output( (classify_graph(matrix(1,nrow = 1, ncol=1))) , "static")
+  expect_output( print(classify_graph(matrix(1,nrow = 1, ncol=1))) , "static")
 
   # Dynamic graphs (simple)
   expect_error(classify_graph(array(dim = c(1,0,3))), "square")
@@ -29,10 +29,10 @@ test_that("Graph class analysis", {
   expect_error(classify_graph(graph), "dimensions .* slices .* equal")
 
   graph <- sapply(1:3,function(x) rgraph_ba())
-  expect_output( (classify_graph(graph)) , "dynamic")
+  expect_output( print(classify_graph(graph)) , "dynamic")
 
   graph <- array(unlist(lapply(graph, as.matrix)), dim=c(11,11,3))
-  expect_output( (classify_graph(graph)) , "dynamic")
+  expect_output( print(classify_graph(graph)) , "dynamic")
 
   }
 )

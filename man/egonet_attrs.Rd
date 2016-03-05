@@ -100,8 +100,8 @@ diffnet <- rdiffnet(150, 20, seed.graph="small-world")
 
 # Adding attributes
 indeg <- dgr(diffnet, cmode="indegree")
-diffnet.attrs(diffnet, "vertex", "dyn") <-
- lapply(1:20, function(x) cbind(indeg=indeg[,x]))
+head(indeg)
+diffnet[["indegree"]] <- indeg
 
 # Retrieving egonet's attributes (vertices 1 and 20)
 egonet_attrs(diffnet, V=c(1,20))

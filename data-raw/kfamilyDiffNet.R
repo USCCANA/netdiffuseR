@@ -60,9 +60,10 @@ graph <- with(
 toa <- kfamily$toa
 
 # Creating a diffnet -----------------------------------------------------------
-kfamilyDiffNet <- as_diffnet(graph, toa)
+kfamilyDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(kfamily, select=c(-id,-toa)))
 # [2016-02-24]: keep.isolates working
 # diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- as.matrix(subset(kfamily, id %in% used.vertex))
-diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- subset(kfamily, select=c(-id,-toa))
+# [2016-03-05]: Deprecated
+# diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- subset(kfamily, select=c(-id,-toa))
 
 save(kfamilyDiffNet, file="data/kfamilyDiffNet.rdata")

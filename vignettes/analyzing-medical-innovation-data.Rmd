@@ -181,11 +181,8 @@ To use the data for statistical models we can retrieve the data stored in the `d
 expo <- exposure(diffnet)
 head(expo)
 
-# Must be a list to be used in diffnet
-expo <- lapply(1:ncol(expo), function(x) cbind(netexp=expo[,x]))
-
-# Adding it to diffnet
-diffnet.attrs(diffnet, attr.class="dyn") <- expo
+# Netdiffuser automatically identifies whether the input is dynamic or not.
+diffnet[["netexp"]] <- expo
 ```
 
 Now we can create a data frame from our `diffnet` object

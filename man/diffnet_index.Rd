@@ -55,15 +55,17 @@ we have the following possible cases:
 \strong{Class}    \tab \strong{Dimension}   \tab \strong{Inferred} \cr
 \code{matrix}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 \code{matrix}     \tab \eqn{n\times 1}{n*1} \tab Static            \cr
+\code{matrix}     \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 \code{data.frame} \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 \code{data.frame} \tab \eqn{n\times 1}{n*1} \tab Static            \cr
 \code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
+\code{vector}     \tab \eqn{n}              \tab Static            \cr
+\code{vector}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 \code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
 }
 *: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
 
 Other cases will return with error.
-
 
 In the case of the slices index \code{k}, either an
 integer vector with the positions, a character vector with the labels of the

@@ -8,16 +8,15 @@ test_that("Simple extraction throught clases", {
   diffnet <- rdiffnet(100,20, seed.graph = "small-world")
 
   # Adding attributes
-  diffnet.attrs(diffnet, attr.class = "dyn") <-
-    lapply(1:t, function(x) cbind(unif=runif(n)))
-  diffnet.attrs(diffnet, attr.class = "dyn") <-
-    lapply(1:t, function(x) cbind(bool=runif(n) > .5))
 
-  diffnet.attrs(diffnet, attr.class = "static") <-
-    cbind(d=rowMeans(dgr(diffnet)))
+  # Dynamic
+  diffnet[["unif"]]      <- runif(n*t)
+  diffnet[["bool"]]      <- runif(n*t) > .5
 
-  diffnet.attrs(diffnet, attr.class = "static") <-
-    cbind(threshold(diffnet))
+  # Static
+  diffnet[["d"]]         <- rowMeans(dgr(diffnet))
+  diffnet[["threshold"]] <- threshold(diffnet)
+
 
   # Computing egonets
   en_diffnet_dn <- egonet_attrs(diffnet, fun=function(x) {

@@ -30,7 +30,8 @@
 #' @param vertex.dyn.attrs List of length \eqn{T}. Contains matrices with vertex attributes.
 #' @param vertex.static.attrs Numeric matrix with \eqn{n} rows.
 #' @param graph.attrs Numeric matrix with a single row.
-#' @param slices Integer vector.
+#' @param slices Either an integer or character vector. While integer vectors are used as
+#' indexes, character vectors are used jointly with the time period labels.
 #' @param element Character vector/scalar. Indicates what to retrieve/alter.
 #' @param attr.class Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
 #' or static (\code{"static"}).
@@ -80,7 +81,7 @@
 #' who adopted prior to time 3 will be set as adopters at time 3, and all individuals
 #' who adopted after time 10 will be set as adopters at time 10, changing the
 #' adoption and cumulative adoption matrices. Importantly, \code{slice} must be an
-#' integer range without gaps.
+#' integer range without gaps, and it should be within 1 and \eqn{T}.
 #'
 #' \code{diffnet.attrs} Allows retriving network attributes. In particular, by default
 #' returns a list of length \eqn{T} with data frames with the following columns:
@@ -319,6 +320,12 @@ diffnet.subset.slices <- function(graph, slices) {
     stop("-slices- is a vector of length ",length(slices),
          ". It must be at least of length 2.")
 
+  # Analyzing class
+  uses_labels <- ifelse(inherits(slices, "character"), TRUE, FALSE)
+  if (uses_labels) {
+    slices <- as.integer(slices)
+  }
+
   # Subset must be continuous...
   test <- (slices[-1] - slices[-length(slices)]) > 1
   if (any(test))
@@ -327,21 +334,28 @@ diffnet.subset.slices <- function(graph, slices) {
   # Ordering
   slices  <- sort(slices)
   nslices <- length(slices)
+  pers    <- graph$meta$pers
 
   # Checking slices
-  test <- !(slices %in% graph$meta$pers)
+  test <- if (!uses_labels) !(slices %in% seq_len(graph$meta$nper))
+  else !(slices %in% pers)
+
   if (any(test))
     stop("The specified -slices- (",
          paste0(slices[test], collapse = ", "),
          ") are invalid.")
+
+  # Recomputing in terms of indexes
+  if (uses_labels) slices <- which(pers %in% as.character(slices))
 
   # Removing not included slices
   graph$graph            <- graph$graph[slices]
   graph$vertex.dyn.attrs <- graph$vertex.dyn.attrs[slices]
 
   # Changing adoption matrices
-  beforeslice <- which(graph$toa < min(slices))
-  afterslice  <- which(graph$toa > max(slices))
+
+  beforeslice <- which(graph$toa < pers[slices][1])
+  afterslice  <- which(graph$toa > pers[slices][nslices])
 
   graph$adopt[beforeslice,slices[1]] <- 1
   graph$adopt[afterslice ,slices[nslices]] <- 1
@@ -352,12 +366,12 @@ diffnet.subset.slices <- function(graph, slices) {
   graph$cumadopt <- graph$cumadopt[,slices]
 
   # Changing toa mat (truncating it)
-  graph$toa[beforeslice] <- min(slices)
-  graph$toa[afterslice]  <- max(slices)
+  graph$toa[beforeslice] <- pers[slices][1]
+  graph$toa[afterslice]  <- pers[slices][nslices]
 
   # Changing meta
-  graph$meta$nper <- length(slices)
-  graph$meta$pers <- slices
+  graph$meta$nper <- nslices
+  graph$meta$pers <- pers[slices]
 
   graph
 }

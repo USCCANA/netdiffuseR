@@ -33,9 +33,9 @@ test_that("Changing toa", {
 
   # All to the first time period
   diffnet.toa(diffnet) <- 1
-  expect_output(diffnet, "Final prevalence\\s+[:] 1\\.0")
+  expect_output(print(diffnet), "Final prevalence\\s+[:] 1\\.0")
 
   # No adopters... what!?
   diffnet.toa(diffnet) <- NA
-  expect_output(diffnet, "Final prevalence\\s+[:] 0\\.0")
+  expect_output(print(diffnet), "Final prevalence\\s+[:] 0\\.0")
 })

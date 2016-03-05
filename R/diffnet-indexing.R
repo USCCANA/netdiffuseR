@@ -24,15 +24,17 @@
 #' \strong{Class}    \tab \strong{Dimension}   \tab \strong{Inferred} \cr
 #' \code{matrix}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 #' \code{matrix}     \tab \eqn{n\times 1}{n*1} \tab Static            \cr
+#' \code{matrix}     \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 #' \code{data.frame} \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 #' \code{data.frame} \tab \eqn{n\times 1}{n*1} \tab Static            \cr
 #' \code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
+#' \code{vector}     \tab \eqn{n}              \tab Static            \cr
+#' \code{vector}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
 #' \code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
 #' }
 #' *: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
 #'
 #' Other cases will return with error.
-#'
 #'
 #' In the case of the slices index \code{k}, either an
 #' integer vector with the positions, a character vector with the labels of the
@@ -131,7 +133,7 @@ diffnet_check_attr_class <- function(value, meta) {
       return(value)
 
     } else {
-      stop("data.frame/matrix has incorrect size (", vdim[1], " x ", vdim[2],"). ",
+      stop("-value- data.frame/matrix has incorrect size (", vdim[1], " x ", vdim[2],"). ",
            "Please refer to the manual to see accepted values.")
     }
 
@@ -160,9 +162,30 @@ diffnet_check_attr_class <- function(value, meta) {
 
     return(value)
 
-  } else {
-    stop("-value- must be either a list, a data frame or a matrix.")
-  }
+  } else if (is.vector(value)) {
+    # Checking the length
+    vdim <- length(value)
+
+    if (vdim == n) {# Checking static
+
+      # Returning asis (ideal case?)
+      return(value)
+
+    } else if (vdim == (n*t)) { # Checking dynamic
+
+      # Coercing into a list
+      value <- lapply(seq_len(t), function(x)
+        value[((x-1)*n + 1):(x*n)]
+      )
+
+      return(value)
+
+    } else {
+      stop("-value- vector has incorrect size (", vdim, "). ",
+           "Please refer to the manual to see accepted values.")
+    }
+
+  } else stop("-value- must be either a list, a data frame or a matrix.")
 }
 
 #' @export
@@ -227,11 +250,11 @@ diffnet_check_attr_class <- function(value, meta) {
 
   # Slices
   if (missing(k)) k <- seq_len(x$meta$nper)
-  else x <- diffnet.subset.slices(x, k)
 
   # Subsetting
-  if (drop) return(lapply(x$graph, "[", i=i, j=j, drop=FALSE))
+  if (drop) return(lapply(x$graph[k], "[", i=i, j=j, drop=FALSE))
   else {
+    x <- diffnet.subset.slices(x, k)
     x$graph <- lapply(x$graph, "[", i=i, j=j, drop=FALSE)
 
     # Subsetting

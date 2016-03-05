@@ -224,7 +224,7 @@ edgelist_to_adjmat.matrix <- function(
   if (length(t1)) t1 <- t1[complete][not.isolated]
   else t1 <- rep(NA, m)
 
-  oldtimes <- range(c(t0,t1), na.rm=TRUE)
+  suppressWarnings(oldtimes <- range(c(t0,t1), na.rm=TRUE))
   if (all(!is.finite(oldtimes))) oldtimes <- rep(1,2)
   oldtimes <- oldtimes[1]:oldtimes[2]
 

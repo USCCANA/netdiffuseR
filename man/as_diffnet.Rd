@@ -63,7 +63,8 @@ diffnet.toa(graph, i) <- value
 
 \item{multiple}{Logical scalar.}
 
-\item{slices}{Integer vector.}
+\item{slices}{Either an integer or character vector. While integer vectors are used as
+indexes, character vectors are used jointly with the time period labels.}
 
 \item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
 
@@ -108,10 +109,6 @@ is ignored.}
 \item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
 
 \item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
-
-\item{j}{Integer vector. Passed to \code{diffnet.subset.slices}.}
-
-\item{drop}{Ignored}
 }
 \value{
 A list of class \code{diffnet} with the following elements:
@@ -186,7 +183,7 @@ if a network goes from time 1 to 20 and we set \code{slices=3:10}, all individua
 who adopted prior to time 3 will be set as adopters at time 3, and all individuals
 who adopted after time 10 will be set as adopters at time 10, changing the
 adoption and cumulative adoption matrices. Importantly, \code{slice} must be an
-integer range without gaps.
+integer range without gaps, and it should be within 1 and \eqn{T}.
 
 \code{diffnet.attrs} Allows retriving network attributes. In particular, by default
 returns a list of length \eqn{T} with data frames with the following columns:
@@ -232,11 +229,6 @@ summary(diffnet)
 plot(diffnet, t=4)
 
 # ATTRIBUTES ----------------------------------------------------------------
-
-# Adding new attributes to the network
-diffnet.attrs(diffnet, "vertex", "static") <- data.frame(posnum=1:diffnet$meta$n)
-diffnet.attrs(diffnet, "vertex", "dyn") <-
- lapply(1:diffnet$meta$nper, function(x) data.frame(rand=runif(diffnet$meta$n)))
 
 # Retrieving attributes
 diffnet.attrs(diffnet, "vertex", "static")
