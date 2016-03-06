@@ -40,6 +40,13 @@
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`, and `egonet_attrs` as
   these use attributes directly. (Requested by Tom)
+  
+* Fixed bugs for the `as_diffnet` method for arrays.
+
+* New features for the `rewire_graph` function. In particular, `p` can now be
+  a vector of length `T`, so each slice can have different rewiring prob., and
+  the new option `copy.first` which allows to recycle the first rewired slice
+  (see details).
 
 # netdiffuseR 1.16.2 (CRAN release)
 

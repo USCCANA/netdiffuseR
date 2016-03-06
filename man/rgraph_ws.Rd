@@ -12,7 +12,7 @@ rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE)
 
 \item{k}{Integer scalar. Set the initial degree of the ring (must be less than \eqn{n}).}
 
-\item{p}{Numeric scalar. Set the probability of changing an edge.}
+\item{p}{Numeric scalar/vector of length \eqn{T}. Set the probability of changing an edge.}
 
 \item{both.ends}{Logical scalar. When \code{TRUE} rewires both ends.}
 

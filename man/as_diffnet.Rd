@@ -51,9 +51,10 @@ diffnet.toa(graph, i) <- value
 
 \item{t1}{Integer scalar. Passed to \code{\link{toa_mat}}.}
 
-\item{vertex.dyn.attrs}{List of length \eqn{T}. Contains matrices with vertex attributes.}
+\item{vertex.dyn.attrs}{List of length \eqn{T}. Contains either matrices or data
+frames with vertex attributes.}
 
-\item{vertex.static.attrs}{Numeric matrix with \eqn{n} rows.}
+\item{vertex.static.attrs}{Either a data frame or a matrix with \eqn{n} rows.}
 
 \item{graph.attrs}{Numeric matrix with a single row.}
 

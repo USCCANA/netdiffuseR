@@ -179,7 +179,7 @@ classify_graph <- function(graph) {
     ids <- rownames(graph)
     if (!length(ids)) ids <- 1:d[1]
 
-    pers <- dimnames(graph)[[3]]
+    pers <- as.numeric(dimnames(graph)[[3]])
     if (!length(pers)) pers <- 1:d[3]
     else {
       # Step 4.2.1: Must be coercible into integer
@@ -187,8 +187,9 @@ classify_graph <- function(graph) {
       if (any(is.na(alters))) stop("names(graph) should be either numeric or integer.")
 
       # Step 4.2.1: Must keep uniqueness
-      if (unique(alters) != length(pers)) stop("When coercing names(graph) into integer,",
-                                       "some slices acquired the same name.")
+      if (length(unique(alters)) != length(pers))
+        stop("When coercing names(graph) into integer,",
+             "some slices acquired the same name.")
       pers <- alters
     }
 

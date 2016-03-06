@@ -27,8 +27,9 @@
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
 #' @param value In the case of \code{diffnet.toa}, replacement, otherwise see below.
-#' @param vertex.dyn.attrs List of length \eqn{T}. Contains matrices with vertex attributes.
-#' @param vertex.static.attrs Numeric matrix with \eqn{n} rows.
+#' @param vertex.dyn.attrs List of length \eqn{T}. Contains either matrices or data
+#' frames with vertex attributes.
+#' @param vertex.static.attrs Either a data frame or a matrix with \eqn{n} rows.
 #' @param graph.attrs Numeric matrix with a single row.
 #' @param slices Either an integer or character vector. While integer vectors are used as
 #' indexes, character vectors are used jointly with the time period labels.
@@ -202,7 +203,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
     # Checking if it is a data.frame or not
     if (!inherits(vertex.dyn.attrs[[1]], "data.frame"))
-      warning("-vertex.dyn.attrs- will be corerced to a data.frame.")
+      warning("-vertex.dyn.attrs- will be coerced to a data.frame.")
 
     vertex.dyn.attrs <- lapply(vertex.dyn.attrs, function(x) {
       if (!inherits(x, "data.frame")) x <- as.data.frame(x)
@@ -211,7 +212,13 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
     })
   }
 
+  # Checking static attributes
   if (length(vertex.static.attrs)) {
+
+    # Must be either a data.frame or a matrix
+    if (!any(c("data.frame", "matrix") %in% class(vertex.static.attrs)))
+      stop("-vertex.static.attrs- must be either a data.frame or a matrix.")
+
     attlen <- nrow(vertex.static.attrs)
     if (attlen != meta$n) stop("-graph- and -vertex.static.attrs- have different lengths (",
                                meta$n, " and ", attlen, "respectively). ",
@@ -224,7 +231,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
     # Checking if it is a data.frame or not
     if (!inherits(vertex.static.attrs, "data.frame")) {
-      warning("-vertex.static.attrs- will be corerced to a data.frame.")
+      warning("-vertex.static.attrs- will be coerced to a data.frame.")
       vertex.static.attrs <- as.data.frame(vertex.static.attrs)
     }
 
@@ -245,7 +252,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
   mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
-  tdiff <- length(graph) - ncol(mat[[1]])
+  tdiff <- meta$nper - ncol(mat[[1]])
   if (tdiff < 0)
     stop("Range of -toa- is bigger than the number of slices in -graph- (",
          ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
@@ -263,6 +270,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
     graph <- lapply(1:meta$nper, function(x) {
       x <- methods::as(graph[,,x], "dgCMatrix")
       dimnames(x) <- with(meta, list(ids, ids))
+      x
     })
     names(graph) <- meta$pers
   } else { # Setting names (if not before)
@@ -462,7 +470,7 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 
     # Checking if it is a data.frame or not
     if (!inherits(value, "data.frame")) {
-      warning("-value- will be corerced to a data.frame.")
+      warning("-value- will be coerced to a data.frame.")
       value <- as.data.frame(value)
     }
 
@@ -528,7 +536,7 @@ diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn"
 
     # Checking if it is a data.frame or not
     if (!inherits(value[[1]], "data.frame"))
-      warning("-value- will be corerced to a data.frame.")
+      warning("-value- will be coerced to a data.frame.")
 
     value <- lapply(value, function(y) {
       if (!inherits(y, "data.frame")) y <- as.data.frame(y)
