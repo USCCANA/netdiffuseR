@@ -98,13 +98,13 @@ for (g in names(EL_digraph)) {
 ################################################################################
 context("Time of Adoption (toa_mat, toa_dif)")
 
-times <- c(2001, 2004, 2003, 2008)
+times <- c(2001L, 2004L, 2003L, 2008L)
 
 graph <- lapply(2001:2008, function(x) rgraph_er(4))
 diffnet <- as_diffnet(graph, times)
 
 test_that("Should warn about -times- not been integer", {
-  expect_warning(toa_mat(times), "will be coersed to integer")
+  expect_warning(toa_mat(as.numeric(times)), "will be coersed to integer")
 })
 
 test_that("Dimensions of TOA mat should be ok", {

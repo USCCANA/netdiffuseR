@@ -5,7 +5,7 @@ test_that("Subsetting slices", {
   diffnet <- rdiffnet(100, 20)
 
   sum1 <- summary(diffnet, no.print = TRUE)
-  sum2 <- summary(diffnet.subset.slices(diffnet, c(7:13)), no.print = TRUE)
+  sum2 <- summary(diffnet[,,7:13], no.print = TRUE)
 
   # Number of adopters should hold (adoption rate)
   expect_equal(sum1[nrow(sum1),c("cum_adopt")],sum2[nrow(sum2),c("cum_adopt")])
@@ -36,19 +36,19 @@ test_that("Error messages", {
                vertex.static.attrs = static_attr), "coerced to a data\\.frame")
 })
 
-test_that("Setting attributes", {
-  set.seed(909)
-  diffnet <- rdiffnet(80, 20, seed.nodes = "random", seed.p.adopt = .1)
-
-  expect_error(diffnet.attrs(diffnet) <- as.matrix(sample(1:4, 20, TRUE)), "different lengths")
-})
+# test_that("Setting attributes", {
+#   set.seed(909)
+#   diffnet <- rdiffnet(80, 20, seed.nodes = "random", seed.p.adopt = .1)
+#
+#   expect_error(diffnet.attrs(diffnet) <- as.matrix(sample(1:4, 20, TRUE)), "different lengths")
+# })
 
 test_that("Changing toa", {
   set.seed(18231)
   diffnet <- rdiffnet(100, 10)
 
   # All to the first time period
-  diffnet.toa(diffnet) <- 1
+  diffnet.toa(diffnet) <- 1L
   expect_output(print(diffnet), "Final prevalence\\s+[:] 1\\.0")
 
   # No adopters... what!?

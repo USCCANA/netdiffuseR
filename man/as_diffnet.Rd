@@ -6,7 +6,6 @@
 \alias{diffnet-class}
 \alias{diffnet.attrs}
 \alias{diffnet.attrs<-}
-\alias{diffnet.subset.slices}
 \alias{diffnet.toa}
 \alias{diffnet.toa<-}
 \alias{plot.diffnet}
@@ -19,8 +18,6 @@ as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   graph.attrs = NULL, undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"))
-
-diffnet.subset.slices(graph, slices)
 
 diffnet.attrs(graph, element = c("vertex", "graph"), attr.class = c("dyn",
   "static"), as.df = FALSE)
@@ -64,9 +61,6 @@ frames with vertex attributes.}
 
 \item{multiple}{Logical scalar.}
 
-\item{slices}{Either an integer or character vector. While integer vectors are used as
-indexes, character vectors are used jointly with the time period labels.}
-
 \item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
 
 \item{attr.class}{Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
@@ -104,6 +98,9 @@ or static (\code{"static"}).}
 is ignored.}
 
 \item{object}{A \code{diffnet} object.}
+
+\item{slices}{Either an integer or character vector. While integer vectors are used as
+indexes, character vectors are used jointly with the time period labels.}
 
 \item{no.print}{Logical scalar. When TRUE suppress screen messages.}
 
@@ -176,15 +173,6 @@ geodesic distances can't be stored as a sparse matrix (saving space).
 }
 \section{Auxiliary functions}{
 
-
-\code{diffnet.subset.slices} retrieves a subsection, in terms of time periods,
-of the graph. When doing so, it modifies the \code{toa} vector as well as the
-\code{adopt} and \code{cumadopt} matrices collapsing network tinmming. For example,
-if a network goes from time 1 to 20 and we set \code{slices=3:10}, all individuals
-who adopted prior to time 3 will be set as adopters at time 3, and all individuals
-who adopted after time 10 will be set as adopters at time 10, changing the
-adoption and cumulative adoption matrices. Importantly, \code{slice} must be an
-integer range without gaps, and it should be within 1 and \eqn{T}.
 
 \code{diffnet.attrs} Allows retriving network attributes. In particular, by default
 returns a list of length \eqn{T} with data frames with the following columns:

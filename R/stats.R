@@ -160,12 +160,16 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
-#' @param attrs A numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
-#' @param alt.graph A dynamic graph that should be used instead of \code{graph} (see details).
+#' @param attrs Either a character scalar (if \code{graph} is diffnet),
+#' or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
+#' @param alt.graph Either a dynamic graph that should be used instead of \code{graph},
+#' or \code{"se"} (see details).
 #' @param outgoing Logical scalar. When TRUE, computed using outgoing ties.
 #' @param valued Logical scalar. When FALSE, values of \code{graph} are set to one.
 #' @param normalized Logical scalar. When true, the exposure will be between zero
 #' and one (see details).
+#' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
+#' \code{alt.graph="se"}).
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -182,13 +186,18 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' product (element-wise), and \eqn{\times}{\%*\%} is the matrix product.
 #'
 #' By default the graph used for this calculation, \eqn{S}, is the social network. Alternatively,
-#' in the case of \code{diffnet} objects, the user can provide an alaternative
+#' in the case of \code{diffnet} objects, the user can provide an alternative
 #' graph using \code{alt.graph}. An example of this would be using \eqn{1/SE},
 #' the element-wise inverse of the structural equivalence matrix (see example below).
+#' Furthermore, if \code{alt.graph="se"}, the inverse of the structural equivalence
+#' is computed via \code{\link{struct_equiv}} and used instead of the provided
+#' graph.
 #'
 #' If the user does not specifies a particular weighting attribute in \code{attrs},
 #' the function sets this as a matrix of ones. Otherwise the function will return
-#' an attribute weighted exposure. See the examples section for a demonstration using
+#' an attribute weighted exposure. When \code{graph} is of class \code{diffnet},
+#' \code{attrs} can be a character scalar specifying the name of any of the graph's
+#' attributes, both dynamic and static. See the examples section for a demonstration using
 #' degree.
 #'
 #' When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
@@ -214,17 +223,20 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' SE <- lapply(struct_equiv(graph), "[[", "SE")
 #' SE <- lapply(SE, function(x) 1/(x + 1e-15))
-#' eSE <- exposure(graph, alt.graph=SE)
-#' eNO <- exposure(graph)
-#' any(eSE != eNO) # Different outputs
+#' expo_se <- exposure(graph, alt.graph=SE)
+#'
+#' # These three lines are equivalent to
+#' expo_se2 <- exposure(graph, alt.graph="se")
 #'
 #' # Weighted Exposure using degree --------------------------------------------
 #' eDE <- exposure(graph, attrs=dgr(graph))
-#' any(eNO != eDE) # Different outputs
+#'
+#' # Which is equivalent to
+#' graph[["deg"]] <- dgr(graph)
+#' eDE2 <- exposure(graph, attrs="deg")
 #'
 #' # Comparing using incomming edges -------------------------------------------
 #' eIN <- exposure(graph, outgoing=FALSE)
-#' any(eIN != eNO) # Different outputs
 #'
 #' @family statistics
 #' @keywords univar
@@ -232,7 +244,20 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
 exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRUE,
-                     valued=getOption("diffnet.valued"), normalized=TRUE) {
+                     valued=getOption("diffnet.valued"), normalized=TRUE, ...) {
+
+  # Checking diffnet attributes
+  if (length(attrs) == 1 && inherits(attrs, "character")) {
+    if (!inherits(graph, "diffnet"))
+      stop("Specifying -attrs- as a character scalar is only valid for -diffnet- objects.")
+
+    # Retrieving attribute
+    attrs <- graph[[attrs]]
+
+    # Coercing into a matrix
+    attrs <- if (inherits(attrs, "list")) do.call(cbind, attrs)
+    else matrix(attrs, ncol=nslices(graph), nrow=nvertices(graph))
+  }
 
   # Checking cumadopt mat
   if (missing(cumadopt))
@@ -249,7 +274,16 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRU
   }
 
   # Checking alt graph
-  if (length(alt.graph)) graph <- alt.graph
+  if (length(alt.graph)) {
+    graph <- if (inherits(alt.graph, "character")) {
+      if (alt.graph != "se") stop("Only character -alt.graph- value allowed is \"se\".")
+
+      # Computing structural equivalence
+      se <- lapply(struct_equiv(graph,...), "[[", "SE")
+      se <- lapply(se, function(x) 1/(x + 1e-15))
+      se
+    } else alt.graph
+  }
 
   switch (class(graph),
     array   = exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized),

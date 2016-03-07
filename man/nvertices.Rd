@@ -4,8 +4,9 @@
 \alias{nedges}
 \alias{nlinks}
 \alias{nnodes}
+\alias{nslices}
 \alias{nvertices}
-\title{Count the number of vertices/edges in a graph}
+\title{Count the number of vertices/edges/slices in a graph}
 \usage{
 nvertices(graph)
 
@@ -14,19 +15,21 @@ nnodes(graph)
 nedges(graph)
 
 nlinks(graph)
+
+nslices(graph)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
-For \code{nvertices}, an integer scalar equal to the number
-of vertices in the graph. Otherwise, from \code{nedges}, either a list
+For \code{nvertices} and \code{nslices}, an integer scalar equal to the number
+of vertices and slices in the graph. Otherwise, from \code{nedges}, either a list
 of size \eqn{t} with the counts of edges (non-zero elements in the adjacency matrices) at
 each time period, or, when \code{graph} is static, a single scalar with
 such number.
 }
 \description{
-Count the number of vertices/edges in a graph
+Count the number of vertices/edges/slices in a graph
 }
 \details{
 \code{nnodes} and \code{nlinks} are just aliases for \code{nvertices} and

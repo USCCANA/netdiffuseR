@@ -51,8 +51,6 @@ qqplot(expo1, expo2)
 brf2_step <- brfarmersDiffNet^2
 brf2_step <- 1/brf2_step
 
-ba <- rdiffnet(10,5, seed.graph="scale-free", rgraph.args=list(m=4))
-
 }
 \seealso{
 Other diffnet methods: \code{\link{as.array.diffnet}},

@@ -12,9 +12,10 @@
 #' @param toavar Character scalar. Name of the time of adoption variable.
 #' @param timevar Character sacalar. In the case of longitudinal data, name of the time var.
 #' @param groupvar Character scalar. Name of cohort variable (e.g. city).
-#' @param no.unsurveyed Logical scalar. When TRUE the nominated individuals
+#' @param no.unsurveyed Logical scalar. When \code{TRUE} the nominated individuals
 #' that do not show in \code{idvar} are set to \code{NA} (see details).
-#' @param ... Further arguments to be passed to \code{\link{as_diffnet}}
+#' @param warn.coercion Logical scalar. When \code{TRUE} warns coercion from numeric to integer.
+#' @param ... Further arguments to be passed to \code{\link{as_diffnet}}.
 #' @details
 #'
 #' All of \code{idvar}, \code{netvars}, \code{toavar} and \code{groupvar}
@@ -73,7 +74,7 @@
 #' groupvar <- "group"
 #' x <- survey_to_diffnet(
 #'    fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group" ,
-#'    timevar = "time", keep.isolates = TRUE)
+#'    timevar = "time", keep.isolates = TRUE, warn.coercion=FALSE)
 #'
 #' plot_diffnet(x, vertex.cex = 1.5, displaylabels = TRUE)
 #'
@@ -85,7 +86,8 @@
 #'
 #' medInnovationsDiffNet2 <- survey_to_diffnet(
 #'    medInnovations,
-#'    "id", netvars, "toa", "city")
+#'    "id", netvars, "toa", "city",
+#'    warn.coercion=FALSE)
 #'
 #' medInnovationsDiffNet2
 #'
@@ -107,6 +109,7 @@ survey_to_diffnet <- function(
   self = getOption("diffnet.self", FALSE),
   multiple=getOption("diffnet.multiple", FALSE),
   keep.isolates=TRUE, recode.ids=TRUE,
+  warn.coercion=TRUE,
   ...) {
 
   # Creating a varlist
@@ -122,7 +125,7 @@ survey_to_diffnet <- function(
     cl <- class(dat[[x]])
     if (cl == "integer") next
     else if (cl == "numeric") {
-      warning("Coercing -",x,"- into integer.")
+      if (warn.coercion) warning("Coercing -",x,"- into integer.")
       dat[[x]] <- as.integer(dat[[x]])
     } else {
       stop("The variable ",x, "is not integer. All variables listed on ",

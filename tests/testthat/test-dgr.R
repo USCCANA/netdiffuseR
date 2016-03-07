@@ -68,7 +68,7 @@ listgraph <- list(`2001`=listgraph, `2002`=listgraph, `2003`=listgraph)
 arraygraph <- array(graph, dim = c(dim(graph), 3),
                dimnames=list(rownames(graph), colnames(graph), 2001:2003))
 
-toa <- c(2001,2001, 2003)
+toa <- c(2001L,2001L, 2003L)
 
 EL_digraph <- list(`array` = arraygraph, `list` = listgraph,
                    `diffnet`=as_diffnet(listgraph, toa))
@@ -93,7 +93,7 @@ graph <- rbind(
 )
 
 dimnames(graph) <- list(letters[1:3],letters[1:3])
-toa <- c(2001,2001, 2003)
+toa <- c(2001L,2001L, 2003L)
 
 listgraph <- as(graph, "dgCMatrix")
 listgraph <- list(`2001`=listgraph, `2002`=listgraph, `2003`=listgraph)

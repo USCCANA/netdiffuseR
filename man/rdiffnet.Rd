@@ -73,7 +73,8 @@ or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
 function). The list \code{rgraph.args} passes arguments to the chosen algorithm.
 
 When \code{rewire=TRUE}, the networks that follow t=1 will be generated using the
-\code{\link{rewire_graph}} function as \eqn{G(t) = G(t-1)}.
+\code{\link{rewire_graph}} function as \eqn{G(t) = R(G(t-1))}, where \eqn{R}
+is the rewiring algorithm.
 
 Finally, \code{threshold.dist} sets the threshold for each vertex in the graph.
 It is applied using \code{sapply} as follows

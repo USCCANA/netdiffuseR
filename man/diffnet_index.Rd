@@ -61,9 +61,9 @@ we have the following possible cases:
 \code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 \code{vector}     \tab \eqn{n}              \tab Static            \cr
 \code{vector}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
-\code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
+\code{list}*      \tab \eqn{T} data.frames/matrices/vectors\tab Dynamic    \cr
 }
-*: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
+*: With \eqn{n\times 1}{n * 1} \code{data.frame}/\code{matrix} or \eqn{n} length vector.
 
 Other cases will return with error.
 
@@ -74,12 +74,20 @@ which slices to retrieve. Likewise, indexing vertices works in the same way
 with the only difference that, instead of time period labels and a logical vector
 of length \code{T}, vertices ids labels and a logical vector of length \code{n}
 should be provided.
+
+When subsetting slices, the function modifies the \code{toa} vector as well as the
+\code{adopt} and \code{cumadopt} matrices collapsing network tinmming. For example,
+if a network goes from time 1 to 20 and we set \code{k=3:10}, all individuals
+who adopted prior to time 3 will be set as adopters at time 3, and all individuals
+who adopted after time 10 will be set as adopters at time 10, changing the
+adoption and cumulative adoption matrices. Importantly, \code{k} have no
+gaps, and it should be within the graph time period range.
 }
 \examples{
 
 # Creating a random diffusion network ---------------------------------------
 set.seed(111)
-graph <- rdiffnet(10,5)
+graph <- rdiffnet(100,5)
 
 # Accessing to a static attribute
 graph[["real_threshold"]]

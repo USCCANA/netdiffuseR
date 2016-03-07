@@ -6,8 +6,9 @@
 \alias{struct_test}
 \title{Structure dependence test}
 \usage{
-struct_test(graph, statistic, R, rewire.args = list(p = 1, undirected =
-  getOption("diffnet.undirected"), both.ends = TRUE), ...)
+struct_test(graph, statistic, R, rewire.args = list(p = c(1, rep(0.3,
+  nslices(graph) - 1)), undirected = getOption("diffnet.undirected"), both.ends
+  = TRUE, copy.first = TRUE), ...)
 
 \method{print}{diffnet_struct_test}(x, ...)
 

@@ -30,9 +30,9 @@
 #' \code{data.frame} \tab \eqn{(n\times T)\times 1}{(n*T)*1} \tab Dynamic            \cr
 #' \code{vector}     \tab \eqn{n}              \tab Static            \cr
 #' \code{vector}     \tab \eqn{n\times T}{n*T} \tab Dynamic           \cr
-#' \code{list}*      \tab \eqn{T} data.frames/matrices\tab Dynamic    \cr
+#' \code{list}*      \tab \eqn{T} data.frames/matrices/vectors\tab Dynamic    \cr
 #' }
-#' *: With \eqn{n\times 1}{n * 1} \code{data.frame} or \code{matrix}.
+#' *: With \eqn{n\times 1}{n * 1} \code{data.frame}/\code{matrix} or \eqn{n} length vector.
 #'
 #' Other cases will return with error.
 #'
@@ -44,6 +44,14 @@
 #' of length \code{T}, vertices ids labels and a logical vector of length \code{n}
 #' should be provided.
 #'
+#' When subsetting slices, the function modifies the \code{toa} vector as well as the
+#' \code{adopt} and \code{cumadopt} matrices collapsing network tinmming. For example,
+#' if a network goes from time 1 to 20 and we set \code{k=3:10}, all individuals
+#' who adopted prior to time 3 will be set as adopters at time 3, and all individuals
+#' who adopted after time 10 will be set as adopters at time 10, changing the
+#' adoption and cumulative adoption matrices. Importantly, \code{k} have no
+#' gaps, and it should be within the graph time period range.
+#'
 #' @return In the case of the asignning methods, a diffnet object. Otherwise,
 #' for \code{[[.diffnet} a vector extracted from one of the attributes data frames,
 #' and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
@@ -54,7 +62,7 @@
 #'
 #' # Creating a random diffusion network ---------------------------------------
 #' set.seed(111)
-#' graph <- rdiffnet(10,5)
+#' graph <- rdiffnet(100,5)
 #'
 #' # Accessing to a static attribute
 #' graph[["real_threshold"]]
@@ -91,6 +99,78 @@
 #' identical(x[["expoM"]], x[["expoL"]]) # TRUE
 #' identical(x[["expoM"]], x[["expoD"]]) # TRUE
 NULL
+
+# @export
+# @rdname diffnet_index
+diffnet.subset.slices <- function(graph, k) {
+
+  if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
+
+  # Subset must be of length 2 (at least)
+  if (length(k) < 2)
+    stop("-k- is a vector of length ",length(k),
+         ". It must be at least of length 2.")
+
+  # Analyzing class
+  uses_labels <- ifelse(inherits(k, "character"), TRUE, FALSE)
+  if (uses_labels) {
+    k <- as.integer(k)
+  }
+
+  # If logical vector
+  if (inherits(k, "logical")) {
+    k <- which(k)
+  }
+
+  # Subset must be continuous...
+  test <- (k[-1] - k[-length(k)]) > 1
+  if (any(test))
+    stop("-k- must represent a range without gaps.")
+
+  # Ordering
+  k  <- sort(k)
+  nslices <- length(k)
+  pers    <- graph$meta$pers
+
+  # Checking k
+  test <- if (!uses_labels) !(k %in% seq_len(graph$meta$nper))
+  else !(k %in% pers)
+
+  if (any(test))
+    stop("The specified -k- (",
+         paste0(k[test], collapse = ", "),
+         ") are invalid.")
+
+  # Recomputing in terms of indexes
+  if (uses_labels) k <- which(pers %in% as.character(k))
+
+  # Removing not included k
+  graph$graph            <- graph$graph[k]
+  graph$vertex.dyn.attrs <- graph$vertex.dyn.attrs[k]
+
+  # Changing adoption matrices
+
+  beforeslice <- which(graph$toa < pers[k][1])
+  afterslice  <- which(graph$toa > pers[k][nslices])
+
+  graph$adopt[beforeslice,k[1]] <- 1
+  graph$adopt[afterslice ,k[nslices]] <- 1
+  graph$adopt    <- graph$adopt[,k]
+
+  graph$cumadopt[beforeslice,k] <- 1
+  graph$cumadopt[afterslice,k[nslices]] <- 1
+  graph$cumadopt <- graph$cumadopt[,k]
+
+  # Changing toa mat (truncating it)
+  graph$toa[beforeslice] <- pers[k][1]
+  graph$toa[afterslice]  <- pers[k][nslices]
+
+  # Changing meta
+  graph$meta$nper <- nslices
+  graph$meta$pers <- pers[k]
+
+  graph
+}
 
 #' Infer whether \code{value} is dynamic or static.
 #'
@@ -141,18 +221,29 @@ diffnet_check_attr_class <- function(value, meta) {
 
     # Checking classes of the elements
     isdf <- sapply(value, inherits, what="data.frame")
-    test <- which(!isdf & !sapply(value, inherits, what="matrix"))
+    # Which ones aren't either
+    test <- !isdf & !sapply(value, inherits, what="matrix")
+
+    # If no data.frame/matrix, then no vector?
+    test <- which(ifelse(test, test, !is.vector(value)))
 
     if (length(test)) {
-      stop("Not all the elements in the list are data.frame/matrix:\n\t",
+      stop("Not all the elements in the list are data.frame/matrix or vector:\n\t",
            paste0(test, collapse=", "), ".")
     }
 
     # Checking the dimensions of the elements
-    test <- which(sapply(value, function(x) !all(dim(x) == c(n,1))))
+    test <- which(sapply(value, function(x) {
+      if (is.vector(x)) {
+        length(x) != 1
+      }
+      else {
+        !all(dim(x) == c(n,1))
+      }
+      }))
 
     if (length(test)) {
-      stop("Not all elements in the list have the right dimension (",n," x 1):\n\t",
+      stop("Not all elements in the list have the right dimension (",n," elements):\n\t",
            paste0(test, collapse=", "), ".")
     }
 

@@ -278,7 +278,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 #' @inheritParams rgraph_ws
 #' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
-#' @param copy_first Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
+#' @param copy.first Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 #' the first slice as a baseline for the rest of slices (see details).
 #' @details Rewiring assumes a weighted network, hence \eqn{G(i,j) = k = G(i',j')},
 #' where \eqn{i',j'} are the new end points of the edge and \eqn{k} may not be equal
@@ -289,7 +289,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
 #' version of the first slice. Formally:
 #'
 #' \deqn{%
-#' G(t)' = \left\{\bergin{array}{ll}
+#' G(t)' = \left\{\begin{array}{ll}
 #' R(G(t)) & \mbox{if }t=1 \\
 #' R(G(1)') & \mbox{otherwise}
 #' \end{array}

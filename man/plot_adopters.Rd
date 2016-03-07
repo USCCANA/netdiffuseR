@@ -51,14 +51,14 @@ List of matrices as described in \code{\link{cumulative_adopt_count}}
 Visualize adopters and cumulative adopters
 }
 \examples{
-# Generating a random diffnet
+# Generating a random diffnet -----------------------------------------------
 set.seed(8321)
 diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 
 plot_adopters(diffnet)
 
 # Alternatively, we can use a TOA Matrix
-toa <- sample(c(NA, 2010,2015), 20, TRUE)
+toa <- sample(c(NA, 2010L,2015L), 20, TRUE)
 mat <- toa_mat(toa)
 plot_adopters(mat$cumadopt)
 }

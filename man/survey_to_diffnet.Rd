@@ -9,7 +9,7 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
   multiple = getOption("diffnet.multiple", FALSE), keep.isolates = TRUE,
-  recode.ids = TRUE, ...)
+  recode.ids = TRUE, warn.coercion = TRUE, ...)
 }
 \arguments{
 \item{dat}{A data frame.}
@@ -22,7 +22,7 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
 
 \item{groupvar}{Character scalar. Name of cohort variable (e.g. city).}
 
-\item{no.unsurveyed}{Logical scalar. When TRUE the nominated individuals
+\item{no.unsurveyed}{Logical scalar. When \code{TRUE} the nominated individuals
 that do not show in \code{idvar} are set to \code{NA} (see details).}
 
 \item{timevar}{Character sacalar. In the case of longitudinal data, name of the time var.}
@@ -42,7 +42,9 @@ that do not show in \code{idvar} are set to \code{NA} (see details).}
 \item{recode.ids}{Logical scalar. When TRUE ids are recoded using \code{\link{as.factor}}
 (see details).}
 
-\item{...}{Further arguments to be passed to \code{\link{as_diffnet}}}
+\item{warn.coercion}{Logical scalar. When \code{TRUE} warns coercion from numeric to integer.}
+
+\item{...}{Further arguments to be passed to \code{\link{as_diffnet}}.}
 }
 \value{
 A \code{\link{diffnet}} object.
@@ -105,7 +107,7 @@ data(fakesurveyDyn)
 groupvar <- "group"
 x <- survey_to_diffnet(
    fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group" ,
-   timevar = "time", keep.isolates = TRUE)
+   timevar = "time", keep.isolates = TRUE, warn.coercion=FALSE)
 
 plot_diffnet(x, vertex.cex = 1.5, displaylabels = TRUE)
 
@@ -117,7 +119,8 @@ netvars <- names(medInnovations)[grepl("^net", names(medInnovations))]
 
 medInnovationsDiffNet2 <- survey_to_diffnet(
    medInnovations,
-   "id", netvars, "toa", "city")
+   "id", netvars, "toa", "city",
+   warn.coercion=FALSE)
 
 medInnovationsDiffNet2
 

@@ -71,7 +71,7 @@ number of individuals that lie within each cell, and draws a heatmap.
 This plotting function was inspired by Aral, S., & Walker, D. (2012).
 }
 \examples{
-# Generating a random graph
+# Generating a random graph -------------------------------------------------
 set.seed(1234)
 n <- 100
 nper <- 20
@@ -79,7 +79,7 @@ graph <- rgraph_er(n,nper, p=.2, undirected = FALSE)
 toa <- sample(1:(1+nper-1), n, TRUE)
 
 # Visualizing distribution of suscep/infect
-out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
+out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 }
 \author{
 Vega Yon

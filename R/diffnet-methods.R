@@ -51,17 +51,33 @@ plot.diffnet <- function(
 #' @export
 #' @rdname as_diffnet
 print.diffnet <- function(x, ...) {
-  with(x, cat(
+  with(x, {
+    # Getting attrs
+    vsa <- paste0(colnames(vertex.static.attrs), collapse=", ")
+    if (nchar(vsa) > 50) vsa <- paste0(strtrim(vsa, 50),"...")
+    else if (!nchar(vsa)) vsa <- '-'
+    nsa <-ncol(vertex.static.attrs)
+    if (nsa) vsa <- paste0(vsa," (",nsa, ")")
+
+    vda <- paste0(colnames(vertex.dyn.attrs[[1]]), collapse=", ")
+    if (nchar(vda) > 50) vda <- paste0(strtrim(vda, 50),"...")
+    else if (!nchar(vda)) vda <- '-'
+    nda <- ncol(vertex.dyn.attrs[[1]])
+    if (nda) vda <- paste0(vda," (",nda, ")")
+
+    cat(
     "Dynamic network of class -diffnet-",
-    paste(" # of nodes        :", meta$n),
-    paste(" # of time periods :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
-    paste(" Final prevalence  :",
+    paste(" # of nodes         :", meta$n),
+    paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
+    paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
+    paste(" Final prevalence   :",
           formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f")
           ),
-    paste(" Type              :", ifelse(meta$undirected, "undirected", "directed")),
+    paste(" Static attributes  :", vsa),
+    paste(" Dynamic attributes :", vda),
     sep="\n"
     )
-  )
+  })
   invisible(x)
 }
 
@@ -611,7 +627,7 @@ plot_threshold.list <- function(
 #' \url{http://doi.org/10.1126/science.1215842}
 #' @export
 #' @examples
-#' # Generating a random graph
+#' # Generating a random graph -------------------------------------------------
 #' set.seed(1234)
 #' n <- 100
 #' nper <- 20
@@ -619,7 +635,7 @@ plot_threshold.list <- function(
 #' toa <- sample(1:(1+nper-1), n, TRUE)
 #'
 #' # Visualizing distribution of suscep/infect
-#' out <- plot_infectsuscep(graph, toa, K=3, logscale = TRUE)
+#' out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 #' @author Vega Yon
 plot_infectsuscep <- function(
   graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
@@ -761,14 +777,14 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
 #' @param include.grid Logical scalar. When TRUE, the grid of the graph is drawn
 #' @family visualizations
 #' @examples
-#' # Generating a random diffnet
+#' # Generating a random diffnet -----------------------------------------------
 #' set.seed(8321)
 #' diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 #'
 #' plot_adopters(diffnet)
 #'
 #' # Alternatively, we can use a TOA Matrix
-#' toa <- sample(c(NA, 2010,2015), 20, TRUE)
+#' toa <- sample(c(NA, 2010L,2015L), 20, TRUE)
 #' mat <- toa_mat(toa)
 #' plot_adopters(mat$cumadopt)
 #' @return List of matrices as described in \code{\link{cumulative_adopt_count}}
@@ -883,8 +899,6 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 #' brf2_step <- brfarmersDiffNet^2
 #' brf2_step <- 1/brf2_step
 #'
-#' ba <- rdiffnet(10,5, seed.graph="scale-free", rgraph.args=list(m=4))
-#'
 #' @export
 #' @name diffnet-arithmetic
 #' @family diffnet methods
@@ -964,11 +978,11 @@ as.array.diffnet <- function(x, ...) {
 }
 
 
-#' Count the number of vertices/edges in a graph
+#' Count the number of vertices/edges/slices in a graph
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @return For \code{nvertices}, an integer scalar equal to the number
-#' of vertices in the graph. Otherwise, from \code{nedges}, either a list
+#' @return For \code{nvertices} and \code{nslices}, an integer scalar equal to the number
+#' of vertices and slices in the graph. Otherwise, from \code{nedges}, either a list
 #' of size \eqn{t} with the counts of edges (non-zero elements in the adjacency matrices) at
 #' each time period, or, when \code{graph} is static, a single scalar with
 #' such number.
@@ -1051,3 +1065,16 @@ nedges <- function(graph) {
 #' @export
 #' @rdname nvertices
 nlinks <- nedges
+
+#' @export
+#' @rdname nvertices
+nslices <- function(graph) {
+  switch (class(graph),
+    array     = dim(graph)[3],
+    matrix    = 1L,
+    dgCMatrix = 1L,
+    diffnet   = graph$meta$nper,
+    list      = length(graph),
+    stopifnot_graph(graph)
+  )
+}

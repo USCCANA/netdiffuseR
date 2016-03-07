@@ -5,7 +5,7 @@
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
-  valued = getOption("diffnet.valued"), normalized = TRUE)
+  valued = getOption("diffnet.valued"), normalized = TRUE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -13,9 +13,11 @@ exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
 \item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
 
-\item{attrs}{A numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).}
+\item{attrs}{Either a character scalar (if \code{graph} is diffnet),
+or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).}
 
-\item{alt.graph}{A dynamic graph that should be used instead of \code{graph} (see details).}
+\item{alt.graph}{Either a dynamic graph that should be used instead of \code{graph},
+or \code{"se"} (see details).}
 
 \item{outgoing}{Logical scalar. When TRUE, computed using outgoing ties.}
 
@@ -23,6 +25,9 @@ exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
 
 \item{normalized}{Logical scalar. When true, the exposure will be between zero
 and one (see details).}
+
+\item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
+\code{alt.graph="se"}).}
 }
 \value{
 A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
@@ -51,13 +56,18 @@ if \eqn{i} has adopted at or prior to \eqn{t}), \eqn{\circ}{*} is the kronecker
 product (element-wise), and \eqn{\times}{\%*\%} is the matrix product.
 
 By default the graph used for this calculation, \eqn{S}, is the social network. Alternatively,
-in the case of \code{diffnet} objects, the user can provide an alaternative
+in the case of \code{diffnet} objects, the user can provide an alternative
 graph using \code{alt.graph}. An example of this would be using \eqn{1/SE},
 the element-wise inverse of the structural equivalence matrix (see example below).
+Furthermore, if \code{alt.graph="se"}, the inverse of the structural equivalence
+is computed via \code{\link{struct_equiv}} and used instead of the provided
+graph.
 
 If the user does not specifies a particular weighting attribute in \code{attrs},
 the function sets this as a matrix of ones. Otherwise the function will return
-an attribute weighted exposure. See the examples section for a demonstration using
+an attribute weighted exposure. When \code{graph} is of class \code{diffnet},
+\code{attrs} can be a character scalar specifying the name of any of the graph's
+attributes, both dynamic and static. See the examples section for a demonstration using
 degree.
 
 When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
@@ -75,17 +85,20 @@ graph <- rdiffnet(100, 10)
 
 SE <- lapply(struct_equiv(graph), "[[", "SE")
 SE <- lapply(SE, function(x) 1/(x + 1e-15))
-eSE <- exposure(graph, alt.graph=SE)
-eNO <- exposure(graph)
-any(eSE != eNO) # Different outputs
+expo_se <- exposure(graph, alt.graph=SE)
+
+# These three lines are equivalent to
+expo_se2 <- exposure(graph, alt.graph="se")
 
 # Weighted Exposure using degree --------------------------------------------
 eDE <- exposure(graph, attrs=dgr(graph))
-any(eNO != eDE) # Different outputs
+
+# Which is equivalent to
+graph[["deg"]] <- dgr(graph)
+eDE2 <- exposure(graph, attrs="deg")
 
 # Comparing using incomming edges -------------------------------------------
 eIN <- exposure(graph, outgoing=FALSE)
-any(eIN != eNO) # Different outputs
 
 }
 \author{

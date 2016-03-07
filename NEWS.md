@@ -35,7 +35,9 @@
   
 * New indexing methods via `[[.diffnet`, `[[<-.diffnet`, for network attributes
   and `[.diffnet` and `[<-.diffnet` for adjacency matrix. The function
-  `diffnet.attrs<-` will be deprecated for the next CRAN release.
+  `diffnet.attrs<-` will be deprecated for the next CRAN release. The function
+  `diffnet.subset.slices` is now not exported (internal use), so the user
+  needs to use the `[.diffnet` method instead.
 
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`, and `egonet_attrs` as
@@ -47,6 +49,11 @@
   a vector of length `T`, so each slice can have different rewiring prob., and
   the new option `copy.first` which allows to recycle the first rewired slice
   (see details).
+  
+* New features for the `exposure` function. When `graph` is of class diffnet, 
+  the function accepts `attrs` equal to the name of some the graph's attributes.
+  Also, `alt.graph` can be specified as `se`, which will be replaced by the
+  inverse of the structural equivalence.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

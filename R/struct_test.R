@@ -84,7 +84,12 @@ struct_test <- function(
   graph,
   statistic,
   R,
-  rewire.args=list(p=1, undirected=getOption("diffnet.undirected"), both.ends=TRUE),
+  rewire.args=list(
+    p = c(1, rep(.3, nslices(graph) - 1)),
+    undirected=getOption("diffnet.undirected"),
+    both.ends=TRUE,
+    copy.first=TRUE
+    ),
   ...
   ) {
 
@@ -97,6 +102,8 @@ struct_test <- function(
   statisticpll <- function(d, i, fn, rewire.args, ...) {
     fn(do.call(rewire_graph, rewire.args))
   }
+
+
 
   # Calling boot
   boot_res <- boot::boot(1, statisticpll, R=R, fn=statistic, rewire.args=rewire.args,
