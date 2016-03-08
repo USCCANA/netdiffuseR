@@ -40,9 +40,9 @@ for (g in names(EL_digraph)) {
   edgelist_recovered <- adjmat_to_edgelist(adjmat , undirected = FALSE)
 
   # Comparing edgelists
-  EL_digraph[[g]] <- EL_digraph[[g]][order(EL_digraph[[g]][,1]),]
+  # EL_digraph[[g]] <- EL_digraph[[g]][order(EL_digraph[[g]][,1]),]
   test_that(paste0("Undirected static edgelist-adjmat-edgelist (should hold) - ",g), {
-    expect_equivalent(edgelist_recovered, as.matrix(EL_digraph[[g]]))
+    expect_equivalent(edgelist_recovered[,1:2], as.matrix(EL_digraph[[g]]))
   })
 
   # Comparing adjmatrices
@@ -59,16 +59,13 @@ for (g in names(EL_digraph)) {
     edgelist_to_adjmat(EL_digraph[[g]], t0 = tim, undirected = FALSE),
     undirected = FALSE)
 
-  ord <- order(edgelist_recovered$edgelist[,1], edgelist_recovered$edgelist[,2])
-  edgelist_recovered$edgelist <-edgelist_recovered$edgelist[ord,]
-  edgelist_recovered$times <-edgelist_recovered$times[ord]
+  # Collapsing
+  edgelist_recovered <- unique(edgelist_recovered[,1:2])
+  edgelist_recovered <- edgelist_recovered[order(edgelist_recovered[,1]),]
+  EL_digraph[[g]]    <- EL_digraph[[g]][order(EL_digraph[[g]][,1]),]
 
-  ord <- order(EL_digraph[[g]][,1], EL_digraph[[g]][,2])
-  EL_digraph[[g]] <- EL_digraph[[g]][ord,]
-  tim <- tim[ord]
-  # Running the test
   test_that(paste0("Undirected dynamic edgelist-adjmat-edgelist (should hold) - ",g), {
-    expect_equivalent(edgelist_recovered$edgelist, as.matrix(EL_digraph[[g]]))
+    expect_equivalent(edgelist_recovered, as.matrix(EL_digraph[[g]]))
   })
 
   # ----------------------------------------------------------------------------
@@ -86,9 +83,14 @@ for (g in names(EL_digraph)) {
     dimnames = dn)
 
   edgelist_recovered <- adjmat_to_edgelist(array_recovered, undirected = FALSE)
+
+  times <- edgelist_recovered[,"time"]
+  edgelist_recovered <- unique(edgelist_recovered[,1:2])
+  edgelist_recovered <- edgelist_recovered[order(edgelist_recovered[,1]),]
+
   test_that(paste0("Undirected dynamic edgelist-adjmat-edgelist (should hold) - ", g), {
-    expect_equivalent(edgelist_recovered$edgelist, as.matrix(EL_digraph[[g]]))
-    expect_equivalent(edgelist_recovered$times, tim)
+    expect_equivalent(edgelist_recovered, as.matrix(EL_digraph[[g]]))
+    # expect_equivalent(edgelist_recovered$times, tim)
   })
 
 }

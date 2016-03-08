@@ -54,6 +54,6 @@ brf2_step <- 1/brf2_step
 }
 \seealso{
 Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{as_diffnet}}
+  \code{\link{as_diffnet}}, \code{\link{diffnet_index}}
 }
 

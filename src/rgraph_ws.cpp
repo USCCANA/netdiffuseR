@@ -1,31 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "netdiffuser_extra.h"
 using namespace Rcpp;
-
-arma::umat sparse_indexes(const arma::sp_mat & mat) {
-
-  int n = mat.n_nonzero;
-  arma::umat indices(n,2);
-  int curcol = (int) mat.col_ptrs[0]/mat.n_rows;
-
-  // If the matrix is empty (which makes no sense)
-  if (n == curcol) return indices;
-
-  int j = 0;
-  int cumrow = 0;
-  for (int i=0;i<n;i++) {
-    // Figuring out what column
-    if (cumrow >= mat.col_ptrs[j+1]) curcol = mat.col_ptrs[++j];
-
-    // Asigning indexes
-    indices.at(i,0) = mat.row_indices[i];
-    indices.at(i,1) = j;
-    ++cumrow;
-  }
-  // return indices;
-  return indices;
-}
-
 
 //' Ring lattice graph
 //'

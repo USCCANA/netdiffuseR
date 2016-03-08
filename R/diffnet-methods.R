@@ -361,7 +361,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
   }
 
   # Plotting
-  curseed <- .Random.seed
+  # curseed <- .Random.seed
   oldpar <- par(no.readonly = TRUE)
   # par(mfrow=mfrow.par, mai=mai, mar=mar)
   par(mai=mai, mar=mar)
@@ -373,7 +373,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
     cols <- ifelse(!cumadopt[,i], vertex.col[1],
                    ifelse(!cumadopt[,i-1*(i!=1)] | rep(i,n) == 1, vertex.col[2], vertex.col[3]))
 
-    set.seed(curseed)
+    # set.seed(curseed)
     # cgraph <- sna::as.sociomatrix.sna(adjmat_to_edgelist(graph[[i]], undirected))
     if (inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "matrix.csc")
     else g <- graph[[i]]
@@ -955,7 +955,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @family diffnet methods
 #' @examples
 #' # Creating a random diffnet object
-#' set.seed(847)
+#' set.seed(8411)
 #' mydiffnet <- rdiffnet(20, 4)
 #'
 #' # Coercing it into an array

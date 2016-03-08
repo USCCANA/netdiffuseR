@@ -158,11 +158,11 @@ survey_to_diffnet <- function(
            ifelse(nchar(test) > 80, paste(strtrim(test,80), "..."), test),".")
     }
 
-    timevar <- dat[[timevar]]
-    tran <- range(timevar, na.rm=TRUE)
+    tvar <- dat[[timevar]]
+    tran <- range(tvar, na.rm=TRUE)
     tran <- tran[1]:tran[2]
   } else {
-    timevar <- rep(1, nrow(dat))
+    tvar <- rep(1, nrow(dat))
     tran    <- 1
   }
 
@@ -172,7 +172,7 @@ survey_to_diffnet <- function(
   vertex.attrs <- vector("list", length(tran))
   colstoexport <- which(!(colnames(dat) %in% c(toavar)))
   for (i in 1:length(tran)) {
-    subs            <- dat[timevar == tran[i],]
+    subs            <- dat[tvar == tran[i],]
     vertex.attrs[[i]] <- subs[,colstoexport]
 
     # Reshaping

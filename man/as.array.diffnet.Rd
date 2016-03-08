@@ -26,7 +26,7 @@ dropped.
 }
 \examples{
 # Creating a random diffnet object
-set.seed(847)
+set.seed(8411)
 mydiffnet <- rdiffnet(20, 4)
 
 # Coercing it into an array
@@ -36,6 +36,7 @@ as.array(mydiffnet)
 \code{\link{diffnet}}.
 
 Other diffnet methods: \code{\link{as_diffnet}},
-  \code{\link{diffnet-arithmetic}}
+  \code{\link{diffnet-arithmetic}},
+  \code{\link{diffnet_index}}
 }
 

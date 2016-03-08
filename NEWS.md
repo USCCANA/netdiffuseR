@@ -53,7 +53,12 @@
 * New features for the `exposure` function. When `graph` is of class diffnet, 
   the function accepts `attrs` equal to the name of some the graph's attributes.
   Also, `alt.graph` can be specified as `se`, which will be replaced by the
-  inverse of the structural equivalence.
+  inverse of the structural equivalence. When `valued=FALSE` the function will
+  switch it to `TRUE` and warn the user.
+  
+* `as_diffnet` now has an internal function, `check_as_diffnet_attrs`, to check
+  input attributes dimensions and coerce them into proper class/structure. Valid
+  attributes are now documented in the function's manual.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

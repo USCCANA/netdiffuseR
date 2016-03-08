@@ -57,7 +57,7 @@
 #' and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
 #' \code{[i,j]} elements from the adjacency matrix.
 #' @name diffnet_index
-#'
+#' @family diffnet methods
 #' @examples
 #'
 #' # Creating a random diffusion network ---------------------------------------

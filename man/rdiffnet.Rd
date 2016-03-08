@@ -87,12 +87,12 @@ By default sets the threshold to be random for each node in the graph.
 }
 \examples{
 # Asimple example -----------------------------------------------------------
-z <- rdiffnet(50,10)
+z <- rdiffnet(100,10)
 z
 summary(z)
 
 # A more complex example: Adopt if at least one neighbor has adopted --------
-y <- rdiffnet(50, 10, threshold.dist=function(x) 1,
+y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
     exposure.args=list(valued=FALSE, normalized=FALSE))
 }
 \author{

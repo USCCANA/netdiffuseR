@@ -7,8 +7,6 @@
 #define NETDIFFUSER_RGRAPH_WS_
 using namespace Rcpp;
 
-arma::umat sparse_indexes(const arma::sp_mat & mat);
-
 arma::sp_mat ring_lattice(int n, int k);
 
 arma::sp_mat rewire_graph_cpp(

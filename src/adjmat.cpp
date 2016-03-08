@@ -12,6 +12,7 @@
 
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "netdiffuser_extra.h"
 
 using namespace Rcpp;
 
@@ -127,29 +128,45 @@ arma::sp_mat edgelist_to_adjmat_cpp(
 
 
 // [[Rcpp::export]]
-arma::mat adjmat_to_edgelist_cpp(const arma::sp_mat & adjmat, bool undirected = true) {
-  std::vector< double > ego;
-  std::vector< double > alter;
+arma::mat adjmat_to_edgelist_cpp(
+    const arma::sp_mat & adjmat,
+    bool undirected = true) {
 
-  int n = adjmat.n_cols;
+  // std::vector< double > ego;
+  // std::vector< double > alter;
+  // std::vector< double > val;
+  //
+  // int n = adjmat.n_cols;
+  //
+  // // CAN BE REWRITTEN ACCESSING VALUES OF THE SPMAT DIRECTLY
+  //
+  // for(int i=0;i<n;i++) {
+  //   /* Setting the length of the subloop acordingly to type of graph */
+  //   int m = n;
+  //   if (undirected) m=i;
+  //   for(int j=0;j<m;j++) {
+  //     if (adjmat(i,j))
+  //       ego.push_back(i+1.0), alter.push_back(j+1.0);
+  //
+  //       // Weights
+  //       val.push_back(adjmat(i,j));
+  //   }
+  // }
+  //
+  // // Creating colvectors to be used with join_rows.
+  // arma::mat egom(ego);
+  // arma::mat alterm(alter);
+  //
+  // arma::mat edgelist = join_rows(egom, alterm);
+  arma::umat coords = sparse_indexes(adjmat);
+  int m = coords.n_rows;
+  arma::mat edgelist(m, 3);
 
-  // CAN BE REWRITTEN ACCESSING VALUES OF THE SPMAT DIRECTLY
-
-  for(int i=0;i<n;i++) {
-    /* Setting the length of the subloop acordingly to type of graph */
-    int m = n;
-    if (undirected) m=i;
-    for(int j=0;j<m;j++) {
-      if (adjmat(i,j))
-        ego.push_back(i+1.0), alter.push_back(j+1.0);
-    }
+  for (int i=0;i<m;i++) {
+    edgelist.at(i,0) = coords.at(i, 0) + 1;
+    edgelist.at(i,1) = coords.at(i, 1) + 1;
+    edgelist.at(i,2) = adjmat.at(coords.at(i,0), coords.at(i,1));
   }
-
-  // Creating colvectors to be used with join_rows.
-  arma::mat egom(ego);
-  arma::mat alterm(alter);
-
-  arma::mat edgelist = join_rows(egom, alterm);
 
   return edgelist;
 }

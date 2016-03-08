@@ -63,13 +63,17 @@
 #'
 #' @return In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 #' (if times is NULL) or an array of these (if times is not null). For
-#' \code{adjmat_to_edgelist} the output is an edgelist.
+#' \code{adjmat_to_edgelist} the output is an edgelist with the following columns:
+#' \item{ego}{Origin of the tie.}
+#' \item{alter}{Target of the tie.}
+#' \item{value}{Value in the adjacency matrix.}
+#' \item{time}{Either a 1 (if the network is static) or the time stamp of the tie.}
 #' @export
 #' @examples
 #' # Base data
 #' set.seed(123)
 #' n <- 5
-#' edgelist <- rgraph_er(n, as.edgelist=TRUE)
+#' edgelist <- rgraph_er(n, as.edgelist=TRUE)[,c("ego","alter")]
 #' times <- sample.int(3, nrow(edgelist), replace=TRUE)
 #' w <- abs(rnorm(nrow(edgelist)))
 #'
@@ -273,13 +277,16 @@ edgelist_to_adjmat.matrix <- function(
 #' @export
 adjmat_to_edgelist <- function(graph, undirected=getOption("diffnet.undirected")) {
 
-  switch (class(graph),
+  out <- switch (class(graph),
           list      = adjmat_to_edgelist.list(graph, undirected),
           array     = adjmat_to_edgelist.array(graph, undirected),
-          dgCMatrix = adjmat_to_edgelist.dgCMatrix(graph, undirected),
-          matrix    = adjmat_to_edgelist.matrix(graph, undirected),
+          dgCMatrix = cbind(adjmat_to_edgelist.dgCMatrix(graph, undirected), 1),
+          matrix    = cbind(adjmat_to_edgelist.matrix(graph, undirected),1),
           stopifnot_graph(graph)
   )
+
+  colnames(out) <- c("ego", "alter", "value", "time")
+  out
 }
 
 # @rdname edgelist_to_adjmat
@@ -297,11 +304,11 @@ adjmat_to_edgelist.dgCMatrix <- function(graph, undirected=getOption("diffnet.un
 # @rdname edgelist_to_adjmat
 # @export
 adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undirected")) {
-  edgelist <- matrix(ncol=2,nrow=0)
+  edgelist <- matrix(ncol=3,nrow=0)
   times <- vector('integer',0L)
 
   # Getting the names
-  tnames <- dimnames(graph)[[3]]
+  tnames <- as.integer(dimnames(graph)[[3]])
   if (!length(tnames)) tnames <- 1:dim(graph)[3]
 
   for (i in 1:dim(graph)[3]) {
@@ -310,24 +317,24 @@ adjmat_to_edgelist.array <- function(graph, undirected=getOption("diffnet.undire
     times <- c(times, rep(tnames[i],nrow(x)))
   }
 
-  # Adjusting the length
-  ids <- apply(edgelist, 1, paste0, collapse="")
-  times <- as.integer(unname(tapply(times, ids, min)))
+  # # Adjusting the length
+  # ids <- apply(edgelist, 1, paste0, collapse="")
+  # times <- as.integer(unname(tapply(times, ids, min)))
+  #
+  # edgelist <- unique(edgelist)
+  # edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
 
-  edgelist <- unique(edgelist)
-  edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
-
-  return(list(edgelist=edgelist, times=times))
+  return(cbind(edgelist, times=times))
 }
 
 # @rdname edgelist_to_adjmat
 # @export
 adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirected")) {
-  edgelist <- matrix(ncol=2,nrow=0)
+  edgelist <- matrix(ncol=3,nrow=0)
   times <- vector('integer',0L)
 
   # Getting the names
-  tnames <- names(graph)
+  tnames <- as.integer(names(graph))
   if (!length(tnames)) tnames <- 1:dim(graph)[3]
 
   for (i in 1:length(graph)) {
@@ -336,14 +343,14 @@ adjmat_to_edgelist.list <- function(graph, undirected=getOption("diffnet.undirec
     times <- c(times, rep(tnames[i],nrow(x)))
   }
 
-  # Adjusting the length
-  ids <- apply(edgelist, 1, paste0, collapse="")
-  times <- as.integer(unname(tapply(times, ids, min)))
+  # # Adjusting the length
+  # ids <- apply(edgelist, 1, paste0, collapse="")
+  # times <- as.integer(unname(tapply(times, ids, min)))
+  #
+  # edgelist <- unique(edgelist)
+  # edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
 
-  edgelist <- unique(edgelist)
-  edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
-
-  return(list(edgelist=edgelist, times=times))
+  return(cbind(edgelist, times=times))
 }
 
 # # Benchmark with the previous version

@@ -5,7 +5,7 @@
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
-  valued = getOption("diffnet.valued"), normalized = TRUE, ...)
+  valued = getOption("diffnet.valued", FALSE), normalized = TRUE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -61,7 +61,9 @@ graph using \code{alt.graph}. An example of this would be using \eqn{1/SE},
 the element-wise inverse of the structural equivalence matrix (see example below).
 Furthermore, if \code{alt.graph="se"}, the inverse of the structural equivalence
 is computed via \code{\link{struct_equiv}} and used instead of the provided
-graph.
+graph. Notice that when using a valued graph the option \code{valued} should
+be equal to \code{TRUE}, this check is run automatically when running the
+model using structural equivalence.
 
 If the user does not specifies a particular weighting attribute in \code{attrs},
 the function sets this as a matrix of ones. Otherwise the function will return
@@ -85,7 +87,9 @@ graph <- rdiffnet(100, 10)
 
 SE <- lapply(struct_equiv(graph), "[[", "SE")
 SE <- lapply(SE, function(x) 1/(x + 1e-15))
-expo_se <- exposure(graph, alt.graph=SE)
+
+# Recall setting valued equal to TRUE!
+expo_se <- exposure(graph, alt.graph=SE , valued=TRUE)
 
 # These three lines are equivalent to
 expo_se2 <- exposure(graph, alt.graph="se")

@@ -15,7 +15,8 @@
 \usage{
 as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   TRUE), vertex.dyn.attrs = NULL, vertex.static.attrs = NULL,
-  graph.attrs = NULL, undirected = getOption("diffnet.undirected"),
+  id.and.per.vars = NULL, graph.attrs = NULL,
+  undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"))
 
@@ -48,12 +49,12 @@ diffnet.toa(graph, i) <- value
 
 \item{t1}{Integer scalar. Passed to \code{\link{toa_mat}}.}
 
-\item{vertex.dyn.attrs}{List of length \eqn{T}. Contains either matrices or data
-frames with vertex attributes.}
+\item{vertex.dyn.attrs}{Vertices dynamic attributes (see details).}
 
-\item{vertex.static.attrs}{Either a data frame or a matrix with \eqn{n} rows.}
+\item{vertex.static.attrs}{Vertices static attributes (see details).}
 
-\item{graph.attrs}{Numeric matrix with a single row.}
+\item{id.and.per.vars}{A character vector of length 2. Optionally specified to check the
+order of the rows in the attribute data.}
 
 \item{undirected}{Logical scalar.}
 
@@ -119,7 +120,7 @@ by \code{\link{toa_mat}}.}
 attributes.}
 \item{vertex.dyn.attrs}{A list of length \eqn{T} with data frames containing vertex attributes
 throught time (dynamic).}
-\item{graph.attrs}{If not NULL, a numeric matrix with 1 row containing graph attributes.}
+\item{graph.attrs}{A data frame with \eqn{T} rows.}
 \item{meta}{A list of length 9 with the following elements:
 \itemize{
  \item \code{type}: Character scalar equal to \code{"dynamic"}.
@@ -140,6 +141,35 @@ matrices and time of adoption (toa) vector as its main components, most of the
 package's functions have methods for this class of objects.
 }
 \details{
+\code{diffnet} objects hold both, static and dynamic vertex attributes. When
+creating \code{diffnet} objects, these can be specified using the arguments
+\code{vertex.static.attrs} and \code{vertex.dyn.attrs}; depending on whether
+the attributes to specify are static or dynamic, \pkg{netdiffuseR} currently
+supports the following objects:
+
+\tabular{llr}{
+\strong{Class}    \tab \strong{Dimension}               \tab \strong{Check sorting}\cr
+\emph{Static attributes} \cr
+\code{matrix}     \tab with \eqn{n} rows                \tab \code{id} \cr
+\code{data.frame} \tab with \eqn{n} rows                \tab \code{id} \cr
+\code{vector}     \tab of length \eqn{n}                \tab - \cr\cr
+\emph{Dynamic attributes} \cr
+\code{matrix}     \tab with \eqn{n\times T}{n * T} rows \tab \code{id}, \code{per} \cr
+\code{data.frame} \tab with \eqn{n\times T}{n * T} rows \tab \code{id}, \code{per}\cr
+\code{vector}     \tab of length \eqn{n\times T}{n*T}   \tab - \cr
+\code{list}       \tab of length \eqn{T} with matrices or data.frames of \eqn{n} rows\tab \code{id}, \code{per}\cr
+}
+
+The last column, \strong{Check sorting}, lists the variables that
+the user should specify if he wants the function to check the order of the rows
+of the attributes (notice that this is not possible for the case of vectors).
+By providing the name of the vertex id variable, \code{id}, and the time period
+id variable, \code{per}, the function makes sure that the attribute data is
+presented in the right order. See the example below. If the user does not
+provide the names of the vertex id and time period variables then the function
+does not check the way the rows are sorted, further it assumes that the data
+is in the correct order.
+
 Plotting is done via the function \code{\link[sna:gplot]{gplot}},
 and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
 the (\pkg{sna}) package.
@@ -228,6 +258,36 @@ diffnet.attrs(diffnet, "vertex", "static", as.df = TRUE)
 # Now as a data.frame (all of them)
 diffnet.attrs(diffnet, as.df = TRUE)
 
+# Unsorted data -------------------------------------------------------------
+# Loading example data
+data(fakesurveyDyn)
+
+# Creating a diffnet object
+fs_diffnet <- survey_to_diffnet(
+   fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group",
+   timevar = "time", keep.isolates=TRUE, warn.coercion=FALSE)
+
+# Now, we extract the graph data and create a diffnet object from scratch
+graph <- fs_diffnet$graph
+attrs <- diffnet.attrs(fs_diffnet, as.df=TRUE)
+toa   <- diffnet.toa(fs_diffnet)
+
+# Lets apply a different sorting to the data to see if it works
+n <- nrow(attrs)
+attrs <- attrs[order(runif(n)),]
+
+# Now, recreating the old diffnet object (notice -id.and.per.vars- arg)
+fs_diffnet_new <- as_diffnet(graph, toa=toa, vertex.dyn.attrs=attrs,
+   id.and.per.vars = c("id", "per"))
+
+# Now, retrieving attributes. The 'new one' will have more (repeated)
+attrs_new <- diffnet.attrs(fs_diffnet_new, as.df=TRUE)
+attrs_old <- diffnet.attrs(fs_diffnet, as.df=TRUE)
+
+# Comparing elements!
+tocompare <- intersect(colnames(attrs_new), colnames(attrs_old))
+all(attrs_new[,tocompare] == attrs_old[,tocompare], na.rm = TRUE) # TRUE!
+
 }
 \author{
 Vega Yon
@@ -235,7 +295,10 @@ Vega Yon
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}
 
+A nice wrapper of this function is \code{\link{survey_to_diffnet}}.
+
 Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{diffnet-arithmetic}}
+  \code{\link{diffnet-arithmetic}},
+  \code{\link{diffnet_index}}
 }
 

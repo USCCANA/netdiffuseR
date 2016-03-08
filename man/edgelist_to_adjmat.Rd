@@ -46,7 +46,11 @@ matrix, otherwise an array of adjacency matrices.}
 \value{
 In the case of \code{edgelist_to_adjmat} either an adjacency matrix
 (if times is NULL) or an array of these (if times is not null). For
-\code{adjmat_to_edgelist} the output is an edgelist.
+\code{adjmat_to_edgelist} the output is an edgelist with the following columns:
+\item{ego}{Origin of the tie.}
+\item{alter}{Target of the tie.}
+\item{value}{Value in the adjacency matrix.}
+\item{time}{Either a 1 (if the network is static) or the time stamp of the tie.}
 }
 \description{
 Generates adjacency matrix from an edgelist and vice versa.
@@ -87,7 +91,7 @@ correctly encoded, so when going back (using \code{edgelist_to_adjmat})
 # Base data
 set.seed(123)
 n <- 5
-edgelist <- rgraph_er(n, as.edgelist=TRUE)
+edgelist <- rgraph_er(n, as.edgelist=TRUE)[,c("ego","alter")]
 times <- sample.int(3, nrow(edgelist), replace=TRUE)
 w <- abs(rnorm(nrow(edgelist)))
 

@@ -22,18 +22,12 @@ test_that("Error messages", {
   # Already a diffnet
   expect_message(as_diffnet(diffnet), "already.+diffnet")
 
-  # Must be data frame or matrix
-  static_attr <- diffnet[["real_threshold"]]
-  expect_error(
-    as_diffnet(diffnet$graph, toa=diffnet.toa(diffnet),
-               vertex.static.attrs = static_attr), "must be either a data\\.frame")
-
-  # Coercing to data.frame
-  static_attr <- matrix(static_attr, ncol=1)
-  expect_warning(
-    as_diffnet(diffnet$graph, toa=diffnet.toa(diffnet),
-               t0=1, t1=20,
-               vertex.static.attrs = static_attr), "coerced to a data\\.frame")
+  # # Coercing to data.frame
+  # static_attr <- matrix(diffnet[["real_threshold"]], ncol=1)
+  # expect_warning(
+  #   as_diffnet(diffnet$graph, toa=diffnet.toa(diffnet),
+  #              t0=1, t1=20,
+  #              vertex.static.attrs = static_attr), "coerced to a data\\.frame")
 })
 
 # test_that("Setting attributes", {
@@ -44,7 +38,7 @@ test_that("Error messages", {
 # })
 
 test_that("Changing toa", {
-  set.seed(18231)
+  set.seed(182321)
   diffnet <- rdiffnet(100, 10)
 
   # All to the first time period
