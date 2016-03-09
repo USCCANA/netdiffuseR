@@ -4,7 +4,8 @@
 \alias{exposure}
 \title{Ego exposure}
 \usage{
-exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL, outgoing = TRUE,
+exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
+  outgoing = getOption("diffnet.outgoing", TRUE),
   valued = getOption("diffnet.valued", FALSE), normalized = TRUE, ...)
 }
 \arguments{
@@ -19,11 +20,11 @@ or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, per
 \item{alt.graph}{Either a dynamic graph that should be used instead of \code{graph},
 or \code{"se"} (see details).}
 
-\item{outgoing}{Logical scalar. When TRUE, computed using outgoing ties.}
+\item{outgoing}{Logical scalar. When \code{TRUE}, computed using outgoing ties.}
 
-\item{valued}{Logical scalar. When FALSE, values of \code{graph} are set to one.}
+\item{valued}{Logical scalar. When \code{FALSE}, values of \code{graph} are set to one.}
 
-\item{normalized}{Logical scalar. When true, the exposure will be between zero
+\item{normalized}{Logical scalar. When \code{TRUE}, the exposure will be between zero
 and one (see details).}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when

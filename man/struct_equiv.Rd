@@ -11,7 +11,7 @@ struct_equiv(graph, v = 1, inf.replace = 0, ...)
 
 \item{v}{Numeric scalar. Cohesion constant (see details).}
 
-\item{inf.replace}{Logical scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.}
+\item{inf.replace}{Numeric scalar scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}.}
 }

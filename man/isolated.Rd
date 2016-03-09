@@ -59,7 +59,9 @@ drop_isolated(graph)
 Vega Yon
 }
 \seealso{
-Other data management functions: \code{\link{edgelist_to_adjmat}}
+Other data management functions: \code{\link{as_diffnet}},
+  \code{\link{edgelist_to_adjmat}},
+  \code{\link{survey_to_diffnet}}
 }
 \keyword{manip}
 

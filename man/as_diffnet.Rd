@@ -297,7 +297,8 @@ Vega Yon
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}
 
-A nice wrapper of this function is \code{\link{survey_to_diffnet}}.
+Other data management functions: \code{\link{edgelist_to_adjmat}},
+  \code{\link{isolated}}, \code{\link{survey_to_diffnet}}
 
 Other diffnet methods: \code{\link{as.array.diffnet}},
   \code{\link{diffnet-arithmetic}},

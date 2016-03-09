@@ -37,7 +37,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       if (inherits(attrs, "list")) {
         # Must have the same number of elements as time periods
         if (length(attrs) != nper)
-          stop("The list -vertex.dyn.attrs-'s length must be equal to the number of slices.")
+          stop("The list -vertex.dyn.attrs-'s length must be equal to the number of slices.",
+               " Has ",length(attrs), " and should have ", nper,".")
 
         # Checking that all are data.frames/matrices or vectors
         isdf  <- sapply(attrs, inherits, what="data.frame")
@@ -63,7 +64,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
           }
 
           # Checking number of columns
-          test <- which(attrs[[1]] == sapply(attrs, ncol))
+          test <- which(ncol(attrs[[1]]) != sapply(attrs, ncol))
           if (length(test))
             stop("All elements in -vertex.dyn.attrs- must have the same number of columns.")
 
@@ -73,7 +74,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
           else which(sapply(attrs, function(x) length(colnames(x))))
 
           if (length(test))
-            stop("Not all the matrices/data frames in -vertex.dyn.attrs- have the same name:\n\t",
+            stop("Not all the matrices/data frames in -vertex.dyn.attrs- have the same colname(.):\n\t",
                  paste0(test, collapse = ", "))
 
           # Making up names
@@ -108,7 +109,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
         } else { # Dynamic: List of vectors --------------------------------------
           # Checking dim
-          test <- which(sapply(attrs, length) != n*nper)
+          test <- which(sapply(attrs, length) != n)
           if (length(test))
             stop("Some vectors in -vertex.dyn.attrs- have a different lengths than expected:\n\t",
                  paste0(test, collapse=", "), ".")
@@ -438,8 +439,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'
 #'
 #' @family diffnet methods
+#' @family data management functions
 #' @aliases diffnet diffnet-class
-#' @seealso A nice wrapper of this function is \code{\link{survey_to_diffnet}}.
 #' @examples
 #'
 #' # Creating a random graph

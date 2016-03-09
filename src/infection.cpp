@@ -10,7 +10,9 @@ arma::mat infection_cpp(
     int K = 1,
     double r = 0.5,
     bool expdiscount = false,
-    int n=0, int T=0, bool valued=false) {
+    int n=0, int T=0,
+    bool valued=false,
+    bool outgoing=true) {
 
 //   // Coersing a NumericVector into a cube for ease of use
 //   IntegerVector dims=graph.attr("dim");
@@ -74,7 +76,8 @@ arma::mat infection_cpp(
 
       // Storing the graph
       arma::sp_mat graph_cube = graph[t];
-      if (!valued) graph_cube = arma::spones(graph_cube);
+      if (!valued)   graph_cube = arma::spones(graph_cube);
+      if (!outgoing) graph_cube = graph_cube.t();
 
       for(int j=0;j<n;j++) {
         if (i==j) continue;
@@ -111,7 +114,8 @@ arma::colvec susceptibility_cpp(
     int K = 1,
     double r = 0.5,
     bool expdiscount = false,
-    int n=0, int T=0, bool valued=false) {
+    int n=0, int T=0, bool valued=false,
+    bool outgoing=true) {
 
   // Coersing a NumericVector into a cube for ease of use
 //   IntegerVector dims=graph.attr("dim");
@@ -177,7 +181,8 @@ arma::colvec susceptibility_cpp(
 
       // Storing the graph
       arma::sp_mat graph_cube = graph[t - 1];
-      if (!valued) graph_cube = arma::spones(graph_cube);
+      if (!valued)   graph_cube = arma::spones(graph_cube);
+      if (!outgoing) graph_cube = graph_cube.t();
 
       for(int j=0;j<n;j++) {
         if (i==j) continue;

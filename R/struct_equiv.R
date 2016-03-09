@@ -4,7 +4,7 @@
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param v Numeric scalar. Cohesion constant (see details).
-#' @param inf.replace Logical scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.
+#' @param inf.replace Numeric scalar scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.
 #' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}}.
 #' @family statistics
 #' @keywords univar

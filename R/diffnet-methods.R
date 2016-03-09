@@ -931,6 +931,48 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
   x
 }
 
+#' @rdname diffnet-arithmetic
+#' @export
+#' @param e1 A diffnet object.
+#' @param e2 Either a diffnet object, an integer vector or a character vector.
+#' @examples
+#' # Removing the first 3 vertex of medInnovationsDiffnet ----------------------
+#' data(medInnovationsDiffNet)
+#'
+#' # Using a diffnet object
+#' first3Diffnet <- medInnovationsDiffNet[1:3,,]
+#' medInnovationsDiffNet - first3Diffnet
+#'
+#' # Using indexes
+#' medInnovationsDiffNet - 1:3
+#'
+#' # Using ids
+#' medInnovationsDiffNet - as.character(1001:1003)
+`-.diffnet` <- function(e1, e2) {
+  if (inherits(e1, "diffnet") & inherits(e2, "diffnet")) {
+
+    # Listing the id numbers that wont be removed
+    ids.to.remove <- e2$meta$ids
+    ids.to.remove <- which(e1$meta$ids %in% ids.to.remove)
+    e1[-ids.to.remove, , drop=FALSE]
+  } else if (inherits(e1, "diffnet") & any(class(e2) %in% c("integer", "numeric"))) {
+
+    # Dropping using ids
+    e1[-e2,, drop=FALSE]
+  } else if (inherits(e1, "diffnet") & inherits(e2, "character")) {
+    # Checking labels exists
+    test <- which(!(e2 %in% e1$meta$ids))
+    if (length(test))
+      stop("Some elements in -e2- (right hand size of the expression) are not ",
+           "in the set of ids of the diffnet object:\n\t",
+           paste0(e2[test], collapse=", "),".")
+
+    e2 <- which(e1$meta$ids %in% e2)
+    e1[-e2,,drop=FALSE]
+  } else
+    stop("Substraction between -",class(e1),"- and -", class(e2), "- not supported.")
+}
+
 # #' @export
 # #' @rdname as_diffnet
 # subset.diffnet <- function(x, subset, ...) {

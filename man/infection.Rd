@@ -6,10 +6,12 @@
 \title{Susceptibility and Infection}
 \usage{
 infection(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE))
+  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE),
+  outgoing = getOption("diffnet.outgoing", TRUE))
 
 susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE))
+  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE),
+  outgoing = getOption("diffnet.outgoing", TRUE))
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -27,6 +29,8 @@ susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
 \item{expdiscount}{Logical scalar. When TRUE, exponential discount rate is used (see details).}
 
 \item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
+
+\item{outgoing}{Logical scalar. When \code{TRUE}, computed using outgoing ties.}
 }
 \value{
 A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
@@ -64,6 +68,10 @@ I(i) = [\sum_k \sum_j (x(ji,t) * z(j,t+1))/w(k)]/[\sum_k \sum_j (x(ji,t) * z(j, 
 
 It is worth noticing that, as we can see in the formulas, while susceptibility
 is from alter to ego, infection is from ego to alter.
+
+When \code{outgoing=FALSE} the algorithms are based on incoming edges, this is
+the adjacency matrices are transposed swapping the indexes \eqn{(i,j)} by
+\eqn{(j,i)}. This can be useful for some users.
 
 Finally, by default both are normalized by the number of individuals who
 adopted the innovation in time \eqn{t-k}. Thus, the resulting formulas,

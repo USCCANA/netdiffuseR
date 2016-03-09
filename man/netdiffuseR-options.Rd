@@ -9,6 +9,8 @@ The full list of options follows:
 \item{self}{FALSE}
 \item{multiple}{FALSE}
 \item{tol}{1e-8 (used for package testing)}
+\item{valued}{FALSE}
+\item{outgoing}{TRUE}
 }
 \description{
 \pkg{netdiffuseR} default options

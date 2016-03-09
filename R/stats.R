@@ -164,9 +164,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
 #' @param alt.graph Either a dynamic graph that should be used instead of \code{graph},
 #' or \code{"se"} (see details).
-#' @param outgoing Logical scalar. When TRUE, computed using outgoing ties.
-#' @param valued Logical scalar. When FALSE, values of \code{graph} are set to one.
-#' @param normalized Logical scalar. When true, the exposure will be between zero
+#' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
+#' @param valued Logical scalar. When \code{FALSE}, values of \code{graph} are set to one.
+#' @param normalized Logical scalar. When \code{TRUE}, the exposure will be between zero
 #' and one (see details).
 #' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
 #' \code{alt.graph="se"}).
@@ -247,7 +247,8 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
 #' @author Vega Yon, Dyal, Hayes & Valente
-exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL, outgoing=TRUE,
+exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
+                     outgoing=getOption("diffnet.outgoing", TRUE),
                      valued=getOption("diffnet.valued", FALSE), normalized=TRUE, ...) {
 
   # Checking diffnet attributes

@@ -10,6 +10,8 @@
 #' \item{self}{FALSE}
 #' \item{multiple}{FALSE}
 #' \item{tol}{1e-8 (used for package testing)}
+#' \item{valued}{FALSE}
+#' \item{outgoing}{TRUE}
 #' @name netdiffuseR-options
 #' @author Vega Yon
 NULL
@@ -19,6 +21,7 @@ NULL
     diffnet.self=FALSE,
     diffnet.multiple=FALSE,
     diffnet.tol=1e-8,
-    diffnet.valued=FALSE
+    diffnet.valued=FALSE,
+    diffnet.outgoing=TRUE
   )
 }

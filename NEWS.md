@@ -11,6 +11,11 @@
   nomination data (in survey fashion) of both types, cross-section and panel
   formats (static network only varying adoption, or dynamic network varying
   attributes and network structure simultaneously).
+  
+* New function: `edgelist_to_diffnet`. Similar to `survey_to_diffnet`, this
+  function reads diffusion networks from an adjacency matrix and a vertex
+  attributes data frame. Both the attributes and the edgelist can be static
+  or dynamic.
 
 * New method: `as.array.diffnet`.
 

@@ -1,9 +1,26 @@
-#' Convert survey-like data to a diffnet object
+# Auxiliar function to warn and coerce classes
+check_var_class_and_coerce <- function(var, dat, class.ok, class.target, warn.coercion) {
+
+  # Has the right class?
+  cl <- class(dat[[var]])
+  if (!any(cl %in% class.ok))
+    stop("The variable -",var,"- is of class ", cl, " which is ",
+         "not supported. Supported class(es): ", paste0(class.ok, collapse=", "),
+         ".")
+
+  # Should be coherced?
+  if (warn.coercion && !(class.target %in% cl))
+    warning("Coercing -",var, "- into ",class.target,".")
+
+  # Returning
+  return(methods::as(dat[[var]], class.target))
+}
+
+#' Convert survey-like data and edgelists to a \code{diffnet} object
 #'
-#' This convenient function turns network nomination data into diffnet obejects.
-#' It works as a wrapper of \code{\link{edgelist_to_adjmat}}
-#' and \code{\link{as_diffnet}}, and as a preprocessing routine of survey-like data,
-#' creating the respective edgelist to be imported as a network.
+#' These convenient functions turn network nomination datasets and edgelists with
+#' vertex attributes datasets into diffnet objects. Both work as wrappers of
+#' \code{\link{edgelist_to_adjmat}} and \code{\link{as_diffnet}}.
 #'
 #' @inheritParams edgelist_to_adjmat
 #' @param dat A data frame.
@@ -18,9 +35,11 @@
 #' @param ... Further arguments to be passed to \code{\link{as_diffnet}}.
 #' @details
 #'
-#' All of \code{idvar}, \code{netvars}, \code{toavar} and \code{groupvar}
+#' All of \code{netvars}, \code{toavar} and \code{groupvar}
 #' must be integers. Were these numeric they are coerced into integers, otherwise,
-#' when neither of both, the function returns with error.
+#' when neither of both, the function returns with error. \code{idvar}, on the
+#' other hand, should only be integer when calling \code{survey_to_diffnet},
+#' on the contrary, for \code{edgelist_to_diffnet}, \code{idvar} may be character.
 #'
 #' In field work it is not unusual that some respondents nominate unsurveyed
 #' individuals. In such case, in order to exclude them from the analysis,
@@ -49,7 +68,8 @@
 #'
 #' @export
 #' @return A \code{\link{diffnet}} object.
-#' @seealso \code{\link{fakesurvey}}
+#' @seealso \code{\link{fakesurvey}}, \code{\link{fakesurveyDyn}}
+#' @family data management functions
 #' @author
 #' Vega Yon
 #' @examples
@@ -122,15 +142,8 @@ survey_to_diffnet <- function(
 
   # Coercing data into numeric variables
   for (x in varlist) {
-    cl <- class(dat[[x]])
-    if (cl == "integer") next
-    else if (cl == "numeric") {
-      if (warn.coercion) warning("Coercing -",x,"- into integer.")
-      dat[[x]] <- as.integer(dat[[x]])
-    } else {
-      stop("The variable ",x, "is not integer. All variables listed on ",
-           "-idvar-, -toavar-, -groupvar- and -netvars- should be integer.")
-    }
+    dat[[x]] <- check_var_class_and_coerce(
+      x, dat, c("numeric", "integer"), "integer", warn.coercion)
   }
 
   # Changing ids
@@ -227,8 +240,8 @@ survey_to_diffnet <- function(
 
   # Times of adoption
   dat <- unique(dat[,c(idvar, toavar)])
-
   toavar <- merge(used.vertex, dat, all.x=TRUE, sort=FALSE)[[toavar]]
+
   if (length(toavar) != nrow(used.vertex))
     stop("It seems that -toavar- is not time-invariant.")
 
@@ -245,4 +258,144 @@ survey_to_diffnet <- function(
       ...
     )
   }
+}
+
+#' @rdname survey_to_diffnet
+#' @export
+edgelist_to_diffnet <- function(edgelist, w=NULL,
+                                t0=NULL, t1=NULL ,
+                                dat, idvar, toavar, timevar=NULL,
+                                undirected = getOption("diffnet.undirected", FALSE),
+                                self = getOption("diffnet.self", FALSE),
+                                multiple=getOption("diffnet.multiple", FALSE),
+                                keep.isolates=TRUE, recode.ids=TRUE,
+                                warn.coercion=TRUE) {
+
+  # Step 0.1: Checking dat -----------------------------------------------------
+  # Creating a varlist
+  varlist <- c(idvar, toavar, timevar)
+
+  # Is it complete? toa may be empty
+  test <- which(!complete.cases(dat[,varlist[-2]]))
+  if (length(test))
+    stop("Incomplete cases in -dat-. All observations must have -idvar- and,",
+         " if specified, -timevar-. The following rows are incomplete:\n\t",
+         paste0(test, collapse=", "), ".")
+
+  # Are all in the dataset??
+  test <- varlist %in% colnames(dat)
+  if (any(!test))
+    stop("Variables -", paste(varlist[!test], collapse = "-, -"),"- can't be found on -dat-.")
+
+  # Coercing data into numeric variables. idvar can be names
+  for (x in varlist[-1])
+    dat[[x]] <- check_var_class_and_coerce(
+      x, dat, c("numeric", "integer"), "integer", warn.coercion)
+
+  # Step 1.1: Converting edgelist into adjmat ------------------------------------
+  adjmat <- edgelist_to_adjmat(
+    edgelist, w=w, t0=t0, t1=t1,
+    undirected = undirected, self=self, multiple=multiple,
+    keep.isolates = keep.isolates,
+    recode.ids = recode.ids, simplify = FALSE)
+
+  # Step 1.2: Checking times in edgelist and in dat (if any) -------------------
+  suppressWarnings(dat.ran.toavar <- range(dat[[toavar]], na.rm = TRUE))
+
+  # If the range turns out to be infinite, then error
+  if (any(!is.finite(dat.ran.toavar)))
+    stop("Invalid Times of Adoption. When computing its is undefine.")
+
+  if (length(timevar)) {
+    dat.ran.timevar <- range(dat[[timevar]])
+
+    # range(toa) %within% range(timevar)
+    if (dat.ran.toavar[1] < dat.ran.timevar[1] ||
+        dat.ran.toavar[2] > dat.ran.timevar[2])
+      stop("Invalid range in -toavar- (",dat.ran.toavar[1], " to ",
+           dat.ran.toavar[2],"). It should be within the range of -timevar-",
+           " (",dat.ran.timevar[1]," to ",dat.ran.timevar[2],").")
+
+    # Setting the range from the data to be the timevar
+    dat.ran <- dat.ran.timevar
+
+  } else dat.ran <- dat.ran.toavar
+
+  # Auxiliary time range
+  tran <- dat.ran[1]:dat.ran[2]
+
+  # Number of observations in adjmat
+  if (length(t0) | length(t1)) { # If dynamic, we have to check
+    edge.ran <- as.integer(names(adjmat))
+    edge.ran <- c(edge.ran[1], edge.ran[length(adjmat)])
+
+    # Range of dat and edgelist should be equal
+    if (any(dat.ran != edge.ran))
+      stop("Time ranges in -edgelist- and -dat- should be the same. Currently ",
+           "they are ",paste0(edge.ran, collapse = " to "), " and ",
+           paste0(dat.ran, collapse=" to "), " respectively.")
+
+  } else { # If no dynamic, then simply replicate it
+    adjmat        <- lapply(tran, function(x) adjmat)
+    names(adjmat) <- tran
+  }
+
+  # Step 2: Getting the ids and checking everything is in order ----------------
+  used.vertex           <- data.frame(rownames(adjmat[[1]]))
+  colnames(used.vertex) <- idvar
+
+  # All in the edgelist?
+  dat.idvar <- unique(dat[[idvar]])
+  test  <- which(!(dat.idvar %in% used.vertex[[idvar]]))
+  if (length(test))
+    warning("Some -ids- not present on the adjacency matrix:\n\t",
+            paste0(dat.idvar[test],collapse = ", "),".")
+
+  # Step 3: Checking attributes ------------------------------------------------
+  # Creating the attributes (this depends on whether these are dynamic or not)
+  vertex.attrs        <- vector("list", length(tran))
+  names(vertex.attrs) <- tran
+
+  if (length(timevar)) {
+    for (i in tran) {
+      vertex.attrs[[i]] <- merge(
+        used.vertex,
+        dat[dat[[timevar]] == i,], all.x=TRUE, sort=FALSE)
+
+      # Removing the id var, the per var and the toa var
+      test <- colnames(vertex.attrs[[i]]) %in% varlist
+      vertex.attrs[[i]] <- vertex.attrs[[i]][,which(!test)]
+    }
+  } else {
+    # Creating data.frame
+    vertex.attrs <- merge(used.vertex, dat, by=idvar, all.x=TRUE, sort=FALSE)
+
+    # Removing the idvar
+    test <- colnames(vertex.attrs) %in% varlist
+    vertex.attrs <- vertex.attrs[,which(!test)]
+  }
+
+  # Times of Adoption vector
+  toa <- unique(dat[,c(idvar, toavar)])
+  toa <- merge(used.vertex, toa, by=idvar, all.x=TRUE,
+               all.y=FALSE, sort=FALSE)[[toavar]]
+
+  # It should be of the same length as the used vertex
+  if (length(toa) != nrow(used.vertex))
+    stop("Multiple -toavar- by individual. Multiple adoption times are not ",
+         "supported yet by the package.")
+
+  # Step 4: Wrapping all together, creating the diffnet object -----------------
+  if (length(timevar)) {
+    as_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
+               vertex.dyn.attrs = vertex.attrs,
+               undirected=undirected, self=self,
+               multiple=multiple)
+  } else {
+    as_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
+               vertex.static.attrs = vertex.attrs,
+               undirected=undirected, self=self,
+               multiple=multiple)
+  }
+
 }

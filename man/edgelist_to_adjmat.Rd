@@ -143,7 +143,8 @@ plot_diffnet(diffnet, displaylabels=TRUE)
 Vega Yon, Dyal, Hayes & Valente
 }
 \seealso{
-Other data management functions: \code{\link{isolated}}
+Other data management functions: \code{\link{as_diffnet}},
+  \code{\link{isolated}}, \code{\link{survey_to_diffnet}}
 }
 \keyword{manip}
 

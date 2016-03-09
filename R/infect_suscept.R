@@ -10,6 +10,7 @@
 #' @param r Numeric scalar. Discount rate used when \code{expdiscount=TRUE}
 #' @param expdiscount Logical scalar. When TRUE, exponential discount rate is used (see details).
 #' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
+#' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
 #' @family statistics
 #' @aliases susceptibility
 #' @keywords univar
@@ -46,6 +47,10 @@
 #'
 #' It is worth noticing that, as we can see in the formulas, while susceptibility
 #' is from alter to ego, infection is from ego to alter.
+#'
+#' When \code{outgoing=FALSE} the algorithms are based on incoming edges, this is
+#' the adjacency matrices are transposed swapping the indexes \eqn{(i,j)} by
+#' \eqn{(j,i)}. This can be useful for some users.
 #'
 #' Finally, by default both are normalized by the number of individuals who
 #' adopted the innovation in time \eqn{t-k}. Thus, the resulting formulas,
@@ -100,7 +105,8 @@
 #' @author Vega Yon
 infection <- function(graph, toa, t0=NULL,
                       normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE,
-                      valued=getOption("diffnet.valued", FALSE)) {
+                      valued   = getOption("diffnet.valued", FALSE),
+                      outgoing = getOption("diffnet.outgoing", TRUE)) {
 
   # Checking the times argument
   if (missing(toa))
@@ -115,16 +121,16 @@ infection <- function(graph, toa, t0=NULL,
   if (!length(t0)) t0 <- min(toa, na.rm=TRUE)
 
   switch (class(graph),
-    array = infection.array(graph, toa, t0, normalize, K, r, expdiscount, valued),
-    list = infection.list(graph, toa, t0, normalize, K, r, expdiscount, valued),
-    diffnet = infection.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued),
+    array = infection.array(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
+    list = infection.list(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
+    diffnet = infection.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing) {
   toa <- toa - t0 + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
@@ -133,7 +139,7 @@ infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- infection_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued)
+  out <- infection_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
 
   # Naming
   rn <- rownames(graph)
@@ -145,12 +151,12 @@ infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued
 
 # @rdname infection
 # @export
-infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   toa <- toa - t0 + 1L
 
-  out <- infection_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued)
+  out <- infection_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -163,7 +169,9 @@ infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued)
 #' @rdname infection
 #' @export
 susceptibility <- function(graph, toa, t0=NULL, normalize=TRUE, K=1L, r=0.5,
-                           expdiscount=FALSE, valued=getOption("diffnet.valued",FALSE)) {
+                           expdiscount=FALSE,
+                           valued=getOption("diffnet.valued",FALSE),
+                           outgoing=getOption("diffnet.outgoing",TRUE)) {
   # Checking the toa argument
   if (missing(toa))
     if (!inherits(graph, "diffnet")) {
@@ -177,21 +185,21 @@ susceptibility <- function(graph, toa, t0=NULL, normalize=TRUE, K=1L, r=0.5,
   if (!length(t0)) t0 <- min(toa, na.rm=TRUE)
 
   switch (class(graph),
-    array = susceptibility.array(graph, toa, t0, normalize, K, r, expdiscount, valued),
-    list = susceptibility.list(graph, toa, t0, normalize, K, r, expdiscount, valued),
-    diffnet = susceptibility.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued),
+    array = susceptibility.array(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
+    list = susceptibility.list(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
+    diffnet = susceptibility.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
     stopifnot_graph(graph)
   )
 }
 
 # @rdname infection
 # @export
-susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   toa <- toa - t0 + 1L
 
-  out <- susceptibility_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued)
+  out <- susceptibility_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -203,7 +211,7 @@ susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, va
 
 # @rdname infection
 # @export
-susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued) {
+susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing) {
   toa <- toa - t0 + 1L
   t <- dim(graph)[3]
   n <- nrow(graph)
@@ -212,7 +220,7 @@ susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, v
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- susceptibility_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued)
+  out <- susceptibility_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
 
   # Naming
   rn <- rownames(graph)
