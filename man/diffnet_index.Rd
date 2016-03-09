@@ -8,7 +8,7 @@
 \alias{diffnet_index}
 \title{Indexing diffnet objects (on development)}
 \usage{
-\method{[[}{diffnet}(x, name)
+\method{[[}{diffnet}(x, name, as.df = FALSE)
 
 \method{[[}{diffnet}(x, i, j) <- value
 
@@ -20,6 +20,9 @@
 \item{x}{A diffnet class object.}
 
 \item{name}{String vector. Names of the vertices attributes.}
+
+\item{as.df}{Logical scalar. When \code{TRUE} returns a data frame, otherwise
+a list of length \eqn{T}.}
 
 \item{i}{Index of the i-th row of the adjacency matrix (see details).}
 

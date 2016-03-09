@@ -56,6 +56,8 @@ diffnet.toa(graph, i) <- value
 \item{id.and.per.vars}{A character vector of length 2. Optionally specified to check the
 order of the rows in the attribute data.}
 
+\item{graph.attrs}{Graph dynamic attributes (not supported yet).}
+
 \item{undirected}{Logical scalar.}
 
 \item{self}{Logical scalar.}

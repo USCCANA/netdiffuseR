@@ -132,7 +132,9 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       } else if (inherits(attrs, "data.frame") | inherits(attrs, "matrix")) {
         # Dynamic: Matrix or data.frame n*nper -----------------------------------
         if (nrow(attrs) != n*nper)
-          stop("The matrix/data.frame -vertex.dyn.attrs- has incorrect number of rows.")
+          stop("The matrix/data.frame -vertex.dyn.attrs- has incorrect number of rows.",
+               " Has ", nrow(attrs), " and should have ", n, "*", nper," = ",
+               n*nper, ".")
 
         # Checking colnames
         cnames <- colnames(attrs)
@@ -172,7 +174,9 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       } else if (is.vector(attrs)) {
         # Dynamic: vector of size n*nper -----------------------------------------
         if (length(attrs) != n*nper)
-          stop("The vector -vertex.dyn.attrs- has incorrect length.")
+          stop("The vector -vertex.dyn.attrs- has incorrect length.",
+               " Has ", length(attrs), " and should have ", n, "*", nper," = ",
+               n*nper, ".")
 
         # Colname
         cnames <- make_col_names(1, TRUE)
@@ -205,7 +209,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       if (inherits(attrs, "data.frame") | inherits(attrs, "matrix")) {
         # Static: Data frame or matrix -------------------------------------------
         if (nrow(attrs) != n)
-          stop("The matrix/data.frame -vertex.static.attrs- has incorrect number of rows.")
+          stop("The matrix/data.frame -vertex.static.attrs- has incorrect number of rows.",
+               " Has ", nrow(attrs), " and should have ", n, ".")
 
         # If we need to sort using id
         attrs <- as.data.frame(attrs)
@@ -230,7 +235,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       } else if (is.vector(attrs)) {
         # Static: Vector -------------------------------------------------------
         if (length(attrs) != n)
-          stop("The vector -vertex.static.attrs- has incorrect length.")
+          stop("The vector -vertex.static.attrs- has incorrect length.",
+               " Has ", nrow(attrs), " and should have ", n, ".")
 
         # Returning
         attrs <- as.data.frame(attrs)
@@ -255,7 +261,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
     if (inherits(attrs, "data.frame") | inherits(attrs, "matrix")) {
       # Checking number of rows
       if (nrow(attrs) != nper)
-        stop("The matrix/data.frame -graph.attrs- has incorrect number of rows.")
+        stop("The matrix/data.frame -graph.attrs- has incorrect number of rows.",
+             " Has ", nrow(attrs), " and should have ", nper, ".")
 
       # Checking the order of the data
       attrs <- as.data.frame(attrs)
@@ -281,7 +288,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
       # Checking the length
       if (length(attrs) != nper)
-        stop("The vector -graph.attrs- has incorrect length.")
+        stop("The vector -graph.attrs- has incorrect length.",
+             " Has ", length(attrs), " and should have ", nper, ".")
 
       # Returning
       attrs <- as.data.frame(attrs)

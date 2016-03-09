@@ -11,6 +11,8 @@
 #' @param value Value to assign (see details)
 #' @param drop Logical scalar. When \code{TRUE} returns an adjacency matrix, otherwise
 #' a filtered diffnet object.
+#' @param as.df Logical scalar. When \code{TRUE} returns a data frame, otherwise
+#' a list of length \eqn{T}.
 #' @details
 #' The \code{[[.diffnet} methods provides access to the diffnet attributes
 #' data frames, static and dynamic. By providing the \code{name} of the corresponding
@@ -281,16 +283,20 @@ diffnet_check_attr_class <- function(value, meta) {
 
 #' @export
 #' @rdname diffnet_index
-`[[.diffnet` <- function(x, name) {
+`[[.diffnet` <- function(x, name, as.df=FALSE) {
 
   # Checking names
   if (name %in% colnames(x$vertex.static.attrs)) {
     return(x$vertex.static.attrs[[name]])
   } else if (name %in% colnames(x$vertex.dyn.attrs[[1]])) {
 
-    return({
-      lapply(x$vertex.dyn.attrs, "[[", name)
-    })
+    x <- lapply(x$vertex.dyn.attrs, "[[", name)
+    if (as.df) {
+      x <- as.data.frame(do.call(c, x))
+      colnames(x) <- name
+      return(x)
+    }
+    else return(x)
 
   } else {
     stop("No dynamic or static attribute with such name.")
