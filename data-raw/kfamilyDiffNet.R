@@ -66,4 +66,5 @@ kfamilyDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(kfamily, s
 # [2016-03-05]: Deprecated
 # diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- subset(kfamily, select=c(-id,-toa))
 
-save(kfamilyDiffNet, file="data/kfamilyDiffNet.rdata")
+save(kfamilyDiffNet, file="data/kfamilyDiffNet.rdata",
+     compress = "xz")

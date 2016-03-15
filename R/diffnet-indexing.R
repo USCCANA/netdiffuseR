@@ -13,6 +13,7 @@
 #' a filtered diffnet object.
 #' @param as.df Logical scalar. When \code{TRUE} returns a data frame, otherwise
 #' a list of length \eqn{T}.
+#' @param ... Further argumnets to be passed to the method (on development)
 #' @details
 #' The \code{[[.diffnet} methods provides access to the diffnet attributes
 #' data frames, static and dynamic. By providing the \code{name} of the corresponding
@@ -320,7 +321,7 @@ diffnet_check_attr_class <- function(value, meta) {
     x$vertex.static.attrs[[i]][j] <- value
   } else {
     # Checking if is empty or not
-    for (l in meta$pers)
+    for (l in 1:meta$nper)
       x$vertex.dyn.attrs[[l]][[i]][j] <- value[[l]]
   }
   x
@@ -340,7 +341,7 @@ diffnet_check_attr_class <- function(value, meta) {
     else if (missing(i)  & !missing(j)) i <- j
     else if (!missing(i) & missing(j) ) j <- i
     else if (!missing(i) & !missing(j))
-      if (identical(i, j))
+      if (!identical(i, j))
         stop("Whe subsetting a diffnet and -i- and -j- are provided these should,",
              "be identical.")
   }
@@ -356,9 +357,8 @@ diffnet_check_attr_class <- function(value, meta) {
 
     # Subsetting
     # 1.0: graph and attributes
-    if (length(unlist(x$vertex.dyn.attrs)))
-      for (l in 1:x$meta$nper)
-         x$vertex.dyn.attrs[[l]] <- x$vertex.dyn.attrs[[l]][i,,drop=FALSE]
+    for (l in 1:x$meta$nper)
+       x$vertex.dyn.attrs[[l]] <- x$vertex.dyn.attrs[[l]][i,,drop=FALSE]
 
 
     # 2.0: Matrices
@@ -368,7 +368,7 @@ diffnet_check_attr_class <- function(value, meta) {
     x$toa                 <- x$toa[i]
 
     # 3.0: Attrubytes
-    x$meta$ids <- x$meta$ids[i]
+    x$meta$ids <- rownames(x$adopt)#x$meta$ids[i]
     x$meta$n   <- length(x$meta$ids)
 
     return(x)
@@ -388,4 +388,5 @@ diffnet_check_attr_class <- function(value, meta) {
 
   x
 }
+
 

@@ -301,6 +301,7 @@ Other data management functions: \code{\link{edgelist_to_adjmat}},
   \code{\link{isolated}}, \code{\link{survey_to_diffnet}}
 
 Other diffnet methods: \code{\link{as.array.diffnet}},
+  \code{\link{c.diffnet}},
   \code{\link{diffnet-arithmetic}},
   \code{\link{diffnet_index}}
 }

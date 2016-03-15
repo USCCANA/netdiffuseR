@@ -66,6 +66,22 @@ check_var_class_and_coerce <- function(var, dat, class.ok, class.target, warn.co
 #' information through time, this is, time-invariable. This as the package does
 #' not yet support variable times of adoption.
 #'
+#' The \code{fill.missing} option can take any of these three values: \code{"edgelist"},
+#' \code{"dat"}, or \code{"both"}. This argument works as follows:
+#' \enumerate{
+#'    \item When \code{fill.missing="edgelist"} (or \code{"both"}) the function
+#'    will check which vertices show in \code{dat} but do not show in \code{edgelist}.
+#'    If there is any, the function will include these in \code{edgelist} as ego to
+#'    \code{NA} (so they have no link to anyone), and, if specified, will fill
+#'    the \code{t0}, \code{t1} vectors with \code{NA}s for those cases. If
+#'    \code{w} is also specified, the new vertices will be set to
+#'    \code{min(w, na.rm=TRUE)}.
+#'    \item When \code{fill.missing="dat"} (or \code{"both"}) the function
+#'    checks which vertices show in \code{edgelist} but not in \code{dat}. If
+#'    there is any, the function will include these in \code{dat} by adding
+#'    one row per individual.
+#' }
+#'
 #' @export
 #' @return A \code{\link{diffnet}} object.
 #' @seealso \code{\link{fakesurvey}}, \code{\link{fakesurveyDyn}}
@@ -261,6 +277,8 @@ survey_to_diffnet <- function(
 }
 
 #' @rdname survey_to_diffnet
+#' @param fill.missing Character scalar. In the case of having unmatching ids
+#' between \code{dat} and \code{edgelist}, fills the data (see details).
 #' @export
 edgelist_to_diffnet <- function(edgelist, w=NULL,
                                 t0=NULL, t1=NULL ,
@@ -268,12 +286,18 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
                                 undirected = getOption("diffnet.undirected", FALSE),
                                 self = getOption("diffnet.self", FALSE),
                                 multiple=getOption("diffnet.multiple", FALSE),
+                                fill.missing=NULL,
                                 keep.isolates=TRUE, recode.ids=TRUE,
                                 warn.coercion=TRUE) {
 
   # Step 0.1: Checking dat -----------------------------------------------------
   # Creating a varlist
   varlist <- c(idvar, toavar, timevar)
+
+  # Are all in the dataset??
+  test <- varlist %in% colnames(dat)
+  if (any(!test))
+    stop("Variables -", paste(varlist[!test], collapse = "-, -"),"- can't be found on -dat-.")
 
   # Is it complete? toa may be empty
   test <- which(!complete.cases(dat[,varlist[-2]]))
@@ -282,15 +306,59 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
          " if specified, -timevar-. The following rows are incomplete:\n\t",
          paste0(test, collapse=", "), ".")
 
-  # Are all in the dataset??
-  test <- varlist %in% colnames(dat)
-  if (any(!test))
-    stop("Variables -", paste(varlist[!test], collapse = "-, -"),"- can't be found on -dat-.")
-
   # Coercing data into numeric variables. idvar can be names
   for (x in varlist[-1])
     dat[[x]] <- check_var_class_and_coerce(
       x, dat, c("numeric", "integer"), "integer", warn.coercion)
+
+  # Step 0.2: Checking FILL data -----------------------------------------------
+  ids.edgelist <- unique(c(edgelist[,1,drop=TRUE], edgelist[,2,drop=TRUE]))
+  ids.dat      <- unique(dat[[idvar]])
+  if (length(fill.missing)) {
+    if (!inherits(fill.missing, "character")) {
+      stop("-fill.missing- should be a character scalar")
+    } else if (fill.missing %in% c("edgelist", "both")) {
+      test <- ids.dat[which(!( ids.dat %in% ids.edgelist))]
+
+      # If some missing, then filling with more edges
+      if (length(test)) {
+        warning("The following ids will be added to -edgelist-:\n\t",
+                paste0(test, collapse=", "),".")
+
+        nedgelist <- nrow(edgelist)
+        edgelist  <- rbind(
+          edgelist,
+          edgelist[1:length(test),, drop=FALSE]
+          )
+
+        edgelist[(nedgelist + 1):nrow(edgelist),]   <- NA
+        edgelist[(nedgelist + 1):nrow(edgelist),1]  <- test
+
+        if (length(t0)) t0 <- c(t0, rep(NA, length(test)))
+        if (length(t1)) t1 <- c(t1, rep(NA, length(test)))
+        if (length(w))   w <- c(w, rep(min(w, na.rm = TRUE), length(test)))
+      }
+    } else if (fill.missing %in% c("dat", "both")) {
+      test <- ids.dat[which(!(ids.edgelist %in% ids.dat))]
+
+      # If some missing, then filling with more edges
+      if (length(test)) {
+        warning("The following ids will be added to -dat-:\n\t",
+                paste0(test, collapse=", "),".")
+
+        ndat <- nrow(dat)
+        dat  <- rbind(
+          dat,
+          dat[1:length(test),, drop=FALSE])
+
+        dat[(ndat + 1):nrow(dat),] <- NA
+        dat[[idvar]][(ndat + 1):nrow(dat)]  <- test
+      }
+    } else {
+      stop("The only values currently supported for -fill.missing- are:\n\t",
+           "'edgelist', 'dat', or 'both'.")
+    }
+  }
 
   # Step 1.1: Converting edgelist into adjmat ------------------------------------
   adjmat <- edgelist_to_adjmat(
@@ -360,7 +428,7 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
     for (i in tran) {
       vertex.attrs[[i]] <- merge(
         used.vertex,
-        dat[dat[[timevar]] == i,], all.x=TRUE, sort=FALSE)
+        dat[is.na(dat[[timevar]]) | (dat[[timevar]] == i),], all.x=TRUE, sort=FALSE)
 
       # Removing the id var, the per var and the toa var
       test <- colnames(vertex.attrs[[i]]) %in% varlist

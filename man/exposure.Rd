@@ -6,7 +6,8 @@
 \usage{
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
   outgoing = getOption("diffnet.outgoing", TRUE),
-  valued = getOption("diffnet.valued", FALSE), normalized = TRUE, ...)
+  valued = getOption("diffnet.valued", FALSE), normalized = TRUE,
+  groupvar = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -26,6 +27,9 @@ or \code{"se"} (see details).}
 
 \item{normalized}{Logical scalar. When \code{TRUE}, the exposure will be between zero
 and one (see details).}
+
+\item{groupvar}{Character scalar. Name of a vertex static attribute in the diffnet
+object (see details).}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}
@@ -66,6 +70,18 @@ graph. Notice that when using a valued graph the option \code{valued} should
 be equal to \code{TRUE}, this check is run automatically when running the
 model using structural equivalence.
 
+\bold{An important remark} is that when calculating \bold{structural equivalence} the
+function \bold{assumes that this is to be done to the entire graph} regardless of
+disconnected communities (as in the case of the medical innovations
+data set). Hence, structural equivalence for individuals for two different
+communites may not be zero. If the user wants to calculate structural
+equivalence separately by community, he should create different diffnet
+objects and do so (see example below). Alternatively, for the case of
+diffnet objects, by using the option \code{groupvar}, the user can provide
+the function with the name of a grouping variable--which should one in the
+set of static vertex attributes--so that the algorithm is done by group
+(or community) instead of in an aggregated way.
+
 If the user does not specifies a particular weighting attribute in \code{attrs},
 the function sets this as a matrix of ones. Otherwise the function will return
 an attribute weighted exposure. When \code{graph} is of class \code{diffnet},
@@ -87,13 +103,19 @@ set.seed(113132)
 graph <- rdiffnet(100, 10)
 
 SE <- lapply(struct_equiv(graph), "[[", "SE")
-SE <- lapply(SE, function(x) 1/(x + 1e-15))
+SE <- lapply(SE, function(x) {
+   x <- 1/x
+   x[!is.finite(x)] <- 0
+   x
+})
 
 # Recall setting valued equal to TRUE!
 expo_se <- exposure(graph, alt.graph=SE , valued=TRUE)
 
-# These three lines are equivalent to
-expo_se2 <- exposure(graph, alt.graph="se")
+# These three lines are equivalent to:
+expo_se2 <- exposure(graph, alt.graph="se", valued=TRUE)
+# Notice that we are setting valued=TRUE, but this is not necesary since when
+# alt.graph = "se" the function checks this to be setted equal to TRUE
 
 # Weighted Exposure using degree --------------------------------------------
 eDE <- exposure(graph, attrs=dgr(graph))
@@ -104,6 +126,62 @@ eDE2 <- exposure(graph, attrs="deg")
 
 # Comparing using incomming edges -------------------------------------------
 eIN <- exposure(graph, outgoing=FALSE)
+
+# Structral equivalence for different communities ---------------------------
+data(brfarmersDiffNet)
+
+# METHOD 1: Using the c.diffnet method:
+
+# Creating subsets by village
+villages <- unique(brfarmersDiffNet[["village"]])
+
+diffnet <- brfarmersDiffNet[brfarmersDiffNet[["village"]] == villages[1]]
+diffnet[["expo_se"]] <- exposure(diffnet, alt.graph="se", valued=TRUE)
+
+for (v in villages[-1]) {
+   diffnet_v <- brfarmersDiffNet[brfarmersDiffNet[["village"]] == v]
+   diffnet_v[["expo_se"]] <- exposure(diffnet_v, alt.graph="se", valued=TRUE)
+   diffnet <- c(diffnet, diffnet_v)
+}
+
+# We can set the original order (just in case) of the data
+diffnet <- diffnet[brfarmersDiffNet$meta$ids]
+diffnet
+
+# Checking everything is equal
+test <- summary(brfarmersDiffNet, no.print=TRUE) ==
+   summary(diffnet, no.print=TRUE)
+
+stopifnot(all(test))
+
+# METHOD 2: Using the 'groupvar' argument
+# Further, we can compare this with using the groupvar
+diffnet[["expo_se2"]] <- exposure(diffnet, alt.graph="se",
+   groupvar="village", valued=TRUE)
+
+# These should be equivalent
+test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se2", as.df=TRUE]]
+stopifnot(all(test))
+
+# METHOD 3: Computing exposure, rbind and then adding it to the diffnet object
+expo_se3 <- NULL
+for (v in unique(villages))
+   expo_se3 <- rbind(
+     expo_se3,
+     exposure(
+       diffnet[diffnet[["village"]] == v],
+       alt.graph = "se", valued=TRUE
+     ))
+
+# Just to make sure, we sort the rows
+expo_se3 <- expo_se3[diffnet$meta$ids,]
+
+diffnet[["expo_se3"]] <- expo_se3
+
+test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se3", as.df=TRUE]]
+stopifnot(all(test))
+
+
 
 }
 \author{

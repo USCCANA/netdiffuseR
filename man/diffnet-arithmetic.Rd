@@ -73,6 +73,7 @@ medInnovationsDiffNet - as.character(1001:1003)
 }
 \seealso{
 Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{as_diffnet}}, \code{\link{diffnet_index}}
+  \code{\link{as_diffnet}}, \code{\link{c.diffnet}},
+  \code{\link{diffnet_index}}
 }
 

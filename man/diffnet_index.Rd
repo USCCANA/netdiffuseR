@@ -34,6 +34,8 @@ a list of length \eqn{T}.}
 
 \item{drop}{Logical scalar. When \code{TRUE} returns an adjacency matrix, otherwise
 a filtered diffnet object.}
+
+\item{...}{Further argumnets to be passed to the method (on development)}
 }
 \value{
 In the case of the asignning methods, a diffnet object. Otherwise,
@@ -129,7 +131,7 @@ identical(x[["expoM"]], x[["expoD"]]) # TRUE
 }
 \seealso{
 Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{as_diffnet}},
+  \code{\link{as_diffnet}}, \code{\link{c.diffnet}},
   \code{\link{diffnet-arithmetic}}
 }
 

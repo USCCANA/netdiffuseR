@@ -108,5 +108,6 @@ brfarmersDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(brfarmer
 # plot_adopters(diffnet)
 # plot_hazard(diffnet)
 
-save(brfarmersDiffNet, file="data/brfarmersDiffNet.rdata")
+save(brfarmersDiffNet, file="data/brfarmersDiffNet.rdata",
+     compress = "xz")
 

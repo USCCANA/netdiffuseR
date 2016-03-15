@@ -44,6 +44,9 @@
   `diffnet.subset.slices` is now not exported (internal use), so the user
   needs to use the `[.diffnet` method instead.
 
+* New concatenating method `c.diffnet` for diffnet objects. This method allows
+  'adding up' diffnet objects.
+
 * Attributes in diffnet objects are now stored as data frames (instead of
   matrices). This affects the function `diffnet.attrs`, and `egonet_attrs` as
   these use attributes directly. (Requested by Tom)
@@ -60,6 +63,11 @@
   Also, `alt.graph` can be specified as `se`, which will be replaced by the
   inverse of the structural equivalence. When `valued=FALSE` the function will
   switch it to `TRUE` and warn the user.
+  
+* New argument for the `exposure` function, `groupvar`. Valid only when `graph`
+  is a diffnet object, `groupvar` provides a convenient way of calculating
+  exposure clusterized by group. Specially useful when there are different
+  communities in a graph. See examples in the man.
   
 * `as_diffnet` now has an internal function, `check_as_diffnet_attrs`, to check
   input attributes dimensions and coerce them into proper class/structure. Valid

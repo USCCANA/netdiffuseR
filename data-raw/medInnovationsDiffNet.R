@@ -76,7 +76,8 @@ medInnovationsDiffNet <- as_diffnet(graph, toa,
 # plot_adopters(diffnet)
 # plot_hazard(diffnet)
 
-save(medInnovationsDiffNet, file="data/medInnovationsDiffNet.rdata")
+save(medInnovationsDiffNet, file="data/medInnovationsDiffNet.rdata",
+     compress = "xz")
 
 # z<-struct_test(
 #   medInnovationsDiffNet,

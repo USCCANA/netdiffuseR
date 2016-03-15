@@ -166,9 +166,18 @@ edgelist_to_adjmat.matrix <- function(
 
   # Step 0: Checking dimensions
   if (ncol(edgelist) !=2) stop("Edgelist must have 2 columns")
-  if (length(t0) && nrow(edgelist) != length(t0)) stop("-t0- should have the same length as number of rows in -edgelist-")
-  if (length(t1) && nrow(edgelist) != length(t1)) stop("-t1- should have the same length as number of rows in -edgelist-")
-  if (length(w) && nrow(edgelist) != length(w)) stop("-w- should have the same length as number of rows in -edgelist-")
+  if (length(t0) && nrow(edgelist) != length(t0))
+    stop("-t0- should have the same length as number of rows in -edgelist-.",
+         " Currently they are ",length(t0), " and ", nrow(edgelist),
+         " respectively.")
+  if (length(t1) && nrow(edgelist) != length(t1))
+    stop("-t1- should have the same length as number of rows in -edgelist-.",
+         " Currently they are ",length(t1), " and ", nrow(edgelist),
+         " respectively.")
+  if (length(w) && nrow(edgelist) != length(w))
+    stop("-w- should have the same length as number of rows in -edgelist-.",
+         " Currently they are ",length(w), " and ", nrow(edgelist),
+         " respectively.")
 
   ##############################################################################
   # Step 1: Incomplete cases.
@@ -627,11 +636,13 @@ isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")
 # @export
 # @rdname isolated
 isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
-  nper <- dim(graph)[3]
-  n    <- dim(graph)[2]
+  nper <- as.integer(dim(graph)[3])
+  n    <- as.integer(dim(graph)[2])
 
   # Creating output list and anciliary vector (to see if is isolated or not!)
-  iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
+  # iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
+  iso <- methods::new("dgCMatrix", Dim=c(n,nper), p=rep(0L,nper + 1L))
+
   for(i in 1:nper)
     iso[,i] <- isolated_cpp(methods::as(graph[,,i], "dgCMatrix"), undirected)
 
@@ -657,11 +668,13 @@ isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
 # @export
 # @rdname isolated
 isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
-  nper<- length(graph)
-  n   <- nrow(graph[[1]])
+  nper<- as.integer(length(graph))
+  n   <- as.integer(nrow(graph[[1]]))
 
   # Creating output list and anciliary vector (to see if is isolated or not!)
-  iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
+  # iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
+  iso <- methods::new("dgCMatrix", Dim=c(n,nper), p=rep(0L,nper + 1L))
+
   for(i in 1:nper)
     iso[,i] <- isolated_cpp(graph[[i]], undirected)
   isolated <- structure(

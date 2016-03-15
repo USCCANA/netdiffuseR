@@ -15,8 +15,8 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
 edgelist_to_diffnet(edgelist, w = NULL, t0 = NULL, t1 = NULL, dat, idvar,
   toavar, timevar = NULL, undirected = getOption("diffnet.undirected",
   FALSE), self = getOption("diffnet.self", FALSE),
-  multiple = getOption("diffnet.multiple", FALSE), keep.isolates = TRUE,
-  recode.ids = TRUE, warn.coercion = TRUE)
+  multiple = getOption("diffnet.multiple", FALSE), fill.missing = NULL,
+  keep.isolates = TRUE, recode.ids = TRUE, warn.coercion = TRUE)
 }
 \arguments{
 \item{dat}{A data frame.}
@@ -61,6 +61,9 @@ alter -target- (see details).}
 \item{t0}{Integer vector. Starting time of the ties (optional).}
 
 \item{t1}{Integer vector. Finishing time of the ties (optional).}
+
+\item{fill.missing}{Character scalar. In the case of having unmatching ids
+between \code{dat} and \code{edgelist}, fills the data (see details).}
 }
 \value{
 A \code{\link{diffnet}} object.
@@ -101,6 +104,22 @@ Where \code{z = 10^nchar(max(dat[[idvar]]))}.
 For longitudinal data, it is assumed that the \code{toavar} holds the same
 information through time, this is, time-invariable. This as the package does
 not yet support variable times of adoption.
+
+The \code{fill.missing} option can take any of these three values: \code{"edgelist"},
+\code{"dat"}, or \code{"both"}. This argument works as follows:
+\enumerate{
+   \item When \code{fill.missing="edgelist"} (or \code{"both"}) the function
+   will check which vertices show in \code{dat} but do not show in \code{edgelist}.
+   If there is any, the function will include these in \code{edgelist} as ego to
+   \code{NA} (so they have no link to anyone), and, if specified, will fill
+   the \code{t0}, \code{t1} vectors with \code{NA}s for those cases. If
+   \code{w} is also specified, the new vertices will be set to
+   \code{min(w, na.rm=TRUE)}.
+   \item When \code{fill.missing="dat"} (or \code{"both"}) the function
+   checks which vertices show in \code{edgelist} but not in \code{dat}. If
+   there is any, the function will include these in \code{dat} by adding
+   one row per individual.
+}
 }
 \examples{
 # Loading a fake survey (data frame)
