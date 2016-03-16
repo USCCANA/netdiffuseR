@@ -132,32 +132,6 @@ arma::mat adjmat_to_edgelist_cpp(
     const arma::sp_mat & adjmat,
     bool undirected = true) {
 
-  // std::vector< double > ego;
-  // std::vector< double > alter;
-  // std::vector< double > val;
-  //
-  // int n = adjmat.n_cols;
-  //
-  // // CAN BE REWRITTEN ACCESSING VALUES OF THE SPMAT DIRECTLY
-  //
-  // for(int i=0;i<n;i++) {
-  //   /* Setting the length of the subloop acordingly to type of graph */
-  //   int m = n;
-  //   if (undirected) m=i;
-  //   for(int j=0;j<m;j++) {
-  //     if (adjmat(i,j))
-  //       ego.push_back(i+1.0), alter.push_back(j+1.0);
-  //
-  //       // Weights
-  //       val.push_back(adjmat(i,j));
-  //   }
-  // }
-  //
-  // // Creating colvectors to be used with join_rows.
-  // arma::mat egom(ego);
-  // arma::mat alterm(alter);
-  //
-  // arma::mat edgelist = join_rows(egom, alterm);
   arma::umat coords = sparse_indexes(adjmat);
   int m = coords.n_rows;
   arma::mat edgelist(m, 3);
@@ -170,42 +144,6 @@ arma::mat adjmat_to_edgelist_cpp(
 
   return edgelist;
 }
-
-
-// // [[Rcpp::export]]
-// arma::mat adjmat_to_dyn_edgelist_cpp(NumericVector adjmat, bool undirected=true) {
-//
-//   // Coersing a NumericVector into a cube for ease of use
-//   IntegerVector dims=adjmat.attr("dim");
-//   const arma::cube adjmat_cube(adjmat.begin(), dims[0], dims[1], dims[2], false);
-//
-//   int T = adjmat_cube.n_slices;
-//   int n = adjmat_cube.n_cols;
-//
-//   std::vector< double > ego;
-//   std::vector< double > alter;
-//   std::vector< double > time;
-//
-//   for(int t=0;t<T;t++)
-//     for(int i=0;i<n;i++) {
-//       /* Setting the length of the subloop acordingly to type of graph */
-//       int m = n;
-//       if (undirected) m=i;
-//       for(int j=0;j<m;j++)
-//         if (adjmat_cube(i,j,t))
-//           ego.push_back(i+1.0), alter.push_back(j+1.0), time.push_back(t+1.0);
-//     }
-//
-//   // Creating colvectors to be used with join_rows.
-//   arma::mat egom(ego);
-//   arma::mat alterm(alter);
-//   arma::mat timem(time);
-//
-//   arma::mat edgelist = join_rows(join_rows(egom, alterm), timem);
-//
-//   return edgelist;
-// }
-
 
 // [[Rcpp::export]]
 IntegerMatrix toa_diff_cpp(const IntegerVector & year) {

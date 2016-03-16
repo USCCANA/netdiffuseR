@@ -11,6 +11,7 @@ The full list of options follows:
 \item{tol}{1e-8 (used for package testing)}
 \item{valued}{FALSE}
 \item{outgoing}{TRUE}
+\item{keep.isolates}{TRUE}
 }
 \description{
 \pkg{netdiffuseR} default options

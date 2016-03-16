@@ -404,7 +404,7 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
            paste0(dat.ran, collapse=" to "), " respectively.")
 
   } else { # If no dynamic, then simply replicate it
-    adjmat        <- lapply(tran, function(x) adjmat)
+    adjmat        <- lapply(tran, function(x) adjmat[[1]])
     names(adjmat) <- tran
   }
 

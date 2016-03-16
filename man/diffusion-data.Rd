@@ -84,7 +84,8 @@ Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University P
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{fakesurveyDyn}},
+  \code{\link{brfarmers}}, \code{\link{fakeDynEdgelist}},
+  \code{\link{fakeEdgelist}}, \code{\link{fakesurveyDyn}},
   \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
   \code{\link{kfamily}},
   \code{\link{medInnovationsDiffNet}},

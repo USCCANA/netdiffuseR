@@ -168,10 +168,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param valued Logical scalar. When \code{FALSE}, values of \code{graph} are set to one.
 #' @param normalized Logical scalar. When \code{TRUE}, the exposure will be between zero
 #' and one (see details).
-#' @param groupvar Character scalar. Name of a vertex static attribute in the diffnet
-#' object (see details).
 #' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
 #' \code{alt.graph="se"}).
+#' @param groupvar Passed to \code{\link{struct_equiv}}.
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -204,7 +203,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' communites may not be zero. If the user wants to calculate structural
 #' equivalence separately by community, he should create different diffnet
 #' objects and do so (see example below). Alternatively, for the case of
-#' diffnet objects, by using the option \code{groupvar}, the user can provide
+#' diffnet objects, by using the option \code{groupvar} (see \code{\link{struct_equiv}}), the user can provide
 #' the function with the name of a grouping variable--which should one in the
 #' set of static vertex attributes--so that the algorithm is done by group
 #' (or community) instead of in an aggregated way.
@@ -263,28 +262,28 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' eIN <- exposure(graph, outgoing=FALSE)
 #'
 #' # Structral equivalence for different communities ---------------------------
-#' data(brfarmersDiffNet)
+#' data(medInnovationsDiffNet)
 #'
 #' # METHOD 1: Using the c.diffnet method:
 #'
-#' # Creating subsets by village
-#' villages <- unique(brfarmersDiffNet[["village"]])
+#' # Creating subsets by city
+#' cities <- unique(medInnovationsDiffNet[["city"]])
 #'
-#' diffnet <- brfarmersDiffNet[brfarmersDiffNet[["village"]] == villages[1]]
+#' diffnet <- medInnovationsDiffNet[medInnovationsDiffNet[["city"]] == cities[1]]
 #' diffnet[["expo_se"]] <- exposure(diffnet, alt.graph="se", valued=TRUE)
 #'
-#' for (v in villages[-1]) {
-#'    diffnet_v <- brfarmersDiffNet[brfarmersDiffNet[["village"]] == v]
+#' for (v in cities[-1]) {
+#'    diffnet_v <- medInnovationsDiffNet[medInnovationsDiffNet[["city"]] == v]
 #'    diffnet_v[["expo_se"]] <- exposure(diffnet_v, alt.graph="se", valued=TRUE)
 #'    diffnet <- c(diffnet, diffnet_v)
 #' }
 #'
 #' # We can set the original order (just in case) of the data
-#' diffnet <- diffnet[brfarmersDiffNet$meta$ids]
+#' diffnet <- diffnet[medInnovationsDiffNet$meta$ids]
 #' diffnet
 #'
 #' # Checking everything is equal
-#' test <- summary(brfarmersDiffNet, no.print=TRUE) ==
+#' test <- summary(medInnovationsDiffNet, no.print=TRUE) ==
 #'    summary(diffnet, no.print=TRUE)
 #'
 #' stopifnot(all(test))
@@ -292,7 +291,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' # METHOD 2: Using the 'groupvar' argument
 #' # Further, we can compare this with using the groupvar
 #' diffnet[["expo_se2"]] <- exposure(diffnet, alt.graph="se",
-#'    groupvar="village", valued=TRUE)
+#'    groupvar="city", valued=TRUE)
 #'
 #' # These should be equivalent
 #' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se2", as.df=TRUE]]
@@ -300,11 +299,11 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' # METHOD 3: Computing exposure, rbind and then adding it to the diffnet object
 #' expo_se3 <- NULL
-#' for (v in unique(villages))
+#' for (v in unique(cities))
 #'    expo_se3 <- rbind(
 #'      expo_se3,
 #'      exposure(
-#'        diffnet[diffnet[["village"]] == v],
+#'        diffnet[diffnet[["city"]] == v],
 #'        alt.graph = "se", valued=TRUE
 #'      ))
 #'
@@ -317,6 +316,21 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' stopifnot(all(test))
 #'
 #'
+#' # METHOD 4: Using the groupvar in struct_equiv
+#' se <- struct_equiv(diffnet, groupvar="city")
+#' se <- lapply(se, "[[", "SE")
+#' se <- lapply(se, function(x) {
+#'    x <- 1/x
+#'    x[!is.finite(x)] <- 0
+#'    x
+#' })
+#'
+#' diffnet[["expo_se4"]] <- exposure(diffnet, alt.graph=se, valued=TRUE)
+#'
+#' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se4", as.df=TRUE]]
+#' stopifnot(all(test))
+#'
+#'
 #'
 #' @family statistics
 #' @keywords univar
@@ -326,40 +340,8 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
                      outgoing=getOption("diffnet.outgoing", TRUE),
                      valued=getOption("diffnet.valued", FALSE), normalized=TRUE,
-                     groupvar=NULL, ...) {
-
-  # Checking if there exists a group var
-  if (length(groupvar)) {
-    if (inherits(graph, "diffnet")) {
-
-      # Analyzing groups
-      groups <- graph[[groupvar]]
-      G      <- unique(groups)
-      out    <- NULL
-      for (g in G) {
-        # Getting indexes
-        index <- which(groups==g)
-
-        if (length(alt.graph) && is.list(alt.graph))
-          alt.g <- lapply(alt.graph, function(x) x[index,index,drop=FALSE])
-        else if (length(alt.graph) && alt.graph == "se")
-          alt.g <- alt.graph
-        else alt.g <- NULL
-
-        # Computing exposure
-        out <- rbind(out,
-          exposure(graph=graph[index], attrs=attrs[index], alt.graph=alt.g,
-                   outgoing = outgoing, valued = valued,normalized = normalized,
-                   ...))
-      }
-
-      # Sorting the data and returning
-      out <- out[graph$meta$ids,]
-      return(out)
-    } else {
-      stop("-groupvar- is currently only supported for diffnet objects.")
-    }
-  }
+                     groupvar=NULL,
+                     ...) {
 
   # Checking diffnet attributes
   if (length(attrs) == 1 && inherits(attrs, "character")) {
@@ -373,6 +355,10 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
     attrs <- if (inherits(attrs, "list")) do.call(cbind, attrs)
     else matrix(attrs, ncol=nslices(graph), nrow=nvertices(graph))
   }
+
+  # Checking groupvar
+  if (length(groupvar) == 1 && inherits(graph, "diffnet"))
+    groupvar <- graph[[groupvar]]
 
   # Checking cumadopt mat
   if (missing(cumadopt))
@@ -393,14 +379,12 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
     graph <- if (inherits(alt.graph, "character")) {
       if (alt.graph != "se") stop("Only character -alt.graph- value allowed is \"se\".")
 
-      se <- lapply(struct_equiv(graph,...), "[[", "SE")
+      se <- lapply(struct_equiv(graph, groupvar=groupvar, ...), "[[", "SE")
       se <- lapply(se, function(x) {
         x <- 1/x
         x[!is.finite(x)] <- 0
         x
         })
-      # }
-
 
       # Changing valued
       if (!valued) {
@@ -411,6 +395,8 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
       se
 
     } else alt.graph
+
+
   }
 
   switch (class(graph),

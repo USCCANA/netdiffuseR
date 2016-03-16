@@ -849,7 +849,8 @@ NULL
 #' Fake survey data
 #'
 #' This data frame is used to ilustrate some of the functions of the package,
-#' in particular, the \code{\link{survey_to_diffnet}} function.
+#' in particular, the \code{\link{survey_to_diffnet}} function. This dataset
+#' can be merged with the \code{\link{fakeEdgelist}}.
 #'
 #' @format A data frame with 9 rows and 9 variables
 #' \describe{
@@ -872,7 +873,8 @@ NULL
 #' Fake longitudinal survey data
 #'
 #' This data frame is used to ilustrate some of the functions of the package,
-#' in particular, the \code{\link{survey_to_diffnet}} function.
+#' in particular, the \code{\link{survey_to_diffnet}} function. This dataset
+#' can be merged with the \code{\link{fakeDynEdgelist}}.
 #'
 #' @format A data frame with 18 rows and 10 variables
 #' \describe{
@@ -892,3 +894,39 @@ NULL
 #' @family diffusion datasets
 #' @author Vega Yon
 "fakesurveyDyn"
+
+
+#' Fake dynamic edgelist
+#'
+#' A data frame used for examples in reading edgelist format networks. This
+#' edgelist can be merged with the dataset \code{\link{fakesurveyDyn}}.
+#'
+#' @format A data frame with 22 rows and 4 variables
+#' \describe{
+#'  \item{ego}{Nominating individual}
+#'  \item{alter}{Nominated individual}
+#'  \item{value}{Strength of the tie}
+#'  \item{time}{Integer with the time of the spell}
+#' }
+#'
+#' @source Generated for the package
+#' @family diffusion datasets
+#' @author Vega Yon
+"fakeDynEdgelist"
+
+#' Fake static edgelist
+#'
+#' A data frame used for examples in reading edgelist format networks. This
+#' edgelist can be merged with the dataset \code{\link{fakesurvey}}.
+#'
+#' @format A data frame with 11 rows and 3 variables
+#' \describe{
+#'  \item{ego}{Nominating individual}
+#'  \item{alter}{Nominated individual}
+#'  \item{value}{Strength of the tie}
+#' }
+#'
+#' @source Generated for the package
+#' @family diffusion datasets
+#' @author Vega Yon
+"fakeEdgelist"

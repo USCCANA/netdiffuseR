@@ -64,14 +64,16 @@
   inverse of the structural equivalence. When `valued=FALSE` the function will
   switch it to `TRUE` and warn the user.
   
-* New argument for the `exposure` function, `groupvar`. Valid only when `graph`
-  is a diffnet object, `groupvar` provides a convenient way of calculating
+* New argument for `struct_equiv` and `exposure`, `groupvar`. This new option
+  provides a convenient way of calculating structural equivalence and
   exposure clusterized by group. Specially useful when there are different
-  communities in a graph. See examples in the man.
+  communities in a graph. See examples in the manual.
   
 * `as_diffnet` now has an internal function, `check_as_diffnet_attrs`, to check
   input attributes dimensions and coerce them into proper class/structure. Valid
   attributes are now documented in the function's manual.
+  
+* New print method for `diffnet_se`, objects returned by `struct_equiv`.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

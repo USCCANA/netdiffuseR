@@ -11,7 +11,8 @@ edgelist_to_adjmat(edgelist, w = NULL, t0 = NULL, t1 = NULL, t = NULL,
   multiple = getOption("diffnet.multiple"), keep.isolates = TRUE,
   recode.ids = TRUE)
 
-adjmat_to_edgelist(graph, undirected = getOption("diffnet.undirected"))
+adjmat_to_edgelist(graph, undirected = getOption("diffnet.undirected", FALSE),
+  keep.isolates = getOption("diffnet.keep.isolates", TRUE))
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
