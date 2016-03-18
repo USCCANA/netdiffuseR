@@ -8,6 +8,7 @@
 \alias{diffnet.attrs<-}
 \alias{diffnet.toa}
 \alias{diffnet.toa<-}
+\alias{nodes}
 \alias{plot.diffnet}
 \alias{print.diffnet}
 \alias{summary.diffnet}
@@ -39,6 +40,8 @@ diffnet.toa(graph, i) <- value
 
 \method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
   skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
+
+nodes(graph)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -229,6 +232,8 @@ The replacement method, \code{diffnet.toa<-} used as \code{diffnet.toa(graph)<-.
 is the right way of modifying times of adoption as when doing so it
  performs several checks on the time ranges, and
 recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
+
+\code{nodes(graph)} is an alias for \code{graph$meta$ids}.
 }
 \examples{
 

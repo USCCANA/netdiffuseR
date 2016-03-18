@@ -150,6 +150,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// sparse_indexes
+arma::umat sparse_indexes(const arma::sp_mat& mat);
+RcppExport SEXP netdiffuseR_sparse_indexes(SEXP matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type mat(matSEXP);
+    __result = Rcpp::wrap(sparse_indexes(mat));
+    return __result;
+END_RCPP
+}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
@@ -164,8 +175,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // edges_coords
-NumericMatrix edges_coords(const arma::sp_mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary);
-RcppExport SEXP netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP) {
+NumericMatrix edges_coords(const arma::sp_mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary, NumericVector dev, NumericVector ran);
+RcppExport SEXP netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP, SEXP devSEXP, SEXP ranSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -176,7 +187,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::colvec& >::type vertex_cex(vertex_cexSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     Rcpp::traits::input_parameter< bool >::type no_contemporary(no_contemporarySEXP);
-    __result = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary));
+    Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
+    __result = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran));
     return __result;
 END_RCPP
 }

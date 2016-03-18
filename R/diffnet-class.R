@@ -13,7 +13,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
   nper <- meta$nper
 
   # In case of merging
-  iddf  <- data.frame(id  = meta$ids)
+  iddf  <- data.frame(id  = meta$ids, `_original_sort`=seq_len(n), check.names = FALSE )
   perdf <- data.frame(per = meta$pers)
 
   # Vertex Attrubutes  ---------------------------------------------------------
@@ -93,7 +93,12 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
               # Sorting names back
               colnames(x)[1] <- id.and.per.vars[1]
-              x <- x[,cnames]
+              x <- x[,c(cnames, "_original_sort")]
+
+              # Sorting back rows and removing sort column
+              x <- x[order(x[["_original_sort"]]),]
+              x[["_original_sort"]] <- NULL
+
               x
             }
 
@@ -158,12 +163,18 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
             # Sorting names (back)
             colnames(x)[1] <- id.and.per.vars[1]
-            x <- x[,cnames]
+            x <- x[,c(cnames, "_original_sort")]
+
+            # Sorting back rows and removing sort column
+            x <- x[order(x[["_original_sort"]]),]
+            x[["_original_sort"]] <- NULL
+
             x
           }
 
           dimnames(x) <- list(meta$ids, cnames)
-          x}
+          x
+          }
         )
 
         # Adding names
@@ -222,7 +233,11 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
           # Sorting names back
           colnames(attrs)[1] <- id.and.per.vars[1]
-          attrs <- attrs[,cnames]
+          attrs <- attrs[,c(cnames, "_original_sort")]
+
+          # Sorting back rows and removing sort column
+          attrs <- attrs[order(attrs[["_original_sort"]]),]
+          attrs[["_original_sort"]] <- NULL
         }
 
         # Checking colnames
@@ -270,7 +285,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
       cnames <- colnames(attrs)
       if (length(id.and.per.vars[2])) {
         attrs <- merge(perdf, attrs, by.x="per", by.y=id.and.per.vars[2],
-                       all.x=TRUE, all.y=FALSE)
+                       all.x=TRUE, all.y=FALSE, sort=TRUE)
         # Sorting names back
         colnames(attrs)[1] <- id.and.per.vars[1]
         attrs <- attrs[,cnames]
@@ -436,6 +451,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' is the right way of modifying times of adoption as when doing so it
 #'  performs several checks on the time ranges, and
 #' recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
+#'
+#' \code{nodes(graph)} is an alias for \code{graph$meta$ids}.
 #'
 #'
 #' @family diffnet methods

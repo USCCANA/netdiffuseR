@@ -3,6 +3,7 @@ using namespace Rcpp;
 
 // Returns a M x 2 matrix (M: # of non-zero elements) with the set of coordinates
 // of the non-zero elements of an sparse matrix. Indices are from 0 to (n-1)
+// [[Rcpp::export]]
 arma::umat sparse_indexes(const arma::sp_mat & mat) {
 
   int n  = mat.n_nonzero;
@@ -27,3 +28,4 @@ arma::umat sparse_indexes(const arma::sp_mat & mat) {
   // return indices;
   return indices;
 }
+

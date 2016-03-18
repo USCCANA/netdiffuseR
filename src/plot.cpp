@@ -120,6 +120,8 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' @param undirected Logical scalar. Whether the graph is undirected or not.
 //' @param no_contemporary Logical scalar. Whether to return (calcular) edges'
 //' coordiantes for vertices with the same time of adoption (see details).
+//' @param dev Numeric vector of size 2. Height and width of the device (see details).
+//' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
 //' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
 //' columns:
 //' \item{x0, y0}{Edge origin}
@@ -160,9 +162,45 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' }
 //' }
 //'
+//' The same process (with sign inverted) is applied to the edge starting piont.
 //' The resulting values, \eqn{x_1',y_1'}{x1',y1'} can be used with the function
 //' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
+//'
+//' The \code{dev} argument provides a reference to rescale the plot accordingly
+//' to the device, and former, considering the size of the margins as well. Internally,
+//' the function \code{netdiffuseR:::devadj} (only documented here) returns a
+//' vector of size 2 including the adjustment for the device.
+//'
+//' On the other hand, \code{ran} provides a reference for the adjustment
+//' according to the range of the data, this is \code{range(x)[2] - range(x)[1]}
+//' and \code{range(y)[2] - range(y)[1]} respectively.
+//'
 //' @keywords misc dplot
+//' @examples
+//' # --------------------------------------------------------------------------
+//' data(medInnovationsDiffNet)
+//' library(sna)
+//'
+//' # Computing coordinates
+//' coords <- sna::gplot(as.matrix(medInnovationsDiffNet$graph[[1]]))
+//'
+//' # Getting edge coordinates
+//' vcex <- rep(1.5, nnodes(medInnovationsDiffNet))
+//' ecoords <- edges_coords(
+//'   medInnovationsDiffNet$graph[[1]],
+//'   diffnet.toa(medInnovationsDiffNet),
+//'   x = coords[,1], y = coords[,2],
+//'   vertex_cex = vcex,
+//'   dev = netdiffuseR:::devadj()
+//'   )
+//'
+//' ecoords <- as.data.frame(ecoords)
+//'
+//' # Plotting
+//' symbols(coords[,1], coords[,2], circles=vcex,
+//'   inches=FALSE, xaxs="i", yaxs="i")
+//'
+//' with(ecoords, arrows(x0,y0,x1,y1, length=.1))
 //' @export
 // [[Rcpp::export]]
 NumericMatrix edges_coords(
@@ -172,7 +210,10 @@ NumericMatrix edges_coords(
     const arma::colvec & y,
     const arma::colvec & vertex_cex,
     bool undirected=true,
-    bool no_contemporary=true) {
+    bool no_contemporary=true,
+    NumericVector dev = NumericVector::create(),
+    NumericVector ran = NumericVector::create()
+) {
 
   int n = graph.n_cols;
 
@@ -197,14 +238,21 @@ NumericMatrix edges_coords(
   arma::colvec vertex_size(vertex_cex);
 
   // If yexpand is too small, just throw an error
-  double xmin = x.min();
-  double xmax = x.max();
-  double ymin = y.min();
-  double ymax = y.max();
+  if (ran.length() == 0) {
+    ran = NumericVector::create(2);
+    ran[0] = x.max() - x.min();
+    ran[1] = y.max() - y.min();
+  }
 
   // Expansion factor for y
   double yexpand = 1.0;
-  if ( (ymax - ymin) > 1e-5 ) yexpand = (ymax - ymin)/(xmax - xmin);
+  if ( ran[1] > 1e-5 ) yexpand = ran[1]/ran[0];
+
+  // Adjusting for device size
+  if (dev.length() == 0)
+    dev = NumericVector::create(2,1.0);
+
+  yexpand = yexpand * (dev[0]/dev[1]);
 
   for(int i=0;i<n;i++) {
 
@@ -229,14 +277,17 @@ NumericMatrix edges_coords(
       alpha.push_back(a);
 
       // Adding the xs and the ys
-      x0.push_back(x(i));
+      x0.push_back(x(i) - cos(a)*vertex_size(i));
       x1.push_back(x(j) + cos(a)*vertex_size(j));
 
-      y0.push_back(y(i));
-
       // The formula needs an extra help to figure out the ys
-      if (y(i) < y(j)) y1.push_back(y(j) - sin(a)*vertex_size(j)*yexpand);
-      else             y1.push_back(y(j) + sin(a)*vertex_size(j)*yexpand);
+      if (y(i) < y(j)) {
+        y1.push_back(y(j) - sin(a)*vertex_size(j)*yexpand);
+        y0.push_back(y(i) + sin(a)*vertex_size(i)*yexpand);
+      } else {
+        y1.push_back(y(j) + sin(a)*vertex_size(j)*yexpand);
+        y0.push_back(y(i) - sin(a)*vertex_size(i)*yexpand);
+      }
 
       // Now the sizes
       size0.push_back(vertex_size(i));
@@ -267,15 +318,23 @@ NumericMatrix edges_coords(
 
 /***R
 set.seed(123)
-graph <- rand_graph()
-toa <- sample(1:5, 10, TRUE)
-pos <- sna::gplot.layout.random(matrix(graph, ncol=10), NULL)
-cex <- seq(1,5,length.out = 10)
+graph <- rgraph_ba()
+toa <- sample(1:5, nnodes(graph), TRUE)
+pos <- sna::gplot.layout.random(as.matrix(graph), NULL)
+pos[,2] <- pos[,2]*20
+cex <- seq(1,3,length.out = nnodes(graph))/40
 
-arr <- as.data.frame(edges_coords(graph, toa, pos[,1], pos[,2], cex/20))
+# Adjusting by device size, mar and mai
+arr <- as.data.frame(edges_coords(graph, toa, pos[,1], pos[,2], cex,
+                                  dev = netdiffuseR:::devadj()))
 
-plot(pos, col="white", xlim= c(-2,2), ylim= c(-2,2))
+oldpar <- par(no.readonly = TRUE)
+
+#Fixing sizes and others
+# par(mai=rep(1, 4), mar=rep(4,4))
+plot(pos, col="white", xlim= range(pos[,1]), ylim= range(pos[,2]), xaxs="i", yaxs="i")
 with(arr, arrows(x0, y0, x1, y1))
-symbols(pos, circles=cex/20, add=TRUE, inches = FALSE, bg="lightblue")
+symbols(pos, circles=cex, add=TRUE, inches = FALSE, bg=rgb(.3,.3,.8,.2))
 text(pos[,1], pos[,2], labels = 1:10)
+# par(oldpar)
 */

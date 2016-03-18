@@ -288,7 +288,9 @@ diffnet_check_attr_class <- function(value, meta) {
 
   # Checking names
   if (name %in% colnames(x$vertex.static.attrs)) {
-    return(x$vertex.static.attrs[[name]])
+    x <- x$vertex.static.attrs[[name]]
+    if (as.df) x <- as.data.frame(setNames(list(x), list(name)))
+    return(x)
   } else if (name %in% colnames(x$vertex.dyn.attrs[[1]])) {
 
     x <- lapply(x$vertex.dyn.attrs, "[[", name)

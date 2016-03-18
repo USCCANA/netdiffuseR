@@ -7,10 +7,10 @@
 plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE),
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
-  ylab = "Threshold", vertex.cex = "degree", vertex.col = "blue",
-  vertex.label = NULL, vertex.lab.pos = 3, edge.width = 2,
-  edge.col = "gray", arrow.length = 0.2, include.grid = TRUE, bty = "n",
-  ...)
+  ylab = "Threshold", vertex.cex = "degree", vertex.col = rgb(0.3, 0.3,
+  0.8, 0.5), vertex.label = "", vertex.lab.pos = 3, edge.width = 2,
+  edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
+  include.grid = TRUE, bty = "n", vertex.bcol = vertex.col, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -49,6 +49,8 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE),
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
 
 \item{bty}{See \code{\link{par}}.}
+
+\item{vertex.bcol}{Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.}
 
 \item{...}{Additional arguments passed to \code{\link{plot}}.}
 }

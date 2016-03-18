@@ -143,8 +143,19 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros
 ``` r
 # Generating a random graph
 set.seed(123)
-diffnet <- rdiffnet(50, 20, rgraph.args = list(m=4))
+diffnet <- rdiffnet(500, 20, rgraph.args = list(m=4))
+diffnet
+```
 
+    ## Dynamic network of class -diffnet-
+    ##  # of nodes         : 500
+    ##  # of time periods  : 20 (1 - 20)
+    ##  Type               : directed
+    ##  Final prevalence   : 0.91
+    ##  Static attributes  : real_threshold (1)
+    ##  Dynamic attributes : -
+
+``` r
 # Threshold with fixed vertex size
 plot_threshold(diffnet)
 ```
@@ -204,3 +215,4 @@ To-do list
 -   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
 -   Implement the Bass model
 -   Include function to import survey data (as shown on the vignettes)
+-   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).

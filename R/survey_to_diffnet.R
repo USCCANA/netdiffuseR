@@ -242,34 +242,45 @@ survey_to_diffnet <- function(
   }
 
   # Used vertices
-  used.vertex <- data.frame(rownames(graph[[1]]))
-  colnames(used.vertex) <- idvar
+  used.vertex <- data.frame(rownames(graph[[1]]),
+                            `_original_sort` = seq_len(nnodes(graph)),
+                            check.names = FALSE)
+
+  colnames(used.vertex)[1] <- idvar
   for (i in 1:length(tran)) {
     vertex.attrs[[i]] <- merge(
       used.vertex, vertex.attrs[[i]],
+      by = idvar,
       all.x=TRUE, sort=FALSE)
 
+    # Sorting rows
+    vertex.attrs[[i]] <- vertex.attrs[[i]][
+      order(vertex.attrs[[i]][["_original_sort"]]),]
+
     # Removing the idvar
-    test <- colnames(vertex.attrs[[i]]) %in% idvar
+    test <- colnames(vertex.attrs[[i]]) %in% c(idvar, "_original_sort")
     vertex.attrs[[i]] <- vertex.attrs[[i]][,which(!test)]
   }
 
   # Times of adoption
   dat <- unique(dat[,c(idvar, toavar)])
-  toavar <- merge(used.vertex, dat, all.x=TRUE, sort=FALSE)[[toavar]]
+  toa <- merge(used.vertex, dat, by=idvar, all.x=TRUE, sort=FALSE)
 
-  if (length(toavar) != nrow(used.vertex))
+  # Sorting rows
+  toa <- toa[order(toa[["_original_sort"]]),][[toavar]]
+
+  if (length(toa) != nrow(used.vertex))
     stop("It seems that -toavar- is not time-invariant.")
 
   if (length(tran) == 1) {
     as_diffnet(
-      graph=graph, toa=toavar,
+      graph=graph, toa=toa,
       vertex.static.attrs = vertex.attrs[[1]],
       ...
     )
   } else {
     as_diffnet(
-      graph=graph, toa=toavar,
+      graph=graph, toa=toa,
       vertex.dyn.attrs = vertex.attrs,
       ...
     )
@@ -409,8 +420,10 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
   }
 
   # Step 2: Getting the ids and checking everything is in order ----------------
-  used.vertex           <- data.frame(rownames(adjmat[[1]]))
-  colnames(used.vertex) <- idvar
+  used.vertex           <- data.frame(rownames(adjmat[[1]]),
+                                      `_original_sort` = seq_len(nnodes(adjmat)),
+                                      check.names = FALSE)
+  colnames(used.vertex)[1] <- idvar
 
   # All in the edgelist?
   dat.idvar <- unique(dat[[idvar]])
@@ -428,25 +441,38 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
     for (i in tran) {
       vertex.attrs[[i]] <- merge(
         used.vertex,
-        dat[is.na(dat[[timevar]]) | (dat[[timevar]] == i),], all.x=TRUE, sort=FALSE)
+        dat[is.na(dat[[timevar]]) | (dat[[timevar]] == i),],
+        by = idvar,
+        all.x=TRUE, sort=FALSE)
+
+      # Sorting back
+      vertex.attrs[[i]] <- vertex.attrs[[i]][
+        order(vertex.attrs[[i]][["_original_sort"]]),]
 
       # Removing the id var, the per var and the toa var
-      test <- colnames(vertex.attrs[[i]]) %in% varlist
+      test <- colnames(vertex.attrs[[i]]) %in% c(varlist, "_original_sort")
       vertex.attrs[[i]] <- vertex.attrs[[i]][,which(!test)]
     }
   } else {
     # Creating data.frame
     vertex.attrs <- merge(used.vertex, dat, by=idvar, all.x=TRUE, sort=FALSE)
 
+    # Sorting back
+    vertex.attrs <- vertex.attrs[
+      order(vertex.attrs[["_original_sort"]]),]
+
     # Removing the idvar
-    test <- colnames(vertex.attrs) %in% varlist
+    test <- colnames(vertex.attrs) %in% c(varlist, "_original_sort")
     vertex.attrs <- vertex.attrs[,which(!test)]
   }
 
   # Times of Adoption vector
   toa <- unique(dat[,c(idvar, toavar)])
   toa <- merge(used.vertex, toa, by=idvar, all.x=TRUE,
-               all.y=FALSE, sort=FALSE)[[toavar]]
+               all.y=FALSE, sort=FALSE)
+
+  # Sorting
+  toa <- toa[order(toa[["_original_sort"]]),][[toavar]]
 
   # It should be of the same length as the used vertex
   if (length(toa) != nrow(used.vertex))

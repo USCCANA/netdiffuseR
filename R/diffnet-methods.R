@@ -65,9 +65,14 @@ print.diffnet <- function(x, ...) {
     nda <- ncol(vertex.dyn.attrs[[1]])
     if (nda) vda <- paste0(vda," (",nda, ")")
 
+    # Getting nodes labels
+    nodesl <- paste0(meta$n," (",
+                     paste(head(meta$ids, 8), collapse=", "),
+                     ifelse(meta$n>8, ", ...", "") ,")")
+
     cat(
     "Dynamic network of class -diffnet-",
-    paste(" # of nodes         :", meta$n),
+    paste(" # of nodes         :", nodesl ),
     paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
     paste(" Final prevalence   :",
@@ -420,6 +425,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
 #' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices.
 #' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
+#' @param vertex.bcol Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.
 #' @param edge.width Numeric. Width of the edges.
 #' @param edge.col Character. Color of the edges.
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
@@ -454,9 +460,10 @@ plot_threshold <- function(
   graph, expo, toa, t0=min(toa, na.rm = TRUE),
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
-  edge.width = 2, edge.col = "gray", arrow.length=.20,
-  include.grid = TRUE, bty="n", ...
+  vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5), vertex.label="", vertex.lab.pos=3,
+  edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
+  include.grid = TRUE, bty="n",
+  vertex.bcol=vertex.col, ...
 ) {
 
   if (missing(expo))
@@ -470,11 +477,11 @@ plot_threshold <- function(
     array = plot_threshold.array(
       graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, ...),
+      arrow.length, include.grid, bty, vertex.bcol, ...),
     list = plot_threshold.list(
       graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, ...),
+      arrow.length, include.grid, bty, vertex.bcol,...),
     diffnet = {
       # If graph is diffnet, then we should do something different (because the
       # first toa may not be the firts one as toa may be stacked to the right.
@@ -485,9 +492,20 @@ plot_threshold <- function(
       graph$graph, expo,
       graph$toa, t0=graph$meta$pers[1], graph$meta$undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, ...)
+      arrow.length, include.grid, bty, vertex.bcol, ...)
       },
     stopifnot_graph(graph)
+  )
+}
+
+# Function to retrieve the right adjustment
+devadj <- function() {
+  mar <- par("mar")
+  mai <- par("mai")
+  par("din") -
+  c(
+    sum(mai[c(2,4)]), # + sum(mar[c(2,4)]),
+    sum(mai[c(1,3)]) #+ sum(mar[c(1,3)])
   )
 }
 
@@ -503,12 +521,12 @@ plot_threshold.array <- function(graph, ...) {
 # @export
 # @rdname plot_threshold
 plot_threshold.list <- function(
-  graph, expo=NULL, toa, t0=min(toa, na.rm=TRUE),
-  undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
-  main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex="degree", vertex.col="blue", vertex.label=NULL, vertex.lab.pos=3,
-  edge.width = 2, edge.col = "gray", arrow.length=.20,
-  include.grid = TRUE, bty="n", ...) {
+  graph, expo, toa, t0,
+  undirected, no.contemporary,
+  main, xlab, ylab,
+  vertex.cex, vertex.col, vertex.label, vertex.lab.pos,
+  edge.width, edge.col, arrow.length,
+  include.grid, bty, vertex.bcol,...) {
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -549,7 +567,8 @@ plot_threshold.list <- function(
 
   # Plotting
   # oldpar <- par(no.readonly = TRUE)
-  plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main, ...)
+  plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main,
+       xaxs="i", yaxs="i",...)
 
   # Should there be a grid??
   if (include.grid) grid()
@@ -561,14 +580,15 @@ plot_threshold.list <- function(
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
-  edges <- netdiffuseR::edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected, no.contemporary)
+  edges <- edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected, no.contemporary,
+                        dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
   with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
                                 length=arrow.length))
 
   # Drawing the vertices and its labels
-  symbols(jit, y, circles=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
+  symbols(jit, y, fg=vertex.bcol, circles=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
@@ -1119,4 +1139,11 @@ nslices <- function(graph) {
     list      = length(graph),
     stopifnot_graph(graph)
   )
+}
+
+#' @export
+#' @rdname as_diffnet
+nodes <- function(graph) {
+  if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
+  graph$meta$ids
 }

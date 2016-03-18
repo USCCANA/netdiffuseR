@@ -41,6 +41,10 @@ moran_cpp <- function(x, w) {
     .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
 }
 
+sparse_indexes <- function(mat) {
+    .Call('netdiffuseR_sparse_indexes', PACKAGE = 'netdiffuseR', mat)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.
@@ -87,6 +91,8 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' @param undirected Logical scalar. Whether the graph is undirected or not.
 #' @param no_contemporary Logical scalar. Whether to return (calcular) edges'
 #' coordiantes for vertices with the same time of adoption (see details).
+#' @param dev Numeric vector of size 2. Height and width of the device (see details).
+#' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
 #' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
 #' columns:
 #' \item{x0, y0}{Edge origin}
@@ -127,12 +133,48 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' }
 #' }
 #'
+#' The same process (with sign inverted) is applied to the edge starting piont.
 #' The resulting values, \eqn{x_1',y_1'}{x1',y1'} can be used with the function
 #' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
+#'
+#' The \code{dev} argument provides a reference to rescale the plot accordingly
+#' to the device, and former, considering the size of the margins as well. Internally,
+#' the function \code{netdiffuseR:::devadj} (only documented here) returns a
+#' vector of size 2 including the adjustment for the device.
+#'
+#' On the other hand, \code{ran} provides a reference for the adjustment
+#' according to the range of the data, this is \code{range(x)[2] - range(x)[1]}
+#' and \code{range(y)[2] - range(y)[1]} respectively.
+#'
 #' @keywords misc dplot
+#' @examples
+#' # --------------------------------------------------------------------------
+#' data(medInnovationsDiffNet)
+#' library(sna)
+#'
+#' # Computing coordinates
+#' coords <- sna::gplot(as.matrix(medInnovationsDiffNet$graph[[1]]))
+#'
+#' # Getting edge coordinates
+#' vcex <- rep(1.5, nnodes(medInnovationsDiffNet))
+#' ecoords <- edges_coords(
+#'   medInnovationsDiffNet$graph[[1]],
+#'   diffnet.toa(medInnovationsDiffNet),
+#'   x = coords[,1], y = coords[,2],
+#'   vertex_cex = vcex,
+#'   dev = netdiffuseR:::devadj()
+#'   )
+#'
+#' ecoords <- as.data.frame(ecoords)
+#'
+#' # Plotting
+#' symbols(coords[,1], coords[,2], circles=vcex,
+#'   inches=FALSE, xaxs="i", yaxs="i")
+#'
+#' with(ecoords, arrows(x0,y0,x1,y1, length=.1))
 #' @export
-edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE) {
-    .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary)
+edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE, dev = as.numeric( c()), ran = as.numeric( c())) {
+    .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran)
 }
 
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
