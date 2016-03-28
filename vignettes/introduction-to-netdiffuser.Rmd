@@ -22,15 +22,24 @@ In this example we compare 3 different simulations that use the same baseline (s
 
 ```{r Simulating diffnets}
 library(netdiffuseR)
-s <- 113
+s <- 11532
 set.seed(s)
-diffnet_ran <- rdiffnet(200, 20, "random", seed.p.adopt = .05, rgraph.args = list(m=4))
+diffnet_ran <- rdiffnet(200, 20, "random", seed.p.adopt = .1,
+                        seed.graph = "small-world",
+                        rgraph.args = list(undirected=FALSE, k=4, p=.5),
+                        threshold.dist = function(x) 0.3)
 
 set.seed(s)
-diffnet_cen <- rdiffnet(200, 20, "central", seed.p.adopt = .05, rgraph.args = list(m=4))
+diffnet_cen <- rdiffnet(200, 20, "central", seed.p.adopt = .1,
+                        seed.graph = "small-world",
+                        rgraph.args = list(undirected=FALSE, k=4, p=.5),
+                        threshold.dist = function(x) 0.3)
 
 set.seed(s)
-diffnet_mar <- rdiffnet(200, 20, "marginal", seed.p.adopt = .05, rgraph.args = list(m=4))
+diffnet_mar <- rdiffnet(200, 20, "marginal", seed.p.adopt = .1,
+                        seed.graph = "small-world",
+                        rgraph.args = list(undirected=FALSE, k=4, p=.5),
+                        threshold.dist = function(x) 0.3)
 
 ```
 
@@ -56,14 +65,14 @@ oldpar <- par(no.readonly = TRUE)
 par(mfcol=c(1,3), mai = c(0, 0, 1, 0), mar = rep(1, 4) +  0.1)
 set.seed(s);plot(diffnet_ran, main="Random seed")
 set.seed(s);plot(diffnet_cen, main="Central seed")
-set.seed(s);plot(diffnet_mar, main="Marginal seed")
+coords <- set.seed(s);plot(diffnet_mar, main="Marginal seed")
 par(oldpar)
 ```
 
 An interesting way of visualizing the diffusion process is using the `plot_diffnet` function. In this case, instead of plotting all the 20 periods (networks), we only focus on a subset (henceforth we use the `slices` argument).
 
 ```{r}
-plot_diffnet(diffnet_ran, slices = c(1,4,8,12,16,20))
+plot_diffnet(diffnet_ran, slices = c(1,4,8,12,16,20), coords=coords)
 ```
 
 
@@ -106,5 +115,7 @@ plot_infectsuscep(diffnet_mar, bins=15, K=3,
 
 
 
-
+```{r Threshold}
+plot_threshold(diffnet_ran)
+```
 

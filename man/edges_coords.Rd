@@ -29,14 +29,12 @@ coordiantes for vertices with the same time of adoption (see details).}
 \item{ran}{Numeric vector of size 2. Range of the x and y axis (see details).}
 }
 \value{
-A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
+A numeric matrix of size \eqn{m\times 5}{m * 5} with the following
 columns:
 \item{x0, y0}{Edge origin}
 \item{x1, y1}{Edge target}
-\item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
 \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
 of radians}
-\item{dist}{Relavtide distance between ego and alters' center.}
 With \eqn{m} as the number of resulting edges.
 }
 \description{

@@ -52,7 +52,7 @@ Visualize adopters and cumulative adopters
 }
 \examples{
 # Generating a random diffnet -----------------------------------------------
-set.seed(8321)
+set.seed(821)
 diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 
 plot_adopters(diffnet)

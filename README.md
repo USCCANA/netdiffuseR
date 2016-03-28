@@ -82,7 +82,7 @@ diffnet
 ```
 
     ## Dynamic network of class -diffnet-
-    ##  # of nodes         : 100
+    ##  # of nodes         : 100 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
     ##  Final prevalence   : 0.95
@@ -143,12 +143,15 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros
 ``` r
 # Generating a random graph
 set.seed(123)
-diffnet <- rdiffnet(500, 20, rgraph.args = list(m=4))
+diffnet <- rdiffnet(500, 20,
+                    seed.nodes = "random",
+                    rgraph.args = list(m=3),
+                    threshold.dist = function(x) runif(1, .3, .7))
 diffnet
 ```
 
     ## Dynamic network of class -diffnet-
-    ##  # of nodes         : 500
+    ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
     ##  Final prevalence   : 0.91
@@ -157,16 +160,13 @@ diffnet
 
 ``` r
 # Threshold with fixed vertex size
-plot_threshold(diffnet)
+plot_threshold(diffnet, vertex.cex = .25)
 ```
 
 ![](README_files/figure-markdown_github/plot_threshold-1.png)<!-- -->
 
 ``` r
-# Threshold with vertex size = avg degree
-cex <- rowMeans(dgr(diffnet))
-cex <- (cex - min(cex) + 1)/(max(cex) - min(cex) + 1)/2
-plot_threshold(diffnet, vertex.cex = cex)
+plot_threshold(diffnet, vertex.cex = "degree")
 ```
 
 ![](README_files/figure-markdown_github/plot_threshold-2.png)<!-- -->
@@ -190,17 +190,8 @@ hazard_rate(diffnet)
 ### Diffusion process
 
 ``` r
-plot_diffnet(diffnet, vertex.cex = 2, slices=c(1,7,15,20))
+plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
-
-    ## Loading required package: SparseM
-
-    ## 
-    ## Attaching package: 'SparseM'
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     backsolve
 
 ![](README_files/figure-markdown_github/plot_diffnet-1.png)<!-- -->
 

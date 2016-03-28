@@ -77,7 +77,7 @@
 rdiffnet <- function(n, t,
                      seed.nodes="random", seed.p.adopt=0.05,
                      seed.graph="scale-free", rgraph.args=list(),
-                     rewire=TRUE, rewire.args=list(p=.1, undirected=TRUE),
+                     rewire=TRUE, rewire.args=list(p=.1, undirected=FALSE),
                      threshold.dist=function(x) runif(1),
                      exposure.args=list(
                        outgoing=TRUE, valued=getOption("diffnet.valued", FALSE),
@@ -85,7 +85,7 @@ rdiffnet <- function(n, t,
                        )
                      ) {
 
-  # Step 0.0: Creating the network seed
+  # Step 0.0: Creating the network seed ----------------------------------------
   if (seed.graph == "scale-free") {
     if (!length(rgraph.args$m0))
       rgraph.args$t <- n-1L
@@ -96,12 +96,16 @@ rdiffnet <- function(n, t,
 
     sgraph <- do.call(rgraph_er, rgraph.args)
   } else if (seed.graph == "small-world") {
+
     rgraph.args$n <- n
-    rgraph.args$k <- 2L
-    rgraph.args$p <- .1
+    if (!length(rgraph.args$k)) rgraph.args$k <- 2L
+    if (!length(rgraph.args$p)) rgraph.args$p <- .1
 
     sgraph <- do.call(rgraph_ws, rgraph.args)
-  }
+  } else
+    stop("Invalid -seed.graph-. It should be either ",
+         "'scale-free\', \'bernoulli\' or \'small-world\'.")
+
 
   diag(sgraph) <- 0
 
@@ -109,7 +113,7 @@ rdiffnet <- function(n, t,
   if (n*seed.p.adopt < 1) warning("Set of initial adopters set to 1.")
   n0 <- max(1, n*seed.p.adopt)
 
-  # Step 0.1: Setting the seed nodes
+  # Step 0.1: Setting the seed nodes -------------------------------------------
   cumadopt <- matrix(0L, ncol=t, nrow=n)
   toa   <- matrix(NA, ncol=1, nrow= n)
   if (seed.nodes %in% c("central","marginal")) {
@@ -127,7 +131,7 @@ rdiffnet <- function(n, t,
   } else
     stop("Invalid -seed.nodes- option. It must be either \"central\", \"marginal\", or \"random\"")
 
-  # Step 1.0: Rewiring or not
+  # Step 1.0: Rewiring or not --------------------------------------------------
   graph      <- vector("list", t)
   graph[[1L]] <- sgraph
   if (rewire) {
@@ -141,7 +145,7 @@ rdiffnet <- function(n, t,
 
   names(graph) <- 1L:t
 
-  # Step 3.0: Thresholds
+  # Step 3.0: Thresholds -------------------------------------------------------
   thr <- sapply(1:n, threshold.dist)
 
   for (i in 2:t) {

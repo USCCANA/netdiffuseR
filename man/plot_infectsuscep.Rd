@@ -5,7 +5,7 @@
 \title{Plot distribution of infect/suscep}
 \usage{
 plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, bins = 50, nlevels = round(bins/2),
+  r = 0.5, expdiscount = FALSE, bins = 20, nlevels = round(bins/2),
   logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",

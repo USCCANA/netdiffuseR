@@ -57,6 +57,6 @@ Vega Yon
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
-  \code{\link{rgraph_ws}}
+  \code{\link{rgraph_ws}}, \code{\link{ring_lattice}}
 }
 

@@ -45,6 +45,10 @@ sparse_indexes <- function(mat) {
     .Call('netdiffuseR_sparse_indexes', PACKAGE = 'netdiffuseR', mat)
 }
 
+angle <- function(x0, y0, x1, y1) {
+    .Call('netdiffuseR_angle', PACKAGE = 'netdiffuseR', x0, y0, x1, y1)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.
@@ -93,14 +97,12 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' coordiantes for vertices with the same time of adoption (see details).
 #' @param dev Numeric vector of size 2. Height and width of the device (see details).
 #' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
-#' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
+#' @return A numeric matrix of size \eqn{m\times 5}{m * 5} with the following
 #' columns:
 #' \item{x0, y0}{Edge origin}
 #' \item{x1, y1}{Edge target}
-#' \item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
 #' \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
 #' of radians}
-#' \item{dist}{Relavtide distance between ego and alters' center.}
 #' With \eqn{m} as the number of resulting edges.
 #' @details
 #'
@@ -177,6 +179,10 @@ edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_con
     .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran)
 }
 
+edges_arrow <- function(x0, y0, x1, y1, height, width, beta = 1.5707963267949, dev = as.numeric( c()), ran = as.numeric( c())) {
+    .Call('netdiffuseR_edges_arrow', PACKAGE = 'netdiffuseR', x0, y0, x1, y1, height, width, beta, dev, ran)
+}
+
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t)
 }
@@ -198,16 +204,17 @@ rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weigh
 #' Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
 #' as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 #' @param n Integer scalar. Size of the graph.
-#' @param k Integer scalar. Degree of each vertex.
-#' @details Since the created graph is undirected, the degree of each node always
+#' @param k Integer scalar. Out-degree of each vertex.
+#' @details when \code{undirected=TRUE}, the degree of each node always
 #' even. So if \code{k=3}, then the degree will be \code{2}.
 #' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
 #' \eqn{n\times n}{n * n}.
 #' @references Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
 #' “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
 #' @export
-ring_lattice <- function(n, k) {
-    .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k)
+#' @family simulation functions
+ring_lattice <- function(n, k, undirected = FALSE) {
+    .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k, undirected)
 }
 
 rewire_graph_cpp <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {

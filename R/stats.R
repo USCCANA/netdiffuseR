@@ -34,7 +34,9 @@
 #' any(d_valued!=d_unvalued)
 #'
 #' @author Vega Yon
-dgr <- function(graph, cmode="degree", undirected=getOption("diffnet.undirected", FALSE), self=getOption("diffnet.self",FALSE),
+dgr <- function(graph, cmode="degree",
+                undirected=getOption("diffnet.undirected", FALSE),
+                self=getOption("diffnet.self",FALSE),
                 valued=getOption("diffnet.valued", FALSE)) {
 
   switch (class(graph),
@@ -686,5 +688,9 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
   toa <- toa - t0 + 1L
   output <- threshold_cpp(obj, toa, include_censored)
   dimnames(output) <- list(rownames(obj), "threshold")
+
+  # Correcting weird cases
+  if (!include_censored) output[toa==1] <- NA
+  output[is.na(toa)] <- NA
   output
 }

@@ -3,14 +3,6 @@
 
  created: nov 2, 2015
  copyright: MIT + LICENCE file
-
- This file contains the following functions:
- - adopt_mat_cpp: Creates an adoption matrix of size nxT
- - edgelist_to_adjmat_cpp: Creates an adjacency matrix from an edgelist
- - adjmat_to_edgelist_cpp: The converse of the previous function
- - toa_mat_cpp: Creates a Time of Adoption Matrix of size nxT
- - isolated_cpp: Identifies the isolated nodes in a network
- - drop_isolated_cpp: Removes isolated networks from an adjmat
 *******************************************************************************/
 
 
@@ -28,7 +20,7 @@ arma::sp_mat rgraph_er_cpp(
   GetRNGstate();
   for(int i=0;i<n;i++) {
     // Checling user interrup
-    if (i % 1000 == 0)
+    if (i % 200 == 0)
       Rcpp::checkUserInterrupt();
 
     /* Setting the length of the subloop acordingly to type of graph */

@@ -75,6 +75,16 @@
   
 * New print method for `diffnet_se`, objects returned by `struct_equiv`.
 
+* New arguments for `edges_coords`: `dev` and `ran` allow including device +
+  margins aspec ratio and plotting area y/x limits for improved aspect ratio
+  computation.
+
+* New internal function `edges_arrow`: Computes the coordinates of a 4 points
+  polygon allowing to draw pretty arrows considering aspec ratio of device,
+  margins and y/x.
+  
+* New function `diffnet_to_igraph`.
+
 # netdiffuseR 1.16.2 (CRAN release)
 
 * First CRAN version.

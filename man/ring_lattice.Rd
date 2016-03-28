@@ -4,12 +4,12 @@
 \alias{ring_lattice}
 \title{Ring lattice graph}
 \usage{
-ring_lattice(n, k)
+ring_lattice(n, k, undirected = FALSE)
 }
 \arguments{
 \item{n}{Integer scalar. Size of the graph.}
 
-\item{k}{Integer scalar. Degree of each vertex.}
+\item{k}{Integer scalar. Out-degree of each vertex.}
 }
 \value{
 A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
@@ -20,11 +20,16 @@ Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{
 as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 }
 \details{
-Since the created graph is undirected, the degree of each node always
+when \code{undirected=TRUE}, the degree of each node always
 even. So if \code{k=3}, then the degree will be \code{2}.
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
 “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
+}
+\seealso{
+Other simulation functions: \code{\link{rdiffnet}},
+  \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
+  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}}
 }
 

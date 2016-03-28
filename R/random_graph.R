@@ -81,7 +81,8 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 
 #' Barabasi-Albert model
 #'
-#' Generates a scale-free random graph.
+#' Generates a scale-free random graph based on Bollabas et al. (2001), also know as
+#' \emph{Linearized Chord Diagram} (LCD) which has nice mathematical propoerties.
 #'
 #' @param m0 Integer scalar. Number of initial vertices in the graph.
 #' @param m Integer scalar. Number of new edges per vertex added.
@@ -99,7 +100,16 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' @concept Random graph
 #' @keywords distribution
 #' @details
-#' Creates an undirected random graph of size \code{t + m0}.
+#' Based on Ballobás et al. (2001) creates a directed random graph of size
+#' \code{t + m0}. A big difference with B-A model
+#' is that this allows for loops (self/auto edges) and further multiple links,
+#' nevertheless, as \eqn{t} increases, the number of such cases reduces.
+#'
+#' By default, the degree of the first \code{m0} vertices is set to be 2 (loops).
+#' When \code{m>1}, as described in the paper, each new link from the new vertex
+#' is added one at a time
+#' \dQuote{counting \sQuote{outward half} of the edge being added as already contributing to the degrees}.
+#'
 #' @examples
 #' # Using another graph as a base graph
 #' graph <- rgraph_ba()
@@ -108,6 +118,10 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' graph <- rgraph_ba(graph=graph)
 #' @export
 #' @references
+#' Bollobás, B´., Riordan, O., Spencer, J., & Tusnády, G. (2001). The degree
+#' sequence of a scale-free random graph process. Random Structures & Algorithms,
+#' 18(3), 279–290. \url{http://doi.org/10.1002/rsa.1009}
+#'
 #' Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
 #' Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
 #'
@@ -249,6 +263,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' @param both.ends Logical scalar. When \code{TRUE} rewires both ends.
 #' @param self Logical scalar. When \code{TRUE}, allows loops (self edges).
 #' @param multiple Logical scalar. When \code{TRUE} allows multiple edges.
+#' @param undirected Logical scalar. Passed to \code{\link{ring_lattice}}
 #' @return A random graph of size \eqn{n\times n}{n*n} following the small-world
 #' model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 #' @family simulation functions
@@ -261,12 +276,13 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
 #' SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
 #' @author Vega Yon
-rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE) {
-  out <- rewire_graph_cpp(ring_lattice(n, k), p, both.ends,
+rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE,
+                      undirected=TRUE) {
+  out <- rewire_graph_cpp(ring_lattice(n, k, undirected), p, both.ends,
                    self, multiple, TRUE)
 
   # WS model is directed
-  attr(out, "undirected") <- FALSE
+  attr(out, "undirected") <- undirected
   out
 }
 

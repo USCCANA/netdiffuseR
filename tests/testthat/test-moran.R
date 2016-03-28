@@ -12,7 +12,8 @@ test_that("Comparing against ape::Moran.I", {
       moran(x,w), ape::Moran.I(x, w)$observed, scale=1, tolerance=getOption("diffnet.tol")
     )
   }
-})
+}
+)
 
 # library(ape)
 # microbenchmark::microbenchmark(

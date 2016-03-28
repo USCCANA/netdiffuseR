@@ -4,7 +4,7 @@
 \alias{plot_threshold}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE),
+plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
   ylab = "Threshold", vertex.cex = "degree", vertex.col = rgb(0.3, 0.3,
@@ -20,6 +20,8 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE),
 \item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
 
 \item{t0}{Integer scalar. Passed to \code{\link{threshold}}.}
+
+\item{attrs}{Passed to \code{\link{exposure}} (via threshold).}
 
 \item{undirected}{Logical scalar.}
 

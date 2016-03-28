@@ -7,16 +7,16 @@
 \title{Structure dependence test}
 \usage{
 struct_test(graph, statistic, R, rewire.args = list(p = c(1, rep(0.3,
-  nslices(graph) - 1)), undirected = getOption("diffnet.undirected"), both.ends
-  = TRUE, copy.first = TRUE), ...)
+  nslices(graph) - 1)), undirected = getOption("diffnet.undirected", FALSE),
+  both.ends = FALSE, copy.first = TRUE), ...)
 
 \method{print}{diffnet_struct_test}(x, ...)
 
 \method{hist}{diffnet_struct_test}(x,
-  main = "Distribution of Statistic on\\nrewired network",
-  xlab = expression(Values ~ of ~ t), breaks = 20, annotated = TRUE,
-  b0 = expression(atop(plain("") \%up\% plain("")), t[0]),
-  b = expression(atop(plain("") \%up\% plain("")), t[]), ...)
+  main = "Empirical Distribution of Statistic", xlab = expression(Values ~
+  of ~ t), breaks = 20, annotated = TRUE, b0 = expression(atop(plain("")
+  \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
+  t[]), ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}

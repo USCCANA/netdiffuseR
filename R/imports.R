@@ -4,6 +4,9 @@ NULL
 #' @importFrom sna geodist gplot as.sociomatrix.sna
 NULL
 
+#' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr
+NULL
+
 #' @useDynLib netdiffuseR
 NULL
 

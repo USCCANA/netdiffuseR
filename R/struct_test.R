@@ -85,10 +85,10 @@ struct_test <- function(
   statistic,
   R,
   rewire.args=list(
-    p = c(1, rep(.3, nslices(graph) - 1)),
-    undirected=getOption("diffnet.undirected"),
-    both.ends=TRUE,
-    copy.first=TRUE
+    p          = c(1, rep(.3, nslices(graph) - 1)),
+    undirected = getOption("diffnet.undirected", FALSE),
+    both.ends  = FALSE,
+    copy.first = TRUE
     ),
   ...
   ) {
@@ -138,11 +138,12 @@ print.diffnet_struct_test <- function(x, ...) {
   with(x,  {
     tmean <- colMeans(boot$t, na.rm = TRUE)
 
-    cat("Network Rewiring graph (",nrow(boot$t)," simulations)\n",
+    cat("Structure dependence test\n",
+        "# Simulations     : ", formatC(nrow(boot$t), digits = 0, format = "f", big.mark = ","),"\n",
         "# nodes           : ", x$graph$meta$n,"\n",
         "# of time periods : ", x$graph$meta$nper,"\n",
         paste(rep("-",80), collapse=""),"\n",
-        " H0: t - t0 = 0 (No structure dependency)\n",
+        " H0: t - t0 = 0 (no structure dependency)\n",
         "   t0 (observed) = ", t0, "\n",
         "   t (simulated) = ", mean_t, "\n",
         "   p-value = ", sprintf("%.5f", p.value), sep="")
@@ -156,7 +157,7 @@ print.diffnet_struct_test <- function(x, ...) {
 #' @rdname struct_test
 hist.diffnet_struct_test <- function(
   x,
-  main="Distribution of Statistic on\nrewired network",
+  main="Empirical Distribution of Statistic",
   xlab=expression(Values~of~t),
   breaks=20,
   annotated=TRUE,

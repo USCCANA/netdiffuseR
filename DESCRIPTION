@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 1.16.3.18
-Date: 2016-03-18
+Version: 1.16.3.27
+Date: 2016-03-27
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
@@ -30,13 +30,13 @@ Imports:
     graphics,
     stats,
     utils,
-    boot
+    boot,
+    igraph
 Suggests:
     testthat,
     knitr,
     ape,
     RSiena,
-    igraph,
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
@@ -56,6 +56,7 @@ Collate:
     'diffnet-indexing.R'
     'diffnet-methods.R'
     'egonets.R'
+    'igraph.R'
     'infect_suscept.R'
     'misc.R'
     'moran.R'

@@ -439,19 +439,22 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
 
   if (length(timevar)) {
     for (i in tran) {
-      vertex.attrs[[i]] <- merge(
+      # In order to access the slices, i do so using a character
+      ichar <- as.character(i)
+
+      vertex.attrs[[ichar]] <- merge(
         used.vertex,
         dat[is.na(dat[[timevar]]) | (dat[[timevar]] == i),],
         by = idvar,
         all.x=TRUE, sort=FALSE)
 
       # Sorting back
-      vertex.attrs[[i]] <- vertex.attrs[[i]][
-        order(vertex.attrs[[i]][["_original_sort"]]),]
+      vertex.attrs[[ichar]] <- vertex.attrs[[ichar]][
+        order(vertex.attrs[[ichar]][["_original_sort"]]),]
 
       # Removing the id var, the per var and the toa var
-      test <- colnames(vertex.attrs[[i]]) %in% c(varlist, "_original_sort")
-      vertex.attrs[[i]] <- vertex.attrs[[i]][,which(!test)]
+      test <- colnames(vertex.attrs[[ichar]]) %in% c(varlist, "_original_sort")
+      vertex.attrs[[ichar]] <- vertex.attrs[[ichar]][,which(!test)]
     }
   } else {
     # Creating data.frame

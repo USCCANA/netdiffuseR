@@ -31,7 +31,7 @@ plot.diffnet <- function(
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(x$graph[[t]], undirected = x$meta$undirected)
+      vertex.cex <- dgr(x$graph[[t]], cmode=vertex.cex, undirected = x$meta$undirected)
       vertex.cex <- sqrt(vertex.cex)
       r <- range(vertex.cex)
 
@@ -110,8 +110,9 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 
   # Computing density
   d <- unlist(lapply(object$graph[slices], function(x) {
-    nelements <- length(x@x)
-    x <-nelements/(meta$n * (meta$n-1))
+    nlinks(x)/nnodes(x)/(nnodes(x)-1)
+    # nelements <- length(x@x)
+    # x <-nelements/(meta$n * (meta$n-1))
   }))
 
   # Computing moran's I
@@ -205,6 +206,7 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 #' @param mar Numeric vector of size 4. To be passed to \code{\link{par}.}
 #' @param gmode Character scalar. See \code{\link[sna:gplot]{gplot}.}
 #' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}
+#' @param coords Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.
 #' @param lgd List of arguments to be passed to \code{\link{legend}}.
 #'
 #' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
@@ -264,19 +266,19 @@ plot_diffnet <- function(
   mai=c(0,0,1,0),
   mar=rep(1,4) + 0.1, gmode=ifelse(undirected, "graph", "digraph"),
   lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
-             bty="n", cex=1.2, horiz=TRUE), ...
+             bty="n", cex=1.2, horiz=TRUE), coords=NULL,...
 ) {
   switch (class(graph),
     array = plot_diffnet.array(
       graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, ...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
     list = plot_diffnet.list(
       graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, ...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
     diffnet = plot_diffnet.list(
       graph$graph, graph$cumadopt, slices, displaylabels, graph$meta$undirected,
       vertex.col, vertex.cex, label=graph$meta$ids,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd,...),
+      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
     stopifnot_graph(graph)
   )
 }
@@ -305,7 +307,8 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
                          mar=rep(1,4) + 0.1,
                          gmode=ifelse(undirected, "graph", "digraph"),
                          lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
-                                    bty="n", cex=1.2, horiz=TRUE), ...) {
+                                    bty="n", cex=1.2, horiz=TRUE),
+                         coords=NULL, ...) {
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
@@ -324,12 +327,12 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 
   # In order to be using SNA functions, we need to coerse the graph
   # into an object from SparseM
-  coords <- fun(methods::as(cumgraph, "matrix.csc"), layout.par)
+  if (!length(coords)) coords <- fun(methods::as(cumgraph, "matrix.csc"), layout.par)
 
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(cumgraph, undirected=undirected)
+      vertex.cex <- dgr(cumgraph, cmode = vertex.cex, undirected=undirected)
       vertex.cex <- sqrt(vertex.cex)
       r <- range(vertex.cex)
       vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)*2
@@ -415,6 +418,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param expo \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param t0 Integer scalar. Passed to \code{\link{threshold}}.
+#' @param attrs Passed to \code{\link{exposure}} (via threshold).
 #' @param undirected Logical scalar.
 #' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
 #' \code{toa} won't be plotted.
@@ -457,7 +461,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @export
 #' @author Vega Yon
 plot_threshold <- function(
-  graph, expo, toa, t0=min(toa, na.rm = TRUE),
+  graph, expo, toa, t0=min(toa, na.rm = TRUE), attrs=NULL,
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
   vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5), vertex.label="", vertex.lab.pos=3,
@@ -475,11 +479,11 @@ plot_threshold <- function(
 
   switch (class(graph),
     array = plot_threshold.array(
-      graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, vertex.bcol, ...),
     list = plot_threshold.list(
-      graph, expo, toa, t0, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, vertex.bcol,...),
     diffnet = {
@@ -490,7 +494,7 @@ plot_threshold <- function(
 
       plot_threshold.list(
       graph$graph, expo,
-      graph$toa, t0=graph$meta$pers[1], graph$meta$undirected, no.contemporary, main, xlab, ylab,
+      graph$toa, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
       arrow.length, include.grid, bty, vertex.bcol, ...)
       },
@@ -521,7 +525,7 @@ plot_threshold.array <- function(graph, ...) {
 # @export
 # @rdname plot_threshold
 plot_threshold.list <- function(
-  graph, expo, toa, t0,
+  graph, expo, toa, t0, attrs,
   undirected, no.contemporary,
   main, xlab, ylab,
   vertex.cex, vertex.col, vertex.label, vertex.lab.pos,
@@ -532,13 +536,14 @@ plot_threshold.list <- function(
   n <- nrow(graph[[1]])
 
   # Step 1: Creating the cumulative graph
-  cumgraph <- Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
+  # Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
+  cumgraph <- methods::new("dgCMatrix", Dim=c(n,n), p=rep(0L, n+1L))
   for(i in 1:t) {
     cumgraph <- cumgraph + graph[[i]]
   }
 
   # Creating the pos vector
-  y <- threshold(expo, toa, t0)
+  y <- threshold(expo, toa, t0, attrs=attrs)
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, amount = .25)
@@ -552,7 +557,7 @@ plot_threshold.list <- function(
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character")) {
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(cumgraph, undirected = undirected)
+      vertex.cex <- dgr(cumgraph, cmode=vertex.cex, undirected = undirected)
       vertex.cex <- sqrt(vertex.cex)
       r <- range(vertex.cex)
 
@@ -584,8 +589,19 @@ plot_threshold.list <- function(
                         dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
-  with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
-                                length=arrow.length))
+  # with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
+  #                               length=arrow.length))
+
+  with(edges, segments(x0, y0, x1, y1, lwd = edge.width, col = edge.col))
+
+  e_arrows <- apply(edges, 1, function(x) {
+      y <- edges_arrow(x["x0"], x["y0"], x["x1"], x["y1"],
+                   width=arrow.length,
+                   height=arrow.length,
+                   beta=pi*(2/3),
+                   dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
+      polygon(y[,1], y[,2], col=edge.col, border=NA)
+    })
 
   # Drawing the vertices and its labels
   symbols(jit, y, fg=vertex.bcol, circles=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
@@ -658,7 +674,7 @@ plot_threshold.list <- function(
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 #' @author Vega Yon
 plot_infectsuscep <- function(
-  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=50,nlevels=round(bins/2),
+  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=20,nlevels=round(bins/2),
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
   xlab="Infectiousness of ego", ylab="Susceptibility of ego",
   sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
@@ -798,7 +814,7 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
 #' @family visualizations
 #' @examples
 #' # Generating a random diffnet -----------------------------------------------
-#' set.seed(8321)
+#' set.seed(821)
 #' diffnet <- rdiffnet(20, 5, seed.graph="small-world", seed.nodes="central")
 #'
 #' plot_adopters(diffnet)
@@ -1017,8 +1033,8 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @family diffnet methods
 #' @examples
 #' # Creating a random diffnet object
-#' set.seed(8411)
-#' mydiffnet <- rdiffnet(20, 4)
+#' set.seed(8441)
+#' mydiffnet <- rdiffnet(20, 5)
 #'
 #' # Coercing it into an array
 #' as.array(mydiffnet)
@@ -1119,7 +1135,7 @@ nedges <- function(graph) {
       if (!length(tnames)) names(x) <- 1:length(x)
       x
       },
-    diffnet   = lapply(graph$graph, function(x) length(x@i)),
+    diffnet   = lapply(graph$graph, function(x) sum(x@x != 0)),
     stopifnot_graph(graph)
   )
 }

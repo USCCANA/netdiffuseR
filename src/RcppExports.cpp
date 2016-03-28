@@ -161,6 +161,20 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// angle
+double angle(double x0, double y0, double x1, double y1);
+RcppExport SEXP netdiffuseR_angle(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    Rcpp::traits::input_parameter< double >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< double >::type y1(y1SEXP);
+    __result = Rcpp::wrap(angle(x0, y0, x1, y1));
+    return __result;
+END_RCPP
+}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
@@ -190,6 +204,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
     __result = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran));
+    return __result;
+END_RCPP
+}
+// edges_arrow
+arma::mat edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran);
+RcppExport SEXP netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const double& >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< const double& >::type y0(y0SEXP);
+    Rcpp::traits::input_parameter< const double& >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< const double& >::type y1(y1SEXP);
+    Rcpp::traits::input_parameter< const double& >::type height(heightSEXP);
+    Rcpp::traits::input_parameter< const double& >::type width(widthSEXP);
+    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
+    __result = Rcpp::wrap(edges_arrow(x0, y0, x1, y1, height, width, beta, dev, ran));
     return __result;
 END_RCPP
 }
@@ -252,14 +285,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // ring_lattice
-arma::sp_mat ring_lattice(int n, int k);
-RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP) {
+arma::sp_mat ring_lattice(int n, int k, bool undirected);
+RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    __result = Rcpp::wrap(ring_lattice(n, k));
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    __result = Rcpp::wrap(ring_lattice(n, k, undirected));
     return __result;
 END_RCPP
 }

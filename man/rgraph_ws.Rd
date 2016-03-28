@@ -5,7 +5,8 @@
 \alias{small-world}
 \title{Watts-Strogatz model}
 \usage{
-rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE)
+rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
+  undirected = TRUE)
 }
 \arguments{
 \item{n}{Integer scalar. Set the size of the graph.}
@@ -19,6 +20,8 @@ rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE)
 \item{self}{Logical scalar. When \code{TRUE}, allows loops (self edges).}
 
 \item{multiple}{Logical scalar. When \code{TRUE} allows multiple edges.}
+
+\item{undirected}{Logical scalar. Passed to \code{\link{ring_lattice}}}
 }
 \value{
 A random graph of size \eqn{n\times n}{n*n} following the small-world
@@ -40,6 +43,6 @@ SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},
   \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}
+  \code{\link{rgraph_er}}, \code{\link{ring_lattice}}
 }
 

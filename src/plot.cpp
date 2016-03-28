@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "netdiffuser_extra.h"
 using namespace Rcpp;
 
 arma::vec seq_cpp(double from, double to, int lengthout) {
@@ -122,14 +123,12 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' coordiantes for vertices with the same time of adoption (see details).
 //' @param dev Numeric vector of size 2. Height and width of the device (see details).
 //' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
-//' @return A numeric matrix of size \eqn{m\times 8}{m * 8} with the following
+//' @return A numeric matrix of size \eqn{m\times 5}{m * 5} with the following
 //' columns:
 //' \item{x0, y0}{Edge origin}
 //' \item{x1, y1}{Edge target}
-//' \item{size0, size1}{Size of the vertices of ego and alter in terms of the x-axis}
 //' \item{alpha}{Relative angle between \code{(x0,y0)} and \code{(x1,y1)} in terms
 //' of radians}
-//' \item{dist}{Relavtide distance between ego and alters' center.}
 //' With \eqn{m} as the number of resulting edges.
 //' @details
 //'
@@ -221,18 +220,11 @@ NumericMatrix edges_coords(
   // - x0 and y0
   // - x1 and y1
   // - alpha
-  // - dist
-  // - size0 and size1
-  // - mutual
   std::vector< double > x0;
   std::vector< double > y0;
   std::vector< double > x1;
   std::vector< double > y1;
   std::vector< double > alpha;
-  std::vector< double > dist;
-  std::vector< double > size0;
-  std::vector< double > size1;
-  // std::vector< int > mutual;
 
   // Rescaling the vertex sizes
   arma::colvec vertex_size(vertex_cex);
@@ -254,69 +246,51 @@ NumericMatrix edges_coords(
 
   yexpand = yexpand * (dev[0]/dev[1]);
 
-  for(int i=0;i<n;i++) {
+  // The the filled elements of the graph
+  arma::umat indexes = sparse_indexes(graph);
 
-    // Verifying undirected or not
-    int m=n;
-    if (undirected) m=i;
+  // for(int i=0;i<n;i++) {
+  for(int I=0;I<indexes.n_rows;I++) {
 
-    for(int j=0;j<m;j++) {
-      // And edge will be drawn iff, there's a link, !contmporary and
-      // the distance is != 0
-      if (!graph(i,j)) continue;
-      if (no_contemporary && (toa(i)==toa(j)) ) continue;
+    int i = indexes.at(I,0);
+    int j = indexes.at(I,1);
 
-      // Euclidean distance
-      double d = pow( pow(x(i) - x(j), 2.0) + pow( (y(i) - y(j))/yexpand, 2.0) , 0.5 );
-      if (d < 1e-15) continue;
+    // Checking conditions
+    if (undirected && (i < j)) continue;
+    if (no_contemporary && (toa(i)==toa(j)) ) continue;
 
-      dist.push_back(d);
+    // Computing angle
+    double a = angle(x(i), y(i)/yexpand, x(j), y(j)/yexpand);
+    alpha.push_back(a);
 
-      // Computing the elevation degree
-      double a = acos( (x[i] - x[j])/d );
-      alpha.push_back(a);
+    // Adding the xs and the ys
+    x0.push_back(x.at(i) + cos(a)*vertex_size.at(i));
+    x1.push_back(x.at(j) - cos(a)*vertex_size.at(j));
 
-      // Adding the xs and the ys
-      x0.push_back(x(i) - cos(a)*vertex_size(i));
-      x1.push_back(x(j) + cos(a)*vertex_size(j));
-
-      // The formula needs an extra help to figure out the ys
-      if (y(i) < y(j)) {
-        y1.push_back(y(j) - sin(a)*vertex_size(j)*yexpand);
-        y0.push_back(y(i) + sin(a)*vertex_size(i)*yexpand);
-      } else {
-        y1.push_back(y(j) + sin(a)*vertex_size(j)*yexpand);
-        y0.push_back(y(i) - sin(a)*vertex_size(i)*yexpand);
-      }
-
-      // Now the sizes
-      size0.push_back(vertex_size(i));
-      size1.push_back(vertex_size(j));
-    }
+    // The formula needs an extra help to figure out the ys
+    y0.push_back(y.at(i) + sin(a)*vertex_size.at(i)*yexpand);
+    y1.push_back(y.at(j) - sin(a)*vertex_size.at(j)*yexpand);
   }
 
   // Building up the output
   int e = x0.size();
-  NumericMatrix out(e,8);
+  NumericMatrix out(e,5);
   for(int i=0; i<e; i++) {
     out(i,0) = x0[i];
     out(i,1) = y0[i];
     out(i,2) = x1[i];
     out(i,3) = y1[i];
-    out(i,4) = size0[i];
-    out(i,5) = size1[i];
-    out(i,6) = alpha[i];
-    out(i,7) = dist[i];
+    out(i,4) = alpha[i];
   }
 
-  colnames(out) = CharacterVector::create("x0", "y0", "x1", "y1", "size0",
-           "size1", "alpha", "dist");
+  colnames(out) = CharacterVector::create("x0", "y0", "x1", "y1", "alpha");
 
   return out;
 
 }
 
 /***R
+library(netdiffuseR)
 set.seed(123)
 graph <- rgraph_ba()
 toa <- sample(1:5, nnodes(graph), TRUE)
@@ -328,13 +302,102 @@ cex <- seq(1,3,length.out = nnodes(graph))/40
 arr <- as.data.frame(edges_coords(graph, toa, pos[,1], pos[,2], cex,
                                   dev = netdiffuseR:::devadj()))
 
-oldpar <- par(no.readonly = TRUE)
-
 #Fixing sizes and others
-# par(mai=rep(1, 4), mar=rep(4,4))
-plot(pos, col="white", xlim= range(pos[,1]), ylim= range(pos[,2]), xaxs="i", yaxs="i")
+xran <- range(pos[,1])
+yran <- range(pos[,2])
+plot(pos, col="white", xlim= xran, ylim= yran,
+     xaxs="i", yaxs="i",xaxt="n", yaxt="n")
+
+yran <- pretty(seq(yran[1], yran[2], length.out = 10), n=10)
+xran <- pretty(seq(xran[1], xran[2], length.out = 10), n=10)
+axis(1, at =xran)
+axis(2, at =yran)
+
 with(arr, arrows(x0, y0, x1, y1))
-symbols(pos, circles=cex, add=TRUE, inches = FALSE, bg=rgb(.3,.3,.8,.2))
-text(pos[,1], pos[,2], labels = 1:10)
-# par(oldpar)
+symbols(pos[,1], pos[,2], circles=cex, add=TRUE, inches = FALSE, bg=rgb(.3,.3,.8,.2),
+        xaxs="i", yaxs="i")
+text(pos[,1], pos[,2], labels = 1:11)
+
+# Taking a look at one of these
+pos[c(4,11),]
+
+a <- atan((-3.4510269 - -0.8881612)/(0.8045981-0.3114116))
+*/
+
+
+// [[Rcpp::export]]
+arma::mat edges_arrow(
+    const double & x0,
+    const double & y0,
+    const double & x1,
+    const double & y1,
+    const double & height,
+    const double & width,
+    const double beta = 1.5707963267949, // PI/2
+    NumericVector dev = NumericVector::create(),
+    NumericVector ran = NumericVector::create()
+) {
+  // Creating output
+  arma::mat coords(4,2);
+
+  // If yexpand is too small, just throw an error ------------------------------
+  if (ran.length() == 0) {
+    ran = NumericVector::create(2);
+    ran[0] = (x1 > x0 ? x1 - x0: x0 -x1);
+    ran[1] = (y1 > y0 ? y1 - y0: y0 -y1);
+  }
+
+  // Expansion factor for y
+  double yexpand = 1.0;
+  if ( ran[1] > 1e-5 ) yexpand = ran[1]/ran[0];
+
+  // Adjusting for device size
+  if (dev.length() == 0)
+    dev = NumericVector::create(2,1.0);
+
+  yexpand = yexpand * (dev[0]/dev[1]);
+
+  // Computing angle and adjusting for sign
+  double alpha = angle(x0, y0/yexpand, x1, y1/yexpand);
+
+  // Filling coords ------------------------------------------------------------
+  coords.at(0,0) = x1;
+  coords.at(0,1) = y1;
+
+  // Left
+  coords.at(1,0) = x1 - cos(alpha)*height + cos(beta+alpha)*width;
+  coords.at(1,1) = y1 - (sin(alpha)*height - sin(beta+alpha)*width)*yexpand;
+
+  // center
+  coords.at(2,0) = x1 - cos(alpha)*height;
+  coords.at(2,1) = y1 - sin(alpha)*height*yexpand;
+
+  // Right
+  coords.at(3,0) = x1 - cos(alpha)*height + cos(-beta+alpha)*width;
+  coords.at(3,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
+
+  return coords;
+}
+
+/***R
+# rm(list = ls())
+
+X <- c(-9,-9)
+ran <- X*1.1
+h <- 1
+w <- .5
+beta <- pi/1.5
+
+pol2 <- vector_polygon(0, 0, X[1], X[2], h, w, dev=netdiffuseR:::devadj(), beta = beta)
+
+plot(pol2[,1], pol2[,2], xlim=ran, ylim=ran, col="white")
+polygon(pol2[,1], pol2[,2], col=rgb(.5,.5,.9,.5))
+
+text(pol2[,1], pol2[,2], text=1:3)
+segments(0,0,X[1],X[1])
+
+library(netdiffuseR)
+data("medInnovationsDiffNet")
+x <- plot_threshold(medInnovationsDiffNet)
+
 */

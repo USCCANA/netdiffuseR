@@ -11,7 +11,7 @@ plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
   main = "Network in period \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
   0.1, gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x =
   "center", legend = c("Non adopters", "New adopters", "Adopters"), pch = 21,
-  bty = "n", cex = 1.2, horiz = TRUE), ...)
+  bty = "n", cex = 1.2, horiz = TRUE), coords = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -48,6 +48,8 @@ the graph are used.}
 \item{gmode}{Character scalar. See \code{\link[sna:gplot]{gplot}.}}
 
 \item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
+
+\item{coords}{Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.}
 
 \item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}}
 }

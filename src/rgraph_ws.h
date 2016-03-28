@@ -7,7 +7,7 @@
 #define NETDIFFUSER_RGRAPH_WS_
 using namespace Rcpp;
 
-arma::sp_mat ring_lattice(int n, int k);
+arma::sp_mat ring_lattice(int n, int k, bool undirected=true);
 
 arma::sp_mat rewire_graph_cpp(
     const arma::sp_mat & graph, double p,

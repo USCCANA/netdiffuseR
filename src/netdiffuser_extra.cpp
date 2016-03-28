@@ -29,3 +29,20 @@ arma::umat sparse_indexes(const arma::sp_mat & mat) {
   return indices;
 }
 
+//   I  ) (x(i) < x(j)) & (y(i) < y(j)) = + Works fine iff
+//   II ) (x(i) > x(j)) & (y(i) < y(j)) = - must add pi
+//   III) (x(i) > x(j)) & (y(i) > y(j)) = +
+//   IV ) (x(i) < x(j)) & (y(i) > y(j)) = - (works ok)
+// [[Rcpp::export]]
+double angle(double x0, double y0, double x1, double y1) {
+  // Computing distances and angles
+  double xdist = x1 - x0;
+  double ydist = y1 - y0;
+  double alpha = atan(ydist/(xdist)+1e-15);
+
+  // Setting cases
+  if      ((xdist < 0) && (ydist > 0)) return(alpha + PI);
+  else if ((xdist < 0) && (ydist < 0)) return(alpha + PI);
+
+  return(alpha);
+}

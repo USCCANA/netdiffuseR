@@ -27,7 +27,7 @@ test_that("Barabasi-Albert model: methods", {
 
   # Diffnet
   toa <- sample(c(1:3,NA),10, TRUE)
-  diffnet <- as_diffnet(graph, toa)
+  diffnet <- as_diffnet(graph, toa, t0=1, t1=3)
 
   # Array
   graphar <- lapply(graph, as.matrix)
@@ -76,7 +76,7 @@ test_that("Rewiring methods", {
   names(graphls) <- 2001:2003
   toa <- sample(c(2001:2003, NA), 10, TRUE)
 
-  graphdn <- as_diffnet(graphls, toa)$graph
+  graphdn <- as_diffnet(graphls, toa, t0=2001, t1=2003)$graph
   graphar <- lapply(graphls, as.matrix)
   graphar <- array(unlist(graphar), dim=c(10,10,3),
                    dimnames = list(1:10, 1:10, 2001:2003))

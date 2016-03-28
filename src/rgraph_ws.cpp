@@ -1,4 +1,4 @@
-// [[Rcpp::depends(RcppArmadillo)]]
+ // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 #include "netdiffuser_extra.h"
 using namespace Rcpp;
@@ -8,35 +8,37 @@ using namespace Rcpp;
 //' Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
 //' as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 //' @param n Integer scalar. Size of the graph.
-//' @param k Integer scalar. Degree of each vertex.
-//' @details Since the created graph is undirected, the degree of each node always
+//' @param k Integer scalar. Out-degree of each vertex.
+//' @param undirected Logical scalar. Whether the graph is undirected or not.
+//' @details when \code{undirected=TRUE}, the degree of each node always
 //' even. So if \code{k=3}, then the degree will be \code{2}.
 //' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
 //' \eqn{n\times n}{n * n}.
 //' @references Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
 //' “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
 //' @export
+//' @family simulation functions
 // [[Rcpp::export]]
-arma::sp_mat ring_lattice(int n, int k) {
+arma::sp_mat ring_lattice(int n, int k, bool undirected=false) {
 
   if ((n-1) < k)
     stop("k can be at most n - 1");
 
   arma::sp_mat graph(n,n);
 
-  // Connecting to k next & previous neighbour
+  // Adjusting k
+  if (undirected)
+    if (k>1) k = (int) floor((double) k/2.0);
+
+  // Connecting to k/2 next & previous neighbour
   for (int i=0;i<n;i++) {
-    for (int j=1;j<=k/2;j++) {
+    for (int j=1;j<=k;j++) {
       // Next neighbor
       int l = i+j;
       if (l >= n) l = l - n;
-      graph.at(i,l) += 1.0;
 
-      // Previous neighbor
-      l = i-j;
-      if (l < 0) l = l + n;
       graph.at(i,l) += 1.0;
-      // graph.aAbstract Submission is now closed. Thank you!t(l,i) += 1.0;
+      if (undirected) graph.at(l,i) += 1.0;
     }
   }
   return graph;
@@ -72,12 +74,15 @@ arma::sp_mat rewire_graph_cpp(
   // Getting the indexes
   arma::umat indexes = sparse_indexes(graph);
 
+
+  GetRNGstate();
   for (int i= 0;i<indexes.n_rows; i++) {
 
     // Checking user interrupt
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
+    // Checking whether to change it or not
     if (unif_rand() > p) continue;
 
     // Indexes
@@ -85,7 +90,7 @@ arma::sp_mat rewire_graph_cpp(
     int k = indexes.at(i, 1);
 
     // Since it is undirected...
-    if (undirected && (j > k) ) continue;
+    if (undirected && (j < k) ) continue;
 
     // New end(s)
     int newk, newj;
@@ -105,14 +110,17 @@ arma::sp_mat rewire_graph_cpp(
       // In the case that the individual actually is connected to everyone and
       // multiple is not allowed, this is needed to break out the loop
       if (picked.at(newk)) {
-        if (++wcount >= n*2) break;
+        if (++wcount >= n*n) break;
         continue;
       } else picked.at(newk) = 1;
 
-      if (undirected && newj > newk) continue;
+      if (undirected && (newj < newk)) continue;
 
+      // Self edges are not allowed, again, must check this on the new graph
       if (!self && newj == newk) continue;
-      if (!multiple && (graph.at(newj, newk) != 0)) continue;
+
+      // Multiple edges are not allowed. Must check this on the new graph
+      if (!multiple && (newgraph.at(newj, newk) != 0)) continue;
 
       conditions = false;
     }
@@ -127,6 +135,8 @@ arma::sp_mat rewire_graph_cpp(
     if (undirected) newgraph.at(newk,newj) += w;
 
   }
+  PutRNGstate();
+
   return newgraph;
 }
 
@@ -137,8 +147,8 @@ rgraph_ws <- function(n,k,p, both_ends=FALSE, self=FALSE, multiple=FALSE) {
                    self, multiple, true)
 }
 
-x <- ring_lattice(10, 2)
+x <- ring_lattice(14, 2)
 gplot(as.matrix(x), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
-gplot(as.matrix(rewire_graph_cpp(x, .1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
-gplot(as.matrix(rewire_graph_cpp(x, 1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
+gplot(as.matrix(netdiffuseR:::rewire_graph_cpp(x, .1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
+gplot(as.matrix(netdiffuseR:::rewire_graph_cpp(x, 1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
 */

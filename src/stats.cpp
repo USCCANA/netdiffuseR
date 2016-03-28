@@ -51,7 +51,10 @@ arma::colvec degree_cpp(
   // Checking if self or not
   arma::mat loop = arma::conv_to<arma::mat>::from(adjmat.diag());
   if (!self) {
-    if (cmode == 2) degree = degree - loop*2;
+    if (cmode == 2) {
+      if (!undirected) degree = degree - loop*2;
+      else             degree = degree - loop;
+    }
     else degree = degree - loop;
   }
 

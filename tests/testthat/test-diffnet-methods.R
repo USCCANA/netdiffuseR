@@ -13,7 +13,7 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   graphar <- unlist(lapply(graph, as.matrix))
   graphar <- array(graphar, dim = c(11,11,3))
 
-  diffnet <- as_diffnet(graph, toa)
+  diffnet <- as_diffnet(graph, toa, undirected = FALSE)
 
   # List
   coords <- plot_diffnet(graph, toa_mat(toa)$cumadopt)

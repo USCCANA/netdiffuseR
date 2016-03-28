@@ -24,10 +24,19 @@ The resulting graph will have \code{graph$meta$undirected = FALSE} if it is of
 class \code{diffnet} and \code{attr(graph, "undirected")=FALSE} otherwise.
 }
 \description{
-Generates a scale-free random graph.
+Generates a scale-free random graph based on Bollabas et al. (2001), also know as
+\emph{Linearized Chord Diagram} (LCD) which has nice mathematical propoerties.
 }
 \details{
-Creates an undirected random graph of size \code{t + m0}.
+Based on Ballobás et al. (2001) creates a directed random graph of size
+\code{t + m0}. A big difference with B-A model
+is that this allows for loops (self/auto edges) and further multiple links,
+nevertheless, as \eqn{t} increases, the number of such cases reduces.
+
+By default, the degree of the first \code{m0} vertices is set to be 2 (loops).
+When \code{m>1}, as described in the paper, each new link from the new vertex
+is added one at a time
+\dQuote{counting \sQuote{outward half} of the edge being added as already contributing to the degrees}.
 }
 \examples{
 # Using another graph as a base graph
@@ -40,6 +49,10 @@ graph <- rgraph_ba(graph=graph)
 Vega Yon
 }
 \references{
+Bollobás, B´., Riordan, O., Spencer, J., & Tusnády, G. (2001). The degree
+sequence of a scale-free random graph process. Random Structures & Algorithms,
+18(3), 279–290. \url{http://doi.org/10.1002/rsa.1009}
+
 Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
 Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
 
@@ -49,7 +62,7 @@ Retrieved from \url{http://barabasi.com/book/network-science}
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},
   \code{\link{rewire_graph}}, \code{\link{rgraph_er}},
-  \code{\link{rgraph_ws}}
+  \code{\link{rgraph_ws}}, \code{\link{ring_lattice}}
 }
 \concept{
 Scale-free random graph
