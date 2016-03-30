@@ -438,7 +438,7 @@ exposure.array <- function(
   if (!length(tn)) tn <- 1:ncol(cumadopt)
 
   # Calculating the exposure, and asigning names
-  output <- exposure_cpp(graphl, cumadopt, attrs, outgoing, valued, normalized)
+  output <- exposure_for(graphl, cumadopt, attrs, outgoing, valued, normalized)
   dimnames(output) <- list(rn, tn)
   output
 }
@@ -466,7 +466,7 @@ exposure.list <- function(
     graph[which(test)] <- lapply(graph[which(test)],
                                  function(x) methods::as(x, "dgCMatrix"))
 
-  output <- exposure_cpp(graph, cumadopt, attrs, outgoing, valued, normalized)
+  output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized)
 
   rn <- rownames(cumadopt)
   if (!length(rn)) rn <- 1:nrow(cumadopt)
@@ -476,6 +476,14 @@ exposure.list <- function(
 
   dimnames(output) <- list(rn, tn)
   output
+}
+
+exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
+  out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
+  for (i in 1:nslices(graph))
+    out[,i]<-exposure_cpp(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+                 outgoing, valued, normalized)
+  return(out)
 }
 
 #' Cummulative count of adopters

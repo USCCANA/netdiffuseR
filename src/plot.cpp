@@ -88,7 +88,7 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100
 
 // arma::mat grid_dist(const arma::vec & xran, const arma::vec & yran, const & arma::vec)
 
-/***R
+/** *R
 library(microbenchmark)
 microbenchmark(
   seq_cpp(0,1,100),
@@ -289,7 +289,7 @@ NumericMatrix edges_coords(
 
 }
 
-/***R
+/** *R
 library(netdiffuseR)
 set.seed(123)
 graph <- rgraph_ba()
@@ -338,7 +338,7 @@ arma::mat edges_arrow(
     NumericVector ran = NumericVector::create()
 ) {
   // Creating output
-  arma::mat coords(4,2);
+  arma::mat coords(6,2);
 
   // If yexpand is too small, just throw an error ------------------------------
   if (ran.length() == 0) {
@@ -372,14 +372,22 @@ arma::mat edges_arrow(
   coords.at(2,0) = x1 - cos(alpha)*height;
   coords.at(2,1) = y1 - sin(alpha)*height*yexpand;
 
+  // Bottom
+  coords.at(3,0) = x0;
+  coords.at(3,1) = y0;
+
+  // Back to the center
+  coords.at(4,0) = coords.at(2,0);
+  coords.at(4,1) = coords.at(2,1);
+
   // Right
-  coords.at(3,0) = x1 - cos(alpha)*height + cos(-beta+alpha)*width;
-  coords.at(3,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
+  coords.at(5,0) = x1 - cos(alpha)*height + cos(-beta+alpha)*width;
+  coords.at(5,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
 
   return coords;
 }
 
-/***R
+/** *R
 # rm(list = ls())
 
 X <- c(-9,-9)
@@ -399,5 +407,94 @@ segments(0,0,X[1],X[1])
 library(netdiffuseR)
 data("medInnovationsDiffNet")
 x <- plot_threshold(medInnovationsDiffNet)
+
+*/
+
+
+// [[Rcpp::export]]
+List vertices_coords(
+    const arma::colvec & x,
+    const arma::colvec & y,
+    const arma::colvec & size,
+    const arma::colvec & nsides,
+    const arma::colvec & rot,
+    NumericVector dev = NumericVector::create(),
+    NumericVector ran = NumericVector::create()
+) {
+
+  int n = x.n_rows;
+
+  // Checking sizes
+  if (n != y.n_rows) stop("-x- and -y- lengths do not coincide.");
+  if (n != size.n_rows) stop("-x- and -size- lengths do not coincide.");
+  if (n != nsides.n_rows) stop("-x- and -nsides- lengths do not coincide.");
+  if (n != rot.n_rows) stop("-x- and -rot- lengths do not coincide.");
+
+  List out(n);
+
+  // If yexpand is too small, just throw an error
+  if (ran.length() == 0) {
+    ran = NumericVector::create(2);
+    ran[0] = x.max() - x.min();
+    ran[1] = y.max() - y.min();
+  }
+
+  // Expansion factor for y
+  double yexpand = 1.0;
+  if ( ran[1] > 1e-5 ) yexpand = ran[1]/ran[0];
+
+  // Adjusting for device size
+  if (dev.length() == 0)
+    dev = NumericVector::create(2,1.0);
+
+  yexpand = yexpand * (dev[0]/dev[1]);
+
+  for (int i=0;i<n;i++) {
+    // Getting inner degrees
+    double alpha = PI - ((nsides(i) - 2.0)*PI)/nsides(i);
+    double beta  = (PI - 2.0*PI/nsides(i))/2.0;
+
+    // Getting step size
+    double size_adj = 2.0*cos(beta)*size(i);
+
+    // Suboutput and first coordinate
+    arma::mat coords(nsides(i),2);
+    coords(0,0) = x(i) + size(i)*cos(beta + PI + rot(i));
+    coords(0,1) = y(i) + size(i)*sin(beta + PI + rot(i))*yexpand;
+
+    double ALPHA = rot(i);
+    for (int j=1; j<nsides(i); j++) {
+      coords(j,0) = coords(j-1,0) + size_adj*cos(ALPHA);
+      coords(j,1) = coords(j-1,1) + size_adj*sin(ALPHA)*yexpand;
+      ALPHA += alpha;
+    }
+
+    // Assigning element
+    out[i] = coords;
+  }
+
+  return out;
+}
+
+/* **R
+
+# Parameters
+n   <- c(3,4,5,6)
+d   <- rep(.5, 4)
+rot <- rep(-pi/6, 4)
+y <- x <- c(1, 2, 3, 4)
+
+plot.new()
+plot.window(xlim=c(0,5), ylim=c(0,5))
+axis(1)
+axis(2)
+
+# Computing coordinates
+coords <- vertices_coords(x,y,d,n,rot, dev=netdiffuseR:::devadj())
+
+# polygon(coords)
+invisible(lapply(coords, polygon))
+
+invisible(sapply(x, function(x) symbols(x,x, .5, inches=FALSE, add=TRUE)))
 
 */

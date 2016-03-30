@@ -326,15 +326,16 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' package's functions have methods for this class of objects.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{gplot}.}
+#' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param undirected Logical scalar.
 #' @param self Logical scalar.
 #' @param multiple Logical scalar.
-#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
-#' is ignored.
+#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, for
+#' \code{summary}, further arguments to be passed to
+#' \code{\link[igraph:distances]{igraph::distances}}, otherwise is ignored.
 #' @param x A \code{diffnet} object.
 #' @param object A \code{diffnet} object.
 #' @param y Ignored.
@@ -343,7 +344,9 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param vertex.col Character scalar/vector. Color of the vertices.
 #' @param vertex.cex Numeric scalar/vector. Size of the vertices.
 #' @param edge.col Character scalar/vector. Color of the edges.
-#' @param mode Character scalar. Name of the layout algorithm to implement (see details).
+#' @param mode Character scalar. In the case of \code{plot}, passed to
+#' \code{\link[sna:gplot]{gplot}}. Otherwise, in the case of summary, passed to
+#' \code{\link[igraph:distances]{igraph::distances}}.
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.

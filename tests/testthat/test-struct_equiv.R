@@ -17,7 +17,7 @@ x <- list(
 
 # `Manual` calculations
 
-Z <- geodist(graph, inf.replace = 0)$gdist
+Z <- sna::geodist(graph, inf.replace = 0)$gdist
 Z <- Z/max(Z)
 
 d <- matrix(0, ncol=4, nrow=4)

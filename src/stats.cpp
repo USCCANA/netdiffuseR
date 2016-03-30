@@ -79,126 +79,45 @@ arma::colvec degree_cpp(
  */
 
 // [[Rcpp::export]]
-arma::mat exposure_cpp(
-  List graph,
-  arma::mat cumadopt,
-  arma::mat attrs,
+arma::colvec exposure_cpp(
+  const arma::sp_mat & graph,
+  const arma::colvec & cumadopt,
+  const arma::colvec & attrs,
   bool outgoing = true,
   bool valued = true,
   bool normalized = true
 ) {
 
   // Getting parameters
-  int T = graph.size();
   int n = cumadopt.n_rows;
+  if (n != graph.n_cols) stop("-graph- is not squared.");
 
   // Creating output and auxiliar objects
-  arma::mat exposure(n,T);
-  arma::colvec NUMERATOR(n);
+  arma::colvec exposure(n);
+
+  // Checking if need to fill with ones
+  arma::sp_mat graph0(graph);
+  if (!valued) graph0 = arma::spones(graph0);
+
+  // Checking if incomming
+  if (!outgoing) graph0 = graph0.t();
+
+  // Computing numerator
+  // NUMERATOR = (attrs.col(t) % cumadopt.col(t));
+  arma::colvec NUMERATOR   = graph0 * (attrs % cumadopt);
   arma::colvec DENOMINATOR(n);
 
-  for (int t=0;t<T;t++) {
-    arma::sp_mat graph_t = graph[t];
-
-    // Checking if need to fill with ones
-    if (!valued) {
-      graph_t = arma::spones(graph_t);
-      graph_t.diag().zeros();
-    }
-
-    // Checking if incomming
-    if (!outgoing) graph_t = graph_t.t();
-
-    // Computing numerator
-    NUMERATOR = graph_t * (attrs.col(t) % cumadopt.col(t));
-
-    // Exposure for the time period
-    if (normalized) {
-      DENOMINATOR = graph_t * attrs.col(t) + 1e-15;
-      exposure.col(t) = NUMERATOR / DENOMINATOR;
-    } else {
-      exposure.col(t) = NUMERATOR;
-    }
+  // Exposure for the time period
+  if (normalized) {
+    DENOMINATOR = graph0 * attrs + 1e-15;
+    exposure = NUMERATOR / DENOMINATOR;
+  } else {
+    exposure = NUMERATOR;
   }
 
   // Returning
   return exposure;
 }
-
-/*
-// [[Rcpp::export]]
-arma::mat exposure_cpp(
-    List graph, const arma::mat & cumadopt, int wtype = 0,
-    double v = 1.0, bool undirected=true, bool normalized=true,
-    int n=0, int T=0) {
-
-  // Checking dimensions
-  if (graph.size() != cumadopt.n_cols)
-    stop("The length of -graph- and number of columns in -cumadopt- do not coincide.");
-
-  // Variables initialization
-  arma::mat exposure(n,T);
-  arma::colvec NUMERATOR(n);
-  arma::colvec DENOMINATOR(n);
-
-  for(int t=0;t<T;t++) {
-
-    arma::sp_mat graph_t = graph[t];
-
-    // Computing weights
-    if (wtype==0 || wtype == 1) { // Unweighted or SE
-      NUMERATOR = graph_t*cumadopt.col(t);
-      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
-    }
-    else if (wtype > 1 && wtype <= 4) { // Degree
-      arma::colvec degree = degree_cpp(graph_t, wtype - 2, undirected);
-
-      NUMERATOR = graph_t*(cumadopt.col(t) % degree);
-      if (normalized) DENOMINATOR = arma::conv_to<arma::mat>::from(sum(graph_t,1)) + 1e-15;
-    }
-    else {
-      stop("Invalid weight code.");
-    }
-
-    // Filling the output
-    if (normalized) exposure.col(t) = NUMERATOR / DENOMINATOR;
-    else exposure.col(t) = NUMERATOR;
-
-  }
-
-  return exposure;
-}
-*/
-
-/** *R
-library(sna)
-library(network)
-library(netdiffuseR)
-set.seed(123)
-graph <- rand_dyn_graph_cpp(n=10,t=10)
-adopt <- toa_mat_cpp(sample(1:dim(graph)[3], dim(graph)[2], TRUE))
-
-exposure <- function(dynmat, adopt) {
-  list(
-    indegree=exposure_cpp(dynmat, adopt,2),
-    structeq=exposure_cpp(dynmat, adopt,1),
-    unweight=exposure_cpp(dynmat, adopt,0)
-  )
-}
-
-# library(microbenchmark)
-#
-# microbenchmark(
-#   old=ExposureCalc(graph, adopt$cumadopt),
-#   new=exposure(graph, adopt$cumadopt),
-#   times=100
-# )
-# Unit: microseconds
-# expr      min        lq      mean    median        uq       max neval cld
-#  old 4474.098 4621.5280 5190.7354 4756.6200 4926.9885 93214.670  1000   b
-#  new   50.578   55.1375  101.2266   86.3295   97.3335  3711.223  1000  a
-# 4756.6200/86.3295 = 55.09843
-*/
 
 // [[Rcpp::export]]
 arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
@@ -220,21 +139,6 @@ arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
 }
 
 
-/** *R
-set.seed(123)
-times <- sample(1:5, 10, TRUE)
-adoptmat <- toa_mat_cpp(times)
-adoptmat$adoptmat
-new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
-old = netdifusseR::cumulativeAdopters(adoptmat$cumadopt)
-new;old
-microbenchmark::microbenchmark(
-  old = netdiffusseR::cumulativeAdopters(adoptmat$cumadopt),
-  new = cumulative_adopt_count_cpp(adoptmat$cumadopt)
-)
-
-*/
-
 // [[Rcpp::export]]
 arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt) {
   int n = cumadopt.n_rows;
@@ -253,11 +157,6 @@ arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt) {
 
   return hazard;
 }
-
-/** *R
-old = hazardrate(adoptmat$cumadopt)
-new = hazard_rate_cpp(adoptmat$cumadopt)
-*/
 
 
 // [[Rcpp::export]]

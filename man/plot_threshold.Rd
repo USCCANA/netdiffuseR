@@ -8,9 +8,12 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
   undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
   main = "Time of Adoption by Network Threshold", xlab = "Time",
   ylab = "Threshold", vertex.cex = "degree", vertex.col = rgb(0.3, 0.3,
-  0.8, 0.5), vertex.label = "", vertex.lab.pos = 3, edge.width = 2,
-  edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
-  include.grid = TRUE, bty = "n", vertex.bcol = vertex.col, ...)
+  0.8, 0.5), vertex.label = "", vertex.lab.pos = 3, vertex.lab.cex = 1,
+  vertex.lab.adj = c(0.5, 0.5), vertex.lab.col = rgb(0.3, 0.3, 0.8, 0.9),
+  vertex.sides = 40, vertex.rot = 0, edge.width = 2, edge.col = rgb(0.6,
+  0.6, 0.6, 0.1), arrow.length = 0.2, include.grid = TRUE, bty = "n",
+  vertex.bcol = vertex.col, jitter.factor = c(1, 0),
+  jitter.amount = c(0.25, 0), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -42,6 +45,18 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
 
 \item{vertex.lab.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
 
+\item{vertex.lab.cex}{Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.}
+
+\item{vertex.lab.adj}{Passed to \code{\link{text}}.}
+
+\item{vertex.lab.col}{Passed to \code{\link{text}}.}
+
+\item{vertex.sides}{Either a vector of size \eqn{n} or a scalar indicating the
+number of sides of each vertex (see details).}
+
+\item{vertex.rot}{Either a vector of size \eqn{n} or a scalar indicating the
+rotation in radians of each vertex (see details).}
+
 \item{edge.width}{Numeric. Width of the edges.}
 
 \item{edge.col}{Character. Color of the edges.}
@@ -54,11 +69,24 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
 
 \item{vertex.bcol}{Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.}
 
+\item{jitter.factor}{Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.}
+
+\item{jitter.amount}{Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.}
+
 \item{...}{Additional arguments passed to \code{\link{plot}}.}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,
 and threshold level, y-axis.
+}
+\details{
+When \code{vertex.label=NULL} the function uses vertices ids as labels.
+By default \code{vertex.label=""} plots no labels.
+
+Vertices are drawn using an internal function for generating polygons.
+Polygons are inscribed in a circle of radius \code{vertex.cex}, and can be
+rotated using \code{vertex.rot}. The number of sides of each polygon
+is set via \code{vertex.sides}.
 }
 \examples{
 

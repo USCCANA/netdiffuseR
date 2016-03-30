@@ -1,10 +1,10 @@
 #' @importFrom Rcpp evalCpp
 NULL
 
-#' @importFrom sna geodist gplot as.sociomatrix.sna
+#' @importFrom sna gplot as.sociomatrix.sna
 NULL
 
-#' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr
+#' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr distances
 NULL
 
 #' @useDynLib netdiffuseR

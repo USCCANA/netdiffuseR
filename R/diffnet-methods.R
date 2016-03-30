@@ -89,7 +89,8 @@ print.diffnet <- function(x, ...) {
 #' @export
 #' @rdname as_diffnet
 summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
-                            skip.moran=FALSE, valued=getOption("diffnet.valued",FALSE), ...) {
+                            skip.moran=FALSE, valued=getOption("diffnet.valued",FALSE),
+                            mode="out", ...) {
   # Subsetting
   if (!length(slices)) slices <- 1:object$meta$nper
 
@@ -119,9 +120,15 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
   if (!skip.moran) {
     m <- vector("numeric", length(slices))
     for (i in 1:length(slices)) {
-      g <- 1/(1e-15 + sna::geodist(as.matrix(object$graph[[slices[i]]]), meta$n,
-              count.paths=FALSE)$gdist)
+      # Computing distances
+      g <- igraph::graph_from_adjacency_matrix(object$graph[[slices[i]]])
+      g <- igraph::distances(g, mode=mode, ...)
+      g[!is.finite(g)] <- meta$n
+
+      # Inverting it (only the diagonal may have 0)
+      g <- 1/g
       diag(g) <- 0
+
       m[i] <- moran(object$cumadopt[,slices[i]], g)
     }
   }
@@ -429,7 +436,16 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
 #' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices.
 #' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
+#' @param vertex.lab.cex Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.
+#' @param vertex.lab.adj Passed to \code{\link{text}}.
+#' @param vertex.lab.col Passed to \code{\link{text}}.
+#' @param jitter.amount Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
+#' @param jitter.factor Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
 #' @param vertex.bcol Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.
+#' @param vertex.sides Either a vector of size \eqn{n} or a scalar indicating the
+#' number of sides of each vertex (see details).
+#' @param vertex.rot Either a vector of size \eqn{n} or a scalar indicating the
+#' rotation in radians of each vertex (see details).
 #' @param edge.width Numeric. Width of the edges.
 #' @param edge.col Character. Color of the edges.
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
@@ -440,6 +456,15 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
 #' obtained returned by \code{\link{exposure}}.
 #' @keywords hplot
+#'
+#' @details When \code{vertex.label=NULL} the function uses vertices ids as labels.
+#' By default \code{vertex.label=""} plots no labels.
+#'
+#' Vertices are drawn using an internal function for generating polygons.
+#' Polygons are inscribed in a circle of radius \code{vertex.cex}, and can be
+#' rotated using \code{vertex.rot}. The number of sides of each polygon
+#' is set via \code{vertex.sides}.
+#'
 #' @examples
 #'
 #' # Generating a random graph
@@ -464,10 +489,13 @@ plot_threshold <- function(
   graph, expo, toa, t0=min(toa, na.rm = TRUE), attrs=NULL,
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5), vertex.label="", vertex.lab.pos=3,
+  vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5),
+  vertex.label="", vertex.lab.pos=3,  vertex.lab.cex=1,
+  vertex.lab.adj = c(.5,.5), vertex.lab.col=rgb(.3,.3,.8,.9),
+  vertex.sides = 40, vertex.rot = 0,
   edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
   include.grid = TRUE, bty="n",
-  vertex.bcol=vertex.col, ...
+  vertex.bcol=vertex.col, jitter.factor=c(1,0), jitter.amount=c(.25,0),...
 ) {
 
   if (missing(expo))
@@ -480,12 +508,18 @@ plot_threshold <- function(
   switch (class(graph),
     array = plot_threshold.array(
       graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol, ...),
+      vertex.cex, vertex.col, vertex.label,
+      vertex.lab.pos, vertex.lab.cex, vertex.lab.adj,vertex.lab.col,
+      vertex.sides, vertex.rot,
+      edge.width, edge.col,
+      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,  ...),
     list = plot_threshold.list(
       graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol,...),
+      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+      vertex.lab.adj, vertex.lab.col,
+      vertex.sides, vertex.rot,
+      edge.width, edge.col,
+      arrow.length, include.grid, bty, vertex.bcol,jitter.factor, jitter.amount, ...),
     diffnet = {
       # If graph is diffnet, then we should do something different (because the
       # first toa may not be the firts one as toa may be stacked to the right.
@@ -495,8 +529,11 @@ plot_threshold <- function(
       plot_threshold.list(
       graph$graph, expo,
       graph$toa, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol, ...)
+      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+      vertex.lab.adj,vertex.lab.col,
+      vertex.sides, vertex.rot,
+      edge.width, edge.col,
+      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount, ...)
       },
     stopifnot_graph(graph)
   )
@@ -528,9 +565,12 @@ plot_threshold.list <- function(
   graph, expo, toa, t0, attrs,
   undirected, no.contemporary,
   main, xlab, ylab,
-  vertex.cex, vertex.col, vertex.label, vertex.lab.pos,
+  vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+  vertex.lab.adj,vertex.lab.col,
+  vertex.sides, vertex.rot,
   edge.width, edge.col, arrow.length,
-  include.grid, bty, vertex.bcol,...) {
+  include.grid, bty, vertex.bcol,
+  jitter.factor, jitter.amount, ...) {
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -544,9 +584,10 @@ plot_threshold.list <- function(
 
   # Creating the pos vector
   y <- threshold(expo, toa, t0, attrs=attrs)
+  y <- jitter(y, factor=jitter.factor[2], amount = jitter.amount[2])
 
   # Jitter to the xaxis and limits
-  jit <- jitter(toa, amount = .25)
+  jit <- jitter(toa, factor=jitter.factor[1], amount = jitter.amount[1])
   xran <- range(toa, na.rm = TRUE)
   xlim <- xran + c(-1,1)
   yran <- c(0,1)
@@ -570,6 +611,36 @@ plot_threshold.list <- function(
     vertex.cex <- rep(vertex.cex, n)
   } else if (inherits(vertex.cex, "character")) stop("Invalid value for -vertex.cex-.")
 
+  # Checking sides
+  test <- length(vertex.sides)
+  if (!inherits(vertex.sides, "integer") & !inherits(vertex.sides, "numeric")) {
+    stop("-vertex.sides- must be integer.")
+  } else if (test == 1) {
+    vertex.sides <- rep(vertex.sides, n)
+  } else if (test != n) {
+    stop("-vertex.sides- must be of the same length as nnodes(graph).")
+  }
+
+  # Checking Rotation
+  test <- length(vertex.rot)
+  if (!inherits(vertex.rot, "integer") & !inherits(vertex.rot, "numeric")) {
+    stop("-vertex.rot- must be numeric.")
+  } else if (test == 1) {
+    vertex.rot <- rep(vertex.rot, n)
+  } else if (test != n) {
+    stop("-vertex.rot- must be of the same length as nnodes(graph).")
+  }
+
+  # Checking colors
+  test <- length(vertex.bcol)
+  if (test == 1) vertex.bcol <- rep(vertex.bcol, n)
+  else if (test != n) stop("-vertex.bcol- must be either of length 1 or nnodes(graph).")
+
+  # Checking colors
+  test <- length(vertex.col)
+  if (test == 1) vertex.col <- rep(vertex.col, n)
+  else if (test != n) stop("-vertex.col- must be either of length 1 or nnodes(graph).")
+
   # Plotting
   # oldpar <- par(no.readonly = TRUE)
   plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main,
@@ -581,7 +652,6 @@ plot_threshold.list <- function(
   # Now, for y (it should be different)
   xran <- range(xlim, na.rm = TRUE)
   yran <- range(ylim, na.rm = TRUE)
-  vertex.cex.y <- vertex.cex *(yran[2]-yran[1])/(xran[2]-xran[1])
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
@@ -589,26 +659,39 @@ plot_threshold.list <- function(
                         dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
-  # with(edges, arrows(x0, y0, x1, y1, lwd = edge.width, col = edge.col,
-  #                               length=arrow.length))
+  # with(edges, segments(x0, y0, x1, y1, lwd = edge.width, col = edge.col))
 
-  with(edges, segments(x0, y0, x1, y1, lwd = edge.width, col = edge.col))
-
+  ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
+  deva <- devadj()
   e_arrows <- apply(edges, 1, function(x) {
       y <- edges_arrow(x["x0"], x["y0"], x["x1"], x["y1"],
                    width=arrow.length,
                    height=arrow.length,
                    beta=pi*(2/3),
-                   dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
-      polygon(y[,1], y[,2], col=edge.col, border=NA)
+                   dev=deva, ran=ran)
+      polygon(y[,1], y[,2], col=edge.col, border=edge.col)
     })
 
   # Drawing the vertices and its labels
-  symbols(jit, y, fg=vertex.bcol, circles=vertex.cex, inches=FALSE, bg=vertex.col, add=TRUE)
+  # Computing the coordinates
+  pol <- vertices_coords(jit, y, vertex.cex, vertex.sides, vertex.rot, deva, ran)
+
+  # Plotting
+  lapply(seq_len(length(pol)),
+         function(x) {
+           polygon(pol[[x]][,1], pol[[x]][,2],
+                   border = vertex.bcol[x],
+                   col    = vertex.col[x])
+           })
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
-  text(x=jit, y=y+vertex.cex.y, labels = vertex.label, pos=vertex.lab.pos)
+  text(x=jit, y=y, labels = vertex.label,
+       pos = vertex.lab.pos,
+       cex = vertex.lab.cex,
+       col = vertex.lab.col,
+       adj = vertex.lab.adj
+       )
 
   # par(oldpar)
 

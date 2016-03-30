@@ -183,6 +183,10 @@ edges_arrow <- function(x0, y0, x1, y1, height, width, beta = 1.5707963267949, d
     .Call('netdiffuseR_edges_arrow', PACKAGE = 'netdiffuseR', x0, y0, x1, y1, height, width, beta, dev, ran)
 }
 
+vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran = as.numeric( c())) {
+    .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
+}
+
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t)
 }
@@ -205,6 +209,7 @@ rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weigh
 #' as an undirected graph. This is the basis of \code{\link{rgraph_ws}}.
 #' @param n Integer scalar. Size of the graph.
 #' @param k Integer scalar. Out-degree of each vertex.
+#' @param undirected Logical scalar. Whether the graph is undirected or not.
 #' @details when \code{undirected=TRUE}, the degree of each node always
 #' even. So if \code{k=3}, then the degree will be \code{2}.
 #' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size

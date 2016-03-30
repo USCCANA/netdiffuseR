@@ -10,6 +10,8 @@ ring_lattice(n, k, undirected = FALSE)
 \item{n}{Integer scalar. Size of the graph.}
 
 \item{k}{Integer scalar. Out-degree of each vertex.}
+
+\item{undirected}{Logical scalar. Whether the graph is undirected or not.}
 }
 \value{
 A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size

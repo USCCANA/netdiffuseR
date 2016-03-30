@@ -11,6 +11,8 @@ List struct_equiv_cpp(
     bool inv = false, double invrep = 0.0) {
 
   int n = graph.n_cols;
+  if (n != graph.n_rows) stop("-graph- is not square.");
+
   NumericMatrix d(n,n);
 
   // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}

@@ -44,7 +44,7 @@ arma::sp_mat ring_lattice(int n, int k, bool undirected=false) {
   return graph;
 }
 
-/***R
+/** *R
 library(Matrix)
 library(sna)
 x <- ring_lattice(6,2)
@@ -141,7 +141,7 @@ arma::sp_mat rewire_graph_cpp(
 }
 
 
-/***R
+/** *R
 rgraph_ws <- function(n,k,p, both_ends=FALSE, self=FALSE, multiple=FALSE) {
   rewire_graph_cpp(ring_lattice(n, k), p, both_ends,
                    self, multiple, true)

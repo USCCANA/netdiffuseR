@@ -118,6 +118,24 @@ plot_threshold(diffnet, vertex.cex = .25)
 plot_threshold(diffnet, vertex.cex = "degree")
 ```
 
+Using more features
+
+```{r}
+data("medInnovationsDiffNet")
+size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
+set.seed(131)
+plot_threshold(
+  medInnovationsDiffNet,
+  vertex.label = nodes(medInnovationsDiffNet),
+  vertex.cex = size/10, vertex.lab.pos = NULL,
+  vertex.lab.cex = size/4,
+  vertex.sides = medInnovationsDiffNet[["city"]] + 2,
+  sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
+  jitter.factor = c(1,1), jitter.amount = c(.25,.025)
+)
+```
+
+
 ### Adoption rate
 
 ```{r}

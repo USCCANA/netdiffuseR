@@ -4,9 +4,10 @@
 #'
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
 #' @param v Numeric scalar. Cohesion constant (see details).
-#' @param inf.replace Numeric scalar scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.
+#' @param inf.replace Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.
 #' @param groupvar Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.
-#' @param ... Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}} (not valid for the print method).
+#' @param ... Further arguments to be passed to \code{\link[igraph:distances]{igraph::distances}} (not valid for the print method).
+#' @param mode Character scalar pased to \code{\link[igraph:distances]{igraph::distances}}
 #' @param x A \code{diffnet_se} class object.
 #' @family statistics
 #' @keywords univar
@@ -90,18 +91,18 @@
 #'
 #'
 #' @author Vega Yon, Dyal, Hayes & Valente
-struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL,...) {
+struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL, mode="out", ...) {
 
   # Checking groupvar
   if ((length(groupvar)==1) && inherits(graph, "diffnet"))
     groupvar <- graph[[groupvar]]
 
   output <- switch (class(graph),
-    matrix = struct_equiv.matrix(graph, v, inf.replace, groupvar,...),
-    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar,...),
-    array = struct_equiv.array(graph, v, inf.replace, groupvar,...),
-    list = struct_equiv.list(graph, v, inf.replace, groupvar,...),
-    diffnet = struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...),
+    matrix = struct_equiv.matrix(graph, v, inf.replace, groupvar, mode, ...),
+    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, mode, ...),
+    array = struct_equiv.array(graph, v, inf.replace, groupvar, mode, ...),
+    list = struct_equiv.list(graph, v, inf.replace, groupvar, mode, ...),
+    diffnet = struct_equiv.list(graph$graph, v, inf.replace, groupvar, mode, ...),
     stopifnot_graph(graph)
   )
 
@@ -130,7 +131,7 @@ print.diffnet_se <- function(x, ...) {
 
 
 # Apply per grouping variable
-struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
+struct_equiv_by <- function(graph, v, inf.replace, groupvar, mode, ...) {
   # Checking length of the grouping variable
   if (length(groupvar) != nvertices(graph))
     stop("The length of -groupvar-, ",length(groupvar),
@@ -166,7 +167,7 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
     ng   <- nvertices(subg)
 
     # Computing SE
-    out <- struct_equiv(subg, v, inf.replace, groupvar=NULL, ...)
+    out <- struct_equiv(subg, v, inf.replace, groupvar=NULL, mode,...)
 
     # Appending values
     index <- (N + 1L):(N + ng)
@@ -193,15 +194,18 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, ...) {
+struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, mode, ...) {
 
   # Running the algorithm
   if (length(groupvar)) {
-    output <- struct_equiv_by(graph, v, inf.replace, groupvar, ...)
+    output <- struct_equiv_by(graph, v, inf.replace, groupvar, mode, ...)
   } else {
-    geod <- sna::geodist(graph, inf.replace = inf.replace, ...)
-    geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
-    output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
+
+    geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
+    geod[!is.finite(geod)] <- inf.replace
+    geod <- geod/max(geod, na.rm = TRUE)
+
+    output <- struct_equiv_cpp(methods::as(geod, "dgCMatrix"), v)
 
     # Names
     rn <- rownames(graph)
@@ -214,16 +218,18 @@ struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
+struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, mode, ...) {
 
   if (length(groupvar)) {
-    output <- struct_equiv_by(graph, v, inf.replace, groupvar, ...)
+    output <- struct_equiv_by(graph, v, inf.replace, groupvar, mode, ...)
   } else {
     # In order to use the SNA package functions, we need to coerce the graph
     # Into a -matrix.csc- object,
-    geod <- sna::geodist(methods::as(graph, "matrix.csc"), inf.replace = inf.replace, ...)
-    geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]], na.rm = TRUE)
-    output <- struct_equiv_cpp(methods::as(geod[["gdist"]], "dgCMatrix"), v)
+    geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
+    geod[!is.finite(geod)] <- inf.replace
+    geod <- geod/max(geod, na.rm = TRUE)
+
+    output <- struct_equiv_cpp(methods::as(geod, "dgCMatrix"), v)
 
     # Names
     rn <- rownames(graph)
@@ -235,11 +241,11 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.array <- function(graph, v, inf.replace, groupvar, ...) {
+struct_equiv.array <- function(graph, v, inf.replace, groupvar, mode, ...) {
   t <- dim(graph)[3]
   output <- vector("list", t)
   for(i in 1:t) {
-    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, groupvar, ...)
+    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, groupvar, mode, ...)
   }
 
   # Naming
@@ -254,13 +260,13 @@ struct_equiv.array <- function(graph, v, inf.replace, groupvar, ...) {
 
 # @rdname struct_equiv
 # @export
-struct_equiv.list <- function(graph, v, inf.replace, groupvar, ...) {
+struct_equiv.list <- function(graph, v, inf.replace, groupvar, mode, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   output <- vector("list", t)
   for(i in 1:t)
     output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
-                                          v, inf.replace, groupvar, ...)
+                                          v, inf.replace, groupvar, mode,...)
 
   # Naming
   tn <- dimnames(graph)[[3]]

@@ -5,7 +5,8 @@
 \alias{struct_equiv}
 \title{Structural Equivalence}
 \usage{
-struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL, ...)
+struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
+  mode = "out", ...)
 
 \method{print}{diffnet_se}(x, ...)
 }
@@ -14,11 +15,13 @@ struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL, ...)
 
 \item{v}{Numeric scalar. Cohesion constant (see details).}
 
-\item{inf.replace}{Numeric scalar scalar. Passed to \code{\link[sna:geodist]{sna::geodist}}.}
+\item{inf.replace}{Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.}
 
 \item{groupvar}{Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.}
 
-\item{...}{Further arguments to be passed to \code{\link[sna:geodist]{sna::geodist}} (not valid for the print method).}
+\item{mode}{Character scalar pased to \code{\link[igraph:distances]{igraph::distances}}}
+
+\item{...}{Further arguments to be passed to \code{\link[igraph:distances]{igraph::distances}} (not valid for the print method).}
 
 \item{x}{A \code{diffnet_se} class object.}
 }

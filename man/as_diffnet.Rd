@@ -39,7 +39,8 @@ diffnet.toa(graph, i) <- value
 \method{print}{diffnet}(x, ...)
 
 \method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
-  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
+  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE),
+  mode = "out", ...)
 
 nodes(graph)
 }
@@ -88,20 +89,23 @@ or static (\code{"static"}).}
 
 \item{vertex.col}{Character scalar/vector. Color of the vertices.}
 
-\item{gmode}{Character scalar. Passed to \code{\link[sna:gplot]{gplot}.}}
+\item{gmode}{Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}}
 
 \item{vertex.cex}{Numeric scalar/vector. Size of the vertices.}
 
 \item{edge.col}{Character scalar/vector. Color of the edges.}
 
-\item{mode}{Character scalar. Name of the layout algorithm to implement (see details).}
+\item{mode}{Character scalar. In the case of \code{plot}, passed to
+\code{\link[sna:gplot]{gplot}}. Otherwise, in the case of summary, passed to
+\code{\link[igraph:distances]{igraph::distances}}.}
 
 \item{layout.par}{Layout parameters (see details).}
 
 \item{main}{Character. A title template to be passed to sprintf.}
 
-\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, otherwise
-is ignored.}
+\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, for
+\code{summary}, further arguments to be passed to
+\code{\link[igraph:distances]{igraph::distances}}, otherwise is ignored.}
 
 \item{object}{A \code{diffnet} object.}
 

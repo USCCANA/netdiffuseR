@@ -58,6 +58,9 @@
   the new option `copy.first` which allows to recycle the first rewired slice
   (see details).
   
+* Fixed bugs in `rewire_graph`. Indexing of the jth component (when rewiring) was
+  not been made correctly (now it does).
+  
 * New features for the `exposure` function. When `graph` is of class diffnet, 
   the function accepts `attrs` equal to the name of some the graph's attributes.
   Also, `alt.graph` can be specified as `se`, which will be replaced by the
@@ -84,6 +87,16 @@
   margins and y/x.
   
 * New function `diffnet_to_igraph`.
+
+* Geodesic distances are now computed using `igraph::distances` instead of
+  `sna::geodist` as it is more flexible and faster.
+  
+* New arguments for `plot_threshold`: `vertex.sides`, `vertex.lab.cex`, `vertex.lab.adj`,
+  `vertex.lab.col`, `vertex.rot`, `jitter.factor`, and `jitter.amount` to give
+  more control.
+  
+* New internal function `vertex_coords`: Creates polygons of any given number of
+  sides considering aspec ratio of both x/y and device.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

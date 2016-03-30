@@ -36,4 +36,14 @@ NumericMatrix edges_coords(
     NumericVector dev = NumericVector::create(),
     NumericVector ran = NumericVector::create()
 );
+
+List vertices_coords(
+    const arma::colvec & x,
+    const arma::colvec & y,
+    const arma::colvec & size,
+    const arma::colvec & nsides,
+    const arma::colvec & rot,
+    NumericVector dev = NumericVector::create(),
+    NumericVector ran = NumericVector::create()
+);
 #endif

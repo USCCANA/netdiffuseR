@@ -226,6 +226,23 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// vertices_coords
+List vertices_coords(const arma::colvec& x, const arma::colvec& y, const arma::colvec& size, const arma::colvec& nsides, const arma::colvec& rot, NumericVector dev, NumericVector ran);
+RcppExport SEXP netdiffuseR_vertices_coords(SEXP xSEXP, SEXP ySEXP, SEXP sizeSEXP, SEXP nsidesSEXP, SEXP rotSEXP, SEXP devSEXP, SEXP ranSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type size(sizeSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type nsides(nsidesSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type rot(rotSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
+    __result = Rcpp::wrap(vertices_coords(x, y, size, nsides, rot, dev, ran));
+    return __result;
+END_RCPP
+}
 // rgraph_ba_cpp
 arma::sp_mat rgraph_ba_cpp(arma::sp_mat graph, arma::colvec dgr, int m, int t);
 RcppExport SEXP netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP) {
@@ -343,14 +360,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // exposure_cpp
-arma::mat exposure_cpp(List graph, arma::mat cumadopt, arma::mat attrs, bool outgoing, bool valued, bool normalized);
+arma::colvec exposure_cpp(const arma::sp_mat& graph, const arma::colvec& cumadopt, const arma::colvec& attrs, bool outgoing, bool valued, bool normalized);
 RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP attrsSEXP, SEXP outgoingSEXP, SEXP valuedSEXP, SEXP normalizedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type cumadopt(cumadoptSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type attrs(attrsSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type cumadopt(cumadoptSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type attrs(attrsSEXP);
     Rcpp::traits::input_parameter< bool >::type outgoing(outgoingSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
     Rcpp::traits::input_parameter< bool >::type normalized(normalizedSEXP);
