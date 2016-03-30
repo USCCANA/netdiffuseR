@@ -163,13 +163,32 @@ diffnet
 plot_threshold(diffnet, vertex.cex = .25)
 ```
 
-![](README_files/figure-markdown_github/plot_threshold-1.png)<!-- -->
+![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)<!-- -->
 
 ``` r
 plot_threshold(diffnet, vertex.cex = "degree")
 ```
 
-![](README_files/figure-markdown_github/plot_threshold-2.png)<!-- -->
+![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-2.png)<!-- -->
+
+Using more features
+
+``` r
+data("medInnovationsDiffNet")
+size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
+set.seed(131)
+plot_threshold(
+  medInnovationsDiffNet,
+  vertex.label = nodes(medInnovationsDiffNet),
+  vertex.cex = size/10, vertex.lab.pos = NULL,
+  vertex.lab.cex = size/4,
+  vertex.sides = medInnovationsDiffNet[["city"]] + 2,
+  sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
+  jitter.factor = c(1,1), jitter.amount = c(.25,.025)
+)
+```
+
+![](README_files/figure-markdown_github/NiceThreshold-1.png)<!-- -->
 
 ### Adoption rate
 
@@ -177,7 +196,7 @@ plot_threshold(diffnet, vertex.cex = "degree")
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->
+![](README_files/figure-markdown_github/Adopters-1.png)<!-- -->
 
 ### Hazard rate
 
@@ -185,7 +204,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-markdown_github/Hazard-1.png)<!-- -->
 
 ### Diffusion process
 

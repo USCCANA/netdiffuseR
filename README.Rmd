@@ -104,7 +104,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros
 
 ### Threshold
 
-```{r, plot_threshold, fig.height=7}
+```{r BoringThreshold, plot_threshold, fig.height=7}
 # Generating a random graph
 set.seed(123)
 diffnet <- rdiffnet(500, 20,
@@ -120,7 +120,7 @@ plot_threshold(diffnet, vertex.cex = "degree")
 
 Using more features
 
-```{r}
+```{r NiceThreshold}
 data("medInnovationsDiffNet")
 size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
 set.seed(131)
@@ -138,14 +138,14 @@ plot_threshold(
 
 ### Adoption rate
 
-```{r}
+```{r Adopters}
 plot_adopters(diffnet)
 ```
 
 
 ### Hazard rate
 
-```{r}
+```{r Hazard}
 hazard_rate(diffnet)
 ```
 
