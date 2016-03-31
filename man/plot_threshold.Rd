@@ -4,14 +4,15 @@
 \alias{plot_threshold}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
-  undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
-  main = "Time of Adoption by Network Threshold", xlab = "Time",
-  ylab = "Threshold", vertex.cex = "degree", vertex.col = rgb(0.3, 0.3,
-  0.8, 0.5), vertex.label = "", vertex.lab.pos = 3, vertex.lab.cex = 1,
-  vertex.lab.adj = c(0.5, 0.5), vertex.lab.col = rgb(0.3, 0.3, 0.8, 0.9),
-  vertex.sides = 40, vertex.rot = 0, edge.width = 2, edge.col = rgb(0.6,
-  0.6, 0.6, 0.1), arrow.length = 0.2, include.grid = TRUE, bty = "n",
+plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
+  na.rm = TRUE), attrs = NULL, undirected = getOption("diffnet.undirected"),
+  no.contemporary = TRUE, main = "Time of Adoption by Network Threshold",
+  xlab = "Time", ylab = "Threshold", vertex.cex = "degree",
+  vertex.col = rgb(0.3, 0.3, 0.8, 0.5), vertex.label = "",
+  vertex.lab.pos = NULL, vertex.lab.cex = 1, vertex.lab.adj = c(0.5, 0.5),
+  vertex.lab.col = rgb(0.3, 0.3, 0.8, 0.9), vertex.sides = 40,
+  vertex.rot = 0, edge.width = 2, edge.col = rgb(0.6, 0.6, 0.6, 0.1),
+  arrow.length = 0.2, include.grid = TRUE, bty = "n",
   vertex.bcol = vertex.col, jitter.factor = c(1, 0),
   jitter.amount = c(0.25, 0), ...)
 }
@@ -21,6 +22,8 @@ plot_threshold(graph, expo, toa, t0 = min(toa, na.rm = TRUE), attrs = NULL,
 \item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
 \item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
+
+\item{include_censored}{Logical scalar. Passed to \code{\link{threshold}}.}
 
 \item{t0}{Integer scalar. Passed to \code{\link{threshold}}.}
 

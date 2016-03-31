@@ -76,6 +76,10 @@
   input attributes dimensions and coerce them into proper class/structure. Valid
   attributes are now documented in the function's manual.
   
+* Fixed bugs for `as_diffnet`: When a dynamic graph was passed with slices names
+  different from the time periods, the slices names were kept. Now these are
+  replaced by `meta$pers`.
+  
 * New print method for `diffnet_se`, objects returned by `struct_equiv`.
 
 * New arguments for `edges_coords`: `dev` and `ran` allow including device +

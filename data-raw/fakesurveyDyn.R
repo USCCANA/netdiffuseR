@@ -20,7 +20,7 @@ dat$age[dat$time==1991] <-
 dat$net1[with(dat, which(id==2 & group == 2 & time == 1991))] <- 1
 dat$note[with(dat, which(id==2 & group == 2 & time == 1991))] <- "Now is not isolated!"
 dat$note[dat$time==1990] <- paste("First wave:",dat$note[dat$time==1990])
-dat$note[dat$time==1991] <- paste("First wave:",dat$note[dat$time==1991])
+dat$note[dat$time==1991] <- paste("Second wave:",dat$note[dat$time==1991])
 
 fakesurveyDyn <- dat
 

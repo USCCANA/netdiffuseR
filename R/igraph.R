@@ -12,6 +12,9 @@
 #' igraph::vertex_attr(x[[1]], "toa")
 #'
 diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
+
+  if (!inherits(graph, "diffnet")) stopifnot_graph(graph)
+
   pers <- graph$meta$pers
   nper <- graph$meta$nper
 
@@ -26,7 +29,7 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
 
   for (p in 1:length(out)) {
     # Index
-    s <- which(pers==slices[p])
+    s <- slices[p]
 
     # Graph
     tempgraph <- igraph::graph_from_adjacency_matrix(
@@ -64,12 +67,17 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
 #' @param t1 Integer scalar. Passed to \code{\link{as_diffnet}}.
 igraph_to_diffnet <- function(
   graph, toavar,
-  t0 = min(toavar, na.rm = TRUE),
-  t1 = max(toavar, na.rm = TRUE)) {
+  t0 = NULL,
+  t1 = NULL) {
 
   if (igraph::is_igraph(graph)) {
     # Getting attributes
     toa <- igraph::vertex_attr(graph, toavar)
+
+    # Checking toa
+    if (!length(t0)) t0 <- min(toa, na.rm = TRUE)
+    if (!length(t1)) t1 <- max(toa, na.rm = TRUE)
+
     mat <- igraph::as_adj(graph)
     mat <- lapply(seq_len(t1-t0+1), function(x) mat)
 
@@ -77,11 +85,13 @@ igraph_to_diffnet <- function(
       igraph::vertex.attributes(graph))
 
     if (length(vertex.static.attrs)) {
-      test <- !which(colnames(vertex.static.attrs) %in% c(toavar, "name"))
+      test <- which(!(colnames(vertex.static.attrs) %in% c(toavar, "name")))
       vertex.static.attrs <- vertex.static.attrs[,test,drop=FALSE]
     }
 
-    as_diffnet(mat, toa, t0, t1,
-               vertex.static.attrs = vertex.static.attrs)
+    return(as_diffnet(mat, toa, t0, t1,
+               vertex.static.attrs = vertex.static.attrs))
   }
+
+  stopifnot_graph(graph)
 }

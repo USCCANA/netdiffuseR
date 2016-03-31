@@ -173,7 +173,7 @@ A couple of important remarks for this dataset. First, each individual in this d
 fakesurvey[c(4,6),]
 ```
 
-So in group one 4 nominates id 1, who does not show in the data, and in group two 6 nominates 2, 3, and 4, also individuals who don't show up in the survey.
+So in group one 4 nominates id 6, who does not show in the data, and in group two 6 nominates 3, 4, and 8, also individuals who don't show up in the survey.
 
 While for some researchers nominations of unsurveyed individuals may not be of importance, for some others might be. For such cases, the function has the option of either keeping unsurveyed individuals (so you would get a bigger adjacency matrix), or ignore them and keep only those who were surveyed. For example, if we wanted to keep unsurveyed individuals in the network we would need to set `no.unsurveyed = FALSE`:
 

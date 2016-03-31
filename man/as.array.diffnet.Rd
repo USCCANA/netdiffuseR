@@ -26,8 +26,8 @@ dropped.
 }
 \examples{
 # Creating a random diffnet object
-set.seed(8441)
-mydiffnet <- rdiffnet(20, 5)
+set.seed(8417)
+mydiffnet <- rdiffnet(30, 5)
 
 # Coercing it into an array
 as.array(mydiffnet)

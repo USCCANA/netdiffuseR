@@ -4,7 +4,7 @@ context("Checking diffnet-indexing")
 
 test_that("Dynamic attributes assignment work", {
   # Preparing the data
-  set.seed(1313)
+  set.seed(13213)
   x <- rdiffnet(20, 5)
 
   # Calculating exposure

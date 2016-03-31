@@ -85,7 +85,7 @@
 #'
 #' # Adding attributes (dynamic) -----------------------------------------------
 #' # Preparing the data
-#' set.seed(1313)
+#' set.seed(122)
 #' x <- rdiffnet(20, 5)
 #'
 #' # Calculating exposure, and storing it diffe

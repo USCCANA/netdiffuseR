@@ -7,8 +7,7 @@
 \usage{
 diffnet_to_igraph(graph, slices = 1:nslices(graph))
 
-igraph_to_diffnet(graph, toavar, t0 = min(toavar, na.rm = TRUE),
-  t1 = max(toavar, na.rm = TRUE))
+igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL)
 }
 \arguments{
 \item{graph}{A diffnet class object.}

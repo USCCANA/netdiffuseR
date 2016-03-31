@@ -8,7 +8,8 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
   rewire.args = list(p = 0.1, undirected = FALSE),
   threshold.dist = function(x) runif(1), exposure.args = list(outgoing =
-  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE))
+  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE),
+  sgraph = NULL)
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
@@ -29,10 +30,12 @@ seed graph (see details).}
 
 \item{rewire.args}{List. Arguments to be passed to \code{\link{rewire_graph}}.}
 
-\item{threshold.dist}{Function. Applied via \code{\link{sapply}}, sets the
-adoption threshold for each node.}
+\item{threshold.dist}{Either a function to be applied via \code{\link{sapply}},
+or a vector/matrix with \eqn{n} elements. Sets the adoption threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
+
+\item{sgraph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
 A random \code{\link{diffnet}} class object.
@@ -76,7 +79,7 @@ When \code{rewire=TRUE}, the networks that follow t=1 will be generated using th
 \code{\link{rewire_graph}} function as \eqn{G(t) = R(G(t-1))}, where \eqn{R}
 is the rewiring algorithm.
 
-Finally, \code{threshold.dist} sets the threshold for each vertex in the graph.
+The argument \code{threshold.dist} sets the threshold for each vertex in the graph.
 It is applied using \code{sapply} as follows
 
 \preformatted{
@@ -84,6 +87,9 @@ sapply(1:n, threshold.dist)
 }
 
 By default sets the threshold to be random for each node in the graph.
+
+If \code{sgraph} is provided, no random graph is generated and the simulation
+is applied using that graph instead.
 }
 \examples{
 # Asimple example -----------------------------------------------------------
@@ -94,6 +100,10 @@ summary(z)
 # A more complex example: Adopt if at least one neighbor has adopted --------
 y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
     exposure.args=list(valued=FALSE, normalized=FALSE))
+
+# Re thinking the Adoption of Tetracycline ----------------------------------
+newMI <- rdiffnet(sgraph = medInnovationsDiffNet$graph,
+ threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 }
 \author{
 Vega Yon

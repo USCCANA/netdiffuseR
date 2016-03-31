@@ -1,7 +1,7 @@
 netdiffuseR: Network Analysis for Diffusion of Innovations
 ==========================================================
 
-[![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser) [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) [![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
+[![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser) [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) [![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR) [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
 
 This package contains functions useful for analyzing network data for diffusion of innovations applications.
 
@@ -51,6 +51,28 @@ sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /
 ```
 
 before installing the package through `devtools`.
+
+### Binary versions
+
+For the case of windows and mac users, they can find binary versions of the package [here](https://github.com/USCCANA/netdiffuseR/releases), [netdiffuseR\_1.16.3.29.zip](https://github.com/USCCANA/netdiffuseR/releases/download/v1.16.3.29/netdiffuseR_1.16.3.29.zip), and [netdiffuseR\_1.16.3.29.tgz](https://github.com/USCCANA/netdiffuseR/releases/download/v1.16.3.29/netdiffuseR_1.16.3.29.tgz) respectively. They can install this directly as follows:
+
+1.  Install dependencies from CRAN
+
+    ``` r
+    > install.packages(c("igraph", "Matrix", "SparseM" "RcppArmadillo", "sna"), dependencies=TRUE)
+    ```
+
+2.  Download the binary version and install it as follows:
+
+    ``` r
+    > install.packages("netdiffuseR_1.16.3.29.zip", repos=NULL)
+    ```
+
+    For windows users, and for Mac users:
+
+    ``` r
+    > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
+    ```
 
 Examples
 --------
@@ -154,22 +176,16 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.91
+    ##  Final prevalence   : 0.78
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
 ``` r
 # Threshold with fixed vertex size
-plot_threshold(diffnet, vertex.cex = .25)
+plot_threshold(diffnet, vertex.cex = .4)
 ```
 
 ![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)<!-- -->
-
-``` r
-plot_threshold(diffnet, vertex.cex = "degree")
-```
-
-![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-2.png)<!-- -->
 
 Using more features
 
@@ -179,10 +195,10 @@ size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.label = nodes(medInnovationsDiffNet),
-  vertex.cex = size/10, vertex.lab.pos = NULL,
+  vertex.label   = nodes(medInnovationsDiffNet),
+  vertex.cex     = size/10, vertex.lab.pos = NULL,
   vertex.lab.cex = size/4,
-  vertex.sides = medInnovationsDiffNet[["city"]] + 2,
+  vertex.sides   = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
 )
@@ -217,12 +233,13 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 To-do list
 ----------
 
--   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), `igraph` and `Rsiena`.
+-   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), ~~`igraph`~~ and `Rsiena`.
 -   Populate the tests folder.
--   Use spells? (`select_egoalter` would use this)
+-   ~~Use spells? (`select_egoalter` would use this)~~
 -   Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).
--   Double check all functions using adjacency matrix values.
+-   ~~Double check all functions using adjacency matrix values.~~
 -   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
 -   Implement the Bass model
--   Include function to import survey data (as shown on the vignettes)
+-   ~~Include function to import survey data (as shown on the vignettes)~~
 -   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).
+-

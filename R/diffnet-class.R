@@ -613,16 +613,17 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
   # Step 4.1: Change the class (or set the names) of the graph -----------------
   if (meta$class=="array") {
-    graph <- lapply(1:meta$nper, function(x) {
+    graph <- lapply(1L:meta$nper, function(x) {
       x <- methods::as(graph[,,x], "dgCMatrix")
       dimnames(x) <- with(meta, list(ids, ids))
       x
     })
     names(graph) <- meta$pers
   } else { # Setting names (if not before)
-    if (!length(names(graph)))
-      names(graph) <- meta$pers
-    for(i in 1:meta$nper)
+    if (!length(names(graph))) names(graph) <- meta$pers
+    else if (any(names(graph) != meta$pers)) names(graph) <- meta$pers
+
+    for(i in 1L:meta$nper)
       dimnames(graph[[i]]) <- with(meta, list(ids, ids))
   }
 

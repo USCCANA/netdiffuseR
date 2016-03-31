@@ -425,6 +425,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param expo \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
 #' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param t0 Integer scalar. Passed to \code{\link{threshold}}.
+#' @param include_censored Logical scalar. Passed to \code{\link{threshold}}.
 #' @param attrs Passed to \code{\link{exposure}} (via threshold).
 #' @param undirected Logical scalar.
 #' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
@@ -486,11 +487,13 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @export
 #' @author Vega Yon
 plot_threshold <- function(
-  graph, expo, toa, t0=min(toa, na.rm = TRUE), attrs=NULL,
+  graph, expo, toa,
+  include_censored=FALSE,
+  t0=min(toa, na.rm = TRUE), attrs=NULL,
   undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
   main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
   vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5),
-  vertex.label="", vertex.lab.pos=3,  vertex.lab.cex=1,
+  vertex.label="", vertex.lab.pos=NULL,  vertex.lab.cex=1,
   vertex.lab.adj = c(.5,.5), vertex.lab.col=rgb(.3,.3,.8,.9),
   vertex.sides = 40, vertex.rot = 0,
   edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
@@ -507,14 +510,14 @@ plot_threshold <- function(
 
   switch (class(graph),
     array = plot_threshold.array(
-      graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label,
       vertex.lab.pos, vertex.lab.cex, vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
       arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,  ...),
     list = plot_threshold.list(
-      graph, expo, toa, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
+      graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
       vertex.lab.adj, vertex.lab.col,
       vertex.sides, vertex.rot,
@@ -528,7 +531,7 @@ plot_threshold <- function(
 
       plot_threshold.list(
       graph$graph, expo,
-      graph$toa, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
+      graph$toa, include_censored, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
       vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
@@ -541,13 +544,17 @@ plot_threshold <- function(
 
 # Function to retrieve the right adjustment
 devadj <- function() {
-  mar <- par("mar")
+  omi <- par("omi")
   mai <- par("mai")
-  par("din") -
-  c(
-    sum(mai[c(2,4)]), # + sum(mar[c(2,4)]),
-    sum(mai[c(1,3)]) #+ sum(mar[c(1,3)])
-  )
+  mfr <- par("mfrow")
+
+  # Getting adjustment
+  out <- c(
+    sum(mai[c(2,4)]) + sum(omi[c(2,4)]),
+    sum(mai[c(1,3)]) + sum(omi[c(1,3)])
+    )
+
+  (par("din") - out)
 }
 
 # @export
@@ -562,7 +569,7 @@ plot_threshold.array <- function(graph, ...) {
 # @export
 # @rdname plot_threshold
 plot_threshold.list <- function(
-  graph, expo, toa, t0, attrs,
+  graph, expo, toa, include_censored, t0, attrs,
   undirected, no.contemporary,
   main, xlab, ylab,
   vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
@@ -583,7 +590,7 @@ plot_threshold.list <- function(
   }
 
   # Creating the pos vector
-  y <- threshold(expo, toa, t0, attrs=attrs)
+  y <- threshold(expo, toa, t0, attrs=attrs, include_censored=include_censored)
   y <- jitter(y, factor=jitter.factor[2], amount = jitter.amount[2])
 
   # Jitter to the xaxis and limits
@@ -1116,8 +1123,8 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @family diffnet methods
 #' @examples
 #' # Creating a random diffnet object
-#' set.seed(8441)
-#' mydiffnet <- rdiffnet(20, 5)
+#' set.seed(8417)
+#' mydiffnet <- rdiffnet(30, 5)
 #'
 #' # Coercing it into an array
 #' as.array(mydiffnet)
