@@ -228,7 +228,7 @@ diffnet_check_attr_class <- function(value, meta) {
     test <- !isdf & !sapply(value, inherits, what="matrix")
 
     # If no data.frame/matrix, then no vector?
-    test <- which(ifelse(test, test, !is.vector(value)))
+    test <- which(ifelse(!test, test, !is.vector(value)))
 
     if (length(test)) {
       stop("Not all the elements in the list are data.frame/matrix or vector:\n\t",
@@ -238,7 +238,7 @@ diffnet_check_attr_class <- function(value, meta) {
     # Checking the dimensions of the elements
     test <- which(sapply(value, function(x) {
       if (is.vector(x)) {
-        length(x) != 1
+        length(x) != n
       }
       else {
         !all(dim(x) == c(n,1))

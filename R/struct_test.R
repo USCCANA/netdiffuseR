@@ -140,8 +140,8 @@ print.diffnet_struct_test <- function(x, ...) {
 
     cat("Structure dependence test\n",
         "# Simulations     : ", formatC(nrow(boot$t), digits = 0, format = "f", big.mark = ","),"\n",
-        "# nodes           : ", x$graph$meta$n,"\n",
-        "# of time periods : ", x$graph$meta$nper,"\n",
+        "# nodes           : ", formatC(x$graph$meta$n, digits = 0, format = "f", big.mark = ","),"\n",
+        "# of time periods : ", formatC(x$graph$meta$nper, digits = 0, format = "f", big.mark = ","),"\n",
         paste(rep("-",80), collapse=""),"\n",
         " H0: t - t0 = 0 (no structure dependency)\n",
         "   t0 (observed) = ", t0, "\n",

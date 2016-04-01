@@ -452,6 +452,8 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
 #' @param bty See \code{\link{par}}.
+#' @param xlim Passed to \code{\link{plot}}.
+#' @param ylim Passed to \code{\link{plot}}.
 #' @param ... Additional arguments passed to \code{\link{plot}}.
 #' @family visualizations
 #' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
@@ -498,7 +500,8 @@ plot_threshold <- function(
   vertex.sides = 40, vertex.rot = 0,
   edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
   include.grid = TRUE, bty="n",
-  vertex.bcol=vertex.col, jitter.factor=c(1,0), jitter.amount=c(.25,0),...
+  vertex.bcol=vertex.col, jitter.factor=c(1,0), jitter.amount=c(.25,0),
+  xlim=NULL, ylim=NULL, ...
 ) {
 
   if (missing(expo))
@@ -515,14 +518,16 @@ plot_threshold <- function(
       vertex.lab.pos, vertex.lab.cex, vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,  ...),
+      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
+      xlim, ylim, ...),
     list = plot_threshold.list(
       graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
       vertex.lab.adj, vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol,jitter.factor, jitter.amount, ...),
+      arrow.length, include.grid, bty, vertex.bcol,jitter.factor, jitter.amount,
+      xlim, ylim, ...),
     diffnet = {
       # If graph is diffnet, then we should do something different (because the
       # first toa may not be the firts one as toa may be stacked to the right.
@@ -536,7 +541,8 @@ plot_threshold <- function(
       vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
-      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount, ...)
+      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
+      xlim, ylim, ...)
       },
     stopifnot_graph(graph)
   )
@@ -546,15 +552,12 @@ plot_threshold <- function(
 devadj <- function() {
   omi <- par("omi")
   mai <- par("mai")
-  mfr <- par("mfrow")
 
   # Getting adjustment
-  out <- c(
+  par("din")*par("mfrow") - c(
     sum(mai[c(2,4)]) + sum(omi[c(2,4)]),
     sum(mai[c(1,3)]) + sum(omi[c(1,3)])
     )
-
-  (par("din") - out)
 }
 
 # @export
@@ -577,7 +580,7 @@ plot_threshold.list <- function(
   vertex.sides, vertex.rot,
   edge.width, edge.col, arrow.length,
   include.grid, bty, vertex.bcol,
-  jitter.factor, jitter.amount, ...) {
+  jitter.factor, jitter.amount, xlim, ylim, ...) {
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
@@ -596,9 +599,9 @@ plot_threshold.list <- function(
   # Jitter to the xaxis and limits
   jit <- jitter(toa, factor=jitter.factor[1], amount = jitter.amount[1])
   xran <- range(toa, na.rm = TRUE)
-  xlim <- xran + c(-1,1)
+  if (!length(xlim)) xlim <- xran + c(-1,1)
   yran <- c(0,1)
-  ylim <- yran + (yran[2] - yran[1])*.1*c(-1,1)
+  if (!length(ylim)) ylim <- yran + (yran[2] - yran[1])*.1*c(-1,1)
 
   # Step 2: Checking colors and sizes
 

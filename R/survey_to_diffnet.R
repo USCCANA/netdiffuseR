@@ -208,7 +208,7 @@ survey_to_diffnet <- function(
     subs <- reshape(
       subs[,c(idvar, netvars)], v.names= "net",
       varying = netvars,
-      idvar="id", direction="long")
+      idvar="id", direction="long")[,c(idvar, "net")]
 
     # Creating edgelist
     dat.long <- rbind(dat.long, subs)
@@ -225,20 +225,16 @@ survey_to_diffnet <- function(
     t    <- rtoa[2] - rtoa[1] + 1
 
     # Creating the adjacency matrix
-    graph <- with(
-      dat.long,
-      edgelist_to_adjmat(edgelist = cbind(id, net), t = t,
+    graph <- edgelist_to_adjmat(edgelist = dat.long, t = t,
                          undirected=undirected, self=self, multiple = multiple,
                          keep.isolates = keep.isolates, recode.ids = recode.ids)
-    )
+
   } else {
     # Creating the adjacency matrix
-    graph <- with(
-      dat.long,
-      edgelist_to_adjmat(edgelist = cbind(id, net), t0 = t0, t1=t1,
+    graph <- edgelist_to_adjmat(edgelist = dat.long, t0 = t0, t1=t1,
                          undirected=undirected, self=self, multiple = multiple,
                          keep.isolates = keep.isolates, recode.ids = recode.ids)
-    )
+
   }
 
   # Used vertices
