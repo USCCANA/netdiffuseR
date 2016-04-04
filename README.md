@@ -38,7 +38,8 @@ install.packages("netdiffuseR")
 If you want the latest (unstable) version of **netdiffuseR**, using the `devtools` package, you can install `netdiffuseR` dev version as follows
 
 ``` r
-devtools::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
+library(devtools)
+install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
 ```
 
 You can skip building vignettes by setting `build_vignettes = FALSE` (so it is not required).
@@ -54,7 +55,7 @@ before installing the package through `devtools`.
 
 ### Binary versions
 
-For the case of windows and mac users, they can find binary versions of the package [here](https://github.com/USCCANA/netdiffuseR/releases), [netdiffuseR\_1.16.3.29.zip](https://github.com/USCCANA/netdiffuseR/releases/download/v1.16.3.29/netdiffuseR_1.16.3.29.zip), and [netdiffuseR\_1.16.3.29.tgz](https://github.com/USCCANA/netdiffuseR/releases/download/v1.16.3.29/netdiffuseR_1.16.3.29.tgz) respectively. They can install this directly as follows:
+For the case of windows and mac users, they can find binary versions of the package [here](https://github.com/USCCANA/netdiffuseR/releases), netdiffuseR\_1...zip, and netdiffuseR\_1...tgz respectively. They can install this directly as follows (for example, using the 1.16.3.29 version):
 
 1.  Install dependencies from CRAN
 
