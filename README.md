@@ -242,4 +242,4 @@ To-do list
 -   Implement the Bass model
 -   ~~Include function to import survey data (as shown on the vignettes)~~
 -   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).
--
+-   -   \[2016-04-04\]: Add more options to `exposure`, namely, `self` (so removes diagonal or not!).
