@@ -1,6 +1,6 @@
 # netdiffuseR 1.16.3.X (beta)
 
-* In `edgelist_to_adjmat` `use.incomplete` has been replaced by `keep.isolated`
+In `edgelist_to_adjmat` `use.incomplete` has been replaced by `keep.isolated`
   which makes more sense for naming. Incomplete cases on `times` or `weights` are
   still ignored (as these cannot be processed by the c++ 'engine'). (Reported by Tom)
   
@@ -101,6 +101,9 @@
   
 * New internal function `vertex_coords`: Creates polygons of any given number of
   sides considering aspec ratio of both x/y and device.
+  
+* Fixed bugs for `rgraph_ba_cpp`: Degree of new vertices was not changing apropiately.
+  This only was an issue when `m>1`.
 
 # netdiffuseR 1.16.2 (CRAN release)
 

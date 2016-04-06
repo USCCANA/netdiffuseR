@@ -133,15 +133,15 @@ rdiffnet <- function(n, t,
       if (missing(t)) {
         stop("When -sgraph- is static, -t- must be provided.")
       } else {
-        graph <- rep(list(graph), t)
+        graph <- rep(list(sgraph), t)
       }
     } else {
       if (!missing(t)) warning("When -sgraph- is dynamic, -t- shouldn't be provided.")
       graph <- sgraph
+      t <- meta$nper
     }
 
     # Setting npers and n
-    t <- meta$nper
     n <- meta$n
   }
 

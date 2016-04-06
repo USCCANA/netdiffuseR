@@ -15,11 +15,12 @@ arma::sp_mat rgraph_ba_cpp(
   arma::sp_mat graph_new(n,n);
   graph_new.submat(0,0,m0-1, m0-1) = graph;
 
-  arma::colvec dgr_new(n, arma::fill::ones);
+  arma::colvec dgr_new(n, arma::fill::zeros);
   dgr_new.subvec(0, m0-1) = dgr;
 
   // Start the process, K is sum(dgr)
   int K = sum(dgr);
+  // std::cout << dgr ;
 
   GetRNGstate();
   for(int i=0;i<t;i++) {
@@ -34,6 +35,10 @@ arma::sp_mat rgraph_ba_cpp(
     if (m > m0) m1 = m0;
 
     for (int j=0;j<m1;j++) {
+      // Incrementing the degree of the first
+      dgr_new.at(m0) += 1.0;
+
+      // std::cout << j << " Iter, "<< m << " m\n";
       // Random selection
       double randdraw = unif_rand();
 
