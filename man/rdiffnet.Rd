@@ -8,8 +8,7 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
   rewire.args = list(p = 0.1, undirected = FALSE),
   threshold.dist = function(x) runif(1), exposure.args = list(outgoing =
-  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE),
-  sgraph = NULL)
+  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE))
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
@@ -20,8 +19,7 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
 
 \item{seed.p.adopt}{Numeric scalar. Proportion of early adopters.}
 
-\item{seed.graph}{Character scalar. Type of algorithm used to generate the
-seed graph (see details).}
+\item{seed.graph}{Baseline graph used for the simulation (see details).}
 
 \item{rgraph.args}{List. Arguments to be passed to rgraph.}
 
@@ -34,8 +32,6 @@ seed graph (see details).}
 or a vector/matrix with \eqn{n} elements. Sets the adoption threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
-
-\item{sgraph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 }
 \value{
 A random \code{\link{diffnet}} class object.
@@ -68,8 +64,10 @@ is set as \code{seed.p.adopt * n}. Please note that when marginal nodes are
 set as seed it may be the case that no diffusion process is attained as the
 chosen set of first adopters can be isolated.
 
-The argument \code{seed.graph} allows the user to set the algorithm used to
-generate the first network (network in t=1). This can be either "scale-free"
+The argument \code{seed.graph} can be either a function that generates a graph
+(Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})), a
+graph itself or a character scalar in which the user sets the algorithm used to
+generate the first network (network in t=1), this can be either "scale-free"
 (Barabasi-Albert model using the \code{\link{rgraph_ba}} function, the default),
 \code{"bernoulli"} (Erdos-Renyi model using the \code{\link{rgraph_er}} function),
 or \code{"small-world"} (Watts-Strogatz model using the \code{\link{rgraph_ws}}
@@ -102,7 +100,7 @@ y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
     exposure.args=list(valued=FALSE, normalized=FALSE))
 
 # Re thinking the Adoption of Tetracycline ----------------------------------
-newMI <- rdiffnet(sgraph = medInnovationsDiffNet$graph,
+newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 }
 \author{

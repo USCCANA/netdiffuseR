@@ -46,11 +46,13 @@ test_that("Barabasi-Albert model: methods", {
 test_that("Watts-Strogatz model: Rewiring shouldn't change the # of elements", {
   # Generating the data
   set.seed(123)
-  for (i in 1:20) {
-    graph1 <- rgraph_ws(10,2,.5)
-    graph2 <- rgraph_ws(10,2,.5)
-    graph3 <- rgraph_ws(10,2,.8)
+  for (i in 1:100) {
+    graph0 <- rgraph_ws(10,2,.1, undirected = TRUE)
+    graph1 <- rgraph_ws(10,2,.5, undirected = TRUE)
+    graph2 <- rgraph_ws(10,2,.5, undirected = TRUE)
+    graph3 <- rgraph_ws(10,2,.8, undirected = TRUE)
 
+    expect_equal(sum(graph0), sum(graph1))
     expect_equal(sum(graph1), sum(graph2))
     expect_equal(sum(graph2), sum(graph3))
   }
@@ -112,4 +114,30 @@ test_that("Rewiring must hold graph's density", {
       expect_equal(sum(graph), sum(graphr))
     }
   }
+})
+
+test_that("When p=1 in rewiring, Pr(j'=i) = Pr(j'=k) for all (i,k) in V", {
+  # Generating seed graph
+  set.seed(2991)
+  n <- 1e2
+  x <- ring_lattice(n, 2)
+
+  # Simulating
+  N <- 1e4
+  out <- lapply(seq_len(N), function(y) {
+    y <- rewire_graph(x, p=1.0, self = TRUE, undirected = FALSE, both.ends = FALSE,
+                      multiple = FALSE)
+    y <- as.matrix(y)
+    colSums(y)/sum(y)
+    })
+
+  # # Computing the probability that an j was picked.
+  out <- do.call(rbind, out)
+  m   <- colMeans(out)
+
+  # Case by case (should be pretty close)
+  x <- rep(0, length(m))
+  names(x) <- names(m)
+  # plot(m-1/n, type="l", ylim=c(-.00025,.00025))
+  expect_equal(m - 1/(n), x, tolerance=.00025, check.attributes=FALSE)
 })

@@ -21,3 +21,5 @@ README[.]md
 vignettes/simulating.+\.Rmd$
 ^NEWS\.md$
 ^cran-comments\.md$
+
+^next_release\.md$

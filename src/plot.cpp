@@ -166,9 +166,8 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
 //'
 //' The \code{dev} argument provides a reference to rescale the plot accordingly
-//' to the device, and former, considering the size of the margins as well. Internally,
-//' the function \code{netdiffuseR:::devadj} (only documented here) returns a
-//' vector of size 2 including the adjustment for the device.
+//' to the device, and former, considering the size of the margins as well (this
+//' can be easily fetched via \code{par("pin")}, plot area in inches).
 //'
 //' On the other hand, \code{ran} provides a reference for the adjustment
 //' according to the range of the data, this is \code{range(x)[2] - range(x)[1]}
@@ -181,6 +180,7 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' library(sna)
 //'
 //' # Computing coordinates
+//' set.seed(79)
 //' coords <- sna::gplot(as.matrix(medInnovationsDiffNet$graph[[1]]))
 //'
 //' # Getting edge coordinates
@@ -190,7 +190,7 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //'   diffnet.toa(medInnovationsDiffNet),
 //'   x = coords[,1], y = coords[,2],
 //'   vertex_cex = vcex,
-//'   dev = netdiffuseR:::devadj()
+//'   dev = par("pin")
 //'   )
 //'
 //' ecoords <- as.data.frame(ecoords)
@@ -213,8 +213,6 @@ NumericMatrix edges_coords(
     NumericVector dev = NumericVector::create(),
     NumericVector ran = NumericVector::create()
 ) {
-
-  int n = graph.n_cols;
 
   // The output matrix has the following
   // - x0 and y0
@@ -300,7 +298,7 @@ cex <- seq(1,3,length.out = nnodes(graph))/40
 
 # Adjusting by device size, mar and mai
 arr <- as.data.frame(edges_coords(graph, toa, pos[,1], pos[,2], cex,
-                                  dev = netdiffuseR:::devadj()))
+                                  dev = par("pin)))
 
 #Fixing sizes and others
 xran <- range(pos[,1])
@@ -396,7 +394,7 @@ h <- 1
 w <- .5
 beta <- pi/1.5
 
-pol2 <- vector_polygon(0, 0, X[1], X[2], h, w, dev=netdiffuseR:::devadj(), beta = beta)
+pol2 <- vector_polygon(0, 0, X[1], X[2], h, w, dev=par("pin"), beta = beta)
 
 plot(pol2[,1], pol2[,2], xlim=ran, ylim=ran, col="white")
 polygon(pol2[,1], pol2[,2], col=rgb(.5,.5,.9,.5))
@@ -490,7 +488,7 @@ axis(1)
 axis(2)
 
 # Computing coordinates
-coords <- vertices_coords(x,y,d,n,rot, dev=netdiffuseR:::devadj())
+coords <- vertices_coords(x,y,d,n,rot, dev=par()$pin)
 
 # polygon(coords)
 invisible(lapply(coords, polygon))

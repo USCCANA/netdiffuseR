@@ -368,9 +368,11 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
     } else {
       cumadopt <- graph$cumadopt
-      graph    <- graph$graph
     }
 
+  # Checking diffnet graph
+  if (inherits(graph, "diffnet")) graph <- graph$graph
+  
   # Checking attrs
   if (!length(attrs)) {
     attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))

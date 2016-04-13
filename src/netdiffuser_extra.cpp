@@ -7,7 +7,6 @@ using namespace Rcpp;
 arma::umat sparse_indexes(const arma::sp_mat & mat) {
 
   int n  = mat.n_nonzero;
-  int nc = mat.n_cols;
   arma::umat indices(n,2);
 
   // If the matrix is empty (which makes no sense)

@@ -18,6 +18,7 @@ News
 
 Changelog can be view [here](NEWS.md).
 
+-   \[2016-04-11\] **netdiffuseR** will be on [useR! 2016](http://user2016.org) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 -   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 -   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
 -   \[2016-02-18\] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/program/)).
@@ -176,7 +177,7 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.84
+    ##  Final prevalence   : 0.96
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
@@ -229,6 +230,37 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
 ![](README_files/figure-markdown_github/plot_diffnet-1.png)<!-- -->
+
+### Session info
+
+``` r
+sessionInfo()
+```
+
+    ## R version 3.2.4 Revised (2016-03-16 r70336)
+    ## Platform: x86_64-pc-linux-gnu (64-bit)
+    ## Running under: Ubuntu 14.04.4 LTS
+    ## 
+    ## locale:
+    ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+    ##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+    ##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+    ##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+    ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    ## 
+    ## attached base packages:
+    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
+    ## 
+    ## other attached packages:
+    ## [1] SparseM_1.7                netdiffuseR_1.16.4.13.9000
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.2.4     
+    ##  [5] formatR_1.3     magrittr_1.5    evaluate_0.8.3  stringi_1.0-1  
+    ##  [9] Matrix_1.2-4    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.5
+    ## [13] tools_3.2.4     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
+    ## [17] htmltools_0.3.5 knitr_1.12.3
 
 To-do list
 ----------

@@ -548,18 +548,6 @@ plot_threshold <- function(
   )
 }
 
-# Function to retrieve the right adjustment
-devadj <- function() {
-  omi <- par("omi")
-  mai <- par("mai")
-
-  # Getting adjustment
-  par("din")*par("mfrow") - c(
-    sum(mai[c(2,4)]) + sum(omi[c(2,4)]),
-    sum(mai[c(1,3)]) + sum(omi[c(1,3)])
-    )
-}
-
 # @export
 # @rdname plot_threshold
 plot_threshold.array <- function(graph, ...) {
@@ -666,25 +654,24 @@ plot_threshold.list <- function(
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
   edges <- edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected, no.contemporary,
-                        dev=devadj(), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
+                        dev=par("pin"), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
   # with(edges, segments(x0, y0, x1, y1, lwd = edge.width, col = edge.col))
 
   ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
-  deva <- devadj()
   e_arrows <- apply(edges, 1, function(x) {
       y <- edges_arrow(x["x0"], x["y0"], x["x1"], x["y1"],
                    width=arrow.length,
                    height=arrow.length,
                    beta=pi*(2/3),
-                   dev=deva, ran=ran)
+                   dev=par("pin"), ran=ran)
       polygon(y[,1], y[,2], col=edge.col, border=edge.col)
     })
 
   # Drawing the vertices and its labels
   # Computing the coordinates
-  pol <- vertices_coords(jit, y, vertex.cex, vertex.sides, vertex.rot, deva, ran)
+  pol <- vertices_coords(jit, y, vertex.cex, vertex.sides, vertex.rot, par("pin"), ran)
 
   # Plotting
   lapply(seq_len(length(pol)),
@@ -1126,7 +1113,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @family diffnet methods
 #' @examples
 #' # Creating a random diffnet object
-#' set.seed(8417)
+#' set.seed(84117)
 #' mydiffnet <- rdiffnet(30, 5)
 #'
 #' # Coercing it into an array

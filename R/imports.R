@@ -28,3 +28,11 @@ NULL
 #' @importFrom utils getFromNamespace head
 #' @importFrom boot boot
 NULL
+
+release_questions <- function() {
+  c(
+    "Have you updated the inst/NEWS file?",
+    "Have you changed the version+dates in DESCRIPTION and NEWS.md?",
+    "Have you added all new files to GIT?"
+    )
+}

@@ -68,74 +68,82 @@ arma::sp_mat rewire_graph_cpp(
     bool undirected=false) {
 
   // Clonning graph
-  arma::sp_mat newgraph(graph);
   int n = graph.n_cols;
+  arma::sp_mat newgraph(graph);
 
   // Getting the indexes
   arma::umat indexes = sparse_indexes(graph);
 
-
-  GetRNGstate();
+  // GetRNGstate();
   for (int i= 0;i<indexes.n_rows; i++) {
 
     // Checking user interrupt
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
-    // Checking whether to change it or not
-    if (unif_rand() > p) continue;
-
     // Indexes
     int j = indexes.at(i, 0);
     int k = indexes.at(i, 1);
 
-    // Since it is undirected...
-    if (undirected && (j < k) ) continue;
+    // In the case of undirected graphs, we only modify the lower triangle
+    // The upper triangle part will be rewritten during the rand.
+    if (undirected && (j < k)) continue;
+
+    // Checking whether to change it or not
+    if (unif_rand() > p) continue;
 
     // New end(s)
     int newk, newj;
 
     // If rewiring is in both sides, then we start from the left
-    if (both_ends) newj = floor( (n-1)*unif_rand() );
-    else newj = j;
+    if (both_ends) newj = (int) floor( unif_rand()*n );
+    else           newj = j;
 
     // Checking for conditions
-    int wcount = 0;
-    bool conditions = true;
-    arma::uvec picked(n, arma::fill::zeros);
+    int  wcount = 0;
+    std::vector< bool > picked(n);
 
-    while (conditions) {
-      newk = floor( (n-1)*unif_rand() );
+    while (true) {
+      // Picking a random number in [0,n)
+      // In the case of undirected graphs,
+      // we only operate on the lower triangle. The upper triangle will be
+      // modified afterwards.
+      if (undirected) newk = (int) floor( unif_rand()*(newj + 1));
+      else            newk = (int) floor( unif_rand()*n);
 
       // In the case that the individual actually is connected to everyone and
       // multiple is not allowed, this is needed to break out the loop
       if (picked.at(newk)) {
-        if (++wcount >= n*n) break;
+        if (wcount >= (undirected ? newj : n)) break;
         continue;
-      } else picked.at(newk) = 1;
-
-      if (undirected && (newj < newk)) continue;
+      } else {
+        picked.at(newk) = true;
+        ++wcount;
+      }
 
       // Self edges are not allowed, again, must check this on the new graph
-      if (!self && newj == newk) continue;
+      if (!self && (newj == newk)) continue;
 
       // Multiple edges are not allowed. Must check this on the new graph
       if (!multiple && (newgraph.at(newj, newk) != 0)) continue;
 
-      conditions = false;
+      break;
     }
 
-    // Setting zeros
-    double w = newgraph.at(j,k);
-    newgraph.at(j,k) = 0;
-    if (undirected) newgraph.at(k,j) = 0;
+    // If it was not able to change
+    if (wcount >= (undirected ? newj : n)) continue;
 
     // Adding up
-    newgraph.at(newj,newk) += w;
+    double w = graph.at(j,k);
+
+                    newgraph.at(j,k) = 0;
+    if (undirected) newgraph.at(k,j) = 0;
+
+                    newgraph.at(newj,newk) += w;
     if (undirected) newgraph.at(newk,newj) += w;
 
   }
-  PutRNGstate();
+  // PutRNGstate();
 
   return newgraph;
 }

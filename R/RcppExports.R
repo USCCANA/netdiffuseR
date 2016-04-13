@@ -140,9 +140,8 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' \code{\link{arrows}}. This is the workhorse function used in \code{\link{plot_threshold}}.
 #'
 #' The \code{dev} argument provides a reference to rescale the plot accordingly
-#' to the device, and former, considering the size of the margins as well. Internally,
-#' the function \code{netdiffuseR:::devadj} (only documented here) returns a
-#' vector of size 2 including the adjustment for the device.
+#' to the device, and former, considering the size of the margins as well (this
+#' can be easily fetched via \code{par("pin")}, plot area in inches).
 #'
 #' On the other hand, \code{ran} provides a reference for the adjustment
 #' according to the range of the data, this is \code{range(x)[2] - range(x)[1]}
@@ -155,6 +154,7 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' library(sna)
 #'
 #' # Computing coordinates
+#' set.seed(79)
 #' coords <- sna::gplot(as.matrix(medInnovationsDiffNet$graph[[1]]))
 #'
 #' # Getting edge coordinates
@@ -164,7 +164,7 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #'   diffnet.toa(medInnovationsDiffNet),
 #'   x = coords[,1], y = coords[,2],
 #'   vertex_cex = vcex,
-#'   dev = netdiffuseR:::devadj()
+#'   dev = par("pin")
 #'   )
 #'
 #' ecoords <- as.data.frame(ecoords)

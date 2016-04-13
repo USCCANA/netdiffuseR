@@ -279,7 +279,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                       undirected=TRUE) {
   out <- rewire_graph_cpp(ring_lattice(n, k, undirected), p, both.ends,
-                   self, multiple, TRUE)
+                   self, multiple, undirected)
 
   # WS model is directed
   attr(out, "undirected") <- undirected
@@ -389,8 +389,7 @@ rewire_graph.list <- function(graph, p, both.ends, self, multiple, undirected,
 }
 
 # @rdname rewire_graph
-rewire_graph.dgCMatrix <- function(graph, p, both.ends=FALSE, self=FALSE, multiple=FALSE,
-                         undirected=getOption("diffnet.undirected")) {
+rewire_graph.dgCMatrix <- function(graph, p, both.ends, self, multiple, undirected) {
   out <- rewire_graph_cpp(graph, p, both.ends, self, multiple, undirected)
 
   rn <- rownames(out)
