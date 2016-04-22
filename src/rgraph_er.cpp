@@ -17,7 +17,6 @@ arma::sp_mat rgraph_er_cpp(
 
   arma::sp_mat graph(n, n);
 
-  GetRNGstate();
   for(int i=0;i<n;i++) {
     // Checling user interrup
     if (i % 200 == 0)
@@ -40,7 +39,6 @@ arma::sp_mat rgraph_er_cpp(
       }
     }
   }
-  PutRNGstate();
 
   return graph;
 }

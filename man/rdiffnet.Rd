@@ -15,7 +15,7 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
 
 \item{t}{Integer scalar. Time length.}
 
-\item{seed.nodes}{Character scalar. Type of seed nodes (early adoptes).}
+\item{seed.nodes}{Either a character scalar or a vector. Type of seed nodes (see details).}
 
 \item{seed.p.adopt}{Numeric scalar. Proportion of early adopters.}
 
@@ -57,12 +57,15 @@ equal to his threshold. The simulation is done in the following steps:
  accordingly to each vertex's threshold and exposure.
 }
 
-\code{seed.nodes} can be \code{"marginal"}, \code{"central"} or \code{"random"},
+When \code{seed.nodes} is a character scalar it can be \code{"marginal"}, \code{"central"} or \code{"random"},
 So each of these values sets the initial adopters using the vertices with lowest
 degree, with highest degree or completely randomly. The number of early adoptes
 is set as \code{seed.p.adopt * n}. Please note that when marginal nodes are
 set as seed it may be the case that no diffusion process is attained as the
-chosen set of first adopters can be isolated.
+chosen set of first adopters can be isolated. Any other case will be considered
+as an index (via \code{\link{[<-}} methods), hence the user can manually set the set of initial adopters, for example
+if the user sets \code{seed.nodes=c(1, 4, 7)} then nodes 1, 4 and 7 will be
+selected as initial adopters.
 
 The argument \code{seed.graph} can be either a function that generates a graph
 (Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})), a
@@ -91,6 +94,7 @@ is applied using that graph instead.
 }
 \examples{
 # Asimple example -----------------------------------------------------------
+set.seed(123)
 z <- rdiffnet(100,10)
 z
 summary(z)
@@ -102,6 +106,7 @@ y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
 # Re thinking the Adoption of Tetracycline ----------------------------------
 newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
+
 }
 \author{
 Vega Yon

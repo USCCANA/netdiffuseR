@@ -61,7 +61,7 @@ gplot(as.matrix(x), displaylabels = TRUE, mode="circle", jitter = FALSE)
 */
 
 // [[Rcpp::export]]
-arma::sp_mat rewire_graph_cpp(
+arma::sp_mat rewire_endpoints(
     const arma::sp_mat & graph, double p,
     bool both_ends=false,
     bool self=false, bool multiple=false,
@@ -74,12 +74,14 @@ arma::sp_mat rewire_graph_cpp(
   // Getting the indexes
   arma::umat indexes = sparse_indexes(graph);
 
-  // GetRNGstate();
   for (int i= 0;i<indexes.n_rows; i++) {
 
     // Checking user interrupt
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
+
+    // Checking whether to change it or not
+    if (unif_rand() > p) continue;
 
     // Indexes
     int j = indexes.at(i, 0);
@@ -89,9 +91,6 @@ arma::sp_mat rewire_graph_cpp(
     // The upper triangle part will be rewritten during the rand.
     if (undirected && (j < k)) continue;
 
-    // Checking whether to change it or not
-    if (unif_rand() > p) continue;
-
     // New end(s)
     int newk, newj;
 
@@ -99,39 +98,14 @@ arma::sp_mat rewire_graph_cpp(
     if (both_ends) newj = (int) floor( unif_rand()*n );
     else           newj = j;
 
-    // Checking for conditions
-    int  wcount = 0;
-    std::vector< bool > picked(n);
+    if (undirected) newk = (int) floor( unif_rand()*(newj + 1));
+    else            newk = (int) floor( unif_rand()*n);
 
-    while (true) {
-      // Picking a random number in [0,n)
-      // In the case of undirected graphs,
-      // we only operate on the lower triangle. The upper triangle will be
-      // modified afterwards.
-      if (undirected) newk = (int) floor( unif_rand()*(newj + 1));
-      else            newk = (int) floor( unif_rand()*n);
+    // Self edges are not allowed, again, must check this on the new graph
+    if (!self && (newj == newk)) continue;
 
-      // In the case that the individual actually is connected to everyone and
-      // multiple is not allowed, this is needed to break out the loop
-      if (picked.at(newk)) {
-        if (wcount >= (undirected ? newj : n)) break;
-        continue;
-      } else {
-        picked.at(newk) = true;
-        ++wcount;
-      }
-
-      // Self edges are not allowed, again, must check this on the new graph
-      if (!self && (newj == newk)) continue;
-
-      // Multiple edges are not allowed. Must check this on the new graph
-      if (!multiple && (newgraph.at(newj, newk) != 0)) continue;
-
-      break;
-    }
-
-    // If it was not able to change
-    if (wcount >= (undirected ? newj : n)) continue;
+    // Multiple edges are not allowed. Must check this on the new graph
+    if (!multiple && (newgraph.at(newj, newk) != 0)) continue;
 
     // Adding up
     double w = graph.at(j,k);
@@ -143,20 +117,18 @@ arma::sp_mat rewire_graph_cpp(
     if (undirected) newgraph.at(newk,newj) += w;
 
   }
-  // PutRNGstate();
-
   return newgraph;
 }
 
 
 /** *R
 rgraph_ws <- function(n,k,p, both_ends=FALSE, self=FALSE, multiple=FALSE) {
-  rewire_graph_cpp(ring_lattice(n, k), p, both_ends,
+ rewire_endpoints(ring_lattice(n, k), p, both_ends,
                    self, multiple, true)
 }
 
 x <- ring_lattice(14, 2)
 gplot(as.matrix(x), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
-gplot(as.matrix(netdiffuseR:::rewire_graph_cpp(x, .1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
-gplot(as.matrix(netdiffuseR:::rewire_graph_cpp(x, 1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
+gplot(as.matrix(netdiffuseR:::rewire_endpoints(x, .1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
+gplot(as.matrix(netdiffuseR:::rewire_endpoints(x, 1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
 */

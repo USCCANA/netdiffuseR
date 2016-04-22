@@ -4,8 +4,8 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 
-#ifndef DIFFTEST_ADJMAT_
-#define DIFFTEST_ADJMAT_
+#ifndef NETDIFFUSER_ADJMAT_
+#define NETDIFFUSER_ADJMAT_
 
 using namespace Rcpp;
 

@@ -29,7 +29,9 @@
 #' \code{struct_test} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
 #' \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
 #' rewires the original graph using \code{\link{rewire_graph}} and applies
-#' the function defined by the user in \code{statistic}.
+#' the function defined by the user in \code{statistic}. In particular, the \code{"swap"} algorithm
+#' is used in order to preserve the degree sequence of the graph, in other words,
+#' each rewired version of the original graph has the same degree sequence.
 #'
 #' In \code{struct_test} \code{\dots} are passed to \code{boot}, otherwise are passed
 #' to the corresponding method (\code{\link{hist}} for instance).
@@ -57,7 +59,7 @@
 #' @examples
 #' # Creating a random graph
 #' set.seed(881)
-#' diffnet <- rdiffnet(100, 10)
+#' diffnet <- rdiffnet(500, 10, seed.graph="small-world")
 #'
 #' # Testing structure-dependency of threshold
 #' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
@@ -85,10 +87,10 @@ struct_test <- function(
   statistic,
   R,
   rewire.args=list(
-    p          = c(1, rep(.3, nslices(graph) - 1)),
+    p          = c(2000, rep(100, nslices(graph) - 1)),
     undirected = getOption("diffnet.undirected", FALSE),
-    both.ends  = FALSE,
-    copy.first = TRUE
+    copy.first = TRUE,
+    algorithm  = "swap"
     ),
   ...
   ) {
@@ -102,8 +104,6 @@ struct_test <- function(
   statisticpll <- function(d, i, fn, rewire.args, ...) {
     fn(do.call(rewire_graph, rewire.args))
   }
-
-
 
   # Calling boot
   boot_res <- boot::boot(1, statisticpll, R=R, fn=statistic, rewire.args=rewire.args,

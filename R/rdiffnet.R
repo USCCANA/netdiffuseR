@@ -6,7 +6,7 @@
 #' @export
 #' @param n Integer scalar. Number of vertices.
 #' @param t Integer scalar. Time length.
-#' @param seed.nodes Character scalar. Type of seed nodes (early adoptes).
+#' @param seed.nodes Either a character scalar or a vector. Type of seed nodes (see details).
 #' @param seed.p.adopt Numeric scalar. Proportion of early adopters.
 #' @param seed.graph Baseline graph used for the simulation (see details).
 #' @param rgraph.args List. Arguments to be passed to rgraph.
@@ -36,12 +36,15 @@
 #'  accordingly to each vertex's threshold and exposure.
 #' }
 #'
-#' \code{seed.nodes} can be \code{"marginal"}, \code{"central"} or \code{"random"},
+#' When \code{seed.nodes} is a character scalar it can be \code{"marginal"}, \code{"central"} or \code{"random"},
 #' So each of these values sets the initial adopters using the vertices with lowest
 #' degree, with highest degree or completely randomly. The number of early adoptes
 #' is set as \code{seed.p.adopt * n}. Please note that when marginal nodes are
 #' set as seed it may be the case that no diffusion process is attained as the
-#' chosen set of first adopters can be isolated.
+#' chosen set of first adopters can be isolated. Any other case will be considered
+#' as an index (via \code{\link{[<-}} methods), hence the user can manually set the set of initial adopters, for example
+#' if the user sets \code{seed.nodes=c(1, 4, 7)} then nodes 1, 4 and 7 will be
+#' selected as initial adopters.
 #'
 #' The argument \code{seed.graph} can be either a function that generates a graph
 #' (Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})), a
@@ -70,6 +73,7 @@
 #'
 #' @examples
 #' # Asimple example -----------------------------------------------------------
+#' set.seed(123)
 #' z <- rdiffnet(100,10)
 #' z
 #' summary(z)
@@ -81,6 +85,7 @@
 #' # Re thinking the Adoption of Tetracycline ----------------------------------
 #' newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
 #'  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
+#'
 #' @author Vega Yon
 rdiffnet <- function(n, t,
                      seed.nodes="random", seed.p.adopt=0.05,
@@ -200,20 +205,25 @@ rdiffnet <- function(n, t,
   # Step 0.1: Setting the seed nodes -------------------------------------------
   cumadopt <- matrix(0L, ncol=t, nrow=n)
   toa   <- matrix(NA, ncol=1, nrow= n)
-  if (seed.nodes %in% c("central","marginal")) {
-    d <- dgr(sgraph)[,1,drop=FALSE]
-    decre <- ifelse(seed.nodes == "central", TRUE, FALSE)
-    d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
-    d <- d[1:floor(n0)]
-    d <- as.numeric(d)
-    cumadopt[d, ] <- 1L
-    toa[d] <- 1L
-  } else if (seed.nodes == "random") {
-    d <- sample.int(n, floor(n0))
-    toa[d] <- 1
-    cumadopt[d,] <- 1L
-  } else
-    stop("Invalid -seed.nodes- option. It must be either \"central\", \"marginal\", or \"random\"")
+
+  if (length(seed.nodes) == 1) {
+    if (seed.nodes %in% c("central","marginal")) {
+      d <- dgr(sgraph)[,1,drop=FALSE]
+      decre <- ifelse(seed.nodes == "central", TRUE, FALSE)
+      d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
+      d <- d[1:floor(n0)]
+      d <- as.numeric(d)
+    } else if (seed.nodes == "random") {
+      d <- sample.int(n, floor(n0))
+    } else
+      stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+  } else if (!inherits(seed.nodes, "character")) {
+    d <- seed.nodes
+  } else stop("Unsupported -seed.nodes- value. See the manual for references.")
+
+  # Setting seed nodes via vector
+  toa[d] <- 1L
+  cumadopt[d,] <- 1L
 
   # Step 3.0: Thresholds -------------------------------------------------------
   if (inherits(threshold.dist, "function")) thr <- sapply(1:n, threshold.dist)

@@ -49,6 +49,14 @@ angle <- function(x0, y0, x1, y1) {
     .Call('netdiffuseR_angle', PACKAGE = 'netdiffuseR', x0, y0, x1, y1)
 }
 
+sp_trimatl <- function(x) {
+    .Call('netdiffuseR_sp_trimatl', PACKAGE = 'netdiffuseR', x)
+}
+
+sp_diag <- function(x, v) {
+    .Call('netdiffuseR_sp_diag', PACKAGE = 'netdiffuseR', x, v)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.
@@ -187,6 +195,10 @@ vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran
     .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
 }
 
+rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE) {
+    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected)
+}
+
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t)
 }
@@ -222,8 +234,8 @@ ring_lattice <- function(n, k, undirected = FALSE) {
     .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k, undirected)
 }
 
-rewire_graph_cpp <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {
-    .Call('netdiffuseR_rewire_graph_cpp', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
+rewire_endpoints <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {
+    .Call('netdiffuseR_rewire_endpoints', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
 }
 
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {

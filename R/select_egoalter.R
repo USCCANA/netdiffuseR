@@ -61,6 +61,8 @@ select_egoalter <- function(graph, adopt, period=NULL) {
   )
 }
 
+adopt_changes <- select_egoalter
+
 # @rdname select_egoalter
 # @export
 select_egoalter.array <- function(graph, adopt, period=NULL) {

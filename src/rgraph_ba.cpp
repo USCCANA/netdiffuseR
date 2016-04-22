@@ -22,7 +22,6 @@ arma::sp_mat rgraph_ba_cpp(
   int K = sum(dgr);
   // std::cout << dgr ;
 
-  GetRNGstate();
   for(int i=0;i<t;i++) {
     // Checling user interrup
     if (i % 1000 == 0)
@@ -63,7 +62,6 @@ arma::sp_mat rgraph_ba_cpp(
     }
     ++m0;
   }
-  PutRNGstate();
 
   return graph_new;
 }

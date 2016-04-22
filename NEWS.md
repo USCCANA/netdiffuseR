@@ -83,7 +83,8 @@
 * New features for `rdiffnet`. `seed.graph` can be either a function that generates
   a random graph, a character string (as before) indicating the class of graph
   to generate, or any other class of graph (either static or dynamic) as specified
-  in `netdiffuseR-graphs`.
+  in `netdiffuseR-graphs`. `seed.nodes` can now be a vector with indices pointing
+  to the initial adopters.
 
 ## New functions
 
@@ -117,6 +118,9 @@
 * New print method for `diffnet_se`, objects returned by `struct_equiv`.
 
 * New function `diffnet_to_igraph`.
+
+* New rewiring algorithm, `rewire_swap` implements the edge-switch algorithm in
+  an efficient way. This preserves degree sequences.
 
 
 # Changes in netdiffuseR version 1.16.2 (2016-02-18)

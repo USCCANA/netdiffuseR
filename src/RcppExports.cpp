@@ -175,6 +175,29 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// sp_trimatl
+arma::sp_mat sp_trimatl(const arma::sp_mat& x);
+RcppExport SEXP netdiffuseR_sp_trimatl(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
+    __result = Rcpp::wrap(sp_trimatl(x));
+    return __result;
+END_RCPP
+}
+// sp_diag
+arma::sp_mat sp_diag(const arma::sp_mat& x, const arma::vec& v);
+RcppExport SEXP netdiffuseR_sp_diag(SEXP xSEXP, SEXP vSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type v(vSEXP);
+    __result = Rcpp::wrap(sp_diag(x, v));
+    return __result;
+END_RCPP
+}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
@@ -240,6 +263,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
     __result = Rcpp::wrap(vertices_coords(x, y, size, nsides, rot, dev, ran));
+    return __result;
+END_RCPP
+}
+// rewire_swap
+arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected);
+RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< int >::type nsteps(nstepsSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    __result = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected));
     return __result;
 END_RCPP
 }
@@ -314,9 +352,9 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// rewire_graph_cpp
-arma::sp_mat rewire_graph_cpp(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
-RcppExport SEXP netdiffuseR_rewire_graph_cpp(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
+// rewire_endpoints
+arma::sp_mat rewire_endpoints(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
+RcppExport SEXP netdiffuseR_rewire_endpoints(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -326,7 +364,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
     Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    __result = Rcpp::wrap(rewire_graph_cpp(graph, p, both_ends, self, multiple, undirected));
+    __result = Rcpp::wrap(rewire_endpoints(graph, p, both_ends, self, multiple, undirected));
     return __result;
 END_RCPP
 }

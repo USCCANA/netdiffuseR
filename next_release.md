@@ -7,7 +7,7 @@ The following document details expectations for the comming versions. There is n
 ## Polishing
 
 - Review manuals: Description of arguments and name of the functions.
-- Aliases creation: `select_egoalter` `table_...`
+- ~~Aliases creation: `select_egoalter` `table_...`~~
 
 ## Testing
 
@@ -19,7 +19,7 @@ The following document details expectations for the comming versions. There is n
 
 - `diffnet_to_networkDynamic`, `networkDynamic_to_diffnet`. Need to reach out the author of Carter Butts: Is there any way to access networkDynamic objects formal definition??
 
-- `rewire_dgr_preserve`: A brief comparison on igraph and netdiffuseR rewiring algorithms shows that igraph has no significan speed improvement in small-medium graphs. This may be due to having a similar rewiring algorithm. The dgr preserve should work in a similar fashion and should incorporate the call to `std::<vector>remove` method.
+- ~~`rewire_dgr_preserve`: A brief comparison on igraph and netdiffuseR rewiring algorithms shows that igraph has no significan speed improvement in small-medium graphs. This may be due to having a similar rewiring algorithm. The dgr preserve should work in a similar fashion and should incorporate the call to `std::<vector>remove` method.~~
 
 - Raise the level of `ARMA_BIT_64INT`: Create a toy package in which, by simulations, we create big sparse matrices of class `dgCMatrix` do read/write operations both from R and from C++.
 
@@ -29,12 +29,12 @@ The following document details expectations for the comming versions. There is n
 
 ## Improving
 
--   `rdiffnet`:
+-   ~~`rdiffnet`:
     Set initial adopters by providing a vector:
     - logical
     - integer (of length n)
     - integer (of random length)
-    - character (ids, rownames)
+    - character (ids, rownames)~~
 
 -   What happens in `survey_to_diffnet` when a data.frame is provided, but se set to fill data and the checking done over the dimmensions of the data?
 

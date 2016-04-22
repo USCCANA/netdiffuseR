@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 1.16.4.13.9000
-Date: 2016-04-13
+Version: 1.16.4.22.9000
+Date: 2016-04-22
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
@@ -40,7 +40,7 @@ Suggests:
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
@@ -62,6 +62,7 @@ Collate:
     'moran.R'
     'options.R'
     'package-doc.R'
+    'rewire.R'
     'random_graph.R'
     'rdiffnet.R'
     'read_write_foreign.R'

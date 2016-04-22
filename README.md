@@ -177,7 +177,7 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.96
+    ##  Final prevalence   : 0.62
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
@@ -237,7 +237,7 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 sessionInfo()
 ```
 
-    ## R version 3.2.4 Revised (2016-03-16 r70336)
+    ## R version 3.2.5 (2016-04-14)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
     ## Running under: Ubuntu 14.04.4 LTS
     ## 
@@ -253,13 +253,13 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7                netdiffuseR_1.16.4.13.9000
+    ## [1] SparseM_1.7                netdiffuseR_1.16.4.22.9000
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.2.4     
+    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.2.5     
     ##  [5] formatR_1.3     magrittr_1.5    evaluate_0.8.3  stringi_1.0-1  
-    ##  [9] Matrix_1.2-4    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.5
-    ## [13] tools_3.2.4     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
+    ##  [9] Matrix_1.2-5    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.5
+    ## [13] tools_3.2.5     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
     ## [17] htmltools_0.3.5 knitr_1.12.3
 
 To-do list
@@ -275,3 +275,4 @@ To-do list
 -   ~~Include function to import survey data (as shown on the vignettes)~~
 -   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).
 -   -   \[2016-04-04\]: Add more options to `exposure`, namely, `self` (so removes diagonal or not!).
+-

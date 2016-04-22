@@ -88,6 +88,12 @@ New features and changes
 -   New internal function vertex_coords: Creates polygons of any given
     number of sides considering aspec ratio of both x/y and device.
 
+-   New features for rdiffnet. seed.graph can be either a function that
+    generates a random graph, a character string (as before) indicating
+    the class of graph to generate, or any other class of graph (either
+    static or dynamic) as specified in netdiffuseR-graphs. seed.nodes
+    can now be a vector with indices pointing to the initial adopters.
+
 
 New functions
 
@@ -123,6 +129,9 @@ New functions
 -   New print method for diffnet_se, objects returned by struct_equiv.
 
 -   New function diffnet_to_igraph.
+
+-   New rewiring algorithm, rewire_swap implements the edge-switch
+    algorithm in an efficient way. This preserves degree sequences.
 
 
 
