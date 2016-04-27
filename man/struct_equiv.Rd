@@ -100,7 +100,7 @@ se_group[[1]]$SE
 
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Thimoty B, Hayes, Thomas W. Valente
 }
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus

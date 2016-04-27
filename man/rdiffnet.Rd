@@ -109,7 +109,7 @@ newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other simulation functions: \code{\link{rewire_graph}},

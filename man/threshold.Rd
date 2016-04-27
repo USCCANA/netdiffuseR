@@ -52,7 +52,7 @@ diffnet <- as_diffnet(graph, toa)
 threshold(diffnet, alt.graph=se)
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}

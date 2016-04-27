@@ -102,7 +102,7 @@ adopt <- toa_mat(toa)
 plot_diffnet(graph, adopt$cumadopt)
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other visualizations: \code{\link{hazard_rate}},

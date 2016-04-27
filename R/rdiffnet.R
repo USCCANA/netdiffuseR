@@ -86,7 +86,7 @@
 #' newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
 #'  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 #'
-#' @author Vega Yon
+#' @author George G. Vega Yon
 rdiffnet <- function(n, t,
                      seed.nodes="random", seed.p.adopt=0.05,
                      seed.graph="scale-free", rgraph.args=list(),

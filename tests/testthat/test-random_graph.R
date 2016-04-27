@@ -169,7 +169,7 @@ test_that("rewire_graph_const_cpp should hold degree", {
   for (i in 1:n) {
     x  <- rgraph_ws(n=N-1, k=4, p=.3)
     d0 <- dfun(x)
-    y  <- netdiffuseR:::rewire_swap(x, 100, undirected = TRUE)
+    y  <- netdiffuseR:::rewire_swap(x, 100, undirected = FALSE)
     d1 <- dfun(y)
 
     out[i] <- identical(d0, d1)

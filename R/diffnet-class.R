@@ -546,7 +546,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'  \item \code{multiple}: Logical scalar.
 #' }
 #' }
-#' @author Vega Yon
+#' @author George G. Vega Yon
 as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
                        vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
                        id.and.per.vars = NULL,

@@ -114,7 +114,7 @@ susceptibility(graph, toa, K=4)
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo

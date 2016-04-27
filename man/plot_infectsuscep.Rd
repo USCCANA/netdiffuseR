@@ -82,7 +82,7 @@ toa <- sample(1:(1+nper-1), n, TRUE)
 out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Aral, S., & Walker, D. (2012). "Identifying Influential and Susceptible Members

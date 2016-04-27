@@ -35,7 +35,7 @@
 #' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 #' when no names are provided, these will be created from scratch.
 #' @include imports.R
-#' @author Vega Yon
+#' @author George G. Vega Yon
 NULL
 
 stopifnot_graph <- function(x)
@@ -58,7 +58,7 @@ stopifnot_graph <- function(x)
 #' \item{nper}{Integer scalar. Number of time periods}
 #' \item{n}{Integer scalar. Number of vertices in the graph}
 #' Otherwise returns with error.
-#' @author Vega Yon
+#' @author George G. Vega Yon
 #' @export
 classify_graph <- function(graph) {
 

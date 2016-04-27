@@ -121,6 +121,79 @@ arma::sp_mat rewire_endpoints(
 }
 
 
+// [[Rcpp::export]]
+arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p=0.0,
+                       bool self=false, bool multiple=false) {
+
+  arma::sp_mat out(G);
+
+  // First half
+  for(int k=1;k<=K;k++) {
+    for(int i=0;i<G.n_cols;i++) {
+      // Clock wise choose
+      int j;
+      if (k <= K/2) j = ((i + k) < (G.n_rows))? i + k: k - (G.n_rows - i);
+      else {
+        int tmpk = k - K/2;
+        j = ((i - tmpk) < 0)? G.n_cols - tmpk + i: i - tmpk;
+      }
+
+      // If not rewire then leave as is
+      if (unif_rand() > p) continue;
+
+      // Indexes
+      double r = unif_rand();
+
+      // Picking the new random obs excluding i
+      int newj;
+      if (!self) newj = unif_rand_w_exclusion(G.n_rows, i);
+      else       newj = floor(unif_rand()*G.n_rows);
+
+      // If multiple
+      std::vector< bool > checked(G.n_rows);
+      int nchecked = 0;
+      while (!multiple && out.at(i,newj) != 0) {
+        // Picking a new one
+        if (!self) newj = unif_rand_w_exclusion(G.n_rows, i);
+        else       newj = floor(unif_rand()*G.n_rows);
+
+        // Has it already been drawn?
+        if (!checked.at(newj)) {
+          checked.at(newj) = true;
+          ++nchecked;
+
+        } else {
+          if      ( self && (nchecked >= G.n_rows))       break;
+          else if (!self && (nchecked >= (G.n_rows - 1))) break;
+        }
+      }
+
+      // If multiple, then continue
+      if (multiple && out.at(i, newj) != 0) continue;
+
+
+      // Changing values
+      double v = G.at(i, j);
+      out.at(i,j) = 0;
+      out.at(i, newj) = v;
+
+
+    }
+  }
+  // // Second half
+  // for(int k=1;k<=K/2;k++) {
+  //   for(int i=0;i<G.n_cols;i++) {
+  //     // Clockwise choose
+  //     int j = ((i - k) < 0)? G.n_cols - k + i: i - k;
+  //     // // Rprintf("(%d, %d)\n", i, j);
+  //     // out.at(i,j) = 1;
+  //   }
+  // }
+
+  return out;
+}
+
+
 /** *R
 rgraph_ws <- function(n,k,p, both_ends=FALSE, self=FALSE, multiple=FALSE) {
  rewire_endpoints(ring_lattice(n, k), p, both_ends,

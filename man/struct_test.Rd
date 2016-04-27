@@ -114,7 +114,7 @@ hist(res)
 }
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Vega Yon, George G. and Valente, Thomas W. (On development).

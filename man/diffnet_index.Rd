@@ -129,6 +129,9 @@ x[["expoD"]] <- expoD
 identical(x[["expoM"]], x[["expoL"]]) # TRUE
 identical(x[["expoM"]], x[["expoD"]]) # TRUE
 }
+\author{
+George G. Vega Yon
+}
 \seealso{
 Other diffnet methods: \code{\link{as.array.diffnet}},
   \code{\link{as_diffnet}}, \code{\link{c.diffnet}},

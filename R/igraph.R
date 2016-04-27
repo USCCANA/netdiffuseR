@@ -78,7 +78,7 @@ igraph_to_diffnet <- function(
     if (!length(t0)) t0 <- min(toa, na.rm = TRUE)
     if (!length(t1)) t1 <- max(toa, na.rm = TRUE)
 
-    mat <- igraph::as_adj(graph)
+    mat <- igraph::as_adj(graph, attr="weight")
     mat <- lapply(seq_len(t1-t0+1), function(x) mat)
 
     vertex.static.attrs <- as.data.frame(

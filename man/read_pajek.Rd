@@ -64,6 +64,6 @@ SAMPSONL <- read_ucinet(path)
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 

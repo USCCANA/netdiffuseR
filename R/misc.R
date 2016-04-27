@@ -19,7 +19,7 @@
 #' # Retrieving the "recode" attribute
 #' attr(recoded_edgelist, "recode")
 #' @keywords misc
-#' @author Vega Yon
+#' @author George G. Vega Yon
 recode <- function(data, ...) UseMethod("recode")
 
 #' @rdname recode

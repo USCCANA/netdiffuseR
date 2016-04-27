@@ -141,7 +141,7 @@ diffnet <- as_diffnet(graph, toa=1:4)
 plot_diffnet(diffnet, displaylabels=TRUE)
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \seealso{
 Other data management functions: \code{\link{as_diffnet}},

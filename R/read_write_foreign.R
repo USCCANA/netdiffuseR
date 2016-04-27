@@ -41,7 +41,7 @@
 #' path <- system.file("extdata", "SAMPSON.DAT", package = "netdiffuseR")
 #' SAMPSONL <- read_ucinet(path)
 #'
-#' @author Vega Yon
+#' @author George G. Vega Yon
 #' @export
 #' @aliases read_net read_dl
 #' @source From the pajek manual \url{http://mrvar.fdv.uni-lj.si/pajek/pajekman.pdf}

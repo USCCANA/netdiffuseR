@@ -198,6 +198,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// unif_rand_w_exclusion
+int unif_rand_w_exclusion(int n, int e);
+RcppExport SEXP netdiffuseR_unif_rand_w_exclusion(SEXP nSEXP, SEXP eSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type e(eSEXP);
+    __result = Rcpp::wrap(unif_rand_w_exclusion(n, e));
+    return __result;
+END_RCPP
+}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
@@ -365,6 +377,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     __result = Rcpp::wrap(rewire_endpoints(graph, p, both_ends, self, multiple, undirected));
+    return __result;
+END_RCPP
+}
+// rewire_ws
+arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p, bool self, bool multiple);
+RcppExport SEXP netdiffuseR_rewire_ws(SEXP GSEXP, SEXP KSEXP, SEXP pSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type G(GSEXP);
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    __result = Rcpp::wrap(rewire_ws(G, K, p, self, multiple));
     return __result;
 END_RCPP
 }

@@ -90,7 +90,7 @@
 #'
 #' @export
 #' @include graph_data.R
-#' @author Vega Yon
+#' @author George G. Vega Yon
 egonet_attrs <- function(
   graph, attrs, V=NULL,
   direction = "outgoing",

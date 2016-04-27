@@ -41,7 +41,7 @@ recoded_edgelist
 attr(recoded_edgelist, "recode")
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 \code{\link{edgelist_to_adjmat}}

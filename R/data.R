@@ -842,7 +842,7 @@
 #' Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University Press.
 #' @family diffusion datasets
 #' @name diffusion-data
-#' @author Valente, T.W.
+#' @author Thomas W. Valente
 NULL
 
 
@@ -867,7 +867,7 @@ NULL
 #'
 #' @source Generated for the package.
 #' @family diffusion datasets
-#' @author Vega Yon
+#' @author George G. Vega Yon
 "fakesurvey"
 
 #' Fake longitudinal survey data
@@ -892,7 +892,7 @@ NULL
 #'
 #' @source Generated for the package.
 #' @family diffusion datasets
-#' @author Vega Yon
+#' @author George G. Vega Yon
 "fakesurveyDyn"
 
 
@@ -911,7 +911,7 @@ NULL
 #'
 #' @source Generated for the package
 #' @family diffusion datasets
-#' @author Vega Yon
+#' @author George G. Vega Yon
 "fakeDynEdgelist"
 
 #' Fake static edgelist
@@ -928,5 +928,5 @@ NULL
 #'
 #' @source Generated for the package
 #' @family diffusion datasets
-#' @author Vega Yon
+#' @author George G. Vega Yon
 "fakeEdgelist"

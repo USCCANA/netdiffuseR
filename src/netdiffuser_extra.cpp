@@ -78,3 +78,14 @@ arma::sp_mat sp_diag(const arma::sp_mat & x, const arma::vec & v) {
 
   return out;
 }
+
+
+// [[Rcpp::export]]
+int unif_rand_w_exclusion(int n, int e) {
+  double r = unif_rand();
+  int num = floor(r*(n-1));
+  if (e != n) {
+    if (num >= e) ++num;
+  }
+  return(num);
+}

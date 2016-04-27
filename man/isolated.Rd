@@ -56,7 +56,7 @@ isolated(graph)
 drop_isolated(graph)
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other data management functions: \code{\link{as_diffnet}},

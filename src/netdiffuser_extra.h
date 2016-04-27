@@ -15,4 +15,6 @@ double angle(double x0, double y0, double x1, double y1);
 
 arma::sp_mat sp_trimatl(const arma::sp_mat & x);
 
+int unif_rand_w_exclusion(int n, int e);
+
 #endif

@@ -21,7 +21,7 @@ A data frame used for examples in reading edgelist format networks. This
 edgelist can be merged with the dataset \code{\link{fakesurvey}}.
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},

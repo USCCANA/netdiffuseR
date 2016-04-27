@@ -33,7 +33,7 @@
 #'
 #' any(d_valued!=d_unvalued)
 #'
-#' @author Vega Yon
+#' @author George G. Vega Yon
 dgr <- function(graph, cmode="degree",
                 undirected=getOption("diffnet.undirected", FALSE),
                 self=getOption("diffnet.self",FALSE),
@@ -338,7 +338,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @keywords univar
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
-#' @author Vega Yon, Dyal, Hayes & Valente
+#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
                      outgoing=getOption("diffnet.outgoing", TRUE),
                      valued=getOption("diffnet.valued", FALSE), normalized=TRUE,
@@ -372,7 +372,7 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
   # Checking diffnet graph
   if (inherits(graph, "diffnet")) graph <- graph$graph
-  
+
   # Checking attrs
   if (!length(attrs)) {
     attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))
@@ -509,7 +509,7 @@ exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
 #' @family statistics
 #' @keywords univar
 #' @export
-#' @author Vega Yon, Dyal, Hayes & Valente
+#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 cumulative_adopt_count <- function(obj) {
 
   if (inherits(obj, "diffnet")) obj <- obj$cumadopt
@@ -605,7 +605,7 @@ cumulative_adopt_count <- function(obj) {
 #' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
 #' (2nd ed.). Cambridge: MIT Press.
 #' @export
-#' @author Vega Yon, Dyal, Hayes & Valente
+#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 
   if (inherits(obj, "diffnet")) obj <- obj$cumadopt
@@ -683,7 +683,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' diffnet <- as_diffnet(graph, toa)
 #' threshold(diffnet, alt.graph=se)
 #' @export
-#' @author Vega Yon, Dyal, Hayes & Valente
+#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE, ...) {
 
   if (inherits(obj, "diffnet")) {

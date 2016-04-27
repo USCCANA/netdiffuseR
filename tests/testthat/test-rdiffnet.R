@@ -64,3 +64,19 @@ test_that("Input", {
   expect_equal(x_dgCMatrix,x_diffnet)
 
 })
+
+# Seed of first adopters
+test_that("All should be equal!", {
+  set.seed(12131)
+  g    <- rgraph_ws(20, 4, p=.3)
+  set0 <- c(1,5,7,10)
+  thr  <- runif(20, .4,.7)
+
+  # Generating identical networks
+  net1 <- rdiffnet(seed.graph = g, seed.nodes = set0, t = 4, rewire = FALSE,
+                   threshold.dist = thr)
+  net2 <- rdiffnet(seed.graph = g, seed.nodes = set0, t = 4, rewire = FALSE,
+                   threshold.dist = thr)
+
+  expect_equal(net1, net2)
+})

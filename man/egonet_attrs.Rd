@@ -108,6 +108,6 @@ egonet_attrs(diffnet, V=c(1,20))
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 

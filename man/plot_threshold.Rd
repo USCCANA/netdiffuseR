@@ -115,7 +115,7 @@ plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Use \code{\link{threshold}} to retrieve the corresponding threshold

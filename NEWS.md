@@ -85,6 +85,9 @@
   to generate, or any other class of graph (either static or dynamic) as specified
   in `netdiffuseR-graphs`. `seed.nodes` can now be a vector with indices pointing
   to the initial adopters.
+  
+* The rewiring algorithm for `rgraph_ws` has been replaced with a `rewire_ws` which
+  has been implemented as it was presented in Watts and Strogatz (1998).
 
 ## New functions
 

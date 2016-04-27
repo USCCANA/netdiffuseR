@@ -51,7 +51,7 @@ any(d_valued!=d_unvalued)
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other statistics: \code{\link{cumulative_adopt_count}},

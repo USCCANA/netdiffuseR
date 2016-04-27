@@ -111,7 +111,7 @@ cumadopt <- toa_mat(toa)$cumadopt
 hazard_rate(cumadopt)
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \references{
 Allison, P. (1984). Event history analysis regression for longitudinal event

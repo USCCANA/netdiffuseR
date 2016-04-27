@@ -26,7 +26,7 @@
 #' moran(x, w/rowSums(as.array(w)))
 #' ape::Moran.I(x, w)
 #' }
-#' @author Vega Yon
+#' @author George G. Vega Yon
 moran <- function(x, w, normalize.w=TRUE) {
   if (!inherits(w, "matrix") & !inherits(w, "dgCMatrix"))
     stop("-w- must be either a matrix or a dgCMatrix.")

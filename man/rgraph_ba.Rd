@@ -46,7 +46,7 @@ graph
 graph <- rgraph_ba(graph=graph)
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Bollobás, B´., Riordan, O., Spencer, J., & Tusnády, G. (2001). The degree

@@ -102,7 +102,7 @@
 #'
 #' @export
 #' @return A numeric column vector (matrix) of size \eqn{n} with either infection/susceptibility rates.
-#' @author Vega Yon
+#' @author George G. Vega Yon
 infection <- function(graph, toa, t0=NULL,
                       normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE,
                       valued   = getOption("diffnet.valued", FALSE),

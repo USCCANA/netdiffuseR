@@ -36,7 +36,7 @@ times <- sample(2000:2005, 10, TRUE)
 toa_diff(times)
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \keyword{manip}
 

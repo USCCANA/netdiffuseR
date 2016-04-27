@@ -61,6 +61,7 @@
 #' \code{[i,j]} elements from the adjacency matrix.
 #' @name diffnet_index
 #' @family diffnet methods
+#' @author George G. Vega Yon
 #' @examples
 #'
 #' # Creating a random diffusion network ---------------------------------------

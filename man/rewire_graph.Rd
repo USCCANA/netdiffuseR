@@ -79,16 +79,14 @@ well behaved in terms of been unbiased, so after each iteration each possible
 structure of the graph has the same probability of been generated. The algorithm
 has been implemented as follows:
 
-Let \eqn{E} be the set of edges of the baseline graph \eqn{G}, and \eqn{G'}
-a copy of \eqn{G}. For \eqn{i=1} to \eqn{p}, do:
+Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, do:
 \enumerate{
  \item Choose \eqn{e0=(a, b)} from \eqn{E}. If \code{!self & a == b} then go to the last step.
  \item Choose \eqn{e1=(c, d)} from \eqn{E}. If \code{!self & c == d } then go to the last step.
- \item Define \eqn{e0'=(a, d)} and \eqn{e1' = (c, b)}
- \item If \code{!multiple & [G'[e0']!= 0 | G'[e1'] != 0]} then go to the last step.
- \item Define \eqn{v0 = G'[e0]} and \eqn{v1 = G'[e1]}, set \eqn{G'[e0]=0} and \eqn{G'[e1]=0}
+ \item Define \eqn{e0'=(a, d)} and \eqn{e1' = (c, b)}. If \code{!multiple & [G[e0']!= 0 | G[e1'] != 0]} then go to the last step.
+ \item Define \eqn{v0 = G[e0]} and \eqn{v1 = G[e1]}, set \eqn{G[e0]=0} and \eqn{G[e1]=0}
  (and the same to the diagonally opposed coordinates in the case of undirected graphs)
- \item Set \eqn{G'[e0'] = v0} and \eqn{G'[e1'] = v1} (and so with the diagonally opposed coordinates
+ \item Set \eqn{G[e0'] = v0} and \eqn{G[e1'] = v1} (and so with the diagonally opposed coordinates
  in the case of undirected graphs).
  \item Next i.
 }
@@ -103,12 +101,12 @@ Let \eqn{G} be the baseline graph and \eqn{G'} be a copy of it. Then, For \eqn{l
 
 \enumerate{
  \item Pick the \eqn{l}-th edge from \eqn{E}, define it as \eqn{e = (i,j)}.
- \item Draw \eqn{r} from \eqn{U(0,1)}, if \eqn{r > p} skip and go to the last step.
+ \item Draw \eqn{r} from \eqn{U(0,1)}, if \eqn{r > p} go to the last step.
  \item If \code{!undirected & i < j} skip and go to the last step.
  \item Randomly select a vertex \eqn{j'} (and \eqn{i'} if \code{both_ends==TRUE}).
        And define \eqn{e'=(i, j')} (or \eqn{e'=(i', j')} if \code{both_ends==TRUE}).
- \item If \code{!self &} \code{i==j}' (or if \code{both_ends==TRUE & i'==j'}) then go to step 4.
- \item If \code{!multiple & G'[e']!= 0} then go to step 4.
+ \item If \code{!self &} \code{i==j}' (or if \code{both_ends==TRUE & i'==j'}) go to the last step.
+ \item If \code{!multiple & G'[e']!= 0} then go to the last step.
  \item Define \eqn{v = G[e]}, set \eqn{G'[e] = 0} and \eqn{G'[e'] = v} (and the
        same to the diagonally opposed coordinates in the case of undirected graphs).
  \item Next \eqn{l}.
@@ -149,7 +147,7 @@ points(x=7,y=table(as.factor(w))[baseline]/nsim*100, pch=3, col="red")
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collectivedynamics of "small-world" networks.

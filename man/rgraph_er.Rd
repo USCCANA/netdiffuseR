@@ -66,7 +66,7 @@ rgraph_er(t=5)
 }
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)

@@ -301,7 +301,7 @@ all(attrs_new[,tocompare] == attrs_old[,tocompare], na.rm = TRUE) # TRUE!
 
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}

@@ -258,7 +258,7 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 #' @family visualizations
 #' @keywords hplot
 #' @export
-#' @author Vega Yon
+#' @author George G. Vega Yon
 plot_diffnet <- function(
   graph, cumadopt,
   slices=NULL,
@@ -487,7 +487,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 #'
 #' @export
-#' @author Vega Yon
+#' @author George G. Vega Yon
 plot_threshold <- function(
   graph, expo, toa,
   include_censored=FALSE,
@@ -752,7 +752,7 @@ plot_threshold.list <- function(
 #'
 #' # Visualizing distribution of suscep/infect
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
-#' @author Vega Yon
+#' @author George G. Vega Yon
 plot_infectsuscep <- function(
   graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=20,nlevels=round(bins/2),
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
@@ -905,7 +905,7 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
 #' plot_adopters(mat$cumadopt)
 #' @return List of matrices as described in \code{\link{cumulative_adopt_count}}
 #' @export
-#' @author Vega Yon
+#' @author George G. Vega Yon
 plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
                           add=FALSE, include.legend=TRUE, include.grid=TRUE,
                           pch=c(21,24), type=c("b", "b"),

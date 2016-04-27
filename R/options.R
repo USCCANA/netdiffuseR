@@ -14,7 +14,7 @@
 #' \item{outgoing}{TRUE}
 #' \item{keep.isolates}{TRUE}
 #' @name netdiffuseR-options
-#' @author Vega Yon
+#' @author George G. Vega Yon
 NULL
 .onLoad <- function(libname, pkgname) {
   options(

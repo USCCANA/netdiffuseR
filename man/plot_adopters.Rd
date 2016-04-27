@@ -63,7 +63,7 @@ mat <- toa_mat(toa)
 plot_adopters(mat$cumadopt)
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other visualizations: \code{\link{hazard_rate}},

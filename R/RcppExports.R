@@ -57,6 +57,10 @@ sp_diag <- function(x, v) {
     .Call('netdiffuseR_sp_diag', PACKAGE = 'netdiffuseR', x, v)
 }
 
+unif_rand_w_exclusion <- function(n, e) {
+    .Call('netdiffuseR_unif_rand_w_exclusion', PACKAGE = 'netdiffuseR', n, e)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.
@@ -236,6 +240,10 @@ ring_lattice <- function(n, k, undirected = FALSE) {
 
 rewire_endpoints <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {
     .Call('netdiffuseR_rewire_endpoints', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
+}
+
+rewire_ws <- function(G, K, p = 0.0, self = FALSE, multiple = FALSE) {
+    .Call('netdiffuseR_rewire_ws', PACKAGE = 'netdiffuseR', G, K, p, self, multiple)
 }
 
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {

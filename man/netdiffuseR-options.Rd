@@ -26,6 +26,6 @@ getOption("diffnet.multiple")
 getOption("diffnet.self")
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 

@@ -6,7 +6,7 @@
 \title{Watts-Strogatz model}
 \usage{
 rgraph_ws(n, k, p, both.ends = FALSE, self = FALSE, multiple = FALSE,
-  undirected = TRUE)
+  undirected = FALSE)
 }
 \arguments{
 \item{n}{Integer scalar. Set the size of the graph.}
@@ -30,8 +30,24 @@ model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 \description{
 Generates a small-world random graph.
 }
+\examples{
+
+library(igraph)
+set.seed(7123)
+x0 <- graph_from_adjacency_matrix(rgraph_ws(10,2, 0))
+x1 <- graph_from_adjacency_matrix(rgraph_ws(10,2, .3))
+x2 <- graph_from_adjacency_matrix(rgraph_ws(10,2, 1))
+
+oldpar <- par(no.readonly=TRUE)
+par(mfrow=c(1,3))
+plot(x0, layout=layout_in_circle, edge.curved=TRUE, main="Regular")
+plot(x1, layout=layout_in_circle, edge.curved=TRUE, main="Small-world")
+plot(x2, layout=layout_in_circle, edge.curved=TRUE, main="Random")
+par(oldpar)
+
+}
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"

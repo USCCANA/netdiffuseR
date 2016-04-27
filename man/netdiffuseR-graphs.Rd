@@ -44,6 +44,6 @@ and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 when no names are provided, these will be created from scratch.
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 

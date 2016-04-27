@@ -40,7 +40,7 @@ omitting such observations leads to biased results (van den Bulte & Iyengar,
 2011).
 }
 \author{
-Valente, T.W.
+Thomas W. Valente
 }
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus

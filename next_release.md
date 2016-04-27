@@ -29,12 +29,12 @@ The following document details expectations for the comming versions. There is n
 
 ## Improving
 
--   ~~`rdiffnet`:
+-   ~~`rdiffnet`:~~
     Set initial adopters by providing a vector:
     - logical
     - integer (of length n)
     - integer (of random length)
-    - character (ids, rownames)~~
+    - character (ids, rownames)
 
 -   What happens in `survey_to_diffnet` when a data.frame is provided, but se set to fill data and the checking done over the dimmensions of the data?
 

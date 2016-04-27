@@ -199,7 +199,7 @@ stopifnot(all(test))
 
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural

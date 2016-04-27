@@ -28,7 +28,7 @@ in particular, the \code{\link{survey_to_diffnet}} function. This dataset
 can be merged with the \code{\link{fakeEdgelist}}.
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},

@@ -36,7 +36,7 @@ ape::Moran.I(x, w)
 }
 }
 \author{
-Vega Yon
+George G. Vega Yon
 }
 \references{
 Moran's I. (2015, September 3). In Wikipedia, The Free Encyclopedia.

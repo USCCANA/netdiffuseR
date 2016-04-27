@@ -57,7 +57,7 @@ toa_mat(times, t0=2000, t1=2006)
 
 }
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \keyword{manip}
 

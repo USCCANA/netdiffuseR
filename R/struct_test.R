@@ -81,7 +81,7 @@
 #' res
 #' hist(res)
 #' }
-#' @author Vega Yon
+#' @author George G. Vega Yon
 struct_test <- function(
   graph,
   statistic,
