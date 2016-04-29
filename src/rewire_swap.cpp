@@ -10,7 +10,6 @@ arma::sp_mat rewire_swap(
     bool undirected=false) {
 
   // Clonning graph
-  int n = graph.n_cols;
   arma::sp_mat newgraph(graph);
 
   // Getting the indexes

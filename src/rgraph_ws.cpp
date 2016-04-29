@@ -74,7 +74,7 @@ arma::sp_mat rewire_endpoints(
   // Getting the indexes
   arma::umat indexes = sparse_indexes(graph);
 
-  for (int i= 0;i<indexes.n_rows; i++) {
+  for (unsigned i= 0;i<indexes.n_rows; i++) {
 
     // Checking user interrupt
     if (i % 1000 == 0)
@@ -126,36 +126,34 @@ arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p=0.0,
                        bool self=false, bool multiple=false) {
 
   arma::sp_mat out(G);
+  int n = G.n_rows;
 
   // First half
   for(int k=1;k<=K;k++) {
-    for(int i=0;i<G.n_cols;i++) {
+    for(int i=0;i<n;i++) {
       // Clock wise choose
       int j;
-      if (k <= K/2) j = ((i + k) < (G.n_rows))? i + k: k - (G.n_rows - i);
+      if (k <= K/2) j = ((i + k) < n)? i + k: k - (n - i);
       else {
         int tmpk = k - K/2;
-        j = ((i - tmpk) < 0)? G.n_cols - tmpk + i: i - tmpk;
+        j = ((i - tmpk) < 0)? n - tmpk + i: i - tmpk;
       }
 
       // If not rewire then leave as is
       if (unif_rand() > p) continue;
 
-      // Indexes
-      double r = unif_rand();
-
       // Picking the new random obs excluding i
       int newj;
-      if (!self) newj = unif_rand_w_exclusion(G.n_rows, i);
-      else       newj = floor(unif_rand()*G.n_rows);
+      if (!self) newj = unif_rand_w_exclusion(n, i);
+      else       newj = floor(unif_rand()*n);
 
       // If multiple
-      std::vector< bool > checked(G.n_rows);
+      std::vector< bool > checked(n);
       int nchecked = 0;
       while (!multiple && out.at(i,newj) != 0) {
         // Picking a new one
-        if (!self) newj = unif_rand_w_exclusion(G.n_rows, i);
-        else       newj = floor(unif_rand()*G.n_rows);
+        if (!self) newj = unif_rand_w_exclusion(n, i);
+        else       newj = floor(unif_rand()*n);
 
         // Has it already been drawn?
         if (!checked.at(newj)) {
@@ -163,8 +161,8 @@ arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p=0.0,
           ++nchecked;
 
         } else {
-          if      ( self && (nchecked >= G.n_rows))       break;
-          else if (!self && (nchecked >= (G.n_rows - 1))) break;
+          if      ( self && (nchecked >= n))       break;
+          else if (!self && (nchecked >= (n - 1))) break;
         }
       }
 

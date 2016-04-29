@@ -19,6 +19,7 @@ README[.]md
 [.]travis[.]yml
 ^appveyor\.yml$
 vignettes/simulating.+\.Rmd$
+vignettes/structural.+\.Rmd$
 ^NEWS\.md$
 ^cran-comments\.md$
 

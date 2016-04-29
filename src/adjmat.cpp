@@ -204,27 +204,25 @@ arma::sp_mat drop_isolated_cpp(
     const arma::sp_mat & adjmat,
     arma::icolvec isolated, bool undirected=true) {
 
-  int n = adjmat.n_cols;
-
   // Checking size
   is_square_sp_mat(adjmat);
 
-  if (isolated.n_rows==0) isolated = isolated_cpp(adjmat, undirected);
-  else if (isolated.n_rows != n) stop("-isolated- must have the same length as nrow(adjmat)");
+  if (isolated.n_rows==0u) isolated = isolated_cpp(adjmat, undirected);
+  else if (isolated.n_rows != adjmat.n_cols) stop("-isolated- must have the same length as nrow(adjmat)");
 
   int m = sum(isolated);
-  arma::sp_mat newadjmat(n-m,n-m);
+  arma::sp_mat newadjmat(adjmat.n_cols-m,adjmat.n_cols-m);
 
   // Rcpp::warning()
 
   // Indexes of the new adjacency matrix
   int ii=0;
   int ji=0;
-  for(int i=0;i<n;i++) {
+  for(unsigned i=0;i<adjmat.n_cols;i++) {
 
     // If an isolated was found, continue next
     if (isolated[i]) continue;
-    for(int j=0;j<n;j++) {
+    for(unsigned j=0;j<adjmat.n_cols;j++) {
       if (isolated[j]) continue;
       newadjmat.at(ii,ji++)=adjmat.at(i,j);
     }

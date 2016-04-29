@@ -248,7 +248,7 @@ NumericMatrix edges_coords(
   arma::umat indexes = sparse_indexes(graph);
 
   // for(int i=0;i<n;i++) {
-  for(int I=0;I<indexes.n_rows;I++) {
+  for(unsigned I=0;I<indexes.n_rows;I++) {
 
     int i = indexes.at(I,0);
     int j = indexes.at(I,1);
@@ -420,15 +420,14 @@ List vertices_coords(
     NumericVector ran = NumericVector::create()
 ) {
 
-  int n = x.n_rows;
 
   // Checking sizes
-  if (n != y.n_rows) stop("-x- and -y- lengths do not coincide.");
-  if (n != size.n_rows) stop("-x- and -size- lengths do not coincide.");
-  if (n != nsides.n_rows) stop("-x- and -nsides- lengths do not coincide.");
-  if (n != rot.n_rows) stop("-x- and -rot- lengths do not coincide.");
+  if (x.n_rows != y.n_rows) stop("-x- and -y- lengths do not coincide.");
+  if (x.n_rows != size.n_rows) stop("-x- and -size- lengths do not coincide.");
+  if (x.n_rows != nsides.n_rows) stop("-x- and -nsides- lengths do not coincide.");
+  if (x.n_rows != rot.n_rows) stop("-x- and -rot- lengths do not coincide.");
 
-  List out(n);
+  List out(x.n_rows);
 
   // If yexpand is too small, just throw an error
   if (ran.length() == 0) {
@@ -447,7 +446,7 @@ List vertices_coords(
 
   yexpand = yexpand * (dev[0]/dev[1]);
 
-  for (int i=0;i<n;i++) {
+  for (unsigned i=0;i<x.n_rows;i++) {
     // Getting inner degrees
     double alpha = PI - ((nsides(i) - 2.0)*PI)/nsides(i);
     double beta  = (PI - 2.0*PI/nsides(i))/2.0;

@@ -253,7 +253,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7                netdiffuseR_1.16.4.22.9000
+    ## [1] SparseM_1.7           netdiffuseR_1.16.4.29
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.2.5     

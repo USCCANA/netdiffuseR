@@ -152,7 +152,7 @@ test4
 testall
 ```
 
-This shows that City 1 is the only place where threshold seems to be struture dependent, as after simulating 2,000 networks (by rewiring each one of these so all have the same number of vertices and density) the average threshold of the rewired networks and the observed network are statistically different. Now we can make an histogram of the outcomes by city:
+This shows in no City threshold seems to be struture dependent, as after simulating 2,000 networks by rewiring each one of these preserving the degree sequence (using `algorithm = "swap"` by default in the `rewire.args`) the null can't be rejected. Now we can make an histogram of the outcomes by city:
 
 ```{r Histograms}
 # To make it nicer, we change the parameters in using par
@@ -169,8 +169,6 @@ hist(test4, main="Distribution of Statistic on rewired\nnetwork (City 4)")
 # Returning to the previous graphical parameters
 par(oldpar)
 ```
-
-Interestingly, since City 1 has the most vertices and its p-value is roughly 0.001, computing the test for the agreggate leads to a p-value of ~0.02, which can be misleading pointing that the threshold model fits the entire network.
 
 # Retrieving the data to create a panel/envent history/longitudinal data
 

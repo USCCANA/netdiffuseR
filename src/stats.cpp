@@ -89,7 +89,7 @@ arma::colvec exposure_cpp(
 ) {
 
   // Getting parameters
-  int n = cumadopt.n_rows;
+  unsigned n = cumadopt.n_rows;
   if (n != graph.n_cols) stop("-graph- is not squared.");
 
   // Creating output and auxiliar objects

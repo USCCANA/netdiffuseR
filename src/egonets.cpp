@@ -35,15 +35,14 @@ List egonet_attrs_cpp(
 
     // Individual specific variables
     arma::sp_mat g = tgraph.col(e);
-    int n = g.n_nonzero;
-    NumericMatrix out(n-rm,2);
+    NumericMatrix out(g.n_nonzero-rm,2);
     // We add two so:
     //  - we can include the value of the edge
     //  - we cna include the id number of the vertex (wich goes from 1 to n)
 
     // Retrieving the desired set of attributes
     int nloop = 0;
-    for (int i=0;i<g.n_nonzero;i++) {
+    for (unsigned i = 0u;i < g.n_nonzero;i++) {
 
       // Edge index
       int index = g.row_indices[i];

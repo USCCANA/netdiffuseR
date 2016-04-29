@@ -93,7 +93,7 @@ legend("topleft", bty="n",
 Comparing hazard rates we can do the following
 
 ```{r Hazard rate}
-plot_hazard(diffnet_ran, ylim=c(0,.4), bg=cols[1])
+plot_hazard(diffnet_ran, ylim=c(0,1), bg=cols[1])
 plot_hazard(diffnet_cen, add=TRUE, bg=cols[2])
 plot_hazard(diffnet_mar, add=TRUE, bg=cols[3])
 
