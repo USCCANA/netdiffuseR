@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.4.13.9000 (2016-04-13)
+# Changes in netdiffuseR version 1.16.4.29 (2016-04-29)
 
 ## Bug fixes
 

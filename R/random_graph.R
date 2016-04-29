@@ -269,6 +269,13 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 #' @family simulation functions
 #' @aliases small-world
 #' @export
+#' @details Implemented as in Watts and Strogatz (1998). Starts from an
+#' undirected ring with \eqn{n} vertices all with degree \eqn{k} (so it must
+#' be an even number), and then rewire each edge by setting the endpoint (so
+#' now you treat it as a digraph) randomly any vertex in \eqn{N \setminus {i}}{N \\ {i}}
+#' avoiding multiple links (by default) using the rewiring algorithm described on
+#' the paper.
+#'
 #' @references
 #' Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
 #' networks. Nature, 393(6684), 440–2. \url{http://dx.doi.org/10.1038/30918}

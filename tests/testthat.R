@@ -1,4 +1,4 @@
 library(testthat)
 library(netdiffuseR)
 
-test_check("netdiffuseR")
+test_check("netdiffuseR", reporter = "summary")

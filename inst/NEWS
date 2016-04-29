@@ -1,6 +1,6 @@
 
 
-CHANGES IN NETDIFFUSER VERSION 1.16.4.13.9000 (2016-04-13)
+CHANGES IN NETDIFFUSER VERSION 1.16.4.29 (2016-04-29)
 
 
 Bug fixes
@@ -93,6 +93,10 @@ New features and changes
     the class of graph to generate, or any other class of graph (either
     static or dynamic) as specified in netdiffuseR-graphs. seed.nodes
     can now be a vector with indices pointing to the initial adopters.
+
+-   The rewiring algorithm for rgraph_ws has been replaced with a
+    rewire_ws which has been implemented as it was presented in Watts
+    and Strogatz (1998).
 
 
 New functions

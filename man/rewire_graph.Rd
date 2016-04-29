@@ -28,7 +28,7 @@ or an integer vector with number of iterations (\code{algorithm="swap"}).}
 the first slice as a baseline for the rest of slices (see details).}
 }
 \description{
-Graph rewiring algorithms
+Changes the structure of a graph by altering ties.
 }
 \details{
 Both algorithms are implemented sequentially, this is, edge-wise checking
@@ -92,17 +92,20 @@ Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, 
 }
 }
 
-\section{\emph{Endpoints} algorithm (Watts-Strogatz)}{
+\section{\emph{Endpoints} algorithm}{
 
 
-This is the workhorse of the \code{\link{rgraph_ws}} function. The algorithm is implemented as follows:
+This reconnect either one or both of the endpoints of the edge randomly. As a big
+difference with the swap algorithm is that this does not preserves the degree
+sequence of the graph (at most the outgoing degree sequence). The algorithm is
+implemented as follows:
 
 Let \eqn{G} be the baseline graph and \eqn{G'} be a copy of it. Then, For \eqn{l=1} to \eqn{|E|} do:
 
 \enumerate{
  \item Pick the \eqn{l}-th edge from \eqn{E}, define it as \eqn{e = (i,j)}.
  \item Draw \eqn{r} from \eqn{U(0,1)}, if \eqn{r > p} go to the last step.
- \item If \code{!undirected & i < j} skip and go to the last step.
+ \item If \code{!undirected & i < j} go to the last step.
  \item Randomly select a vertex \eqn{j'} (and \eqn{i'} if \code{both_ends==TRUE}).
        And define \eqn{e'=(i, j')} (or \eqn{e'=(i', j')} if \code{both_ends==TRUE}).
  \item If \code{!self &} \code{i==j}' (or if \code{both_ends==TRUE & i'==j'}) go to the last step.
@@ -111,6 +114,9 @@ Let \eqn{G} be the baseline graph and \eqn{G'} be a copy of it. Then, For \eqn{l
        same to the diagonally opposed coordinates in the case of undirected graphs).
  \item Next \eqn{l}.
 }
+
+The endpoints algorithm is used by default in \code{\link{rdiffnet}} and used
+to be the default in \code{\link{struct_test}} (now \code{swap} is the default).
 }
 \examples{
 # Checking the consistency of the "swap" ------------------------------------

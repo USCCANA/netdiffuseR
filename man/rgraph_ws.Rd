@@ -30,6 +30,14 @@ model. The resulting graph will have \code{attr(graph, "undirected")=FALSE}.
 \description{
 Generates a small-world random graph.
 }
+\details{
+Implemented as in Watts and Strogatz (1998). Starts from an
+undirected ring with \eqn{n} vertices all with degree \eqn{k} (so it must
+be an even number), and then rewire each edge by setting the endpoint (so
+now you treat it as a digraph) randomly any vertex in \eqn{N \setminus {i}}{N \\ {i}}
+avoiding multiple links (by default) using the rewiring algorithm described on
+the paper.
+}
 \examples{
 
 library(igraph)

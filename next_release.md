@@ -11,8 +11,8 @@ The following document details expectations for the comming versions. There is n
 
 ## Testing
 
-- `survey_to_diffnet`, `edgelist_to_adjmat`
-- `diffnet_as_igraph`, `igraph_as_diffnet`
+- `survey_to_diffnet`, ~~`edgelist_to_adjmat`~~
+- ~~`diffnet_as_igraph`, `igraph_as_diffnet`~~
 
 
 ## Developing
@@ -42,4 +42,4 @@ The following document details expectations for the comming versions. There is n
 
 - Include the survival analysis example: Maybe use the recidivism data mixed with social data? Find a paper where someone does that
 - Include a probit/logit model
-- Write down an example with the function `select_egoalter` and rename it.
+- ~~Write down an example with the function `select_egoalter` and rename it.~~

@@ -322,9 +322,18 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
   ids.edgelist <- unique(c(edgelist[,1,drop=TRUE], edgelist[,2,drop=TRUE]))
   ids.dat      <- unique(dat[[idvar]])
   if (length(fill.missing)) {
+    # Checking argument
     if (!inherits(fill.missing, "character")) {
       stop("-fill.missing- should be a character scalar")
-    } else if (fill.missing %in% c("edgelist", "both")) {
+    }
+    # If something goes wrong
+    if (!(fill.missing %in% c("edgelist", "dat", "both"))) {
+      stop("The only values currently supported for -fill.missing- are:\n\t",
+           "'edgelist', 'dat', or 'both'.")
+    }
+
+    # Filling missing pieces
+    if (fill.missing %in% c("edgelist", "both")) {
       test <- ids.dat[which(!( ids.dat %in% ids.edgelist))]
 
       # If some missing, then filling with more edges
@@ -345,8 +354,9 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
         if (length(t1)) t1 <- c(t1, rep(NA, length(test)))
         if (length(w))   w <- c(w, rep(min(w, na.rm = TRUE), length(test)))
       }
-    } else if (fill.missing %in% c("dat", "both")) {
-      test <- ids.dat[which(!(ids.edgelist %in% ids.dat))]
+    }
+    if (fill.missing %in% c("dat", "both")) {
+      test <- ids.edgelist[which(!(ids.edgelist %in% ids.dat))]
 
       # If some missing, then filling with more edges
       if (length(test)) {
@@ -361,9 +371,6 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
         dat[(ndat + 1):nrow(dat),] <- NA
         dat[[idvar]][(ndat + 1):nrow(dat)]  <- test
       }
-    } else {
-      stop("The only values currently supported for -fill.missing- are:\n\t",
-           "'edgelist', 'dat', or 'both'.")
     }
   }
 
@@ -450,7 +457,7 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
 
       # Removing the id var, the per var and the toa var
       test <- colnames(vertex.attrs[[ichar]]) %in% c(varlist, "_original_sort")
-      vertex.attrs[[ichar]] <- vertex.attrs[[ichar]][,which(!test)]
+      vertex.attrs[[ichar]] <- vertex.attrs[[ichar]][,which(!test),drop=FALSE]
     }
   } else {
     # Creating data.frame
@@ -462,7 +469,7 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
 
     # Removing the idvar
     test <- colnames(vertex.attrs) %in% c(varlist, "_original_sort")
-    vertex.attrs <- vertex.attrs[,which(!test)]
+    vertex.attrs <- vertex.attrs[,which(!test),drop=FALSE]
   }
 
   # Times of Adoption vector

@@ -3,7 +3,8 @@
 #' This function calculates the 16 possible configurations between ego and alter
 #' over two time points in terms of their behavior and tie changes.  From time
 #' one to time two, given a binary state of behavior, ego and alter can be
-#' related in 16 different ways.
+#' related in 16 different ways. The function \code{adopt_changes} is just an
+#' alias for \code{select_egoalter}.
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param adopt \eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.
@@ -46,7 +47,13 @@
 #' Pages 89-97, ISSN 0277-9536
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Thimoty B, Hayes, Thomas W. Valente
+#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
+#' @examples
+#' # Simple example
+#' set.seed(1312)
+#' dn <- rdiffnet(20, 5, seed.graph="small-world")
+#'
+#' str(adopt_changes(dn))
 select_egoalter <- function(graph, adopt, period=NULL) {
 
   if (missing(adopt))
@@ -56,7 +63,7 @@ select_egoalter <- function(graph, adopt, period=NULL) {
   switch (class(graph),
     array = select_egoalter.array(graph, adopt, period),
     list = select_egoalter.list(graph, adopt, period),
-    list = select_egoalter.list(graph$graph, graph$adopt, period),
+    diffnet = select_egoalter.list(graph$graph, graph$adopt, period),
     stopifnot_graph(graph)
   )
 }

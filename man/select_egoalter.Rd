@@ -32,7 +32,8 @@ classified between categories 1 to 16.}
 This function calculates the 16 possible configurations between ego and alter
 over two time points in terms of their behavior and tie changes.  From time
 one to time two, given a binary state of behavior, ego and alter can be
-related in 16 different ways.
+related in 16 different ways. The function \code{adopt_changes} is just an
+alias for \code{select_egoalter}.
 }
 \details{
 The 16 possibilities are summarized in this matrix:
@@ -55,8 +56,15 @@ while neither of the two had addopted the innovation in \eqn{t-1}, both have in 
 At the same time, number 12 means that ego adopted the innovation in \eqn{t}, but
 alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
 }
+\examples{
+# Simple example
+set.seed(1312)
+dn <- rdiffnet(20, 5, seed.graph="small-world")
+
+str(adopt_changes(dn))
+}
 \author{
-George G. Vega Yon, Stephanie R. Dyal, Thimoty B, Hayes, Thomas W. Valente
+George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
 }
 \references{
 Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
