@@ -11,6 +11,9 @@
 * Install size > 1Mb in libs. Using Rcpp increases the size. Still, working on
   reducing it.
 * Also, possible mis-spelled words in DESCRIPTION have the correct spelling.
+* CRAN repository db overrides: X-CRAN-Comment: Archived on 2016-05-02 as ...
+  fixed (see below).
+* Possible invalid URLs in man/rgraph_ws.Rd is false positive.
 
 ## Reverse dependencies
 
@@ -30,4 +33,5 @@ This is a resubmission. In this version I have:
   issue), but the package includes several tests to make sure everything is in
   order (and will include more).
 * Updated tests in testthat/*.R following the testthat package update (all passing).
+  (Fixed errors that caused CRAN archiving the previous version).
   

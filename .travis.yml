@@ -1,5 +1,10 @@
 language: r
+cache: packages
 sudo: required
+
+r:
+  - release
+  - devel
 
 os:
   - linux
