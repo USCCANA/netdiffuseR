@@ -1,11 +1,11 @@
 Package: netdiffuseR
 Title: Network Analysis for Diffusion of Innovations
-Version: 1.16.4.29
-Date: 2016-04-29
+Version: 1.16.5
+Date: 2016-01-02
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
-  person("Tim", "Hayes", email="timothybhayes@gmail.com", role=c("aut"), comment="Package's first version"),
+  person("Timothy", "Hayes", email="timothybhayes@gmail.com", role=c("aut"), comment="Package's first version"),
   person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"), comment="R original code"))
 Description: Empirical statistical analysis, visualization and simulation
     of network models of the diffusion of innovations. The package implements

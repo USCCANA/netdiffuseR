@@ -90,6 +90,10 @@ Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, 
  in the case of undirected graphs).
  \item Next i.
 }
+
+Milo et al. (2004) suggests that in order for the rewired graph to be independent
+from the original one researchers usually iterate around \code{nlinks(graph)*100}
+times, so \code{p=nlinks(graph)*100} is recommended.
 }
 
 \section{\emph{Endpoints} algorithm}{

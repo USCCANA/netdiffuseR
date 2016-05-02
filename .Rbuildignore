@@ -18,9 +18,12 @@ README[.]md
 ^README\_files$
 [.]travis[.]yml
 ^appveyor\.yml$
-vignettes/simulating.+\.Rmd$
-vignettes/structural.+\.Rmd$
+
+# Not-ready vignettes
+^vignettes/simulating.+\.Rmd$
+^vignettes/structural.+\.Rmd$
+
+# CRAN
 ^NEWS\.md$
 ^cran-comments\.md$
-
 ^next_release\.md$

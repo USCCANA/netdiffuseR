@@ -24,6 +24,20 @@ arma::umat sparse_indexes(const arma::sp_mat & mat) {
     // Incrementing
     i++;
   }
+
+  // int curcol = 1;
+  // for (int i=0;i<n;i++) {
+  //
+  //   // Incrementing column while there's no new element in the col
+  //   while (mat.col_ptrs[curcol] <= i) ++curcol;
+  //   // while (mat.col_ptrs[curcol-1] == mat.col_ptrs[curcol]) ++curcol;
+  //
+  //   // Asigning indexes
+  //   indices.at(i, 0) = mat.row_indices[i];
+  //   // indices.at(i,1) = j;
+  //   indices.at(i, 1) = curcol - 1;
+  // }
+
   // return indices;
   return indices;
 }
@@ -57,12 +71,19 @@ arma::sp_mat sp_trimatl(const arma::sp_mat & x) {
   int n = x.n_cols;
   arma::sp_mat newx(n,n);
 
-  for(arma::sp_mat::const_iterator it = start; it != end; ++it) {
+  for (arma::sp_mat::const_iterator it = start; it != end; ++it) {
     int i = it.row();
     int j = it.col();
     if (i >= j)
       newx.at(i,j) = *it;
   }
+
+  // arma::umat indices = sparse_indexes(x);
+  // for (int i=0; i< (int) indices.n_rows; i++) {
+  //   if (indices.at(0,i) >= indices.at(1,i))
+  //     newx.at(indices.at(0,i), indices.at(1,i)) =
+  //       x.at(indices.at(0,i), indices.at(1,i));
+  // }
 
   return newx;
 }
