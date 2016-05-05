@@ -237,7 +237,7 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 sessionInfo()
 ```
 
-    ## R version 3.2.5 (2016-04-14)
+    ## R version 3.3.0 (2016-05-03)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
     ## Running under: Ubuntu 14.04.4 LTS
     ## 
@@ -253,13 +253,13 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7           netdiffuseR_1.16.4.29
+    ## [1] SparseM_1.7        netdiffuseR_1.16.5
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.2.5     
-    ##  [5] formatR_1.3     magrittr_1.5    evaluate_0.8.3  stringi_1.0-1  
-    ##  [9] Matrix_1.2-5    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.5
-    ## [13] tools_3.2.5     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
+    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.3.0     
+    ##  [5] formatR_1.3     magrittr_1.5    evaluate_0.9    stringi_1.0-1  
+    ##  [9] Matrix_1.2-6    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.6
+    ## [13] tools_3.3.0     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
     ## [17] htmltools_0.3.5 knitr_1.12.3
 
 To-do list
