@@ -23,6 +23,9 @@
 
 ## New features and changes
 
+* Support for `int64_t` in `RcppArmadillo` now allows for creating/reading
+  adjacency matrices with more than 4 billion elements (big graphs).
+
 * In `edgelist_to_adjmat` `use.incomplete` has been replaced by `keep.isolated`
   which makes more sense for naming. Incomplete cases on `times` or `weights` are
   still ignored (as these cannot be processed by the c++ 'engine'). (Reported by Tom)

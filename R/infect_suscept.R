@@ -139,7 +139,7 @@ infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- infection_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
+  out <- infection_cpp(ngraph, toa, normalize, K, r, expdiscount, n, valued, outgoing)
 
   # Naming
   rn <- rownames(graph)
@@ -156,7 +156,7 @@ infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued,
   n <- nrow(graph[[1]])
   toa <- toa - t0 + 1L
 
-  out <- infection_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
+  out <- infection_cpp(graph, toa, normalize, K, r, expdiscount, n, valued, outgoing)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -199,7 +199,7 @@ susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, va
   n <- nrow(graph[[1]])
   toa <- toa - t0 + 1L
 
-  out <- susceptibility_cpp(graph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
+  out <- susceptibility_cpp(graph, toa, normalize, K, r, expdiscount, n, valued, outgoing)
 
   # Naming
   rn <- rownames(graph[[1]])
@@ -220,7 +220,7 @@ susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, v
   for(i in 1:t)
     ngraph[[i]] <- methods::as(graph[,,i], "dgCMatrix")
 
-  out <- susceptibility_cpp(ngraph, toa, normalize, K, r, expdiscount, n, t, valued, outgoing)
+  out <- susceptibility_cpp(ngraph, toa, normalize, K, r, expdiscount, n, valued, outgoing)
 
   # Naming
   rn <- rownames(graph)

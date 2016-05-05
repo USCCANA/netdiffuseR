@@ -99,8 +99,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // infection_cpp
-arma::mat infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, int T, bool valued, bool outgoing);
-RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP TSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
+arma::mat infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
+RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -111,16 +111,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< bool >::type expdiscount(expdiscountSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type T(TSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
     Rcpp::traits::input_parameter< bool >::type outgoing(outgoingSEXP);
-    __result = Rcpp::wrap(infection_cpp(graph, times, normalize, K, r, expdiscount, n, T, valued, outgoing));
+    __result = Rcpp::wrap(infection_cpp(graph, times, normalize, K, r, expdiscount, n, valued, outgoing));
     return __result;
 END_RCPP
 }
 // susceptibility_cpp
-arma::colvec susceptibility_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, int T, bool valued, bool outgoing);
-RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP TSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
+arma::colvec susceptibility_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
+RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -131,10 +130,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< bool >::type expdiscount(expdiscountSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type T(TSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
     Rcpp::traits::input_parameter< bool >::type outgoing(outgoingSEXP);
-    __result = Rcpp::wrap(susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, T, valued, outgoing));
+    __result = Rcpp::wrap(susceptibility_cpp(graph, times, normalize, K, r, expdiscount, n, valued, outgoing));
     return __result;
 END_RCPP
 }

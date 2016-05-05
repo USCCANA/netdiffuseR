@@ -1,6 +1,6 @@
 ## Test environments
-* Local Ubuntu 14.04, R 3.2.5
-* Ubuntu 12.04.5 LTS (on travis-ci), R version 3.2.5 (2016-04-14).
+* Local Ubuntu 14.04, R version 3.3.0 (2016-05-03)
+* Ubuntu 12.04.5 LTS (on travis-ci), R version 3.3.0 (2016-05-03).
 * Windows Server 2012 R2 x64 (on AppVeyor), R Under development (3.2.5 Patched (2016-04-18 r70556).
 * OS X 10.9.5 (Mavericks) (on travis-ci), R version 3.2.4 (2016-03-10).
 
@@ -26,12 +26,10 @@ This is a resubmission. In this version I have:
 * Included rgb (grDevices), polygon (graphics) and setNames (stats) as importFrom
   in the package's NAMESPACE.
 * Fixed the problem with "Vignette sources missing".
-* About "Memtest notes: clang-UBSAN valgrind", the issue has been reported before
-  (http://lists.r-forge.r-project.org/pipermail/rcpp-devel/2014-December/008266.html)
-  and it mostly arises from the usage of iterators in arma::sp_mat using
-  RcppArmadillo.  I'm not aware of any solution for this (Valgrind pointing this
-  issue), but the package includes several tests to make sure everything is in
-  order (and will include more).
+* About "Memtest notes: clang-UBSAN valgrind", the issue was actually a bug in
+  RcppArmadillo. This has been solved in RcppArmadillo v 0.6.700.6.0 (which is
+  already on CRAN). R CMD check --use-valgrind no longer reports memory leaks
+  or 'Conditional jump...' issues.
 * Updated tests in testthat/*.R following the testthat package update (all passing).
   (Fixed errors that caused CRAN archiving the previous version).
   
