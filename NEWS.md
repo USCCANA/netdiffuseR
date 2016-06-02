@@ -1,3 +1,19 @@
+# Changes in netdiffuseR version 1.16.6.9000
+
+## Bug fixes
+
+* Fixed bug in `struct_equiv`: When `groupvar` was a list (dynamic attr), the
+  function returned error.
+
+## New features and changes
+
+* `plot_infectsuscept` includes 2D kernel smoother via `MASS::kde2d`.
+
+* `infection`, `susceptibility` and `threshold` now report `NA` for non-adopters
+  or excluded variables.
+  
+* New function `diffnetLapply` applies function to slices.
+
 # Changes in netdiffuseR version 1.16.5 (2016-05-02)
 
 ## Bug fixes

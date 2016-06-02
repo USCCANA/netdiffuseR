@@ -264,9 +264,17 @@ struct_equiv.list <- function(graph, v, inf.replace, groupvar, mode, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   output <- vector("list", t)
-  for(i in 1:t)
-    output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
-                                          v, inf.replace, groupvar, mode,...)
+
+  # If groupvar is dynamic as well
+  if (!is.list(groupvar)) {
+    for(i in 1:t)
+      output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
+                                            v, inf.replace, groupvar, mode,...)
+  } else {
+    for(i in 1:t)
+      output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
+                                            v, inf.replace, groupvar[[i]], mode,...)
+  }
 
   # Naming
   tn <- dimnames(graph)[[3]]

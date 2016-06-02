@@ -6,11 +6,12 @@
 \usage{
 plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
   r = 0.5, expdiscount = FALSE, bins = 20, nlevels = round(bins/2),
-  logscale = TRUE,
+  h = NULL, logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
-  sub = ifelse(logscale, "(in log-scale)", NA), color.palette = function(n)
-  grey(n:1/n), include.grid = TRUE, exclude.zeros = FALSE,
+  sub = ifelse(logscale, "(in log-scale)", NA),
+  color.palette = grDevices::colorRampPalette(grDevices::blues9),
+  include.grid = TRUE, exclude.zeros = FALSE,
   valued = getOption("diffnet.valued", FALSE), ...)
 }
 \arguments{
@@ -31,6 +32,8 @@ plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
 \item{bins}{Integer scalar. Size of the grid (\eqn{n}).}
 
 \item{nlevels}{Integer scalar. Number of levels to plot (see \code{\link{filled.contour}}).}
+
+\item{h}{Numeric vector of length 2. Passed to \code{\link[MASS:kde2d]{kde2d}} in the \pkg{MASS} package.}
 
 \item{logscale}{Logical scalar. When TRUE the axis of the plot will be presented in log-scale.}
 
@@ -69,6 +72,10 @@ number of individuals that lie within each cell, and draws a heatmap.
 }
 \details{
 This plotting function was inspired by Aral, S., & Walker, D. (2012).
+
+By default the function will try to apply a kernel smooth function via
+\code{kde2d}. If not possible (because not enought data points), then
+the user should try changing the parameter \code{h} or set it equal to zero.
 }
 \examples{
 # Generating a random graph -------------------------------------------------

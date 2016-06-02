@@ -52,6 +52,7 @@ A list of class \code{diffnet_bot} containing the following:
 \item{R}{Number of simulations.}
 \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
+\item{rewire.args}{The list \code{rewire.args} passed to \code{struct_test}.}
 
 The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 }

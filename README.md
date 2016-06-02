@@ -18,6 +18,7 @@ News
 
 Changelog can be view [here](NEWS.md).
 
+-   \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
 -   \[2016-04-11\] **netdiffuseR** will be on [useR! 2016](http://user2016.org) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 -   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 -   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
@@ -147,19 +148,21 @@ summary(diffnet)
 
 ``` r
 # Visualizing distribution of suscep/infect
-out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
+```
+
+![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
+
+``` r
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
+                         exclude.zeros = TRUE, h=1,
+                         color.palette = colorRampPalette(c("lightblue", "yellow", "red")))
 ```
 
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
     ## When applying logscale some observations are missing.
 
-![](README_files/figure-markdown_github/plot_infectsuscept-1.png)<!-- -->
-
-``` r
-out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros = TRUE)
-```
-
-![](README_files/figure-markdown_github/plot_infectsuscept-2.png)<!-- -->
+![](README_files/figure-markdown_github/plot_infectsuscept-2.png)
 
 ### Threshold
 
@@ -186,7 +189,7 @@ diffnet
 plot_threshold(diffnet, vertex.cex = .4)
 ```
 
-![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)<!-- -->
+![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)
 
 Using more features
 
@@ -205,7 +208,7 @@ plot_threshold(
 )
 ```
 
-![](README_files/figure-markdown_github/NiceThreshold-1.png)<!-- -->
+![](README_files/figure-markdown_github/NiceThreshold-1.png)
 
 ### Adoption rate
 
@@ -213,7 +216,7 @@ plot_threshold(
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Adopters-1.png)<!-- -->
+![](README_files/figure-markdown_github/Adopters-1.png)
 
 ### Hazard rate
 
@@ -221,7 +224,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Hazard-1.png)<!-- -->
+![](README_files/figure-markdown_github/Hazard-1.png)
 
 ### Diffusion process
 
@@ -229,7 +232,7 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet-1.png)<!-- -->
+![](README_files/figure-markdown_github/plot_diffnet-1.png)
 
 ### Session info
 
@@ -253,14 +256,14 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7        netdiffuseR_1.16.5
+    ## [1] SparseM_1.7             netdiffuseR_1.16.6.9000
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.4     lattice_0.20-33 digest_0.6.9    grid_3.3.0     
-    ##  [5] formatR_1.3     magrittr_1.5    evaluate_0.9    stringi_1.0-1  
-    ##  [9] Matrix_1.2-6    sna_2.3-2       boot_1.3-17     rmarkdown_0.9.6
-    ## [13] tools_3.3.0     stringr_1.0.0   igraph_1.0.1    yaml_2.1.13    
-    ## [17] htmltools_0.3.5 knitr_1.12.3
+    ##  [1] Rcpp_0.12.5     lattice_0.20-33 digest_0.6.9    MASS_7.3-45    
+    ##  [5] grid_3.3.0      formatR_1.4     magrittr_1.5    evaluate_0.9   
+    ##  [9] stringi_1.1.1   Matrix_1.2-6    sna_2.3-2       boot_1.3-18    
+    ## [13] rmarkdown_0.9.6 tools_3.3.0     stringr_1.0.0   igraph_1.0.1   
+    ## [17] yaml_2.1.13     htmltools_0.3.5 knitr_1.13
 
 To-do list
 ----------

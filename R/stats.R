@@ -697,10 +697,11 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
 
   toa <- toa - t0 + 1L
   output <- threshold_cpp(obj, toa, include_censored)
-  dimnames(output) <- list(rownames(obj), "threshold")
+  # dimnames(output) <- list(rownames(obj), "threshold")
+  structure(output, dim=c(length(toa), 1), dimnames=list(rownames(obj), "threshold"))
 
-  # Correcting weird cases
-  if (!include_censored) output[toa==1] <- NA
-  output[is.na(toa)] <- NA
-  output
+  # # Correcting weird cases
+  # if (!include_censored) output[toa==1] <- NA
+  # output[is.na(toa)] <- NA
+  # output
 }

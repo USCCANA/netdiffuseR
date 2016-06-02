@@ -8,6 +8,7 @@
 \alias{diffnet.attrs<-}
 \alias{diffnet.toa}
 \alias{diffnet.toa<-}
+\alias{diffnetLapply}
 \alias{nodes}
 \alias{plot.diffnet}
 \alias{print.diffnet}
@@ -43,6 +44,8 @@ diffnet.toa(graph, i) <- value
   mode = "out", ...)
 
 nodes(graph)
+
+diffnetLapply(graph, FUN, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -117,6 +120,8 @@ indexes, character vectors are used jointly with the time period labels.}
 \item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
 
 \item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
+
+\item{FUN}{a function to be passed to lapply}
 }
 \value{
 A list of class \code{diffnet} with the following elements:
@@ -298,6 +303,11 @@ attrs_old <- diffnet.attrs(fs_diffnet, as.df=TRUE)
 # Comparing elements!
 tocompare <- intersect(colnames(attrs_new), colnames(attrs_old))
 all(attrs_new[,tocompare] == attrs_old[,tocompare], na.rm = TRUE) # TRUE!
+
+# diffnetLapply -------------------------------------------------------------
+
+data(medInnovationsDiffNet)
+diffnetLapply(medInnovationsDiffNet, function(x, cumadopt, ...) {sum(cumadopt)})
 
 }
 \author{

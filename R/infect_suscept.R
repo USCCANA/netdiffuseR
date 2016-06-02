@@ -144,9 +144,7 @@ infection.array <- function(graph, toa, t0, normalize, K, r, expdiscount, valued
   # Naming
   rn <- rownames(graph)
   if (!length(rn)) rn <- 1:n
-  dimnames(out) <- list(rn, "infection")
-
-  out
+  structure(out, dimnames=list(rn, "infection"), dim=c(n,1))
 }
 
 # @rdname infection
@@ -161,9 +159,8 @@ infection.list <- function(graph, toa, t0, normalize, K, r, expdiscount, valued,
   # Naming
   rn <- rownames(graph[[1]])
   if (!length(rn)) rn <- 1:n
-  dimnames(out) <- list(rn, "infection")
 
-  out
+  structure(out, dimnames=list(rn, "infection"), dim=c(n,1))
 }
 
 #' @rdname infection
@@ -204,9 +201,9 @@ susceptibility.list <- function(graph, toa, t0, normalize, K, r, expdiscount, va
   # Naming
   rn <- rownames(graph[[1]])
   if (!length(rn)) rn <- 1:n
-  dimnames(out) <- list(rn, "susceptibility")
 
-  out
+  structure(out, dimnames=list(rn, "susceptibility"), dim=c(n,1))
+
 }
 
 # @rdname infection
@@ -225,7 +222,5 @@ susceptibility.array <- function(graph, toa, t0, normalize, K, r, expdiscount, v
   # Naming
   rn <- rownames(graph)
   if (!length(rn)) rn <- 1:n
-  dimnames(out) <- list(rn, "susceptibility")
-
-  out
+  structure(out, dimnames=list(rn, "susceptibility"), dim=c(n,1))
 }

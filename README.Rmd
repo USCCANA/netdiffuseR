@@ -42,6 +42,7 @@ __Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA1
 
 Changelog can be view [here](NEWS.md).
 
+* [2016-06-02] A video of the __netdiffuseR__ workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
 * [2016-04-11] __netdiffuseR__ will be on [useR! 2016](http://user2016.org) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 * [2016-03-16] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 * [2016-02-18] __netdiffuseR__ vers 1.16.2 is now on CRAN!
@@ -126,8 +127,10 @@ diffnet
 summary(diffnet)
 
 # Visualizing distribution of suscep/infect
-out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE)
-out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, exclude.zeros = TRUE)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
+out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
+                         exclude.zeros = TRUE, h=1,
+                         color.palette = colorRampPalette(c("lightblue", "yellow", "red")))
 ```
 
 ### Threshold

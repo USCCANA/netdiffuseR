@@ -160,7 +160,7 @@ arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt) {
 
 
 // [[Rcpp::export]]
-arma::colvec threshold_cpp(
+NumericVector threshold_cpp(
     const arma::mat & exposure,
     const arma::vec & toa,
     bool include_censored = false
@@ -169,7 +169,7 @@ arma::colvec threshold_cpp(
   int n = exposure.n_rows;
   // int T = exposure.n_cols;
 
-  arma::colvec threshold(n);
+  NumericVector threshold(n);
 
   for(int i=0;i<n;i++) {
     // If NA (aka nan in Armadillo), then NA.
@@ -180,7 +180,7 @@ arma::colvec threshold_cpp(
 
     // If left censored and specified, then don't compute
     if ((toa(i)==1) & !include_censored) {
-      threshold(i) = arma::datum::nan;
+      threshold(i) = NA_REAL;
       continue;
     }
 

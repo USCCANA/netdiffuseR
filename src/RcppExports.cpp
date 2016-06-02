@@ -99,7 +99,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // infection_cpp
-arma::mat infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
+NumericVector infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
 RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -118,7 +118,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // susceptibility_cpp
-arma::colvec susceptibility_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
+NumericVector susceptibility_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
 RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -461,7 +461,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // threshold_cpp
-arma::colvec threshold_cpp(const arma::mat& exposure, const arma::vec& toa, bool include_censored);
+NumericVector threshold_cpp(const arma::mat& exposure, const arma::vec& toa, bool include_censored);
 RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP toaSEXP, SEXP include_censoredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

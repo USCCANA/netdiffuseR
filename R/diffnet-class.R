@@ -521,6 +521,11 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' tocompare <- intersect(colnames(attrs_new), colnames(attrs_old))
 #' all(attrs_new[,tocompare] == attrs_old[,tocompare], na.rm = TRUE) # TRUE!
 #'
+#' # diffnetLapply -------------------------------------------------------------
+#'
+#' data(medInnovationsDiffNet)
+#' diffnetLapply(medInnovationsDiffNet, function(x, cumadopt, ...) {sum(cumadopt)})
+#'
 #' @return
 #' A list of class \code{diffnet} with the following elements:
 #' \item{graph}{A list of length \eqn{T}. Containing sparse square matrices of size \eqn{n}

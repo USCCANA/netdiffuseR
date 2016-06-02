@@ -82,9 +82,9 @@ test_that("Returning threshold equal to the infect/suscept funs", {
 
   diffnet <- as_diffnet(graph, toa)
 
-  infsus <- plot_infectsuscep(graph, toa, logscale  = FALSE)
-  infsusar <- plot_infectsuscep(graphar, toa, logscale  = FALSE)
-  infsusdn <- plot_infectsuscep(diffnet, logscale  = FALSE)
+  infsus <- plot_infectsuscep(graph, toa, logscale  = FALSE, h=0)
+  infsusar <- plot_infectsuscep(graphar, toa, logscale  = FALSE, h=0)
+  infsusdn <- plot_infectsuscep(diffnet, logscale  = FALSE, h=0)
 
   infect <- infection(graph, toa)
   suscep <- susceptibility(graph, toa)

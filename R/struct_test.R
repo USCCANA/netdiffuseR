@@ -23,6 +23,7 @@
 #' \item{R}{Number of simulations.}
 #' \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
+#' \item{rewire.args}{The list \code{rewire.args} passed to \code{struct_test}.}
 #'
 #' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #' @details
@@ -126,7 +127,8 @@ struct_test <- function(
     mean_t      = colMeans(boot_res$t, na.rm = TRUE),
     R           = R,
     statistic   = statistic,
-    boot        = boot_res
+    boot        = boot_res,
+    rewire.args = rewire.args
   )
 
   return(structure(out, class="diffnet_struct_test"))

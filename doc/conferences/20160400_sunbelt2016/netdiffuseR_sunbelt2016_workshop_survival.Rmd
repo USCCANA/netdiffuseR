@@ -1,0 +1,242 @@
+---
+title: |
+  | Understanding Diffusion with __netdiffuseR__
+  | _Survival Analysis_
+subtitle: Sunbelt 2016 INSNA
+author: George Vega Yon \and Thomas Valente
+date: |
+  | Newport Beach, CA
+  | April 5, 2016
+institute: |
+  | Department of Preventive Medicine
+  | University of Southern California
+header-includes: \usepackage{grffile}
+output: beamer_presentation
+fontsize: 10pt
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(SparseM)
+```
+
+# Setup
+
+We will use the medical innovations data
+
+\scriptsize
+```{r setup, include=TRUE}
+# Loading the required packages
+library(survival)
+library(netdiffuseR)
+
+# Loading the data
+data("medInnovationsDiffNet")
+medInnovationsDiffNet
+```
+\normalsize
+
+# Preparing the data
+
+From __netdiffuseR__ we will get the following covariates:
+
+- Cohesive exposure: Proportion of ego's adopters at each time period
+- Structural equivalence exposure: Same as before but using the structural equivalence graph instead of the baseline network.
+
+\scriptsize
+```{r}
+# Structural equivalence exposure
+medInnovationsDiffNet[["seexp"]] <- exposure(
+  medInnovationsDiffNet, groupvar="city", alt.graph = "se")
+
+# Cohesive exposure
+medInnovationsDiffNet[["cohexp"]] <- exposure(medInnovationsDiffNet)
+```
+\normalsize
+
+# Coercing data into a dataframe
+
+\tiny
+```{r}
+# Getting the data for running the cox regression
+dat <- diffnet.attrs(medInnovationsDiffNet, as.df = TRUE)
+dat <- subset(
+  dat,
+  subset = 
+    per <= toa & 
+    per < 18 &
+    !is.na(date),
+  select = c(id, per, toa, date, city, proage, proage2, seexp, cohexp))
+
+# Creating the event variable
+dat$event <- with(dat, toa==per)
+
+# Here, since its survival, we only care from when the doctor is aware.
+dat <- subset(dat, per - date >=0)
+
+# Checking out the data
+dat <- dat[with(dat, order(id, per)),]
+head(dat,10)
+```
+\normalsize
+
+Notice that `diffnet.attrs` generates two extra variables: `per` (time period) and `id`.
+
+# The `survival` package
+
+-   In order to work, the `survival` package works with `Surv` objects.
+-   These store the response/events and the time frame during which these occurred.
+-   Usually take the following form: `Surv(start, end, event)`.
+-   For this tutorial we will use the Cox model, from Andersen and Gill (1982)
+
+    $$\mathcal{L}(\beta) = \prod_{i=1}^n\left\{\frac{\exp\beta'x_i(T_i)}{\sum_{j}\exp{\beta'x_j(T_j)}}\right\}^{\delta_i}$$
+
+    Which can extended to time-variant covariates.
+
+# The `survival` package
+## The `Suvreg` object
+
+-   First, we need to create the `Suvreg` object using the function with the same name
+
+    \scriptsize
+    ```{r}
+    # Needs a start, stop, event
+    surv_mi <- with(dat, Surv(per-1, per, event))
+    ```
+    \normalsize
+    Notice the warning as the time frames should be grater than 1. 
+-   Now, let's take a look at the object itself
+    \scriptsize
+    ```{r}
+    head(surv_mi, 10)
+    ```
+    \normalsize
+
+# Fitting the model
+## All cities
+
+\scriptsize
+```{r}
+# Fitting a model
+set.seed(1988)
+mymodel <- formula(surv_mi ~ factor(city) + proage + I(proage^2) +
+                     seexp + cohexp + cluster(id))
+out <- coxph(mymodel, data=dat)
+```
+
+\normalsize
+
+# Fitting the model
+## All cities (cont. 1)
+
+\scriptsize
+```{r, echo=FALSE}
+pander::pander(out)
+```
+\normalsize
+
+# Fitting the model
+## All cities (cont. 2)
+
+More diganostics can be done as follows:
+
+\tiny
+```{r out.width=".6\\linewidth"}
+# Diagnostics
+fit <- survfit(out)
+
+plot(fit, mark.time=TRUE, lty=1:2,
+     xlab="Time period", ylab="Survival")
+legend("bottomleft", c("Adopters", "Non-adopters"),
+       lty=2:1, bty="n")
+```
+\normalsize
+
+
+# Example with brazilian farmers
+
+\scriptsize
+```{r, out.width='.8\\linewidth'}
+data("brfarmersDiffNet")
+
+# Creating a classification for village
+village  <- as.integer(factor(brfarmersDiffNet[["village"]])) + 2
+nvillage <- length(unique(village))
+plot_threshold(brfarmersDiffNet, 
+               vertex.sides = village, # Creates polygons
+               vertex.col   = terrain.colors(nvillage)[village]) # Colors!
+```
+\normalsize
+
+# Example with brazilian farmers
+## Preparing the data
+
+\tiny
+```{r}
+# Exposure variables
+brfarmersDiffNet[["seexp"]] <- exposure(brfarmersDiffNet, alt.graph = "se",
+                                        groupvar="village", valued = TRUE)
+brfarmersDiffNet[["cohexp"]] <- exposure(brfarmersDiffNet)
+
+# Creating a dynamic version of age
+age <- brfarmersDiffNet[["age"]]
+pers <- brfarmersDiffNet$meta$pers
+brfarmersDiffNet[["age_dyn"]] <- lapply(
+  seq_len(nslices(brfarmersDiffNet)), function(x) {
+    age + (pers[x] - 1966) # Surveyed in 1966
+  })
+
+# Subset
+dat <- diffnet.attrs(brfarmersDiffNet, as.df = TRUE)
+dat <- subset(dat, per <= toa, select=c(per, toa, age_dyn, village, seexp, cohexp, id))
+
+# Creating the event variable
+dat$event <- with(dat, toa==per)
+
+# Checking out the data
+dat <- dat[with(dat, order(id, per)),]
+head(dat,10)
+```
+\normalsize
+
+# Example with brazilian farmers
+## Fitting the data
+
+\tiny
+```{r}
+out <- coxph(Surv(per-1, per, event) ~ factor(village) + seexp + cohexp + age_dyn + cluster(id),
+             data=dat)
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+pander::pander(out)
+```
+\normalsize
+
+# Example with brazilian farmers
+## Diagnotstics
+
+More diganostics can be done as follows:
+
+\tiny
+```{r out.width=".6\\linewidth"}
+# Diagnostics
+fit <- survfit(out)
+
+plot(fit, mark.time=TRUE, lty=1:2,
+     xlab="Time period", ylab="Survival", firstx = min(dat$per))
+legend("bottomleft", c("Adopters", "Non-adopters"),
+       lty=2:1, bty="n")
+```
+\normalsize
+
+
+# Example with brazilian farmers
+## Diagnotstics (cont.)
+
+\tiny
+```{r out.width=".6\\linewidth"}
+cox.zph(out)
+```
+
+\normalsize
+

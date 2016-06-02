@@ -1,11 +1,3 @@
-# vertex.attrs <- function(x)
-# edge.attrs <- function(x)
-#
-# `[<-.diffnet` <- function(graph, v, value) {
-#   graph$vertex.attrs[v] <- value
-#   graph
-# }
-
 #' @export
 #' @rdname as_diffnet
 plot.diffnet <- function(
@@ -711,6 +703,7 @@ plot_threshold.list <- function(
 #' @param expdiscount Logical scalar.  Passed to infection/susceptibility.
 #' @param bins Integer scalar. Size of the grid (\eqn{n}).
 #' @param nlevels Integer scalar. Number of levels to plot (see \code{\link{filled.contour}}).
+#' @param h Numeric vector of length 2. Passed to \code{\link[MASS:kde2d]{kde2d}} in the \pkg{MASS} package.
 #' @param logscale Logical scalar. When TRUE the axis of the plot will be presented in log-scale.
 #' @param main Character scalar. Title of the graph.
 #' @param xlab Character scalar. Title of the x-axis.
@@ -725,6 +718,10 @@ plot_threshold.list <- function(
 #' @details
 #'
 #' This plotting function was inspired by Aral, S., & Walker, D. (2012).
+#'
+#' By default the function will try to apply a kernel smooth function via
+#' \code{kde2d}. If not possible (because not enought data points), then
+#' the user should try changing the parameter \code{h} or set it equal to zero.
 #'
 #' @return A list with three elements:
 #' \item{infect}{A numeric vector of size \eqn{n} with infectiousness levels}
@@ -754,10 +751,11 @@ plot_threshold.list <- function(
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 #' @author George G. Vega Yon
 plot_infectsuscep <- function(
-  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=20,nlevels=round(bins/2),
+  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=20,nlevels=round(bins/2), h=NULL,
   logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
   xlab="Infectiousness of ego", ylab="Susceptibility of ego",
-  sub=ifelse(logscale, "(in log-scale)", NA), color.palette=function(n) grey(n:1/n),
+  sub=ifelse(logscale, "(in log-scale)", NA),
+  color.palette = grDevices::colorRampPalette(grDevices::blues9),
   include.grid=TRUE, exclude.zeros=FALSE, valued=getOption("diffnet.valued",FALSE), ...
 ) {
 
@@ -774,13 +772,13 @@ plot_infectsuscep <- function(
 
   switch (class(graph),
     array = plot_infectsuscep.array(
-      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
       xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued, ...),
     list = plot_infectsuscep.list(
-      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
       xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
     diffnet = plot_infectsuscep.list(
-      graph$graph, graph$toa, t0, normalize, K, r, expdiscount, bins, nlevels, logscale, main,
+      graph$graph, graph$toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
       xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
     stopifnot_graph(graph)
   )
@@ -800,6 +798,7 @@ plot_infectsuscep.array <- function(graph, ...) {
 plot_infectsuscep.list <- function(graph, toa, t0, normalize,
                               K, r, expdiscount,
                               bins,nlevels,
+                              h,
                               logscale,
                               main,
                               xlab,
@@ -811,6 +810,7 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
   # Computing infect and suscept
   infect <- infection(graph, toa, t0, normalize, K, r, expdiscount, valued)
   suscep <- susceptibility(graph, toa, t0, normalize, K, r, expdiscount, valued)
+  complete <- complete.cases(infect, suscep)
 
   # Performing classification (linear)
   if (logscale) {
@@ -818,36 +818,53 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
     suscepp<-log(suscep)
 
     # Only keeping complete cases
-    complete <- is.finite(infectp) & is.finite(suscepp)
+    complete <- complete & is.finite(infectp) & is.finite(suscepp)
+
     if (any(!complete)) warning("When applying logscale some observations are missing.")
-    infectp <- infectp[complete,]
-    suscepp <- suscepp[complete,]
   }
   else {
     infectp <- infect
     suscepp <- suscep
-    complete <- vector(length=length(infectp))
   }
+
+  infectp <- infectp[complete,]
+  suscepp <- suscepp[complete,]
 
   if ((!length(infectp) | !length(suscepp)) & logscale)
     stop("Can't apply logscale (undefined values).")
 
   # If excluding zeros
-  include <- rep(TRUE,length(toa))
+  include <- rep(TRUE,length(infectp))
   if (exclude.zeros) {
     include[!infectp | !suscepp] <- FALSE
   }
 
-  # Computing infect & suscept
-  coords <- netdiffuseR::grid_distribution(x=infectp[include], y=suscepp[include], bins)
 
+  # Computing infect & suscept
+  if (length(h) && h==0) {
+    coords <- grid_distribution(infectp[include], suscepp[include], bins)
+  } else {
+    if (!length(h)) h <- c(
+      MASS::bandwidth.nrd(infectp[include & infectp!=0]),
+      MASS::bandwidth.nrd(suscepp[include & suscepp!=0])
+      )
+
+    # Cant use smoother
+    if (any((h==0) | is.na(h)))
+      stop('Not enought data to perform smooth. Try choosing another value for -h-,',
+           ' or set h=0 (no kernel smooth).')
+    coords <- MASS::kde2d(infectp[include], suscepp[include], n = bins, h = h)
+  }
 
   # Nice plot
+
+
+
   n <- sum(coords$z)
   with(coords, filled.contour(
     x,y,
     z/n, bty="n", main=main, xlab=xlab, ylab=ylab, sub=sub, color.palette =color.palette,
-    xlim=range(pretty(x)), ylim=range(pretty(y)),
+    xlim=range(x), ylim=range(y),
     plot.axes={
 
       # Preparing the tickmarks for the axis
@@ -869,6 +886,11 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
       if (include.grid) grid()
     }, nlevels=nlevels, ...))
   # if (include.grid) grid()
+
+  # Adding some reference
+  legend("topleft", legend=
+         sprintf('\n%d out of %d obs.\nincluded', sum(include), length(complete)),
+         bty="n")
 
   invisible(list(infect=infect, suscept=suscep, coords=coords,
                  complete=complete))
@@ -1243,3 +1265,23 @@ nodes <- function(graph) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
   graph$meta$ids
 }
+
+#' @export
+#' @rdname as_diffnet
+#' @param FUN a function to be passed to lapply
+diffnetLapply <- function(graph, FUN, ...) {
+  lapply(seq_len(nslices(graph)), function(x, graph, ...) {
+    FUN(x,
+        graph               = graph$graph[[x]],
+        toa                 = graph$toa,
+        vertex.static.attrs = graph$vertex.static.attrs,
+        vertex.dyn.attrs    = graph$vertex.dyn.attrs[[x]],
+        adopt               = graph$adopt[,x,drop=FALSE],
+        cumadopt            = graph$cumadopt[,x,drop=FALSE],
+        meta                = graph$meta)
+    }, graph=graph,...)
+}
+# debug(diffnetLapply)
+# diffnetLapply(medInnovationsDiffNet, function(x, graph, cumadopt, ...) {
+#   sum(cumadopt)
+# })

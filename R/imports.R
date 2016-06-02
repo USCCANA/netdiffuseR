@@ -22,11 +22,12 @@ NULL
 
 # Importing from R CORE packages -----------------------------------------------
 
-#' @importFrom grDevices grey rgb
+#' @importFrom grDevices grey rgb colorRampPalette blues9
 #' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window hist mtext polygon
 #' @importFrom stats complete.cases runif reshape setNames
 #' @importFrom utils getFromNamespace head
 #' @importFrom boot boot
+#' @importFrom MASS bandwidth.nrd kde2d
 NULL
 
 release_questions <- function() {

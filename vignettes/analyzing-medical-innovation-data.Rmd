@@ -125,7 +125,7 @@ par(oldpar)
 ```
 
 ```{r}
-plot_infectsuscep(diffnet_city1, K=5, logscale = TRUE, bins=20)
+plot_infectsuscep(diffnet_city1, K=5, logscale = TRUE, bins=30)
 ```
 
 

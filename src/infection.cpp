@@ -3,7 +3,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::mat infection_cpp(
+NumericVector infection_cpp(
     List graph,
     const arma::colvec & times,
     bool normalize = true,
@@ -21,7 +21,7 @@ arma::mat infection_cpp(
   // Variables initialization
 //   const int n = graph_cube.n_rows;
 //   const int T = graph_cube.n_slices;
-  arma::colvec infect(n, arma::fill::zeros);
+  NumericVector infect(n);
 
   // Variables to use within loop
   int ti, tj;
@@ -56,7 +56,7 @@ arma::mat infection_cpp(
 
     // If NA (aka nan in Armadillo), then NA.
     if (!arma::is_finite(times(i))) {
-      infect.at(i) = arma::datum::nan;
+      infect.at(i) = NA_REAL;
       continue;
     }
 
@@ -112,7 +112,7 @@ arma::mat infection_cpp(
 }
 
 // [[Rcpp::export]]
-arma::colvec susceptibility_cpp(
+NumericVector susceptibility_cpp(
     List graph,
     const arma::colvec & times,
     bool normalize = true,
@@ -129,7 +129,7 @@ arma::colvec susceptibility_cpp(
   // Variables initialization
 //   const int n = graph_cube.n_rows;
 //   const int T = graph_cube.n_slices;
-  arma::colvec suscep(n, arma::fill::zeros);
+  NumericVector suscep(n);
 
   // Variables to use within loop
   int ti, tj;
@@ -160,7 +160,7 @@ arma::colvec susceptibility_cpp(
 
     // If NA (aka nan in Armadillo), then NA.
     if (!arma::is_finite(times(i))) {
-      suscep.at(i) = arma::datum::nan;
+      suscep.at(i) = NA_REAL;
       continue;
     }
 
