@@ -64,6 +64,7 @@ Collate:
     'moran.R'
     'options.R'
     'package-doc.R'
+    'plot_diffnet2.R'
     'rewire.R'
     'random_graph.R'
     'rdiffnet.R'

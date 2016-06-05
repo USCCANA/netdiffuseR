@@ -10,7 +10,7 @@ struct_test(graph, statistic, R, rewire.args = list(p = c(2000, rep(100,
   nslices(graph) - 1)), undirected = getOption("diffnet.undirected", FALSE),
   copy.first = TRUE, algorithm = "swap"), ...)
 
-\method{print}{diffnet_struct_test}(x, ...)
+print.diffnet_struct_test(x, ...)
 
 \method{hist}{diffnet_struct_test}(x,
   main = "Empirical Distribution of Statistic", xlab = expression(Values ~

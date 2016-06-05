@@ -8,7 +8,7 @@
 struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
   mode = "out", ...)
 
-\method{print}{diffnet_se}(x, ...)
+print.diffnet_se(x, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}

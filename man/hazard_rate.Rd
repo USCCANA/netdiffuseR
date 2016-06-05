@@ -126,7 +126,8 @@ Other statistics: \code{\link{cumulative_adopt_count}},
   \code{\link{infection}}, \code{\link{moran}},
   \code{\link{struct_equiv}}, \code{\link{threshold}}
 
-Other visualizations: \code{\link{plot_adopters}},
+Other visualizations: \code{\link{diffusionMap}},
+  \code{\link{plot_adopters}}, \code{\link{plot_diffnet2}},
   \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}

@@ -4,7 +4,7 @@
 \alias{as.array.diffnet}
 \title{Coerce a diffnet graph into an array}
 \usage{
-\method{as.array}{diffnet}(x, ...)
+as.array.diffnet(x, ...)
 }
 \arguments{
 \item{x}{A diffnet object.}

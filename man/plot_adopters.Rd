@@ -66,7 +66,8 @@ plot_adopters(mat$cumadopt)
 George G. Vega Yon
 }
 \seealso{
-Other visualizations: \code{\link{hazard_rate}},
+Other visualizations: \code{\link{diffusionMap}},
+  \code{\link{hazard_rate}}, \code{\link{plot_diffnet2}},
   \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
