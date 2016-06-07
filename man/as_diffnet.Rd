@@ -37,9 +37,9 @@ diffnet.toa(graph, i) <- value
   mode = "fruchtermanreingold", layout.par = NULL,
   main = "Diffusion network in time \%d", ...)
 
-print.diffnet(x, ...)
+\method{print}{diffnet}(x, ...)
 
-summary.diffnet(object, slices = NULL, no.print = FALSE,
+\method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
   skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE),
   mode = "out", ...)
 

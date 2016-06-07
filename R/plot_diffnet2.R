@@ -10,11 +10,15 @@
 #' x <- rnorm(100)
 #' w <- data.frame(as.integer(round_to_seq(x, as_factor = TRUE)),x)
 #' plot(w,x)
-round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
+round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
   y <- range(x, na.rm = TRUE, finite=TRUE)
   y <- seq(y[1], y[2], length.out = nlevels)
-  print(y)
-  y <- sapply(x, function(z) y[which.min(abs(y-z))])
+
+  y <- sapply(x, function(z) {
+    if (is.na(z)) return(NA)
+    y[which.min(abs(y-z))]
+    })
+
   if (as_factor) as.factor(y)
   else y
 }
@@ -37,6 +41,8 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 #' @param edge.curved Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param add.map Logical scalar. When \code{TRUE} adds plots \code{\link{diffusionMap}}.
 #' @param diffmap.args List. If \code{add.map=TRUE}, arguments passed to \code{diffusionMap}.
+#' @param include.white Character scalar. Includes white in the color palette used in the map.
+#'  When \code{include.white=NULL} then it won't include it.
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @details If \code{key.width<=0} then no key is created.
 #'
@@ -70,6 +76,7 @@ plot_diffnet2.diffnet <- function(
   edge.curved=FALSE,
   add.map = FALSE,
   diffmap.args=list(kde2d.args=list(n=100)),
+  include.white="first",
   ...
 ) {
   plot_diffnet2.default(
@@ -78,7 +85,7 @@ plot_diffnet2.diffnet <- function(
     main=main,
     vertex.size=vertex.size, vertex.shape=vertex.shape, vertex.label=vertex.label,
     vertex.frame.color=vertex.frame.color, edge.arrow.size=edge.arrow.size,
-    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,...)
+    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,include.white,...)
 }
 
 #' @rdname plot_diffnet2
@@ -100,6 +107,7 @@ plot_diffnet2.default <- function(
   edge.curved=FALSE,
   add.map=FALSE,
   diffmap.args=list(kde2d.args=list(n=100)),
+  include.white = "first",
   ...) {
 
   # Some constants
@@ -150,14 +158,19 @@ plot_diffnet2.default <- function(
 
   # If adding map! -------------------------------------------------------------
   if (add.map) {
-    dm <- do.call(diffusionMap.default, c(diffmap.args, list(graph=graph, toa=toa,
+    dm <- do.call(diffusionMap.default, c(diffmap.args, list(graph=graph, x=toa,
                                                              layout = l)))
     # Levels
     dmlvls <- pretty(range(dm$map$z), diffmap.args$kde2d.args$n)
 
     # Colors, in this case we need to extrapolate nper and add white.
     dmcol <- grDevices::rgb(color.ramp(seq(0,1, length.out = nper)), maxColorValue = 255)
-    dmcol <- c("white", dmcol)
+
+    # Do we need to include white in the map?
+    if (length(include.white))
+      if (include.white=="first") dmcol <- c("white", dmcol)
+      else if (include.white=="last") dmcol <- c(dmcol, "white")
+      else stop('-include.white- should be either NULL, "first" or "last".')
 
     # Palette
     dmcol <- grDevices::colorRampPalette(dmcol)(length(dmlvls))
@@ -233,10 +246,10 @@ plot_diffnet2.default <- function(
 #' Creates a heatmap based on a graph layout and times of adoption
 #'
 #' Basically creates a smooth-scatter plot in which each observation is weighted
-#' by \code{toa}.
+#' by \code{x}.
 #'
 #' @param graph A square matrix of size \eqn{n\times n}{n * n}.
-#' @param toa An integer vector with times of adoption of length \eqn{n}.
+#' @param x An vector of length \eqn{n}. Usually a \code{toa} vector.
 #' @param layout Either a \eqn{n\times 2}{n *2} matrix of coordinates or a layout
 #'  function applied to \code{graph} (must return coordinates).
 #' @param jitter.args A list including arguments to be passed to \code{\link{jitter}}.
@@ -245,11 +258,11 @@ plot_diffnet2.default <- function(
 #' The image is created using the function \code{kde2d} from
 #' the \pkg{MASS} package. The complete algorithm follows:
 #' \enumerate{
-#'  \item \code{toa} is coerced into integer and the range is adjusted to start from 1.
+#'  \item \code{x} is coerced into integer and the range is adjusted to start from 1.
 #'    \code{NA} are replaced by zero.
 #'  \item In no \code{layout} is passed, layout is computed using
 #'    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
-#'  \item Each vertex's coordinates is repeated \code{toa} times.
+#'  \item Each vertex's coordinates is repeated \code{x} times.
 #'  \item The jitter function is applied to the repeated coordinates.
 #'  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 #' }
@@ -302,7 +315,7 @@ plot_diffnet2.default <- function(
 #'   NA
 #'
 #' # Coordinates
-#' coords <- gplot.layout.fruchtermanreingold(
+#' coords <- sna::gplot.layout.fruchtermanreingold(
 #'   as.matrix(dn$graph[[1]]), layout.par=NULL
 #' )
 #'
@@ -323,14 +336,19 @@ diffmap <- diffusionMap
 #' @export
 #' @rdname diffusionMap
 diffusionMap.default <- function(
-  graph, toa, layout=NULL,
+  graph, x, x.adj=round_to_seq, layout=NULL,
   jitter.args = list(),
   kde2d.args  = list(n=100)) {
 
   # Step 0) Preparing the data
-  toa <- as.integer(toa)
-  toa <- toa - min(toa, na.rm = TRUE) + 1L
-  toa[is.na(toa)] <- 0
+  if (length(x.adj)) {
+    if (!is.function(x.adj)) stop('-x.adj- must be a function')
+    x <- x.adj(x)
+  }
+
+  ntimes <- as.integer(x)
+  ntimes <- ntimes - min(ntimes, na.rm = TRUE) + 1L
+  ntimes[is.na(ntimes)] <- 0
 
   # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph)
@@ -339,11 +357,11 @@ diffusionMap.default <- function(
   else if (is.matrix(layout)) layout
 
   # Step 1) Expand using toa as weights
-  n <- length(toa)
+  n <- length(ntimes)
   i <- seq_len(n)
   Coords <- cbind(
-    rep(coords[,1], toa),
-    rep(coords[,2], toa)
+    rep(coords[,1], ntimes),
+    rep(coords[,2], ntimes)
   )
 
   # Step 2) Jitter
@@ -361,7 +379,8 @@ diffusionMap.default <- function(
                      c(kde2d.args, list(x=Coords[,1], y=Coords[,2],
                                         lims = c(range(coords[,1]), range(coords[,2]))
                      ))),
-    h      = kde2d.args$h
+    h       = kde2d.args$h,
+    used_x  = x
   ), class="diffnet_diffmap")
 }
 

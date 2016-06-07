@@ -50,7 +50,10 @@
 #' Empirical Distribution Function retrieved from the simulations.
 #'
 #' The test is actually on development by Vega Yon and Valente. A copy of the
-#' working paper can be distributed upon request to \email{g.vegayon@gmail.com}
+#' working paper can be distributed upon request to \email{g.vegayon@gmail.com}.
+#'
+#' The function \code{n_rewires} proposes a vector of number of rewirings that
+#' are performed in each iteration.
 #' @export
 #' @references
 #' Vega Yon, George G. and Valente, Thomas W. (On development).
@@ -83,12 +86,26 @@
 #' hist(res)
 #' }
 #' @author George G. Vega Yon
+#' @name struct_test
+NULL
+
+#' @export
+#' @param p Either a numeric scalar or a numeric vector of length \code{nslices(graph)-1}
+#' with values within [0,1].
+#' @rdname struct_test
+n_rewires <- function(graph, p=.05) {
+  nl <- unlist(nlinks(graph))
+  c(nl[1]*100, nl[-1]*100*p)
+}
+
+
+#' @rdname struct_test
 struct_test <- function(
   graph,
   statistic,
   R,
   rewire.args=list(
-    p          = c(2000, rep(100, nslices(graph) - 1)),
+    p          = n_rewires(graph),
     undirected = getOption("diffnet.undirected", FALSE),
     copy.first = TRUE,
     algorithm  = "swap"
@@ -192,3 +209,4 @@ hist.diffnet_struct_test <- function(
 # , nsim)
 #
 # ttest<-(boot_thr$t[1,] - mean(threshold(net), na.rm=TRUE))/boot_thr$t[2,]
+

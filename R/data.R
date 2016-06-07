@@ -188,7 +188,8 @@
 #'
 #' @format A \code{\link{diffnet}} class object.
 #' @family diffusion datasets
-"brfarmersDiffNet"
+#' @name brfarmersDiffNet
+NULL
 
 #' Korean Family Planning
 #'
@@ -652,7 +653,8 @@
 #' Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
 #' @family diffusion datasets
-"kfamily"
+#' @name kfamily
+NULL
 
 # "kfamilyDiffNet"
 
@@ -663,8 +665,8 @@
 #'
 #' @format A \code{\link{diffnet}} class object.
 #' @family diffusion datasets
-"kfamilyDiffNet"
-
+#' @name kfamilyDiffNet
+NULL
 
 
 #' Medical Innovation
@@ -755,8 +757,8 @@
 #' Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 #' Cresskill N.J.: Hampton Press.
 #' @family diffusion datasets
-"medInnovations"
-
+#' @name medInnovations
+NULL
 
 #' \code{diffnet} version of the Medical Innovation data
 #'
@@ -765,7 +767,8 @@
 #'
 #' @format A \code{\link{diffnet}} class object.
 #' @family diffusion datasets
-"medInnovationsDiffNet"
+#' @name medInnovationsDiffNet
+NULL # "medInnovationsDiffNet"
 
 #' Diffusion Network Datasets
 #'
@@ -868,7 +871,8 @@ NULL
 #' @source Generated for the package.
 #' @family diffusion datasets
 #' @author George G. Vega Yon
-"fakesurvey"
+#' @name fakesurvey
+NULL # "fakesurvey"
 
 #' Fake longitudinal survey data
 #'
@@ -893,7 +897,8 @@ NULL
 #' @source Generated for the package.
 #' @family diffusion datasets
 #' @author George G. Vega Yon
-"fakesurveyDyn"
+#' @name fakesurveyDyn
+NULL # "fakesurveyDyn"
 
 
 #' Fake dynamic edgelist
@@ -912,7 +917,8 @@ NULL
 #' @source Generated for the package
 #' @family diffusion datasets
 #' @author George G. Vega Yon
-"fakeDynEdgelist"
+#' @name fakeDynEdgelist
+NULL
 
 #' Fake static edgelist
 #'
@@ -929,4 +935,5 @@ NULL
 #' @source Generated for the package
 #' @family diffusion datasets
 #' @author George G. Vega Yon
-"fakeEdgelist"
+#' @name fakeEdgelist
+NULL # "fakeEdgelist"

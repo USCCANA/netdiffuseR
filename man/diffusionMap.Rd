@@ -14,21 +14,21 @@ diffusionMap(...)
 
 diffmap(...)
 
-\method{diffusionMap}{default}(graph, toa, layout = NULL,
-  jitter.args = list(), kde2d.args = list(n = 100))
+\method{diffusionMap}{default}(graph, x, x.adj = round_to_seq,
+  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100))
 
 \method{diffusionMap}{diffnet}(graph, slice = nslices(graph), ...)
 
-image.diffnet_diffmap(x, ...)
+\method{image}{diffnet_diffmap}(x, ...)
 
-print.diffnet_diffmap(x, ...)
+\method{print}{diffnet_diffmap}(x, ...)
 
 \method{plot}{diffnet_diffmap}(x, y = NULL, ...)
 }
 \arguments{
 \item{graph}{A square matrix of size \eqn{n\times n}{n * n}.}
 
-\item{toa}{An integer vector with times of adoption of length \eqn{n}.}
+\item{x}{An vector of length \eqn{n}. Usually a \code{toa} vector.}
 
 \item{layout}{Either a \eqn{n\times 2}{n *2} matrix of coordinates or a layout
 function applied to \code{graph} (must return coordinates).}
@@ -47,17 +47,17 @@ A list of class \code{diffnet_diffmap}
 }
 \description{
 Basically creates a smooth-scatter plot in which each observation is weighted
-by \code{toa}.
+by \code{x}.
 }
 \details{
 The image is created using the function \code{kde2d} from
 the \pkg{MASS} package. The complete algorithm follows:
 \enumerate{
- \item \code{toa} is coerced into integer and the range is adjusted to start from 1.
+ \item \code{x} is coerced into integer and the range is adjusted to start from 1.
    \code{NA} are replaced by zero.
  \item In no \code{layout} is passed, layout is computed using
    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
- \item Each vertex's coordinates is repeated \code{toa} times.
+ \item Each vertex's coordinates is repeated \code{x} times.
  \item The jitter function is applied to the repeated coordinates.
  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 }
@@ -103,7 +103,7 @@ diffnet.toa(dn)[dn$toa == max(dn$toa)] <-
   NA
 
 # Coordinates
-coords <- gplot.layout.fruchtermanreingold(
+coords <- sna::gplot.layout.fruchtermanreingold(
   as.matrix(dn$graph[[1]]), layout.par=NULL
 )
 

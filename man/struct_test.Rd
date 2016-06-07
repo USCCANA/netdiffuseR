@@ -2,15 +2,18 @@
 % Please edit documentation in R/struct_test.R
 \name{struct_test}
 \alias{hist.diffnet_struct_test}
+\alias{n_rewires}
 \alias{print.diffnet_struct_test}
 \alias{struct_test}
 \title{Structure dependence test}
 \usage{
-struct_test(graph, statistic, R, rewire.args = list(p = c(2000, rep(100,
-  nslices(graph) - 1)), undirected = getOption("diffnet.undirected", FALSE),
-  copy.first = TRUE, algorithm = "swap"), ...)
+n_rewires(graph, p = 0.05)
 
-print.diffnet_struct_test(x, ...)
+struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
+  undirected = getOption("diffnet.undirected", FALSE), copy.first = TRUE,
+  algorithm = "swap"), ...)
+
+\method{print}{diffnet_struct_test}(x, ...)
 
 \method{hist}{diffnet_struct_test}(x,
   main = "Empirical Distribution of Statistic", xlab = expression(Values ~
@@ -20,6 +23,9 @@ print.diffnet_struct_test(x, ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}
+
+\item{p}{Either a numeric scalar or a numeric vector of length \code{nslices(graph)-1}
+with values within [0,1].}
 
 \item{statistic}{A function that returns either a scalar or a vector.}
 
@@ -86,7 +92,10 @@ Where \eqn{\mbox{Pr}\{\cdot\}}{Pr(.)} is approximated using the
 Empirical Distribution Function retrieved from the simulations.
 
 The test is actually on development by Vega Yon and Valente. A copy of the
-working paper can be distributed upon request to \email{g.vegayon@gmail.com}
+working paper can be distributed upon request to \email{g.vegayon@gmail.com}.
+
+The function \code{n_rewires} proposes a vector of number of rewirings that
+are performed in each iteration.
 }
 \examples{
 # Creating a random graph

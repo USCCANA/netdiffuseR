@@ -14,7 +14,7 @@ plot_diffnet2(...)
   main = "Diffusion dynamics", vertex.size = NULL, vertex.shape = NULL,
   vertex.label = "", vertex.frame.color = "gray", edge.arrow.size = 0.5,
   edge.curved = FALSE, add.map = FALSE, diffmap.args = list(kde2d.args =
-  list(n = 100)), ...)
+  list(n = 100)), include.white = "first", ...)
 
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE), color.ramp = grDevices::colorRamp(c("skyblue",
@@ -22,7 +22,8 @@ plot_diffnet2(...)
   key.title = "Time of Adoption", main = "Diffusion dynamics",
   vertex.size = NULL, vertex.shape = NULL, vertex.label = "",
   vertex.frame.color = "gray", edge.arrow.size = 0.5, edge.curved = FALSE,
-  add.map = FALSE, diffmap.args = list(kde2d.args = list(n = 100)), ...)
+  add.map = FALSE, diffmap.args = list(kde2d.args = list(n = 100)),
+  include.white = "first", ...)
 }
 \arguments{
 \item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -54,6 +55,9 @@ plot_diffnet2(...)
 \item{add.map}{Logical scalar. When \code{TRUE} adds plots \code{\link{diffusionMap}}.}
 
 \item{diffmap.args}{List. If \code{add.map=TRUE}, arguments passed to \code{diffusionMap}.}
+
+\item{include.white}{Character scalar. Includes white in the color palette used in the map.
+When \code{include.white=NULL} then it won't include it.}
 
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
