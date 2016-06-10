@@ -705,3 +705,156 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
   # output[is.na(toa)] <- NA
   # output
 }
+
+#' Classify adopters accordingly to Time of Adoption and Threshold levels.
+#'
+#' Adopters are classified as in Valente (1995). In general, this is done
+#' depending on the distance in terms of standard deviations from the mean of
+#' Time of Adoption and Threshold.
+#'
+#' @param graph A dynamic graph.
+#' @param toa Integer vector of length \eqn{n} with times of adoption.
+#' @param t0 Integer scalar passed to \code{\link{threshold}} and \code{\link{toa_mat}}.
+#' @param t1 Integer scalar passed to \code{\link{toa_mat}}.
+#' @param expo Numeric matrix of size \eqn{n\times T}{n*T} with network exposures.
+#' @param include_censored Logical scalar, passed to \code{\link{threshold}}.
+#' @param x A \code{diffnet_adopters} class object.
+#' @param ... Further arguments passed to the method.
+#' @export
+#' @details
+#' Classifies (only) adopters according to time of adoption and threshold as
+#' described in Valente (1995). In particular, the categories are defined as follow:
+#'
+#' For Time of Adoption, with \code{toa} as the vector of times of adoption:
+#' \itemize{
+#'  \item \emph{Early Adopters}: \code{toa[i] <= mean(toa) - sd(toa)},
+#'  \item \emph{Early Majority}: \code{mean(toa) - sd(toa) < toa[i] <= mean(toa) },
+#'  \item \emph{Late Majority}: \code{mean(toa) < toa[i] <= mean(toa) + sd(toa) }, and
+#'  \item \emph{Laggards}: \code{mean(toa) + sd(toa) < toa[i] }.
+#' }
+#'
+#' For Threshold levels, with \code{thr} as the vector of threshold levels:
+#' \itemize{
+#'  \item \emph{Very Low Thresh.}: \code{thr[i] <= mean(thr) - sd(thr)},
+#'  \item \emph{Low Thresh.}: \code{mean(thr) - sd(thr) < thr[i] <= mean(thr) },
+#'  \item \emph{High Thresh.}: \code{mean(thr) < thr[i] <= mean(thr) + sd(thr) }, and
+#'  \item \emph{Very High. Thresh.}: \code{mean(thr) + sd(thr) < thr[i] }.
+#' }
+#'
+#' By default threshold levels are not computed for left censored data. These
+#' will have a \code{NA} value in the \code{thr} vector.
+#'
+#' The plot method, \code{plot.diffnet_adopters}, is a wrapper for the
+#' \code{\link[graphics:plot.table]{plot.table}} method. This generates a
+#' \code{\link[graphics:mosaic]{mosaic}} plot.
+#'
+#' @return A list of class \code{diffnet_adopters} with the following elements:
+#' \item{toa}{A factor vector of length \eqn{n} with 4 levels:
+#'  "Early Adopters", "Early Majority", "Late Majority", and "Laggards"}
+#' \item{thr}{A factor vector of length \eqn{n} with 4 levels:
+#'  "Very Low Thresh.", "Low Thresh.", "High Thresh.", and "Very High Thresh."}
+#' @examples
+#' # Classifying brfarmers -----------------------------------------------------
+#'
+#' x <- brfarmersDiffNet
+#' diffnet.toa(x)[x$toa==max(x$toa, na.rm = TRUE)] <- NA
+#' out <- classify_adopters(x)
+#'
+#' # This is one way
+#' round(
+#' with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
+#'   nnodes(x[!is.na(x$toa)])*100, digits=2)
+#'
+#' # This is other
+#' ftable(out)
+#'
+#' # Can be coerced into a data.frame, e.g. ------------------------------------
+#' \dontrun{
+#'  View(classify(brfarmersDiffNet))
+#'  cbind(as.data.frame(classify(brfarmersDiffNet)), brfarmersDiffNet$toa)
+#' }
+#'
+#' # Creating a mosaic plot with the medical innovations -----------------------
+#' x <- classify(medInnovationsDiffNet)
+#' plot(x)
+#'
+#' @family statistics
+#' @references
+#' Valente, T. W. (1995). "Network models of the diffusion of innovations"
+#'  (2nd ed.). Cresskill N.J.: Hampton Press.
+#' @author George G. Vega Yon
+classify_adopters <- function(...) UseMethod("classify_adopters")
+
+#' @export
+#' @rdname classify_adopters
+classify <- classify_adopters
+
+#' @export
+#' @rdname classify_adopters
+classify_adopters.diffnet <- function(graph, include_censored=FALSE, ...) {
+  classify_adopters.default(graph$graph, graph$toa,
+                            t0=graph$meta$pers[1], t1=NULL,
+                            expo=exposure(graph, ...),
+                            include_censored=include_censored)
+}
+
+#' @export
+#' @rdname classify_adopters
+classify_adopters.default <- function(graph, toa,
+                                      t0=NULL,
+                                      t1=NULL,
+                                      expo=NULL,
+                                      include_censored=FALSE, ...) {
+  # Computing ranges
+  ran_toa <- mean(toa, na.rm = TRUE) + sd(toa, na.rm = TRUE)*c(-1,0,1)
+
+  # Getting threshold
+  if (!length(expo)) expo <- exposure(graph, toa_mat(toa, t0=t0, t1=t1), ...)
+  thr <- threshold(expo, toa, t0, include_censored)
+  ran_thr <- mean(thr, na.rm = TRUE) + sd(thr, na.rm = TRUE)*c(-1,0,1)
+
+  # Classifying
+  c_toa <- c("Early Adopters", "Early Majority", "Late Majority", "Laggards")
+  c_toa <- factor(findInterval(toa, ran_toa), 0:3, c_toa)
+
+  c_thr <- c("Very Low Thresh.", "Low Thresh.", "High Thresh.", "Very High Thresh.")
+  c_thr <- factor(findInterval(thr, ran_thr), 0:3, c_thr)
+
+  structure(list(
+    toa=c_toa,
+    thr=c_thr,
+    cutoffs=list(toa=ran_toa, thr=ran_thr)
+    ), class="diffnet_adopters")
+  #
+
+}
+
+#' @export
+#' @rdname classify_adopters
+ftable.diffnet_adopters <- function(x, as.pcent=TRUE, addNA=TRUE, digits=2, ...) {
+  if (addNA)
+    x <- lapply(x[1:2], addNA)
+  out <- with(x, stats::ftable(toa, thr, ...))
+
+  if (as.pcent) round(out/sum(out)*100, digits)
+  else out
+}
+
+#' @export
+#' @rdname classify_adopters
+as.data.frame.diffnet_adopters <- function(x, row.names=NULL, optional=FALSE, ...) {
+  as.data.frame(x[1:2], row.names, optional, ...)
+}
+
+#' @export
+#' @param y Ignored.
+#' @param ftable.args List of arguments passed to \code{\link[stats:ftable]{ftable}}.
+#' @param table.args List of arguments passed to \code{\link{table}}.
+#' @rdname classify_adopters
+plot.diffnet_adopters <- function(x, y = NULL,
+                                  ftable.args = list(),
+                                  table.args=list(),...) {
+  y <- do.call(ftable.diffnet_adopters, c(ftable.args, list(x=x)))
+  y <- do.call(as.table, c(table.args, list(x=y)))
+  graphics:::plot.table(y, ...)
+}

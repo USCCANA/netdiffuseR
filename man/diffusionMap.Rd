@@ -116,10 +116,13 @@ col <- adjustcolor(colorRampPalette(c("white","lightblue", "yellow", "red"))(100
 with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
 
 }
+\author{
+George G. Vega Yon
+}
 \seealso{
-Other visualizations: \code{\link{hazard_rate}},
-  \code{\link{plot_adopters}}, \code{\link{plot_diffnet2}},
-  \code{\link{plot_diffnet}},
+Other visualizations: \code{\link{drawColorKey}},
+  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
+  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }

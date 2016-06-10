@@ -285,9 +285,7 @@ plot_diffnet <- function(
 # @export
 # @rdname plot_diffnet
 plot_diffnet.array <- function(graph, ...) {
-  dn <- dimnames(graph)[[3]]
-  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
-  names(graph) <- dn
+  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
   plot_diffnet.list(graph, ...)
 }
 
@@ -543,9 +541,7 @@ plot_threshold <- function(
 # @export
 # @rdname plot_threshold
 plot_threshold.array <- function(graph, ...) {
-  dn <- dimnames(graph)[[3]]
-  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
-  names(graph) <- dn
+  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
   plot_threshold.list(graph, ...)
 }
 
@@ -564,6 +560,7 @@ plot_threshold.list <- function(
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
+
 
   # Step 1: Creating the cumulative graph
   # Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
@@ -787,9 +784,7 @@ plot_infectsuscep <- function(
 # @export
 # @rdname plot_infectsuscep
 plot_infectsuscep.array <- function(graph, ...) {
-  dn <- dimnames(graph)[[3]]
-  graph <- lapply(1:dim(graph)[3], function(x) methods::as(graph[,,x], "dgCMatrix"))
-  names(graph) <- dn
+  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
   plot_infectsuscep.list(graph, ...)
 }
 
@@ -1285,3 +1280,59 @@ diffnetLapply <- function(graph, FUN, ...) {
 # diffnetLapply(medInnovationsDiffNet, function(x, graph, cumadopt, ...) {
 #   sum(cumadopt)
 # })
+
+#' @export
+#' @rdname as_diffnet
+str.diffnet <- function(object, ...) {
+  str(unclass(object))
+}
+
+#' @export
+#' @rdname as_diffnet
+dimnames.diffnet <- function(x) {
+  with(x, list(
+    meta$ids,
+    c(colnames(vertex.static.attrs), names(vertex.dyn.attrs[[1]])),
+    meta$pers)
+  )
+}
+
+#' @export
+#' @rdname as_diffnet
+t.diffnet <- function(x) {
+  x$graph <- lapply(x$graph, t)
+  x
+}
+
+#' @export
+#' @rdname as_diffnet
+`&.diffnet` <- function(e1,e2) {
+  mapply(`&`, e1$graph, e2$graph)
+}
+
+#' @export
+#' @rdname as_diffnet
+`|.diffnet` <- function(e1,e2) {
+  mapply(`|`, e1$graph, e2$graph)
+}
+
+#' @rdname as_diffnet
+#' @export
+dim.diffnet <- function(x) {
+  k <- length(with(x, c(colnames(vertex.static.attrs), names(vertex.dyn.attrs[[1]]))))
+  as.integer(with(x$meta, c(n, k, nper)))
+}
+
+#' @export
+#' @rdname as_diffnet
+`%*%` <- function(...) UseMethod("%*%")
+
+#' @export
+#' @rdname as_diffnet
+`%*%.default` <- function(...) do.call(base::`%*%`, list(...))
+
+#' @export
+#' @rdname as_diffnet
+`%*%.diffnet` <- function(e1, e2) {
+  mapply(`%*%`, e1$graph, e2$graph)
+}

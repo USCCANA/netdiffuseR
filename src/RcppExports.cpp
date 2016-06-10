@@ -84,8 +84,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // egonet_attrs_cpp
-List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, bool outer, bool self, bool valued);
-RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
+List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, bool outer, bool self, bool self_attrs, bool valued);
+RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP self_attrsSEXP, SEXP valuedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -93,8 +93,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::uvec >::type V(VSEXP);
     Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type self_attrs(self_attrsSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    __result = Rcpp::wrap(egonet_attrs_cpp(graph, V, outer, self, valued));
+    __result = Rcpp::wrap(egonet_attrs_cpp(graph, V, outer, self, self_attrs, valued));
     return __result;
 END_RCPP
 }

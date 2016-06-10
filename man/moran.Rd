@@ -46,9 +46,10 @@ https://en.wikipedia.org/w/index.php?title=Moran%27s_I&oldid=679297766
 }
 }
 \seealso{
-Other statistics: \code{\link{cumulative_adopt_count}},
-  \code{\link{dgr}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}}
+Other statistics: \code{\link{classify_adopters}},
+  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
+  \code{\link{exposure}}, \code{\link{hazard_rate}},
+  \code{\link{infection}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
 }
 

@@ -6,7 +6,7 @@
 \usage{
 rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
   self = FALSE, multiple = FALSE,
-  undirected = getOption("diffnet.undirected"), copy.first = FALSE)
+  undirected = getOption("diffnet.undirected"), copy.first = TRUE)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})}

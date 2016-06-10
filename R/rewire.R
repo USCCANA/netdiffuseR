@@ -148,7 +148,7 @@ rewire_graph <- function(graph, p,
                          algorithm="endpoints",
                          both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected"),
-                         copy.first=FALSE) {
+                         copy.first=TRUE) {
 
   # Checking undirected (if exists)
   checkingUndirected(graph)
@@ -186,7 +186,7 @@ rewire_graph <- function(graph, p,
 rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, undirected,
                               copy.first) {
   t   <- length(graph)
-  out <- vector("list", t)
+  out <- graph
 
   # Names
   tn <- names(graph)
@@ -203,9 +203,9 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
     j <- ifelse(copy.first, 1, i)
 
     out[[i]] <- if (algorithm == "endpoints")
-      rewire_endpoints(graph[[j]], p[i], both.ends, self, multiple, undirected)
+      rewire_endpoints(out[[j]], p[i], both.ends, self, multiple, undirected)
     else if (algorithm == "swap")
-      rewire_swap(graph[[j]], p[i], self, multiple, undirected)
+      rewire_swap(out[[j]], p[i], self, multiple, undirected)
     else stop("No such rewiring algorithm: ", algorithm)
 
     # Names
@@ -236,7 +236,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
                               copy.first) {
   n   <- dim(graph)[1]
   t   <- dim(graph)[3]
-  out <- vector("list", t)
+  out <- apply(graph, 3, methods::as, Class="dgCMatrix")
 
   # Checking time names
   tn <- dimnames(graph)[[3]]
@@ -254,10 +254,10 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 
     out[[i]] <- if (algorithm == "endpoints") {
       rewire_endpoints(
-        methods::as(graph[,,j], "dgCMatrix"), p[i], both.ends, self, multiple, undirected)
+        out[[j]], p[i], both.ends, self, multiple, undirected)
     } else if (algorithm == "swap") {
       rewire_swap(
-        methods::as(graph[,,j], "dgCMatrix"), p, self, multiple, undirected)
+        out[[j]], p[i], self, multiple, undirected)
     } else stop("No such rewiring algorithm: ", algorithm)
 
     rn <- rownames(graph[,,i])

@@ -15,6 +15,7 @@ NULL
 #' @import methods
 #' @importClassesFrom Matrix dgCMatrix
 #' @importFrom Matrix Matrix rowSums colSums
+#' @importMethodsFrom Matrix t
 NULL
 
 #' @importClassesFrom SparseM matrix.csc
@@ -24,7 +25,7 @@ NULL
 
 #' @importFrom grDevices grey rgb colorRampPalette blues9
 #' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window hist mtext polygon
-#' @importFrom stats complete.cases runif reshape setNames
+#' @importFrom stats complete.cases runif reshape setNames ftable
 #' @importFrom utils getFromNamespace head
 #' @importFrom boot boot
 #' @importFrom MASS bandwidth.nrd kde2d

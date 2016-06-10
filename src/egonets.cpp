@@ -5,7 +5,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List egonet_attrs_cpp(
     const arma::sp_mat & graph, const arma::uvec V,
-    bool outer=true, bool self=true, bool valued=true) {
+    bool outer=true, bool self=true, bool self_attrs=false, bool valued=true) {
 
   // General variables
   int N = V.n_elem;
@@ -35,13 +35,17 @@ List egonet_attrs_cpp(
 
     // Individual specific variables
     arma::sp_mat g = tgraph.col(e);
-    NumericMatrix out(g.n_nonzero-rm,2);
+    NumericMatrix out(g.n_nonzero-rm + (self_attrs ? 1 : 0),2);
     // We add two so:
     //  - we can include the value of the edge
     //  - we cna include the id number of the vertex (wich goes from 1 to n)
 
     // Retrieving the desired set of attributes
-    int nloop = 0;
+    if (self_attrs) {
+      out(0,0) = tgraph.at(v,v);
+      out(0,1) = v + 1;
+    }
+    int nloop = (self_attrs ? 1 : 0);
     for (unsigned i = 0u;i < g.n_nonzero;i++) {
 
       // Edge index

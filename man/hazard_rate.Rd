@@ -121,14 +121,15 @@ Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
 (2nd ed.). Cambridge: MIT Press.
 }
 \seealso{
-Other statistics: \code{\link{cumulative_adopt_count}},
-  \code{\link{dgr}}, \code{\link{exposure}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}}
+Other statistics: \code{\link{classify_adopters}},
+  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
+  \code{\link{exposure}}, \code{\link{infection}},
+  \code{\link{moran}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
 
 Other visualizations: \code{\link{diffusionMap}},
-  \code{\link{plot_adopters}}, \code{\link{plot_diffnet2}},
-  \code{\link{plot_diffnet}},
+  \code{\link{drawColorKey}}, \code{\link{plot_adopters}},
+  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }

@@ -54,7 +54,8 @@ any(d_valued!=d_unvalued)
 George G. Vega Yon
 }
 \seealso{
-Other statistics: \code{\link{cumulative_adopt_count}},
+Other statistics: \code{\link{classify_adopters}},
+  \code{\link{cumulative_adopt_count}},
   \code{\link{exposure}}, \code{\link{hazard_rate}},
   \code{\link{infection}}, \code{\link{moran}},
   \code{\link{struct_equiv}}, \code{\link{threshold}}

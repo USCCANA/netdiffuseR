@@ -1,9 +1,14 @@
-# Changes in netdiffuseR version 1.16.6.9000
+# Changes in netdiffuseR version 1.16.6.9000 ()
 
 ## Bug fixes
 
 * Fixed bug in `struct_equiv`: When `groupvar` was a list (dynamic attr), the
   function returned error.
+  
+* Fixed bug in `rewire_graph.array`: Returned error when `algorithm="swap"`
+
+* Fixed bug in `rewire_graph`: The option `copy.first` was not bee applied correctly.
+
 
 ## New features and changes
 
@@ -12,7 +17,31 @@
 * `infection`, `susceptibility` and `threshold` now report `NA` for non-adopters
   or excluded variables.
   
-* New function `diffnetLapply` applies function to slices.
+* `egonets_attrs` now has new argument: `self.attrs` allows including ego's attributes
+  as part of the outcome so it can be used by the user.
+  
+
+## New functions
+
+* New method `c.diffnet_struct_test`: A wrapper of `boot:::c.boot`.
+
+* `diffusionMap` computes the required matrix to be used with
+  `image`-like functions mapping a vertex covariate given a graph structure.
+  
+* `n_rewires`: computes a suggested number of rewires per step in order to attain
+  unbiased graph samples.
+  
+* `diffnetLapply`: Apply throught periods on diffnet objects.
+
+* Several new methods for the class `diffnet`. Now users can apply `str`,
+  `dimnames` (so `colnames` and `rownames`), `t`, `&`, `|`, `dim` and `%*%`.
+  
+* `drawColorKey`: Handy function to draw a color key in the current plot.
+
+* `classify_adopters`: As in Valente (1995), depending on time of adoption, adopters
+  are classified as early adopters, early  majority, late majority, and laggards.
+  The function introduces a new class and has methods for `ftable` and `plot`.
+
 
 # Changes in netdiffuseR version 1.16.5 (2016-05-02)
 

@@ -39,8 +39,10 @@ round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
 #' @param vertex.frame.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param edge.arrow.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param edge.curved Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param add.map Logical scalar. When \code{TRUE} adds plots \code{\link{diffusionMap}}.
+#' @param add.map Character scalar. When \code{"first"} plots a \code{\link{diffusionMap}} before the
+#'  graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds nothing.
 #' @param diffmap.args List. If \code{add.map=TRUE}, arguments passed to \code{diffusionMap}.
+#' @param diffmap.alpha Numeric scalar between [0,1]. Alpha level for the map.
 #' @param include.white Character scalar. Includes white in the color palette used in the map.
 #'  When \code{include.white=NULL} then it won't include it.
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
@@ -55,17 +57,18 @@ round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
 #' \item{diffmap}{}
 #' @export
 #' @family visualizations
+#' @author George G. Vega Yon
 plot_diffnet2 <- function(...) UseMethod("plot_diffnet2")
 
 #' @rdname plot_diffnet2
 #' @export
 #' @include diffnet-methods.R data.R
 plot_diffnet2.diffnet <- function(
-  graph,
+  graph, toa=NULL,
   slice=nslices(graph),
   color.ramp = grDevices::colorRamp(c("skyblue","yellow", "red")),
   layout = NULL,
-  key.width = .20,
+  key.width = .10,
   key.title = "Time of Adoption",
   main = "Diffusion dynamics",
   vertex.size = NULL,
@@ -76,16 +79,17 @@ plot_diffnet2.diffnet <- function(
   edge.curved=FALSE,
   add.map = FALSE,
   diffmap.args=list(kde2d.args=list(n=100)),
+  diffmap.alpha=.5,
   include.white="first",
   ...
 ) {
   plot_diffnet2.default(
-    graph=graph$graph[[slice]], toa=graph$toa, pers=graph$meta$pers,
+    graph=graph$graph[[slice]], toa=if (length(toa)) toa else graph$toa, pers=graph$meta$pers,
     color.ramp=color.ramp, layout=layout, key.width=key.width, key.title=key.title,
     main=main,
     vertex.size=vertex.size, vertex.shape=vertex.shape, vertex.label=vertex.label,
     vertex.frame.color=vertex.frame.color, edge.arrow.size=edge.arrow.size,
-    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,include.white,...)
+    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,diffmap.alpha,include.white,...)
 }
 
 #' @rdname plot_diffnet2
@@ -96,7 +100,7 @@ plot_diffnet2.default <- function(
   pers = min(toa, na.rm = TRUE):max(toa, na.rm = TRUE),
   color.ramp = grDevices::colorRamp(c("skyblue","yellow", "red")),
   layout = NULL,
-  key.width = .20,
+  key.width = .10,
   key.title = "Time of Adoption",
   main = "Diffusion dynamics",
   vertex.size = NULL,
@@ -107,6 +111,7 @@ plot_diffnet2.default <- function(
   edge.curved=FALSE,
   add.map=FALSE,
   diffmap.args=list(kde2d.args=list(n=100)),
+  diffmap.alpha=.5,
   include.white = "first",
   ...) {
 
@@ -157,14 +162,14 @@ plot_diffnet2.default <- function(
   title(main=main)
 
   # If adding map! -------------------------------------------------------------
-  if (add.map) {
+  if (length(add.map)) {
     dm <- do.call(diffusionMap.default, c(diffmap.args, list(graph=graph, x=toa,
                                                              layout = l)))
     # Levels
     dmlvls <- pretty(range(dm$map$z), diffmap.args$kde2d.args$n)
 
     # Colors, in this case we need to extrapolate nper and add white.
-    dmcol <- grDevices::rgb(color.ramp(seq(0,1, length.out = nper)), maxColorValue = 255)
+    dmcol <- grDevices::rgb(color.ramp(seq(0,1, length.out = nper*2)), maxColorValue = 255)
 
     # Do we need to include white in the map?
     if (length(include.white))
@@ -173,10 +178,12 @@ plot_diffnet2.default <- function(
       else stop('-include.white- should be either NULL, "first" or "last".')
 
     # Palette
-    dmcol <- grDevices::colorRampPalette(dmcol)(length(dmlvls))
+    dmcol <- grDevices::adjustcolor(grDevices::colorRampPalette(dmcol)(length(dmlvls)),
+                                    alpha.f=diffmap.alpha)
 
     # Plot
-    .filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
+    if (add.map=="first")
+      .filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
   } else dm <- NULL
 
   # Plotting graph -------------------------------------------------------------
@@ -194,46 +201,13 @@ plot_diffnet2.default <- function(
     ...
   )
 
-  # Plotting boxes -------------------------------------------------------------
-  if (key.width > 0) {
-    marks <- pretty(pers, n = min(10, nper))
-    marks <- unique(c(pers[1], marks[marks %in% pers], pers[nper]))
+  if (length(add.map) && (add.map=="last"))
+      .filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
 
-    n <- length(marks) + 1
-
-    yscale <- yran[2] - yran[1]
-    xadj   <- (xran[2] - xran[1])
-    bcoords <- data.frame(
-      x1 = rep(xran[2] - xadj*key.width*.9, n),
-      x2 = rep(xran[2] - xadj*key.width*.1, n),
-      y1 = yscale/n*(1:n - 1) + yran[1],
-      y2 = yscale/n*(1:n) + yran[1]
-    )
-
-
-    boxcol <- (marks-t01[1])/(t01[2]-t01[1])
-
-    boxcol <- color.ramp(boxcol)
-    boxcol <- c("white", rgb(boxcol[,1], boxcol[,2], boxcol[,3], maxColorValue = 255))
-
-    # Drawing rectangles
-    with(
-      bcoords,
-      rect(xleft=x1, ybottom = y1, xright = x2, ytop = y2, col = boxcol,
-           border = c("gray", rep("transparent", n-1)))
-    )
-
-    # Gettint the labels
-    with(bcoords, text(
-      x=x1,
-      y=(y1+y2)/2,
-      labels = c("Non-adopter", marks),
-      pos=2
-    )
-    )
-
-    with(bcoords, text((x1[1]+x2[1])/2, y2[n], labels=key.title, pos=3))
-  }
+  # # Plotting boxes -------------------------------------------------------------
+  if (key.width > 0)
+    drawColorKey(toa, key.pos = c(1-key.width, 0.975, 0.05, 0.95),
+                 nlevels = 100, main = key.title, border="transparent")
 
   invisible(list(layout=l,vertex.color=col,
                  vertex.label=vertex.label,
@@ -276,6 +250,7 @@ plot_diffnet2.default <- function(
 #' \item{h}{Bandwidth passed to \code{kde2d}.}
 #' @export
 #' @family visualizations
+#' @author George G. Vega Yon
 #' @examples
 #'
 #' # Example with a random graph --------------------------------------------------
@@ -356,29 +331,51 @@ diffusionMap.default <- function(
   else if (!length(layout)) igraph::layout_nicely(g)
   else if (is.matrix(layout)) layout
 
-  # Step 1) Expand using toa as weights
-  n <- length(ntimes)
-  i <- seq_len(n)
-  Coords <- cbind(
-    rep(coords[,1], ntimes),
-    rep(coords[,2], ntimes)
-  )
+  # # Step 1) Expand using toa as weights
+  # n <- length(ntimes)
+  # i <- seq_len(n)
+  # Coords <- cbind(
+  #   rep(coords[,1], ntimes),
+  #   rep(coords[,2], ntimes)
+  # )
+  #
+  # # Step 2) Jitter
+  # Coords[,1] <- do.call(jitter, c(jitter.args, list(x=Coords[,1])))
+  # Coords[,2] <- do.call(jitter, c(jitter.args, list(x=Coords[,2])))
+  #
+  # # Step 3) kde2d
+  #
+  # if (!length(kde2d.args$h))
+  #   kde2d.args$h <- c(MASS::bandwidth.nrd(Coords[,1]), MASS::bandwidth.nrd(Coords[,2]))
 
-  # Step 2) Jitter
-  Coords[,1] <- do.call(jitter, c(jitter.args, list(x=Coords[,1])))
-  Coords[,2] <- do.call(jitter, c(jitter.args, list(x=Coords[,2])))
-
-  # Step 3) kde2d
-
+  # Step 1) Compute densities per level
   if (!length(kde2d.args$h))
-    kde2d.args$h <- c(MASS::bandwidth.nrd(Coords[,1]), MASS::bandwidth.nrd(Coords[,2]))
+    kde2d.args$h <- c(MASS::bandwidth.nrd(coords[,1]), MASS::bandwidth.nrd(coords[,2]))
+
+  # Mapping limits
+  lims  <- c(range(coords[,1]), range(coords[,2]))
+  Map   <- with(kde2d.args, list(z=matrix(0, ncol=n, nrow=n)))
+  Map$W <- Map$z
+  for (i in unique(ntimes)) {
+    # Subset and map
+    dat <- coords[ntimes==i,,drop=FALSE]
+    map <- do.call(MASS::kde2d, c(kde2d.args, list(
+      x = dat[,1], y=dat[,2], lims=lims)))
+
+    # Adding up (for weighted average)
+    Map$W <- Map$W + map$z
+    Map$z <- Map$z + map$z*i
+
+  }
+
+  # Normalizing
+  Map$z <- Map$z/(Map$W + 1e-15)
+  Map$x <- seq(lims[1], lims[2], length.out = kde2d.args$n)
+  Map$y <- seq(lims[3], lims[4], length.out = kde2d.args$n)
 
   structure(list(
     coords = coords,
-    map    = do.call(MASS::kde2d,
-                     c(kde2d.args, list(x=Coords[,1], y=Coords[,2],
-                                        lims = c(range(coords[,1]), range(coords[,2]))
-                     ))),
+    map    = with(Map, list(x=x,y=y,z=z)),
     h       = kde2d.args$h,
     used_x  = x
   ), class="diffnet_diffmap")

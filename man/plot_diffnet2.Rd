@@ -8,27 +8,29 @@
 \usage{
 plot_diffnet2(...)
 
-\method{plot_diffnet2}{diffnet}(graph, slice = nslices(graph),
+\method{plot_diffnet2}{diffnet}(graph, toa = NULL, slice = nslices(graph),
   color.ramp = grDevices::colorRamp(c("skyblue", "yellow", "red")),
-  layout = NULL, key.width = 0.2, key.title = "Time of Adoption",
+  layout = NULL, key.width = 0.1, key.title = "Time of Adoption",
   main = "Diffusion dynamics", vertex.size = NULL, vertex.shape = NULL,
   vertex.label = "", vertex.frame.color = "gray", edge.arrow.size = 0.5,
   edge.curved = FALSE, add.map = FALSE, diffmap.args = list(kde2d.args =
-  list(n = 100)), include.white = "first", ...)
+  list(n = 100)), diffmap.alpha = 0.5, include.white = "first", ...)
 
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE), color.ramp = grDevices::colorRamp(c("skyblue",
-  "yellow", "red")), layout = NULL, key.width = 0.2,
+  "yellow", "red")), layout = NULL, key.width = 0.1,
   key.title = "Time of Adoption", main = "Diffusion dynamics",
   vertex.size = NULL, vertex.shape = NULL, vertex.label = "",
   vertex.frame.color = "gray", edge.arrow.size = 0.5, edge.curved = FALSE,
   add.map = FALSE, diffmap.args = list(kde2d.args = list(n = 100)),
-  include.white = "first", ...)
+  diffmap.alpha = 0.5, include.white = "first", ...)
 }
 \arguments{
 \item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
 \item{graph}{Either a square matrix or a diffnet object.}
+
+\item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
 \item{color.ramp}{A function as returned by \code{\link[grDevices::colorRamp]{colorRamp}}.}
 
@@ -52,14 +54,15 @@ plot_diffnet2(...)
 
 \item{edge.curved}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
-\item{add.map}{Logical scalar. When \code{TRUE} adds plots \code{\link{diffusionMap}}.}
+\item{add.map}{Character scalar. When \code{"first"} plots a \code{\link{diffusionMap}} before the
+graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds nothing.}
 
 \item{diffmap.args}{List. If \code{add.map=TRUE}, arguments passed to \code{diffusionMap}.}
 
+\item{diffmap.alpha}{Numeric scalar between [0,1]. Alpha level for the map.}
+
 \item{include.white}{Character scalar. Includes white in the color palette used in the map.
 When \code{include.white=NULL} then it won't include it.}
-
-\item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
 \item{pers}{Integer vector of length \eqn{T} indicating the time periods of the data.}
 }
@@ -78,10 +81,13 @@ Another way of visualizing diffusion
 \details{
 If \code{key.width<=0} then no key is created.
 }
+\author{
+George G. Vega Yon
+}
 \seealso{
 Other visualizations: \code{\link{diffusionMap}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet}},
+  \code{\link{drawColorKey}}, \code{\link{hazard_rate}},
+  \code{\link{plot_adopters}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }

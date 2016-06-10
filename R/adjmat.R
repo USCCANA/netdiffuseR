@@ -353,13 +353,6 @@ adjmat_to_edgelist.array <- function(graph, undirected, keep.isolates) {
     times <- c(times, rep(tnames[i],nrow(x)))
   }
 
-  # # Adjusting the length
-  # ids <- apply(edgelist, 1, paste0, collapse="")
-  # times <- as.integer(unname(tapply(times, ids, min)))
-  #
-  # edgelist <- unique(edgelist)
-  # edgelist <- edgelist[order(edgelist[,1],edgelist[,2]),]
-
   return(cbind(edgelist, times=times))
 }
 
@@ -814,4 +807,9 @@ drop_isolated.list <- function(graph, undirected=getOption("diffnet.undirected")
   }
 
   out
+}
+
+simmelian_mat <- function(graph) {
+  tmp <- graph * graph
+  (graph & (tmp %*% t(tmp))) + 0
 }

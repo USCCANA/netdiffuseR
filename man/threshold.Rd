@@ -57,10 +57,11 @@ George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}
 
-Other statistics: \code{\link{cumulative_adopt_count}},
-  \code{\link{dgr}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}}
+Other statistics: \code{\link{classify_adopters}},
+  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
+  \code{\link{exposure}}, \code{\link{hazard_rate}},
+  \code{\link{infection}}, \code{\link{moran}},
+  \code{\link{struct_equiv}}
 }
 \keyword{univar}
 

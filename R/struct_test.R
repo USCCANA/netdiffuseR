@@ -90,12 +90,11 @@
 NULL
 
 #' @export
-#' @param p Either a numeric scalar or a numeric vector of length \code{nslices(graph)-1}
-#' with values within [0,1].
+#' @param p Either a Numeric scalar or vector of length \code{nslices(graph)-1}
+#' with the number of rewires per links.
 #' @rdname struct_test
-n_rewires <- function(graph, p=.05) {
-  nl <- unlist(nlinks(graph))
-  c(nl[1]*100, nl[-1]*100*p)
+n_rewires <- function(graph, p=c(100L, rep(5L, nslices(graph) - 1))) {
+  unlist(nlinks(graph))*p
 }
 
 
@@ -149,6 +148,26 @@ struct_test <- function(
   )
 
   return(structure(out, class="diffnet_struct_test"))
+}
+
+#' @export
+#' @rdname struct_test
+c.diffnet_struct_test <- function(..., recursive=FALSE) {
+  # Checking arguments names
+  args <- list(...)
+  nm <- lapply(args, names)
+  if (!all(sapply(nm, function(x) identical(x, nm[[1]]))))
+    stop("arguments are not all the same type of \"diffnet_struct_test\" object")
+
+  # Checking graph dim
+  res         <- args[[1]]
+  res$boot    <- do.call(boot:::c.boot, lapply(args, "[[", "boot"))
+  res$p.value <- with(res, 2*min(mean(boot$t < boot$t0),
+                                 mean(boot$t > boot$t0)))
+  res$mean_t  <- colMeans(res$boot$t, na.rm=TRUE)
+  res$R       <- res$boot$R
+
+  res
 }
 
 #' @export

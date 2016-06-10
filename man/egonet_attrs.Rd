@@ -6,7 +6,7 @@
 \usage{
 egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
   fun = function(x) x, as.df = FALSE, self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"))
+  self.attrs = FALSE, valued = getOption("diffnet.valued"))
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -22,6 +22,9 @@ egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
 \item{as.df}{Logical scalar. When TRUE returns a data.frame instead of a list (see details).}
 
 \item{self}{Logical scalar. When FALSE ignores ego's own attributes.}
+
+\item{self.attrs}{Logical scalar. When \code{TRUE} ego's attributes are included in the output
+as the first row.}
 
 \item{valued}{Logical scalar. When TRUE stores the value of the edge, otherwise includes a one.}
 }
