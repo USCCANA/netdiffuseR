@@ -1,0 +1,11 @@
+2016-06-10  George G. Vega Yon <g.vegayon@gmail.com>
+	* ChangeLog: Sarting ChangeLog
+	* R/adjmat.R: Adding new function `simmelian_mat`
+	* R/diffnet-methods.R: New methods str, dimnames, t, &, |, dim, %*%.
+	* R/egonets.R: Adding new arg.
+	* R/misc.R: New function to create a color key.
+	* R/plot_diffnet2.R: Fixing small bugs and improving doc.
+	* R/rewire.R: Fixing bug.
+	* R/stats.R: New function to classify adopters.
+	* R/struct_test.R: New method c and helper function.
+	* man/*: Adding documentation.
