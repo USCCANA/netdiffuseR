@@ -20,6 +20,8 @@
 * `egonets_attrs` now has new argument: `self.attrs` allows including ego's attributes
   as part of the outcome so it can be used by the user.
   
+* `plot_diffnet` now uses `igraph::plot.igraph` for plotting instead
+  
 
 ## New functions
 
@@ -41,6 +43,9 @@
 * `classify_adopters`: As in Valente (1995), depending on time of adoption, adopters
   are classified as early adopters, early  majority, late majority, and laggards.
   The function introduces a new class and has methods for `ftable` and `plot`.
+  
+* `rescale_vertex_igraph`: Helper function to fix the size of vertex when calling
+  `plot.igraph` so that the size is proportional to the x-axis.
 
 
 # Changes in netdiffuseR version 1.16.5 (2016-05-02)

@@ -45,6 +45,18 @@ classify(...)
 
 \item{x}{A \code{diffnet_adopters} class object.}
 
+\item{as.pcent}{Logical scalar. When \code{TRUE} returns a table with percentages
+instead.}
+
+\item{addNA}{Logical scalar. When \code{TRUE} add an additional factor, \code{NA},
+to the values returned by \code{classify}.}
+
+\item{digits}{Integer scalar. Passed to \code{\link[base:round]{round}}.}
+
+\item{row.names}{Passed to \code{\link[base:as.data.frame]{as.data.frame}}.}
+
+\item{optional}{Passed to \code{\link[base:as.data.frame]{as.data.frame}}.}
+
 \item{y}{Ignored.}
 
 \item{ftable.args}{List of arguments passed to \code{\link[stats:ftable]{ftable}}.}
@@ -88,7 +100,7 @@ will have a \code{NA} value in the \code{thr} vector.
 
 The plot method, \code{plot.diffnet_adopters}, is a wrapper for the
 \code{\link[graphics:plot.table]{plot.table}} method. This generates a
-\code{\link[graphics:mosaic]{mosaic}} plot.
+\code{\link[graphics:mosaicplot]{mosaicplot}} plot.
 }
 \examples{
 # Classifying brfarmers -----------------------------------------------------

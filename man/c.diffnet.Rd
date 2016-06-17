@@ -58,8 +58,8 @@ diffnet
 
 }
 \seealso{
-Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{as_diffnet}},
+Other diffnet methods: \code{\link{\%*\%}},
+  \code{\link{as.array.diffnet}}, \code{\link{as_diffnet}},
   \code{\link{diffnet-arithmetic}},
   \code{\link{diffnet_index}}
 }

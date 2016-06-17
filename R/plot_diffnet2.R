@@ -26,9 +26,10 @@ round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
 
 #' Another way of visualizing diffusion
 #' @param graph Either a square matrix or a diffnet object.
+#' @param slice Integer scalar. Number of slice to use as baseline for drawing the graph.
 #' @param toa Integer vector of length \eqn{n} with the times of adoption.
 #' @param pers Integer vector of length \eqn{T} indicating the time periods of the data.
-#' @param color.ramp A function as returned by \code{\link[grDevices::colorRamp]{colorRamp}}.
+#' @param color.ramp A function as returned by \code{\link[grDevices:colorRamp]{colorRamp}}.
 #' @param layout Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param key.width Numeric scalar. Sets the proportion of the plot (x-axis) that the key uses.
 #' @param key.title Character scalar. Title of the key (vertex colors).
@@ -45,20 +46,21 @@ round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
 #' @param diffmap.alpha Numeric scalar between [0,1]. Alpha level for the map.
 #' @param include.white Character scalar. Includes white in the color palette used in the map.
 #'  When \code{include.white=NULL} then it won't include it.
+#' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @details If \code{key.width<=0} then no key is created.
 #'
 #' @return A list with the following elements
-#' \item{layout}{}
-#' \item{vertex.color}{}
-#' \item{vertex.label}{}
-#' \item{vertex.shape}{}
-#' \item{vertex.size}{}
-#' \item{diffmap}{}
+#' \item{layout}{A numeric matrix with vertex coordinates.}
+#' \item{vertex.color}{A character vector with computed colors for each vertex.}
+#' \item{vertex.label}{The value passed to \code{plot_diffnet2}.}
+#' \item{vertex.shape}{A character vector with assigned shapes.}
+#' \item{vertex.size}{A numeric vector with vertices sizes}
+#' \item{diffmap}{If \code{add.map=TRUE}, the returned values from \code{\link{diffmap}}}
 #' @export
 #' @family visualizations
 #' @author George G. Vega Yon
-plot_diffnet2 <- function(...) UseMethod("plot_diffnet2")
+plot_diffnet2 <- function(graph, ...) UseMethod("plot_diffnet2")
 
 #' @rdname plot_diffnet2
 #' @export
@@ -77,10 +79,11 @@ plot_diffnet2.diffnet <- function(
   vertex.frame.color="gray",
   edge.arrow.size=.5,
   edge.curved=FALSE,
-  add.map = FALSE,
+  add.map = NULL,
   diffmap.args=list(kde2d.args=list(n=100)),
   diffmap.alpha=.5,
   include.white="first",
+  rescale.fun= rescale_vertex_igraph,
   ...
 ) {
   plot_diffnet2.default(
@@ -89,7 +92,8 @@ plot_diffnet2.diffnet <- function(
     main=main,
     vertex.size=vertex.size, vertex.shape=vertex.shape, vertex.label=vertex.label,
     vertex.frame.color=vertex.frame.color, edge.arrow.size=edge.arrow.size,
-    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,diffmap.alpha,include.white,...)
+    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,diffmap.alpha,include.white,
+    rescale.fun,...)
 }
 
 #' @rdname plot_diffnet2
@@ -109,14 +113,18 @@ plot_diffnet2.default <- function(
   vertex.frame.color="gray",
   edge.arrow.size=.5,
   edge.curved=FALSE,
-  add.map=FALSE,
+  add.map=NULL,
   diffmap.args=list(kde2d.args=list(n=100)),
   diffmap.alpha=.5,
   include.white = "first",
+  rescale.fun=rescale_vertex_igraph,
   ...) {
 
   # Some constants
   nper <- length(pers)
+
+  if (length(add.map) && !(add.map %in% c("first", "last")))
+    stop("When -add.map- is specified it should be either \'before\' or \'last\'.")
 
   # Taggin types ---------------------------------------------------------------
 
@@ -159,10 +167,11 @@ plot_diffnet2.default <- function(
 
   plot.new()
   plot.window(xlim=xran, ylim=yran, xaxs="i", yaxs="i")
-  title(main=main)
+  graphics::title(main=main)
 
   # If adding map! -------------------------------------------------------------
   if (length(add.map)) {
+
     dm <- do.call(diffusionMap.default, c(diffmap.args, list(graph=graph, x=toa,
                                                              layout = l)))
     # Levels
@@ -183,7 +192,7 @@ plot_diffnet2.default <- function(
 
     # Plot
     if (add.map=="first")
-      .filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
+      graphics::.filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
   } else dm <- NULL
 
   # Plotting graph -------------------------------------------------------------
@@ -192,7 +201,7 @@ plot_diffnet2.default <- function(
     vertex.color=col,
     vertex.label=vertex.label,
     vertex.shape=vertex.shape,
-    vertex.size=vertex.size,
+    vertex.size=rescale.fun(vertex.size),
     vertex.frame.color=vertex.frame.color,
     edge.arrow.size=edge.arrow.size,
     edge.curved=edge.curved,
@@ -202,7 +211,7 @@ plot_diffnet2.default <- function(
   )
 
   if (length(add.map) && (add.map=="last"))
-      .filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
+      graphics::.filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
 
   # # Plotting boxes -------------------------------------------------------------
   if (key.width > 0)
@@ -223,11 +232,13 @@ plot_diffnet2.default <- function(
 #' by \code{x}.
 #'
 #' @param graph A square matrix of size \eqn{n\times n}{n * n}.
+#' @param slice Integer scalar. Slice of the network to be used as baseline for drawing the graph.
 #' @param x An vector of length \eqn{n}. Usually a \code{toa} vector.
 #' @param layout Either a \eqn{n\times 2}{n *2} matrix of coordinates or a layout
 #'  function applied to \code{graph} (must return coordinates).
 #' @param jitter.args A list including arguments to be passed to \code{\link{jitter}}.
 #' @param kde2d.args A list including arguments to be passed to \code{\link[MASS:kde2d]{kde2d}}.
+#' @param ... Arguments passed to method.
 #' @details
 #' The image is created using the function \code{kde2d} from
 #' the \pkg{MASS} package. The complete algorithm follows:
@@ -242,6 +253,11 @@ plot_diffnet2.default <- function(
 #' }
 #'
 #' The resulting matrix can be passed to \code{\link{image}} or similar.
+#'
+#' The argument \code{x.adj} uses by default the function \code{\link{round_to_seq}}
+#' which basically maps \code{x} to a fix length sequence of numbers such that
+#' \code{x.adj(x)} resembles an integer sequence.
+#'
 #' @return A list of class \code{diffnet_diffmap}
 #' \item{coords}{A matrix of size \eqn{n\times 2}{n*2} of vertices coordinates.}
 #' \item{map}{Output from \code{kde2d}. This is a list with 3 elements, vectors
@@ -302,18 +318,20 @@ plot_diffnet2.default <- function(
 #' col <- adjustcolor(colorRampPalette(c("white","lightblue", "yellow", "red"))(100),.5)
 #' with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
 #'
-diffusionMap <- function(...) UseMethod("diffusionMap")
+diffusionMap <- function(graph, ...) UseMethod("diffusionMap")
 
 #' @export
 #' @rdname diffusionMap
 diffmap <- diffusionMap
 
 #' @export
+#' @param x.adj Function to adjust \code{x}. If not \code{NULL} then it is applied
+#'  to \code{x} at the beginning (see details).
 #' @rdname diffusionMap
 diffusionMap.default <- function(
   graph, x, x.adj=round_to_seq, layout=NULL,
   jitter.args = list(),
-  kde2d.args  = list(n=100)) {
+  kde2d.args  = list(n=100), ...) {
 
   # Step 0) Preparing the data
   if (length(x.adj)) {
@@ -330,23 +348,6 @@ diffusionMap.default <- function(
   coords <- if (is.function(layout)) layout(g)
   else if (!length(layout)) igraph::layout_nicely(g)
   else if (is.matrix(layout)) layout
-
-  # # Step 1) Expand using toa as weights
-  # n <- length(ntimes)
-  # i <- seq_len(n)
-  # Coords <- cbind(
-  #   rep(coords[,1], ntimes),
-  #   rep(coords[,2], ntimes)
-  # )
-  #
-  # # Step 2) Jitter
-  # Coords[,1] <- do.call(jitter, c(jitter.args, list(x=Coords[,1])))
-  # Coords[,2] <- do.call(jitter, c(jitter.args, list(x=Coords[,2])))
-  #
-  # # Step 3) kde2d
-  #
-  # if (!length(kde2d.args$h))
-  #   kde2d.args$h <- c(MASS::bandwidth.nrd(Coords[,1]), MASS::bandwidth.nrd(Coords[,2]))
 
   # Step 1) Compute densities per level
   if (!length(kde2d.args$h))
@@ -390,18 +391,19 @@ diffusionMap.diffnet <- function(graph, slice=nslices(graph), ...) {
 #' @rdname diffusionMap
 #' @export
 image.diffnet_diffmap <- function(x, ...) {
-  image(x$map,...)
+  graphics::image(x$map,...)
 }
 
 #' @rdname diffusionMap
 #' @export
 print.diffnet_diffmap <- function(x, ...) {
   cat("An object of class -diffnet_map-\n")
-  cat(str(x))
+  cat(utils::str(x))
   cat("Use methods -plot- and -image-.")
 }
 
 #' @rdname diffusionMap
+#' @param y Ignored.
 #' @export
 plot.diffnet_diffmap <- function(x, y=NULL, ...) {
   image.diffnet_diffmap(x, ...)

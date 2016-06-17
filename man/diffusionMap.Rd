@@ -10,12 +10,12 @@
 \alias{print.diffnet_diffmap}
 \title{Creates a heatmap based on a graph layout and times of adoption}
 \usage{
-diffusionMap(...)
+diffusionMap(graph, ...)
 
-diffmap(...)
+diffmap(graph, ...)
 
 \method{diffusionMap}{default}(graph, x, x.adj = round_to_seq,
-  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100))
+  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100), ...)
 
 \method{diffusionMap}{diffnet}(graph, slice = nslices(graph), ...)
 
@@ -28,7 +28,12 @@ diffmap(...)
 \arguments{
 \item{graph}{A square matrix of size \eqn{n\times n}{n * n}.}
 
+\item{...}{Arguments passed to method.}
+
 \item{x}{An vector of length \eqn{n}. Usually a \code{toa} vector.}
+
+\item{x.adj}{Function to adjust \code{x}. If not \code{NULL} then it is applied
+to \code{x} at the beginning (see details).}
 
 \item{layout}{Either a \eqn{n\times 2}{n *2} matrix of coordinates or a layout
 function applied to \code{graph} (must return coordinates).}
@@ -36,6 +41,10 @@ function applied to \code{graph} (must return coordinates).}
 \item{jitter.args}{A list including arguments to be passed to \code{\link{jitter}}.}
 
 \item{kde2d.args}{A list including arguments to be passed to \code{\link[MASS:kde2d]{kde2d}}.}
+
+\item{slice}{Integer scalar. Slice of the network to be used as baseline for drawing the graph.}
+
+\item{y}{Ignored.}
 }
 \value{
 A list of class \code{diffnet_diffmap}
@@ -63,6 +72,10 @@ the \pkg{MASS} package. The complete algorithm follows:
 }
 
 The resulting matrix can be passed to \code{\link{image}} or similar.
+
+The argument \code{x.adj} uses by default the function \code{\link{round_to_seq}}
+which basically maps \code{x} to a fix length sequence of numbers such that
+\code{x.adj(x)} resembles an integer sequence.
 }
 \examples{
 
@@ -124,6 +137,7 @@ Other visualizations: \code{\link{drawColorKey}},
   \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
   \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}}
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 

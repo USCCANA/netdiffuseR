@@ -6,6 +6,9 @@ plot.diffnet <- function(
   vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
   layout.par = NULL, main = "Diffusion network in time %d", ...) {
 
+  # Listing arguments
+  args <- list(...)
+
   # Checking that the time period is actually within
   if (!(t %in% 1:x$meta$nper))
     stop("-t- must be an integer within 1 and ",x$meta$nper,".")
@@ -17,8 +20,14 @@ plot.diffnet <- function(
   cols <- with(x, ifelse(cumadopt[,t], vertex.col[1], vertex.col[2]))
 
   # Calcularing layout
-  fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
-  coords <- fun(graph, layout.par)
+
+   if ("coord" %in% names(args)) {
+     coords <- args[["coord"]]
+     args[["coord"]] <- NULL
+   } else {
+     fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
+     coords <- fun(graph, layout.par)
+   }
 
   # Computing sizes
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
@@ -33,9 +42,10 @@ plot.diffnet <- function(
       stop("Invalid -vertex.cex-")
     }
 
-  sna::gplot(graph, displaylabels=displaylabels, vertex.col=cols,
+  do.call(sna::gplot, c(list(dat=graph, displaylabels=displaylabels, vertex.col=cols,
              coord=coords, edge.col=edge.col, label=x$meta$ids,
-             main=sprintf(main, x$meta$pers[t]), vertex.cex=vertex.cex, gmode=gmode, ...)
+             main=sprintf(main, x$meta$pers[t]), vertex.cex=vertex.cex, gmode=gmode),
+             args))
 
   invisible(coords)
 }
@@ -189,10 +199,10 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 #'
 #' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
 #' @param cumadopt \eqn{n\times T}{n*T} matrix.
-#' @param displaylabels Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})
 #' @param slices Integer vector. Indicates what slices to plot. By default all are plotted.
 #' @param undirected Logical scalar.
 #' @param vertex.col A character vector of size 3 with colors names.
+#' @param vertex.shape A character vector of size 3 with shape names.
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
 #' @param label Character vector of size \eqn{n}. If no provided, rownames of
 #' the graph are used.
@@ -201,10 +211,13 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 #' @param layout.par Layout parameters (see details).
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}
 #' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
-#' @param mai Numeric vector of size 4. To be passed to \code{\link{par}.}
-#' @param mar Numeric vector of size 4. To be passed to \code{\link{par}.}
 #' @param gmode Character scalar. See \code{\link[sna:gplot]{gplot}.}
-#' @param ... Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}
+#' @param vertex.frame.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
+#' @param edge.arrow.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
+#' @param intra.space Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
+#' @param key.height Numeric scalar. Sets the proportion of the plot (y-axis) that the key uses.
+#' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
+#' @param ... Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param coords Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.
 #' @param lgd List of arguments to be passed to \code{\link{legend}}.
 #'
@@ -254,30 +267,38 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 plot_diffnet <- function(
   graph, cumadopt,
   slices=NULL,
-  displaylabels=FALSE,
   undirected=TRUE,
-  vertex.col=c("grey", "red", "blue"),
+  vertex.col=c("white", "red", "blue"),
+  vertex.shape=c("square", "circle", "circle"),
   vertex.cex="degree",
-  label=rownames(graph[[1]]),
+  label=NA,
   edge.col="gray",
   mode="fruchtermanreingold", layout.par=NULL,
   mfrow.par=NULL, main="Network in period %d",
-  mai=c(0,0,1,0),
-  mar=rep(1,4) + 0.1, gmode=ifelse(undirected, "graph", "digraph"),
-  lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
-             bty="n", cex=1.2, horiz=TRUE), coords=NULL,...
+  gmode=ifelse(undirected, "graph", "digraph"),
+  lgd = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+             bty="n", cex=1.2, horiz=TRUE), coords=NULL,
+  vertex.frame.color="gray",
+  edge.arrow.size=.25,
+  intra.space=c(.15,.15),
+  key.height = 0.1,
+  rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100),
+  ...
 ) {
   switch (class(graph),
     array = plot_diffnet.array(
-      graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
+      graph, cumadopt, slices, undirected, vertex.col, vertex.shape, vertex.cex, label,
+      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
+      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
     list = plot_diffnet.list(
-      graph, cumadopt, slices, displaylabels, undirected, vertex.col, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
+      graph, cumadopt, slices, undirected, vertex.col, vertex.shape, vertex.cex, label,
+      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
+      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
     diffnet = plot_diffnet.list(
-      graph$graph, graph$cumadopt, slices, displaylabels, graph$meta$undirected,
-      vertex.col, vertex.cex, label=graph$meta$ids,
-      edge.col, mode, layout.par, mfrow.par, main, mai, mar, gmode, lgd, coords,...),
+      graph$graph, graph$cumadopt, slices, graph$meta$undirected,
+      vertex.col, vertex.shape, vertex.cex, label,
+      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
+      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
     stopifnot_graph(graph)
   )
 }
@@ -292,20 +313,24 @@ plot_diffnet.array <- function(graph, ...) {
 # @export
 # @rdname plot_diffnet
 plot_diffnet.list <- function(graph, cumadopt, slices,
-                         displaylabels=FALSE,
                          undirected=TRUE,
-                         vertex.col=c("grey", "red", "blue"),
+                         vertex.col=c("white", "red", "blue"),
+                         vertex.shape=c("square", "circle", "circle"),
                          vertex.cex="degree",
-                         label=rownames(graph[[1]]),
+                         label=NA,
                          edge.col="gray",
                          mode="fruchtermanreingold", layout.par=NULL,
                          mfrow.par=NULL, main="Network in period %d",
-                         mai=c(0,0,1,0),
-                         mar=rep(1,4) + 0.1,
                          gmode=ifelse(undirected, "graph", "digraph"),
-                         lgd = list(x="center", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+                         lgd = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
                                     bty="n", cex=1.2, horiz=TRUE),
-                         coords=NULL, ...) {
+                         coords=NULL,
+                         vertex.frame.color="gray",
+                         edge.arrow.size=.25,
+                         intra.space=c(.15,.15),
+                         key.height = 0.1,
+                         rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100),
+                         ...) {
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
@@ -330,15 +355,9 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
   if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
     if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
       vertex.cex <- dgr(cumgraph, cmode = vertex.cex, undirected=undirected)
-      vertex.cex <- sqrt(vertex.cex)
-      r <- range(vertex.cex)
-      vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)*2
     } else {
       stop("Invalid -vertex.cex-")
     }
-
-#   if ( (length(vertex.cex)==1) && (n > 1) )
-#     vertex.cex <- rep(vertex.cex,n)
 
   # Figuring out the dimension
   if (!length(mfrow.par)) {
@@ -355,53 +374,86 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
     else mfrow.par <- c(ceiling(t/4),4)
   }
 
-  test <- prod(mfrow.par)-t
-  if (test) {
-    marlayout <- matrix(1:prod(mfrow.par), ncol=mfrow.par[2], byrow = TRUE)
-    marlayout[nrow(marlayout),(ncol(marlayout) - test + 1):ncol(marlayout)] <- t + 1
-    lgd$horiz <- FALSE
-  } else {
-    marlayout <- rbind(matrix(1:prod(mfrow.par), ncol=mfrow.par[2], byrow = TRUE),
-                       prod(mfrow.par)+1)
-  }
 
-  # Plotting
-  # curseed <- .Random.seed
-  oldpar <- par(no.readonly = TRUE)
-  # par(mfrow=mfrow.par, mai=mai, mar=mar)
-  par(mai=mai, mar=mar)
-  layout(marlayout)
+  # 1. Computing dims ----------------------------------------------------------
+  intra.space <- intra.space + 1
+  xrange <- range(coords[,1])
+  xlim   <- xrange + c(0, (xrange[2]-xrange[1])*intra.space[1]*(mfrow.par[2] - 1))
 
+  yrange <- range(coords[,1])
+  ylim   <- yrange - c((yrange[2]-yrange[1])*intra.space[2]*(mfrow.par[1] - 1), 0)
+
+  # Adjustems depending on the number of slice
+  irow <- t(matrix(0:(mfrow.par[1]-1), nrow=mfrow.par[1], ncol=mfrow.par[2], byrow = FALSE))
+  icol <- t(matrix(0:(mfrow.par[2]-1), nrow=mfrow.par[1], ncol=mfrow.par[2], byrow = TRUE))
+
+  # 2. Set up frame
+  plot.new()
+  ylim <- grDevices::extendrange(ylim, ylim)
+  plot.window(
+    grDevices::extendrange(xlim),
+    ylim - c((ylim[2]-ylim[1])*key.height, 0))
+
+  # 3. Plotting
   times <- as.integer(names(graph))
-  for(i in 1:t)  {
+  for (i in 1:t) {
     # Colors, new adopters are painted differently
     cols <- ifelse(!cumadopt[,i], vertex.col[1],
-                   ifelse(!cumadopt[,i-1*(i!=1)] | rep(i,n) == 1, vertex.col[2], vertex.col[3]))
+                   ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.col[2], vertex.col[3]))
 
-    # set.seed(curseed)
-    # cgraph <- sna::as.sociomatrix.sna(adjmat_to_edgelist(graph[[i]], undirected))
-    if (inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "matrix.csc")
+    # Shapes
+    shapes <- ifelse(!cumadopt[,i], vertex.shape[1],
+                     ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.shape[2], vertex.shape[3]))
+
+    # Computing coords
+    coords_adjs <- cbind(
+      coords[,1] + icol[i]*intra.space[1]*(xrange[2]-xrange[1]),
+      coords[,2] - irow[i]*intra.space[2]*(yrange[2]-yrange[1]))
+
+    # Title
+    if (length(main)) {
+      # Creating the title and computing how much space should be
+      itit <- sprintf(main, slices[i])
+      nlines <- length(strsplit(main, "\n")[[1]])
+      tspace <- par("cxy")[2]*(nlines + .5)
+
+      # Adjusting coords
+      ystart <- range(coords_adjs[,2])
+      coords_adjs[,2] <- (coords_adjs[,2] - ystart[1])/(ystart[2] - ystart[1])*(
+        ystart[2] - ystart[1] - tspace) + ystart[1]
+
+      # Including text
+      xstart <- range(coords_adjs[,1])
+      text(
+        x = (xstart[2] + xstart[1])/2,
+        y = ystart[2] - tspace,
+        labels = itit,
+        pos=3
+      )
+
+    }
+
+    # Coercing into the right method
+    if (!inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "dgCMatrix")
     else g <- graph[[i]]
-    sna::gplot(g,
-               displaylabels = displaylabels, vertex.col = cols, coord=coords,
-               edge.col = edge.col,vertex.cex = vertex.cex, label=label,
-               main=sprintf(main, times[i]), gmode=gmode, ...)
+
+    # Plotting
+    igraph::plot.igraph(igraph::graph_from_adjacency_matrix(g),
+                        vertex.color = cols,
+                        layout = coords_adjs,
+                        edge.color = edge.col,
+                        vertex.size = rescale.fun(vertex.cex),
+                        vertex.label=label,
+                        add=TRUE, rescale=FALSE,
+                        edge.arrow.size=edge.arrow.size,
+                        vertex.frame.color = vertex.frame.color,
+                        vertex.shape=shapes,
+                        ...)
   }
 
   # Legend
-  plot.new()
-  plot.window(xlim=c(0,1), ylim=c(0,1))
+  do.call(legend, c(lgd, list(pt.bg=vertex.col)))
 
-  lgd$pt.bg  <- vertex.col
-
-  do.call(legend, lgd)
-
-#   with(lgd,
-#     legend(pos, pt.bg = vertex.col,
-#            legend = text, pch=pch, bty=bty, cex=cex, horiz = horiz)
-#   )
-
-  par(oldpar)
   invisible(coords)
 
 }
@@ -998,9 +1050,10 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 # x["num",]
 
 
-#' \code{diffnet} Arithmetic Operators
+#' \code{diffnet} Arithmetic and Logical Operators
 #'
-#' Addition, substraction and network power of diffnet objects
+#' Addition, substraction, network power of diffnet and logical operators such as
+#' \code{&} and \code{|} as objects
 #'
 #' @param x A \code{diffnet} class object.
 #' @param y Integer scalar. Power of the network
@@ -1066,8 +1119,6 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 
 #' @rdname diffnet-arithmetic
 #' @export
-#' @param e1 A diffnet object.
-#' @param e2 Either a diffnet object, an integer vector or a character vector.
 #' @examples
 #' # Removing the first 3 vertex of medInnovationsDiffnet ----------------------
 #' data(medInnovationsDiffNet)
@@ -1081,36 +1132,116 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #'
 #' # Using ids
 #' medInnovationsDiffNet - as.character(1001:1003)
-`-.diffnet` <- function(e1, e2) {
-  if (inherits(e1, "diffnet") & inherits(e2, "diffnet")) {
+`-.diffnet` <- function(x, y) {
+  if (inherits(x, "diffnet") & inherits(y, "diffnet")) {
 
     # Listing the id numbers that wont be removed
-    ids.to.remove <- e2$meta$ids
-    ids.to.remove <- which(e1$meta$ids %in% ids.to.remove)
-    e1[-ids.to.remove, , drop=FALSE]
-  } else if (inherits(e1, "diffnet") & any(class(e2) %in% c("integer", "numeric"))) {
+    ids.to.remove <- y$meta$ids
+    ids.to.remove <- which(x$meta$ids %in% ids.to.remove)
+    x[-ids.to.remove, , drop=FALSE]
+  } else if (inherits(x, "diffnet") & any(class(y) %in% c("integer", "numeric"))) {
 
     # Dropping using ids
-    e1[-e2,, drop=FALSE]
-  } else if (inherits(e1, "diffnet") & inherits(e2, "character")) {
+    x[-y,, drop=FALSE]
+  } else if (inherits(x, "diffnet") & inherits(y, "character")) {
     # Checking labels exists
-    test <- which(!(e2 %in% e1$meta$ids))
+    test <- which(!(y %in% x$meta$ids))
     if (length(test))
-      stop("Some elements in -e2- (right hand size of the expression) are not ",
+      stop("Some elements in -y- (right hand size of the expression) are not ",
            "in the set of ids of the diffnet object:\n\t",
-           paste0(e2[test], collapse=", "),".")
+           paste0(y[test], collapse=", "),".")
 
-    e2 <- which(e1$meta$ids %in% e2)
-    e1[-e2,,drop=FALSE]
+    y <- which(x$meta$ids %in% y)
+    x[-y,,drop=FALSE]
   } else
-    stop("Substraction between -",class(e1),"- and -", class(e2), "- not supported.")
+    stop("Substraction between -",class(x),"- and -", class(y), "- not supported.")
 }
 
-# #' @export
-# #' @rdname as_diffnet
-# subset.diffnet <- function(x, subset, ...) {
-#
-# }
+#' @export
+#' @rdname diffnet-arithmetic
+`*.diffnet` <- function(x,y) {
+  if (inherits(x, "diffnet") & inherits(y, "diffnet")) {
+
+    # Checking dimmensions
+    test <- all(dim(x) == dim(y))
+    if (!test)
+      stop('Both -x- and -y- must have the same dimmensions.')
+
+    x$graph <- mapply(`*`, x$graph, y$graph)
+    return(x)
+  } else if (inherits(x, "diffnet") & is.numeric(y)) {
+    x$graph <- mapply(`+`, x$graph, y)
+    return(x)
+
+  } else
+    stop("Substraction between -",class(x),"- and -", class(y), "- not supported.")
+}
+
+#' @export
+#' @rdname diffnet-arithmetic
+`&.diffnet` <- function(x,y) {
+  x$graph <- mapply(function(a,b) (x %*% b) + 0, x$graph, y$graph)
+  x
+}
+
+#' @export
+#' @rdname diffnet-arithmetic
+`|.diffnet` <- function(x,y) {
+  x$graph <- mapply(function(a,b) (x | b) + 0, x$graph, y$graph)
+  x
+}
+
+#' Matrix multiplication
+#'
+#' Matrix multiplication methods, including \code{\link{diffnet}}
+#' objects. This function creates a generic method for \code{\link[base:matmult]{\%*\%}}
+#' allowing for multiplying diffnet objects.
+#'
+#' @param x Numeric or complex matrices or vectors, or \code{diffnet} objects.
+#' @param y Numeric or complex matrices or vectors, or \code{diffnet} objects.
+#'
+#' @details This function can be usefult to generate alternative graphs, for
+#' example, users could compute the n-steps graph by doing \code{net \%*\% net}
+#' (see examples).
+#'
+#' @return In the case of \code{diffnet} objects performs matrix multiplication
+#' via \code{\link{mapply}} using \code{x$graph} and \code{y$graph} as arguments,
+#' returnling a \code{diffnet}. Otherwise returns the default according to
+#' \code{\link[base:matmult]{\%*\%}}.
+#'
+#' @examples
+#' # Finding the Simmelian Ties network ----------------------------------------
+#'
+#' # Random diffnet graph
+#' set.seed(773)
+#' net <- rdiffnet(100, 4, seed.graph='small-world', rgraph.args=list(k=8))
+#' netsim <- net
+#'
+#' # According to Dekker (2006), Simmelian ties can be computed as follows
+#' netsim <- net * t(net) # Keeping mutal
+#' netsim <- netsim * (netsim %*% netsim)
+#'
+#' # Checking out differences (netsim should have less)
+#' nlinks(net)
+#' nlinks(netsim)
+#'
+#' mapply(`-`, nlinks(net), nlinks(netsim))
+#'
+#' @export
+#' @rdname diffnetmatmult
+#' @family diffnet methods
+`%*%` <- function(x, y) UseMethod("%*%")
+
+#' @export
+#' @rdname diffnetmatmult
+`%*%.default` <- function(x, y) base::`%*%`(x=x,y=y)
+
+#' @export
+#' @rdname diffnetmatmult
+`%*%.diffnet` <- function(x, y) {
+  x$graph <- mapply(base::`%*%`, x$graph, y$graph)
+  x
+}
 
 
 
@@ -1284,7 +1415,7 @@ diffnetLapply <- function(graph, FUN, ...) {
 #' @export
 #' @rdname as_diffnet
 str.diffnet <- function(object, ...) {
-  str(unclass(object))
+  utils::str(unclass(object))
 }
 
 #' @export
@@ -1299,21 +1430,10 @@ dimnames.diffnet <- function(x) {
 
 #' @export
 #' @rdname as_diffnet
+#' @method t diffnet
 t.diffnet <- function(x) {
   x$graph <- lapply(x$graph, t)
   x
-}
-
-#' @export
-#' @rdname as_diffnet
-`&.diffnet` <- function(e1,e2) {
-  mapply(`&`, e1$graph, e2$graph)
-}
-
-#' @export
-#' @rdname as_diffnet
-`|.diffnet` <- function(e1,e2) {
-  mapply(`|`, e1$graph, e2$graph)
 }
 
 #' @rdname as_diffnet
@@ -1321,18 +1441,4 @@ t.diffnet <- function(x) {
 dim.diffnet <- function(x) {
   k <- length(with(x, c(colnames(vertex.static.attrs), names(vertex.dyn.attrs[[1]]))))
   as.integer(with(x$meta, c(n, k, nper)))
-}
-
-#' @export
-#' @rdname as_diffnet
-`%*%` <- function(...) UseMethod("%*%")
-
-#' @export
-#' @rdname as_diffnet
-`%*%.default` <- function(...) do.call(base::`%*%`, list(...))
-
-#' @export
-#' @rdname as_diffnet
-`%*%.diffnet` <- function(e1, e2) {
-  mapply(`%*%`, e1$graph, e2$graph)
 }

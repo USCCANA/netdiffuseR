@@ -24,9 +24,10 @@ NULL
 # Importing from R CORE packages -----------------------------------------------
 
 #' @importFrom grDevices grey rgb colorRampPalette blues9
-#' @importFrom graphics grid par plot points symbols text layout legend lines matplot plot.new plot.window hist mtext polygon
-#' @importFrom stats complete.cases runif reshape setNames ftable
-#' @importFrom utils getFromNamespace head
+#' @importFrom graphics grid par plot points symbols text layout legend lines
+#'  matplot plot.new plot.window hist mtext polygon image title .filled.contour
+#' @importFrom stats complete.cases runif reshape setNames ftable sd
+#' @importFrom utils getFromNamespace head str
 #' @importFrom boot boot
 #' @importFrom MASS bandwidth.nrd kde2d
 NULL

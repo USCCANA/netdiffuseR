@@ -119,7 +119,7 @@
 #'
 #' # Creating a diffnet object with it so we can apply the plot_diffnet function
 #' diffnet <- as_diffnet(graph, toa=1:4)
-#' plot_diffnet(diffnet, displaylabels=TRUE)
+#' plot_diffnet(diffnet, label=rownames(diffnet))
 #' @keywords manip
 #' @family data management functions
 #' @include graph_data.R

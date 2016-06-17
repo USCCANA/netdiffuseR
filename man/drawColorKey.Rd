@@ -4,9 +4,8 @@
 \alias{drawColorKey}
 \title{Draw a color key in the current device}
 \usage{
-drawColorKey(x, tick.marks = {     tick <- pretty(x, min.n = 5)     r <-
-  range(x, na.rm = TRUE)     tick[(tick >= r[1]) & (tick <= r[2])] },
-  main = NULL, key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
+drawColorKey(x, tick.marks = pretty_within(x), main = NULL,
+  key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
   nlevels = length(tick.marks),
   color.palette = (grDevices::colorRampPalette(c("lightblue", "yellow",
   "red")))(nlevels), tick.width = c(0.01, 0.0075), add.box = TRUE, ...)
@@ -19,7 +18,7 @@ drawColorKey(x, tick.marks = {     tick <- pretty(x, min.n = 5)     r <-
 \item{main}{Character scalar. Title of the key.}
 
 \item{key.pos}{A numeric vector of length 4 with relative coordinates of the
-key (as \% of the plotting area, see  \code{\link[base:par]{par("usr")}})}
+key (as \% of the plotting area, see  \code{\link[graphics:par]{par("usr")}})}
 
 \item{pos}{Integer scalar. Position of the axis as in \code{\link[graphics:text]{text}}.}
 
@@ -27,12 +26,12 @@ key (as \% of the plotting area, see  \code{\link[base:par]{par("usr")}})}
 
 \item{color.palette}{Color palette of \code{length(nlevels)}.}
 
+\item{tick.width}{Numeric vector of length 2 indicating the length of the inner
+and outer tick marks as percentage of the axis.}
+
 \item{add.box}{Logical scalar. When \code{TRUE} adds a box around the key.}
 
-\item{...}{Further arguments to be passed to \code{\link{graphics::rect}{rect}}}
-
-\item{tick.with}{Numeric vector of length 2 indicating the length of the inner
-and outer tick marks as percentage of the axis.}
+\item{...}{Further arguments to be passed to \code{\link[graphics:rect]{rect}}}
 }
 \value{
 Invisible \code{NULL}.
@@ -57,6 +56,7 @@ Other visualizations: \code{\link{diffusionMap}},
   \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
   \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}}
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 

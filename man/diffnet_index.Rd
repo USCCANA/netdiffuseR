@@ -133,8 +133,8 @@ identical(x[["expoM"]], x[["expoD"]]) # TRUE
 George G. Vega Yon
 }
 \seealso{
-Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{as_diffnet}}, \code{\link{c.diffnet}},
-  \code{\link{diffnet-arithmetic}}
+Other diffnet methods: \code{\link{\%*\%}},
+  \code{\link{as.array.diffnet}}, \code{\link{as_diffnet}},
+  \code{\link{c.diffnet}}, \code{\link{diffnet-arithmetic}}
 }
 

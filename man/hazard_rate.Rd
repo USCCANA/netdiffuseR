@@ -131,7 +131,8 @@ Other visualizations: \code{\link{diffusionMap}},
   \code{\link{drawColorKey}}, \code{\link{plot_adopters}},
   \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}}
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 \keyword{univar}
 

@@ -4,14 +4,16 @@
 \alias{plot_diffnet}
 \title{Plot the diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
-  undirected = TRUE, vertex.col = c("grey", "red", "blue"),
-  vertex.cex = "degree", label = rownames(graph[[1]]), edge.col = "gray",
-  mode = "fruchtermanreingold", layout.par = NULL, mfrow.par = NULL,
-  main = "Network in period \%d", mai = c(0, 0, 1, 0), mar = rep(1, 4) +
-  0.1, gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x =
-  "center", legend = c("Non adopters", "New adopters", "Adopters"), pch = 21,
-  bty = "n", cex = 1.2, horiz = TRUE), coords = NULL, ...)
+plot_diffnet(graph, cumadopt, slices = NULL, undirected = TRUE,
+  vertex.col = c("white", "red", "blue"), vertex.shape = c("square",
+  "circle", "circle"), vertex.cex = "degree", label = NA,
+  edge.col = "gray", mode = "fruchtermanreingold", layout.par = NULL,
+  mfrow.par = NULL, main = "Network in period \%d",
+  gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x = "bottom",
+  legend = c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
+  cex = 1.2, horiz = TRUE), coords = NULL, vertex.frame.color = "gray",
+  edge.arrow.size = 0.25, intra.space = c(0.15, 0.15), key.height = 0.1,
+  rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -20,11 +22,11 @@ plot_diffnet(graph, cumadopt, slices = NULL, displaylabels = FALSE,
 
 \item{slices}{Integer vector. Indicates what slices to plot. By default all are plotted.}
 
-\item{displaylabels}{Logical scalar. When TRUE vertex labels are displayed (see \code{\link[sna:gplot]{gplot}})}
-
 \item{undirected}{Logical scalar.}
 
 \item{vertex.col}{A character vector of size 3 with colors names.}
+
+\item{vertex.shape}{A character vector of size 3 with shape names.}
 
 \item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices.}
 
@@ -41,17 +43,23 @@ the graph are used.}
 
 \item{main}{Character scalar. A title template to be passed to \code{\link{sprintf}.}}
 
-\item{mai}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
-
-\item{mar}{Numeric vector of size 4. To be passed to \code{\link{par}.}}
-
 \item{gmode}{Character scalar. See \code{\link[sna:gplot]{gplot}.}}
 
 \item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
 
 \item{coords}{Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.}
 
-\item{...}{Further arguments to be passed to \code{\link[sna:gplot]{gplot}.}}
+\item{vertex.frame.color}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
+
+\item{edge.arrow.size}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
+
+\item{intra.space}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
+
+\item{key.height}{Numeric scalar. Sets the proportion of the plot (y-axis) that the key uses.}
+
+\item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
+
+\item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 }
 \value{
 Calculated coordinates for the grouped graph (invisible).
@@ -109,7 +117,8 @@ Other visualizations: \code{\link{diffusionMap}},
   \code{\link{drawColorKey}}, \code{\link{hazard_rate}},
   \code{\link{plot_adopters}}, \code{\link{plot_diffnet2}},
   \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}}
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 \keyword{hplot}
 

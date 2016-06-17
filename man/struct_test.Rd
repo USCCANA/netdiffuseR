@@ -38,6 +38,8 @@ with the number of rewires per links.}
 
 \item{...}{Further arguments passed to the method (see details).}
 
+\item{recursive}{Ignored}
+
 \item{x}{A \code{diffnet_boot} class object.}
 
 \item{main}{Character scalar. Title of the histogram.}
@@ -106,7 +108,7 @@ set.seed(881)
 diffnet <- rdiffnet(500, 10, seed.graph="small-world")
 
 # Testing structure-dependency of threshold
-res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
+res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
 res
 hist(res)
 

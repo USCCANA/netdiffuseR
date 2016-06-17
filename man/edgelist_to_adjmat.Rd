@@ -138,7 +138,7 @@ graph <- edgelist_to_adjmat(edgelist[,1:2], t0=edgelist[,3], t1=edgelist[,4])
 
 # Creating a diffnet object with it so we can apply the plot_diffnet function
 diffnet <- as_diffnet(graph, toa=1:4)
-plot_diffnet(diffnet, displaylabels=TRUE)
+plot_diffnet(diffnet, label=rownames(diffnet))
 }
 \author{
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente

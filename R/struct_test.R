@@ -66,7 +66,7 @@
 #' diffnet <- rdiffnet(500, 10, seed.graph="small-world")
 #'
 #' # Testing structure-dependency of threshold
-#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
+#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
 #' res
 #' hist(res)
 #'
@@ -151,6 +151,7 @@ struct_test <- function(
 }
 
 #' @export
+#' @param recursive Ignored
 #' @rdname struct_test
 c.diffnet_struct_test <- function(..., recursive=FALSE) {
   # Checking arguments names
@@ -161,7 +162,7 @@ c.diffnet_struct_test <- function(..., recursive=FALSE) {
 
   # Checking graph dim
   res         <- args[[1]]
-  res$boot    <- do.call(boot:::c.boot, lapply(args, "[[", "boot"))
+  res$boot    <- do.call(c, lapply(args, "[[", "boot"))
   res$p.value <- with(res, 2*min(mean(boot$t < boot$t0),
                                  mean(boot$t > boot$t0)))
   res$mean_t  <- colMeans(res$boot$t, na.rm=TRUE)

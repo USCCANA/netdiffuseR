@@ -746,7 +746,7 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
 #'
 #' The plot method, \code{plot.diffnet_adopters}, is a wrapper for the
 #' \code{\link[graphics:plot.table]{plot.table}} method. This generates a
-#' \code{\link[graphics:mosaic]{mosaic}} plot.
+#' \code{\link[graphics:mosaicplot]{mosaicplot}} plot.
 #'
 #' @return A list of class \code{diffnet_adopters} with the following elements:
 #' \item{toa}{A factor vector of length \eqn{n} with 4 levels:
@@ -830,6 +830,11 @@ classify_adopters.default <- function(graph, toa,
 }
 
 #' @export
+#' @param as.pcent Logical scalar. When \code{TRUE} returns a table with percentages
+#' instead.
+#' @param addNA Logical scalar. When \code{TRUE} add an additional factor, \code{NA},
+#' to the values returned by \code{classify}.
+#' @param digits Integer scalar. Passed to \code{\link[base:round]{round}}.
 #' @rdname classify_adopters
 ftable.diffnet_adopters <- function(x, as.pcent=TRUE, addNA=TRUE, digits=2, ...) {
   if (addNA)
@@ -841,6 +846,8 @@ ftable.diffnet_adopters <- function(x, as.pcent=TRUE, addNA=TRUE, digits=2, ...)
 }
 
 #' @export
+#' @param row.names Passed to \code{\link[base:as.data.frame]{as.data.frame}}.
+#' @param optional Passed to \code{\link[base:as.data.frame]{as.data.frame}}.
 #' @rdname classify_adopters
 as.data.frame.diffnet_adopters <- function(x, row.names=NULL, optional=FALSE, ...) {
   as.data.frame(x[1:2], row.names, optional, ...)
@@ -856,5 +863,5 @@ plot.diffnet_adopters <- function(x, y = NULL,
                                   table.args=list(),...) {
   y <- do.call(ftable.diffnet_adopters, c(ftable.args, list(x=x)))
   y <- do.call(as.table, c(table.args, list(x=y)))
-  graphics:::plot.table(y, ...)
+  plot(y, ...)
 }

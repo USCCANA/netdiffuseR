@@ -6,15 +6,16 @@
 \alias{plot_diffnet2.diffnet}
 \title{Another way of visualizing diffusion}
 \usage{
-plot_diffnet2(...)
+plot_diffnet2(graph, ...)
 
 \method{plot_diffnet2}{diffnet}(graph, toa = NULL, slice = nslices(graph),
   color.ramp = grDevices::colorRamp(c("skyblue", "yellow", "red")),
   layout = NULL, key.width = 0.1, key.title = "Time of Adoption",
   main = "Diffusion dynamics", vertex.size = NULL, vertex.shape = NULL,
   vertex.label = "", vertex.frame.color = "gray", edge.arrow.size = 0.5,
-  edge.curved = FALSE, add.map = FALSE, diffmap.args = list(kde2d.args =
-  list(n = 100)), diffmap.alpha = 0.5, include.white = "first", ...)
+  edge.curved = FALSE, add.map = NULL, diffmap.args = list(kde2d.args =
+  list(n = 100)), diffmap.alpha = 0.5, include.white = "first",
+  rescale.fun = rescale_vertex_igraph, ...)
 
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE), color.ramp = grDevices::colorRamp(c("skyblue",
@@ -22,17 +23,20 @@ plot_diffnet2(...)
   key.title = "Time of Adoption", main = "Diffusion dynamics",
   vertex.size = NULL, vertex.shape = NULL, vertex.label = "",
   vertex.frame.color = "gray", edge.arrow.size = 0.5, edge.curved = FALSE,
-  add.map = FALSE, diffmap.args = list(kde2d.args = list(n = 100)),
-  diffmap.alpha = 0.5, include.white = "first", ...)
+  add.map = NULL, diffmap.args = list(kde2d.args = list(n = 100)),
+  diffmap.alpha = 0.5, include.white = "first",
+  rescale.fun = rescale_vertex_igraph, ...)
 }
 \arguments{
-\item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
-
 \item{graph}{Either a square matrix or a diffnet object.}
+
+\item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
-\item{color.ramp}{A function as returned by \code{\link[grDevices::colorRamp]{colorRamp}}.}
+\item{slice}{Integer scalar. Number of slice to use as baseline for drawing the graph.}
+
+\item{color.ramp}{A function as returned by \code{\link[grDevices:colorRamp]{colorRamp}}.}
 
 \item{layout}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
@@ -64,16 +68,18 @@ graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds
 \item{include.white}{Character scalar. Includes white in the color palette used in the map.
 When \code{include.white=NULL} then it won't include it.}
 
+\item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
+
 \item{pers}{Integer vector of length \eqn{T} indicating the time periods of the data.}
 }
 \value{
 A list with the following elements
-\item{layout}{}
-\item{vertex.color}{}
-\item{vertex.label}{}
-\item{vertex.shape}{}
-\item{vertex.size}{}
-\item{diffmap}{}
+\item{layout}{A numeric matrix with vertex coordinates.}
+\item{vertex.color}{A character vector with computed colors for each vertex.}
+\item{vertex.label}{The value passed to \code{plot_diffnet2}.}
+\item{vertex.shape}{A character vector with assigned shapes.}
+\item{vertex.size}{A numeric vector with vertices sizes}
+\item{diffmap}{If \code{add.map=TRUE}, the returned values from \code{\link{diffmap}}}
 }
 \description{
 Another way of visualizing diffusion
@@ -89,6 +95,7 @@ Other visualizations: \code{\link{diffusionMap}},
   \code{\link{drawColorKey}}, \code{\link{hazard_rate}},
   \code{\link{plot_adopters}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}}
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 

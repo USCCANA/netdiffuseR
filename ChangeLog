@@ -1,3 +1,17 @@
+2016-06-17  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.R: Adding new arguments to deal with new function
+	  to rescale the size of vertices.
+	* R/misc.R: Adding new function to rescale vertex size.
+	* R/diffnet-methods.R: Update to plot_diffnet.
+
+2016-06-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.R: Fixing warnings from R CMD check.
+	* R/imports.R: idem.
+	* R/misc.R: idem.
+	* R/plot_diffnet2.R: idem
+	* R/stats.R: idem.
+	* R/struct_test.R: idem.
+
 2016-06-10  George G. Vega Yon <g.vegayon@gmail.com>
 	* ChangeLog: Sarting ChangeLog
 	* R/adjmat.R: Adding new function `simmelian_mat`
