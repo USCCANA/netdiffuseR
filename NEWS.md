@@ -9,6 +9,7 @@
 
 * Fixed bug in `rewire_graph`: The option `copy.first` was not bee applied correctly.
 
+* In `hist.diffnet_struct_test`: `...` now passed to `hist.default`.
 
 ## New features and changes
 
@@ -21,6 +22,10 @@
   as part of the outcome so it can be used by the user.
   
 * `plot_diffnet` now uses `igraph::plot.igraph` for plotting instead
+
+* `threshold` gains a new argument: `lags` now users can define threshold as
+  exposure `lags` time periods prior to the time of adoption. By default is 0
+  so its exposure at the time of adoption.
   
 
 ## New functions

@@ -10,7 +10,7 @@ plot_diffnet(graph, cumadopt, slices = NULL, undirected = TRUE,
   edge.col = "gray", mode = "fruchtermanreingold", layout.par = NULL,
   mfrow.par = NULL, main = "Network in period \%d",
   gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x = "bottom",
-  legend = c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
+  legend = c("Non-adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
   cex = 1.2, horiz = TRUE), coords = NULL, vertex.frame.color = "gray",
   edge.arrow.size = 0.25, intra.space = c(0.15, 0.15), key.height = 0.1,
   rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100), ...)

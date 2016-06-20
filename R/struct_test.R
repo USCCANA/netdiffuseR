@@ -204,15 +204,15 @@ hist.diffnet_struct_test <- function(
   b =expression(atop(plain("") %up% plain("")), t[]),
   ...) {
 
-  out <- hist(x$boot$t,  breaks=breaks, plot=FALSE,...)
-
+  out <- hist(x$boot$t,  breaks=breaks, plot=FALSE)
   ran <- range(out$mids)
   if (annotated) {
     mt <- mean(x$boot$t, na.rm=TRUE)
     ran <- range(c(ran, mt, x$boot$t0))
+    hist(x$boot$t, breaks=breaks, main=main, xlab=xlab, xlim = ran, ...)
+  } else {
+    hist(x$boot$t, breaks=breaks, main=main, xlab=xlab, ...)
   }
-
-  plot(out, main=main, xlab=xlab, xlim = ran)
 
   # Adding margin note
   if (annotated) {

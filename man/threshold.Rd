@@ -5,7 +5,7 @@
 \title{Retrive threshold levels from the exposure matrix}
 \usage{
 threshold(obj, toa, t0 = min(toa, na.rm = TRUE), include_censored = FALSE,
-  ...)
+  lags = 0L, ...)
 }
 \arguments{
 \item{obj}{Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
@@ -15,10 +15,13 @@ threshold(obj, toa, t0 = min(toa, na.rm = TRUE), include_censored = FALSE,
 
 \item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
-\item{include_censored}{Logical scalar. When \code{TRUE} (default), threshold
-levels are not reported for observations adopting in the first time period.}
+\item{include_censored}{Logical scalar. When \code{TRUE} (default), threshold}
 
 \item{...}{Further arguments to be passed to \code{\link{exposure}}.}
+
+\item{lag}{Integer scalar. Number of lags to consider when computing thresholds. \code{lag=1}
+ defines threshold as exposure at \eqn{T-1}, where \code{T} is time of adoption.
+levels are not reported for observations adopting in the first time period.}
 }
 \value{
 A vector of size \eqn{n} indicating the threshold for each node.

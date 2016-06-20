@@ -655,6 +655,8 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' @param toa Integer vector. Indicating the time of adoption of the innovation.
 #' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param include_censored Logical scalar. When \code{TRUE} (default), threshold
+#' @param lag Integer scalar. Number of lags to consider when computing thresholds. \code{lag=1}
+#'  defines threshold as exposure at \eqn{T-1}, where \code{T} is time of adoption.
 #' levels are not reported for observations adopting in the first time period.
 #' @param ... Further arguments to be passed to \code{\link{exposure}}.
 #' @return A vector of size \eqn{n} indicating the threshold for each node.
@@ -684,7 +686,8 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' threshold(diffnet, alt.graph=se)
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
-threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE, ...) {
+threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE,
+                      lags=0L, ...) {
 
   if (inherits(obj, "diffnet")) {
     t0 <- min(obj$meta$pers)
@@ -696,6 +699,11 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
   }
 
   toa <- toa - t0 + 1L
+
+  # If lags are included
+  toa <- toa - lags
+  toa[(toa < 1) | (toa > ncol(obj))] <- NA
+
   output <- threshold_cpp(obj, toa, include_censored)
   # dimnames(output) <- list(rownames(obj), "threshold")
   structure(output, dim=c(length(toa), 1), dimnames=list(rownames(obj), "threshold"))

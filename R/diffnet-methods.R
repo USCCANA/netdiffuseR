@@ -276,7 +276,7 @@ plot_diffnet <- function(
   mode="fruchtermanreingold", layout.par=NULL,
   mfrow.par=NULL, main="Network in period %d",
   gmode=ifelse(undirected, "graph", "digraph"),
-  lgd = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+  lgd = list(x="bottom", legend=c("Non-adopters", "New adopters","Adopters"), pch=21,
              bty="n", cex=1.2, horiz=TRUE), coords=NULL,
   vertex.frame.color="gray",
   edge.arrow.size=.25,
@@ -1174,7 +1174,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
     return(x)
 
   } else
-    stop("Substraction between -",class(x),"- and -", class(y), "- not supported.")
+    stop("Multiplication between -",class(x),"- and -", class(y), "- not supported.")
 }
 
 #' @export
@@ -1239,7 +1239,25 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @export
 #' @rdname diffnetmatmult
 `%*%.diffnet` <- function(x, y) {
-  x$graph <- mapply(base::`%*%`, x$graph, y$graph)
+
+  mat2dgCList <- function(w,z) {
+    w <- lapply(seq_len(nslices(z)), function(u) methods::as(w, "dgCMatrix"))
+    names(w) <- dimnames(z)[[3]]
+    w
+  }
+
+  if (inherits(x, "diffnet") && inherits(y, "diffnet")) {
+    x$graph <- mapply(base::`%*%`, x$graph, y$graph)
+  } else if (inherits(x, "diffnet") && !inherits(y, "diffnet")) {
+    if (identical(dim(x)[-3], dim(y)))
+      x$graph <- mapply(base::`%*%`, x$graph, mat2dgCList(y, x))
+    else stop("-y- must have the same dimmension as -x-")
+  } else if (inherits(y, "diffnet") && !inherits(x, "diffnet")) {
+  if (identical(dim(y)[-3], dim(x)))
+    x$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
+  else stop("-y- must have the same dimmension as -x-")
+  }
+
   x
 }
 

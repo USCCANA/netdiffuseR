@@ -1,3 +1,8 @@
+2016-06-20  George G. Vega Yon <g.vegayon@gmail.com>
+  * R/struct_test.R: Changes in hist.diffnet_struc_test method.
+  * R/diffnet-methods.R: Extending the %*% method.
+  * R/stats.R: New argument for threshold.
+
 2016-06-17  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/plot_diffnet2.R: Adding new arguments to deal with new function
 	  to rescale the size of vertices.
