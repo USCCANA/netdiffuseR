@@ -655,7 +655,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' @param toa Integer vector. Indicating the time of adoption of the innovation.
 #' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param include_censored Logical scalar. When \code{TRUE} (default), threshold
-#' @param lag Integer scalar. Number of lags to consider when computing thresholds. \code{lag=1}
+#' @param lags Integer scalar. Number of lags to consider when computing thresholds. \code{lags=1}
 #'  defines threshold as exposure at \eqn{T-1}, where \code{T} is time of adoption.
 #' levels are not reported for observations adopting in the first time period.
 #' @param ... Further arguments to be passed to \code{\link{exposure}}.
