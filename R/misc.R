@@ -10,7 +10,7 @@
 #' as a reference for accessing elements in adjacency matrices.
 #' @seealso \code{\link{edgelist_to_adjmat}}
 #' @examples
-#' # Simple example
+#' # Simple example ------------------------------------------------------------
 #' edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 #' edgelist
 #' recoded_edgelist <- recode(edgelist)
@@ -75,8 +75,16 @@ recode.matrix <- function(data, ...) {
 #'
 #' \code{tick[(tick >= xrange[1]) & (tick <= xrange[2])]}
 #'
-#' @export
+#' @examples
+#' # Simple example ------------------------------------------------------------
+#' set.seed(3331)
+#' x <- runif(10)
+#' pretty(x)
+#' pretty_within(x)
+#' range(x)
 #'
+#' @export
+#' @keywords misc
 pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
     tick <- pretty(x, min.n = min.n, ...)
     tick[(tick >= xrange[1]) & (tick <= xrange[2])]
@@ -108,6 +116,7 @@ pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
 #'  main="Key\nLike A\nBoss")
 #' @family visualizations
 #' @author George G. Vega Yon
+#' @keywords misc
 drawColorKey <- function(
   x, tick.marks = pretty_within(x), main=NULL,
   key.pos=c(.925,.975,.05,.95),
@@ -256,7 +265,7 @@ drawColorKey <- function(
 rescale_vertex_igraph <- function(
   vertex.size,
   par.usr=par("usr"),
-  minmax.relative.size=c(.01,.05),
+  minmax.relative.size=c(.005,.025),
   adjust=200
 ) {
   if (!length(vertex.size)) return(

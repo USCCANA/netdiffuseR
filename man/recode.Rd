@@ -31,7 +31,7 @@ Required for using most of the package's functions, as ids are used
 as a reference for accessing elements in adjacency matrices.
 }
 \examples{
-# Simple example
+# Simple example ------------------------------------------------------------
 edgelist <- cbind(c(1,1,3,6),c(4,3,200,1))
 edgelist
 recoded_edgelist <- recode(edgelist)

@@ -85,6 +85,13 @@ This example has been taken from the package's vignettes:
 library(netdiffuseR)
 ```
 
+    ## 
+    ## Attaching package: 'netdiffuseR'
+
+    ## The following object is masked from 'package:base':
+    ## 
+    ##     %*%
+
 ### Infectiousness and Susceptibility
 
 ``` r
@@ -180,7 +187,7 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.62
+    ##  Final prevalence   : 0.58
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
@@ -233,6 +240,73 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
 ![](README_files/figure-markdown_github/plot_diffnet-1.png)
+
+``` r
+diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
+plot_diffnet2(brfarmersDiffNet,
+              vertex.size = dgr(brfarmersDiffNet)[,3])
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+``` r
+set.seed(1133)
+x <- rdiffnet(2e3, 10, seed.graph = 'small-world')
+plot_diffnet2(x, vertex.size = dgr(x)[,nslices(x)], add.map = "last",
+              diffmap.args = list(kde2d.args=list(n=100, h=c(10,10))))
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)
+
+### Adopters classification
+
+``` r
+out <- classify(kfamilyDiffNet, include_censored = TRUE, addNA=FALSE)
+ftable(out)
+```
+
+    ##                thr Very Low Thresh. Low Thresh. High Thresh. Very High Thresh.    NA
+    ## toa                                                                                 
+    ## Early Adopters                14.04        8.40         0.57              0.29  0.00
+    ## Early Majority                 5.64       11.65         5.54              2.58  0.00
+    ## Late Majority                  1.34        5.06         6.21              2.96  0.00
+    ## Laggards                       1.53        0.00         0.00             34.19  0.00
+    ## NA                             0.00        0.00         0.00              0.00  0.00
+
+``` r
+# Computing color
+age <- kfamilyDiffNet[["age"]]
+age[age==0] <- mean(age)
+
+# Mean by class
+cl  <- as.data.frame(out)
+Means <- with(out, matrix(0, 4, 4,
+                        dimnames = list(levels(toa), levels(thr))))
+for (l in levels(out$toa))
+  for (h in levels(out$thr))
+    Means[l,h] <- mean(age[cl$toa==l & cl$thr==h], na.rm = TRUE)
+
+# Color palette
+Col <- Means
+Col[] <- (Means - min(Means, na.rm = TRUE))/
+  (max(Means, na.rm = TRUE) - min(Means, na.rm = TRUE))
+Col[is.nan(Col)] <- mean(Col, na.rm = TRUE)
+Col[] <- rgb(colorRamp(blues9)(Col), maxColorValue = 255)
+
+# Plotting and adding key
+levels(out$toa) <-
+  sapply(strsplit(levels(out$toa), " "), paste, collapse="\n             ")
+plot(out, color=Col, las = 2, xlab="Time of Adoption",
+     ylab="Threshold", main="", ftable.args=list(addNA=FALSE))
+
+drawColorKey(Means, nlevels = 50, border="transparent",
+             main="Age",
+             color.palette = colorRampPalette(blues9)(50),
+             key.pos = c(.8,.90,.1,.6)
+             )
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ### Session info
 

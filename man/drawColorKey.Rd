@@ -59,4 +59,5 @@ Other visualizations: \code{\link{diffusionMap}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
+\keyword{misc}
 

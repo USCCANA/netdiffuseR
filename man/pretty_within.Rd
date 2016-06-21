@@ -24,4 +24,14 @@ resulting vector as
 \description{
 A wrapper for \code{\link[base:pretty]{pretty}}.
 }
+\examples{
+# Simple example ------------------------------------------------------------
+set.seed(3331)
+x <- runif(10)
+pretty(x)
+pretty_within(x)
+range(x)
+
+}
+\keyword{misc}
 

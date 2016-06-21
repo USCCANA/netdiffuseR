@@ -5,7 +5,7 @@
 \title{Rescale vertex size to be used in \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 \usage{
 rescale_vertex_igraph(vertex.size, par.usr = par("usr"),
-  minmax.relative.size = c(0.01, 0.05), adjust = 200)
+  minmax.relative.size = c(0.005, 0.025), adjust = 200)
 }
 \arguments{
 \item{vertex.size}{Numeric vector of unscaled vertices' sizes. This is unit-free.}

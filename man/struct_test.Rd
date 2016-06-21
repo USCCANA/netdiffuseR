@@ -120,6 +120,11 @@ legend("topright", bty="n",
  )
  )
 
+# Concatenating results
+res2 <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
+
+c(res, res2)
+
 # Running in parallel fashion
 \dontrun{
 res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100,
