@@ -247,7 +247,7 @@ plot_diffnet2(brfarmersDiffNet,
               vertex.size = dgr(brfarmersDiffNet)[,3])
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](README_files/figure-markdown_github/plot_diffnet2-1.png)
 
 ``` r
 set.seed(1133)
@@ -256,7 +256,7 @@ plot_diffnet2(x, vertex.size = dgr(x)[,nslices(x)], add.map = "last",
               diffmap.args = list(kde2d.args=list(n=100, h=c(10,10))))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](README_files/figure-markdown_github/plot_diffnet2%20with%20map-1.png)
 
 ### Adopters classification
 
@@ -306,7 +306,7 @@ drawColorKey(Means, nlevels = 50, border="transparent",
              )
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](README_files/figure-markdown_github/mosaic-1.png)
 
 ### Session info
 
@@ -330,7 +330,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7             netdiffuseR_1.16.6.9000
+    ## [1] SparseM_1.7        netdiffuseR_1.16.6
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_0.12.5     lattice_0.20-33 digest_0.6.9    MASS_7.3-45    

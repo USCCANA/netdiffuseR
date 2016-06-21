@@ -186,13 +186,13 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-```{r}
+```{r plot_diffnet2}
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
 plot_diffnet2(brfarmersDiffNet,
               vertex.size = dgr(brfarmersDiffNet)[,3])
 ```
 
-```{r}
+```{r plot_diffnet2 with map}
 set.seed(1133)
 x <- rdiffnet(2e3, 10, seed.graph = 'small-world')
 plot_diffnet2(x, vertex.size = dgr(x)[,nslices(x)], add.map = "last",
@@ -201,7 +201,7 @@ plot_diffnet2(x, vertex.size = dgr(x)[,nslices(x)], add.map = "last",
 
 ### Adopters classification
 
-```{r}
+```{r mosaic}
 out <- classify(kfamilyDiffNet, include_censored = TRUE, addNA=FALSE)
 ftable(out)
 
