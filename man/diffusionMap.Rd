@@ -64,9 +64,10 @@ the \pkg{MASS} package. The complete algorithm follows:
 \enumerate{
  \item \code{x} is coerced into integer and the range is adjusted to start from 1.
    \code{NA} are replaced by zero.
- \item In no \code{layout} is passed, layout is computed using
+ \item If no \code{layout} is passed, layout is computed using
    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
- \item Each vertex's coordinates is repeated \code{x} times.
+ \item Then, a \code{kde2d} map is computed for each level of \code{x}. The
+   resulting matrices are added up as a weighted sum
  \item The jitter function is applied to the repeated coordinates.
  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 }

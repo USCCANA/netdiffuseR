@@ -4,7 +4,7 @@
 \alias{round_to_seq}
 \title{Takes a numeric vector and maps it into a finite length sequence}
 \usage{
-round_to_seq(x, nlevels = 20, as_factor = TRUE)
+round_to_seq(x, nlevels = 20, as_factor = FALSE)
 }
 \arguments{
 \item{x}{A numeric or integer vector.}

@@ -1180,14 +1180,14 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @export
 #' @rdname diffnet-arithmetic
 `&.diffnet` <- function(x,y) {
-  x$graph <- mapply(function(a,b) (x %*% b) + 0, x$graph, y$graph)
+  x$graph <- mapply(function(a,b) methods::as(a & b, "dgCMatrix"), x$graph, y$graph)
   x
 }
 
 #' @export
 #' @rdname diffnet-arithmetic
 `|.diffnet` <- function(x,y) {
-  x$graph <- mapply(function(a,b) (x | b) + 0, x$graph, y$graph)
+  x$graph <- mapply(function(a,b) methods::as(a | b, "dgCMatrix"), x$graph, y$graph)
   x
 }
 
@@ -1253,9 +1253,9 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
       x$graph <- mapply(base::`%*%`, x$graph, mat2dgCList(y, x))
     else stop("-y- must have the same dimmension as -x-")
   } else if (inherits(y, "diffnet") && !inherits(x, "diffnet")) {
-  if (identical(dim(y)[-3], dim(x)))
-    x$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
-  else stop("-y- must have the same dimmension as -x-")
+    if (identical(dim(y)[-3], dim(x)))
+      x$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
+    else stop("-y- must have the same dimmension as -x-")
   }
 
   x
@@ -1450,7 +1450,7 @@ dimnames.diffnet <- function(x) {
 #' @rdname as_diffnet
 #' @method t diffnet
 t.diffnet <- function(x) {
-  x$graph <- lapply(x$graph, t)
+  x$graph <- lapply(x$graph, getMethod("t", "dgCMatrix"))
   x
 }
 

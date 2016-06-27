@@ -1,3 +1,8 @@
+2016-06-26  George G. Vega Yon <g.vegayon@gmail.com>
+  * R/egonets.R: Fixing small bug on the matrix methods
+  * R/diffnet-methods.R: No actual significant changes
+  * R/plot_diffnet2.R: Fixing small bug and improving doc.
+
 2016-06-21  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.R: Changing defaults and adding examples
 	* R/struct_test.R: Adding example with c.diffnet_struct_test

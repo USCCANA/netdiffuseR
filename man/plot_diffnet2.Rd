@@ -20,7 +20,7 @@ plot_diffnet2(graph, ...)
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE), color.ramp = grDevices::colorRamp(c("skyblue",
   "yellow", "red")), layout = NULL, key.width = 0.1,
-  key.title = "Time of Adoption", main = "Diffusion dynamics",
+  key.title = "Time of\\nAdoption", main = "Diffusion dynamics",
   vertex.size = NULL, vertex.shape = NULL, vertex.label = "",
   vertex.frame.color = "gray", edge.arrow.size = 0.5, edge.curved = FALSE,
   add.map = NULL, diffmap.args = list(kde2d.args = list(n = 100)),

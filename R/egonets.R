@@ -130,8 +130,8 @@ egonet_attrs <- function(
     diffnet = egonet_attrs.list(
       graph$graph, attrs, if (!length(V)) 1:graph$meta$n else V, outer, fun, as.df, self, self.attrs, valued),
     list      = egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    matrix    = egonet_attrs.matrix(methods::as(graph, "dgCMatrix"), V, attrs, outer, self, self.attrs, valued),
-    dgCMatrix = egonet_attrs.matrix(graph, V, attrs, outer, self, self.attrs, valued),
+    matrix    = egonet_attrs.matrix(methods::as(graph, "dgCMatrix"), V, attrs, outer, fun, self, self.attrs, valued),
+    dgCMatrix = egonet_attrs.matrix(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
     array     = egonet_attrs.array(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
     stopifnot_graph(graph)
   )
@@ -143,24 +143,22 @@ egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, self.a
   if (!length(V)) V <- seq_len(nrow(graph))
 
   ids <- egonet_attrs_cpp(graph, as.integer(V)-1L, outer, self, self.attrs, valued)
-  lapply(ids, function(w) cbind(
+  sapply(lapply(ids, function(w) cbind(
     value = w[,"value"],
     id    = w[,"id"],
     attrs[w[,"id"],,drop=FALSE]
-  ))
+  )), fun)
 }
 
 egonet_attrs.array <- function(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued) {
   # Coercing into list
   dn <- dimnames(graph)[[3]]
-  if (!length(dn)) dn <- 1:dim(graph)[3]
+  if (!length(dn)) dimnames(graph)[[3]] <- 1:dim(graph)[3]
 
   # Filling V
   if (!length(V)) V <- seq_len(nrow(graph))
 
-  graph <- lapply(1:dim(graph)[3], function(x) methods::as(graph[,,x], "dgCMatrix"))
-  names(graph) <- dn
-
+  graph <- apply(graph, 3, methods::as, Class='dgCMatrix')
   egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued)
 
 }

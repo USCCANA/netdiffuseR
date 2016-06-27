@@ -8,6 +8,16 @@ The following document details expectations for the comming versions. There is n
 
 - Review manuals: Description of arguments and name of the functions.
 - ~~Aliases creation: `select_egoalter` `table_...`~~
+- New meta on the diffnet class:
+    * name: 'A diffnet network'
+    * description 'Diffnet network with no description'
+    * timestamp (maybe auto update) 'DATE'
+    * author: 'user'
+    * netdiffuseR.version: 1.16.6
+  Plus some other stuff:
+    * coordinates (xyz)
+    * colors
+    * vertex size
 
 ## Testing
 
@@ -21,7 +31,7 @@ The following document details expectations for the comming versions. There is n
 
 - ~~`rewire_dgr_preserve`: A brief comparison on igraph and netdiffuseR rewiring algorithms shows that igraph has no significan speed improvement in small-medium graphs. This may be due to having a similar rewiring algorithm. The dgr preserve should work in a similar fashion and should incorporate the call to `std::<vector>remove` method.~~
 
-- Raise the level of `ARMA_BIT_64INT`: Create a toy package in which, by simulations, we create big sparse matrices of class `dgCMatrix` do read/write operations both from R and from C++.
+- ~~Raise the level of `ARMA_BIT_64INT`: Create a toy package in which, by simulations, we create big sparse matrices of class `dgCMatrix` do read/write operations both from R and from C++.~~
 
 - `read_ucinet` and rename `read_ucinet` to `read_dl`. And write versions of it. It will be useful to ask Steven B. if is there any way of using UCINET to analyze dynamic data.
 

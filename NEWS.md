@@ -11,6 +11,8 @@
 
 * In `hist.diffnet_struct_test`: `...` now passed to `hist.default`.
 
+* Fixed bug on `egonet_attrs`: The matrix method was returning with error.
+
 ## New features and changes
 
 * `plot_infectsuscept` includes 2D kernel smoother via `MASS::kde2d`.

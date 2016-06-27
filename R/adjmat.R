@@ -809,7 +809,11 @@ drop_isolated.list <- function(graph, undirected=getOption("diffnet.undirected")
   out
 }
 
-simmelian_mat <- function(graph) {
-  tmp <- graph * graph
-  (graph & (tmp %*% t(tmp))) + 0
+
+simmelian_mat <- function(graph, ...) {
+  tmethod <- if(isS4(graph)) getMethod("t", class(graph)) else t
+  tmp <- graph & tmethod(graph)
+  methods::as(tmp & (tmp %*% tmp), "dgCMatrix")
 }
+
+

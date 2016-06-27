@@ -10,7 +10,7 @@
 #' x <- rnorm(100)
 #' w <- data.frame(as.integer(round_to_seq(x, as_factor = TRUE)),x)
 #' plot(w,x)
-round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
+round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
   y <- range(x, na.rm = TRUE, finite=TRUE)
   y <- seq(y[1], y[2], length.out = nlevels)
 
@@ -18,11 +18,22 @@ round_to_seq <- function(x, nlevels=20, as_factor=TRUE) {
     if (is.na(z)) return(NA)
     y[which.min(abs(y-z))]
     })
-
+  # factor(c(1,3), levels = 1:3, labels = letters[1:3])
   if (as_factor) as.factor(y)
   else y
 }
 
+as_levels <- function(x, nlevels=20) {
+  y <- range(x, na.rm = TRUE, finite=TRUE)
+  y <- seq(y[1], y[2], length.out = nlevels)
+
+  x <- sapply(x, function(z) {
+    if (is.na(z)) return(NA)
+    which.min(abs(y-z))
+  })
+
+  factor(x, levels=1:nlevels, labels = y)
+}
 
 #' Another way of visualizing diffusion
 #' @param graph Either a square matrix or a diffnet object.
@@ -105,7 +116,7 @@ plot_diffnet2.default <- function(
   color.ramp = grDevices::colorRamp(c("skyblue","yellow", "red")),
   layout = NULL,
   key.width = .10,
-  key.title = "Time of Adoption",
+  key.title = "Time of\nAdoption",
   main = "Diffusion dynamics",
   vertex.size = NULL,
   vertex.shape = NULL,
@@ -245,9 +256,10 @@ plot_diffnet2.default <- function(
 #' \enumerate{
 #'  \item \code{x} is coerced into integer and the range is adjusted to start from 1.
 #'    \code{NA} are replaced by zero.
-#'  \item In no \code{layout} is passed, layout is computed using
+#'  \item If no \code{layout} is passed, layout is computed using
 #'    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
-#'  \item Each vertex's coordinates is repeated \code{x} times.
+#'  \item Then, a \code{kde2d} map is computed for each level of \code{x}. The
+#'    resulting matrices are added up as a weighted sum
 #'  \item The jitter function is applied to the repeated coordinates.
 #'  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 #' }
@@ -339,9 +351,6 @@ diffusionMap.default <- function(
     x <- x.adj(x)
   }
 
-  ntimes <- as.integer(x)
-  ntimes <- ntimes - min(ntimes, na.rm = TRUE) + 1L
-  ntimes[is.na(ntimes)] <- 0
 
   # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph)
@@ -357,9 +366,12 @@ diffusionMap.default <- function(
   lims  <- c(range(coords[,1]), range(coords[,2]))
   Map   <- with(kde2d.args, list(z=matrix(0, ncol=n, nrow=n)))
   Map$W <- Map$z
-  for (i in unique(ntimes)) {
+  for (i in unique(x)) {
+    # Skip if NA
+    if (is.na(i)) next
+
     # Subset and map
-    dat <- coords[ntimes==i,,drop=FALSE]
+    dat <- coords[which(x==i),,drop=FALSE]
     map <- do.call(MASS::kde2d, c(kde2d.args, list(
       x = dat[,1], y=dat[,2], lims=lims)))
 

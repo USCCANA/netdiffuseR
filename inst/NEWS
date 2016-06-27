@@ -16,6 +16,9 @@ Bug fixes
 
 -   In hist.diffnet_struct_test: ... now passed to hist.default.
 
+-   Fixed bug on egonet_attrs: The matrix method was returning
+    with error.
+
 
 New features and changes
 
