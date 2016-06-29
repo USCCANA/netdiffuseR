@@ -1,0 +1,849 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+\setbeamertemplate{footline}{
+  \hfill\insertframenumber\hspace{.5cm}\vspace{.5cm}
+}
+
+% To fix
+% - Remove going back to the title
+% - Include data table for quick review
+
+% Naming -----------------------------------------------------------------------
+\pgfdeclareimage[height=2.5cm, width=2.5cm]{logo}{cana_logo.pdf}
+\logo{\pgfuseimage{logo}\vspace{20cm}}
+
+\title[netdiffuseR @ useR! 2016]{%
+  Network Diffusion of Innovations in R:\\%
+  Introducing \ndR}
+\author[GGVY \and TWV]{George G. Vega Yon \and Thomas W. Valente\vspace{-3ex}}
+\institute[USC + CANA]{%
+  \begin{minipage}[m]{.18\linewidth}
+    % \includegraphics[width=.3\linewidth, clip=true, trim=1cm 1cm 1cm 1cm ]{cana_logo.pdf}
+    \raggedleft
+    \includegraphics[width=.8\linewidth]{Small_Use_Seal_BlackOnWhite.pdf}
+  \end{minipage}
+  \begin{minipage}[m]{.18\linewidth}
+    \raggedright
+    \includegraphics[width=.8\linewidth]{cana_logo.pdf}
+  \end{minipage}
+  \\
+  Department of Preventive Medicine\\University of Southern California%
+  }
+\date[]{%
+  \includegraphics[width=.2\linewidth]{userlogo2016.pdf}\\%
+  June 29th, 2016
+  }
+
+% Notes ------------------------------------------------------------------------
+% \usepackage{pgfpages}
+% \setbeameroption{show notes}
+% \setbeameroption{show notes on second screen=left}
+
+
+% Style ------------------------------------------------------------------------
+
+% Color
+\usetheme{Boadilla}
+
+\useinnertheme{circles}
+\useoutertheme{default}
+\usecolortheme[RGB={153,0,0}]{structure}
+\useoutertheme{infolines} % infolines, split
+
+% Font
+\usepackage[scaled]{berasans}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
+
+% Others
+\usepackage{tabularx, booktabs, rotating}
+% \usepackage{tikz}
+% \usetikzlibrary{arrows,shapes}
+
+% Some commands ----------------------------------------------------------------
+\newcommand{\Rpkg}[1]{{\bf\href{https://cloud.r-project.org/web/packages/#1/index.html}{#1}}}
+\newcommand{\ndR}{\Rpkg{netdiffuseR}}
+\newcommand{\framesec}{}%\frame{\frametitle{Contents}\tableofcontents[currentsection]}}
+\newcommand{\framesubsec}{}%\frame{\frametitle{Contents}\tableofcontents[currentsubsection]}}
+\newcommand{\code}[1]{{\tt #1}}
+
+\usepackage{ulem}% For st (stroke)
+
+\begin{document}
+
+<<Setup, echo=FALSE, warning=FALSE, message=FALSE>>=
+knitr::opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE)
+@
+
+
+\frame{\titlepage}
+
+\note[enumerate]{
+  \item Hi there, I'm George Vega Yon,
+  \item and I'm here today to tell you about our R package ndR.
+  \item While we have a lot of things to show you, I'll go a little bit fast so we can fit our time!
+}
+
+% Acknowledgements
+\frame{\frametitle{Acknowledgements}
+
+\begin{quote}
+\ndR{} was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+\end{quote}
+
+\begin{quote}
+\ndR{} has benefited from input provided by participants of the Center for Applied Network Analysis (CANA), and the Computational Social Science Lab (CSSL) at the University of Southern California.
+\end{quote}
+
+\begin{quote}
+\ndR{}'s original code was developed by {\bf Thomas Valente}, improved by {\bf Stephanie Dyal} and {\bf Timothy Hayes}, and extended by {\bf George Vega Yon}.
+\end{quote}
+}
+
+\note[enumerate]{
+  \item Before starting I'd like to make a few acknowledgements.
+  \item To tha National Cancer Insitute and the National Institute of Health for their support
+  \item To the Center for Applied Network Analysis and Computational Social Science Lab at USC for their feedback, and
+  \item To the other team members behind ndR: Thomas Valente, Stephanie Dyal and Timothy Hayes.
+  \item Let's get started
+}
+
+\frame{\frametitle{Contents}\tableofcontents}
+
+\note[enumerate]{
+  \item I'll start by telling something about Network Diffusion of Innovations and ndR itself
+  \item To then show you some example using ndR
+}
+
+\section{Motivation}\framesec
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{{\it Network} Diffusion of Innovations}
+
+\note[item]{Basically, Network Diffusion of Innovations is the product of merging two
+    big fields: Diffusion of Innovations (lead by Prof. Rogers's seminal work)
+    and Social Network Analysis.}
+\note[item]<2->{Further, network diffusion of innovations is a filed itself lead which
+    started with Prof. Valente doctoral thesis, 'Network Models of the Diffusion
+    of Innovations', to whom Prof. Rogers was the advisor.}
+\note[item]<3->{There you'll see ndR's first steps written in GAUSS!}
+\begin{center}
+\begin{minipage}[m]{.25\linewidth}
+  \center
+  \includegraphics[width=.9\linewidth]{rogers_2003.jpg}
+\end{minipage}\pause
+\begin{minipage}[m]{.03\linewidth}
+  \centering \Huge \bf +
+\end{minipage}
+\begin{minipage}[m]{.3\linewidth}
+  <<Nice graph, out.width='.9\\linewidth', fig.width=4, fig.height=4, fig.align='center'>>=
+  library(netdiffuseR)
+  set.seed(231)
+  x <- rdiffnet(100, 10, rewire = FALSE, seed.nodes = "central")
+  s <- sqrt(dgr(x)[,4] + 1)
+  s <- (s - min(s))/(max(s) - min(s))
+  s <- s*(90-20)+20
+  oldpar <- par(no.readonly = TRUE)
+  par(mai=rep(0,4))
+  plot_diffnet2(x, key.width = 0, main=NA, vertex.size = s)
+  par(oldpar)
+  @
+\end{minipage}
+\pause
+\begin{minipage}[m]{.03\linewidth}
+  \centering \Huge \bf =
+\end{minipage}
+\begin{minipage}[m]{.25\linewidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{valente_1995.jpg}
+\end{minipage}
+\end{center}\pause
+So what is Network Diffusion of Innovations anyway?
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{Network Diffusion of Innovations}
+
+\begin{itemize}
+  \item<+-> Tries to explain how new ideas and practices (innovations) spread within and between
+  communities.
+  \item<+-> While a lot of factors have been shown to influence diffusion (Spatial,
+    Economic, Cultural, Biological, etc.), Social Networks is a prominent one.
+  \item<+-> More complex than \textit{contagion} $\implies$ a single tie is no longer enough\note{This discipline works on the fact that }
+    for an innovation to spread across a social system.
+  \item<+-> We think of this in terms of adoption thresholds and social exposure.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{Network Diffusion of Innovations}
+
+\textbf{The basic idea}
+
+\begin{itemize}
+\item Network thresholds (Valente, 1995), $\tau$, are defined as the required proportion or number of neighbors that leads you to adopt a particular behavior (innovation), $a=1$. In (very) general terms\pause
+
+\begin{equation}
+a_i = \left\{\begin{array}{ll}
+1 &\mbox{if } \tau_i\leq E_i \\
+0 & \mbox{Otherwise}
+\end{array}\right. \qquad
+E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+\end{equation}
+
+Where $E_i$ is i's exposure to the innovation and $\mathbf{X}$ is the adjacency matrix (the network).\note[item]<2->{So it's all about threshold levels and exposures}\pause
+
+\item  This can be generalized and extended to include covariates and other weighting schemes (that's what \ndR{} is all about).\pause
+\end{itemize}
+
+So now, what is \ndR?
+\end{frame}
+
+\section{\ndR: network diffusion of innovations in R}\framesec
+
+\begin{frame}
+\frametitle{\ndR: network diffusion of innovations in R}
+% \framesubtitle{General overview}
+
+\ndR{} is an {\bf R} package that\pause
+
+\begin{itemize}[<+->]
+\item Is designed for Visualizing, Analyzing and Simulating network diffusion data (in general).
+\item Depends on some pretty popular packages:
+\begin{itemize}
+  \item \Rpkg{RcppArmadillo}: So it's fast,
+  \item \Rpkg{Matrix}: So it's big,
+  \item \Rpkg{statnet} and \Rpkg{igraph}: So it's not from scratch
+\end{itemize}
+\item It's roughly 14,000 lines of code (\code{R/} + \code{src/} + \code{tests/}), ~100 pages of manual, and 4 vignettes,\note[item]<7->{BTW, I can't tell you how exited I was when we reached the 100 p in the manual. A very nerdy thing but I see it as a proxy of all the work we've put in it.}
+\item Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)\note[item]<8->{This after a PR that we submitted to RcppArmadillo!},
+\item Already on CRAN (2 iterations) with ~700 downloads since its first version, Feb 2016,
+\item A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{\ndR: network diffusion of innovations in R}
+% \framesubtitle{General overview}
+
+\note{
+\begin{itemize}
+  \item Among other features, ndR includes 3 classical datasets from network diffusion literature
+  \item The diffusion of Tetacycline, Hybrid Corn Seed and Family planning methods
+  \item Won't enter in details but here is for later reference.
+  \item Now some examples!
+  \end{itemize}
+}
+
+\ndR{} distributes classical diffusion of innovations datasets:
+
+\footnotesize
+\begin{table}
+\begin{tabular}{l*{3}{m{.225\linewidth}<\centering}} \toprule
+ & 	{\bf Medical Innovation}	 & 	{\bf Brazilian Farmers}	 & 	{\bf Korean Family Planning}	\\ \midrule
+\textit{Country}	 & 	USA	 & 	Brazil	 & 	Korea	\\
+\textit{N Respondents}	 & 	125 Doctors	 & 	692 Farmers	 & 	1,047 Women	\\
+\textit{N Communities}	 & 	4	 & 	11	 & 	25	\\
+\textit{Innovation}	 & 	Tetracycline	 & 	Hybrid Corn Seed	 & 	Family Planning	\\
+\textit{Time for Diffusion}	 & 	18 Months	 & 	20 Years	 & 	11 Years	\\
+\textit{Year Data Collected}	 & 	1955-1956	 & 	1966	 & 	1973	\\
+\textit{Ave. Time to 0.50}	 & 	6	 & 	16	 & 	7	\\
+\textit{Highest Saturation}	 & 	0.89	 & 	0.98	 & 	0.83	\\
+\textit{Lowest Saturation}	 & 	0.81	 & 	0.29	 & 	0.44	\\
+\textit{Citation}	 & 	Coleman et al (1966)	 & 	Rogers et al (1970)	 & 	Rogers \& Kincaid (1981) \\ \bottomrule
+\end{tabular}
+\end{table}\pause
+\normalsize
+
+Very nice\dots\pause But it's better to show it with examples!
+
+\end{frame}
+
+\section{\ndR: some examples}
+\subsection{The basics}\framesubsec
+
+\begin{frame}[fragile]
+% \frametitle{\ndR: some examples}
+\frametitle{The basics: Reading data}
+
+\note{
+\begin{itemize}
+  \item Besides of the usual edgelist and adjacency matrix reading, we have put a lot of time on reading data in ndR.
+  \item ndR can read survey data!
+  \item Take this dataset as an exmaple: We have a longitudinal dataset with network nominations (e.g. name your 5 closest
+  friends), including times of adoption for a particular behavior.
+  \end{itemize}
+}
+\note[item]<2->{We can use the s 2 dn function}
+
+\footnotesize
+<<Showing data, echo=TRUE>>=
+
+library(netdiffuseR)
+print(head(fakesurveyDyn))
+
+@
+\normalsize\pause
+
+We can use the \code{survey\_to\_diffnet} function!
+
+\end{frame}
+
+\begin{frame}[fragile]
+% \frametitle{\ndR: some examples}
+\frametitle{The basics: Reading data}
+\scriptsize
+<<Reading it, echo=TRUE, warning=FALSE>>=
+mydiffnet <- survey_to_diffnet(
+  fakesurveyDyn,
+  idvar    = "id",                      # Id of each vertex
+  netvars  = c("net1", "net2", "net3"), # Net nominations (e.g. 'name 3 closest friends')
+  toavar   = "toa",                     # Time of Adoption
+  groupvar = "group",                   # Group (e.g. neighbor, village, etc.)
+  timevar  = "time"                     # Timestamp
+  )
+
+# Print method
+mydiffnet
+@
+
+This is a \code{diffnet} object.
+
+\normalsize
+
+\end{frame}
+
+\note[enumerate]{
+  \item By telling ndR some basics such as the id, network nominations and time of adoption (the others here are optional)
+  \item You can get a diffnet object!
+}
+
+\begin{frame}[fragile]
+% \frametitle{\ndR: some examples}
+\frametitle{The basics: \code{diffnet} objects}
+
+\code{diffnet} are
+
+\footnotesize
+\begin{minipage}[t]{.35\linewidth}
+  Lists that contains (among other things):
+  \begin{itemize}
+  \item A list of \code{dgCMatrix} objects (sparse matrices),
+  \item A set of \code{data.frame}s with vertex attributes,
+  \item An \code{integer} vector with times of adoption
+  \end{itemize}
+
+\end{minipage}\pause
+\hfill
+\begin{minipage}[t]{.55\linewidth}
+  Nice objects with a lot of methods
+
+  {\bf Common methods}
+
+  \begin{itemize}
+  \item[]
+  \begin{description}
+  \item[\tt print, summary, plot] The usual deal
+  \item[\tt [[, [[<-] Attribute access
+  \item[\tt [, [<-] Adjacency matrix access
+  \item[\tt \%*\%, \^{}, t, c] Matrix mult and others
+  \item[\tt +, -, *, \&, |] Arithmetic
+  \end{description}
+  \end{itemize}\pause
+
+  {\bf Other special functions}
+
+  \begin{itemize}
+  \item[]
+  \begin{description}
+  \item[\tt exposure (threshold)] Basic net-diff stats
+  \item[\tt infection, susceptibility] Some friends from epi
+  \item[\tt struct\_equiv] Burt's (1987) structural equivalence
+  \item[\tt struct\_test] We'll see this later\dots
+  \end{description}
+  \end{itemize}
+
+\end{minipage}\note<3->{Most of the special functions have methods for non-diffnet objects (matrix friendly).}\pause
+\normalsize
+
+So, what can we do with \code{diffnet} objects?
+\end{frame}
+
+
+\subsection{Visualizing Diffusion}\framesubsec
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_diffnet}}
+
+<<diffusion plot1, fig.width=12, fig.height=4.5, out.width='1\\linewidth', fig.align='center', cache=TRUE, fig.cap='Diffusion of Hybrid Corn Seed (Brazilian Farmers) - 11 communities/20 years.'>>=
+set.seed(123112)
+x <- brfarmersDiffNet
+
+diffnet.toa(x)[x$toa==1965] <- NA
+oldpar <- par(no.readonly = TRUE)
+
+# source("20160614_plot_diffnet(new).R", echo = FALSE)
+oldpar <- par(no.readonly = TRUE)
+par(mai=rep(0,4))
+coords <- plot_diffnet(x, slices=c(1,10,21),
+              vertex.cex = dgr(x)[,1],
+              mfrow.par = c(1,3), key.height = .025, intra.space = c(.1,.1),
+              rescale.fun = function(x)
+                rescale_vertex_igraph(x, adjust=150, minmax.relative.size = c(.005,.025)))
+par(oldpar)
+@
+\end{frame}
+
+\note[enumerate]{
+  \item We plot them.
+  \item Here we can see how does the usage of a Hybrid corn seed spreads across
+    a social the network through time.
+  \item Showing three slides (time points), the plot represents non-adopters as
+    white squares, new adopters in red and previous adopters in blue.
+}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_diffnet2}}
+
+<<diffusion plot2, fig.width=12, fig.height=6, out.width='.7\\linewidth', fig.align='center', cache=TRUE, fig.cap='Diffusion of Hybrid Corn Seed (Brazilian Farmers) - 11 communities/20 years.'>>=
+oldpar <- par(no.readonly = TRUE)
+par(mai=rep(0,4))
+plot_diffnet2(x, layout = coords, vertex.size = dgr(x)[,2], main="",
+              rescale.fun = function(x)
+                rescale_vertex_igraph(x, minmax.relative.size = c(.005,.025)))
+par(oldpar)
+@
+\end{frame}
+
+\note[enumerate]{
+  \item Same information, different visualization
+  \item Here diffusion dynamics are observed on the vertex color.
+  \item Blu-ish are early adopters and red are laggards, and as before, white
+    ones are non-adopters.
+}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_infectsuscept}}
+
+\begin{figure}[h]
+\centering
+<<infection plot, fig.height=5.5, fig.width=7, out.width=".45\\linewidth", fig.show="hold", cache=TRUE, fig.env=''>>=
+set.seed(1231)
+x <- rdiffnet(400, t=20, seed.graph = "bernoulli")
+plot_infectsuscep(x, bins=40, logscale = FALSE, main="(a)")
+plot_infectsuscep(x, h=.5, bins=40, main="(b)")
+@
+\caption{Joint distribution of Infectiousness and Susceptibility in a random bernoulli diffusion network: (b) shows (a) with log-scale.}
+\end{figure}
+
+\end{frame}
+
+\note[enumerate]{
+  \item Borrowing concepts from epidemiology,
+  \item Here we can see (and compute) infectiousness and susceptibility of each
+    vertex in linear and log-scale.
+}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_threshold} (a classic)}
+
+<<Network Thresholds, fig.width=9, fig.height=5, out.width='.7\\linewidth', fig.align='center', fig.cap='Adoption thresholds and times of adoption for the Brazilian Farmers: Colors and shapes represent villages. Size is scaled accordingly to each vertex degree.', cache=FALSE>>=
+V <- as.integer(as.factor(brfarmersDiffNet[['village']])) + 2
+C <- rgb(colorRamp(blues9)(V/max(V)), alpha=200, maxColorValue = 255)
+plot_threshold(brfarmersDiffNet, vertex.sides = V,
+               vertex.col=C, main="")
+@
+\note{Here we have a classic plot. Threshold vs time of adoption (very fancy, it has a lot of parameters for the user to play with.)}
+\end{frame}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{classify\_adopters} (also a classic)}
+
+\begin{figure}
+\centering
+\begin{minipage}[m]{0.3\linewidth}
+\tiny
+<<echo=FALSE, out.width='1\\linewidth', results='asis'>>=
+library(xtable)
+out <- classify(kfamilyDiffNet, include_censored = TRUE, addNA=FALSE)
+print(
+  xtable::xtable(
+    as.table(ftable(out, addNA = FALSE)),
+    align=c("p{.3\\linewidth}",rep("p{.06\\linewidth}",4))
+    ),
+  rotate.colnames = TRUE)
+@
+\normalsize
+\end{minipage}
+% \hfill
+\begin{minipage}[m]{0.65\linewidth}
+<<Classification, echo=FALSE, fig.width=8, fig.height=5, out.width='1\\linewidth'>>=
+
+# Computing color
+age <- kfamilyDiffNet[["age"]]
+age[age==0] <- mean(age)
+
+# Mean by class
+cl  <- as.data.frame(out)
+Means <- with(out, matrix(0, 4, 4,
+                        dimnames = list(levels(toa), levels(thr))))
+for (l in levels(out$toa))
+  for (h in levels(out$thr))
+    Means[l,h] <- mean(age[cl$toa==l & cl$thr==h], na.rm = TRUE)
+
+# Color palette
+Col <- Means
+Col[] <- (Means - min(Means, na.rm = TRUE))/
+  (max(Means, na.rm = TRUE) - min(Means, na.rm = TRUE))
+Col[is.nan(Col)] <- mean(Col, na.rm = TRUE)
+Col[] <- rgb(colorRamp(blues9)(Col), maxColorValue = 255)
+
+# Plotting and adding key
+levels(out$toa) <-
+  sapply(strsplit(levels(out$toa), " "), paste, collapse="\n             ")
+plot(out, color=Col, las = 2, xlab="Time of Adoption",
+     ylab="Threshold", main="", ftable.args=list(addNA=FALSE))
+
+drawColorKey(Means, nlevels = 50, border="transparent",
+             main="Age",
+             color.palette = colorRampPalette(blues9)(50),
+             key.pos = c(.8,.90,.1,.6)
+             )
+
+@
+\end{minipage}
+
+\caption{Adopters classification in the Korean Family data: From the mosaic we can see that in general
+low threshold levels and early adoption seems to be positively correlated with age.}
+\end{figure}
+
+\end{frame}
+
+\note[enumerate]{
+  \item And further, another classic, we can classify adopters according to Rogers early-adopters vs laggards and Valente's threshold levels, tabulate them and visualize them easily
+  \item Now, some of you may be thinking\dots
+}
+
+\frame{
+\Large What about \ndR{} being big?? \normalsize
+}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_diffnet2} w/ big graph}
+
+<<diffusion plot thousand I, cache=TRUE, echo=FALSE, dev='tiff'>>=
+set.seed(231)
+n <- 5e4
+x <- rdiffnet(n, 5, seed.graph = "scale-free", rewire = FALSE,
+              seed.nodes="central", rgraph.args = list(m=2), seed.p.adopt = .0675,
+              threshold.dist = runif(n, .7,.9))
+
+# Layout and size
+layout <- igraph::layout.fruchterman.reingold(
+  igraph::graph_from_adjacency_matrix(x$graph[[nslices(x)]])
+)
+@
+
+<<diffusion plot thousand II,  fig.width=12, fig.height=6, out.width='.8\\linewidth', fig.align='center', echo=FALSE, cache=TRUE, fig.cap='Random scale-free diffusion network: With 5e4 vertices, diffusion started at the central nodes.', dev='CairoPNG'>>=
+
+in_sd <- function(x, k=3, na.rm=TRUE) {
+  m <- mean(x, na.rm = na.rm)
+  s <- sd(x, na.rm = na.rm)
+  r <- m + s*c(-1,1)*k
+
+  (r[1] <= x) & (x <= r[2])
+}
+
+index <- apply(layout, 2, in_sd)
+index <- apply(index, 1, all)
+
+vs <- dgr(x[index])[,nslices(x)]
+
+oldpar <- par(no.readonly = TRUE)
+par(mai=rep(.5,4))
+plot_diffnet2(x[index], vertex.size = vs, main="", layout = layout[index,,drop=FALSE],
+              edge.color=adjustcolor("gray", .1),
+              color.ramp = colorRamp(c("skyblue","yellow", "red")),
+              key.width = .1, key.title = "Time of\nAdoption")
+par(oldpar)
+
+@
+
+\end{frame}
+
+\note[enumerate]{
+  \item Here it is. This is a simulated diffusion network with 50 K vertices
+  \item Is a scale-free network in which the diffusion started on the higher degree
+    centrality vertices.
+  \item The diffusion pattern is clear... right?
+}
+
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_diffnet2 + diffmap} w/ big graph}
+
+<<diffusion plot thousand III, fig.width=12, fig.height=6, out.width='.8\\linewidth', fig.align='center', cache=TRUE, fig.cap='Random scale-free diffusion network: With 5e4 vertices, diffusion started at the central nodes.', dev='CairoPNG'>>=
+oldpar <- par(no.readonly = TRUE)
+par(mai=rep(.5,4))
+plot_diffnet2(x[index], vertex.size = vs, main="",
+              layout = layout[index,,drop=FALSE],
+              add.map="last", edge.color="transparent",
+              color.ramp = colorRamp(c("skyblue","yellow", "red")),
+              diffmap.args = list(kde2d.args=list(n=100, h=.10)),
+              key.width = .1, key.title = "Time of\nAdoption")
+par(oldpar)
+
+@
+
+\end{frame}
+
+\note[enumerate]{
+  \item What about now!
+  \item The diffnet map function takes any vector of length n (covariate), and
+    draws it over the graph's layout in a smooth way.
+  \item Notice it is not a smoothScatter-plot (the hotter portion of it is outside
+    where there's lower density!)
+  \item While a very fancy and neat way of visualizing big data, we have to be
+    careful with this kind of issues
+}
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Visualizing Diffusion: \code{plot\_diffnet2 + diffmap} w/ big graph}
+
+But\dots be careful with this!
+
+\begin{figure}
+\centering
+\includegraphics[width=.35\linewidth]{xkcd_1138_heatmap.png}
+\caption{The heatmaps pitfall (source \url{xkcd.com/1138})}
+\end{figure}
+
+\end{frame}
+
+\note[enumerate]{
+  \item nevertheless, users must be careful with the heatmaps' pitfall!
+  \item Fancy heatmap-like figures aren't always the best way to go!
+  \item Now lets checkout the rdiffnet function.
+}
+
+\subsection{Simulating Diffusion Process}\framesubsec
+
+\note{ndR is also a toold for simulating diffusion process}
+
+\begin{frame}[fragile]
+% \frametitle{\ndR: some examples}
+\frametitle{Simulating Diffusion Process: \code{rdiffnet}}
+
+Simulations are a big thing in \ndR. The \code{rdiffnet} function features:
+
+\footnotesize
+<<Simulating a diffnet, echo=TRUE>>=
+
+set.seed(887)
+mydn <- rdiffnet(
+  n=1e3, t=5, # Number of vertices and time points
+  seed.nodes     = "random", # Set of initial adopters
+  seed.p.adopt   = .15, # Proportion of initial adopters
+  seed.graph     = "small-world", # Baseline graph
+  rgraph.args    = list(p=4), # Arguments for the rgraph call
+  rewire.args    = list(algorithm="swap", p=5), # Rewiring args after time 1
+  threshold.dist = function(x) runif(1, .4, .8), # Distribution of thresholds
+  exposure.args  = list(normalized=TRUE) # Args for computing exposures
+)
+@
+
+\normalsize
+\end{frame}
+
+\note[enumerate]{
+  \item ndR is also a tool for simulating diffusion process.
+  \item In this example we use the rdiffnet function to generate a random diffnet
+    object.
+  \item While it only suffices with specifying the size of the graph and number of
+    time periods, this example illustrates several other parameters that can be
+    modified by the user: The set of initial adopters (innovators as Rogers would said),
+    the seed graph and some rewiring algorithm, the vertices distribution and
+    how to compute exposures.
+}
+
+% New methods: Non-parametric tests --------------------------------------------
+\subsection{Statistical inference}\framesubsec
+
+\begin{frame}
+% \frametitle{\ndR: some examples}
+\frametitle{Statistical inference: \code{struct\_test}}
+
+<<echo=FALSE, cache=FALSE>>=
+library(netdiffuseR)
+@
+
+
+<<Struct test kf, echo=FALSE, cache=TRUE>>=
+kf <- kfamilyDiffNet
+
+out.1 <- struct_test(kf, function(x) mean(threshold(x), na.rm = TRUE), R = 1e3,
+            parallel="multicore", ncpus=8,
+            rewire.args = list(
+              p=n_rewires(kf), algorithm="swap"))
+@
+
+<<Struct test bf, echo=FALSE, cache=TRUE>>=
+bf <- brfarmersDiffNet
+
+out.2 <- struct_test(bf, function(x) mean(threshold(x), na.rm = TRUE), R = 1e3,
+            parallel="multicore", ncpus=8,
+            rewire.args = list(
+              p=n_rewires(bf), algorithm="swap"))
+@
+
+<<Struct test mi, echo=FALSE, cache=TRUE>>=
+mi <- medInnovationsDiffNet
+
+out.3 <- struct_test(mi, function(x) mean(threshold(x), na.rm = TRUE), R = 1e3,
+            parallel="multicore", ncpus=8,
+            rewire.args = list(
+              p=n_rewires(mi), algorithm="swap"))
+@
+
+\begin{align*}
+H_0:&\; \mathcal{G} \perp \mbox{Time of Adoption (random time of adoption)}\\
+H_a:&\; \mathcal{G} \not\perp \mbox{Time of Adoption (not random time of adoption)}
+\end{align*}
+
+<<echo=FALSE>>=
+fetch_important <- function(l, args=c(`p-val`="p.value", `Obs. Avg. threshold $t_0$`="t0", `Sim  Avg. threshold $\\bar t$`="mean_t"),
+                            format.args=list(digits=4, big.mark=",", format="f")) {
+  out <- lapply(l, "[", args)
+  out <- lapply(out, function(x) {
+    do.call(base::formatC, c(format.args, list(unlist(x))))
+  })
+  out <- do.call(cbind, out)
+  rownames(out) <- names(args)
+  out
+}
+@
+
+
+\scriptsize
+{
+\centering
+<<Struct test table, echo=FALSE, results='asis'>>=
+# knitr::kable(fetch_important(list(KFP=out.1, BF=out.2, MI=out.3)),
+#              format="latex", booktabs=TRUE, escape=FALSE)
+library(xtable)
+print(xtable(fetch_important(list(`Korean Family`=out.1, `Brazilian Farmers`=out.2, `Medical Innovation`=out.3))),
+      table.placement='H', sanitize.text.function=function(x) x,
+      booktabs=TRUE, with='.6\\linewidth')
+@
+}
+\normalsize
+
+<<Plotting, echo=FALSE, fig.width=10, fig.height=2.75>>=
+oldpar <- par(no.readonly = TRUE)
+par(mfcol=c(1,3))
+hist(out.1, main="Korean Family Planning")
+hist(out.2, main="Brazilian Farmers")
+hist(out.3, main="Medical Innovation")
+par(oldpar)
+save(out.1, out.2, out.3, file="rewired.rda")
+@
+
+
+\end{frame}
+
+\note[enumerate]{
+  \item Finally, ndR can do statistical inference for network data
+  \item The struct test function implements a new non-parametric test that mixes
+    network structure and vertices covariates.
+  \item A nice alternative for parametric ERGMs and SIENAs for those of you
+    close to the network inference. In this example we are testing if time of
+    adoption (TOA) was independent from the network structure or not.
+  \item Applied to the three classical datasets, it shows strong evidence towards
+    diffusion effects on the diffusion of Hybrid Corn Seeds (supporting previous
+    findings).
+}
+
+\section{Concluding remarks}\framesec
+
+\begin{frame}
+\frametitle{Concluding remarks}
+
+So, to conclude, \ndR
+
+\begin{itemize}
+\item<+-> Is an R package focused on network diffusion \alt<1>{of innovations}{\sout{of innovations} (in general)}\pause.
+\begin{itemize}
+\item Health behavior diffusion (tobacco, drinking, etc.),
+\item Memes on social media,
+\item Country-level spill over effects (FCTC)
+\item ... social contagion (human or not) in general.\only<3->{\footnote{Social learning in animals, see \href{http://rspb.royalsocietypublishing.org/cgi/doi/10.1098/rspb.2008.1824}{Franz and Nunn (2009)}}}
+\end{itemize}\pause
+\item<+-> Provides out-of-the-box tools for network diffusion analysis (both classic and new),
+\item<+-> Complements your favorite SNA R package--\Rpkg{igraph}, \Rpkg{statnet}, \Rpkg{RSiena}, etc. (and further, work is been done to extend it to others \textit{s.a.} \Rpkg{spdep}, \Rpkg{spatialprobit})
+\item<+-> Is on active development, so stay tuned for more to come!
+\end{itemize}
+
+\end{frame}
+
+\frame{
+
+\begin{center}
+\Huge Thank you! \normalsize
+
+
+\begin{minipage}[m]{.35\linewidth}
+  % \includegraphics[width=.3\linewidth, clip=true, trim=1cm 1cm 1cm 1cm ]{cana_logo.pdf}
+  \raggedleft
+  \includegraphics[width=.8\linewidth]{Small_Use_Seal_BlackOnWhite.pdf}
+\end{minipage}
+\begin{minipage}[m]{.35\linewidth}
+  \raggedright
+  \includegraphics[width=.8\linewidth]{cana_logo.pdf}
+\end{minipage}
+
+
+\textbf{More info} \\
+\url{https://github.com/USCCANA/netdiffuseR}\\
+\url{http://cana.usc.edu}
+
+\textbf{contact} \\
+\href{mailto:vegayon@usc.edu}{vegayon@usc.edu}\\
+\href{https://twitter.com/gvegayon}{@gvegayon}
+\end{center}
+}
+
+\begin{frame}
+\frametitle{Sesssion Info}
+
+\begin{minipage}[m]{.35\linewidth}
+\scalebox{.8}{
+<<Session info 1, echo=FALSE, results='asis'>>=
+knitr::kable(t(data.frame(t(unclass(devtools::session_info()[[1]])))), col.names = " ", format="latex")
+@
+}
+\end{minipage}
+\hfill
+\begin{minipage}[m]{.6\linewidth}
+\scalebox{.65}{
+<<Session info 2, echo=FALSE, results='asis'>>=
+knitr::kable(devtools::session_info()[[2]], format = "latex")
+@
+}
+\end{minipage}
+\end{frame}
+
+\end{document}
+
