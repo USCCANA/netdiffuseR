@@ -7,7 +7,7 @@
   
 * Fixed bug in `rewire_graph.array`: Returned error when `algorithm="swap"`
 
-* Fixed bug in `rewire_graph`: The option `copy.first` was not bee applied correctly.
+* Fixed bug in `rewire_graph`: The option `copy.first` was not been applied correctly.
 
 * In `hist.diffnet_struct_test`: `...` now passed to `hist.default`.
 

@@ -46,7 +46,7 @@ test_that("Barabasi-Albert model: methods", {
 test_that("Watts-Strogatz model: Rewiring shouldn't change the # of elements", {
   # Generating the data
   set.seed(123)
-  for (i in 1:100) {
+  for (i in 1:50) {
     graph0 <- rgraph_ws(10,2,.1, undirected = TRUE)
     graph1 <- rgraph_ws(10,2,.5, undirected = TRUE)
     graph2 <- rgraph_ws(10,2,.5, undirected = TRUE)
@@ -96,7 +96,7 @@ test_that("Rewiring methods", {
 test_that("Rewiring must hold graph's density", {
   set.seed(1231)
 
-  ntimes <- 10
+  ntimes <- 5
 
   # BA model
   for (i in 1:ntimes) {

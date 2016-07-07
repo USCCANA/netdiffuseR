@@ -8,7 +8,7 @@
 \alias{struct_test}
 \title{Structure dependence test}
 \usage{
-n_rewires(graph, p = c(100L, rep(5L, nslices(graph) - 1)))
+n_rewires(graph, p = c(100L, rep(0.1, nslices(graph) - 1)))
 
 struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
   undirected = getOption("diffnet.undirected", FALSE), copy.first = TRUE,
@@ -105,7 +105,7 @@ are performed in each iteration.
 \examples{
 # Creating a random graph
 set.seed(881)
-diffnet <- rdiffnet(500, 10, seed.graph="small-world")
+diffnet <- rdiffnet(300, 5, seed.graph="small-world")
 
 # Testing structure-dependency of threshold
 res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)

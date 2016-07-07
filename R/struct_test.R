@@ -63,7 +63,7 @@
 #' @examples
 #' # Creating a random graph
 #' set.seed(881)
-#' diffnet <- rdiffnet(500, 10, seed.graph="small-world")
+#' diffnet <- rdiffnet(300, 5, seed.graph="small-world")
 #'
 #' # Testing structure-dependency of threshold
 #' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
@@ -79,9 +79,7 @@
 #'  )
 #'
 #' # Concatenating results
-#' res2 <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
-#'
-#' c(res, res2)
+#' c(res, res)
 #'
 #' # Running in parallel fashion
 #' \dontrun{
@@ -98,8 +96,8 @@ NULL
 #' @param p Either a Numeric scalar or vector of length \code{nslices(graph)-1}
 #' with the number of rewires per links.
 #' @rdname struct_test
-n_rewires <- function(graph, p=c(100L, rep(5L, nslices(graph) - 1))) {
-  unlist(nlinks(graph))*p
+n_rewires <- function(graph, p=c(100L, rep(.1, nslices(graph) - 1))) {
+  as.integer(round(unlist(nlinks(graph))*p))
 }
 
 
