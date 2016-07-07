@@ -19,6 +19,9 @@ test_that("struct_test should be reproducible (serial version)", {
 
 test_that("struct_test should be reproducible (parallel version)", {
 
+  # I don't want to run this test
+  skip_on_cran()
+
   # Generating data
   set.seed(1231)
   graph <- rdiffnet(150, 5, seed.graph = "small-world")
@@ -27,11 +30,11 @@ test_that("struct_test should be reproducible (parallel version)", {
   # RNG algorithm to be L'Ecuyer so the sequences can be reproduced
 
   N <- 100
-  set.seed(123, "L'Ecuyer-CMRG")
+  set.seed(123, "L'Ecuyer")
   b1 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=N, ncpus=2,
                  parallel="multicore")
 
-  set.seed(123, "L'Ecuyer-CMRG")
+  set.seed(123, "L'Ecuyer")
   b2 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=N, ncpus=2,
                  parallel="multicore")
 

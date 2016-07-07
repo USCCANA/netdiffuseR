@@ -27,45 +27,45 @@ test_that("exposure calculations", {
   # expect_equivalent(exp_1_diffnet, exp_1_manual)
 })
 
-# test_that("Times of Adoption", {
-#   # Creating the data
-#   set.seed(13131)
-#   toa <- sample(c(NA, 1:10), 100, TRUE)
-#
-#   toa_mat2 <- function(
-#     times, labels=NULL,
-#     t0=min(times, na.rm=TRUE), t1=max(times, na.rm=TRUE)) {
-#
-#     # Counting number of rows
-#     n <- length(times)
-#
-#     # Checking names
-#     if (length(labels)) rn <- labels
-#     else {
-#       rn <- names(times)
-#       if (!length(rn)) rn <- 1:n
-#     }
-#
-#     cn <- t0:t1
-#
-#     # Computing
-#     m <- matrix(0, nrow=n, ncol= t1-t0 + 1, dimnames = list(rn, cn))
-#     m[cbind(cn, times - t0 + 1)] <- 1
-#     m <- list(adopt=m, cumadopt=t(apply(m, 1, cumsum)))
-#
-#     # Assigning names
-#     dimnames(m[[2]]) <- dimnames(m[[1]])
-#
-#     m
-#   }
-#
-#   expect_equal(toa_mat(toa), toa_mat2(toa))
-# #   library(microbenchmark)
-# #   tm1 <- toa_mat(toa)
-# #   tm2 <- toa_mat2(toa)
-# #
-# #   microbenchmark(
-# #     toa_mat(toa),
-# #     toa_mat2(toa), times = 1
-# #   )
-# })
+test_that("Times of Adoption", {
+  # Creating the data
+  set.seed(13131)
+  toa <- sample(c(NA, 1:10), 100, TRUE)
+
+  toa_mat2 <- function(
+    times, labels=NULL,
+    t0=min(times, na.rm=TRUE), t1=max(times, na.rm=TRUE)) {
+
+    # Counting number of rows
+    n <- length(times)
+
+    # Checking names
+    if (length(labels)) rn <- labels
+    else {
+      rn <- names(times)
+      if (!length(rn)) rn <- 1:n
+    }
+
+    cn <- t0:t1
+
+    # Computing
+    m <- matrix(0, nrow=n, ncol= t1-t0 + 1, dimnames = list(rn, cn))
+    m[cbind(rn, times - t0 + 1)] <- 1
+    m <- list(adopt=m, cumadopt=t(apply(m, 1, cumsum)))
+
+    # Assigning names
+    dimnames(m[[2]]) <- dimnames(m[[1]])
+
+    m
+  }
+
+  expect_equal(toa_mat(toa), toa_mat2(toa))
+  # library(microbenchmark)
+  # tm1 <- toa_mat(toa)
+  # tm2 <- toa_mat2(toa)
+  #
+  # microbenchmark(
+  #   toa_mat(toa),
+  #   toa_mat2(toa), times = 1000
+  # )
+})

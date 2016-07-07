@@ -63,10 +63,10 @@
 #' @examples
 #' # Creating a random graph
 #' set.seed(881)
-#' diffnet <- rdiffnet(300, 5, seed.graph="small-world")
+#' diffnet <- rdiffnet(100, 5, seed.graph="small-world")
 #'
 #' # Testing structure-dependency of threshold
-#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=50)
+#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
 #' res
 #' hist(res)
 #'

@@ -1,8 +1,6 @@
 context("Plotting functions 1 (plot_diffnet, threshold, and exposure)")
 
-################################################################################
-# plot_diffnet
-################################################################################
+# plot_diffnet -----------------------------------------------------------------
 
 test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   # Creating the graph
@@ -28,9 +26,7 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   expect_equal(dim(coords), c(11,2), info = "applying to diffnet")
 })
 
-################################################################################
-# plot_threshold, threshold and exposure
-################################################################################
+# plot_threshold, threshold and exposure ---------------------------------------
 
 test_that("Returning threshold equal to the threshold fun (plot_threshold and )", {
   # Generating a random graph
@@ -66,9 +62,8 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   expect_equivalent(th, thdn)
 })
 
-################################################################################
-# plot_infectsuscept, infection, susceptibility
-################################################################################
+# plot_infectsuscept, infection, susceptibility --------------------------------
+
 
 test_that("Returning threshold equal to the infect/suscept funs", {
   # Generating a random graph
@@ -129,3 +124,25 @@ test_that("summary.diffnet with slices", {
   }
 })
 
+# Concatenating diffnet --------------------------------------------------------
+test_that('concatenating diffnet', {
+
+  # Spliting and putting together
+  index <- medInnovationsDiffNet[['city']]<2
+  mi1 <- medInnovationsDiffNet[which(index)]
+  mi2 <- medInnovationsDiffNet[which(!index)]
+
+  mi <- c(mi1, mi2)
+  test <- all(mapply(identical, mi$graph, medInnovationsDiffNet$graph))
+
+  expect_true(test)
+
+  # Errors
+  expect_error(c(mi1, 1), 'Some objects are not of class')
+  expect_error(c(mi1, mi1), 'No pair of diffnets')
+  expect_error(c(mi1[,,1:4], mi2), 'same time range')
+  # mi1less <- mi1[['city']] <- NULL
+  # colnames(mi1less)
+  # expect_error(c())
+
+})

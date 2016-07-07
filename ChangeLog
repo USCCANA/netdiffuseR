@@ -1,3 +1,10 @@
+2016-07-07  George G. Vega Yon <g.vegayon@gmail.com>
+  * R/diffnet-indexing.R: Adding method for [[.diffnet <- NULL
+  * tests/testthat/*: Adding more tests + small changes to reduce time.
+
+2016-07-06  George G. Vega Yon <g.vegayon@gmail.com>
+  * R/struc_test.R: Changing defaults in n_rewires.
+
 2016-06-26  George G. Vega Yon <g.vegayon@gmail.com>
   * R/egonets.R: Fixing small bug on the matrix methods
   * R/diffnet-methods.R: No actual significant changes

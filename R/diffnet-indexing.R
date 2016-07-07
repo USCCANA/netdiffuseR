@@ -317,7 +317,34 @@ diffnet_check_attr_class <- function(value, meta) {
   # Checking and preparing the data
   meta <- x$meta
   if (length(j) < meta$n) meta$n <- length(j)
-  value <- diffnet_check_attr_class(value, meta)
+  if (length(value)) value <- diffnet_check_attr_class(value, meta)
+  else {
+
+    if (i %in% colnames(x$vertex.static.attrs)) {
+
+      # Static case
+      tokeep <- colnames(x$vertex.static.attrs)
+      tokeep <- tokeep[which(tokeep != i)]
+      x$vertex.static.attrs <- subset(x$vertex.static.attrs, select=tokeep)
+      return(x)
+
+    } else if (i %in% colnames(x$vertex.dyn.attrs[[1]])) {
+
+      # Dynamic case
+      tokeep <- colnames(x$vertex.dyn.attrs[[1]])
+      tokeep <- tokeep[which(tokeep != i)]
+      x$vertex.dyn.attrs <-
+        lapply(x$vertex.dyn.attrs, subset, select=tokeep)
+      return(x)
+    } else {
+
+      # Nothing case
+      warning('There is no attribute called -',i,'-. Returning the diffnet intact.')
+      return(x)
+    }
+
+
+  }
 
   # Adding the attribute
   if (!inherits(value, "list")) {
