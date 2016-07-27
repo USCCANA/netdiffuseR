@@ -9,7 +9,7 @@ test_that("Comparing against ape::Moran.I", {
   for (i in 1:10) {
     x <- rnorm(1000)
     expect_equal(
-      moran(x,w), ape::Moran.I(x, w)$observed, scale=1, tolerance=getOption("diffnet.tol")
+      moran(x,w)[[1]], ape::Moran.I(x, w)$observed, scale=1, tolerance=getOption("diffnet.tol")
     )
   }
 }

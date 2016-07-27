@@ -26,4 +26,7 @@ arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt);
 arma::colvec threshold_cpp(const arma::mat & exposure,
                            const arma::vec & toa, bool include_censored=false);
 
+arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
+                                   const NumericMatrix & X, double p=2.0);
+
 #endif

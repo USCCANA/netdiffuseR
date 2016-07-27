@@ -61,6 +61,10 @@ unif_rand_w_exclusion <- function(n, e) {
     .Call('netdiffuseR_unif_rand_w_exclusion', PACKAGE = 'netdiffuseR', n, e)
 }
 
+sp_as_undirected <- function(x) {
+    .Call('netdiffuseR_sp_as_undirected', PACKAGE = 'netdiffuseR', x)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.
@@ -268,6 +272,28 @@ hazard_rate_cpp <- function(cumadopt) {
 
 threshold_cpp <- function(exposure, toa, include_censored = FALSE) {
     .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, toa, include_censored)
+}
+
+#' Computes p-norm between connected vertices
+#' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
+#' @param X A numeric matrix of size \eqn{n\times K}{n * K}. Vertices attributes
+#' @param p Numeric scalar. Norm to compute
+#' @return A symetric matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+#' @details For each par of vertices, the function computes the following
+#' \deqn{%
+#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\eqn 0
+#' }{%
+#' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
+#' }
+#' @export
+#' @examples
+#' set.seed(123)
+#' G <- rgraph_ws(20, 4, .1)
+#' X <- matrix(runif(40), ncol=2)
+#'
+#' vertex_covariate_dist(G, X)
+vertex_covariate_dist <- function(graph, X, p = 2.0) {
+    .Call('netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {

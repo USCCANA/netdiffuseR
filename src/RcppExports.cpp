@@ -138,7 +138,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // moran_cpp
-double moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
+std::vector<double> moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
 RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -206,6 +206,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type e(eSEXP);
     __result = Rcpp::wrap(unif_rand_w_exclusion(n, e));
+    return __result;
+END_RCPP
+}
+// sp_as_undirected
+arma::sp_mat sp_as_undirected(const arma::sp_mat& x);
+RcppExport SEXP netdiffuseR_sp_as_undirected(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
+    __result = Rcpp::wrap(sp_as_undirected(x));
     return __result;
 END_RCPP
 }
@@ -471,6 +482,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type toa(toaSEXP);
     Rcpp::traits::input_parameter< bool >::type include_censored(include_censoredSEXP);
     __result = Rcpp::wrap(threshold_cpp(exposure, toa, include_censored));
+    return __result;
+END_RCPP
+}
+// vertex_covariate_dist
+arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const NumericMatrix& X, double p);
+RcppExport SEXP netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    __result = Rcpp::wrap(vertex_covariate_dist(graph, X, p));
     return __result;
 END_RCPP
 }

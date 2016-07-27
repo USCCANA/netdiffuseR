@@ -87,3 +87,22 @@ int unif_rand_w_exclusion(int n, int e) {
   }
   return(num);
 }
+
+
+// [[Rcpp::export]]
+arma::sp_mat sp_as_undirected(const arma::sp_mat & x) {
+  // Getting start-end
+  arma::sp_mat::const_iterator start = x.begin();
+  arma::sp_mat::const_iterator end   = x.end();
+
+  // Empty mat
+  arma::sp_mat newx(x);
+
+  for (arma::sp_mat::const_iterator it = start; it != end; ++it) {
+    int i = it.row();
+    int j = it.col();
+    newx.at(j,i) = *it;
+  }
+
+  return newx;
+}

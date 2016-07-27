@@ -1,3 +1,14 @@
+# Changes in netdiffuseR version 1.16.7.9000 (2016-07-27)
+
+## New features and changes
+
+* The function `struct_test` now allows other types of graphs.
+
+## New functions
+
+* `vertex_covariate_dist` computes distances between vertices using both the graph
+  and a matrix of length nxK.
+
 # Changes in netdiffuseR version 1.16.7 (2016-07-07)
 
 ## Bug fixes

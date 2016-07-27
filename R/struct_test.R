@@ -115,14 +115,14 @@ struct_test <- function(
   ...
   ) {
 
-  # Checking class
-  if (!inherits(graph, "diffnet"))
-    stop("-graph- must be of class diffnet.")
+  # # Checking class
+  # if (!inherits(graph, "diffnet"))
+  #   stop("-graph- must be of class diffnet.")
 
   # Preparing the call to boot
   rewire.args$graph <- graph
   statisticpll <- function(d, i, fn, rewire.args, ...) {
-    fn(do.call(rewire_graph, rewire.args))
+    fn(do.call(rewire_graph, rewire.args),...)
   }
 
   # Calling boot
@@ -182,8 +182,8 @@ print.diffnet_struct_test <- function(x, ...) {
 
     cat("Structure dependence test\n",
         "# Simulations     : ", formatC(nrow(boot$t), digits = 0, format = "f", big.mark = ","),"\n",
-        "# nodes           : ", formatC(x$graph$meta$n, digits = 0, format = "f", big.mark = ","),"\n",
-        "# of time periods : ", formatC(x$graph$meta$nper, digits = 0, format = "f", big.mark = ","),"\n",
+        "# nodes           : ", formatC(nnodes(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
+        "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         paste(rep("-",80), collapse=""),"\n",
         " H0: t - t0 = 0 (no structure dependency)\n",
         "   t0 (observed) = ", t0, "\n",

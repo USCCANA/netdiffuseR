@@ -212,3 +212,43 @@ double graph_density(arma::sp_mat graph, bool undirected=false) {
 
 }
 */
+
+//' Computes p-norm between connected vertices
+//' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
+//' @param X A numeric matrix of size \eqn{n\times K}{n * K}. Vertices attributes
+//' @param p Numeric scalar. Norm to compute
+//' @return A symetric matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+//' @details For each par of vertices, the function computes the following
+//' \deqn{%
+//' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\eqn 0
+//' }{%
+//' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
+//' }
+//' @export
+//' @examples
+//' set.seed(123)
+//' G <- rgraph_ws(20, 4, .1)
+//' X <- matrix(runif(40), ncol=2)
+//'
+//' vertex_covariate_dist(G, X)
+// [[Rcpp::export]]
+arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatrix & X, double p=2.0) {
+
+  // Creating objects
+  arma::sp_mat res(graph.n_rows,graph.n_cols);
+  arma::sp_mat::const_iterator b = graph.begin();
+  arma::sp_mat::const_iterator e = graph.end();
+
+  // Iterating over elements of graph
+  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
+    if (iter.col() < iter.row()) continue;
+
+    for (int k=0;k<X.ncol();k++)
+      res.at(iter.row(), iter.col()) += pow(fabs(X(iter.col(),k) - X(iter.row(),k)), p);
+
+    res.at(iter.row(), iter.col()) = pow(res.at(iter.row(), iter.col()), 1/p);
+    res.at(iter.col(), iter.row()) = res.at(iter.row(), iter.col());
+  }
+
+  return res;
+}

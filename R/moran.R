@@ -40,6 +40,8 @@ moran <- function(x, w, normalize.w=TRUE) {
   if (normalize.w)
     w <- w/(rowSums(w) + 1e-15)
 
-  moran_cpp(x, w)
+  res <- moran_cpp(x, w)
+  names(res) <- c("I", "Var")
+  res
 }
 

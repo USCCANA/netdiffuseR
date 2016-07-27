@@ -69,3 +69,24 @@ test_that("Times of Adoption", {
   #   toa_mat2(toa), times = 1000
   # )
 })
+
+test_that("vertex_covariate_distance", {
+  set.seed(123131231)
+  n <- 20
+  X <- matrix(runif(n*2, -1,1), ncol=2)
+  W <- rgraph_ws(n,4,.2)
+
+  D <- vertex_covariate_dist(W,X)
+  D2 <- methods::as(matrix(0, n,n), "dgCMatrix")
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      if (W[i,j]) {
+        D2[i,j] = as.numeric(dist(X[c(i,j),]))
+        D2[j,i] = D2[i,j]
+      }
+    }
+  }
+
+  expect_equal(sum(D2-D), 0)
+})
