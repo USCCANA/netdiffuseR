@@ -380,7 +380,7 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
   xrange <- range(coords[,1])
   xlim   <- xrange + c(0, (xrange[2]-xrange[1])*intra.space[1]*(mfrow.par[2] - 1))
 
-  yrange <- range(coords[,1])
+  yrange <- range(coords[,2])
   ylim   <- yrange - c((yrange[2]-yrange[1])*intra.space[2]*(mfrow.par[1] - 1), 0)
 
   # Adjustems depending on the number of slice

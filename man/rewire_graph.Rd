@@ -91,9 +91,12 @@ Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, 
  \item Next i.
 }
 
-Milo et al. (2004) suggests that in order for the rewired graph to be independent
+In Milo et al. (2004) is suggested that in order for the rewired graph to be independent
 from the original one researchers usually iterate around \code{nlinks(graph)*100}
-times, so \code{p=nlinks(graph)*100} is recommended.
+times, so \code{p=nlinks(graph)*100}. On the other hand in Ray et al (2012)
+it is shown that in order to achive such it is needed to perform
+\code{nlinks(graph)*log(1/eps)}, where \code{eps}\eqn{\sim}1e-7, in other words,
+around \code{nlinks(graph)*16}. We set the default to be 20.
 }
 
 \section{\emph{Endpoints} algorithm}{
@@ -167,6 +170,16 @@ Milo, R., Kashtan, N., Itzkovitz, S., Newman, M. E. J., & Alon, U.
 (2004). On the uniform generation of random graphs with prescribed degree sequences.
 Arxiv Preprint condmat0312028, cond-mat/0, 1–4. Retrieved from
 \url{http://arxiv.org/abs/cond-mat/0312028}
+
+Ray, J., Pinar, A., and Seshadhri, C. (2012).
+Are we there yet? When to stop a Markov chain while generating random graphs.
+pages 1–21.
+
+Ray, J., Pinar, A., & Seshadhri, C. (2012). Are We There Yet? When to Stop a
+Markov Chain while Generating Random Graphs. In A. Bonato & J. Janssen (Eds.),
+Algorithms and Models for the Web Graph (Vol. 7323, pp. 153–164).
+Berlin, Heidelberg: Springer Berlin Heidelberg.
+\url{http://doi.org/10.1007/978-3-642-30541-2}
 }
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},

@@ -96,7 +96,7 @@ NULL
 #' @param p Either a Numeric scalar or vector of length \code{nslices(graph)-1}
 #' with the number of rewires per links.
 #' @rdname struct_test
-n_rewires <- function(graph, p=c(100L, rep(.1, nslices(graph) - 1))) {
+n_rewires <- function(graph, p=c(20L, rep(.1, nslices(graph) - 1))) {
   as.integer(round(unlist(nlinks(graph))*p))
 }
 
@@ -177,17 +177,18 @@ c.diffnet_struct_test <- function(..., recursive=FALSE) {
 #' @export
 #' @rdname struct_test
 print.diffnet_struct_test <- function(x, ...) {
+
   with(x,  {
-    tmean <- colMeans(boot$t, na.rm = TRUE)
+    nsim <- ifelse(!is.na(R), R, 0)
 
     cat("Structure dependence test\n",
-        "# Simulations     : ", formatC(nrow(boot$t), digits = 0, format = "f", big.mark = ","),"\n",
+        "# Simulations     : ", formatC(nsim, digits = 0, format = "f", big.mark = ","),"\n",
         "# nodes           : ", formatC(nnodes(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         paste(rep("-",80), collapse=""),"\n",
-        " H0: t - t0 = 0 (no structure dependency)\n",
-        "   t0 (observed) = ", t0, "\n",
-        "   t (simulated) = ", mean_t, "\n",
+        " H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)\n",
+        "   E[beta(Y,G)|G] (observed) = ", t0, "\n",
+        "   E[beta(Y,G)] (expected)   = ", mean_t, "\n",
         "   p-value = ", sprintf("%.5f", p.value), sep="")
   })
   invisible(x)
@@ -232,4 +233,62 @@ hist.diffnet_struct_test <- function(
 # , nsim)
 #
 # ttest<-(boot_thr$t[1,] - mean(threshold(net), na.rm=TRUE))/boot_thr$t[2,]
+
+#' @export
+#' @rdname struct_test
+#' @param Y Numeric vector of length \eqn{n}.
+#' @param statistic_name Character scalar. Name of the metric to compute.
+struct_test_approx <- function(
+  graph, Y,
+  statistic_name=c("distance",">","<","==", ">=", "<="), p=2.0, ...) {
+
+  # Distance metric
+  if (statistic_name == "distance") D <- vertex_covariate_dist(graph, cbind(Y), p)
+  else D <- vertex_covariate_compare(graph, Y, statistic_name)
+
+  # Computing observed mean
+  m_obs <- mean(Matrix::rowSums(D*graph)/(Matrix::rowSums(graph) + 1e-15), na.rm=TRUE)
+
+  # Computing theoreticals
+  m_null <- struct_test_mean(Y, statistic_name)
+  v_null <- struct_test_var(Y, statistic_name)
+
+  p.value <- pnorm(sqrt(nnodes(graph))*(m_obs-m_null)/sqrt(v_null))
+  p.value <- ifelse(p.value > .5, 1-p.value, p.value)*2
+
+  # Creating the object
+  out <- list(
+    graph       = graph,
+    p.value     = p.value,
+    t0          = m_obs,
+    mean_t      = m_null,
+    R           = NA,
+    statistic   = statistic_name,
+    boot        = NA,
+    rewire.args = NA
+  )
+
+  return(structure(out, class="diffnet_struct_test"))
+}
+
+
+# library(mvtnorm)
+#
+# rm(list=ls())
+# set.seed(123)
+# n <- 400
+# G <- rgraph_ws(n,8,.2)
+# G <- G/(Matrix::rowSums(G) + 1e-15)
+# X <- cbind(rchisq(n, 4))
+#
+# # Case 1
+# ape::Moran.I(as.vector(X), as.matrix(G))
+# struct_test_approx(G, X, "distance")
+#
+# # Case 2
+# X <- as.vector(
+#   solve(Matrix::Diagonal(n) - .4*G) %*% matrix(rmvnorm(1, rep(1,n)), ncol=1)
+# )
+# ape::Moran.I(as.vector(X), as.matrix(G))
+# struct_test_approx(G, X, "distance")
 

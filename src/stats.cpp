@@ -235,20 +235,44 @@ double graph_density(arma::sp_mat graph, bool undirected=false) {
 arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatrix & X, double p=2.0) {
 
   // Creating objects
-  arma::sp_mat res(graph.n_rows,graph.n_cols);
+  arma::sp_mat ans(graph.n_rows,graph.n_cols);
   arma::sp_mat::const_iterator b = graph.begin();
   arma::sp_mat::const_iterator e = graph.end();
 
   // Iterating over elements of graph
   for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
-    if (iter.col() < iter.row()) continue;
-
     for (int k=0;k<X.ncol();k++)
-      res.at(iter.row(), iter.col()) += pow(fabs(X(iter.col(),k) - X(iter.row(),k)), p);
+      ans.at(iter.row(), iter.col()) += pow(fabs(X(iter.col(),k) - X(iter.row(),k)), p);
 
-    res.at(iter.row(), iter.col()) = pow(res.at(iter.row(), iter.col()), 1/p);
-    res.at(iter.col(), iter.row()) = res.at(iter.row(), iter.col());
+    ans.at(iter.row(), iter.col()) = pow(ans.at(iter.row(), iter.col()), 1/p);
   }
 
-  return res;
+  return ans;
+}
+
+// [[Rcpp::export]]
+arma::sp_mat vertex_covariate_compare(const arma::sp_mat & graph, const NumericVector & X,
+                                      std::string symbol) {
+
+  // Creating objects
+  arma::sp_mat ans(graph.n_rows,graph.n_cols);
+  arma::sp_mat::const_iterator b = graph.begin();
+  arma::sp_mat::const_iterator e = graph.end();
+
+  // Iterating over elements of graph
+  int i,j;
+  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
+    i = iter.row();
+    j = iter.col();
+
+    if (symbol == ">")       ans.at(i,j) = (int) (X[i] > X[j]);
+    else if  (symbol == "<") ans.at(i,j) = (int) (X[i] < X[j]);
+    else if (symbol == ">=") ans.at(i,j) = (int) (X[i] >= X[j]);
+    else if (symbol == "<=") ans.at(i,j) = (int) (X[i] <= X[j]);
+    else if (symbol == "==") ans.at(i,j) = (int) (X[i] == X[j]);
+    else Rcpp::stop("Invalid symbol");
+
+  }
+
+  return ans;
 }

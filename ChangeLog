@@ -1,14 +1,36 @@
+2016-08-12  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.R: Fixing bug in plot_diffnet on the range of the
+	plot.
+	* R/struct_test.R: New function for exact test (experimental).
+
+2016-08-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/struct_test.cpp: Adding new functions for computing exact text.
+	* R/struct_test.R: Adding new functions for computing exact text.
+
+2016-08-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Adding internal function to compute distances.
+	This is used in the new version of rgraph_ba.
+	* src/rgraph_ba.cpp: Working on new algorithm for scale-free + covariates.
+
+2016-08-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/rewire.R: Changing default number in `n_rewires` from 100 to 20 + adding
+	explaination.
+
+2016-07-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/moran.R: Adding variance of Moran's I (not user visible yet)
+	* R/diffnet-methods.R: idem.
+
 2016-07-07  George G. Vega Yon <g.vegayon@gmail.com>
-  * R/diffnet-indexing.R: Adding method for [[.diffnet <- NULL
-  * tests/testthat/*: Adding more tests + small changes to reduce time.
+	* R/diffnet-indexing.R: Adding method for [[.diffnet <- NULL
+	* tests/testthat/*: Adding more tests + small changes to reduce time.
 
 2016-07-06  George G. Vega Yon <g.vegayon@gmail.com>
-  * R/struc_test.R: Changing defaults in n_rewires.
+	* R/struc_test.R: Changing defaults in n_rewires.
 
 2016-06-26  George G. Vega Yon <g.vegayon@gmail.com>
-  * R/egonets.R: Fixing small bug on the matrix methods
-  * R/diffnet-methods.R: No actual significant changes
-  * R/plot_diffnet2.R: Fixing small bug and improving doc.
+	* R/egonets.R: Fixing small bug on the matrix methods
+	* R/diffnet-methods.R: No actual significant changes
+	* R/plot_diffnet2.R: Fixing small bug and improving doc.
 
 2016-06-21  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.R: Changing defaults and adding examples

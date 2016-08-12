@@ -1,3 +1,5 @@
+library(netdiffuseR)
+library(testthat)
 context("Plotting functions 1 (plot_diffnet, threshold, and exposure)")
 
 # plot_diffnet -----------------------------------------------------------------

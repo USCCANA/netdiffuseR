@@ -6,9 +6,10 @@
 \alias{n_rewires}
 \alias{print.diffnet_struct_test}
 \alias{struct_test}
+\alias{struct_test_approx}
 \title{Structure dependence test}
 \usage{
-n_rewires(graph, p = c(100L, rep(0.1, nslices(graph) - 1)))
+n_rewires(graph, p = c(20L, rep(0.1, nslices(graph) - 1)))
 
 struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
   undirected = getOption("diffnet.undirected", FALSE), copy.first = TRUE,
@@ -23,6 +24,9 @@ struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
   of ~ t), breaks = 20, annotated = TRUE, b0 = expression(atop(plain("")
   \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
   t[]), ...)
+
+struct_test_approx(graph, Y, statistic_name = c("distance", ">", "<", "==",
+  ">=", "<="), p = 2, ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}
@@ -53,6 +57,10 @@ with the number of rewires per links.}
 \item{b0}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.}
 
 \item{b}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.}
+
+\item{Y}{Numeric vector of length \eqn{n}.}
+
+\item{statistic_name}{Character scalar. Name of the metric to compute.}
 }
 \value{
 A list of class \code{diffnet_bot} containing the following:

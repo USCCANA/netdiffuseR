@@ -304,13 +304,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rgraph_ba_cpp
-arma::sp_mat rgraph_ba_cpp(arma::sp_mat graph, arma::colvec dgr, int m, int t);
+arma::sp_mat rgraph_ba_cpp(const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t);
 RcppExport SEXP netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::sp_mat >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type dgr(dgrSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type dgr(dgrSEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     __result = Rcpp::wrap(rgraph_ba_cpp(graph, dgr, m, t));
@@ -327,6 +327,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     __result = Rcpp::wrap(rgraph_ba_new_cpp(m0, m, t));
+    return __result;
+END_RCPP
+}
+// rgraph_ba2_cpp
+arma::sp_mat rgraph_ba2_cpp(const arma::sp_mat& graph, const arma::colvec& dgr, const arma::mat& X, int m, int t);
+RcppExport SEXP netdiffuseR_rgraph_ba2_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP XSEXP, SEXP mSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type dgr(dgrSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    __result = Rcpp::wrap(rgraph_ba2_cpp(graph, dgr, X, m, t));
     return __result;
 END_RCPP
 }
@@ -498,6 +513,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// vertex_covariate_compare
+arma::sp_mat vertex_covariate_compare(const arma::sp_mat& graph, const NumericVector& X, std::string symbol);
+RcppExport SEXP netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP symbolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< std::string >::type symbol(symbolSEXP);
+    __result = Rcpp::wrap(vertex_covariate_compare(graph, X, symbol));
+    return __result;
+END_RCPP
+}
 // struct_equiv_cpp
 List struct_equiv_cpp(const arma::sp_mat& graph, double v, bool unscaled, bool inv, double invrep);
 RcppExport SEXP netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP, SEXP unscaledSEXP, SEXP invSEXP, SEXP invrepSEXP) {
@@ -510,6 +538,32 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type inv(invSEXP);
     Rcpp::traits::input_parameter< double >::type invrep(invrepSEXP);
     __result = Rcpp::wrap(struct_equiv_cpp(graph, v, unscaled, inv, invrep));
+    return __result;
+END_RCPP
+}
+// struct_test_mean
+double struct_test_mean(NumericVector& y, std::string funname, bool self);
+RcppExport SEXP netdiffuseR_struct_test_mean(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    __result = Rcpp::wrap(struct_test_mean(y, funname, self));
+    return __result;
+END_RCPP
+}
+// struct_test_var
+double struct_test_var(NumericVector& y, std::string funname, bool self);
+RcppExport SEXP netdiffuseR_struct_test_var(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    __result = Rcpp::wrap(struct_test_var(y, funname, self));
     return __result;
 END_RCPP
 }

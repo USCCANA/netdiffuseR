@@ -106,3 +106,17 @@ arma::sp_mat sp_as_undirected(const arma::sp_mat & x) {
 
   return newx;
 }
+
+void _covariate_distance(arma::sp_mat & D, const arma::mat & x, double p=2.0, bool symetric=false) {
+
+  for (int i=0;i<x.size();i++)
+    for (int j=0;j<i;j++) {
+      for (int k=0;k<x.n_cols;k++)
+        D.at(i,j) += pow(x.at(i,k) - x.at(j,k), p);
+      D.at(i,j) = pow(D.at(i,j), 1.0/p);
+      if (symetric) D.at(j,i) = D.at(i,j);
+    }
+
+    return;
+}
+

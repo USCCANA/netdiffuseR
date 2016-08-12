@@ -215,6 +215,10 @@ rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L) {
     .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t)
 }
 
+rgraph_ba2_cpp <- function(graph, dgr, X, m = 1L, t = 10L) {
+    .Call('netdiffuseR_rgraph_ba2_cpp', PACKAGE = 'netdiffuseR', graph, dgr, X, m, t)
+}
+
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
@@ -296,7 +300,19 @@ vertex_covariate_dist <- function(graph, X, p = 2.0) {
     .Call('netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
 }
 
+vertex_covariate_compare <- function(graph, X, symbol) {
+    .Call('netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, symbol)
+}
+
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
     .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
+}
+
+struct_test_mean <- function(y, funname, self = FALSE) {
+    .Call('netdiffuseR_struct_test_mean', PACKAGE = 'netdiffuseR', y, funname, self)
+}
+
+struct_test_var <- function(y, funname, self = FALSE) {
+    .Call('netdiffuseR_struct_test_var', PACKAGE = 'netdiffuseR', y, funname, self)
 }
 
