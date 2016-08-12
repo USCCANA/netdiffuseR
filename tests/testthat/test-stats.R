@@ -79,14 +79,7 @@ test_that("vertex_covariate_distance", {
   D <- vertex_covariate_dist(W,X)
   D2 <- methods::as(matrix(0, n,n), "dgCMatrix")
 
-  for (i in 1:n) {
-    for (j in i:n) {
-      if (W[i,j]) {
-        D2[i,j] = as.numeric(dist(X[c(i,j),]))
-        D2[j,i] = D2[i,j]
-      }
-    }
-  }
+  D2 <- methods::as(as.matrix(dist(X)), "dgCMatrix")*W
 
   expect_equal(sum(D2-D), 0)
 })

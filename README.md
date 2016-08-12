@@ -315,24 +315,32 @@ sessionInfo()
 ```
 
     ## R version 3.3.1 (2016-06-21)
-    ## Platform: x86_64-apple-darwin15.5.0 (64-bit)
-    ## Running under: OS X 10.11.3 (El Capitan)
+    ## Platform: x86_64-pc-linux-gnu (64-bit)
+    ## Running under: Ubuntu 14.04.5 LTS
     ## 
     ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+    ##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+    ##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+    ##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+    ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
     ## 
     ## attached base packages:
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] SparseM_1.7        netdiffuseR_1.16.6
+    ## [1] netdiffuseR_1.16.7.9000
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.5     lattice_0.20-33 digest_0.6.9    MASS_7.3-45    
-    ##  [5] grid_3.3.1      formatR_1.4     magrittr_1.5    evaluate_0.9   
-    ##  [9] stringi_1.1.1   Matrix_1.2-6    sna_2.3-2       boot_1.3-18    
-    ## [13] rmarkdown_0.9.6 tools_3.3.1     stringr_1.0.0   igraph_1.0.1   
-    ## [17] yaml_2.1.13     htmltools_0.3.5 knitr_1.13
+    ##  [1] statnet.common_3.3.0 Rcpp_0.12.6          lattice_0.20-33     
+    ##  [4] digest_0.6.10        MASS_7.3-45          grid_3.3.1          
+    ##  [7] formatR_1.4          magrittr_1.5         evaluate_0.9        
+    ## [10] stringi_1.1.1        SparseM_1.7          Matrix_1.2-6        
+    ## [13] sna_2.4              boot_1.3-18          rmarkdown_1.0       
+    ## [16] tools_3.3.1          stringr_1.0.0        igraph_1.0.1        
+    ## [19] network_1.13.0       yaml_2.1.13          htmltools_0.3.5     
+    ## [22] knitr_1.13
 
 To-do list
 ----------

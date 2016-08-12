@@ -25,8 +25,13 @@
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 #' \item{rewire.args}{The list \code{rewire.args} passed to \code{struct_test}.}
 #'
-#' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #' @details
+#' \code{struct_test} computes the test by generating the null distribution using
+#' Monte Carlo simulations (rewiring). \code{struct_test_asymp} computes the
+#' test using an asymptotic approximation.
+#'
+#' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
+#'
 #' \code{struct_test} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
 #' \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
 #' rewires the original graph using \code{\link{rewire_graph}} and applies
@@ -48,6 +53,15 @@
 #'
 #' Where \eqn{\mbox{Pr}\{\cdot\}}{Pr(.)} is approximated using the
 #' Empirical Distribution Function retrieved from the simulations.
+#'
+#' For the case of the asymptotic approximation, under the null we have
+#'
+#' \deqn{%
+#' \sqrt{n}\left(\hat\beta(\Depvar,\Graph)-\mu_\beta\right)\overset{d}{\sim}\mbox{N}\left(0,\sigma_\beta^2\right)
+#' }{%
+#' sqrt(n)*[mean(beta) - E[beta]]/Var[beta] ~ N(0,1)
+#' }
+#'
 #'
 #' The test is actually on development by Vega Yon and Valente. A copy of the
 #' working paper can be distributed upon request to \email{g.vegayon@gmail.com}.
@@ -237,10 +251,12 @@ hist.diffnet_struct_test <- function(
 #' @export
 #' @rdname struct_test
 #' @param Y Numeric vector of length \eqn{n}.
-#' @param statistic_name Character scalar. Name of the metric to compute.
-struct_test_approx <- function(
+#' @param statistic_name Character scalar. Name of the metric to compute. Currently
+#' this can be either \code{"distance"},\code{">"},\code{"<"},\code{"=="}, \code{">="},
+#' or \code{"<="}.
+struct_test_asymp <- function(
   graph, Y,
-  statistic_name=c("distance",">","<","==", ">=", "<="), p=2.0, ...) {
+  statistic_name="distance", p=2.0, ...) {
 
   # Distance metric
   if (statistic_name == "distance") D <- vertex_covariate_dist(graph, cbind(Y), p)

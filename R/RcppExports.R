@@ -282,10 +282,11 @@ threshold_cpp <- function(exposure, toa, include_censored = FALSE) {
 #' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
 #' @param X A numeric matrix of size \eqn{n\times K}{n * K}. Vertices attributes
 #' @param p Numeric scalar. Norm to compute
-#' @return A symetric matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+#' @return A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}. Will
+#' be symmetric only if \code{graph} is symmetric.
 #' @details For each par of vertices, the function computes the following
 #' \deqn{%
-#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\eqn 0
+#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
 #' }{%
 #' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
 #' }

@@ -1,17 +1,28 @@
 
 
-CHANGES IN NETDIFFUSER VERSION 1.16.7.9000 (2016-07-27)
+CHANGES IN NETDIFFUSER VERSION 1.16.7.9000 (2016-08-12)
 
 
 New features and changes
 
 -   The function struct_test now allows other types of graphs.
 
+-   The function n_rewires now has a default of 20 (before it was 100).
+    This is based on a theoretical result (more details in the manual).
+
 
 New functions
 
 -   vertex_covariate_dist computes distances between vertices using both
     the graph and a matrix of length nxK.
+-   struct_test_asymp an asymptotic approximation of struct_test.
+
+
+Bug fixes
+
+-   plot_diffnet was computing the coordinates of the cells wrongly.
+    Most of the time causing adding figures outside of the
+    plotting area.
 
 
 

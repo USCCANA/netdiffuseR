@@ -6,7 +6,7 @@
 \alias{n_rewires}
 \alias{print.diffnet_struct_test}
 \alias{struct_test}
-\alias{struct_test_approx}
+\alias{struct_test_asymp}
 \title{Structure dependence test}
 \usage{
 n_rewires(graph, p = c(20L, rep(0.1, nslices(graph) - 1)))
@@ -25,8 +25,7 @@ struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
   \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
   t[]), ...)
 
-struct_test_approx(graph, Y, statistic_name = c("distance", ">", "<", "==",
-  ">=", "<="), p = 2, ...)
+struct_test_asymp(graph, Y, statistic_name = "distance", p = 2, ...)
 }
 \arguments{
 \item{graph}{A \code{\link{diffnet}} graph.}
@@ -60,7 +59,9 @@ with the number of rewires per links.}
 
 \item{Y}{Numeric vector of length \eqn{n}.}
 
-\item{statistic_name}{Character scalar. Name of the metric to compute.}
+\item{statistic_name}{Character scalar. Name of the metric to compute. Currently
+this can be either \code{"distance"},\code{">"},\code{"<"},\code{"=="}, \code{">="},
+or \code{"<="}.}
 }
 \value{
 A list of class \code{diffnet_bot} containing the following:
@@ -72,8 +73,6 @@ A list of class \code{diffnet_bot} containing the following:
 \item{statistic}{The function \code{statistic} passed to \code{struct_test}.}
 \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 \item{rewire.args}{The list \code{rewire.args} passed to \code{struct_test}.}
-
-The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 }
 \description{
 Test whether or not a network estimates can be considered structurally dependent, i.e.
@@ -82,6 +81,12 @@ a particular statistic \eqn{t}, the test compares the observed mean of \eqn{t}
 against the empirical distribution of it obtained from rewiring the network.
 }
 \details{
+\code{struct_test} computes the test by generating the null distribution using
+Monte Carlo simulations (rewiring). \code{struct_test_asymp} computes the
+test using an asymptotic approximation.
+
+The output from the \code{hist} method is the same as \code{\link{hist.default}}.
+
 \code{struct_test} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
 \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
 rewires the original graph using \code{\link{rewire_graph}} and applies
@@ -103,6 +108,15 @@ p(tau) = 2*min[Pr(t<=tau), Pr(t>=tau)] %
 
 Where \eqn{\mbox{Pr}\{\cdot\}}{Pr(.)} is approximated using the
 Empirical Distribution Function retrieved from the simulations.
+
+For the case of the asymptotic approximation, under the null we have
+
+\deqn{%
+\sqrt{n}\left(\hat\beta(\Depvar,\Graph)-\mu_\beta\right)\overset{d}{\sim}\mbox{N}\left(0,\sigma_\beta^2\right)
+}{%
+sqrt(n)*[mean(beta) - E[beta]]/Var[beta] ~ N(0,1)
+}
+
 
 The test is actually on development by Vega Yon and Valente. A copy of the
 working paper can be distributed upon request to \email{g.vegayon@gmail.com}.
