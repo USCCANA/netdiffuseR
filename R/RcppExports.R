@@ -301,8 +301,8 @@ vertex_covariate_dist <- function(graph, X, p = 2.0) {
     .Call('netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
 }
 
-vertex_covariate_compare <- function(graph, X, symbol) {
-    .Call('netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, symbol)
+vertex_covariate_compare <- function(graph, X, funname) {
+    .Call('netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, funname)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
@@ -315,5 +315,9 @@ struct_test_mean <- function(y, funname, self = FALSE) {
 
 struct_test_var <- function(y, funname, self = FALSE) {
     .Call('netdiffuseR_struct_test_var', PACKAGE = 'netdiffuseR', y, funname, self)
+}
+
+hatf <- function(G, Y, funname) {
+    .Call('netdiffuseR_hatf', PACKAGE = 'netdiffuseR', G, Y, funname)
 }
 

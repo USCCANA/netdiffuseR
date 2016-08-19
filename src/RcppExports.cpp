@@ -514,15 +514,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // vertex_covariate_compare
-arma::sp_mat vertex_covariate_compare(const arma::sp_mat& graph, const NumericVector& X, std::string symbol);
-RcppExport SEXP netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP symbolSEXP) {
+arma::sp_mat vertex_covariate_compare(const arma::sp_mat& graph, const NumericVector& X, std::string funname);
+RcppExport SEXP netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP funnameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< std::string >::type symbol(symbolSEXP);
-    __result = Rcpp::wrap(vertex_covariate_compare(graph, X, symbol));
+    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
+    __result = Rcpp::wrap(vertex_covariate_compare(graph, X, funname));
     return __result;
 END_RCPP
 }
@@ -564,6 +564,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
     __result = Rcpp::wrap(struct_test_var(y, funname, self));
+    return __result;
+END_RCPP
+}
+// hatf
+NumericVector hatf(const arma::sp_mat& G, const NumericVector& Y, std::string funname);
+RcppExport SEXP netdiffuseR_hatf(SEXP GSEXP, SEXP YSEXP, SEXP funnameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type G(GSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
+    __result = Rcpp::wrap(hatf(G, Y, funname));
     return __result;
 END_RCPP
 }

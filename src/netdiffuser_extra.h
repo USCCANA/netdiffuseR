@@ -21,4 +21,16 @@ arma::sp_mat sp_as_undirected(const arma::sp_mat & x);
 
 void _covariate_distance(arma::sp_mat & D, const arma::mat & x, double p=2.0, bool symetric=false);
 
+typedef double (*funcPtr)(double y0, double y1);
+
+double st_dist(double y0, double y1);
+double st_greater(double y0, double y1);
+double st_greaterequal(double y0, double y1);
+double st_smaller(double y0, double y1);
+double st_smallerequal(double y0, double y1);
+double st_equal(double y0, double y1);
+
+void st_getfun(std::string funname, funcPtr & fun);
+
+
 #endif

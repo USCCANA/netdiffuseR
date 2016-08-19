@@ -1,3 +1,8 @@
+2016-08-19  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Functions for dyadic comparison.
+	* src/stats.cpp: Changing definition of vertex_compare.
+	* R/struct_test.R: Working on doc + adding some debugs.
+
 2016-08-12  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-methods.R: Fixing bug in plot_diffnet on the range of the
 	plot.

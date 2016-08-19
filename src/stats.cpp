@@ -18,6 +18,7 @@
 *******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "netdiffuser_extra.h"
 
 using namespace Rcpp;
 
@@ -253,27 +254,20 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatr
 
 // [[Rcpp::export]]
 arma::sp_mat vertex_covariate_compare(const arma::sp_mat & graph, const NumericVector & X,
-                                      std::string symbol) {
+                                      std::string funname) {
 
   // Creating objects
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
   arma::sp_mat::const_iterator b = graph.begin();
   arma::sp_mat::const_iterator e = graph.end();
 
+  // Fetching function
+  funcPtr fun;
+  st_getfun(funname, fun);
+
   // Iterating over elements of graph
-  int i,j;
-  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
-    i = iter.row();
-    j = iter.col();
-
-    if (symbol == ">")       ans.at(i,j) = (int) (X[i] > X[j]);
-    else if  (symbol == "<") ans.at(i,j) = (int) (X[i] < X[j]);
-    else if (symbol == ">=") ans.at(i,j) = (int) (X[i] >= X[j]);
-    else if (symbol == "<=") ans.at(i,j) = (int) (X[i] <= X[j]);
-    else if (symbol == "==") ans.at(i,j) = (int) (X[i] == X[j]);
-    else Rcpp::stop("Invalid symbol");
-
-  }
+  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++)
+    ans.at(iter.row(),iter.col()) = fun(X[iter.row()], X[iter.col()]);
 
   return ans;
 }

@@ -120,3 +120,26 @@ void _covariate_distance(arma::sp_mat & D, const arma::mat & x, double p=2.0, bo
     return;
 }
 
+typedef double (*funcPtr)(double y0, double y1);
+
+double st_dist(double y0, double y1) {return fabs(y0-y1);}
+double st_sqdist(double y0, double y1) {return pow(y0-y1, 2.0);}
+double st_greater(double y0, double y1) {return (double) (y0 > y1);}
+double st_greaterequal(double y0, double y1) {return (double) (y0 >= y1);}
+double st_smaller(double y0, double y1) {return (double) (y0 < y1);}
+double st_smallerequal(double y0, double y1) {return (double) (y0 <= y1);}
+double st_equal(double y0, double y1) {return (double) (y0 == y1);}
+
+// XPtr<funcPtr> st_getfun(std::string funname) {
+void st_getfun(std::string funname, funcPtr & fun) {
+  if      (funname == "distance")                           fun = &st_dist;
+  else if ((funname == "sqdistance") | (funname == "^2"))       fun = &st_sqdist;
+  else if ((funname == "greater") | (funname == ">"))       fun = &st_greater;
+  else if ((funname == "greaterequal") | (funname == ">=")) fun =  &st_greaterequal;
+  else if ((funname == "smaller") | (funname == "<"))       fun =  &st_smaller;
+  else if ((funname == "smallerequal") | (funname == "<=")) fun =  &st_smallerequal;
+  else if ((funname == "equal") | (funname == "=="))        fun =  &st_equal;
+  else Rcpp::stop("Unkown function.");
+
+  return ;
+}

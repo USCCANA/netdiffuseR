@@ -45,6 +45,7 @@
 #' From the \code{print} method, p-value for the null of the statistic been
 #' equal between graph and its rewired versions is computed as follows
 #'
+#'
 #' \deqn{%
 #' p(\tau)=2\times\min\left(\mbox{Pr}(t\leq\tau), \mbox{Pr}(t\geq\tau)\right) %
 #' }{ %
@@ -57,7 +58,7 @@
 #' For the case of the asymptotic approximation, under the null we have
 #'
 #' \deqn{%
-#' \sqrt{n}\left(\hat\beta(\Depvar,\Graph)-\mu_\beta\right)\overset{d}{\sim}\mbox{N}\left(0,\sigma_\beta^2\right)
+#' \sqrt{n}\left(\hat\beta(Y,G)-\mu_\beta\right)\sim^d\mbox{N}\left(0,\sigma_\beta^2\right)
 #' }{%
 #' sqrt(n)*[mean(beta) - E[beta]]/Var[beta] ~ N(0,1)
 #' }
@@ -158,6 +159,7 @@ struct_test <- function(
     p.value     = p.value,
     t0          = boot_res$t0,
     mean_t      = colMeans(boot_res$t, na.rm = TRUE),
+    var_t       = var(colMeans(boot_res$t, na.rm = TRUE)),
     R           = R,
     statistic   = statistic,
     boot        = boot_res,
@@ -259,11 +261,17 @@ struct_test_asymp <- function(
   statistic_name="distance", p=2.0, ...) {
 
   # Distance metric
-  if (statistic_name == "distance") D <- vertex_covariate_dist(graph, cbind(Y), p)
-  else D <- vertex_covariate_compare(graph, Y, statistic_name)
+  D <- vertex_covariate_compare(graph, Y, statistic_name)
 
   # Computing observed mean
   m_obs <- mean(Matrix::rowSums(D*graph)/(Matrix::rowSums(graph) + 1e-15), na.rm=TRUE)
+
+  # Checking NA
+  isna <- which(is.na(Y))
+  if (length(isna)) {
+    warning("There are some NA values in Y: ",paste(isna, collapse=", "))
+    Y <- Y[-isna]
+  }
 
   # Computing theoreticals
   m_null <- struct_test_mean(Y, statistic_name)
@@ -278,6 +286,7 @@ struct_test_asymp <- function(
     p.value     = p.value,
     t0          = m_obs,
     mean_t      = m_null,
+    var_t       = v_null,
     R           = NA,
     statistic   = statistic_name,
     boot        = NA,
@@ -287,6 +296,10 @@ struct_test_asymp <- function(
   return(structure(out, class="diffnet_struct_test"))
 }
 
+#' Vertex comparison
+#' @details This set of internal functions are called by \CRANpkg{netdiffuseR}
+#' @name vertex_comparison
+NULL
 
 # library(mvtnorm)
 #

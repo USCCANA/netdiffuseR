@@ -100,6 +100,7 @@ to the corresponding method (\code{\link{hist}} for instance).
 From the \code{print} method, p-value for the null of the statistic been
 equal between graph and its rewired versions is computed as follows
 
+
 \deqn{%
 p(\tau)=2\times\min\left(\mbox{Pr}(t\leq\tau), \mbox{Pr}(t\geq\tau)\right) %
 }{ %
@@ -112,7 +113,7 @@ Empirical Distribution Function retrieved from the simulations.
 For the case of the asymptotic approximation, under the null we have
 
 \deqn{%
-\sqrt{n}\left(\hat\beta(\Depvar,\Graph)-\mu_\beta\right)\overset{d}{\sim}\mbox{N}\left(0,\sigma_\beta^2\right)
+\sqrt{n}\left(\hat\beta(Y,G)-\mu_\beta\right)\sim^d\mbox{N}\left(0,\sigma_\beta^2\right)
 }{%
 sqrt(n)*[mean(beta) - E[beta]]/Var[beta] ~ N(0,1)
 }

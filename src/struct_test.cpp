@@ -1,28 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "netdiffuser_extra.h"
 using namespace Rcpp;
-
-typedef double (*funcPtr)(double y0, double y1);
-
-double st_dist(double y0, double y1) {return fabs(y0-y1);}
-double st_greater(double y0, double y1) {return (double) (y0 > y1);}
-double st_greaterequal(double y0, double y1) {return (double) (y0 >= y1);}
-double st_smaller(double y0, double y1) {return (double) (y0 < y1);}
-double st_smallerequal(double y0, double y1) {return (double) (y0 <= y1);}
-double st_equal(double y0, double y1) {return (double) (y0 == y1);}
-
-// XPtr<funcPtr> st_getfun(std::string funname) {
-void st_getfun(std::string funname, funcPtr & fun) {
-  if      (funname == "distance")                           fun = &st_dist;
-  else if ((funname == "greater") | (funname == ">"))       fun = &st_greater;
-  else if ((funname == "greaterequal") | (funname == ">=")) fun =  &st_greaterequal;
-  else if ((funname == "smaller") | (funname == "<"))       fun =  &st_smaller;
-  else if ((funname == "smallerequal") | (funname == "<=")) fun =  &st_smallerequal;
-  else if ((funname == "equal") | (funname == "=="))        fun =  &st_equal;
-  else Rcpp::stop("Unkown function.");
-
-  return ;
-}
 
 // [[Rcpp::export]]
 double struct_test_mean(NumericVector & y,
@@ -67,11 +46,48 @@ double struct_test_var(NumericVector & y, std::string funname, bool self=false) 
       return ans - pow(struct_test_mean(y, funname, self),2.0);
 }
 
+typedef arma::sp_mat::const_iterator spiter;
 
+// [[Rcpp::export]]
+NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
+                   std::string funname) {
+  int n = G.n_rows;
+  NumericVector ans(n);
+  NumericVector d(n);
+
+  // Fetching function
+  funcPtr fun;
+  st_getfun(funname, fun);
+
+  // Preparing iterators
+  spiter begin = G.begin();
+  spiter end   = G.end();
+
+  for (spiter i = begin; i!=end; i++) {
+    for (spiter j = begin; j!=end; j++) {
+      // I and j must be connected
+      if (i.col() != j.row()) continue;
+
+      // Are i and k connected
+      // To see such we check at G in
+      // G(i,k) > 0
+      if (G.at(i.row(), j.col()) < 1e-15) continue;
+
+      ans[i.row()] += fun(Y[j.row()], Y[j.col()]);
+      d.at(i.row())++;
+    }
+  }
+
+  for (int i=0;i<n;i++)
+    if (d[i]>0) ans[i] /= (d[i] + 1e-15);
+    else ans[i] = NA_REAL;
+
+  return ans;
+}
 
 /***R
 set.seed(1231)
-Y <- rnorm(500)
+Y <- rnorm(100)
 
 # Greater
 struct_test_mean(Y, "greater")
@@ -120,4 +136,43 @@ x <- matrix(rnorm(5e5*3), ncol=3)
 
 mean((x[,1] > x[,2])*(x[,1] > x[,3]))
 mean(x[,1]>x[,2])
+
+# Med innovations
+x     <- kfamilyDiffNet
+index <- which(x$toa != max(x$toa, na.rm = TRUE))
+x     <- x[index,]
+
+G   <- x$graph[[1]]
+ans <- hatf(G, x$toa, "distance")
+
+i <- 105
+g   <- which(G[i,] != 0)
+
+toas <- NULL
+g
+for (j in g) {
+  whichg <- which(G[j,] !=0)
+  print(whichg)
+  for (k in whichg)
+    if (G[i,k]!=0) {
+      message(sprintf("%03d--%03d", j, k))
+      toas <- c(toas, abs(x$toa[j] - x$toa[k]))
+    }
+}
+mean(toas,na.rm=TRUE);ans[i]
+
+# Another example
+set.seed(331)
+G <- rdiffnet(1e3, t=10, rewire = FALSE, seed.graph = "small-world",
+              rgraph.args = list(k=14,p=.2), threshold.dist = function(x) .2)
+ans0 <- hatf(G$graph[[1]],G$toa,"<=")
+ans1 <- hatf(G$graph[[1]],sample(G$toa, 1e3, TRUE),"<=")
+struct_test_var(G$toa, "distance")
+plot(ans0,ans1)
+abline(0,1)
+cor(ans0,ans1, use="complete.obs")
+
+t.test(ans0,ans1)
+
+x$toa[c(1,6)]
 */
