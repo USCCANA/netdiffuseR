@@ -1,3 +1,7 @@
+2016-08-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rewire_swap.cpp: New argument for assuring aperiodicity on MCMC.
+	* R/rewire.R: Documenting new argument.
+
 2016-08-19  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/netdiffuser_extra.cpp: Functions for dyadic comparison.
 	* src/stats.cpp: Changing definition of vertex_compare.

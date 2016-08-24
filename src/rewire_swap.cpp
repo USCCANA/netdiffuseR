@@ -7,7 +7,7 @@ using namespace Rcpp;
 arma::sp_mat rewire_swap(
     const arma::sp_mat & graph, int nsteps=100,
     bool self=false, bool multiple=false,
-    bool undirected=false) {
+    bool undirected=false, double pr_rewire=0.5) {
 
   // Clonning graph
   arma::sp_mat newgraph(graph);
@@ -20,6 +20,12 @@ arma::sp_mat rewire_swap(
   int s = 0;
   while (s < nsteps) {
 
+    // Does it need to be rewired?
+    if (unif_rand() > pr_rewire) {
+      s++;
+      continue;
+    }
+
     // Checking user interrupt
     if (s % 1000 == 0)
       Rcpp::checkUserInterrupt();
@@ -30,7 +36,10 @@ arma::sp_mat rewire_swap(
     int j = indexes.at(ij, 1);
 
     // If self, then remove from the indexes and go for the next
-    if (!self && i==j) continue;
+    if (!self && i==j) {
+      s++;
+      continue;
+    }
 
     // New end(s)
     int newij, newi, newj;

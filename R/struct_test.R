@@ -197,7 +197,7 @@ print.diffnet_struct_test <- function(x, ...) {
   with(x,  {
     nsim <- ifelse(!is.na(R), R, 0)
 
-    cat("Structure dependence test\n",
+    cat("\nStructure dependence test\n",
         "# Simulations     : ", formatC(nsim, digits = 0, format = "f", big.mark = ","),"\n",
         "# nodes           : ", formatC(nnodes(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
@@ -205,7 +205,7 @@ print.diffnet_struct_test <- function(x, ...) {
         " H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)\n",
         "   E[beta(Y,G)|G] (observed) = ", t0, "\n",
         "   E[beta(Y,G)] (expected)   = ", mean_t, "\n",
-        "   p-value = ", sprintf("%.5f", p.value), sep="")
+        "   p-value = ", sprintf("%.5f\n", p.value), sep="")
   })
   invisible(x)
 }

@@ -203,8 +203,8 @@ vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran
     .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
 }
 
-rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE) {
-    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected)
+rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5) {
+    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
 }
 
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {

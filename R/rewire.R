@@ -9,6 +9,7 @@
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
 #' @param copy.first Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 #' the first slice as a baseline for the rest of slices (see details).
+#' @param pr.change Numeric scalar. Probability ([0,1]) of doing a rewire (see details).
 #' @param algorithm Character scalar. Either \code{"swap"} or \code{"endpoints"}.
 #' @details
 #' Both algorithms are implemented sequentially, this is, edge-wise checking
@@ -60,6 +61,7 @@
 #'
 #' Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, do:
 #' \enumerate{
+#'  \item With probability \code{1-pr.change} got to the last step.
 #'  \item Choose \eqn{e0=(a, b)} from \eqn{E}. If \code{!self & a == b} then go to the last step.
 #'  \item Choose \eqn{e1=(c, d)} from \eqn{E}. If \code{!self & c == d } then go to the last step.
 #'  \item Define \eqn{e0'=(a, d)} and \eqn{e1' = (c, b)}. If \code{!multiple & [G[e0']!= 0 | G[e1'] != 0]} then go to the last step.
@@ -76,6 +78,9 @@
 #' it is shown that in order to achive such it is needed to perform
 #' \code{nlinks(graph)*log(1/eps)}, where \code{eps}\eqn{\sim}1e-7, in other words,
 #' around \code{nlinks(graph)*16}. We set the default to be 20.
+#'
+#' In the case of Markov chains, the variable \code{pr.change=0.5} makes the
+#' algorithm aperiodic (Stanton and Pinar, 2012).
 #'
 #' @section \emph{Endpoints} algorithm:
 #'
@@ -120,7 +125,10 @@
 #' Algorithms and Models for the Web Graph (Vol. 7323, pp. 153–164).
 #' Berlin, Heidelberg: Springer Berlin Heidelberg.
 #' \url{http://doi.org/10.1007/978-3-642-30541-2}
-
+#'
+#' Stanton, I., & Pinar, A. (2012). Constructing and sampling graphs with a
+#' prescribed joint degree distribution. Journal of Experimental Algorithmics,
+#' 17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
 #'
 #' @family simulation functions
 #' @export
@@ -162,6 +170,7 @@ rewire_graph <- function(graph, p,
                          algorithm="endpoints",
                          both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected"),
+                         pr.change=0.5,
                          copy.first=TRUE) {
 
   # Checking undirected (if exists)
@@ -171,15 +180,15 @@ rewire_graph <- function(graph, p,
   # if (missing(copy.first)) copy.first <- FALSE
 
   out <- switch(class(graph),
-                dgCMatrix = rewire_graph.dgCMatrix(graph, p, algorithm, both.ends, self, multiple, undirected),
-                list = rewire_graph.list(graph, p, algorithm, both.ends, self, multiple, undirected, copy.first),
+                dgCMatrix = rewire_graph.dgCMatrix(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change),
+                list = rewire_graph.list(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first),
                 matrix = rewire_graph.dgCMatrix(
-                  methods::as(graph, "dgCMatrix"), p, algorithm, both.ends, self, multiple, undirected),
+                  methods::as(graph, "dgCMatrix"), p, algorithm, both.ends, self, multiple, undirected, pr.change),
                 diffnet = {
                   rewire_graph.list(graph$graph, p, algorithm, both.ends, self, multiple,
-                                    graph$meta$undirected, copy.first)
+                                    graph$meta$undirected, pr.change, copy.first)
                 },
-                array = rewire_graph.array(graph, p, algorithm, both.ends, self, multiple, undirected, copy.first),
+                array = rewire_graph.array(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first),
                 stopifnot_graph(graph)
   )
 
@@ -198,7 +207,7 @@ rewire_graph <- function(graph, p,
 
 # @rdname rewire_graph
 rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, undirected,
-                              copy.first) {
+                              pr.change, copy.first) {
   t   <- length(graph)
   out <- graph
 
@@ -219,7 +228,7 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
     out[[i]] <- if (algorithm == "endpoints")
       rewire_endpoints(out[[j]], p[i], both.ends, self, multiple, undirected)
     else if (algorithm == "swap")
-      rewire_swap(out[[j]], p[i], self, multiple, undirected)
+      rewire_swap(out[[j]], p[i], self, multiple, undirected, pr.change)
     else stop("No such rewiring algorithm: ", algorithm)
 
     # Names
@@ -232,11 +241,11 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
 }
 
 # @rdname rewire_graph
-rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multiple, undirected) {
+rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change) {
   out <- if (algorithm == "endpoints")
     rewire_endpoints(graph, p, both.ends, self, multiple, undirected)
   else if (algorithm == "swap")
-    rewire_swap(graph, p, self, multiple, undirected)
+    rewire_swap(graph, p, self, multiple, undirected, pr.change)
   else stop("No such rewiring algorithm: ", algorithm)
 
   rn <- rownames(out)
@@ -247,7 +256,7 @@ rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multipl
 
 # @rdname rewire_graph
 rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, undirected,
-                              copy.first) {
+                              pr.change, copy.first) {
   n   <- dim(graph)[1]
   t   <- dim(graph)[3]
   out <- apply(graph, 3, methods::as, Class="dgCMatrix")
@@ -271,7 +280,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
         out[[j]], p[i], both.ends, self, multiple, undirected)
     } else if (algorithm == "swap") {
       rewire_swap(
-        out[[j]], p[i], self, multiple, undirected)
+        out[[j]], p[i], self, multiple, undirected, pr.change)
     } else stop("No such rewiring algorithm: ", algorithm)
 
     rn <- rownames(graph[,,i])

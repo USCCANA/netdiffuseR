@@ -6,7 +6,8 @@
 \usage{
 rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
   self = FALSE, multiple = FALSE,
-  undirected = getOption("diffnet.undirected"), copy.first = TRUE)
+  undirected = getOption("diffnet.undirected"), pr.change = 0.5,
+  copy.first = TRUE)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})}
@@ -23,6 +24,8 @@ or an integer vector with number of iterations (\code{algorithm="swap"}).}
 \item{multiple}{Logical scalar. When \code{TRUE} allows multiple edges.}
 
 \item{undirected}{Logical scalar. \code{TRUE} when the graph is undirected.}
+
+\item{pr.change}{Numeric scalar. Probability ([0,1]) of doing a rewire (see details).}
 
 \item{copy.first}{Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 the first slice as a baseline for the rest of slices (see details).}
@@ -81,6 +84,7 @@ has been implemented as follows:
 
 Let \eqn{E} be the set of edges of the graph \eqn{G}. For \eqn{i=1} to \eqn{p}, do:
 \enumerate{
+ \item With probability \code{1-pr.change} got to the last step.
  \item Choose \eqn{e0=(a, b)} from \eqn{E}. If \code{!self & a == b} then go to the last step.
  \item Choose \eqn{e1=(c, d)} from \eqn{E}. If \code{!self & c == d } then go to the last step.
  \item Define \eqn{e0'=(a, d)} and \eqn{e1' = (c, b)}. If \code{!multiple & [G[e0']!= 0 | G[e1'] != 0]} then go to the last step.
@@ -97,6 +101,9 @@ times, so \code{p=nlinks(graph)*100}. On the other hand in Ray et al (2012)
 it is shown that in order to achive such it is needed to perform
 \code{nlinks(graph)*log(1/eps)}, where \code{eps}\eqn{\sim}1e-7, in other words,
 around \code{nlinks(graph)*16}. We set the default to be 20.
+
+In the case of Markov chains, the variable \code{pr.change=0.5} makes the
+algorithm aperiodic (Stanton and Pinar, 2012).
 }
 
 \section{\emph{Endpoints} algorithm}{
@@ -180,6 +187,10 @@ Markov Chain while Generating Random Graphs. In A. Bonato & J. Janssen (Eds.),
 Algorithms and Models for the Web Graph (Vol. 7323, pp. 153–164).
 Berlin, Heidelberg: Springer Berlin Heidelberg.
 \url{http://doi.org/10.1007/978-3-642-30541-2}
+
+Stanton, I., & Pinar, A. (2012). Constructing and sampling graphs with a
+prescribed joint degree distribution. Journal of Experimental Algorithmics,
+17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
 }
 \seealso{
 Other simulation functions: \code{\link{rdiffnet}},

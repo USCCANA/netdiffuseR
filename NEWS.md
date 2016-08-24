@@ -1,8 +1,11 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-08-19)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-08-23)
 
 ## New features and changes
 
 * The function `struct_test` now allows other types of graphs.
+
+* The function `rewire_graph` gains a new argument for the algorithm "swap". Now
+  to ensure aperiodicity in MCMC a chance of skiping a rewire has been included.
 
 * The function `n_rewires` now has a default of 20 (before it was 100).
   This is based on a theoretical result (more details in the manual).
