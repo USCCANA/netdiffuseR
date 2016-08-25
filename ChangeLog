@@ -1,3 +1,6 @@
+2016-08-25  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/stats.cpp: New function to compare vertices at dyadic level.
+
 2016-08-23  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rewire_swap.cpp: New argument for assuring aperiodicity on MCMC.
 	* R/rewire.R: Documenting new argument.

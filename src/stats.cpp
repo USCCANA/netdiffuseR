@@ -252,6 +252,37 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatr
   return ans;
 }
 
+//' Comparisons at dyadic level
+//' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{\link[Matrix:dgCMatrix]{dgCMatrix}}.
+//' @param x A numeric vector of length \eqn{n}.
+//' @param funname Character scalar. Comparison to make (see details).
+//' @details
+//'
+//' This auxiliary function takes advantage of the sparcity of \code{graph} and
+//' applies a function in the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}
+//' only to \eqn{(i,j)} that have no empty entry. In other words, applies a compares
+//' elements of \code{x} only between vertices that have a link; making
+//' \code{nlinks(graph)} comparisons instead of looping through \code{n\times n}{n*n},
+//' which is much faster.
+//'
+//' \code{funname} can take any of the following values:
+//' \code{"distance"}, \code{"^2"} or \code{"sqdistance"}, \code{">"} or \code{"greater"},
+//' \code{"<"} or \code{"smaller"}, \code{">="} or \code{"greaterequal"},
+//' \code{"<="} or \code{"smallerequal"}, \code{"=="} or \code{"equal"}.
+//' @return A matrix \code{dgCMatrix} of size \eqn{n\times n}{n*n} with values in
+//' the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}.
+//' @examples
+//'
+//' # Basic example ------------------------------------------------------------
+//' set.seed(1313)
+//' G <- rgraph_ws(10, 4, .2)
+//' x <- rnorm(10)
+//'
+//' vertex_covariate_compare(G, x, "distance")
+//' vertex_covariate_compare(G, x, "^2")
+//' vertex_covariate_compare(G, x, ">=")
+//' vertex_covariate_compare(G, x, "<=")
+//' @export
 // [[Rcpp::export]]
 arma::sp_mat vertex_covariate_compare(const arma::sp_mat & graph, const NumericVector & X,
                                       std::string funname) {
