@@ -1,3 +1,9 @@
+2016-08-31  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/struct_test.cpp: New function to compare vertices at dyadic level.
+	-ego_variance-.
+	* src/stats.cpp: Changing name of function sqdistance to quaddistance.
+	* src/rewire_swap.cpp: Adding alternating hexagons algorithm (on dev).
+
 2016-08-25  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/stats.cpp: New function to compare vertices at dyadic level.
 

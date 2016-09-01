@@ -24,6 +24,7 @@ void _covariate_distance(arma::sp_mat & D, const arma::mat & x, double p=2.0, bo
 typedef double (*funcPtr)(double y0, double y1);
 
 double st_dist(double y0, double y1);
+double st_quaddist(double y0, double y1);
 double st_greater(double y0, double y1);
 double st_greaterequal(double y0, double y1);
 double st_smaller(double y0, double y1);

@@ -12,6 +12,6 @@ using namespace Rcpp;
 arma::sp_mat rewire_swap(
     const arma::sp_mat & graph, int nsteps=100,
     bool self=false, bool multiple=false,
-    bool undirected=false, double pr_rewire=0.5);
+    bool undirected=false, double pr_rewire=0.5,bool althexagons=false);
 
 #endif

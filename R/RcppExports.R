@@ -203,8 +203,8 @@ vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran
     .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
 }
 
-rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5) {
-    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
+rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5, althexagons = FALSE) {
+    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire, althexagons)
 }
 
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L) {
@@ -302,24 +302,24 @@ vertex_covariate_dist <- function(graph, X, p = 2.0) {
 }
 
 #' Comparisons at dyadic level
-#' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{\link[Matrix:dgCMatrix]{dgCMatrix}}.
-#' @param x A numeric vector of length \eqn{n}.
+#' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+#' @param X A numeric vector of length \eqn{n}.
 #' @param funname Character scalar. Comparison to make (see details).
 #' @details
 #'
 #' This auxiliary function takes advantage of the sparcity of \code{graph} and
-#' applies a function in the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}
+#' applies a function in the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}
 #' only to \eqn{(i,j)} that have no empty entry. In other words, applies a compares
-#' elements of \code{x} only between vertices that have a link; making
-#' \code{nlinks(graph)} comparisons instead of looping through \code{n\times n}{n*n},
+#' elements of \code{X} only between vertices that have a link; making
+#' \code{nlinks(graph)} comparisons instead of looping through \eqn{n\times n}{n*n},
 #' which is much faster.
 #'
 #' \code{funname} can take any of the following values:
-#' \code{"distance"}, \code{"^2"} or \code{"sqdistance"}, \code{">"} or \code{"greater"},
+#' \code{"distance"}, \code{"^2"} or \code{"quaddistance"}, \code{">"} or \code{"greater"},
 #' \code{"<"} or \code{"smaller"}, \code{">="} or \code{"greaterequal"},
 #' \code{"<="} or \code{"smallerequal"}, \code{"=="} or \code{"equal"}.
 #' @return A matrix \code{dgCMatrix} of size \eqn{n\times n}{n*n} with values in
-#' the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}.
+#' the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}.
 #' @examples
 #'
 #' # Basic example ------------------------------------------------------------
@@ -350,5 +350,33 @@ struct_test_var <- function(y, funname, self = FALSE) {
 
 hatf <- function(G, Y, funname) {
     .Call('netdiffuseR_hatf', PACKAGE = 'netdiffuseR', G, Y, funname)
+}
+
+#' Computes variance of \eqn{Y} at ego level
+#' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+#' @param Y A numeric vector of length \eqn{n}.
+#' @param funname Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).
+#' @details
+#'
+#' For each vertex \eqn{i} the variance is computed as follows
+#'
+#' \deqn{%
+#' (\sum_j a_{ij})^{-1}\sum_j a_{ij} \left[f(y_i,y_j) - f_i\right]^2
+#' }{%
+#' (sum_j a(ij))^(-1) * sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
+#' }
+#'
+#' Where \eqn{a_{ij}}{a(ij)} is the ij-th element of \code{graph}, \eqn{f} is
+#' the function specified in \code{funname}, and
+#' \eqn{f_i = \sum_j a_{ij}(y_i - y_j)^2/\sum_ja_{ij}}{f(i)=sum_j a(ij)(y(i) - y(j))^2/sum_j a(ij)}
+#'
+#' This is an auxiliary function for \code{\link{struct_test}}. The idea is
+#' to compute an adjusted measure of disimilarity between vertices, so the
+#' closest in terms of \eqn{f} is \eqn{i} to its neighbors, the smaller the
+#' relative variance.
+#' @results A vector of length \eqn{n}.
+#' @export
+ego_variance <- function(graph, Y, funname) {
+    .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname)
 }
 

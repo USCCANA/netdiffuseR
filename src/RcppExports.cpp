@@ -289,8 +289,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rewire_swap
-arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire);
-RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP) {
+arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire, bool althexagons);
+RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP, SEXP althexagonsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -300,7 +300,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     Rcpp::traits::input_parameter< double >::type pr_rewire(pr_rewireSEXP);
-    __result = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected, pr_rewire));
+    Rcpp::traits::input_parameter< bool >::type althexagons(althexagonsSEXP);
+    __result = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected, pr_rewire, althexagons));
     return __result;
 END_RCPP
 }
@@ -578,6 +579,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type Y(YSEXP);
     Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
     __result = Rcpp::wrap(hatf(G, Y, funname));
+    return __result;
+END_RCPP
+}
+// ego_variance
+NumericVector ego_variance(const arma::sp_mat& graph, const NumericVector& Y, std::string funname);
+RcppExport SEXP netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
+    __result = Rcpp::wrap(ego_variance(graph, Y, funname));
     return __result;
 END_RCPP
 }

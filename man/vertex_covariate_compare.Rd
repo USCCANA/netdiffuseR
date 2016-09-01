@@ -7,29 +7,29 @@
 vertex_covariate_compare(graph, X, funname)
 }
 \arguments{
-\item{graph}{A matrix of size \eqn{n\times n}{n*n} of class \code{\link[Matrix:dgCMatrix]{dgCMatrix}}.}
+\item{graph}{A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.}
+
+\item{X}{A numeric vector of length \eqn{n}.}
 
 \item{funname}{Character scalar. Comparison to make (see details).}
-
-\item{x}{A numeric vector of length \eqn{n}.}
 }
 \value{
 A matrix \code{dgCMatrix} of size \eqn{n\times n}{n*n} with values in
-the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}.
+the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}.
 }
 \description{
 Comparisons at dyadic level
 }
 \details{
 This auxiliary function takes advantage of the sparcity of \code{graph} and
-applies a function in the form of \eqn{funname(x_i,x_j)}{funname(x[i],x[j])}
+applies a function in the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}
 only to \eqn{(i,j)} that have no empty entry. In other words, applies a compares
-elements of \code{x} only between vertices that have a link; making
-\code{nlinks(graph)} comparisons instead of looping through \code{n\times n}{n*n},
+elements of \code{X} only between vertices that have a link; making
+\code{nlinks(graph)} comparisons instead of looping through \eqn{n\times n}{n*n},
 which is much faster.
 
 \code{funname} can take any of the following values:
-\code{"distance"}, \code{"^2"} or \code{"sqdistance"}, \code{">"} or \code{"greater"},
+\code{"distance"}, \code{"^2"} or \code{"quaddistance"}, \code{">"} or \code{"greater"},
 \code{"<"} or \code{"smaller"}, \code{">="} or \code{"greaterequal"},
 \code{"<="} or \code{"smallerequal"}, \code{"=="} or \code{"equal"}.
 }

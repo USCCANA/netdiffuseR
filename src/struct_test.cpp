@@ -85,6 +85,71 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
   return ans;
 }
 
+//' Computes variance of \eqn{Y} at ego level
+//' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
+//' @param Y A numeric vector of length \eqn{n}.
+//' @param funname Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).
+//' @details
+//'
+//' For each vertex \eqn{i} the variance is computed as follows
+//'
+//' \deqn{%
+//' (\sum_j a_{ij})^{-1}\sum_j a_{ij} \left[f(y_i,y_j) - f_i\right]^2
+//' }{%
+//' (sum_j a(ij))^(-1) * sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
+//' }
+//'
+//' Where \eqn{a_{ij}}{a(ij)} is the ij-th element of \code{graph}, \eqn{f} is
+//' the function specified in \code{funname}, and
+//' \eqn{f_i = \sum_j a_{ij}(y_i - y_j)^2/\sum_ja_{ij}}{f(i)=sum_j a(ij)(y(i) - y(j))^2/sum_j a(ij)}
+//'
+//' This is an auxiliary function for \code{\link{struct_test}}. The idea is
+//' to compute an adjusted measure of disimilarity between vertices, so the
+//' closest in terms of \eqn{f} is \eqn{i} to its neighbors, the smaller the
+//' relative variance.
+//' @results A vector of length \eqn{n}.
+//' @export
+// [[Rcpp::export]]
+NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
+                       std::string funname) {
+
+  // Initialization
+  int n = Y.length();
+  NumericVector ans(n);
+  NumericVector fhat(n);
+  arma::sp_mat degree = sum(graph,1);
+
+  // Fetching function
+  funcPtr fun;
+  st_getfun(funname, fun);
+
+  // Preparing iterators
+  spiter begin = graph.begin();
+  spiter end   = graph.end();
+
+  for (spiter i=begin; i!=end;i++)
+    fhat[i.row()] += fun(Y[i.row()], Y[i.col()])/(degree[i.row()] + 1e-15);
+
+  // Preparing iterators
+  begin = graph.begin();
+  end   = graph.end();
+
+  // Iterating
+  for (spiter i = begin; i!=end; i++) {
+    if (NumericVector::is_na(fhat[i.row()])) {
+      ans[i.row()] = NA_REAL;
+      continue;
+    }
+    ans[i.row()] +=  powf(fun(Y[i.row()], Y[i.col()]) - fhat[i.row()],2.0) /
+      (degree[i.row()] + 1e-15);
+  }
+
+  return ans;
+
+}
+
+
+
 /***R
 set.seed(1231)
 Y <- rnorm(100)
@@ -145,7 +210,7 @@ x     <- x[index,]
 G   <- x$graph[[1]]
 ans <- hatf(G, x$toa, "distance")
 
-i <- 105
+i <- 73
 g   <- which(G[i,] != 0)
 
 toas <- NULL
@@ -160,6 +225,7 @@ for (j in g) {
     }
 }
 mean(toas,na.rm=TRUE);ans[i]
+stop()
 
 # Another example
 set.seed(331)
