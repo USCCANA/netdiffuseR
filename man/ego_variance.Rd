@@ -13,6 +13,9 @@ ego_variance(graph, Y, funname)
 
 \item{funname}{Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).}
 }
+\value{
+A numeric vector of length \eqn{n}.
+}
 \description{
 Computes variance of \eqn{Y} at ego level
 }

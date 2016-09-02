@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-08-23)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-09-02)
 
 ## New features and changes
 
@@ -15,7 +15,15 @@
 
 * `vertex_covariate_dist` computes distances between vertices using both the graph
   and a matrix of length nxK.
+
 * `struct_test_asymp` an asymptotic approximation of `struct_test`.
+
+* `ego_variance` computes a pseudo variance at the ego level (aux function for
+  `struct_test`).
+
+* `transformGraphBy` applies a function that transforms a graph considering
+  structural zeros given by groups. Similar to the idea of the -by- option
+  in `struct_equiv`.
 
 
 ## Bug fixes

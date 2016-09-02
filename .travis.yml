@@ -3,7 +3,6 @@ sudo: required
 
 r:
   - release
-  - devel
 
 os:
   - linux

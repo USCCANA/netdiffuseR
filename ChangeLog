@@ -1,3 +1,8 @@
+2016-09-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struct_equiv.R: New function to apply transformation to a matrix
+	considering structural zeros -transformGraphBy-.
+	* .travis.yml: Removing dev version from tests.
+
 2016-08-31  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/struct_test.cpp: New function to compare vertices at dyadic level.
 	-ego_variance-.

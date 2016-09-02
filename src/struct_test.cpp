@@ -107,7 +107,7 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
 //' to compute an adjusted measure of disimilarity between vertices, so the
 //' closest in terms of \eqn{f} is \eqn{i} to its neighbors, the smaller the
 //' relative variance.
-//' @results A vector of length \eqn{n}.
+//' @return A numeric vector of length \eqn{n}.
 //' @export
 // [[Rcpp::export]]
 NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
@@ -128,7 +128,8 @@ NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
   spiter end   = graph.end();
 
   for (spiter i=begin; i!=end;i++)
-    fhat[i.row()] += fun(Y[i.row()], Y[i.col()])/(degree[i.row()] + 1e-15);
+    fhat[i.row()] += graph.at(i.row(),i.col())*fun(Y[i.row()], Y[i.col()])/
+    (degree[i.row()] + 1e-15);
 
   // Preparing iterators
   begin = graph.begin();
@@ -140,7 +141,7 @@ NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
       ans[i.row()] = NA_REAL;
       continue;
     }
-    ans[i.row()] +=  powf(fun(Y[i.row()], Y[i.col()]) - fhat[i.row()],2.0) /
+    ans[i.row()] +=  graph.at(i.row(),i.col())*powf(fun(Y[i.row()], Y[i.col()]) - fhat[i.row()],2.0) /
       (degree[i.row()] + 1e-15);
   }
 

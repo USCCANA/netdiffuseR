@@ -374,7 +374,7 @@ hatf <- function(G, Y, funname) {
 #' to compute an adjusted measure of disimilarity between vertices, so the
 #' closest in terms of \eqn{f} is \eqn{i} to its neighbors, the smaller the
 #' relative variance.
-#' @results A vector of length \eqn{n}.
+#' @return A numeric vector of length \eqn{n}.
 #' @export
 ego_variance <- function(graph, Y, funname) {
     .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname)
