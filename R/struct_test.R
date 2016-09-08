@@ -115,6 +115,15 @@ n_rewires <- function(graph, p=c(20L, rep(.1, nslices(graph) - 1))) {
   as.integer(round(unlist(nlinks(graph))*p))
 }
 
+struct_test_pval <- function(meanobs, meansim) {
+  n <- length(meanobs)
+  ans <- vector("numeric",n)
+  for (i in 1:n)
+    ans[i] <- 2*min(mean(meansim[,i] < meanobs[i]),
+                    mean(meansim[,i] > meanobs[i]))
+
+  ans
+}
 
 #' @rdname struct_test
 struct_test <- function(
@@ -151,7 +160,7 @@ struct_test <- function(
   # To be conservative, in a two tail test we use the min of the two
   # So, following davidson & mckinnon Confidence intrval section,
   # p(tau) = 2 * min[F(tau), 1-F(tau)]
-  p.value <- 2*min(mean(boot_res$t < boot_res$t0), mean(boot_res$t > boot_res$t0))
+  p.value <- struct_test_pval(boot_res$t0, boot_res$t)
 
   # Creating the object
   out <- list(
@@ -182,8 +191,9 @@ c.diffnet_struct_test <- function(..., recursive=FALSE) {
   # Checking graph dim
   res         <- args[[1]]
   res$boot    <- do.call(c, lapply(args, "[[", "boot"))
-  res$p.value <- with(res, 2*min(mean(boot$t < boot$t0),
-                                 mean(boot$t > boot$t0)))
+  # res$p.value <- with(res, 2*min(mean(boot$t < boot$t0),
+  #                                mean(boot$t > boot$t0)))
+  p.value <- struct_test_pval(res$boot$t0, res$boot$t)
   res$mean_t  <- colMeans(res$boot$t, na.rm=TRUE)
   res$R       <- res$boot$R
 
@@ -203,9 +213,10 @@ print.diffnet_struct_test <- function(x, ...) {
         "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         paste(rep("-",80), collapse=""),"\n",
         " H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)\n",
-        "   E[beta(Y,G)|G] (observed) = ", t0, "\n",
-        "   E[beta(Y,G)] (expected)   = ", mean_t, "\n",
-        "   p-value = ", sprintf("%.5f\n", p.value), sep="")
+        "   E[beta(Y,G)|G] (observed) = ", paste0(sprintf("%12.4f",t0), collapse=", "), "\n",
+        "   E[beta(Y,G)] (expected)   = ", paste0(sprintf("%12.4f",mean_t), collapse=", "), "\n",
+        "   p-value                   = ", paste0(sprintf("%12.4f", p.value), collapse=", "),"\n",
+        sep="")
   })
   invisible(x)
 }
