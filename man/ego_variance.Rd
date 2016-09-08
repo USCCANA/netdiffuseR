@@ -4,7 +4,7 @@
 \alias{ego_variance}
 \title{Computes variance of \eqn{Y} at ego level}
 \usage{
-ego_variance(graph, Y, funname)
+ego_variance(graph, Y, funname, all = FALSE)
 }
 \arguments{
 \item{graph}{A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.}
@@ -12,6 +12,9 @@ ego_variance(graph, Y, funname)
 \item{Y}{A numeric vector of length \eqn{n}.}
 
 \item{funname}{Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).}
+
+\item{all}{Logical scalar. When \code{FALSE} (default) \eqn{f_i} is mean at
+ego level. Otherwise is fix for all i.}
 }
 \value{
 A numeric vector of length \eqn{n}.

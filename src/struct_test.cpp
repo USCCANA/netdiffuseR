@@ -89,6 +89,8 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
 //' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
 //' @param Y A numeric vector of length \eqn{n}.
 //' @param funname Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).
+//' @param all Logical scalar. When \code{FALSE} (default) \eqn{f_i} is mean at
+//' ego level. Otherwise is fix for all i.
 //' @details
 //'
 //' For each vertex \eqn{i} the variance is computed as follows
@@ -111,7 +113,7 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
 //' @export
 // [[Rcpp::export]]
 NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
-                       std::string funname) {
+                       std::string funname, bool all=false) {
 
   // Initialization
   int n = Y.length();
@@ -127,9 +129,19 @@ NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
   spiter begin = graph.begin();
   spiter end   = graph.end();
 
-  for (spiter i=begin; i!=end;i++)
-    fhat[i.row()] += graph.at(i.row(),i.col())*fun(Y[i.row()], Y[i.col()])/
-    (degree[i.row()] + 1e-15);
+  // Which value to use as mean
+  if (!all) {
+    for (spiter i=begin; i!=end;i++)
+      fhat[i.row()] += graph.at(i.row(),i.col())*fun(Y[i.row()], Y[i.col()])/
+      (degree[i.row()] + 1e-15);
+  } else {
+    double val = 0.0;
+    for (int i=0;i<n;i++)
+      for (int j=0;j<n;j++)
+        val += fun(Y[i],Y[j])/n/n;
+
+    fhat.fill(val);
+  }
 
   // Preparing iterators
   begin = graph.begin();
@@ -242,4 +254,11 @@ cor(ans0,ans1, use="complete.obs")
 t.test(ans0,ans1)
 
 x$toa[c(1,6)]
+
+diffnet <- medInnovationsDiffNet
+G <- diffnet$graph[[1]]
+Y <- diffnet$toa
+
+ans <- struct_test(G, function(g) mean(ego_variance(g,Y,"quaddist",TRUE)), R=1000)
+ans
 */

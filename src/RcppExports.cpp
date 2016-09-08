@@ -583,15 +583,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // ego_variance
-NumericVector ego_variance(const arma::sp_mat& graph, const NumericVector& Y, std::string funname);
-RcppExport SEXP netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP) {
+NumericVector ego_variance(const arma::sp_mat& graph, const NumericVector& Y, std::string funname, bool all);
+RcppExport SEXP netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP, SEXP allSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type Y(YSEXP);
     Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
-    __result = Rcpp::wrap(ego_variance(graph, Y, funname));
+    Rcpp::traits::input_parameter< bool >::type all(allSEXP);
+    __result = Rcpp::wrap(ego_variance(graph, Y, funname, all));
     return __result;
 END_RCPP
 }

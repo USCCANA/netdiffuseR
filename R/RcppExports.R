@@ -356,6 +356,8 @@ hatf <- function(G, Y, funname) {
 #' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
 #' @param Y A numeric vector of length \eqn{n}.
 #' @param funname Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).
+#' @param all Logical scalar. When \code{FALSE} (default) \eqn{f_i} is mean at
+#' ego level. Otherwise is fix for all i.
 #' @details
 #'
 #' For each vertex \eqn{i} the variance is computed as follows
@@ -376,7 +378,7 @@ hatf <- function(G, Y, funname) {
 #' relative variance.
 #' @return A numeric vector of length \eqn{n}.
 #' @export
-ego_variance <- function(graph, Y, funname) {
-    .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname)
+ego_variance <- function(graph, Y, funname, all = FALSE) {
+    .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname, all)
 }
 

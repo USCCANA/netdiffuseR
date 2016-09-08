@@ -2,9 +2,17 @@
 % Please edit documentation in R/struct_equiv.R
 \name{transformGraphBy}
 \alias{transformGraphBy}
+\alias{transformGraphBy.dgCMatrix}
+\alias{transformGraphBy.diffnet}
 \title{Apply a function to a graph considering non-diagonal structural zeros}
 \usage{
 transformGraphBy(graph, INDICES, fun = function(g, ...) g, ...)
+
+\method{transformGraphBy}{diffnet}(graph, INDICES, fun = function(g, ...) g,
+  ...)
+
+\method{transformGraphBy}{dgCMatrix}(graph, INDICES, fun = function(g, ...) g,
+  ...)
 }
 \arguments{
 \item{graph}{A graph}

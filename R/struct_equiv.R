@@ -215,6 +215,8 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, mode, ...) {
 transformGraphBy <- function(graph, INDICES, fun=function(g,...) g, ...)
   UseMethod("transformGraphBy")
 
+#' @export
+#' @rdname transformGraphBy
 transformGraphBy.diffnet <- function(graph, INDICES, fun=function(g,...) g, ...) {
   for (per in graph$meta$pers)
     graph$graph[[per]] <- transformGraphBy(graph$graph[[per]], INDICES, fun, ...)
@@ -222,6 +224,8 @@ transformGraphBy.diffnet <- function(graph, INDICES, fun=function(g,...) g, ...)
   return(graph)
 }
 
+#' @export
+#' @rdname transformGraphBy
 transformGraphBy.dgCMatrix <- function(graph, INDICES, fun=function(g,...) g, ...) {
   # Checking length of the grouping variable
   if (length(INDICES) != nvertices(graph))

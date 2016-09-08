@@ -112,7 +112,7 @@ it is shown that in order to achive such it is needed to perform
 \code{nlinks(graph)*log(1/eps)}, where \code{eps}\eqn{\sim}1e-7, in other words,
 around \code{nlinks(graph)*16}. We set the default to be 20.
 
-In the case of Markov chains, the variable \code{pr.change=0.5} makes the
+In the case of Markov chains, the variable \code{pr.change} allows making the
 algorithm aperiodic (Stanton and Pinar, 2012).
 }
 
