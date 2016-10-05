@@ -2,9 +2,9 @@
 % Please edit documentation in R/read_write_foreign.R
 \name{read_pajek}
 \alias{read_dl}
+\alias{read_ml}
 \alias{read_net}
 \alias{read_pajek}
-\alias{read_ucinet}
 \title{Read foreign graph formats}
 \source{
 From the pajek manual \url{http://mrvar.fdv.uni-lj.si/pajek/pajekman.pdf}
@@ -12,7 +12,7 @@ From the pajek manual \url{http://mrvar.fdv.uni-lj.si/pajek/pajekman.pdf}
 \usage{
 read_pajek(x)
 
-read_ucinet(x)
+read_ml(x)
 }
 \arguments{
 \item{x}{Character scalar. Path to the file to be imported.}
@@ -23,7 +23,7 @@ In the case of \code{read_pajek}, a list with three elements
 \item{edges}{If not null, a list of data frames with three columns: ego, alter, w (weight)}
 \item{edgelist}{If not null, a list of data frame with three columns: ego, alter, w (weight)}
 
-For \code{read_ucinet}, a list with two elements:
+For \code{read_ml}, a list with two elements:
 \item{adjmat}{An array with the graph}
 \item{meta}{A list with metadata}
 }
@@ -60,7 +60,7 @@ SAMPSONL <- read_pajek(path)
 
 # From DL (UCINET): Sampson monastery data (again) --------------------------
 path <- system.file("extdata", "SAMPSON.DAT", package = "netdiffuseR")
-SAMPSONL <- read_ucinet(path)
+SAMPSONL <- read_ml(path)
 
 }
 \author{

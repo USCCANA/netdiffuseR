@@ -5,7 +5,7 @@
 \alias{scale-free}
 \title{Barabasi-Albert model}
 \usage{
-rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL)
+rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE)
 }
 \arguments{
 \item{m0}{Integer scalar. Number of initial vertices in the graph.}
@@ -15,6 +15,8 @@ rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL)
 \item{t}{Integer scalar. Number of time periods (steps).}
 
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
+
+\item{self}{Logical scalar. When TRUE (default) allows for autolinks.}
 }
 \value{
 If \code{graph} is not provided, a static graph, otherwise an expanded
@@ -37,6 +39,10 @@ By default, the degree of the first \code{m0} vertices is set to be 2 (loops).
 When \code{m>1}, as described in the paper, each new link from the new vertex
 is added one at a time
 \dQuote{counting \sQuote{outward half} of the edge being added as already contributing to the degrees}.
+
+When \code{self=FALSE}, the generated graph is created without autolinks. This
+means that at the beginning, if the number of links equals zero, all vertices
+have the same probability of receiving a new link.
 }
 \examples{
 # Using another graph as a base graph

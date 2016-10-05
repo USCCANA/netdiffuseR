@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-09-02)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-05)
 
 ## New features and changes
 
@@ -9,6 +9,10 @@
 
 * The function `n_rewires` now has a default of 20 (before it was 100).
   This is based on a theoretical result (more details in the manual).
+  
+* The function `rgraph_ba` gains a new argument, `self=TRUE`. By default behaves
+  as before following Bollabas, but now can deviate to generate graphs with no
+  autolinks.
 
 
 ## New functions
@@ -16,7 +20,7 @@
 * `vertex_covariate_dist` computes distances between vertices using both the graph
   and a matrix of length nxK.
 
-* `struct_test_asymp` an asymptotic approximation of `struct_test`.
+* `struct_test_asymp` an asymptotic approximation of `struct_test` (not recomended).
 
 * `ego_variance` computes a pseudo variance at the ego level (aux function for
   `struct_test`).
@@ -24,12 +28,17 @@
 * `transformGraphBy` applies a function that transforms a graph considering
   structural zeros given by groups. Similar to the idea of the -by- option
   in `struct_equiv`.
+  
+* `read_ucinet` read UCINET binary files (both header and graph file). Still
+  work in progress
 
 
 ## Bug fixes
 
 * `plot_diffnet` was computing the coordinates of the cells wrongly. Most of the
   time causing adding figures outside of the plotting area.
+  
+* The `c.diffnet_struct_test` method was not updating the `p.value`.
 
 
 # Changes in netdiffuseR version 1.16.7 (2016-07-07)

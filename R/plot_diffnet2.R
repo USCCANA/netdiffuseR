@@ -23,18 +23,6 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
   else y
 }
 
-as_levels <- function(x, nlevels=20) {
-  y <- range(x, na.rm = TRUE, finite=TRUE)
-  y <- seq(y[1], y[2], length.out = nlevels)
-
-  x <- sapply(x, function(z) {
-    if (is.na(z)) return(NA)
-    which.min(abs(y-z))
-  })
-
-  factor(x, levels=1:nlevels, labels = y)
-}
-
 #' Another way of visualizing diffusion
 #' @param graph Either a square matrix or a diffnet object.
 #' @param slice Integer scalar. Number of slice to use as baseline for drawing the graph.
@@ -59,6 +47,8 @@ as_levels <- function(x, nlevels=20) {
 #'  When \code{include.white=NULL} then it won't include it.
 #' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
+#' @param no.graph Logical scala. When \code{TRUE} the graph is not drawn. This only makes
+#' sense when the option \code{add.map} is active.
 #' @details If \code{key.width<=0} then no key is created.
 #'
 #' @return A list with the following elements
@@ -95,6 +85,7 @@ plot_diffnet2.diffnet <- function(
   diffmap.alpha=.5,
   include.white="first",
   rescale.fun= rescale_vertex_igraph,
+  no.graph=FALSE,
   ...
 ) {
   plot_diffnet2.default(
@@ -104,7 +95,7 @@ plot_diffnet2.diffnet <- function(
     vertex.size=vertex.size, vertex.shape=vertex.shape, vertex.label=vertex.label,
     vertex.frame.color=vertex.frame.color, edge.arrow.size=edge.arrow.size,
     edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,diffmap.alpha,include.white,
-    rescale.fun,...)
+    rescale.fun,no.graph,...)
 }
 
 #' @rdname plot_diffnet2
@@ -129,6 +120,7 @@ plot_diffnet2.default <- function(
   diffmap.alpha=.5,
   include.white = "first",
   rescale.fun=rescale_vertex_igraph,
+  no.graph=FALSE,
   ...) {
 
   # Some constants
@@ -136,6 +128,9 @@ plot_diffnet2.default <- function(
 
   if (length(add.map) && !(add.map %in% c("first", "last")))
     stop("When -add.map- is specified it should be either \'before\' or \'last\'.")
+
+  if (!length(add.map) & no.graph)
+    stop("If -no.graph=TRUE- then you should specify some value for -add.map-.")
 
   # Taggin types ---------------------------------------------------------------
 
@@ -158,7 +153,7 @@ plot_diffnet2.default <- function(
   col <- rgb(col[,1], col[,2], col[,3], maxColorValue = 255)
 
   # Shapes
-  if (!length(vertex.shape)) {
+  if (!no.graph && !length(vertex.shape)) {
     vertex.shape <- rep("circle", nnodes(graph))
     vertex.shape[type_non] <- "square"
   }
@@ -174,10 +169,11 @@ plot_diffnet2.default <- function(
   yran <- range(l[,2])
 
   # Adjusting
-  xran[2] <- (xran[2] - xran[1]*(key.width + .1))/(1 - key.width - .1)
+  if (key.width > 0)
+    xran[2] <- (xran[2] - xran[1]*(key.width + .1))/(1 - key.width - .1)
 
-  plot.new()
-  plot.window(xlim=xran, ylim=yran, xaxs="i", yaxs="i")
+  graphics::plot.new()
+  graphics::plot.window(xlim=xran, ylim=yran, xaxs="i", yaxs="i")
   graphics::title(main=main)
 
   # If adding map! -------------------------------------------------------------
@@ -207,19 +203,20 @@ plot_diffnet2.default <- function(
   } else dm <- NULL
 
   # Plotting graph -------------------------------------------------------------
-  igraph::plot.igraph(
-    g, layout=l,
-    vertex.color=col,
-    vertex.label=vertex.label,
-    vertex.shape=vertex.shape,
-    vertex.size=rescale.fun(vertex.size),
-    vertex.frame.color=vertex.frame.color,
-    edge.arrow.size=edge.arrow.size,
-    edge.curved=edge.curved,
-    add=TRUE, rescale=FALSE,
-    xlim=xran, ylim=yran,
-    ...
-  )
+  if (!no.graph)
+    igraph::plot.igraph(
+      g, layout=l,
+      vertex.color=col,
+      vertex.label=vertex.label,
+      vertex.shape=vertex.shape,
+      vertex.size=rescale.fun(vertex.size),
+      vertex.frame.color=vertex.frame.color,
+      edge.arrow.size=edge.arrow.size,
+      edge.curved=edge.curved,
+      add=TRUE, rescale=FALSE,
+      xlim=xran, ylim=yran,
+      ...
+    )
 
   if (length(add.map) && (add.map=="last"))
       graphics::.filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
@@ -249,6 +246,8 @@ plot_diffnet2.default <- function(
 #'  function applied to \code{graph} (must return coordinates).
 #' @param jitter.args A list including arguments to be passed to \code{\link{jitter}}.
 #' @param kde2d.args A list including arguments to be passed to \code{\link[MASS:kde2d]{kde2d}}.
+#' @param sharp.criter A function choose whether to apply a weighted mean for each cell,
+#' or randomize over the values present in that cell (see details).
 #' @param ... Arguments passed to method.
 #' @details
 #' The image is created using the function \code{kde2d} from
@@ -259,10 +258,16 @@ plot_diffnet2.default <- function(
 #'  \item If no \code{layout} is passed, layout is computed using
 #'    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
 #'  \item Then, a \code{kde2d} map is computed for each level of \code{x}. The
-#'    resulting matrices are added up as a weighted sum
+#'    resulting matrices are added up as a weighted sum. This only holds if
+#'    at the cell level the function \code{sharp.criter} returns \code{FALSE}.
 #'  \item The jitter function is applied to the repeated coordinates.
 #'  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 #' }
+#'
+#' The function \code{sharp.criter} must take two values, a vector of levels and a
+#' vector of weights. It must return a logical scalar with value equal to \code{TRUE}
+#' when a randomization at the cell level must be done, in which case the final
+#' value of the cell is chosen using \code{sample(x, 1, prob=w)}.
 #'
 #' The resulting matrix can be passed to \code{\link{image}} or similar.
 #'
@@ -278,6 +283,8 @@ plot_diffnet2.default <- function(
 #' \item{h}{Bandwidth passed to \code{kde2d}.}
 #' @export
 #' @family visualizations
+#' @references Vega Yon, George G., and Valente, Thomas W., Visualizing Annotated
+#' Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working paper).
 #' @author George G. Vega Yon
 #' @examples
 #'
@@ -285,28 +292,29 @@ plot_diffnet2.default <- function(
 #'
 #' set.seed(1231)
 #'
-#' # Random small-world diffusion network
-#' x <- netdiffuseR::rdiffnet(300, 20, seed.graph="small-world",
-#'  seed.nodes = "random")
+#' # Random scale-free diffusion network
+#' x <- netdiffuseR::rdiffnet(2000, 5, seed.graph="scale-free", seed.p.adopt = .025,
+#'                            rewire = FALSE, seed.nodes = "central",
+#'                            rgraph.arg=list(self=FALSE, m=4),
+#'                            threshold.dist = function(id) .4)
 #'
 #' # Diffusion map (no random toa)
-#' dm0 <- diffusionMap(x, kde2d.args=list(n=100, h=4))
+#' dm0 <- diffusionMap(x, kde2d.args=list(n=150, h=.5), layout=igraph::layout_with_fr)
 #'
 #' # Random
-#' diffnet.toa(x) <- (x$toa)[order(runif(300))]
+#' diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 #'
 #' # Diffusion map (random toa)
-#' dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=100, h=4))
+#' dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 #'
 #' oldpar <- par(no.readonly = TRUE)
-#' col <- adjustcolor(
-#'  colorRampPalette(c("white","lightblue", "yellow", "red"))(100),.5)
+#' col <- colorRampPalette(blues9)(200)
 #' par(mfrow=c(1,2), oma=c(1,0,0,0))
 #' image(dm0, col=col, main="Non-random Times of Adoption")
 #' image(dm1, col=col, main="Random Times of Adoption")
 #' par(mfrow=c(1,1))
 #' mtext("Both networks have the same distribution on times of adoption", 1,
-#'  outer = TRUE)
+#'       outer = TRUE)
 #' par(oldpar)
 #'
 #' # Example with Brazilian Farmers --------------------------------------------
@@ -336,6 +344,33 @@ diffusionMap <- function(graph, ...) UseMethod("diffusionMap")
 #' @rdname diffusionMap
 diffmap <- diffusionMap
 
+#' Computes weighted variance
+#' @param x A numeric vector of length \eqn{n}.
+#' @param w A numeric vector of length \eqn{n}.
+#' @details \code{weighted_variance} implements weighted variance computation
+#' in the following form:
+#' \deqn{%
+#' \frac{\sum_i w_i'(x_i - \bar x)^2}{(1-n)}
+#' }{%
+#' sum[w(i)'(x(i) - w.mean(x))^2/(1-n)]
+#' }
+#'
+#' where \eqn{w_i'=w_i/\sum_i w_i}{w(i)' = w(i)/sum(w)}, and
+#' \eqn{\bar x = \sum_i w_i'x_i}{w.mean(x)=sum[w(i)'*x(i)]}.
+#' @return Numeric scalar with the weighted variance.
+#' @export
+#'
+weighted_var <- function(x,w) {
+  n <- length(x)
+  w <- w/sum(w, na.rm=TRUE)*n
+  m <- sum(x*w/sum(w, na.rm=TRUE), na.rm=TRUE)
+  sum((x - m)^2*w/(n-1+1e-15), na.rm=TRUE)
+}
+
+#' @export
+#' @rdname weighted_var
+wvar <- weighted_var
+
 #' @export
 #' @param x.adj Function to adjust \code{x}. If not \code{NULL} then it is applied
 #'  to \code{x} at the beginning (see details).
@@ -343,7 +378,10 @@ diffmap <- diffusionMap
 diffusionMap.default <- function(
   graph, x, x.adj=round_to_seq, layout=NULL,
   jitter.args = list(),
-  kde2d.args  = list(n=100), ...) {
+  kde2d.args  = list(n=100),
+  sharp.criter=function(x, w) {
+    wvar(x,w) > (max(x, na.rm=TRUE) - min(x, na.rm=TRUE))^2/12
+    },...) {
 
   # Step 0) Preparing the data
   if (length(x.adj)) {
@@ -363,26 +401,43 @@ diffusionMap.default <- function(
     kde2d.args$h <- c(MASS::bandwidth.nrd(coords[,1]), MASS::bandwidth.nrd(coords[,2]))
 
   # Mapping limits
-  lims  <- c(range(coords[,1]), range(coords[,2]))
-  Map   <- with(kde2d.args, list(z=matrix(0, ncol=n, nrow=n)))
-  Map$W <- Map$z
-  for (i in unique(x)) {
+  lims   <- c(range(coords[,1]), range(coords[,2]))
+  lvls   <- unique(x)
+  nlvls  <- length(unique(x))
+  Maps   <- with(kde2d.args, list(z=array(0, dim=c(n,n,nlvls) )))
+  Maps$W <- Maps$z
+  for (i in 1:nlvls) {
     # Skip if NA
-    if (is.na(i)) next
+    if (is.na(lvls[i])) next
 
     # Subset and map
-    dat <- coords[which(x==i),,drop=FALSE]
+    dat <- coords[which(x==lvls[i]),,drop=FALSE]
     map <- do.call(MASS::kde2d, c(kde2d.args, list(
       x = dat[,1], y=dat[,2], lims=lims)))
 
     # Adding up (for weighted average)
-    Map$W <- Map$W + map$z
-    Map$z <- Map$z + map$z*i
+    Maps$W[,,i] <- map$z
+    Maps$z[,,i] <- map$z*lvls[i]
 
   }
 
+  # Processing each level
+  Map     <- with(kde2d.args, list(z=matrix(0, ncol=n, nrow=n)))
+  Map$W   <- Map$z
+
+  for (i in 1:kde2d.args$n)
+    for (j in 1:kde2d.args$n) {
+
+      # Computing variance at that level
+      if (sharp.criter(lvls,Maps$W[i,j,]) || sum(Maps$W[i,j,]) < 1e-30 ) {
+        Map$z[i,j] <- sum(Maps$z[i,j,])/(sum(Maps$W[i,j,]) + 1e-15)
+      } else {
+        Map$z[i,j] <- sample(lvls, 1, prob=Maps$W[i,j,])
+      }
+    }
+
   # Normalizing
-  Map$z <- Map$z/(Map$W + 1e-15)
+  # Map$z <- Map$z/(Map$W + 1e-15)
   Map$x <- seq(lims[1], lims[2], length.out = kde2d.args$n)
   Map$y <- seq(lims[3], lims[4], length.out = kde2d.args$n)
 

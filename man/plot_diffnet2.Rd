@@ -15,7 +15,7 @@ plot_diffnet2(graph, ...)
   vertex.label = "", vertex.frame.color = "gray", edge.arrow.size = 0.5,
   edge.curved = FALSE, add.map = NULL, diffmap.args = list(kde2d.args =
   list(n = 100)), diffmap.alpha = 0.5, include.white = "first",
-  rescale.fun = rescale_vertex_igraph, ...)
+  rescale.fun = rescale_vertex_igraph, no.graph = FALSE, ...)
 
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE), color.ramp = grDevices::colorRamp(c("skyblue",
@@ -25,7 +25,7 @@ plot_diffnet2(graph, ...)
   vertex.frame.color = "gray", edge.arrow.size = 0.5, edge.curved = FALSE,
   add.map = NULL, diffmap.args = list(kde2d.args = list(n = 100)),
   diffmap.alpha = 0.5, include.white = "first",
-  rescale.fun = rescale_vertex_igraph, ...)
+  rescale.fun = rescale_vertex_igraph, no.graph = FALSE, ...)
 }
 \arguments{
 \item{graph}{Either a square matrix or a diffnet object.}
@@ -69,6 +69,9 @@ graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds
 When \code{include.white=NULL} then it won't include it.}
 
 \item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
+
+\item{no.graph}{Logical scala. When \code{TRUE} the graph is not drawn. This only makes
+sense when the option \code{add.map} is active.}
 
 \item{pers}{Integer vector of length \eqn{T} indicating the time periods of the data.}
 }

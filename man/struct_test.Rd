@@ -83,7 +83,9 @@ against the empirical distribution of it obtained from rewiring the network.
 \details{
 \code{struct_test} computes the test by generating the null distribution using
 Monte Carlo simulations (rewiring). \code{struct_test_asymp} computes the
-test using an asymptotic approximation.
+test using an asymptotic approximation. While available, we do not recommend
+using the asymptotic approximation since it has not shown good results when
+compared to the MC approximation.
 
 The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 

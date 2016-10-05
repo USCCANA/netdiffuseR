@@ -143,3 +143,16 @@ void st_getfun(std::string funname, funcPtr & fun) {
 
   return ;
 }
+
+// Removes cases of graph that are not complete in x
+NumericVector complete_cases_graph(arma::sp_mat & graph, const NumericVector & x) {
+  std::vector<double> ans;
+  int n = x.size();
+  for (int i =0;i<n;i++)
+    if (NumericVector::is_na(x[i])) {
+      graph.shed_col(i);
+      graph.shed_row(i);
+    } else ans.push_back(x[i]);
+
+  return wrap(ans);
+}

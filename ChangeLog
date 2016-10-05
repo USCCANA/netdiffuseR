@@ -1,3 +1,11 @@
+2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.R: Added new options, adding sharp criter for diffmap.
+	* R/random_graph.R: New argument for -rgraph_ba-. Now allows for !self.
+	* R/read_write_foreign.R: New function for reading binary files from 
+	  UCINET.
+	* R/struct_test.R: Fixing bug in c. method.
+	* src/rgraph_ba.cpp: New argument for !self.
+
 2016-09-02  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/struct_equiv.R: New function to apply transformation to a matrix
 	considering structural zeros -transformGraphBy-.

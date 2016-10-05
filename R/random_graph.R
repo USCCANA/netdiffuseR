@@ -88,6 +88,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' @param m Integer scalar. Number of new edges per vertex added.
 #' @param t Integer scalar. Number of time periods (steps).
 #' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @param self Logical scalar. When TRUE (default) allows for autolinks.
 #' @return If \code{graph} is not provided, a static graph, otherwise an expanded
 #' graph (\code{t} aditional vertices) of the same class as \code{graph}.
 #'
@@ -110,6 +111,10 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' is added one at a time
 #' \dQuote{counting \sQuote{outward half} of the edge being added as already contributing to the degrees}.
 #'
+#' When \code{self=FALSE}, the generated graph is created without autolinks. This
+#' means that at the beginning, if the number of links equals zero, all vertices
+#' have the same probability of receiving a new link.
+#'
 #' @examples
 #' # Using another graph as a base graph
 #' graph <- rgraph_ba()
@@ -128,7 +133,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
 #' Retrieved from \url{http://barabasi.com/book/network-science}
 #' @author George G. Vega Yon
-rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
+rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE) {
   # When the graph is not null, then use it as a seed (starting point)
   if (length(graph)) {
     d <- dgr(graph)
@@ -139,15 +144,15 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
 
     # Parsing the class
     out <- switch(class(graph),
-           matrix = rgraph_ba_cpp(methods::as(graph, "dgCMatrix"), d, m, t),
-           dgCMatrix =rgraph_ba_cpp(graph, d, m, t),
-           list = lapply(graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t)),
-           diffnet = lapply(graph$graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t)),
+           matrix = rgraph_ba_cpp(methods::as(graph, "dgCMatrix"), d, m, t, self),
+           dgCMatrix =rgraph_ba_cpp(graph, d, m, t, self),
+           list = lapply(graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t, self)),
+           diffnet = lapply(graph$graph, function(x) rgraph_ba_cpp(x, dgr(x), m, t, self)),
            array = {
              out <- vector("list", dim(graph)[3])
              for (i in 1:dim(graph)[3])
                out[[i]] <- rgraph_ba_cpp(methods::as(graph[,,i], "dgCMatrix"),
-                                         d[,i], m, t)
+                                         d[,i], m, t, self)
              out
            },
            stopifnot_graph(graph)
@@ -173,6 +178,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
       # BA is undirected by definition
       attr(out, "undirected") <- NULL
       graph$meta$undirected <- FALSE
+      graph$meta$self       <- self
 
       names(out) <- graph$meta$pers
 
@@ -242,7 +248,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL) {
       return(out)
     }
   } else {
-    out <- rgraph_ba_new_cpp(m0, m, t)
+    out <- rgraph_ba_new_cpp(m0, m, t, self)
     ids <- 1:(m0+t)
 
     attr(out, "undirected") <- FALSE

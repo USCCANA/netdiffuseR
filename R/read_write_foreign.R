@@ -9,7 +9,7 @@
 #' \item{edges}{If not null, a list of data frames with three columns: ego, alter, w (weight)}
 #' \item{edgelist}{If not null, a list of data frame with three columns: ego, alter, w (weight)}
 #'
-#' For \code{read_ucinet}, a list with two elements:
+#' For \code{read_ml}, a list with two elements:
 #' \item{adjmat}{An array with the graph}
 #' \item{meta}{A list with metadata}
 #'
@@ -39,7 +39,7 @@
 #'
 #' # From DL (UCINET): Sampson monastery data (again) --------------------------
 #' path <- system.file("extdata", "SAMPSON.DAT", package = "netdiffuseR")
-#' SAMPSONL <- read_ucinet(path)
+#' SAMPSONL <- read_ml(path)
 #'
 #' @author George G. Vega Yon
 #' @export
@@ -158,7 +158,7 @@ gregexec <- function(s, pattern) {
 #' Other datasets http://moreno.ss.uci.edu/data.html
 #' @rdname read_pajek
 #' @export
-read_ucinet <- function(x) {
+read_ml <- function(x) {
   # (1) Reading the file and finding the tags ----------------------------------
   lines <- readLines(x)
 
@@ -284,4 +284,141 @@ read_ucinet <- function(x) {
   return(
     list(adjmat=dat, meta=meta)
     )
+}
+
+
+UCINET_datatype <- c(
+  "nodt","bytedt","booleandt","shortintdt","worddt","smallintdt","longintdt",
+  "singledt","realdt","doubledt","compdt","extendeddt","labeldt","setdt",
+  "stringdt","pointerdt","chardt","integerdt","nodelistdt","sparsedt","int64dt"
+)
+# UCINET_datatype <- data.frame(
+#   des   = UCINET_datatype,
+#   bytes = c(0, 1, 1, 2)
+# )
+
+#' Reads UCINET files
+#' @param f Character scalar. Name of the header file. e.g. \code{mydata.##h}.
+#' @export
+#' @return An array including dimnames (if there are) and the following attributes:
+#' \item{headerversion}{Character scalar}
+#' \item{year}{Integer. Year the file was created}
+#' \item{month}{Integer. Month of the year the file was created.}
+#' \item{day}{Integer. Day of the month the file was created.}
+#' \item{dow}{Integer. Day of the week the file was created.}
+#' \item{labtype}{}
+#' \item{infile.dt}{Character scalar. Type of data of the array.}
+#' \item{dim}{Integer vector. Dimmensions of the array.}
+#' \item{tit}{Character scalar. Title of the file.}
+#' \item{haslab}{Logical vector. Whether  each dim has a label.}
+read_ucinet_head <- function(f) {
+  con <- file(f,"rb")
+  on.exit(close(con))
+  readBin(con, raw(), n=2L)
+
+  # Common meta
+  meta <- list(
+    headerversion = rawToChar(readBin(con, raw(), n=4L)),
+    year          = readBin(con, integer(), size=2L, signed = FALSE),
+    month         =readBin(con, integer(), size=2L, signed = FALSE),
+    day           = readBin(con, integer(), size=2L, signed = FALSE),
+    dow           = readBin(con, integer(), size=2L, signed = FALSE),
+    labtype       = readBin(con, integer(), size=2L, signed = FALSE),
+    infile.dt     = UCINET_datatype[readBin(con, integer(), size=1L, signed = FALSE)]
+  )
+
+  # Dims
+  ndim <- readBin(con, integer(), size=2L, signed = FALSE)
+  meta$dim <- readBin(con, integer(), size=4L, n=ndim)
+
+  # Title
+  ntit      <- readBin(con, integer(), size=1L, signed = FALSE)
+  meta$tit  <- readChar(con, nchars = ntit)
+
+  # Labels
+  meta$haslab <- readBin(con, logical(), size = 1L, n=3L)
+
+  # Col labels
+  if (meta$haslab[1]) {
+    meta$clab <- vector("character", meta$dim[1])
+    for (i in 1:meta$dim[1]) {
+      lablen       <- readBin(con, integer(), size=2L)
+      meta$clab[i] <- paste(readBin(con, character(), n=lablen/2, size=1L), collapse="")
+    }
+  } else {
+    meta$clab <- NULL
+  }
+
+  # Row labels
+  if (meta$haslab[2]) {
+    meta$rlab <- vector("character", meta$dim[2])
+    for (i in 1:meta$dim[2]) {
+      lablen       <- readBin(con, integer(), size=2L)
+      meta$rlab[i] <- paste(readBin(con, character(), n=lablen/2, size=1L), collapse="")
+    }
+  } else {
+    meta$rlab <- NULL
+  }
+
+  # Level labels
+  if (meta$haslab[3]) {
+    meta$llab <- vector("character", meta$dim[3])
+    for (i in 1:meta$dim[3]) {
+      lablen       <- readBin(con, integer(), size=2L)
+      meta$llab[i] <- paste(readBin(con, character(), n=lablen/2, size=1L), collapse="")
+    }
+  } else {
+    meta$llab <- NULL
+  }
+
+
+  return(meta)
+}
+
+#' Read UCINET files (binary)
+#' @param echo Logical scalar. When \code{TRUE} shows a message.
+#' @export
+#' @rdname read_ucinet_head
+read_ucinet <- function(f, echo=FALSE) {
+
+  # Recursion
+  if (length(f) > 1)
+    return(lapply(f, read_ucinet, echo=echo))
+
+  # Checking extension
+  f <- gsub("\\.[#]{2}(h|d)$", "", f)
+  if (echo) message(sprintf("Reading file %s", f))
+
+  # File names (do they exits)
+  fhead <- paste0(f,".##h")
+  fdata <- paste0(f,".##d")
+
+  if (!file.exists(fhead))
+    stop(sprintf("File %s not found"))
+
+  if (!file.exists(fdata))
+    stop(sprintf("File %s not found"))
+
+  # Getting Metadata
+  meta <- tryCatch(read_ucinet_head(fhead), error=function(e) e)
+  if (inherits(meta, "error")) {
+    stop(sprintf("An error ocurred while processing the header %s\n", fhead),
+         meta)
+  }
+
+  # Reading data and coercing into an array
+  con <- file(fdata, "rb")
+  on.exit(close(con))
+
+  s <- prod(meta$dim)
+  dat <- readBin(con, numeric(), s, size=4L)
+  dat <- do.call(structure, c(list(.Data=dat), meta))
+
+  # Transposing (since the data is stored by row in the .##d file)
+  for (i in 1:dim(dat)[3])
+    dat[,,i] <- t(dat[,,i])
+
+  dimnames(dat) <- list(meta$rlab, meta$clab, meta$llab)
+
+  return(dat)
 }

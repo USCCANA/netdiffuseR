@@ -15,7 +15,9 @@ diffusionMap(graph, ...)
 diffmap(graph, ...)
 
 \method{diffusionMap}{default}(graph, x, x.adj = round_to_seq,
-  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100), ...)
+  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100),
+  sharp.criter = function(x, w) {     wvar(x, w) > (max(x, na.rm = TRUE) -
+  min(x, na.rm = TRUE))^2/12 }, ...)
 
 \method{diffusionMap}{diffnet}(graph, slice = nslices(graph), ...)
 
@@ -42,6 +44,9 @@ function applied to \code{graph} (must return coordinates).}
 
 \item{kde2d.args}{A list including arguments to be passed to \code{\link[MASS:kde2d]{kde2d}}.}
 
+\item{sharp.criter}{A function choose whether to apply a weighted mean for each cell,
+or randomize over the values present in that cell (see details).}
+
 \item{slice}{Integer scalar. Slice of the network to be used as baseline for drawing the graph.}
 
 \item{y}{Ignored.}
@@ -67,10 +72,16 @@ the \pkg{MASS} package. The complete algorithm follows:
  \item If no \code{layout} is passed, layout is computed using
    \code{\link[igraph:layout_nicely]{layout_nicely}} from \pkg{igraph}
  \item Then, a \code{kde2d} map is computed for each level of \code{x}. The
-   resulting matrices are added up as a weighted sum
+   resulting matrices are added up as a weighted sum. This only holds if
+   at the cell level the function \code{sharp.criter} returns \code{FALSE}.
  \item The jitter function is applied to the repeated coordinates.
  \item 2D kernel is computed using \code{kde2d} over the coordinates.
 }
+
+The function \code{sharp.criter} must take two values, a vector of levels and a
+vector of weights. It must return a logical scalar with value equal to \code{TRUE}
+when a randomization at the cell level must be done, in which case the final
+value of the cell is chosen using \code{sample(x, 1, prob=w)}.
 
 The resulting matrix can be passed to \code{\link{image}} or similar.
 
@@ -84,28 +95,29 @@ which basically maps \code{x} to a fix length sequence of numbers such that
 
 set.seed(1231)
 
-# Random small-world diffusion network
-x <- netdiffuseR::rdiffnet(300, 20, seed.graph="small-world",
- seed.nodes = "random")
+# Random scale-free diffusion network
+x <- netdiffuseR::rdiffnet(2000, 5, seed.graph="scale-free", seed.p.adopt = .025,
+                           rewire = FALSE, seed.nodes = "central",
+                           rgraph.arg=list(self=FALSE, m=4),
+                           threshold.dist = function(id) .4)
 
 # Diffusion map (no random toa)
-dm0 <- diffusionMap(x, kde2d.args=list(n=100, h=4))
+dm0 <- diffusionMap(x, kde2d.args=list(n=150, h=.5), layout=igraph::layout_with_fr)
 
 # Random
-diffnet.toa(x) <- (x$toa)[order(runif(300))]
+diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 
 # Diffusion map (random toa)
-dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=100, h=4))
+dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- adjustcolor(
- colorRampPalette(c("white","lightblue", "yellow", "red"))(100),.5)
+col <- colorRampPalette(blues9)(200)
 par(mfrow=c(1,2), oma=c(1,0,0,0))
 image(dm0, col=col, main="Non-random Times of Adoption")
 image(dm1, col=col, main="Random Times of Adoption")
 par(mfrow=c(1,1))
 mtext("Both networks have the same distribution on times of adoption", 1,
- outer = TRUE)
+      outer = TRUE)
 par(oldpar)
 
 # Example with Brazilian Farmers --------------------------------------------
@@ -132,6 +144,10 @@ with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
 }
 \author{
 George G. Vega Yon
+}
+\references{
+Vega Yon, George G., and Valente, Thomas W., Visualizing Annotated
+Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working paper).
 }
 \seealso{
 Other visualizations: \code{\link{drawColorKey}},

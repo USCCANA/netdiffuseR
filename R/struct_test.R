@@ -28,7 +28,9 @@
 #' @details
 #' \code{struct_test} computes the test by generating the null distribution using
 #' Monte Carlo simulations (rewiring). \code{struct_test_asymp} computes the
-#' test using an asymptotic approximation.
+#' test using an asymptotic approximation. While available, we do not recommend
+#' using the asymptotic approximation since it has not shown good results when
+#' compared to the MC approximation.
 #'
 #' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #'
@@ -193,7 +195,7 @@ c.diffnet_struct_test <- function(..., recursive=FALSE) {
   res$boot    <- do.call(c, lapply(args, "[[", "boot"))
   # res$p.value <- with(res, 2*min(mean(boot$t < boot$t0),
   #                                mean(boot$t > boot$t0)))
-  p.value <- struct_test_pval(res$boot$t0, res$boot$t)
+  res$p.value <- struct_test_pval(res$boot$t0, res$boot$t)
   res$mean_t  <- colMeans(res$boot$t, na.rm=TRUE)
   res$R       <- res$boot$R
 

@@ -32,6 +32,6 @@ double st_smallerequal(double y0, double y1);
 double st_equal(double y0, double y1);
 
 void st_getfun(std::string funname, funcPtr & fun);
-
+NumericVector complete_cases_graph(arma::sp_mat & graph, NumericVector & x);
 
 #endif
