@@ -14,7 +14,8 @@
 #'  most of the package functions are defined for both classes, the default output
 #'  graph is sparse, i.e. \code{dgCMatrix}.}
 #'  \item{With respect to \strong{dynamic graphs}, these are represented by either
-#'  a \code{\link{diffnet}} object, an \code{\link{array}} of size \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
+#'  a \code{\link{diffnet}} object, an \code{\link{array}} of size
+#'  \eqn{n\times n \times T}{n * n * T}, or a list of size \eqn{T}
 #'  with sparse matrices (class \code{dgCMatrix}) of size \eqn{n\times n}{n * n}.
 #'  Just like the static graph case, while most of the functions accept both
 #'  graph types, the default output is \code{dgCMatrix}.}
@@ -37,6 +38,79 @@
 #' @include imports.R
 #' @author George G. Vega Yon
 NULL
+
+
+as_generic_graph <- function(graph) UseMethod("as_generic_graph")
+
+# Method for igraph objects
+as_generic_graph.igraph <- function(graph) {
+
+  # If multiple then warn
+  if (igraph::any_multiple(graph))
+    warning("The -igraph- object has multiple edges. Only one of each will be retrieved.")
+  if ("weight" %in% igraph::graph_attr_names(graph)) {
+    adjmat <- igraph::as_adj(graph, attr="weight")
+  } else {
+    adjmat <- igraph::as_adj(graph)
+  }
+
+  # Converting to dgCMatrix
+  env <- environment()
+  ans <- new_generic_graph()
+  suppressWarnings(add_to_generic_graph("ans", "graph", list(`1`=adjmat), env))
+  meta <- c(classify_graph(adjmat), list(
+    self       = any(igraph::is.loop(graph)),
+    undirected = FALSE, # For now we will assume it is undirected
+    multiple   = FALSE, # And !multiple
+    class      = "igraph"
+    ))
+  add_to_generic_graph("ans", "meta", meta, env)
+
+  return(ans)
+}
+
+new_generic_graph <- function() {
+  list(graph=NULL, meta=NULL)
+}
+
+# This function adds an element checking that the slot exits
+add_to_generic_graph <- function(gg,nam,val,env=environment()) {
+  obj <- get(gg, envir = env)
+  if (!(nam %in% names(obj))) stop(nam," unknown slot.")
+  obj[[nam]] <- val
+  assign(gg,obj,envir = env)
+  invisible(NULL)
+}
+
+# Method for network objects
+as_generic_graph.network <- function(graph) {
+  # If multiple then warn
+  if (network::is.multiplex(graph))
+    warning("The -network- object has multiple edges. These will be added up.")
+
+  # Converting to an adjacency matrix (dgCMatrix)
+  adjmat <- edgelist_to_adjmat(
+    network::as.edgelist(graph),
+    undirected = !network::is.directed(graph),
+    multiple   = network::is.multiplex(graph),
+    self       = network::has.loops(graph)
+    )
+
+  env <- environment()
+  ans <- new_generic_graph()
+  suppressWarnings(add_to_generic_graph("ans", "graph", list(`1`=adjmat), env))
+
+  meta <- c(classify_graph(adjmat), list(
+    self       = network::has.loops(graph),
+    undirected = !network::is.directed(graph),
+    multiple   = network::is.multiplex(graph),
+    class      = "network"
+  ))
+
+  add_to_generic_graph("ans", "meta", meta, env)
+
+  return(ans)
+}
 
 stopifnot_graph <- function(x)
   stop("No method for graph of class -",class(x),"-. Please refer to the manual 'netdiffuseR-graphs'.")
@@ -146,7 +220,7 @@ classify_graph <- function(graph) {
     return(invisible(list(
       type="dynamic",
       class="list",
-      ids=ids,
+      ids=as.character(ids),
       pers=pers,
       nper=t,
       n=d[[1]][1])

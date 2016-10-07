@@ -130,16 +130,17 @@ edgelist_to_adjmat <- function(
   undirected=getOption("diffnet.undirected"), self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple"),
   keep.isolates=TRUE, recode.ids=TRUE) {
 
-  switch (class(edgelist),
-    data.frame = edgelist_to_adjmat.data.frame(
+  cls <- class(edgelist)
+  if ("data.frame" %in% cls)
+    edgelist_to_adjmat.data.frame(
       edgelist, w, t0, t1, t, simplify, undirected, self, multiple,
       keep.isolates, recode.ids
-    ),
-    matrix = edgelist_to_adjmat.matrix(
+    )
+  else if ("matrix" %in% cls)
+    edgelist_to_adjmat.matrix(
       edgelist, w, t0, t1, t, simplify, undirected, self, multiple,
-      keep.isolates, recode.ids),
-    stop("-edgelist- should be either a data.frame, or a matrix.")
-  )
+      keep.isolates, recode.ids)
+  else stop("-edgelist- should be either a data.frame, or a matrix.")
 }
 
 # @rdname edgelist_to_adjmat

@@ -1,4 +1,12 @@
 2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Changing syntax.
+	* R/graph_data.R: Working on new function to convert igraph,network,
+	  etc. to 'generic graphs' so methods in netdiffuseR work.
+	* R/stats.R: New plot method for the output of degree seq (which is
+	  now a diffnet_degSeq, matrix class object.
+	* src/adjmat.cpp: Fixing bug on undirected graphs.
+
+2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/plot_diffnet2.R: Added new options, adding sharp criter for diffmap.
 	* R/random_graph.R: New argument for -rgraph_ba-. Now allows for !self.
 	* R/read_write_foreign.R: New function for reading binary files from 

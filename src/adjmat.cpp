@@ -115,12 +115,13 @@ arma::sp_mat edgelist_to_adjmat_cpp(
     }
 
     // If multiple edges are not allowed.
-    if (!multiple && (adjmat(ego, alter) != 0)) continue;
-
-    adjmat.at(ego, alter) += w[i];
+    if (multiple | (adjmat(ego, alter) == 0))
+      adjmat.at(ego, alter) += w[i];
 
     // If undirected, must include in the switch
-    if (undirected) adjmat.at(alter, ego) += w[i];
+    if (undirected)
+      if (multiple | (adjmat(alter, ego) == 0))
+        adjmat.at(alter, ego) += w[i];
   }
 
   return adjmat;

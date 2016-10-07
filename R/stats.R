@@ -7,8 +7,8 @@
 #' @param undirected Logical scalar. TRUE when the graph is undirected.
 #' @param self Logical scalar.. TRUE when self edges should not be considered.
 #' @param valued Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.
-#' @return Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
-#' a matrix), or a matrix of size \eqn{n\times T}{n * T}.
+#' @return A numeric matrix of size \eqn{n\times T}{n * T}. In the case of \code{plot},
+#'  returns an object of class \code{\link[hist]{histogram}}.
 #' @export
 #' @family statistics
 #' @keywords univar
@@ -33,21 +33,60 @@
 #'
 #' any(d_valued!=d_unvalued)
 #'
+#' # Classic Scale-free plot ---------------------------------------------------
+#' set.seed(1122)
+#' g <- rgraph_ba(t=1e3-1)
+#' hist(dgr(g))
+#'
+#' # Since by default uses logscale, here we suppress the warnings
+#' # on points been discarded for <=0.
+#' suppressWarnings(plot(dgr(g)))
+#'
 #' @author George G. Vega Yon
 dgr <- function(graph, cmode="degree",
                 undirected=getOption("diffnet.undirected", FALSE),
                 self=getOption("diffnet.self",FALSE),
                 valued=getOption("diffnet.valued", FALSE)) {
 
-  switch (class(graph),
-    matrix = dgr.matrix(graph, cmode, undirected, self, valued),
-    array = dgr.array(graph, cmode, undirected, self, valued),
-    dgCMatrix = dgr.dgCMatrix(graph, cmode, undirected, self, valued),
-    list = dgr.list(graph, cmode, undirected, self, valued),
-    diffnet = dgr.list(graph$graph, cmode, undirected = graph$meta$undirected, self, valued),
-    stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+  ans <- if ("matrix" %in% cls) {
+    dgr.matrix(graph, cmode, undirected, self, valued)
+  } else if ("array" %in% cls) {
+    dgr.array(graph, cmode, undirected, self, valued)
+  } else if ("dgCMatrix" %in% cls) {
+    dgr.dgCMatrix(graph, cmode, undirected, self, valued)
+  } else if ("list" %in% cls) {
+    dgr.list(graph, cmode, undirected, self, valued)
+  } else if ("diffnet" %in% cls) {
+    dgr.list(graph$graph, cmode, undirected = graph$meta$undirected, self, valued)
+  } else if ("igraph" %in% cls) {
+    graph <- as_generic_graph.igraph(graph)
+    dgr.dgCMatrix(graph$graph[[1]], cmode, graph$meta$undirected, self, valued)
+  } else if ("network" %in% cls) {
+    graph <- as_generic_graph.network(graph)
+    dgr.dgCMatrix(graph$graph[[1]], cmode, graph$meta$undirected, self, valued)
+  } else stopifnot_graph(graph)
 
+  return(structure(ans, class=c("diffnet_degSeq", class(ans))))
+}
+
+#' @export
+#' @rdname dgr
+#' @param x An \code{diffnet_degSeq object}
+#' @param breaks Passed to \code{\link{hist}}.
+#' @param log Passed to \code{\link{plot}} (see \code{\link{par}}).
+#' @param hist.args Arguments passed to \code{\link{hist}}.
+#' @param ... Further arguments passed to \code{\link{plot}}.
+#' @param slice Integer scalar. In the case of dynamic graphs, number of time
+#'  point to plot.
+#' @param y Ignored
+#' @param freq Logical scalar. When \code{TRUE} the y-axis will reflex counts,
+#'  otherwise densities.
+plot.diffnet_degSeq <- function(x, breaks = min(100L, nrow(x)/5), freq=FALSE, y=NULL, log="xy",
+                                hist.args=list(), slice=ncol(x), ...) {
+  ans <- do.call(hist, c(hist.args, list(x=x[,slice], breaks = breaks, plot=FALSE)))
+  with(ans, plot(x=mids,y=if (freq) counts else density,log=log, ...))
+  invisible(ans)
 }
 
 # @rdname dgr
@@ -403,12 +442,14 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
   }
 
-  switch (class(graph),
-    array   = exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized),
-    list    = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
-    diffnet = exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized),
-    stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+  if ("array" %in% cls) {
+    exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized)
+  } else if ("list" %in% cls) {
+    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized)
+  } else if ("diffnet" %in% cls) {
+    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized)
+  } else stopifnot_graph(graph)
 }
 
 # @rdname exposure

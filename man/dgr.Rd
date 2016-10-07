@@ -5,11 +5,16 @@
 \alias{dgr}
 \alias{indegree}
 \alias{outdegree}
+\alias{plot.diffnet_degSeq}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
 dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
   FALSE), self = getOption("diffnet.self", FALSE),
   valued = getOption("diffnet.valued", FALSE))
+
+\method{plot}{diffnet_degSeq}(x, breaks = min(100L, nrow(x)/5),
+  freq = FALSE, y = NULL, log = "xy", hist.args = list(),
+  slice = ncol(x), ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -21,10 +26,28 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
 \item{self}{Logical scalar.. TRUE when self edges should not be considered.}
 
 \item{valued}{Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.}
+
+\item{x}{An \code{diffnet_degSeq object}}
+
+\item{breaks}{Passed to \code{\link{hist}}.}
+
+\item{freq}{Logical scalar. When \code{TRUE} the y-axis will reflex counts,
+otherwise densities.}
+
+\item{y}{Ignored}
+
+\item{log}{Passed to \code{\link{plot}} (see \code{\link{par}}).}
+
+\item{hist.args}{Arguments passed to \code{\link{hist}}.}
+
+\item{slice}{Integer scalar. In the case of dynamic graphs, number of time
+point to plot.}
+
+\item{...}{Further arguments passed to \code{\link{plot}}.}
 }
 \value{
-Either a numeric vector of size \eqn{n}{n} with the degree of each node (if graph is
-a matrix), or a matrix of size \eqn{n\times T}{n * T}.
+A numeric matrix of size \eqn{n\times T}{n * T}. In the case of \code{plot},
+ returns an object of class \code{\link[hist]{histogram}}.
 }
 \description{
 Computes the requested degree measure for each node in the graph.
@@ -48,6 +71,15 @@ d_unvalued <- dgr(kfamilyDiffNet, valued=FALSE)
 d_valued   <- dgr(kfamilyDiffNet, valued=TRUE)
 
 any(d_valued!=d_unvalued)
+
+# Classic Scale-free plot ---------------------------------------------------
+set.seed(1122)
+g <- rgraph_ba(t=1e3-1)
+hist(dgr(g))
+
+# Since by default uses logscale, here we suppress the warnings
+# on points been discarded for <=0.
+suppressWarnings(plot(dgr(g)))
 
 }
 \author{

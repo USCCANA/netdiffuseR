@@ -58,6 +58,7 @@ Collate:
     'diffnet-indexing.R'
     'diffnet-methods.R'
     'egonets.R'
+    'graph.R'
     'igraph.R'
     'infect_suscept.R'
     'misc.R'
