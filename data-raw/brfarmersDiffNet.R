@@ -77,7 +77,8 @@ toa <- brfarmers$adopt
 
 # Creating a diffnet -----------------------------------------------------------
 brfarmersDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(brfarmers, select=c(-id,-toa)),
-                               t0=1946, t1=1966)
+                               t0=1946, t1=1966, name="Brazilian Farmers",
+                               behavior="Adoption of Hybrid Corn Seeds")
 
 # [2016-02-24]: keep.isolates working
 # diffnet.attrs(brfarmersDiffNet2, "vertex", "static") <- as.matrix(subset(brfarmers, id %in% used.vertex))

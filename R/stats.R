@@ -8,7 +8,7 @@
 #' @param self Logical scalar.. TRUE when self edges should not be considered.
 #' @param valued Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.
 #' @return A numeric matrix of size \eqn{n\times T}{n * T}. In the case of \code{plot},
-#'  returns an object of class \code{\link[hist]{histogram}}.
+#'  returns an object of class \code{\link[graphics:hist]{histogram}}.
 #' @export
 #' @family statistics
 #' @keywords univar
@@ -70,6 +70,45 @@ dgr <- function(graph, cmode="degree",
   return(structure(ans, class=c("diffnet_degSeq", class(ans))))
 }
 
+# cmode:
+#  0: in
+#  1: out
+#  2: total
+.dgr <- function(graph, cmode, undirected, self, valued) {
+
+  if (cmode < 0 || cmode > 2) stop("Invalid degree.")
+
+  # Checking if it is valued or not
+  n <- nrow(graph)
+  if (ncol(graph) != n)
+    stop("-graph- should be a square matrix.")
+
+  if (!valued)
+    graph@x <- rep(1, length(graph@x))
+
+  # Computing sums
+  ans <- if (cmode == 2) {
+    if (undirected)  Matrix::rowSums(graph)
+    else (Matrix::rowSums(graph) + Matrix::colSums(graph))
+  } else if (cmode == 0) {
+    Matrix::colSums(graph)
+  } else {
+    Matrix::rowSums(graph)
+  }
+
+  # Checking if self or not
+  ans <- if (!self) {
+    if (cmode == 2) {
+      if (!undirected) ans - Matrix::diag(graph)*2
+      else ans - Matrix::diag(graph)
+    } else {
+      ans - Matrix::diag(graph)
+    }
+  }
+
+  return(matrix(ans, ncol=1))
+}
+
 #' @export
 #' @rdname dgr
 #' @param x An \code{diffnet_degSeq object}
@@ -106,7 +145,7 @@ dgr.matrix <- function(
             '"indegree", "outdegree" or "degree".')
 
   # Computing degree
-  output <- degree_cpp(methods::as(graph, "dgCMatrix"), cmode, undirected, self,
+  output <- .dgr(methods::as(graph, "dgCMatrix"), cmode, undirected, self,
                        valued)
 
   # Naming
@@ -133,7 +172,7 @@ dgr.dgCMatrix <- function(graph, cmode, undirected, self, valued) {
             '"indegree", "outdegree" or "degree".')
 
   # Computing degree
-  output <- degree_cpp(graph, cmode, undirected, self, valued)
+  output <- .dgr(graph, cmode, undirected, self, valued)
 
   # Naming
   rn <- rownames(graph)
@@ -378,6 +417,35 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @name exposure
+
+
+.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
+
+  # Getting the parameters
+  n <- nrow(graph)
+  if (n!=ncol(graph))
+    stop("-graph- is not squared.")
+
+  # Checking values
+  if (!valued)
+    graph@x <- rep(1, length(graph@x))
+
+  # Direction of the exposure
+  if (!outgoing)
+    graph <- t(graph)
+
+  ans <- ( graph %*% (attrs * cumadopt) )
+
+  if (normalized) as.vector(ans/( graph %*% attrs + 1e-15 ))
+  else as.vector(ans)
+}
+
+# library(microbenchmark)
+# microbenchmark(.exposure, netdiffuseR:::exposure_cpp)
+
+#' @export
+#' @rdname exposure
 exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
                      outgoing=getOption("diffnet.outgoing", TRUE),
                      valued=getOption("diffnet.valued", FALSE), normalized=TRUE,
@@ -524,7 +592,7 @@ exposure.list <- function(
 exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
   out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
   for (i in 1:nslices(graph))
-    out[,i]<-exposure_cpp(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+    out[,i]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
                  outgoing, valued, normalized)
   return(out)
 }

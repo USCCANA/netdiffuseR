@@ -311,6 +311,7 @@ UCINET_datatype <- c(
 #' \item{dim}{Integer vector. Dimmensions of the array.}
 #' \item{tit}{Character scalar. Title of the file.}
 #' \item{haslab}{Logical vector. Whether  each dim has a label.}
+#' @aliases ucinet UCINET
 read_ucinet_head <- function(f) {
   con <- file(f,"rb")
   on.exit(close(con))

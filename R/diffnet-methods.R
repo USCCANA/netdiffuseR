@@ -74,6 +74,8 @@ print.diffnet <- function(x, ...) {
 
     cat(
     "Dynamic network of class -diffnet-",
+    paste(" Name               :", meta$name),
+    paste(" Behavior           :", meta$behavior),
     paste(" # of nodes         :", nodesl ),
     paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
@@ -166,7 +168,10 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
   # Quick Formatting function
   qf <- function(x, digits=2) sprintf(paste0("%.",digits,"f"), x)
 
-  cat("Diffusion network summary statistics\n",rule,"\n",sep="")
+  cat("Diffusion network summary statistics\n",
+      "Name     : ", meta$name, "\n",
+      "Behavior : ", meta$behavior, "\n",
+      rule,"\n",sep="")
   cat(header,"\n")
   cat(hline, "\n")
   for (i in 1:nrow(out)) {

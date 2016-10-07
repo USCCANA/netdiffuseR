@@ -438,37 +438,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// degree_cpp
-arma::colvec degree_cpp(const arma::sp_mat& adjmat0, const int& cmode, bool undirected, bool self, bool valued);
-RcppExport SEXP netdiffuseR_degree_cpp(SEXP adjmat0SEXP, SEXP cmodeSEXP, SEXP undirectedSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat0(adjmat0SEXP);
-    Rcpp::traits::input_parameter< const int& >::type cmode(cmodeSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    rcpp_result_gen = Rcpp::wrap(degree_cpp(adjmat0, cmode, undirected, self, valued));
-    return rcpp_result_gen;
-END_RCPP
-}
-// exposure_cpp
-arma::colvec exposure_cpp(const arma::sp_mat& graph, const arma::colvec& cumadopt, const arma::colvec& attrs, bool outgoing, bool valued, bool normalized);
-RcppExport SEXP netdiffuseR_exposure_cpp(SEXP graphSEXP, SEXP cumadoptSEXP, SEXP attrsSEXP, SEXP outgoingSEXP, SEXP valuedSEXP, SEXP normalizedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type cumadopt(cumadoptSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type attrs(attrsSEXP);
-    Rcpp::traits::input_parameter< bool >::type outgoing(outgoingSEXP);
-    Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    Rcpp::traits::input_parameter< bool >::type normalized(normalizedSEXP);
-    rcpp_result_gen = Rcpp::wrap(exposure_cpp(graph, cumadopt, attrs, outgoing, valued, normalized));
-    return rcpp_result_gen;
-END_RCPP
-}
 // cumulative_adopt_count_cpp
 arma::mat cumulative_adopt_count_cpp(const arma::mat& cumadopt);
 RcppExport SEXP netdiffuseR_cumulative_adopt_count_cpp(SEXP cumadoptSEXP) {

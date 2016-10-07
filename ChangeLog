@@ -1,10 +1,15 @@
-2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
+2016-10-07  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/adjmat.R: Changing syntax.
 	* R/graph_data.R: Working on new function to convert igraph,network,
 	  etc. to 'generic graphs' so methods in netdiffuseR work.
 	* R/stats.R: New plot method for the output of degree seq (which is
-	  now a diffnet_degSeq, matrix class object.
+	  now a diffnet_degSeq, matrix class object. rm -degree_cpp- and add
+	  -.dgr-. Same with -exposure_cpp- and -.exposure-.
+	* src/stats.cpp: See above.
 	* src/adjmat.cpp: Fixing bug on undirected graphs.
+	* R/diffnet-class.R: New desc meta for the class (and methods).
+	* R/diffnet-methods.R: Idem.
+	* R/igraph.R: Idem.
 
 2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/plot_diffnet2.R: Added new options, adding sharp criter for diffmap.

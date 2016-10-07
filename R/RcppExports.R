@@ -258,14 +258,6 @@ select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
-degree_cpp <- function(adjmat0, cmode = 2L, undirected = TRUE, self = FALSE, valued = FALSE) {
-    .Call('netdiffuseR_degree_cpp', PACKAGE = 'netdiffuseR', adjmat0, cmode, undirected, self, valued)
-}
-
-exposure_cpp <- function(graph, cumadopt, attrs, outgoing = TRUE, valued = TRUE, normalized = TRUE) {
-    .Call('netdiffuseR_exposure_cpp', PACKAGE = 'netdiffuseR', graph, cumadopt, attrs, outgoing, valued, normalized)
-}
-
 cumulative_adopt_count_cpp <- function(cumadopt) {
     .Call('netdiffuseR_cumulative_adopt_count_cpp', PACKAGE = 'netdiffuseR', cumadopt)
 }

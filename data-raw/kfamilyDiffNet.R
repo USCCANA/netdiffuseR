@@ -60,7 +60,9 @@ graph <- with(
 toa <- kfamily$toa
 
 # Creating a diffnet -----------------------------------------------------------
-kfamilyDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(kfamily, select=c(-id,-toa)))
+kfamilyDiffNet <- as_diffnet(graph, toa, vertex.static.attrs = subset(kfamily, select=c(-id,-toa)),
+                             name = "Korean Family Planning",
+                             behavior = "Family Planning Methods")
 # [2016-02-24]: keep.isolates working
 # diffnet.attrs(kfamilyDiffNet, "vertex", "static") <- as.matrix(subset(kfamily, id %in% used.vertex))
 # [2016-03-05]: Deprecated

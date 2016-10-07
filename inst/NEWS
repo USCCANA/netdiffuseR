@@ -1,6 +1,6 @@
 
 
-CHANGES IN NETDIFFUSER VERSION 1.16.7.9000 (2016-10-05)
+CHANGES IN NETDIFFUSER VERSION 1.16.7.9000 (2016-10-07)
 
 
 New features and changes
@@ -17,6 +17,12 @@ New features and changes
 -   The function rgraph_ba gains a new argument, self=TRUE. By default
     behaves as before following Bollabas, but now can deviate to
     generate graphs with no autolinks.
+
+-   The functions exposure and dgr are now pure R code (cpp functions
+    were replace since there were no significant gains).
+
+-   diffnet class objects now have two new meta-values: name
+    and behavior.
 
 
 New functions
@@ -35,7 +41,10 @@ New functions
     the -by- option in struct_equiv.
 
 -   read_ucinet read UCINET binary files (both header and graph file).
-    Still work in progress
+    Still work in progress.
+
+-   plot.diffnet_degSeq method allows visualizing degree sequence as
+    log-log plots (default).
 
 
 Bug fixes
@@ -45,6 +54,10 @@ Bug fixes
     plotting area.
 
 -   The c.diffnet_struct_test method was not updating the p.value.
+
+-   The function edgelist_to_adjmat was not processing correctly
+    undirected graphs when the edgelist represented a lower
+    triangular matrix.
 
 
 

@@ -24,7 +24,8 @@ as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   id.and.per.vars = NULL, graph.attrs = NULL,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
-  multiple = getOption("diffnet.multiple"))
+  multiple = getOption("diffnet.multiple"), name = "Diffusion Network",
+  behavior = "")
 
 diffnet.attrs(graph, element = c("vertex", "graph"), attr.class = c("dyn",
   "static"), as.df = FALSE)
@@ -82,6 +83,10 @@ order of the rows in the attribute data.}
 \item{self}{Logical scalar.}
 
 \item{multiple}{Logical scalar.}
+
+\item{name}{Character scalar. Name of the diffusion network (descriptive).}
+
+\item{behavior}{Character scalar. Name of the behavior been analyzed (innovation).}
 
 \item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
 

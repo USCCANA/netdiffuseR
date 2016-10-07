@@ -365,6 +365,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param no.print Logical scalar. When TRUE suppress screen messages.
 #' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
 #' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
+#' @param name Character scalar. Name of the diffusion network (descriptive).
+#' @param behavior Character scalar. Name of the behavior been analyzed (innovation).
 #' @export
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
@@ -557,7 +559,10 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
                        id.and.per.vars = NULL,
                        graph.attrs = NULL,
                        undirected=getOption("diffnet.undirected"),
-                       self=getOption("diffnet.self"), multiple=getOption("diffnet.multiple")) {
+                       self=getOption("diffnet.self"),
+                       multiple=getOption("diffnet.multiple"),
+                       name = "Diffusion Network",
+                       behavior = "") {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
   if (inherits(graph, "diffnet")) {
@@ -636,6 +641,10 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
   meta$self       <- self
   meta$undirected <- undirected
   meta$multiple   <- multiple
+  meta$name       <- ifelse(!length(name), "", ifelse(is.na(name), "",
+                                                      as.character(name)))
+  meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
+                                                          as.character(behavior)))
 
   return(structure(list(
     graph = graph,

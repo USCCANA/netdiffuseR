@@ -113,6 +113,8 @@ diffnet
 ```
 
     ## Dynamic network of class -diffnet-
+    ##  Name               : Diffusion Network
+    ##  Behavior           : 
     ##  # of nodes         : 100 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
@@ -125,6 +127,8 @@ summary(diffnet)
 ```
 
     ## Diffusion network summary statistics
+    ## Name     : Diffusion Network
+    ## Behavior : 
     ## -----------------------------------------------------------------------
     ##  Period  Adopters Cum Adopt. Cum Adopt. % Hazard Rate Density Moran's I 
     ## -------- -------- ---------- ------------ ----------- ------- --------- 
@@ -184,6 +188,8 @@ diffnet
 ```
 
     ## Dynamic network of class -diffnet-
+    ##  Name               : Diffusion Network
+    ##  Behavior           : 
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
@@ -316,7 +322,7 @@ sessionInfo()
 
     ## R version 3.3.1 (2016-06-21)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.1 LTS
+    ## Running under: Ubuntu 14.04.5 LTS
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -336,11 +342,12 @@ sessionInfo()
     ##  [1] statnet.common_3.3.0 Rcpp_0.12.7          lattice_0.20-34     
     ##  [4] digest_0.6.10        assertthat_0.1       MASS_7.3-45         
     ##  [7] grid_3.3.1           formatR_1.4          magrittr_1.5        
-    ## [10] evaluate_0.9         stringi_1.1.1        SparseM_1.72        
+    ## [10] evaluate_0.9         stringi_1.1.2        SparseM_1.72        
     ## [13] Matrix_1.2-7.1       sna_2.4              boot_1.3-18         
-    ## [16] rmarkdown_1.0.9016   tools_3.3.1          stringr_1.1.0       
-    ## [19] igraph_1.0.1         network_1.13.0       yaml_2.1.13         
-    ## [22] htmltools_0.3.5      knitr_1.14           tibble_1.2
+    ## [16] rmarkdown_1.0.9014   tools_3.3.1          stringr_1.1.0       
+    ## [19] igraph_1.1.0         network_1.13.0       yaml_2.1.13         
+    ## [22] pkgconfig_2.0.0      htmltools_0.3.5      knitr_1.14          
+    ## [25] tibble_1.2
 
 To-do list
 ----------

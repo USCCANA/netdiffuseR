@@ -7,7 +7,7 @@
 \usage{
 diffnet_to_igraph(graph, slices = 1:nslices(graph))
 
-igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL)
+igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL, ...)
 }
 \arguments{
 \item{graph}{A diffnet class object.}
@@ -19,6 +19,8 @@ igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL)
 \item{t0}{Integer scalar. Passed to \code{\link{as_diffnet}}.}
 
 \item{t1}{Integer scalar. Passed to \code{\link{as_diffnet}}.}
+
+\item{...}{Further arguments passed to \code{\link{as_diffnet}}.}
 }
 \value{
 A list of \code{length(slices)} \code{\link[igraph:igraph]{igraph}}

@@ -47,7 +47,7 @@ point to plot.}
 }
 \value{
 A numeric matrix of size \eqn{n\times T}{n * T}. In the case of \code{plot},
- returns an object of class \code{\link[hist]{histogram}}.
+ returns an object of class \code{\link[graphics:hist]{histogram}}.
 }
 \description{
 Computes the requested degree measure for each node in the graph.
