@@ -1,5 +1,31 @@
 context("Survey to diffnet")
 
+test_that("Error messages", {
+  # Class checkings
+  expect_error(
+    netdiffuseR:::check_var_class_and_coerce("Murder",USArrests,"character","integer"),
+    "is not supported"
+  )
+})
+
+test_that("Reproducing observed", {
+
+  # What are the netvars
+  netvars <- names(medInnovations)[grepl("^net", names(medInnovations))]
+
+  medInnovationsDiffNet2 <- survey_to_diffnet(
+    medInnovations,
+    "id", netvars, "toa", "city",
+    warn.coercion=FALSE, multiple = TRUE)
+
+  # Graph and attributes
+  expect_equal(medInnovationsDiffNet$graph, medInnovationsDiffNet2$graph)
+  expect_equal(diffnet.toa(medInnovationsDiffNet), diffnet.toa(medInnovationsDiffNet2))
+  expect_equal(diffnet.attrs(medInnovationsDiffNet),
+               diffnet.attrs(medInnovationsDiffNet2))
+
+})
+
 test_that("Filling edgelist and dataset", {
   # Creating network data (1:5)
   set.seed(1231)

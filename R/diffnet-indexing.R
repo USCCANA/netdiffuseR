@@ -299,8 +299,7 @@ diffnet_check_attr_class <- function(value, meta) {
       x <- as.data.frame(do.call(c, x))
       colnames(x) <- name
       return(x)
-    }
-    else return(x)
+    } else return(x)
 
   } else {
     stop("No dynamic or static attribute with such name.")

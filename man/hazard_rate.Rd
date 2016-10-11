@@ -125,7 +125,8 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
   \code{\link{exposure}}, \code{\link{infection}},
   \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}}
+  \code{\link{threshold}},
+  \code{\link{vertex_covariate_dist}}
 
 Other visualizations: \code{\link{diffusionMap}},
   \code{\link{drawColorKey}}, \code{\link{plot_adopters}},

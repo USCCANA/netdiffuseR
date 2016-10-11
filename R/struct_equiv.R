@@ -122,7 +122,7 @@ print.diffnet_se <- function(x, ...) {
       else " Access elements via $ (as a list). Available elements are:",
       "  - SE    : Structural equivalence matrix (n x n)",
       "  - d     : Euclidean distances matrix (n x n) ",
-      "  - gdist : Structural equivalence matrix (n x n)",
+      "  - gdist : Geodesic distances matrix (n x n)",
       sep="\n"
       )
 

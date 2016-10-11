@@ -135,3 +135,36 @@ test_that("as_diffnet with different graph classes", {
   expect_equal(dn_arr, dn_dgc)
 
 })
+
+
+test_that("Warnings and errors", {
+  set.seed(11222344)
+  g <- rdiffnet(100,5)
+  g[["dynamic"]] <- lapply(1:5, function(x) runif(100))
+
+  # Messages
+  expect_warning(with(g, as_diffnet(graph, as.numeric(toa))), "into integer")
+
+  attrs <- as.matrix(g$vertex.static.attrs)
+  dimnames(attrs) <- NULL
+
+  dynattrs <- lapply(g$vertex.dyn.attrs, function(x) {
+    ans <- as.matrix(x)
+    dimnames(ans) <- NULL
+    ans
+    })
+  ans <- with(g, as_diffnet(graph, toa, vertex.static.attrs = attrs,
+                            vertex.dyn.attrs = dynattrs))
+
+  # Making variables
+  expect_output(print(ans), "V1 \\(1\\)")
+  expect_output(print(ans), "v\\.dyn\\.1 \\(1\\)")
+  expect_s3_class(ans$vertex.static.attrs, "data.frame")
+
+  expect_error(
+    with(g, as_diffnet(graph, toa, vertex.static.attrs = 1:99))
+  )
+  expect_error(
+    with(g, as_diffnet(graph, toa, graph.attrs = vector("list",5)))
+  )
+})

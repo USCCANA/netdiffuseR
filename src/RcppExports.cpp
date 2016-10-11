@@ -438,51 +438,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cumulative_adopt_count_cpp
-arma::mat cumulative_adopt_count_cpp(const arma::mat& cumadopt);
-RcppExport SEXP netdiffuseR_cumulative_adopt_count_cpp(SEXP cumadoptSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type cumadopt(cumadoptSEXP);
-    rcpp_result_gen = Rcpp::wrap(cumulative_adopt_count_cpp(cumadopt));
-    return rcpp_result_gen;
-END_RCPP
-}
-// hazard_rate_cpp
-arma::rowvec hazard_rate_cpp(const arma::mat& cumadopt);
-RcppExport SEXP netdiffuseR_hazard_rate_cpp(SEXP cumadoptSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type cumadopt(cumadoptSEXP);
-    rcpp_result_gen = Rcpp::wrap(hazard_rate_cpp(cumadopt));
-    return rcpp_result_gen;
-END_RCPP
-}
-// threshold_cpp
-NumericVector threshold_cpp(const arma::mat& exposure, const arma::vec& toa, bool include_censored);
-RcppExport SEXP netdiffuseR_threshold_cpp(SEXP exposureSEXP, SEXP toaSEXP, SEXP include_censoredSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type exposure(exposureSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type toa(toaSEXP);
-    Rcpp::traits::input_parameter< bool >::type include_censored(include_censoredSEXP);
-    rcpp_result_gen = Rcpp::wrap(threshold_cpp(exposure, toa, include_censored));
-    return rcpp_result_gen;
-END_RCPP
-}
 // vertex_covariate_dist
-arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const NumericMatrix& X, double p);
+arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const arma::mat& X, double p);
 RcppExport SEXP netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
     rcpp_result_gen = Rcpp::wrap(vertex_covariate_dist(graph, X, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vertex_mahalanobis_dist_cpp
+arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat& graph, const arma::mat& X, const arma::mat& S);
+RcppExport SEXP netdiffuseR_vertex_mahalanobis_dist_cpp(SEXP graphSEXP, SEXP XSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(vertex_mahalanobis_dist_cpp(graph, X, S));
     return rcpp_result_gen;
 END_RCPP
 }

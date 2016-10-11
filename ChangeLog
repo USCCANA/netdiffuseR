@@ -1,3 +1,14 @@
+2016-10-10  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-class.R: Small bug when reading dynamic attributes. and
+	  printing bug.
+	* R/diffnet-methods.R: Bug in ^ operator. And plot_adopters returned
+	  NULL.
+	* R/spatial.R: Fixing bugs.
+	* tests/testthat/*.R: Adding several new tests to cover code.	
+	* R/stats.R: Rewriting functions in R.
+	* R/stats.cpp: idem + new function mahalanobis distance.
+	* R/rdiffnet.R: Adding default name and behavior.
+
 2016-10-07  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/adjmat.R: Changing syntax.
 	* R/graph_data.R: Working on new function to convert igraph,network,

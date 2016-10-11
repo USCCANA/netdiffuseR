@@ -188,8 +188,8 @@ diffnet
 ```
 
     ## Dynamic network of class -diffnet-
-    ##  Name               : Diffusion Network
-    ##  Behavior           : 
+    ##  Name               : A diffusion network
+    ##  Behavior           : Random contagion
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed

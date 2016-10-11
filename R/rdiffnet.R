@@ -16,6 +16,8 @@
 #' @param threshold.dist Either a function to be applied via \code{\link{sapply}},
 #' or a vector/matrix with \eqn{n} elements. Sets the adoption threshold for each node.
 #' @param exposure.args List. Arguments to be passed to \code{\link{exposure}}.
+#' @param name Character scalar. Passed to \code{\link{as_diffnet}}.
+#' @param behavior Character scalar. Passed to \code{\link{as_diffnet}}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -95,7 +97,9 @@ rdiffnet <- function(n, t,
                      exposure.args=list(
                        outgoing=TRUE, valued=getOption("diffnet.valued", FALSE),
                        normalized=TRUE
-                       )
+                       ),
+                     name="A diffusion network",
+                     behavior="Random contagion"
                      ) {
 
   # Step 0.0: Creating the network seed ----------------------------------------
@@ -267,6 +271,7 @@ rdiffnet <- function(n, t,
   }
 
   as_diffnet(sgraph, as.integer(toa), undirected=FALSE, t0=1, t1=t,
-             vertex.static.attrs = data.frame(real_threshold=thr))
+             vertex.static.attrs = data.frame(real_threshold=thr),
+             name=name,behavior = behavior)
 }
 

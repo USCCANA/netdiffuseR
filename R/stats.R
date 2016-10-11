@@ -251,6 +251,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
 #' \code{alt.graph="se"}).
 #' @param groupvar Passed to \code{\link{struct_equiv}}.
+#' @param self Logical scalar. When \code{TRUE} loops will be included.
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -418,9 +419,10 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 #' @name exposure
+NULL
 
-
-.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
+#
+.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
 
   # Getting the parameters
   n <- nrow(graph)
@@ -434,6 +436,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
   # Direction of the exposure
   if (!outgoing)
     graph <- t(graph)
+
+  # Checking self
+  if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
   ans <- ( graph %*% (attrs * cumadopt) )
 
@@ -449,7 +454,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
                      outgoing=getOption("diffnet.outgoing", TRUE),
                      valued=getOption("diffnet.valued", FALSE), normalized=TRUE,
-                     groupvar=NULL,
+                     groupvar=NULL, self=getOption("diffnet.self"),
                      ...) {
 
   # Checking diffnet attributes
@@ -512,11 +517,11 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
   cls <- class(graph)
   if ("array" %in% cls) {
-    exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized)
+    exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized, self)
   } else if ("list" %in% cls) {
-    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized)
+    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
   } else if ("diffnet" %in% cls) {
-    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized)
+    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
   } else stopifnot_graph(graph)
 }
 
@@ -524,7 +529,7 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 # @export
 exposure.array <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized) {
+  outgoing, valued, normalized, self) {
 
   # Preparing the data
   n <- nrow(graph)
@@ -549,7 +554,8 @@ exposure.array <- function(
   if (!length(tn)) tn <- 1:ncol(cumadopt)
 
   # Calculating the exposure, and asigning names
-  output <- exposure_for(graphl, cumadopt, attrs, outgoing, valued, normalized)
+  output <- exposure_for(graphl, cumadopt, attrs, outgoing, valued, normalized,
+                         self)
   dimnames(output) <- list(rn, tn)
   output
 }
@@ -558,7 +564,7 @@ exposure.array <- function(
 # @export
 exposure.list <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized) {
+  outgoing, valued, normalized, self) {
 
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
@@ -577,7 +583,8 @@ exposure.list <- function(
     graph[which(test)] <- lapply(graph[which(test)],
                                  function(x) methods::as(x, "dgCMatrix"))
 
-  output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized)
+  output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
+                         self)
 
   rn <- rownames(cumadopt)
   if (!length(rn)) rn <- 1:nrow(cumadopt)
@@ -589,11 +596,11 @@ exposure.list <- function(
   output
 }
 
-exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
+exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
   out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
   for (i in 1:nslices(graph))
     out[,i]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                 outgoing, valued, normalized)
+                 outgoing, valued, normalized, self)
   return(out)
 }
 
@@ -621,12 +628,20 @@ exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized) {
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 cumulative_adopt_count <- function(obj) {
 
-  if (inherits(obj, "diffnet")) obj <- obj$cumadopt
+  if (inherits(obj, "diffnet")) x <- obj$cumadopt
+  else x <- obj
 
-  x <- cumulative_adopt_count_cpp(obj)
-  dimnames(x) <- list(c("num", "prop", "rate"), colnames(obj))
-  return(x)
+  q <- colSums(x)
+  t <- length(q)
+  structure(
+    rbind(
+      q,
+      q/nrow(x),
+      c(0,(q[-1] - q[-t])/(q[-t] + 1e-15))
+    ), dimnames = list(c("num", "prop", "rate"), colnames(x))
+  )
 }
+
 
 #' Network Hazard Rate
 #'
@@ -716,14 +731,19 @@ cumulative_adopt_count <- function(obj) {
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
-
   if (inherits(obj, "diffnet")) obj <- obj$cumadopt
 
-  x <- hazard_rate_cpp(obj)
-  dimnames(x) <- list("hazard", colnames(obj))
-  class(x) <- c("diffnet_hr", class(x))
+  q <- colSums(obj)
+  t <- length(q)
+  x <- structure(
+    rbind(c(0,(q[-1] - q[-t])/(nrow(obj) - q[-t] + 1e-15)))
+    , dimnames = list("hazard", colnames(obj)),
+    class=c("diffnet_hr", "matrix")
+  )
+
   if (!no.plot) plot.diffnet_hr(x, include.grid=include.grid, ...)
   invisible(x)
+
 }
 
 #' @rdname hazard_rate
@@ -796,7 +816,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE,
-                      lags=0L, ...) {
+                       lags=0L, ...) {
 
   if (inherits(obj, "diffnet")) {
     t0 <- min(obj$meta$pers)
@@ -813,14 +833,15 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
   toa <- toa - lags
   toa[(toa < 1) | (toa > ncol(obj))] <- NA
 
-  output <- threshold_cpp(obj, toa, include_censored)
-  # dimnames(output) <- list(rownames(obj), "threshold")
-  structure(output, dim=c(length(toa), 1), dimnames=list(rownames(obj), "threshold"))
+  ans <- structure(obj[cbind(1:length(toa),toa)], dim=c(length(toa),1),
+            dimnames=list(rownames(obj), "threshold"))
 
-  # # Correcting weird cases
-  # if (!include_censored) output[toa==1] <- NA
-  # output[is.na(toa)] <- NA
-  # output
+  # Checking if whether to included censored or not
+  if (include_censored) return(ans)
+  else {
+    ans[which(is.na(toa))] <- NA
+    return(ans)
+  }
 }
 
 #' Classify adopters accordingly to Time of Adoption and Threshold levels.
@@ -981,4 +1002,99 @@ plot.diffnet_adopters <- function(x, y = NULL,
   y <- do.call(ftable.diffnet_adopters, c(ftable.args, list(x=x)))
   y <- do.call(as.table, c(table.args, list(x=y)))
   plot(y, ...)
+}
+
+#' Computes covariate distance between connected vertices
+#'
+#' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
+#' @param X A numeric matrix of size \eqn{n \times K}{n * K}. Vertices attributes
+#' @param p Numeric scalar. Norm to compute
+#' @param S Square matrix of size \code{ncol(x)}. Usually the var-covar matrix.
+#' @details
+#'
+#' Faster than \code{\link{dist}}, these functions compute distance metrics
+#' between pairs of vertices that are connected (otherwise skip).
+#'
+#' The function \code{vertex_covariate_dist} is the simil of \code{\link{dist}}
+#' and returns p-norms. It is implemented as follows (for each pair of vertices):
+#'
+#' \deqn{%
+#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
+#' }{%
+#' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
+#' }
+#'
+#' In the case of mahalanobis distance, for each pair of vertex \eqn{(i,j)}, the
+#' distance is computed as follows:
+#'
+#' \deqn{%
+#' D_{ij} = \left( (X_i - X_j)\times S \times (X_i - X_j)' \right)^{1/2}\mbox{ if }graph_{i,j}\neq 0
+#' }{%
+#' D(i,j) = sqrt[(X(i) - X(j)) \%*\% S  \%*\% t(X(i) - X(j))]  if graph(i,j) != 0
+#' }
+#'
+#' @return A matrix of size \eqn{n\times n}{n * n} of class \code{dgCMatrix}. Will
+#' be symmetric only if \code{graph} is symmetric.
+#'
+#' @export
+#' @examples
+#' # Distance (aka p norm) -----------------------------------------------------
+#' set.seed(123)
+#' G <- rgraph_ws(20, 4, .1)
+#' X <- matrix(runif(40), ncol=2)
+#'
+#' vertex_covariate_dist(G, X)
+#'
+#' # Mahalanobis distance ------------------------------------------------------
+#' S <- var(X)
+#'
+#' M <- vertex_mahalanobis_dist(G, X, S)
+#'
+#' # Example with diffnet objects ----------------------------------------------
+#'
+#' data(medInnovationsDiffNet)
+#' X <- cbind(
+#'   medInnovationsDiffNet[["proage"]],
+#'   medInnovationsDiffNet[["attend"]]
+#' )
+#'
+#' S <- var(X, na.rm=TRUE)
+#' ans <- vertex_mahalanobis_dist(medInnovationsDiffNet, X, S)
+#'
+#' @name vertex_covariate_dist
+#' @references
+#' Mahalanobis distance. (2016, September 27). In Wikipedia, The Free Encyclopedia.
+#' Retrieved 20:31, September 27, 2016, from
+#' \url{https://en.wikipedia.org/w/index.php?title=Mahalanobis_distance&oldid=741488252}
+#' @author George G. Vega Yon
+#' @aliases p-norm mahalanobis
+#' @family statistics
+#' @seealso \code{\link[stats:mahalanobis]{mahalanobis}} in the stats package.
+NULL
+
+#' @export
+#' @rdname vertex_covariate_dist
+vertex_mahalanobis_dist <- function(graph, X, S) {
+
+  # Analyzing
+  cls <- class(graph)
+  ans <- if ("matrix" %in% cls) {
+    vertex_mahalanobis_dist_cpp(methods::as(graph, "dgCMatrix"), X, S)
+  } else if ("dgCMatrix" %in% cls) {
+    vertex_mahalanobis_dist_cpp(graph, X, S)
+  } else if ("diffnet" %in% cls) {
+
+    # Checking sizes
+    if (!inherits(S, "list")) S <- lapply(1:nslices(graph), function(x) S)
+    if (inherits(X, "character")) {
+      X <- lapply(1:nslices(graph), function(x) cbind(as.matrix(graph[[X]])))
+    }
+    if (!inherits(X, c("list"))) {
+      X <- lapply(1:nslices(graph), function(x) as.matrix(X))
+    }
+
+    with(graph, Map(function(g, x, s) vertex_mahalanobis_dist(g,x,s), g=graph, x=X, s=S))
+  }
+
+  return(ans)
 }

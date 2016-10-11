@@ -28,6 +28,21 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   expect_equal(dim(coords), c(11,2), info = "applying to diffnet")
 })
 
+test_that("More plot methods", {
+
+  # Empty graph
+  set.seed(1231)
+  g <- rdiffnet(20, 4)
+
+  ans1  <- plot(g)
+  ans2 <- plot(g, coord=ans1)
+
+  expect_equal(ans1, ans2)
+
+  ans1 <- plot_adopters(g)
+  expect_output(print(ans1), "0[.]85")
+})
+
 # plot_threshold, threshold and exposure ---------------------------------------
 
 test_that("Returning threshold equal to the threshold fun (plot_threshold and )", {
@@ -147,4 +162,17 @@ test_that('concatenating diffnet', {
   # colnames(mi1less)
   # expect_error(c())
 
+})
+
+# ------------------------------------------------------------------------------
+test_that("Arithmetic and others", {
+  # Pow
+  set.seed(18181)
+  g <- rdiffnet(100, 3)
+
+  ans1 <- g^2
+  ans2 <- g
+  ans2$graph <- Map(function(x) x %*% x, g$graph)
+
+  expect_equal(lapply(ans1$graph, as.matrix), lapply(ans2$graph, as.matrix))
 })

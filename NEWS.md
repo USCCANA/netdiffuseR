@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-07)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-10)
 
 ## New features and changes
 
@@ -24,6 +24,8 @@
 
 * `vertex_covariate_dist` computes distances between vertices using both the graph
   and a matrix of length nxK.
+  
+* `vertex_mahalanobis_dist` computes mahalanobis distance between vertices (as above).
 
 * `struct_test_asymp` an asymptotic approximation of `struct_test` (not recomended).
 
@@ -42,6 +44,9 @@
 
 ## Bug fixes
 
+* `^.diffnet` method was rasing to +1 power, e.g. `diffnet^2` was actually
+  `diffnet^3`. Now solved.
+
 * `plot_diffnet` was computing the coordinates of the cells wrongly. Most of the
   time causing adding figures outside of the plotting area.
   
@@ -49,6 +54,9 @@
 
 * The function `edgelist_to_adjmat` was not processing correctly undirected
   graphs when the edgelist represented a lower triangular matrix.
+  
+* The function `survey_to_diffnet` had an issue processin dyn graph attrs returning
+  errors. Now fixed.
 
 
 # Changes in netdiffuseR version 1.16.7 (2016-07-07)

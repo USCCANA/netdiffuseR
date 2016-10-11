@@ -45,7 +45,7 @@ plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
 \item{...}{Further arguments passed to \code{\link{matplot}}.}
 }
 \value{
-List of matrices as described in \code{\link{cumulative_adopt_count}}
+A matrix as described in \code{\link{cumulative_adopt_count}}.
 }
 \description{
 Visualize adopters and cumulative adopters

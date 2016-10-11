@@ -258,39 +258,14 @@ select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
-cumulative_adopt_count_cpp <- function(cumadopt) {
-    .Call('netdiffuseR_cumulative_adopt_count_cpp', PACKAGE = 'netdiffuseR', cumadopt)
-}
-
-hazard_rate_cpp <- function(cumadopt) {
-    .Call('netdiffuseR_hazard_rate_cpp', PACKAGE = 'netdiffuseR', cumadopt)
-}
-
-threshold_cpp <- function(exposure, toa, include_censored = FALSE) {
-    .Call('netdiffuseR_threshold_cpp', PACKAGE = 'netdiffuseR', exposure, toa, include_censored)
-}
-
-#' Computes p-norm between connected vertices
-#' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
-#' @param X A numeric matrix of size \eqn{n\times K}{n * K}. Vertices attributes
-#' @param p Numeric scalar. Norm to compute
-#' @return A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}. Will
-#' be symmetric only if \code{graph} is symmetric.
-#' @details For each par of vertices, the function computes the following
-#' \deqn{%
-#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
-#' }{%
-#' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
-#' }
 #' @export
-#' @examples
-#' set.seed(123)
-#' G <- rgraph_ws(20, 4, .1)
-#' X <- matrix(runif(40), ncol=2)
-#'
-#' vertex_covariate_dist(G, X)
+#' @rdname vertex_covariate_dist
 vertex_covariate_dist <- function(graph, X, p = 2.0) {
     .Call('netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
+}
+
+vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
+    .Call('netdiffuseR_vertex_mahalanobis_dist_cpp', PACKAGE = 'netdiffuseR', graph, X, S)
 }
 
 #' Comparisons at dyadic level

@@ -8,7 +8,8 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
   rewire.args = list(p = 0.1, undirected = FALSE),
   threshold.dist = function(x) runif(1), exposure.args = list(outgoing =
-  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE))
+  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE),
+  name = "A diffusion network", behavior = "Random contagion")
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
@@ -32,6 +33,10 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
 or a vector/matrix with \eqn{n} elements. Sets the adoption threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
+
+\item{name}{Character scalar. Passed to \code{\link{as_diffnet}}.}
+
+\item{behavior}{Character scalar. Passed to \code{\link{as_diffnet}}.}
 }
 \value{
 A random \code{\link{diffnet}} class object.

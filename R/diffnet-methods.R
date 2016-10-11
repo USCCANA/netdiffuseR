@@ -977,7 +977,7 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
 #' toa <- sample(c(NA, 2010L,2015L), 20, TRUE)
 #' mat <- toa_mat(toa)
 #' plot_adopters(mat$cumadopt)
-#' @return List of matrices as described in \code{\link{cumulative_adopt_count}}
+#' @return A matrix as described in \code{\link{cumulative_adopt_count}}.
 #' @export
 #' @author George G. Vega Yon
 plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
@@ -1032,7 +1032,7 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
   if (length(bg)   > k) bg   <- bg[test]
   if (length(pch)  > k) pch  <- pch[test]
 
-  out <- matplot(times, y=mat, ylim=ylim, add=add, type=type,
+  matplot(times, y=mat, ylim=ylim, add=add, type=type,
           lty=lty, col=col, xlab=xlab, ylab=ylab, main=main, pch=pch,
           bg=bg,...)
 
@@ -1094,9 +1094,12 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 #' @name diffnet-arithmetic
 #' @family diffnet methods
 `^.diffnet` <- function(x,y) {
+
+  if (y < 2) return(x)
+
   for (i in 1:x$meta$nper) {
     g <- x$graph[[i]]
-    for (p in 1:y)
+    for (p in 1:(y-1))
       x$graph[[i]] <- x$graph[[i]] %*% g
   }
   x

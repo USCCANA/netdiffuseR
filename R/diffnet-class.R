@@ -71,7 +71,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
           # Checking columnnames
           test <- colnames(attrs[[1]])
           test <- if (length(test)) which(sapply(attrs, function(x) all(colnames(x) != test)))
-          else which(sapply(attrs, function(x) length(colnames(x))))
+          else which(!!sapply(attrs, function(x) length(colnames(x))))
 
           if (length(test))
             stop("Not all the matrices/data frames in -vertex.dyn.attrs- have the same colname(.):\n\t",
@@ -252,7 +252,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
         # Static: Vector -------------------------------------------------------
         if (length(attrs) != n)
           stop("The vector -vertex.static.attrs- has incorrect length.",
-               " Has ", nrow(attrs), " and should have ", n, ".")
+               " Has ", length(attrs), " and should have ", n, ".")
 
         # Returning
         attrs <- as.data.frame(attrs)
@@ -300,7 +300,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
       return(attrs)
 
-    } else if (is.vector(attrs)) {
+    } else if (is.vector(attrs) && inherits(attrs, c("numeric", "character", "raw", "integer"))) {
 
       # Checking the length
       if (length(attrs) != nper)

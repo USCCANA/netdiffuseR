@@ -70,6 +70,22 @@ test_that("Times of Adoption", {
   # )
 })
 
+# ------------------------------------------------------------------------------
+test_that("Threshold levels", {
+  set.seed(11231)
+  g <- rdiffnet(n=100, t=5, seed.nodes = "central", rgraph.args=list(m=4),
+                threshold.dist = function(x) .5)
+
+  ans1 <- threshold(g)
+  ans2 <- exposure(g)
+  ans2 <- sapply(1:100, function(x) {
+    ans2[x, g$toa[x]]
+  })
+
+  expect_equal(as.vector(ans1), ans2)
+})
+
+# ------------------------------------------------------------------------------
 test_that("vertex_covariate_distance", {
   set.seed(123131231)
   n <- 20
@@ -82,4 +98,25 @@ test_that("vertex_covariate_distance", {
   D2 <- methods::as(as.matrix(dist(X)), "dgCMatrix")*W
 
   expect_equal(sum(D2-D), 0)
+})
+
+
+# ------------------------------------------------------------------------------
+test_that("vertex_mahalanobis_distance", {
+  set.seed(123131231)
+  n <- 20
+  X <- matrix(runif(n*2, -1,1), ncol=2)
+  G <- rgraph_ws(n,4,.2)
+  W <- var(X)
+
+  ans1 <- vertex_mahalanobis_dist(G,X, W)
+  ans2 <- methods::as(matrix(0, n,n), "dgCMatrix")
+
+  for (i in 1:n)
+    for (j in 1:n)
+      ans2[i,j] <- sqrt(mahalanobis(X[i,] - X[j,], FALSE, cov=W))
+
+  ans2 <-ans2*G
+
+  expect_equal(ans1,ans2)
 })

@@ -22,121 +22,14 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
-arma::mat cumulative_adopt_count_cpp(const arma::mat & cumadopt) {
-  int n = cumadopt.n_rows;
-  int T = cumadopt.n_cols;
-
-  arma::mat adoptcount(3,T);
-
-  // Computing cumulative adoptes
-  adoptcount.row(0) = cumsum(sum(cumadopt,0));
-  adoptcount.row(1) = adoptcount.row(0)/n;
-
-  // Calculating rate
-  adoptcount(2,0) = 0.0;
-  for(int t=1;t<T;t++)
-    adoptcount(2,t) = (adoptcount(1,t) - adoptcount(1,t-1))/(adoptcount(1,t-1) + 1e-10);
-
-  return adoptcount;
-}
 
 
-// [[Rcpp::export]]
-arma::rowvec hazard_rate_cpp(const arma::mat & cumadopt) {
-  int n = cumadopt.n_rows;
-  int T = cumadopt.n_cols;
-
-  arma::rowvec cumadoptcount(T);
-  arma::rowvec hazard(T);
-
-  // Computing cumulative adoptes
-  cumadoptcount = cumsum(sum(cumadopt,0));
-
-  hazard(0) = 0.0;
-  for(int t=1;t<T;t++)
-    hazard(t) = (cumadoptcount(t) - cumadoptcount(t-1)) /
-        (n - cumadoptcount(t-1) + 1e-10);
-
-  return hazard;
-}
-
-
-// [[Rcpp::export]]
-NumericVector threshold_cpp(
-    const arma::mat & exposure,
-    const arma::vec & toa,
-    bool include_censored = false
-    ) {
-
-  int n = exposure.n_rows;
-  // int T = exposure.n_cols;
-
-  NumericVector threshold(n);
-
-  for(int i=0;i<n;i++) {
-    // If NA (aka nan in Armadillo), then NA.
-    if (!arma::is_finite(toa(i))) {
-      threshold(i) = arma::datum::nan;
-      continue;
-    }
-
-    // If left censored and specified, then don't compute
-    if ((toa(i)==1) & !include_censored) {
-      threshold(i) = NA_REAL;
-      continue;
-    }
-
-    threshold(i) = exposure(i,toa(i)-1);
-  }
-
-  return threshold;
-}
-
-/** *R
-
-set.seed(123)
-graph <- rand_dyn_graph_cpp(n=10,t=10)
-tadopt <- sample(1:dim(graph)[3], dim(graph)[2], TRUE)
-
-adopt <- toa_mat_cpp(tadopt)
-exp_mat <- exposure(graph, adopt$cumadopt)$unweight
-
-threshold_cpp(exp_mat, tadopt)
-
-*/
-/*
-// [[Rcpp::export]]
-double graph_density(arma::sp_mat graph, bool undirected=false) {
-  int n = graph.n_cols;
-  double dens = 0.0;
-
-  return graph.n_nonzero / (n * (n-1));
-
-}
-*/
-
-//' Computes p-norm between connected vertices
-//' @param graph A square matrix of size \eqn{n} of class dgCMatrix.
-//' @param X A numeric matrix of size \eqn{n\times K}{n * K}. Vertices attributes
-//' @param p Numeric scalar. Norm to compute
-//' @return A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}. Will
-//' be symmetric only if \code{graph} is symmetric.
-//' @details For each par of vertices, the function computes the following
-//' \deqn{%
-//' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
-//' }{%
-//' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
-//' }
 //' @export
-//' @examples
-//' set.seed(123)
-//' G <- rgraph_ws(20, 4, .1)
-//' X <- matrix(runif(40), ncol=2)
-//'
-//' vertex_covariate_dist(G, X)
+//' @rdname vertex_covariate_dist
 // [[Rcpp::export]]
-arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatrix & X, double p=2.0) {
+arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
+                                   const arma::mat & X,
+                                   double p = 2.0) {
 
   // Creating objects
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
@@ -144,11 +37,44 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph, const NumericMatr
   arma::sp_mat::const_iterator e = graph.end();
 
   // Iterating over elements of graph
+  int i,j;
   for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
-    for (int k=0;k<X.ncol();k++)
-      ans.at(iter.row(), iter.col()) += pow(fabs(X(iter.col(),k) - X(iter.row(),k)), p);
 
-    ans.at(iter.row(), iter.col()) = pow(ans.at(iter.row(), iter.col()), 1/p);
+    i = iter.row();
+    j = iter.col();
+
+    ans.at(i,j) = pow(
+      arma::as_scalar((X.row(i) - X.row(j)) * (X.row(i) - X.row(j)).t()),
+      1/p
+    );
+  }
+
+  return ans;
+}
+
+// [[Rcpp::export]]
+arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
+                                   const arma::mat & X,
+                                   const arma::mat & S) {
+
+  // Creating objects
+  arma::sp_mat ans(graph.n_rows,graph.n_cols);
+  arma::sp_mat::const_iterator b = graph.begin();
+  arma::sp_mat::const_iterator e = graph.end();
+
+  arma::mat Sinv = S.i();
+
+  // Iterating over elements of graph
+  int i,j;
+  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
+
+    i = iter.row();
+    j = iter.col();
+
+    ans.at(i,j) = pow(
+      arma::as_scalar((X.row(i) - X.row(j)) * Sinv * (X.row(i) - X.row(j)).t()),
+      0.5
+    );
   }
 
   return ans;
