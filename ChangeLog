@@ -1,13 +1,20 @@
-2016-10-10  George G. Vega Yon <g.vegayon@gmail.com>
+2016-10-12  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-class.R: Small bug when reading dynamic attributes. and
-	  printing bug.
+	  printing bug+removing dimnames.
+	* R/adjmat.R: no dimnames.
+	* R/diffnet-c.R: idem.
+	* R/diffnet-indexing.R: idem.
+	* R/igraph.R: idem.
+	* R/read_write_foreign.R: Working on bug with read_net (still on dev).
 	* R/diffnet-methods.R: Bug in ^ operator. And plot_adopters returned
 	  NULL.
-	* R/spatial.R: Fixing bugs.
+	* R/spatial.R: Fixing bugs + adding it as a function in the namespace.
 	* tests/testthat/*.R: Adding several new tests to cover code.	
 	* R/stats.R: Rewriting functions in R.
 	* R/stats.cpp: idem + new function mahalanobis distance.
 	* R/rdiffnet.R: Adding default name and behavior.
+	* src/netdiffuser_extra.cpp: Fixing bug.
+	* src/rgraph_ba.cpp: Removing unused version of ba model.
 
 2016-10-07  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/adjmat.R: Changing syntax.

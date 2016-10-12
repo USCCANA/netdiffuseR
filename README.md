@@ -193,7 +193,7 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.58
+    ##  Final prevalence   : 0.60
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
@@ -357,10 +357,10 @@ To-do list
 -   ~~Use spells? (`select_egoalter` would use this)~~
 -   ~~Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).~~
 -   ~~Double check all functions using adjacency matrix values.~~
--   Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.
+-   ~~Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.~~
 -   Implement the Bass model
 -   ~~Include function to import survey data (as shown on the vignettes)~~
 -   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).
 -   (2016-03-30): use `xspline` for drawing polygons & edges.
--   (2016-04-04): Add more options to `exposure`, namely, `self` (so removes diagonal or not!).
+-   ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so removes diagonal or not!).~~
 -   (2016-04-19): animal behaviorists.

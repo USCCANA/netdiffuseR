@@ -78,12 +78,12 @@ read_pajek <- function(x) {
   } else vertices <- NULL
 
   # Reading edges
-  test <- which(grepl("^(arcs|edges)\\s+", rownames(tags)))
-  edges <- NULL
+  test <- which(grepl("^(arcslist|edgeslist)", rownames(tags)))
+  edgelist <- NULL
   if (length(test)) {
     # Creating empty object
-    edges <- vector("list", length(test))
-    names(edges) <- lines[tags$lab[test]]
+    edgelist <- vector("list", length(test))
+    names(edgelist) <- lines[tags$lab[test]]
 
     for (i in test) {
       # Getting the lines of the class of arc
@@ -97,19 +97,19 @@ read_pajek <- function(x) {
       }))
 
       # Including it into the edgelist
-      edges[[ lines[tags$lab[i]] ]] <- subarc
+      edgelist[[ lines[tags$lab[i]] ]] <- subarc
     }
 
   }
 
   # Reading edgelist
-  test <- which(grepl("^(arcslist|edgeslist)", rownames(tags)))
-  edgelist <- NULL
+  test <- which(grepl("^(arcs|edges)\\s+", rownames(tags)))
+  edges <- NULL
   if (length(test)) {
 
     # Creating empty object
-    edgelist <- vector("list", length(test))
-    names(edgelist) <- lines[tags$lab[test]]
+    edges <- vector("list", length(test))
+    names(edges) <- lines[tags$lab[test]]
 
     for (i in test) {
       # Getting the lines of the class of arc
@@ -125,7 +125,7 @@ read_pajek <- function(x) {
       }))
 
       # Including it into the edgelist
-      edgelist[[ lines[tags$lab[i]] ]] <- subedge
+      edges[[ lines[tags$lab[i]] ]] <- subedge
     }
   }
 

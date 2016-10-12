@@ -35,7 +35,7 @@ double angle(double x0, double y0, double x1, double y1) {
   // Computing distances and angles
   double xdist = x1 - x0;
   double ydist = y1 - y0;
-  double alpha = atan(ydist/(xdist)+1e-15);
+  double alpha = atan(ydist/(xdist+1e-15));
 
   // Setting cases
   if      ((xdist < 0) && (ydist > 0)) return(alpha + PI);

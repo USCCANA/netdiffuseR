@@ -4,15 +4,14 @@ context("Structural equivalence")
 test_that("Computation", {
   # Basis graph
   rn <- LETTERS[1:4]
-  graph <- matrix(c(0,0,1,0,1,0,1,0,0,1,0,1,0,0,0,0), ncol=4,
-                  dimnames = list(rn, rn))
+  graph <- matrix(c(0,0,1,0,1,0,1,0,0,1,0,1,0,0,0,0), ncol=4)
 
   dyngraph <- lapply(1:3,function(x) methods::as(graph, "dgCMatrix"))
   # Static graphs
   x <- list(
     `static matrix`=struct_equiv(graph),
     `static dgCMatrix`= struct_equiv(methods::as(graph, "dgCMatrix")),
-    `dynamic array` = struct_equiv(array(graph, dim = c(4,4,3), dimnames = list(rn, rn, 1:3))),
+    `dynamic array` = struct_equiv(array(graph, dim = c(4,4,3))),
     `dynamic list` = struct_equiv(dyngraph),
     `dynamic diffnet` = struct_equiv(as_diffnet(dyngraph, c(1L,1L,3L,2L)))
   )
@@ -41,8 +40,8 @@ test_that("Computation", {
     }
 
   # Naming
-  dimnames(se) <- dimnames(graph)
-  dimnames(d) <- dimnames(graph)
+  dimnames(se) <- list(1:4,1:4)
+  dimnames(d) <- list(1:4,1:4)
 
   # Comparing
   for (i in names(x)) {

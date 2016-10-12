@@ -215,10 +215,6 @@ rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L, self = TRUE) {
     .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
 }
 
-rgraph_ba2_cpp <- function(graph, dgr, X, m = 1L, t = 10L) {
-    .Call('netdiffuseR_rgraph_ba2_cpp', PACKAGE = 'netdiffuseR', graph, dgr, X, m, t)
-}
-
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }

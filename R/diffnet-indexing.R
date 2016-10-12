@@ -356,6 +356,13 @@ diffnet_check_attr_class <- function(value, meta) {
   x
 }
 
+.indexing <- function(i, ids) {
+
+  ans <- seq_len(length(ids))
+  names(ans) <- ids
+  ans[i]
+}
+
 #' @export
 #' @rdname diffnet_index
 `[.diffnet` <- function(x, i, j, k, drop=FALSE) {
@@ -378,6 +385,11 @@ diffnet_check_attr_class <- function(value, meta) {
   # Slices
   if (missing(k)) k <- seq_len(x$meta$nper)
 
+  # Adding names
+  i <- .indexing(i, x$meta$ids)
+  j <- .indexing(j, x$meta$ids)
+  k <- .indexing(k, x$meta$pers)
+
   # Subsetting
   if (drop) return(lapply(x$graph[k], "[", i=i, j=j, drop=FALSE))
   else {
@@ -397,7 +409,7 @@ diffnet_check_attr_class <- function(value, meta) {
     x$toa                 <- x$toa[i]
 
     # 3.0: Attrubytes
-    x$meta$ids <- rownames(x$adopt)#x$meta$ids[i]
+    x$meta$ids <- x$meta$ids[i] #rownames(x$adopt)#x$meta$ids[i]
     x$meta$n   <- length(x$meta$ids)
 
     return(x)

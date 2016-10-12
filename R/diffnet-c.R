@@ -154,7 +154,7 @@ c.diffnet <- function(..., recursive=FALSE) {
   nper <- as.integer(diffnets[[1]]$meta$nper)
 
   A        <- methods::new("dgCMatrix", Dim=c(N,N), p=rep(0L,N + 1L),
-                       Dimnames = list(IDS, IDS))
+                       Dimnames = list(NULL, NULL))
   A        <- lapply(1:nper, function(x) A)
   names(A) <- diffnets[[1]]$meta$pers
 
@@ -201,7 +201,9 @@ c.diffnet <- function(..., recursive=FALSE) {
     # Others
     self       = any(sapply(diffnets, function(x) x$meta$self)),
     undirected = any(sapply(diffnets, function(x) x$meta$undirected)),
-    multiple   = any(sapply(diffnets, function(x) x$meta$multiple))
+    multiple   = any(sapply(diffnets, function(x) x$meta$multiple)),
+    name       = diffnets[[1]]$meta$name,
+    behavior   = diffnets[[1]]$meta$behavior
   )
 
   graph <- structure(list(graph=A, toa=toa, adopt=adopt, cumadopt=cumadopt,

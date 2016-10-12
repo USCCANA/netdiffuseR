@@ -163,6 +163,8 @@ throught time (dynamic).}
  \item \code{self}: Logical scalar.
  \item \code{undirected}: Logical scalar.
  \item \code{multiple}: Logical scalar.
+ \item \code{name}: Character scalar.
+ \item \code{behavior}: Character scalar.
 }
 }
 }
@@ -302,6 +304,11 @@ fs_diffnet <- survey_to_diffnet(
 
 # Now, we extract the graph data and create a diffnet object from scratch
 graph <- fs_diffnet$graph
+ids <- fs_diffnet$meta$ids
+graph <- Map(function(g) {
+  dimnames(g) <- list(ids,ids)
+  g
+  }, g=graph)
 attrs <- diffnet.attrs(fs_diffnet, as.df=TRUE)
 toa   <- diffnet.toa(fs_diffnet)
 

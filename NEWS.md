@@ -19,6 +19,9 @@
   
 * `diffnet` class objects now have two new meta-values: name and behavior.
 
+* Elements -graph-, -toa-, -adopt- and -cumadopt- in `diffnet` class objects
+  have lost their dimnames (more efficient storage).
+
 
 ## New functions
 
@@ -41,6 +44,8 @@
   
 * `plot.diffnet_degSeq` method allows visualizing degree sequence as log-log
   plots (default).
+  
+* `diag_expand` creates a single adjacency matrix from a dynamic graph.
 
 ## Bug fixes
 

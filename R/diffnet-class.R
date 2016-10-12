@@ -16,7 +16,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
   iddf  <- data.frame(id  = meta$ids, `_original_sort`=seq_len(n), check.names = FALSE )
   perdf <- data.frame(per = meta$pers)
 
-  # Vertex Attrubutes  ---------------------------------------------------------
+  # Vertex Attributes  ---------------------------------------------------------
   if (attr.class == "vertex") {
     if (is.dynamic) {
       # If null
@@ -504,6 +504,11 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'
 #' # Now, we extract the graph data and create a diffnet object from scratch
 #' graph <- fs_diffnet$graph
+#' ids <- fs_diffnet$meta$ids
+#' graph <- Map(function(g) {
+#'   dimnames(g) <- list(ids,ids)
+#'   g
+#'   }, g=graph)
 #' attrs <- diffnet.attrs(fs_diffnet, as.df=TRUE)
 #' toa   <- diffnet.toa(fs_diffnet)
 #'
@@ -551,6 +556,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'  \item \code{self}: Logical scalar.
 #'  \item \code{undirected}: Logical scalar.
 #'  \item \code{multiple}: Logical scalar.
+#'  \item \code{name}: Character scalar.
+#'  \item \code{behavior}: Character scalar.
 #' }
 #' }
 #' @author George G. Vega Yon
@@ -623,18 +630,10 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
   # Step 4.1: Change the class (or set the names) of the graph -----------------
   if (meta$class=="array") {
-    graph <- lapply(1L:meta$nper, function(x) {
-      x <- methods::as(graph[,,x], "dgCMatrix")
-      dimnames(x) <- with(meta, list(ids, ids))
-      x
-    })
-    names(graph) <- meta$pers
+    graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
   } else { # Setting names (if not before)
     if (!length(names(graph))) names(graph) <- meta$pers
     else if (any(names(graph) != meta$pers)) names(graph) <- meta$pers
-
-    for(i in 1L:meta$nper)
-      dimnames(graph[[i]]) <- with(meta, list(ids, ids))
   }
 
   # Step 5: Compleating attributes and building the object and returning
@@ -645,6 +644,12 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
                                                       as.character(name)))
   meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
                                                           as.character(behavior)))
+
+  # Removing dimnames
+  graph                  <- Map(function(x) Matrix::unname(x), x=graph)
+  dimnames(toa)          <- NULL
+  dimnames(mat$adopt)    <- NULL
+  dimnames(mat$cumadopt) <- NULL
 
   return(structure(list(
     graph = graph,
@@ -844,7 +849,7 @@ diffnet.toa <- function(graph) {
 #' @export
 `diffnet.toa<-` <- function(graph, i, value) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
-  if (missing(i)) i <- 1:graph$meta$n
+  if (missing(i)) i <- graph$meta$ids
 
   # Checking values of the data: normalizing
   test <- !(value %in% c(graph$meta$pers, NA))
@@ -854,7 +859,9 @@ diffnet.toa <- function(graph) {
                       ,") are not within the range of the original graph.")
 
   # Changing the value of toa
+  names(graph$toa) <- graph$meta$ids
   graph$toa[i] <- value
+  graph$toa <- unname(graph$toa)
 
   # Recalculating adopt and cumadopt
   mat <- toa_mat(graph$toa, t0=graph$meta$pers[1], t1=graph$meta$pers[graph$meta$nper])

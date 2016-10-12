@@ -51,13 +51,14 @@ test_that("Filling edgelist and dataset", {
                         toavar="toa", fill.missing = "dat"))
 
   # Should be equal but from the graph
-  diffnet0 <- dn; diffnet0$graph <- NULL
-  diffnet_filling_el$graph <- NULL
+  diffnet0 <- dn # diffnet0$graph <- NULL
+  # diffnet_filling_el$graph <- NULL
+  diffnet_filling_el$graph <- diffnet0$graph
 
-  expect_equal(diffnet0, diffnet_filling_el)
+  expect_equal(as.array(diffnet0), as.array(diffnet_filling_el))
 
   # Should be equal but from the 2 individual
-  diffnet_filling_dat$graph <- NULL
+  # diffnet_filling_dat$graph <- NULL
   expect_equal(diffnet0[-3], diffnet_filling_dat[-3])
 })
 

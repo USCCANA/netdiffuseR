@@ -46,16 +46,23 @@ test_that("Barabasi-Albert model: methods", {
 test_that("Watts-Strogatz model: Rewiring shouldn't change the # of elements", {
   # Generating the data
   set.seed(123)
+  test1 <- NULL
+  test2 <- NULL
+  test3 <- NULL
   for (i in 1:50) {
     graph0 <- rgraph_ws(10,2,.1, undirected = TRUE)
     graph1 <- rgraph_ws(10,2,.5, undirected = TRUE)
     graph2 <- rgraph_ws(10,2,.5, undirected = TRUE)
     graph3 <- rgraph_ws(10,2,.8, undirected = TRUE)
 
-    expect_equal(sum(graph0), sum(graph1))
-    expect_equal(sum(graph1), sum(graph2))
-    expect_equal(sum(graph2), sum(graph3))
+    test1 <- c(test1, sum(graph0) == sum(graph1))
+    test2 <- c(test2, sum(graph1) == sum(graph2))
+    test3 <- c(test3, sum(graph2) == sum(graph3))
   }
+
+  expect_true(all(test1))
+  expect_true(all(test2))
+  expect_true(all(test3))
 })
 
 
@@ -99,21 +106,26 @@ test_that("Rewiring must hold graph's density", {
   ntimes <- 5
 
   # BA model
+  test <- NULL
   for (i in 1:ntimes) {
     for (j in 1:ntimes) {
       graph <- rgraph_ba(t=9)
-      expect_equal(sum(graph), sum(rewire_graph(graph, p=.5, undirected = FALSE)))
+      test <- c(test, sum(graph) == sum(rewire_graph(graph, p=.5, undirected = FALSE)))
     }
   }
+  expect_true(all(test))
 
   # Bernoulli
+  test <- NULL
   for (i in 1:ntimes) {
     for (j in 1:ntimes) {
       graph  <- rgraph_er(undirected = TRUE)
       suppressWarnings(graphr <- rewire_graph(graph, p=.5, undirected = TRUE))
-      expect_equal(sum(graph), sum(graphr))
+      test <- c(test, sum(graph) == sum(graphr))
     }
   }
+
+  expect_true(all(test))
 })
 
 test_that("When p=1 in rewiring, Pr(j'=i) = Pr(j'=k) for all (i,k) in V", {
@@ -145,7 +157,7 @@ test_that("When p=1 in rewiring, Pr(j'=i) = Pr(j'=k) for all (i,k) in V", {
 # Rewiring degree preserve
 test_that("rewire_graph_const_cpp should hold degree", {
   set.seed(18231)
-  n <- 1e3
+  n <- 5e2
   N <- 1e2
 
   # Function to compute degrees

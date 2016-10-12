@@ -1,4 +1,4 @@
-context("Exposure")
+context("Stats functions (including exposure)")
 
 test_that("exposure calculations", {
   # Generating data
@@ -119,4 +119,17 @@ test_that("vertex_mahalanobis_distance", {
   ans2 <-ans2*G
 
   expect_equal(ans1,ans2)
+})
+
+# ------------------------------------------------------------------------------
+test_that("vertex_covarite_compare", {
+  g <- methods::as(matrix(c(0,1,1,0,0,0,0,0,0), ncol=3), "dgCMatrix")
+  x <- cbind(1, 1, 3)
+  expect_equal(vertex_covariate_compare(g, x, "distance")@x, 2)
+  expect_equal(vertex_covariate_compare(g, x, "quaddist")@x, 4)
+  expect_equal(vertex_covariate_compare(g, x, "equal")@x, 1)
+  expect_equal(vertex_covariate_compare(g, x, "greater")@x, 1)
+  expect_equal(vertex_covariate_compare(g, x, "greaterequal")@x, c(1,1))
+  expect_equal(vertex_covariate_compare(g, x, "smaller")@x, numeric())
+  expect_equal(vertex_covariate_compare(g, x, "smallerequal")@x, 1)
 })

@@ -479,7 +479,7 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
     if (!inherits(graph, "diffnet")) {
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
     } else {
-      cumadopt <- graph$cumadopt
+      cumadopt <- toa_mat(graph)$cumadopt
     }
 
   # Checking diffnet graph
@@ -631,6 +631,11 @@ cumulative_adopt_count <- function(obj) {
   if (inherits(obj, "diffnet")) x <- obj$cumadopt
   else x <- obj
 
+  # Checking colnames
+  cn <- if (inherits(obj, "diffnet")) obj$meta$pers
+  else colnames(obj)
+  if (length(cn) == 0) cn <- as.character(1:ncol(obj))
+
   q <- colSums(x)
   t <- length(q)
   structure(
@@ -638,7 +643,7 @@ cumulative_adopt_count <- function(obj) {
       q,
       q/nrow(x),
       c(0,(q[-1] - q[-t])/(q[-t] + 1e-15))
-    ), dimnames = list(c("num", "prop", "rate"), colnames(x))
+    ), dimnames = list(c("num", "prop", "rate"), cn)
   )
 }
 
@@ -731,10 +736,18 @@ cumulative_adopt_count <- function(obj) {
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
-  if (inherits(obj, "diffnet")) obj <- obj$cumadopt
+  if (inherits(obj, "diffnet")) {
+    dn  <- with(obj$meta, list(ids, pers))
+    obj <- obj$cumadopt
+    dimnames(obj) <- dn
+  } else {
+    if (!length(colnames(obj)))
+      colnames(obj) <- seq_len(ncol(obj))
+  }
 
   q <- colSums(obj)
   t <- length(q)
+
   x <- structure(
     rbind(c(0,(q[-1] - q[-t])/(nrow(obj) - q[-t] + 1e-15)))
     , dimnames = list("hazard", colnames(obj)),

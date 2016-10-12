@@ -994,7 +994,7 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 
   # Computing the TOA mat
   if (inherits(obj, "diffnet")) {
-    cumadopt <- cumulative_adopt_count(obj$cumadopt)
+    cumadopt <- cumulative_adopt_count(obj)
     adopt    <- colSums(obj$adopt)
     n        <- obj$meta$n
   }

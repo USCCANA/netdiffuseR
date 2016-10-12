@@ -334,21 +334,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_ba2_cpp
-arma::sp_mat rgraph_ba2_cpp(const arma::sp_mat& graph, const arma::colvec& dgr, const arma::mat& X, int m, int t);
-RcppExport SEXP netdiffuseR_rgraph_ba2_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP XSEXP, SEXP mSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type dgr(dgrSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< int >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_ba2_cpp(graph, dgr, X, m, t));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rgraph_er_cpp
 arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
 RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {

@@ -30,6 +30,7 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
   for (p in 1:length(out)) {
     # Index
     s <- slices[p]
+    dimnames(graph$graph[[s]]) <- with(graph$meta, list(ids,ids))
 
     # Graph
     tempgraph <- igraph::graph_from_adjacency_matrix(
