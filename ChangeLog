@@ -1,3 +1,10 @@
+2016-10-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-class.R: Function -diffnet.attrs<-- Defunct-ed.
+	* R/select_egoalter.R: New summary method+fix bug with arrays.
+	* R/struct_test.R: Working on doc.
+	* src/struct_test.cpp: Removing unused function -hatf-.
+	* tests/testthat/*.R: Several new tests.
+
 2016-10-12  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-class.R: Small bug when reading dynamic attributes. and
 	  printing bug+removing dimnames.

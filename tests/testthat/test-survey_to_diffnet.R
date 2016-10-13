@@ -1,13 +1,36 @@
 context("Survey to diffnet")
 
+# ------------------------------------------------------------------------------
 test_that("Error messages", {
   # Class checkings
   expect_error(
     netdiffuseR:::check_var_class_and_coerce("Murder",USArrests,"character","integer"),
     "is not supported"
   )
+
+  # Can't find variables
+  expect_error(
+    edgelist_to_diffnet(1, dat=USArrests, idvar="a", toavar="b", timevar = "c"),
+    "can\'t be found"
+  )
+
+  dat <- fakesurveyDyn
+  dat$id[c(1,5)] <- NA
+  expect_error(
+    edgelist_to_diffnet(fakeEdgelist[,1:2], dat=dat,
+                        idvar="id", toavar="toa", timevar="time"),
+    "1, 5"
+  )
+
+  dat <- fakesurveyDyn
+  expect_error(
+    edgelist_to_diffnet(fakeEdgelist[,1:2], dat=dat, warn.coercion = FALSE,
+                        idvar="id", toavar="toa", timevar="time", fill.missing = TRUE),
+    "currently supported"
+  )
 })
 
+# ------------------------------------------------------------------------------
 test_that("Reproducing observed", {
 
   # What are the netvars
@@ -26,6 +49,7 @@ test_that("Reproducing observed", {
 
 })
 
+# ------------------------------------------------------------------------------
 test_that("Filling edgelist and dataset", {
   # Creating network data (1:5)
   set.seed(1231)

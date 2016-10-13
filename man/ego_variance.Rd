@@ -14,7 +14,7 @@ ego_variance(graph, Y, funname, all = FALSE)
 \item{funname}{Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).}
 
 \item{all}{Logical scalar. When \code{FALSE} (default) \eqn{f_i} is mean at
-ego level. Otherwise is fix for all i.}
+ego level. Otherwise is fix for all i (see details).}
 }
 \value{
 A numeric vector of length \eqn{n}.
@@ -28,16 +28,21 @@ For each vertex \eqn{i} the variance is computed as follows
 \deqn{%
 (\sum_j a_{ij})^{-1}\sum_j a_{ij} \left[f(y_i,y_j) - f_i\right]^2
 }{%
-(sum_j a(ij))^(-1) * sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
+(sum_j a(ij))^(-1) * \sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
 }
 
 Where \eqn{a_{ij}}{a(ij)} is the ij-th element of \code{graph}, \eqn{f} is
-the function specified in \code{funname}, and
-\eqn{f_i = \sum_j a_{ij}(y_i - y_j)^2/\sum_ja_{ij}}{f(i)=sum_j a(ij)(y(i) - y(j))^2/sum_j a(ij)}
+the function specified in \code{funname}, and, if \code{all=FALSE}
+\eqn{f_i = \sum_j a_{ij}f(y_i,y_j)^2/\sum_ja_{ij}}{f(i)=\sum_j a(ij)f(y(i), y(j))^2/\sum_j a(ij)},
+otherwise \eqn{f_i = f_j = \frac{1}{n^2}\sum_{i,j}f(y_i,y_j)}{f(i)=f(j)=(1/n^2)\sum_(i,j) f(y_i,y_j)}
+
 
 This is an auxiliary function for \code{\link{struct_test}}. The idea is
 to compute an adjusted measure of disimilarity between vertices, so the
 closest in terms of \eqn{f} is \eqn{i} to its neighbors, the smaller the
 relative variance.
+}
+\seealso{
+\code{\link{struct_test}}
 }
 

@@ -167,4 +167,13 @@ test_that("Warnings and errors", {
   expect_error(
     with(g, as_diffnet(graph, toa, graph.attrs = vector("list",5)))
   )
+
+  # Different method of dynamic attributes
+  ans0 <- with(g, as_diffnet(graph, toa, vertex.static.attrs = attrs,
+                            vertex.dyn.attrs = do.call(rbind, dynattrs)))
+
+  ans1 <- with(g, as_diffnet(graph, toa, vertex.static.attrs = attrs,
+                             vertex.dyn.attrs = do.call(rbind, dynattrs)[,1]))
+  expect_equal(ans,ans0)
+  expect_equal(ans,ans1)
 })

@@ -102,7 +102,7 @@ test_that("vertex_covariate_distance", {
 
 
 # ------------------------------------------------------------------------------
-test_that("vertex_mahalanobis_distance", {
+test_that("vertex_mahalanobis_dist", {
   set.seed(123131231)
   n <- 20
   X <- matrix(runif(n*2, -1,1), ncol=2)
@@ -132,4 +132,25 @@ test_that("vertex_covarite_compare", {
   expect_equal(vertex_covariate_compare(g, x, "greaterequal")@x, c(1,1))
   expect_equal(vertex_covariate_compare(g, x, "smaller")@x, numeric())
   expect_equal(vertex_covariate_compare(g, x, "smallerequal")@x, 1)
+})
+
+# ------------------------------------------------------------------------------
+test_that("Classify adopter", {
+  # Creating graph
+  g <- matrix(0, ncol=3, nrow=3)
+  g[cbind(1,2:3)] <- 1
+  g[cbind(2:3,1)] <- 1
+  g[2,3] <- 1
+  g[3,2] <- 1
+
+  g <- lapply(1:3, function(x) methods::as(g, "dgCMatrix"))
+
+  # Cumultive adoption matrix
+  toa <- 1:3
+
+  dn <- as_diffnet(g, toa)
+  ans <- ftable(classify(dn))
+
+  expect_equal(sum(ans), 100, tolerance = .01)
+  expect_equal(colSums(ans)/100, c(0,1/3,1/3,1/3,0), tolerance = .005)
 })

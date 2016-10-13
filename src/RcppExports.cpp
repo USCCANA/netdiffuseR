@@ -503,19 +503,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// hatf
-NumericVector hatf(const arma::sp_mat& G, const NumericVector& Y, std::string funname);
-RcppExport SEXP netdiffuseR_hatf(SEXP GSEXP, SEXP YSEXP, SEXP funnameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type G(GSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
-    rcpp_result_gen = Rcpp::wrap(hatf(G, Y, funname));
-    return rcpp_result_gen;
-END_RCPP
-}
 // ego_variance
 NumericVector ego_variance(const arma::sp_mat& graph, const NumericVector& Y, std::string funname, bool all);
 RcppExport SEXP netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP, SEXP allSEXP) {

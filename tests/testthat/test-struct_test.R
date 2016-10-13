@@ -1,4 +1,4 @@
-context("Network boot")
+context("Structural test")
 
 test_that("struct_test should be reproducible (serial version)", {
 
@@ -46,7 +46,7 @@ test_that("struct_test should be reproducible (parallel version)", {
 
 })
 
-
+# ------------------------------------------------------------------------------
 test_that("Methods of struct test", {
   set.seed(1122)
   x <- rdiffnet(100, 4, "central")
@@ -63,4 +63,56 @@ test_that("Methods of struct test", {
 
   # Just printing
   hist(ans1)
+})
+
+# ------------------------------------------------------------------------------
+# There is still a lot of work to do in this
+test_that("Asymptotic approximations", {
+  data(medInnovationsDiffNet)
+  g <- medInnovationsDiffNet
+  expect_output(print(struct_test_asymp(g$graph[[1]], g$toa, statistic_name = ">=")), "Simulations.+0\n")
+})
+
+# ------------------------------------------------------------------------------
+test_that("ego_variance", {
+  set.seed(9981)
+  n <- 100
+  g <- rgraph_er(n=100)
+  Y <- runif(100)
+
+  # R version
+  regovar <- function(graph, Y, funname, all=FALSE) {
+    n <- nnodes(graph)
+
+
+    F_ <- vertex_covariate_compare(graph, cbind(Y), funname)
+    F_mean <- mean(outer(Y,Y,function(x,y) abs(x-y)))
+
+    ans <- vector("numeric", n)
+    for (i in seq_len(n)) {
+      a_ij <- graph[i,,drop=FALSE]@x
+      f_ij <- F_[i,,drop=FALSE]@x
+      f_i  <- ifelse(all, F_mean, mean(F_[i,,drop=FALSE]@x))
+
+      ans[i] <- sum((f_ij - f_i)^2)/(sum(a_ij) + 1e-15)
+    }
+
+    ans
+  }
+
+  ans0 <- ego_variance(g, Y, "distance")
+  ans1 <- regovar(g,Y,"distance")
+
+  expect_equal(ans0, ans1, tolerance=1e-5)
+
+  ans0 <- ego_variance(g, Y, "distance", TRUE)
+  ans1 <- regovar(g,Y,"distance", TRUE)
+
+  expect_equal(ans0, ans1, tolerance=1e-5)
+
+  # microbenchmark(
+  #   cpp= ego_variance(g, Y, "distance", TRUE),
+  #   r = regovar(g,Y,"distance", TRUE), times=1000, unit="relative"
+  # )
+
 })

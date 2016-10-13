@@ -323,11 +323,8 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
   ids.dat      <- unique(dat[[idvar]])
   if (length(fill.missing)) {
     # Checking argument
-    if (!inherits(fill.missing, "character")) {
-      stop("-fill.missing- should be a character scalar")
-    }
-    # If something goes wrong
-    if (!(fill.missing %in% c("edgelist", "dat", "both"))) {
+    if (!inherits(fill.missing, "character") ||
+        !(fill.missing %in% c("edgelist", "dat", "both"))) {
       stop("The only values currently supported for -fill.missing- are:\n\t",
            "'edgelist', 'dat', or 'both'.")
     }

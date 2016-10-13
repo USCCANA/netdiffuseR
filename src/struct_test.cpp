@@ -48,49 +48,12 @@ double struct_test_var(NumericVector & y, std::string funname, bool self=false) 
 
 typedef arma::sp_mat::const_iterator spiter;
 
-// [[Rcpp::export]]
-NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
-                   std::string funname) {
-  int n = G.n_rows;
-  NumericVector ans(n);
-  NumericVector d(n);
-
-  // Fetching function
-  funcPtr fun;
-  st_getfun(funname, fun);
-
-  // Preparing iterators
-  spiter begin = G.begin();
-  spiter end   = G.end();
-
-  for (spiter i = begin; i!=end; i++) {
-    for (spiter j = begin; j!=end; j++) {
-      // I and j must be connected
-      if (i.col() != j.row()) continue;
-
-      // Are i and k connected
-      // To see such we check at G in
-      // G(i,k) > 0
-      if (G.at(i.row(), j.col()) < 1e-15) continue;
-
-      ans[i.row()] += fun(Y[j.row()], Y[j.col()]);
-      d.at(i.row())++;
-    }
-  }
-
-  for (int i=0;i<n;i++)
-    if (d[i]>0) ans[i] /= (d[i] + 1e-15);
-    else ans[i] = NA_REAL;
-
-  return ans;
-}
-
 //' Computes variance of \eqn{Y} at ego level
 //' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
 //' @param Y A numeric vector of length \eqn{n}.
 //' @param funname Character scalar. Comparison to make (see \code{\link{vertex_covariate_compare}}).
 //' @param all Logical scalar. When \code{FALSE} (default) \eqn{f_i} is mean at
-//' ego level. Otherwise is fix for all i.
+//' ego level. Otherwise is fix for all i (see details).
 //' @details
 //'
 //' For each vertex \eqn{i} the variance is computed as follows
@@ -98,12 +61,14 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
 //' \deqn{%
 //' (\sum_j a_{ij})^{-1}\sum_j a_{ij} \left[f(y_i,y_j) - f_i\right]^2
 //' }{%
-//' (sum_j a(ij))^(-1) * sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
+//' (sum_j a(ij))^(-1) * \sum_j a(ij) * [f(y(i),y(j)) - f(i)]^2
 //' }
 //'
 //' Where \eqn{a_{ij}}{a(ij)} is the ij-th element of \code{graph}, \eqn{f} is
-//' the function specified in \code{funname}, and
-//' \eqn{f_i = \sum_j a_{ij}(y_i - y_j)^2/\sum_ja_{ij}}{f(i)=sum_j a(ij)(y(i) - y(j))^2/sum_j a(ij)}
+//' the function specified in \code{funname}, and, if \code{all=FALSE}
+//' \eqn{f_i = \sum_j a_{ij}f(y_i,y_j)^2/\sum_ja_{ij}}{f(i)=\sum_j a(ij)f(y(i), y(j))^2/\sum_j a(ij)},
+//' otherwise \eqn{f_i = f_j = \frac{1}{n^2}\sum_{i,j}f(y_i,y_j)}{f(i)=f(j)=(1/n^2)\sum_(i,j) f(y_i,y_j)}
+//'
 //'
 //' This is an auxiliary function for \code{\link{struct_test}}. The idea is
 //' to compute an adjusted measure of disimilarity between vertices, so the
@@ -111,6 +76,7 @@ NumericVector hatf(const arma::sp_mat & G, const  NumericVector & Y,
 //' relative variance.
 //' @return A numeric vector of length \eqn{n}.
 //' @export
+//' @seealso \code{\link{struct_test}}
 // [[Rcpp::export]]
 NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
                        std::string funname, bool all=false) {

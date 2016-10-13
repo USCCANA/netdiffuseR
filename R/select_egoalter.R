@@ -30,8 +30,9 @@
 #' At the same time, number 12 means that ego adopted the innovation in \eqn{t}, but
 #' alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
 #'
-#' @return An dataframe with \eqn{n\times (T-1)}{n * (T-1)} rows and
-#' \eqn{2 + 16\times 3}{2 + 16 * 3} columns. The column names are
+#' @return An object of class \code{diffnet_adoptChanges} and \code{data.frame}
+#' with \eqn{n\times (T-1)}{n * (T-1)} rows and \eqn{2 + 16\times 3}{2 + 16 * 3}
+#' columns. The column names are:
 #' \item{\code{time}}{Integer represting the time period}
 #' \item{\code{id}}{Node id}
 #' \item{\code{select_a_01}, \dots, \code{select_a_16}}{Number of new links classified
@@ -75,9 +76,7 @@ adopt_changes <- select_egoalter
 # @rdname select_egoalter
 # @export
 select_egoalter.array <- function(graph, adopt, period=NULL) {
-  dn <- dimnames(graph)[[3]]
-  graph <- lapply(1:dim(graph)[3], function(x) graph[,,x])
-  names(graph) <- dn
+  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
   select_egoalter.list(graph, adopt, period)
 }
 
@@ -123,5 +122,60 @@ select_egoalter.list <- function(graph, adopt, period=NULL) {
     colnames(out[[i-1]]) <- cn
   }
 
-  return(do.call(rbind, out))
+  out <- do.call(rbind, out)
+  class(out) <- c("diffnet_adoptChanges", class(out))
+  return(out)
+}
+
+#' @export
+#' @param object An object of class \code{diffnet_adoptChanges}.
+#' @param ... Ignored.
+#' @rdname select_egoalter
+summary.diffnet_adoptChanges <- function(object, ...) {
+  timevar <- object[["time"]]
+
+  # Labels
+  rn <- paste0(c(
+    paste0("Ego|", rep("No (t-1)|", 2)),
+    paste0("Ego|", rep("Yes (t-1)|", 2))
+  ), c("No (t)","Yes (t)"))
+
+  cn <- paste0(c(
+    paste0("Alter|", rep("No (t-1)|", 2)),
+    paste0("Alter|", rep("Yes (t-1)|", 2))
+  ), c("No (t)","Yes (t)"))
+
+  # Function for tabulating
+  egoaltertab <- function(expr) {
+
+    ans <- grepl(expr, colnames(object))
+    ans <- object[,ans]
+    colnames(ans) <- as.integer(
+      gsub(".+_(?=[0-9]+)", "", colnames(ans), perl = TRUE))
+
+    ans <- unclass(by(ans, timevar, colSums))
+
+    ans <- lapply(ans, function(x) {
+      x <- matrix(x, byrow = TRUE, ncol=2)
+      x <- cbind(x[1:4,], x[5:8,])
+      dimnames(x) <- list(rn, cn)
+      x
+    })
+
+    names(ans) <- paste("period",names(ans))
+    ans
+
+  }
+
+  # Added Links
+  # debug(egoaltertab)
+  links_added   <- egoaltertab("select_a")
+  links_deleted <- egoaltertab("select_d")
+  links_static  <- egoaltertab("select_s")
+
+  list(
+    `added (a)`     = links_added,
+    `removed (d)`   = links_deleted,
+    `unchanged (s)` = links_static
+  )
 }

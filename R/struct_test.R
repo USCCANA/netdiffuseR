@@ -30,7 +30,8 @@
 #' Monte Carlo simulations (rewiring). \code{struct_test_asymp} computes the
 #' test using an asymptotic approximation. While available, we do not recommend
 #' using the asymptotic approximation since it has not shown good results when
-#' compared to the MC approximation.
+#' compared to the MC approximation. Furthermore, the asymptotic version has only
+#' been implemented for \code{graph} as static graph.
 #'
 #' The output from the \code{hist} method is the same as \code{\link{hist.default}}.
 #'
@@ -308,11 +309,6 @@ struct_test_asymp <- function(
 
   return(structure(out, class="diffnet_struct_test"))
 }
-
-#' Vertex comparison
-#' @details This set of internal functions are called by \CRANpkg{netdiffuseR}
-#' @name vertex_comparison
-NULL
 
 # library(mvtnorm)
 #
