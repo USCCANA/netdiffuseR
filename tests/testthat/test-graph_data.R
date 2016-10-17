@@ -9,6 +9,7 @@ test_that("Checking that -graph- argument correctly passes", {
   expect_error(adjmat_to_edgelist("a"), "No method for")
 })
 
+# ------------------------------------------------------------------------------
 test_that("Graph class analysis", {
   # Generic error
   expect_error(classify_graph(1), "Not an object")
@@ -36,3 +37,21 @@ test_that("Graph class analysis", {
 
   }
 )
+
+# ------------------------------------------------------------------------------
+test_that("As generic graph", {
+
+  g <- rgraph_ba(t=19)
+
+  # igraph case
+  ig <- igraph::graph_from_adjacency_matrix(g)
+  ans0 <- netdiffuseR:::as_generic_graph.igraph(ig)
+  expect_equal(igraph::as_adj(ig), ans0$graph[[1]])
+
+  # network case
+  nw <- network::network(as.matrix(g), loops=TRUE)
+  ans1 <- netdiffuseR:::as_generic_graph.network(nw)
+  # ans1 <- as.matrix(ans1$graph[[1]])
+
+  expect_equivalent(as.matrix(nw), as.matrix(ans1$graph[[1]]))
+})

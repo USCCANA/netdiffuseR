@@ -1,4 +1,8 @@
 2016-10-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/graph_data.R: Bug in ordering (now its preserved)
+	* test/testthat/*: New select_egoalter and graph_data tests.
+
+2016-10-13  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-class.R: Function -diffnet.attrs<-- Defunct-ed.
 	* R/select_egoalter.R: New summary method+fix bug with arrays.
 	* R/struct_test.R: Working on doc.

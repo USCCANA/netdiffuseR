@@ -1,11 +1,11 @@
 #' netdiffuseR
 #'
-#' Network Analysis for Diffusion of Innovations
+#' Analysis of Diffusion and Contagion Processes on Networks
 #'
 #' @description
 #'
-#' Statistical analysis, visualization and simulation of network diffusion of
-#' innovations. The package implements algorithms for
+#' Statistical analysis, visualization and simulation of diffusion and contagion
+#' processes on networks. The package implements algorithms for
 #' calculating stats such as innovation threshold levels, infectiousness
 #' (contagion) and susceptibility, and hazard rates as presented in Burt (1987),
 #' Valente (1995), and Myers (2000) (among others).

@@ -135,3 +135,37 @@ test_that("By group", {
   expect_true(all(test))
 
 })
+
+# ------------------------------------------------------------------------------
+test_that("transformGraphBy", {
+  set.seed(123)
+  x <- rdiffnet(50, 5)
+  x[["group"]] <- sample(1:3, nnodes(x), TRUE)
+
+  # Baseline computation
+  myfun <- function(x) struct_equiv(x)$SE
+  ans0  <- Map(function(G) {
+    # Empty matrix
+    ans <- methods::new("dgCMatrix", Dim=c(nnodes(x),nnodes(x)), p=rep(0L,nnodes(x) + 1L))
+
+    # Analizing data
+    Group <- x[["group"]]
+    GROUP <- unique(Group)
+
+    for (i in GROUP) {
+      index <- which(Group == i)
+      ans[index,index] <- myfun(G[index,index])
+    }
+
+    ans
+
+  }, G=x$graph)
+
+  # Method
+  ans1 <- Map(function(G) transformGraphBy(G, x[["group"]], myfun), G=x$graph)
+  ans2 <- transformGraphBy(x, x[["group"]], myfun)$graph
+
+  expect_equivalent(ans1, ans0)
+  expect_equivalent(ans1, ans2)
+
+})

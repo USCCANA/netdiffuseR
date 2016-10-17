@@ -96,6 +96,10 @@ as_generic_graph.network <- function(graph) {
     self       = network::has.loops(graph)
     )
 
+  ord <- network::network.vertex.names(graph)
+  ord <-  match(ord, rownames(adjmat))
+  adjmat <- adjmat[ord,ord]
+
   env <- environment()
   ans <- new_generic_graph()
   suppressWarnings(add_to_generic_graph("ans", "graph", list(`1`=adjmat), env))
