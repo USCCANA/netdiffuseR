@@ -1,9 +1,29 @@
 context("Random graphs")
 
+# ------------------------------------------------------------------------------
 test_that("Bernoulli model", {
   set.seed(123)
-  graph <- rgraph_er(n=5e2, p=.3)
-  expect_equal(sum(graph)/length(graph), .3, tolerance=5e-4, scale=1)
+  graph <- rgraph_er(n=3e2, p=.3)
+  expect_equal(sum(graph)/length(graph), .3, tolerance=5e-3, scale=1)
+
+  set.seed(1); ans0 <- rgraph_er(100, p=.3)
+  set.seed(1); ans1 <- rgraph_er(100, p=.3, as.edgelist = TRUE)
+  ans1<-edgelist_to_adjmat(ans1[,1:2])
+
+  expect_equivalent(ans0,ans1)
+
+  # Dynamic
+  ans0 <- vector("list", 2)
+  set.seed(1)
+  ans0[[1]] <- rgraph_er(10)
+  ans0[[2]] <- rgraph_er(10)
+
+  set.seed(1)
+  ans1 <- rgraph_er(10, 2)
+
+  expect_equivalent(ans0,ans1)
+
+
 })
 
 # Barabasi-albert (need more sophisticated test) -------------------------------
@@ -35,8 +55,10 @@ test_that("Barabasi-Albert model: methods", {
 
   set.seed(123); x_dn <- rgraph_ba(t=2, graph=diffnet)$graph
   set.seed(123); x_ar <- rgraph_ba(t=2, graph=graphar)
+  set.seed(123); x_ls <- rgraph_ba(t=2, graph=diffnet$graph)
 
   expect_equivalent(x_dn, x_ar)
+  expect_equivalent(x_dn, x_ls)
 
 
 })
@@ -97,7 +119,6 @@ test_that("Rewiring methods", {
   expect_equal(graphls, graphdn)
   expect_equal(graphar, graphdn)
 
-
 })
 
 test_that("Rewiring must hold graph's density", {
@@ -135,7 +156,7 @@ test_that("When p=1 in rewiring, Pr(j'=i) = Pr(j'=k) for all (i,k) in V", {
   x <- ring_lattice(n, 2)
 
   # Simulating
-  N <- 1e4
+  N <- 1e3
   out <- lapply(seq_len(N), function(y) {
     y <- rewire_graph(x, p=1.0, self = TRUE, undirected = FALSE, both.ends = FALSE,
                       multiple = FALSE)
@@ -187,4 +208,19 @@ test_that("rewire_graph_const_cpp should hold degree", {
     out[i] <- identical(d0, d1)
   }
   expect_equal(out, rep(TRUE, n))
+
+
+  # # Alternating exagons (hold deg seq)
+  # out <- vector(length=n)
+  # for (i in 1:n) {
+  #   g0 <- rgraph_ba(t = 99, self=FALSE)
+  #   d0 <- dfun(g0)
+  #   g1 <- netdiffuseR:::rewire_swap(g, althexagons = TRUE)
+  #   d1 <- dfun(g1)
+  #   out[i] <- identical(d0,d1)
+  # }
+  # expect_true(all(out))
+
+
+
 })

@@ -569,7 +569,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
                        self=getOption("diffnet.self"),
                        multiple=getOption("diffnet.multiple"),
                        name = "Diffusion Network",
-                       behavior = "") {
+                       behavior = "Unspecified") {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
   if (inherits(graph, "diffnet")) {

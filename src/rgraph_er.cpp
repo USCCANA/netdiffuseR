@@ -43,19 +43,6 @@ arma::sp_mat rgraph_er_cpp(
   return graph;
 }
 
-// [[Rcpp::export]]
-List rgraph_er_dyn_cpp(
-    int n=10, int t=3, double p = 0.3, bool undirected=true,
-    bool weighted=false, bool self=false) {
-
-  List graphs(t);
-  for(int i=0;i<t;i++)
-    graphs[i] = rgraph_er_cpp(n, p, undirected, weighted, self);
-
-  return graphs;
-
-}
-
 /* **R
  set.seed(123)
  rand_graph_cpp()

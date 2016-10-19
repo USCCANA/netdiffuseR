@@ -32,4 +32,7 @@ sum[w(i)'(x(i) - w.mean(x))^2/(1-n)]
 where \eqn{w_i'=w_i/\sum_i w_i}{w(i)' = w(i)/sum(w)}, and
 \eqn{\bar x = \sum_i w_i'x_i}{w.mean(x)=sum[w(i)'*x(i)]}.
 }
+\seealso{
+This function is used in \code{\link{diffmap}}.
+}
 

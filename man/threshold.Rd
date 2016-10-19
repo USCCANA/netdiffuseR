@@ -62,9 +62,9 @@ Threshold can be visualized using \code{\link{plot_threshold}}
 
 Other statistics: \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{exposure}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}},
+  \code{\link{ego_variance}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{infection}},
+  \code{\link{moran}}, \code{\link{struct_equiv}},
   \code{\link{vertex_covariate_dist}}
 }
 \keyword{univar}

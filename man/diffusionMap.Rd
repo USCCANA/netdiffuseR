@@ -150,7 +150,9 @@ Vega Yon, George G., and Valente, Thomas W., Visualizing Annotated
 Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working paper).
 }
 \seealso{
-Other visualizations: \code{\link{drawColorKey}},
+Other visualizations: \code{\link{dgr}},
+  \code{\link{drawColorKey}},
+  \code{\link{grid_distribution}},
   \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
   \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},

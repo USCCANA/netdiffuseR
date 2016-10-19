@@ -88,10 +88,20 @@ George G. Vega Yon
 \seealso{
 Other statistics: \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}},
-  \code{\link{exposure}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}},
+  \code{\link{ego_variance}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{infection}},
+  \code{\link{moran}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
+
+Other visualizations: \code{\link{diffusionMap}},
+  \code{\link{drawColorKey}},
+  \code{\link{grid_distribution}},
+  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
+  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
+  \code{\link{plot_infectsuscep}},
+  \code{\link{plot_threshold}},
+  \code{\link{rescale_vertex_igraph}}
 }
 \keyword{univar}
 

@@ -26,6 +26,7 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 //'
 //' @export
 //' @keywords misc dplot
+//' @family visualizations
 //' @seealso Used by \code{\link{plot_infectsuscep}}
 //' @return Returns a list with three elements
 //' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}

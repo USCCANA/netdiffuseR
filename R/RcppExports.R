@@ -78,6 +78,7 @@ sp_as_undirected <- function(x) {
 #'
 #' @export
 #' @keywords misc dplot
+#' @family visualizations
 #' @seealso Used by \code{\link{plot_infectsuscep}}
 #' @return Returns a list with three elements
 #' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
@@ -219,10 +220,6 @@ rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE,
     .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
 
-rgraph_er_dyn_cpp <- function(n = 10L, t = 3L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('netdiffuseR_rgraph_er_dyn_cpp', PACKAGE = 'netdiffuseR', n, t, p, undirected, weighted, self)
-}
-
 #' Ring lattice graph
 #'
 #' Creates a ring lattice with \eqn{n} vertices, each one of degree (at most) \eqn{k}
@@ -340,6 +337,7 @@ struct_test_var <- function(y, funname, self = FALSE) {
 #' @return A numeric vector of length \eqn{n}.
 #' @export
 #' @seealso \code{\link{struct_test}}
+#' @family statistics
 ego_variance <- function(graph, Y, funname, all = FALSE) {
     .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname, all)
 }

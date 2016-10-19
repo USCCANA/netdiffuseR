@@ -57,7 +57,7 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 
   # Generating the random graph
   if (t==1) graph <- rgraph_er_cpp(n, p, undirected, weighted, self)
-  else graph <- rgraph_er_dyn_cpp(n, t, p, undirected, weighted, self)
+  else graph <- lapply(1:t, function(x) rgraph_er_cpp(n, p, undirected, weighted, self))
 
   if (as.edgelist) {
     graph <- adjmat_to_edgelist(graph, undirected)
@@ -74,8 +74,6 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
   }
 
   attr(graph, "undirected") <- undirected
-  return(graph)
-
   return(graph)
 }
 

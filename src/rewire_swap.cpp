@@ -57,7 +57,7 @@ arma::sp_mat rewire_swap(
     // Alternating Hexagons
     // Ramachandra Rao, et al, The Indian Journal of Statistics
     if (ismultiple && althexagons && (unif_rand() < 0.5)) {
-      // Case 1: i1i2 and i2i3 (j == newi)
+      // Case 1: will switch i1i2 and i2i3 (so j == newi)
       if ((j==newi) && (newgraph.at(newj, i))) {
 
         i1 = i, i2 = j, i3 = newj;

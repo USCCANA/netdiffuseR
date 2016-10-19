@@ -133,9 +133,9 @@ by using the function \code{\link{plot_infectsuscep}}
 
 Other statistics: \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{exposure}}, \code{\link{hazard_rate}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}},
+  \code{\link{ego_variance}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{moran}},
+  \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
 \keyword{univar}

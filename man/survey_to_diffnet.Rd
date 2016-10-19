@@ -176,6 +176,7 @@ Vega Yon
 \code{\link{fakesurvey}}, \code{\link{fakesurveyDyn}}
 
 Other data management functions: \code{\link{as_diffnet}},
-  \code{\link{edgelist_to_adjmat}}, \code{\link{isolated}}
+  \code{\link{edgelist_to_adjmat}},
+  \code{\link{egonet_attrs}}, \code{\link{isolated}}
 }
 

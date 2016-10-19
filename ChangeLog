@@ -1,4 +1,12 @@
-2016-10-13  George G. Vega Yon <g.vegayon@gmail.com>
+2016-10-18  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-indexing.R: Fixing bug on [[<-.diffnet.
+	* R/rewire.R: althex is currently on dev (so change when TRUE).
+	* src/netdiffuser_extra.h: Removing unsued function.
+	* src/rgraph_er.cpp: Removing redundant function.
+	* R/random_graph.R: rgraph_ws uses a single cpp fun. (idem)
+	* test/testthat/*: More tests.	
+
+2016-10-17  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/graph_data.R: Bug in ordering (now its preserved)
 	* test/testthat/*: New select_egoalter and graph_data tests.
 

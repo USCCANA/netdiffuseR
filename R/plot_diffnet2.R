@@ -10,6 +10,8 @@
 #' x <- rnorm(100)
 #' w <- data.frame(as.integer(round_to_seq(x, as_factor = TRUE)),x)
 #' plot(w,x)
+#'
+#' @seealso Used in \code{\link{diffmap}} and \code{\link{plot_diffnet2}}
 round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
   y <- range(x, na.rm = TRUE, finite=TRUE)
   y <- seq(y[1], y[2], length.out = nlevels)
@@ -359,7 +361,7 @@ diffmap <- diffusionMap
 #' \eqn{\bar x = \sum_i w_i'x_i}{w.mean(x)=sum[w(i)'*x(i)]}.
 #' @return Numeric scalar with the weighted variance.
 #' @export
-#'
+#' @seealso This function is used in \code{\link{diffmap}}.
 weighted_var <- function(x,w) {
   n <- length(x)
   w <- w/sum(w, na.rm=TRUE)*n

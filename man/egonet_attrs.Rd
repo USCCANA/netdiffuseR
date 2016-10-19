@@ -113,4 +113,9 @@ egonet_attrs(diffnet, V=c(1,20))
 \author{
 George G. Vega Yon
 }
+\seealso{
+Other data management functions: \code{\link{as_diffnet}},
+  \code{\link{edgelist_to_adjmat}}, \code{\link{isolated}},
+  \code{\link{survey_to_diffnet}}
+}
 

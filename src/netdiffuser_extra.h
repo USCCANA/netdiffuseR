@@ -19,8 +19,6 @@ int unif_rand_w_exclusion(int n, int e);
 
 arma::sp_mat sp_as_undirected(const arma::sp_mat & x);
 
-void _covariate_distance(arma::sp_mat & D, const arma::mat & x, double p=2.0, bool symetric=false);
-
 typedef double (*funcPtr)(double y0, double y1);
 
 double st_dist(double y0, double y1);

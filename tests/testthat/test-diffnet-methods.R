@@ -1,6 +1,6 @@
 # library(netdiffuseR)
 # library(testthat)
-context("Plotting functions 1 (plot_diffnet, threshold, and exposure)")
+context("plot_diffnet, threshold, and exposure")
 
 # plot_diffnet -----------------------------------------------------------------
 
@@ -170,9 +170,26 @@ test_that("Arithmetic and others", {
   set.seed(18181)
   g <- rdiffnet(100, 3)
 
+  ans0 <- graph_power(g, 2)
   ans1 <- g^2
   ans2 <- g
   ans2$graph <- Map(function(x) x %*% x, g$graph)
 
   expect_equal(lapply(ans1$graph, as.matrix), lapply(ans2$graph, as.matrix))
+  expect_equal(lapply(ans0$graph, as.matrix), lapply(ans2$graph, as.matrix))
+
+  # Substract
+  ans0 <- g - c(1,2)
+  ans1 <- g[-c(1,2)]
+  ans2 <- g-g[-(3:100)]
+
+  expect_equal(ans0,ans1)
+  expect_equal(ans0,ans2)
+
+  # Multiply
+  ans0 <- g %*% g
+  ans1 <- g
+  ans1$graph <- Map(function(x) x %*% x, x=ans1$graph)
+
+  expect_equal(ans0, ans1)
 })

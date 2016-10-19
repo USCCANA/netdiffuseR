@@ -94,9 +94,11 @@ If \code{key.width<=0} then no key is created.
 George G. Vega Yon
 }
 \seealso{
-Other visualizations: \code{\link{diffusionMap}},
-  \code{\link{drawColorKey}}, \code{\link{hazard_rate}},
-  \code{\link{plot_adopters}}, \code{\link{plot_diffnet}},
+Other visualizations: \code{\link{dgr}},
+  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
+  \code{\link{grid_distribution}},
+  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
+  \code{\link{plot_diffnet}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}

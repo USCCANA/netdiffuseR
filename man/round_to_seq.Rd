@@ -25,5 +25,9 @@ Takes a numeric vector and maps it into a finite length sequence
 x <- rnorm(100)
 w <- data.frame(as.integer(round_to_seq(x, as_factor = TRUE)),x)
 plot(w,x)
+
+}
+\seealso{
+Used in \code{\link{diffmap}} and \code{\link{plot_diffnet2}}
 }
 

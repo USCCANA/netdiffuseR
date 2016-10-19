@@ -25,7 +25,7 @@ as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), name = "Diffusion Network",
-  behavior = "")
+  behavior = "Unspecified")
 
 diffnet.attrs(graph, element = c("vertex", "graph"), attr.class = c("dyn",
   "static"), as.df = FALSE)
@@ -341,7 +341,8 @@ George G. Vega Yon
 Default options are listed at \code{\link{netdiffuseR-options}}
 
 Other data management functions: \code{\link{edgelist_to_adjmat}},
-  \code{\link{isolated}}, \code{\link{survey_to_diffnet}}
+  \code{\link{egonet_attrs}}, \code{\link{isolated}},
+  \code{\link{survey_to_diffnet}}
 
 Other diffnet methods: \code{\link{\%*\%}},
   \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},

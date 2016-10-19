@@ -61,6 +61,7 @@ George G. Vega Yon
 \seealso{
 Other data management functions: \code{\link{as_diffnet}},
   \code{\link{edgelist_to_adjmat}},
+  \code{\link{egonet_attrs}},
   \code{\link{survey_to_diffnet}}
 }
 \keyword{manip}

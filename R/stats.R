@@ -11,6 +11,7 @@
 #'  returns an object of class \code{\link[graphics:hist]{histogram}}.
 #' @export
 #' @family statistics
+#' @family visualizations
 #' @keywords univar
 #' @aliases degree indegree outdegree
 #' @examples

@@ -69,7 +69,9 @@ alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t
 set.seed(1312)
 dn <- rdiffnet(20, 5, seed.graph="small-world")
 
-str(adopt_changes(dn))
+ans <- adopt_changes(dn)
+str(ans)
+summary(ans)
 }
 \author{
 George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente

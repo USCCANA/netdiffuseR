@@ -333,7 +333,7 @@ diffnet_check_attr_class <- function(value, meta) {
       tokeep <- colnames(x$vertex.dyn.attrs[[1]])
       tokeep <- tokeep[which(tokeep != i)]
       x$vertex.dyn.attrs <-
-        lapply(x$vertex.dyn.attrs, subset, select=tokeep)
+        lapply(x$vertex.dyn.attrs, function(y) subset(y, select=tokeep))
       return(x)
     } else {
 

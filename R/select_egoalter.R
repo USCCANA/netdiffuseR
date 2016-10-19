@@ -54,7 +54,9 @@
 #' set.seed(1312)
 #' dn <- rdiffnet(20, 5, seed.graph="small-world")
 #'
-#' str(adopt_changes(dn))
+#' ans <- adopt_changes(dn)
+#' str(ans)
+#' summary(ans)
 select_egoalter <- function(graph, adopt, period=NULL) {
 
   if (missing(adopt))

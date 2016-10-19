@@ -145,7 +145,8 @@ George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \seealso{
 Other data management functions: \code{\link{as_diffnet}},
-  \code{\link{isolated}}, \code{\link{survey_to_diffnet}}
+  \code{\link{egonet_attrs}}, \code{\link{isolated}},
+  \code{\link{survey_to_diffnet}}
 }
 \keyword{manip}
 

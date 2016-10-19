@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-17)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-19)
 
 ## New features and changes
 
@@ -21,6 +21,8 @@
 
 * Elements -graph-, -toa-, -adopt- and -cumadopt- in `diffnet` class objects
   have lost their dimnames (more efficient storage).
+  
+* Significant amount of new code-tests (coverage over 85%).
 
 ## New functions
 
@@ -66,6 +68,9 @@
   errors. Now fixed.
   
 * The function `select_egoalter` returned error when `graph` was an array.
+
+* The method `[[<-.diffnet` failed when replacing a dynamic attribute with
+  a `NULL` value (e.g. `dn[["my_dyn_att"]] <- NULL`).
 
 
 # Changes in netdiffuseR version 1.16.7 (2016-07-07)

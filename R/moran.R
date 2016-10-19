@@ -1,6 +1,13 @@
 #' Computes Moran's I correlation index
+#'
+#' Natively built for computing Moran's I on \code{dgCMatrix} objects, this
+#' routine allows computing the I on large sparse matrices (graphs), which is
+#' not supported on \code{\link[ape:Moran.I]{ape::Moran.I}}.
+#'
 #' @param x Numeric vector of size \eqn{n}.
-#' @param w Numeric matrix of size \eqn{n\times n}{n * n}. Weights.
+#' @param w Numeric matrix of size \eqn{n\times n}{n * n}. Weights. It can be
+#'  either a object of class \code{\link{matrix}} or \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}
+#'  from the \code{\link[Matrix]{Matrix}} package.
 #' @param normalize.w Logical scalar. When TRUE normalizes rowsums to one (or zero).
 #' @export
 #' @family statistics

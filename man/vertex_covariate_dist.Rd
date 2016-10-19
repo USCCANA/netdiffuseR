@@ -87,8 +87,9 @@ Retrieved 20:31, September 27, 2016, from
 
 Other statistics: \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{exposure}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}}
+  \code{\link{ego_variance}}, \code{\link{exposure}},
+  \code{\link{hazard_rate}}, \code{\link{infection}},
+  \code{\link{moran}}, \code{\link{struct_equiv}},
+  \code{\link{threshold}}
 }
 

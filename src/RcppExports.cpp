@@ -349,22 +349,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_er_dyn_cpp
-List rgraph_er_dyn_cpp(int n, int t, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rgraph_er_dyn_cpp(SEXP nSEXP, SEXP tSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_er_dyn_cpp(n, t, p, undirected, weighted, self));
-    return rcpp_result_gen;
-END_RCPP
-}
 // ring_lattice
 arma::sp_mat ring_lattice(int n, int k, bool undirected);
 RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {

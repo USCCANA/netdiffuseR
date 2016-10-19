@@ -77,6 +77,7 @@ typedef arma::sp_mat::const_iterator spiter;
 //' @return A numeric vector of length \eqn{n}.
 //' @export
 //' @seealso \code{\link{struct_test}}
+//' @family statistics
 // [[Rcpp::export]]
 NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
                        std::string funname, bool all=false) {

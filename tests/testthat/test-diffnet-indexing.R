@@ -24,6 +24,17 @@ test_that("Dynamic attributes assignment work", {
   expect_equal(eM, eL)
   expect_equal(eL, eD)
 
+  # Removing data
+  expect_warning(x[["davinci"]] <- NULL)
+  ans0 <- x
+  ans0[["real_threshold"]] <- NULL
+  expect_error(ans0[["real_threshold"]], "No dynamic or static")
+
+  ans0 <- x
+  ans0[["expoM"]] <- NULL
+  expect_error(ans0[["expoM"]], "No dynamic or static")
+
+
 })
 
 # Slices of a diffnet object ---------------------------------------------------
