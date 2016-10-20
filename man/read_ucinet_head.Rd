@@ -34,4 +34,9 @@ Reads UCINET files
 
 Read UCINET files (binary)
 }
+\seealso{
+Other graph formats: \code{\link{diffnet_to_igraph}},
+  \code{\link{netdiffuseR-graphs}},
+  \code{\link{read_pajek}}
+}
 

@@ -10,7 +10,7 @@ diffnet_to_igraph(graph, slices = 1:nslices(graph))
 igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL, ...)
 }
 \arguments{
-\item{graph}{A diffnet class object.}
+\item{graph}{Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.}
 
 \item{slices}{An integer vector indicating the slices to subset.}
 
@@ -23,7 +23,8 @@ igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL, ...)
 \item{...}{Further arguments passed to \code{\link{as_diffnet}}.}
 }
 \value{
-A list of \code{length(slices)} \code{\link[igraph:igraph]{igraph}}
+Either a list of \code{length(slices)} \code{igraph}
+(\code{diffnet_to_igraph}), or a \code{diffnet} object (\code{igraph_to_diffnet})
 objects.
 }
 \description{
@@ -36,5 +37,9 @@ x <- diffnet_to_igraph(medInnovationsDiffNet)
 # Fetching the times of adoption
 igraph::vertex_attr(x[[1]], "toa")
 
+}
+\seealso{
+Other graph formats: \code{\link{netdiffuseR-graphs}},
+  \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
 }
 

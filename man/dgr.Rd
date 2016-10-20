@@ -21,11 +21,11 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
 
 \item{cmode}{Character scalar. Either "indegree", "outdegree" or "degree".}
 
-\item{undirected}{Logical scalar. TRUE when the graph is undirected.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
 
-\item{self}{Logical scalar.. TRUE when self edges should not be considered.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
-\item{valued}{Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
 \item{x}{An \code{diffnet_degSeq object}}
 

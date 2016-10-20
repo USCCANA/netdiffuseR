@@ -1,15 +1,15 @@
 #' Susceptibility and Infection
 #'
 #' Calculates infectiousness and susceptibility for each node in the graph
-#'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param toa Integer vector with times of adoption (see details)
+#' @templateVar dynamic TRUE
+#' @templateVar toa TRUE
+#' @templateVar valued TRUE
+#' @template graph_template
 #' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param normalize Logical. Whether or not to normalize the outcome
 #' @param K Integer scalar. Number of time periods to consider
 #' @param r Numeric scalar. Discount rate used when \code{expdiscount=TRUE}
 #' @param expdiscount Logical scalar. When TRUE, exponential discount rate is used (see details).
-#' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 #' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
 #' @family statistics
 #' @aliases susceptibility

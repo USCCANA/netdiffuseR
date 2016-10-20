@@ -37,6 +37,7 @@
 #' when no names are provided, these will be created from scratch.
 #' @include imports.R
 #' @author George G. Vega Yon
+#' @family graph formats
 NULL
 
 
@@ -120,7 +121,7 @@ stopifnot_graph <- function(x)
   stop("No method for graph of class -",class(x),"-. Please refer to the manual 'netdiffuseR-graphs'.")
 
 #' Analyze an R object to identify the class of graph (if any)
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @template graph_template
 #' @details This function analyzes an R object and tries to classify it among the
 #' accepted classes in \pkg{netdiffuseR}. If the object fails to fall in one of
 #' the types of graphs the function returns with an error indicating what (and

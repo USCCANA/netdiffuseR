@@ -324,15 +324,15 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' \code{diffnet} objects contain difussion of innovation networks. With adjacency
 #' matrices and time of adoption (toa) vector as its main components, most of the
 #' package's functions have methods for this class of objects.
-#'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar dynamic TRUE
+#' @templateVar undirected TRUE
+#' @templateVar self TRUE
+#' @templateVar valued TRUE
+#' @template graph_template
 #' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
-#' @param undirected Logical scalar.
-#' @param self Logical scalar.
-#' @param multiple Logical scalar.
 #' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, for
 #' \code{summary}, further arguments to be passed to
 #' \code{\link[igraph:distances]{igraph::distances}}, otherwise is ignored.

@@ -393,6 +393,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// permute_graph_cpp
+arma::sp_mat permute_graph_cpp(const arma::sp_mat& x, bool self, bool multiple);
+RcppExport SEXP netdiffuseR_permute_graph_cpp(SEXP xSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    rcpp_result_gen = Rcpp::wrap(permute_graph_cpp(x, self, multiple));
+    return rcpp_result_gen;
+END_RCPP
+}
 // select_egoalter_cpp
 DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
 RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {

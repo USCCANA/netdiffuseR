@@ -28,7 +28,7 @@ plot_diffnet2(graph, ...)
   rescale.fun = rescale_vertex_igraph, no.graph = FALSE, ...)
 }
 \arguments{
-\item{graph}{Either a square matrix or a diffnet object.}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 

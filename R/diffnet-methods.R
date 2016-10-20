@@ -202,10 +202,11 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
 #' (one network plot for each time period)  and the set of adopter and non-adopters
 #' in the network.
 #'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar dynamic TRUE
+#' @templateVar undirected TRUE
+#' @template graph_template
 #' @param cumadopt \eqn{n\times T}{n*T} matrix.
 #' @param slices Integer vector. Indicates what slices to plot. By default all are plotted.
-#' @param undirected Logical scalar.
 #' @param vertex.col A character vector of size 3 with colors names.
 #' @param vertex.shape A character vector of size 3 with shape names.
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
@@ -468,13 +469,14 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 #' Draws a graph where the coordinates are given by time of adoption, x-axis,
 #' and threshold level, y-axis.
 #'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar dynamic TRUE
+#' @templateVar toa TRUE
+#' @templateVar undirected TRUE
+#' @template graph_template
 #' @param expo \eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}
-#' @param toa Integer vector of size \eqn{n}. Times of Adoption
 #' @param t0 Integer scalar. Passed to \code{\link{threshold}}.
 #' @param include_censored Logical scalar. Passed to \code{\link{threshold}}.
 #' @param attrs Passed to \code{\link{exposure}} (via threshold).
-#' @param undirected Logical scalar.
 #' @param no.contemporary Logical scalar. When TRUE, edges for vertices with the same
 #' \code{toa} won't be plotted.
 #' @param main Character scalar. Title of the plot.
@@ -748,8 +750,9 @@ plot_threshold.list <- function(
 #' network, it creates an \code{nlevels} by \code{nlevels} matrix indicating the
 #' number of individuals that lie within each cell, and draws a heatmap.
 #'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param toa Integer vector of size \eqn{T}. Passed to infection/susceptibility.
+#' @templateVar dynamic TRUE
+#' @templateVar toa TRUE
+#' @template graph_template
 #' @param t0 Integer scalar. See \code{\link{toa_mat}}.
 #' @param normalize Logical scalar.  Passed to infection/susceptibility.
 #' @param K Integer scalar.  Passed to infection/susceptibility.
@@ -776,6 +779,8 @@ plot_threshold.list <- function(
 #' By default the function will try to apply a kernel smooth function via
 #' \code{kde2d}. If not possible (because not enought data points), then
 #' the user should try changing the parameter \code{h} or set it equal to zero.
+#'
+#' \code{toa} is passed to \code{infection/susceptibility}.
 #'
 #' @return A list with three elements:
 #' \item{infect}{A numeric vector of size \eqn{n} with infectiousness levels}
@@ -1312,7 +1317,7 @@ as.array.diffnet <- function(x, ...) {
 
 #' Count the number of vertices/edges/slices in a graph
 #'
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @template graph_template
 #' @return For \code{nvertices} and \code{nslices}, an integer scalar equal to the number
 #' of vertices and slices in the graph. Otherwise, from \code{nedges}, either a list
 #' of size \eqn{t} with the counts of edges (non-zero elements in the adjacency matrices) at

@@ -21,12 +21,12 @@ egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
 
 \item{as.df}{Logical scalar. When TRUE returns a data.frame instead of a list (see details).}
 
-\item{self}{Logical scalar. When FALSE ignores ego's own attributes.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
 \item{self.attrs}{Logical scalar. When \code{TRUE} ego's attributes are included in the output
 as the first row.}
 
-\item{valued}{Logical scalar. When TRUE stores the value of the edge, otherwise includes a one.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 }
 \value{
 A list with ego alters's attributes. By default, if the graph is static, the

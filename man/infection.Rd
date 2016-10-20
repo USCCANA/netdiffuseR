@@ -16,7 +16,7 @@ susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{toa}{Integer vector with times of adoption (see details)}
+\item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
 \item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
@@ -28,7 +28,7 @@ susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
 
 \item{expdiscount}{Logical scalar. When TRUE, exponential discount rate is used (see details).}
 
-\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
 \item{outgoing}{Logical scalar. When \code{TRUE}, computed using outgoing ties.}
 }

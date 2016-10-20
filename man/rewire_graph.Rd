@@ -10,7 +10,7 @@ rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
   copy.first = TRUE, althexagons = FALSE)
 }
 \arguments{
-\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{p}{Either a [0,1] vector with rewiring probabilities (\code{algorithm="endpoints"}),
 or an integer vector with number of iterations (\code{algorithm="swap"}).}
@@ -23,7 +23,7 @@ or an integer vector with number of iterations (\code{algorithm="swap"}).}
 
 \item{multiple}{Logical scalar. When \code{TRUE} allows multiple edges.}
 
-\item{undirected}{Logical scalar. \code{TRUE} when the graph is undirected.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
 
 \item{pr.change}{Numeric scalar. Probability ([0,1]) of doing a rewire (see details).}
 
@@ -207,8 +207,9 @@ prescribed joint degree distribution. Journal of Experimental Algorithmics,
 17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
 }
 \seealso{
-Other simulation functions: \code{\link{rdiffnet}},
-  \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
-  \code{\link{rgraph_ws}}, \code{\link{ring_lattice}}
+Other simulation functions: \code{\link{permute_graph}},
+  \code{\link{rdiffnet}}, \code{\link{rgraph_ba}},
+  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
+  \code{\link{ring_lattice}}
 }
 

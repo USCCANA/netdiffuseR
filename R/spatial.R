@@ -1,21 +1,20 @@
 #' Creates a square matrix suitable for spatial statistics models.
-#'
-#' @param g A graph.
+#' @templateVar self TRUE
+#' @templateVar valued TRUE
+#' @template graph_template
 #' @param nper Integer scalar. Number of time periods of the graph.
-#' @param self Logical scalar. When \code{TRUE} non-zero diagonal elements are used.
-#' @param valued Logical scalar. When \code{FALSE} \code{g} is treated as a binary graph.
 #' @param ... Further arguments to be passed to the method.
 #' @return A square matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of
 #' size \code{(nnode(g)*nper)^2}
 #' @export
 diag_expand <- function(...) UseMethod("diag_expand")
 
-.diag_expand <- function(g, nper,
+.diag_expand <- function(graph, nper,
                                 self=getOption("diffnet.self"),
                                 valued=getOption("diffnet.valued")) {
 
   # Checking class
-  meta <- classify_graph(g)
+  meta <- classify_graph(graph)
 
   # Getting the info
   d <- with(meta, c(n, n, nper))
@@ -26,16 +25,16 @@ diag_expand <- function(...) UseMethod("diag_expand")
 
   # checking options
   if (!self) {
-    g <- Map(function(x) {
-      Matrix::diag(x) <- rep(0,nnodes(g))
+    graph <- Map(function(x) {
+      Matrix::diag(x) <- rep(0,nnodes(graph))
       x
-    }, x = g)
+    }, x = graph)
   }
   if (!valued)
-    g <- Map(function(x) {
+    graph <- Map(function(x) {
     x@x <- rep(1, length(x@x))
     x
-    }, x=g)
+    }, x=graph)
 
   # Structure
   W <- methods::new("dgCMatrix", Dim=d[1:2]*nper, p=rep(0L,d[1]*nper+1L))
@@ -45,7 +44,7 @@ diag_expand <- function(...) UseMethod("diag_expand")
     i <- ((p-1)*d[1]+1):(d[1]*p)
     j <- ((p-1)*d[2]+1):(d[2]*p)
 
-    W[i,j] <- g[[p]]
+    W[i,j] <- graph[[p]]
   }
 
   # Autolag
@@ -56,42 +55,42 @@ diag_expand <- function(...) UseMethod("diag_expand")
 
 #' @export
 #' @rdname diag_expand
-diag_expand.list <- function(g, self=getOption("diffnet.self"),
+diag_expand.list <- function(graph, self=getOption("diffnet.self"),
                                 valued=getOption("diffnet.valued"), ...) {
-  .diag_expand(g, length(g), self, valued)
+  .diag_expand(graph, length(graph), self, valued)
 }
 
 
 #' @export
 #' @rdname diag_expand
-diag_expand.diffnet <- function(g, self=getOption("diffnet.self"),
+diag_expand.diffnet <- function(graph, self=getOption("diffnet.self"),
                                 valued=getOption("diffnet.valued"), ...) {
-  .diag_expand(g$graph, g$meta$nper, self, valued)
+  .diag_expand(graph$graph, graph$meta$nper, self, valued)
 }
 
 #' @export
 #' @rdname diag_expand
-diag_expand.matrix <- function(g, nper, self=getOption("diffnet.self"),
+diag_expand.matrix <- function(graph, nper, self=getOption("diffnet.self"),
                             valued=getOption("diffnet.valued"), ...) {
 
-  .diag_expand(list(methods::as(g, "dgCMatrix")), nper, self, valued)
+  .diag_expand(list(methods::as(graph, "dgCMatrix")), nper, self, valued)
 }
 
 
 #' @export
 #' @rdname diag_expand
-diag_expand.array <- function(g, self=getOption("diffnet.self"),
+diag_expand.array <- function(graph, self=getOption("diffnet.self"),
                               valued=getOption("diffnet.valued"), ...) {
 
-  g <- apply(g, 3, function(x) methods::as(x, "dgCMatrix"))
-  diag_expand(g, nslices(g), self, valued)
+  graph <- apply(graph, 3, function(x) methods::as(x, "dgCMatrix"))
+  diag_expand(graph, nslices(graph), self, valued)
 
 }
 
 #' @export
 #' @rdname diag_expand
-diag_expand.dgCMatrix <- function(g, nper, self=getOption("diffnet.self"),
+diag_expand.dgCMatrix <- function(graph, nper, self=getOption("diffnet.self"),
                                valued=getOption("diffnet.valued"), ...) {
 
-  .diag_expand(list(g), nper, self, valued)
+  .diag_expand(list(graph), nper, self, valued)
 }

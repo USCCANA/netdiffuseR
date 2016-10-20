@@ -78,11 +78,9 @@ order of the rows in the attribute data.}
 
 \item{graph.attrs}{Graph dynamic attributes (not supported yet).}
 
-\item{undirected}{Logical scalar.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
 
-\item{self}{Logical scalar.}
-
-\item{multiple}{Logical scalar.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
 \item{name}{Character scalar. Name of the diffusion network (descriptive).}
 
@@ -136,9 +134,11 @@ indexes, character vectors are used jointly with the time period labels.}
 
 \item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
 
-\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
 \item{FUN}{a function to be passed to lapply}
+
+\item{valued}{Logical scalar. When FALSE non-zero values in the adjmat are set to one.}
 }
 \value{
 A list of class \code{diffnet} with the following elements:

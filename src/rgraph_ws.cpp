@@ -203,3 +203,52 @@ gplot(as.matrix(x), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph
 gplot(as.matrix(netdiffuseR:::rewire_endpoints(x, .1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
 gplot(as.matrix(netdiffuseR:::rewire_endpoints(x, 1)), mode="circle", jitter=FALSE, usecurve = TRUE, gmode = "graph")
 */
+
+// [[Rcpp::export]]
+arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
+                               bool self = false,
+                               bool multiple = false) {
+
+  // Initialization
+  typedef arma::sp_mat::const_iterator spiter;
+  spiter beg = x.begin();
+  spiter end = x.end();
+  int n = x.n_rows;
+  arma::sp_mat ans(x.n_rows, x.n_cols);
+  bool keeplooking;
+  int niter = 0;
+  for(spiter iter=beg;iter!=end;iter++) {
+
+    // Checking user interrupt
+    if (++niter % 1000 == 0)
+      Rcpp::checkUserInterrupt();
+
+    int i = iter.row();
+    int j = iter.col();
+
+    keeplooking = true;
+    while (keeplooking) {
+
+      // Proposal
+      int newi = unif_rand_w_exclusion(n,-1);
+      int newj = unif_rand_w_exclusion(n, (self? -1 : newi));
+
+      if (!multiple && ans.at(newi, newj) != 0) continue;
+
+      ans.at(newi, newj) += *iter;
+      keeplooking = false;
+
+    }
+  }
+
+  return ans;
+}
+//
+// /***R
+// set.seed(1123)
+// N <- 1e2
+// g <- netdiffuseR:::rgraph_ba(t=9)
+//
+// sapply(1:N, function(x) sum(permute_graph(g)))
+//
+// */

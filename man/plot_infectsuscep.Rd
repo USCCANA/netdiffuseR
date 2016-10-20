@@ -17,7 +17,7 @@ plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{toa}{Integer vector of size \eqn{T}. Passed to infection/susceptibility.}
+\item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
 \item{t0}{Integer scalar. See \code{\link{toa_mat}}.}
 
@@ -76,6 +76,8 @@ This plotting function was inspired by Aral, S., & Walker, D. (2012).
 By default the function will try to apply a kernel smooth function via
 \code{kde2d}. If not possible (because not enought data points), then
 the user should try changing the parameter \code{h} or set it equal to zero.
+
+\code{toa} is passed to \code{infection/susceptibility}.
 }
 \examples{
 # Generating a random graph -------------------------------------------------

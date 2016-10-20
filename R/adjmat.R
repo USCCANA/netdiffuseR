@@ -1,26 +1,19 @@
-# Rcpp::sourceCpp("/home/george/Documents/usc/software/netdiffuseR/playground/adjmat.cpp")
-# library(microbenchmark)
-# library(netdiffuseR)
-
-# Important difference with the previous version, this one accounts for duplicate
-# dyads and also for self edges.
-
 #' Conversion between adjacency matrix and edgelist
 #'
 #' Generates adjacency matrix from an edgelist and vice versa.
 #'
 #' @param edgelist Two column matrix/data.frame in the form of ego -source- and
 #' alter -target- (see details).
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar undirected TRUE
+#' @templateVar self TRUE
+#' @templateVar multiple TRUE
+#' @template graph_template
 #' @param w Numeric vector. Strength of ties (optional).
 #' @param t0 Integer vector. Starting time of the ties (optional).
 #' @param t1 Integer vector. Finishing time of the ties (optional).
 #' @param t Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).
 #' @param simplify Logical scalar. When TRUE and \code{times=NULL} it will return an adjacency
 #' matrix, otherwise an array of adjacency matrices.
-#' @param undirected Logical scalar. TRUE when the graph is undirected.
-#' @param self Logical scalar. TRUE when self edges are excluded.
-#' @param multiple Logical scalar. TRUE when multiple edges should not be included
 #' (see details).
 #' @param keep.isolates Logical scalar. When FALSE, rows with \code{NA/NULL} values
 #' (isolated vertices unless have autolink) will be droped (see details).
@@ -590,9 +583,8 @@ toa_diff.integer <- function(times, t0, labels) {
 #' Find and remove isolated vertices
 #'
 #' Find and remove unconnected vertices from the graph.
-#'
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param undirected Logical. TRUE when the graph is undirected.
+#' @templateVar undirected TRUE
+#' @template graph_template
 #' @export
 #' @return
 #' When \code{graph} is an adjacency matrix:

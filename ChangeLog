@@ -1,3 +1,9 @@
+2016-10-20  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/*: Working with @template of roxygen2.
+	* R/rewire.R: New functions permute_graph and rewire_qap.
+	* man-roxygen/: Where templates live (roxygen2).
+	* src/rgraph.cpp: permute_graph.
+
 2016-10-18  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-indexing.R: Fixing bug on [[<-.diffnet.
 	* R/rewire.R: althex is currently on dev (so change when TRUE).

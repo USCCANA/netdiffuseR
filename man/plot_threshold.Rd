@@ -21,7 +21,7 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
 
 \item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
-\item{toa}{Integer vector of size \eqn{n}. Times of Adoption}
+\item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
 \item{include_censored}{Logical scalar. Passed to \code{\link{threshold}}.}
 
@@ -29,7 +29,7 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
 
 \item{attrs}{Passed to \code{\link{exposure}} (via threshold).}
 
-\item{undirected}{Logical scalar.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
 
 \item{no.contemporary}{Logical scalar. When TRUE, edges for vertices with the same
 \code{toa} won't be plotted.}

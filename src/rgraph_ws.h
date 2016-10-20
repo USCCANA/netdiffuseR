@@ -14,4 +14,8 @@ arma::sp_mat rewire_endpoints(
     bool both_ends=false, bool self=false, bool multiple=false,
     bool undirected=false);
 
+arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
+                               bool self = false,
+                               bool multiple = false);
+
 #endif

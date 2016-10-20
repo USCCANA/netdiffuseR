@@ -47,4 +47,8 @@ when no names are provided, these will be created from scratch.
 \author{
 George G. Vega Yon
 }
+\seealso{
+Other graph formats: \code{\link{diffnet_to_igraph}},
+  \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
+}
 

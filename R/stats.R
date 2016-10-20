@@ -1,12 +1,11 @@
 #' Indegree, outdegree and degree of the vertices
 #'
 #' Computes the requested degree measure for each node in the graph.
-#'
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar undirected TRUE
+#' @templateVar self TRUE
+#' @templateVar valued TRUE
+#' @template graph_template
 #' @param cmode Character scalar. Either "indegree", "outdegree" or "degree".
-#' @param undirected Logical scalar. TRUE when the graph is undirected.
-#' @param self Logical scalar.. TRUE when self edges should not be considered.
-#' @param valued Logical scalar. When FALSE sets every non-zero entry of \code{graph} to one.
 #' @return A numeric matrix of size \eqn{n\times T}{n * T}. In the case of \code{plot},
 #'  returns an object of class \code{\link[graphics:hist]{histogram}}.
 #' @export
@@ -238,21 +237,22 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' attribute weighted (5) network-metric weighted (e.g., central nodes have more
 #' influence), and attribute-weighted (e.g., based on homophily or tie strength).
 #'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
-#' @param cumadopt nxT matrix. Cumulative adoption matrix obtained from
+#' @templateVar valued TRUE
+#' @templateVar dynamic TRUE
+#' @templateVar self TRUE
+#' @template graph_template
+#' @param cumadopt \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
 #' \code{\link{toa_mat}}
 #' @param attrs Either a character scalar (if \code{graph} is diffnet),
 #' or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
 #' @param alt.graph Either a dynamic graph that should be used instead of \code{graph},
 #' or \code{"se"} (see details).
 #' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
-#' @param valued Logical scalar. When \code{FALSE}, values of \code{graph} are set to one.
 #' @param normalized Logical scalar. When \code{TRUE}, the exposure will be between zero
 #' and one (see details).
 #' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
 #' \code{alt.graph="se"}).
 #' @param groupvar Passed to \code{\link{struct_equiv}}.
-#' @param self Logical scalar. When \code{TRUE} loops will be included.
 #' @details
 #' Exposure is calculated as follows:
 #'

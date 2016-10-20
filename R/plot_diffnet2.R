@@ -26,9 +26,9 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 }
 
 #' Another way of visualizing diffusion
-#' @param graph Either a square matrix or a diffnet object.
-#' @param slice Integer scalar. Number of slice to use as baseline for drawing the graph.
-#' @param toa Integer vector of length \eqn{n} with the times of adoption.
+#' @templateVar toa TRUE
+#' @templateVar slice TRUE
+#' @template graph_template
 #' @param pers Integer vector of length \eqn{T} indicating the time periods of the data.
 #' @param color.ramp A function as returned by \code{\link[grDevices:colorRamp]{colorRamp}}.
 #' @param layout Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.

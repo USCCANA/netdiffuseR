@@ -1,9 +1,11 @@
 #' Convertion between graph classes
-#' @param graph A diffnet class object.
+#' @param graph Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.
 #' @param slices An integer vector indicating the slices to subset.
-#' @return A list of \code{length(slices)} \code{\link[igraph:igraph]{igraph}}
+#' @return Either a list of \code{length(slices)} \code{igraph}
+#' (\code{diffnet_to_igraph}), or a \code{diffnet} object (\code{igraph_to_diffnet})
 #' objects.
 #' @export
+#' @family graph formats
 #' @examples
 #' # Reading the meddical innovation data into igraph --------------------------
 #' x <- diffnet_to_igraph(medInnovationsDiffNet)

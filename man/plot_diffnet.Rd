@@ -22,7 +22,7 @@ plot_diffnet(graph, cumadopt, slices = NULL, undirected = TRUE,
 
 \item{slices}{Integer vector. Indicates what slices to plot. By default all are plotted.}
 
-\item{undirected}{Logical scalar.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
 
 \item{vertex.col}{A character vector of size 3 with colors names.}
 

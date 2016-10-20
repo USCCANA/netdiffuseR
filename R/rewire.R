@@ -3,10 +3,10 @@
 #' Changes the structure of a graph by altering ties.
 #'
 #' @inheritParams rgraph_ws
+#' @templateVar undirected TRUE
+#' @template graph_template
 #' @param p Either a [0,1] vector with rewiring probabilities (\code{algorithm="endpoints"}),
 #' or an integer vector with number of iterations (\code{algorithm="swap"}).
-#' @param undirected Logical scalar. \code{TRUE} when the graph is undirected.
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}})
 #' @param copy.first Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 #' the first slice as a baseline for the rest of slices (see details).
 #' @param pr.change Numeric scalar. Probability ([0,1]) of doing a rewire (see details).
@@ -219,18 +219,20 @@ rewire_graph <- function(graph, p,
   # Checking copy.first
   # if (missing(copy.first)) copy.first <- FALSE
 
-  out <- switch(class(graph),
-                dgCMatrix = rewire_graph.dgCMatrix(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, althexagons),
-                list = rewire_graph.list(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first, althexagons),
-                matrix = rewire_graph.dgCMatrix(
-                  methods::as(graph, "dgCMatrix"), p, algorithm, both.ends, self, multiple, undirected, pr.change, althexagons),
-                diffnet = {
-                  rewire_graph.list(graph$graph, p, algorithm, both.ends, self, multiple,
-                                    graph$meta$undirected, pr.change, copy.first, althexagons)
-                },
-                array = rewire_graph.array(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first, althexagons),
-                stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+  out <- if ("dgCMatrix" %in% cls) {
+    rewire_graph.dgCMatrix(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, althexagons)
+  } else if ("list" %in% cls) {
+    rewire_graph.list(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first, althexagons)
+  } else if ("matrix" %in% cls) {
+    rewire_graph.dgCMatrix(
+      methods::as(graph, "dgCMatrix"), p, algorithm, both.ends, self, multiple, undirected, pr.change, althexagons)
+  } else if ("diffnet" %in% cls) {
+    rewire_graph.list(graph$graph, p, algorithm, both.ends, self, multiple,
+                      graph$meta$undirected, pr.change, copy.first, althexagons)
+  } else if ("array" %in% cls) {
+    rewire_graph.array(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, copy.first, althexagons)
+  } else stopifnot_graph(graph)
 
   # If diffnet, then it must return the same object but rewired, and change
   # the attribute of directed or not
@@ -331,3 +333,126 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 
   out
 }
+
+#' Permute the values of a matrix
+#'
+#' \code{permute_graph} Shuffles the values of a matrix either considering
+#' \emph{loops} and \emph{multiple} links (which are processed as cell values
+#' different than 1/0). \code{rewire_qap} generates a new graph \code{graph}\eqn{'}
+#' that is isomorphic to \code{graph}.
+#' @templateVar self TRUE
+#' @templateVar multiple TRUE
+#' @template graph_template
+#' @author George G. Vega Yon
+#' @return A permuted version of \code{graph}.
+#' @examples
+#' # Simple example ------------------------------------------------------------
+#' set.seed(1231)
+#' g <- rgraph_ba(t=9)
+#' g
+#'
+#' # These preserve the density
+#' permute_graph(g)
+#' permute_graph(g)
+#'
+#' # These are isomorphic to g
+#' rewire_qap(g)
+#' rewire_qap(g)
+#'
+#' @references
+#' B. S. Anderson, C. Butts, K. Carley, "The interaction of size and density with
+#' graph-level indices", Social Networks 21 (3) (1999) 239–267.
+#' \url{doi:10.1016/S0378-8733(99)00011-8}.
+#'
+#' N. Mantel, The detection of disease clustering and a generalized regression
+#' approach., Cancer research 27 (2) (1967) 209–20. \url{doi:10.1038/212665a0}.
+#'
+#' @seealso This function can be used as null distribution in \code{struct_test}
+#' @family simulation functions
+#' @export
+#' @aliases CUG QAP
+permute_graph <- function(graph, self=FALSE, multiple=FALSE) {
+
+  # Changing class
+  cls <- class(graph)
+  x <- if ("matrix" %in% cls) methods::as(graph, "dgCMatrix")
+  else if ("list" %in% cls) lapply(graph, methods::as, Class="dgCMatrix")
+  else if ("diffnet" %in% cls) graph$graph
+  else if ("array" %in% cls) apply(graph, 3, methods::as, Class="dgCMatrix")
+  else if ("dgCMatrix" %in% cls) graph
+  else stopifnot_graph(graph)
+
+  if (any(c("list", "array") %in% cls)) {
+    ans <- lapply(x, permute_graph_cpp, self=self, multiple=multiple)
+
+  } else if ("diffnet" %in% cls) {
+    ans <- graph
+    ans$graph <- lapply(x, permute_graph_cpp, self=self, multiple=multiple)
+  } else {
+    ans <- permute_graph_cpp(x, self, multiple)
+  }
+
+  return(ans)
+
+}
+
+#' @export
+#' @rdname permute_graph
+rewire_permute <- permute_graph
+
+#' @export
+#' @rdname permute_graph
+rewire_qap <- function(graph) {
+
+  neword <- order(runif(nnodes(graph)))
+  rewirefun <- function(graph) {
+    graph[neword, neword]
+  }
+
+  # Changing class
+  cls <- class(graph)
+  x <- if ("matrix" %in% cls) methods::as(graph, "dgCMatrix")
+  else if ("list" %in% cls) lapply(graph, methods::as, Class="dgCMatrix")
+  else if ("diffnet" %in% cls) graph$graph
+  else if ("array" %in% cls) apply(graph, 3, methods::as, Class="dgCMatrix")
+  else if ("dgCMatrix" %in% cls) graph
+  else stopifnot_graph(graph)
+
+  if (any(c("diffnet", "list", "array") %in% cls)) {
+
+    ans <- lapply(x, rewirefun)
+
+    if (inherits(graph, "diffnet")) {
+      # Naming
+      neword <- match(neword, nodes(graph))
+
+      graph$graph <- ans
+      graph$graph <- lapply(graph$graph, Matrix::unname)
+      graph$meta$ids <- graph$meta$ids[neword]
+
+      # Attributes
+      if (nrow(graph$vertex.static.attrs)) {
+        graph$vertex.static.attrs <- graph$vertex.static.attrs[neword,,drop=FALSE]
+      }
+      if (nrow(graph$vertex.dyn.attrs[[1]])) {
+        graph$vertex.dyn.attrs <- lapply(graph$vertex.dyn.attrs, function(y) {
+          y[neword,,drop=FALSE]
+        })
+      }
+
+      # Adoptions
+      graph$cumadopt <- graph$cumadopt[neword,,drop=FALSE]
+      graph$adopt    <- graph$adopt[neword,,drop=FALSE]
+      graph$toa      <- graph$toa[neword]
+
+      return(graph)
+    }
+
+
+  } else {
+    ans <- rewirefun(x)
+  }
+
+  return(ans)
+}
+

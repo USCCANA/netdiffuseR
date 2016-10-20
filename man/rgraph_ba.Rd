@@ -16,7 +16,7 @@ rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE)
 
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{self}{Logical scalar. When TRUE (default) allows for autolinks.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 }
 \value{
 If \code{graph} is not provided, a static graph, otherwise an expanded
@@ -66,9 +66,10 @@ Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge Univers
 Retrieved from \url{http://barabasi.com/book/network-science}
 }
 \seealso{
-Other simulation functions: \code{\link{rdiffnet}},
-  \code{\link{rewire_graph}}, \code{\link{rgraph_er}},
-  \code{\link{rgraph_ws}}, \code{\link{ring_lattice}}
+Other simulation functions: \code{\link{permute_graph}},
+  \code{\link{rdiffnet}}, \code{\link{rewire_graph}},
+  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
+  \code{\link{ring_lattice}}
 }
 \concept{
 Scale-free random graph

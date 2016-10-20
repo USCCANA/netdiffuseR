@@ -82,11 +82,11 @@ rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected
 #' Generates a scale-free random graph based on Bollabas et al. (2001), also know as
 #' \emph{Linearized Chord Diagram} (LCD) which has nice mathematical propoerties.
 #'
+#' @templateVar self TRUE
+#' @template graph_template
 #' @param m0 Integer scalar. Number of initial vertices in the graph.
 #' @param m Integer scalar. Number of new edges per vertex added.
 #' @param t Integer scalar. Number of time periods (steps).
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
-#' @param self Logical scalar. When TRUE (default) allows for autolinks.
 #' @return If \code{graph} is not provided, a static graph, otherwise an expanded
 #' graph (\code{t} aditional vertices) of the same class as \code{graph}.
 #'

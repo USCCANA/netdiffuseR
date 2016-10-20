@@ -66,4 +66,9 @@ SAMPSONL <- read_ml(path)
 \author{
 George G. Vega Yon
 }
+\seealso{
+Other graph formats: \code{\link{diffnet_to_igraph}},
+  \code{\link{netdiffuseR-graphs}},
+  \code{\link{read_ucinet_head}}
+}
 

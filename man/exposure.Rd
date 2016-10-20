@@ -12,7 +12,7 @@ exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{cumadopt}{nxT matrix. Cumulative adoption matrix obtained from
+\item{cumadopt}{\eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
 \code{\link{toa_mat}}}
 
 \item{attrs}{Either a character scalar (if \code{graph} is diffnet),
@@ -23,14 +23,14 @@ or \code{"se"} (see details).}
 
 \item{outgoing}{Logical scalar. When \code{TRUE}, computed using outgoing ties.}
 
-\item{valued}{Logical scalar. When \code{FALSE}, values of \code{graph} are set to one.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
 \item{normalized}{Logical scalar. When \code{TRUE}, the exposure will be between zero
 and one (see details).}
 
 \item{groupvar}{Passed to \code{\link{struct_equiv}}.}
 
-\item{self}{Logical scalar. When \code{TRUE} loops will be included.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}

@@ -6,7 +6,8 @@
 #' related in 16 different ways. The function \code{adopt_changes} is just an
 #' alias for \code{select_egoalter}.
 #'
-#' @param graph A dynamic graph (see \code{\link{netdiffuseR-graphs}}).
+#' @templateVar dynamic TRUE
+#' @template graph_template
 #' @param adopt \eqn{n\times T}{n*T} matrix. Cumulative adoption matrix obtained from \code{\link{toa_mat}}.
 #' @param period Integer scalar. Optional to make the count for a particular period of time.
 #' @details

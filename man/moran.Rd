@@ -20,8 +20,8 @@ Numeric scalar with Moran's I.
 }
 \description{
 Natively built for computing Moran's I on \code{dgCMatrix} objects, this
-routine allows computing the I on large sparse matrices (graphs), which is
-not supported on \code{\link[ape:Moran.I]{ape::Moran.I}}.
+routine allows computing the I on large sparse matrices (graphs), feature that
+is not supported on \code{\link[ape:Moran.I]{ape::Moran.I}}.
 }
 \examples{
 \dontrun{

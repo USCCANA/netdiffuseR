@@ -65,8 +65,9 @@ Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
 SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
 }
 \seealso{
-Other simulation functions: \code{\link{rdiffnet}},
-  \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}, \code{\link{ring_lattice}}
+Other simulation functions: \code{\link{permute_graph}},
+  \code{\link{rdiffnet}}, \code{\link{rewire_graph}},
+  \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
+  \code{\link{ring_lattice}}
 }
 

@@ -2,7 +2,7 @@
 #'
 #' Computes structural equivalence between ego and alter in a network
 #'
-#' @param graph Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).
+#' @template graph_template
 #' @param v Numeric scalar. Cohesion constant (see details).
 #' @param inf.replace Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.
 #' @param groupvar Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.

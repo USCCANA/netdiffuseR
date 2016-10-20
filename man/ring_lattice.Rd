@@ -30,8 +30,9 @@ Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
 “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
 }
 \seealso{
-Other simulation functions: \code{\link{rdiffnet}},
-  \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}}
+Other simulation functions: \code{\link{permute_graph}},
+  \code{\link{rdiffnet}}, \code{\link{rewire_graph}},
+  \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
+  \code{\link{rgraph_ws}}
 }
 

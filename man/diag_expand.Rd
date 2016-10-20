@@ -11,29 +11,29 @@
 \usage{
 diag_expand(...)
 
-\method{diag_expand}{list}(g, self = getOption("diffnet.self"),
+\method{diag_expand}{list}(graph, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{diffnet}(g, self = getOption("diffnet.self"),
+\method{diag_expand}{diffnet}(graph, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{matrix}(g, nper, self = getOption("diffnet.self"),
+\method{diag_expand}{matrix}(graph, nper, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{array}(g, self = getOption("diffnet.self"),
+\method{diag_expand}{array}(graph, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{dgCMatrix}(g, nper, self = getOption("diffnet.self"),
+\method{diag_expand}{dgCMatrix}(graph, nper, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to the method.}
 
-\item{g}{A graph.}
+\item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{self}{Logical scalar. When \code{TRUE} non-zero diagonal elements are used.}
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
-\item{valued}{Logical scalar. When \code{FALSE} \code{g} is treated as a binary graph.}
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
 \item{nper}{Integer scalar. Number of time periods of the graph.}
 }

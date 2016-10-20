@@ -247,6 +247,10 @@ rewire_ws <- function(G, K, p = 0.0, self = FALSE, multiple = FALSE) {
     .Call('netdiffuseR_rewire_ws', PACKAGE = 'netdiffuseR', G, K, p, self, multiple)
 }
 
+permute_graph_cpp <- function(x, self = FALSE, multiple = FALSE) {
+    .Call('netdiffuseR_permute_graph_cpp', PACKAGE = 'netdiffuseR', x, self, multiple)
+}
+
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
