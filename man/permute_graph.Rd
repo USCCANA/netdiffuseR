@@ -43,6 +43,7 @@ permute_graph(g)
 # These are isomorphic to g
 rewire_qap(g)
 rewire_qap(g)
+
 }
 \author{
 George G. Vega Yon

@@ -328,6 +328,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @templateVar undirected TRUE
 #' @templateVar self TRUE
 #' @templateVar valued TRUE
+#' @templateVar multiple TRUE
 #' @template graph_template
 #' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
@@ -364,7 +365,6 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param no.print Logical scalar. When TRUE suppress screen messages.
 #' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
-#' @param valued Logical scalar. When FALSE non-zero values in the adjmat are set to one.
 #' @param name Character scalar. Name of the diffusion network (descriptive).
 #' @param behavior Character scalar. Name of the behavior been analyzed (innovation).
 #' @export
