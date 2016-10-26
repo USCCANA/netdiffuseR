@@ -106,7 +106,7 @@ arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10, bool self=true
 // Scale-free homophilic network. European Physical Journal B, 86(2).
 // \url{}http://doi.org/10.1140/epjb/e2012-30802-x}
 // [[Rcpp::export]]
-arma::sp_mat rgraph_sf_homo_cpp(
+arma::sp_mat rgraph_sf_homo(
     const arma::colvec & eta,
     const arma::sp_mat & graph,
     const arma::colvec & dgr,
@@ -207,7 +207,7 @@ arma::sp_mat rgraph_sf_homo_cpp(
 }
 
 // [[Rcpp::export]]
-arma::sp_mat rgraph_sf_homo_new_cpp(const arma::colvec & eta, int m0 = 1, int m = 1, int t = 10, bool self=true) {
+arma::sp_mat rgraph_sf_homo_new(const arma::colvec & eta, int m0 = 1, int m = 1, int t = 10, bool self=true) {
   int n = m0;
 
   arma::sp_mat graph(n, n);
@@ -226,7 +226,7 @@ arma::sp_mat rgraph_sf_homo_new_cpp(const arma::colvec & eta, int m0 = 1, int m 
     dgr.fill(2.0);
   }
 
-  return rgraph_sf_homo_cpp(eta, graph, dgr, m, t, self);
+  return rgraph_sf_homo(eta, graph, dgr, m, t, self);
 }
 
 /** *R

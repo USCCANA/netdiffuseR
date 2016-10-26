@@ -349,9 +349,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_sf_homo_cpp
-arma::sp_mat rgraph_sf_homo_cpp(const arma::colvec& eta, const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_sf_homo_cpp(SEXP etaSEXP, SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+// rgraph_sf_homo
+arma::sp_mat rgraph_sf_homo(const arma::colvec& eta, const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t, bool self);
+RcppExport SEXP netdiffuseR_rgraph_sf_homo(SEXP etaSEXP, SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -361,13 +361,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_sf_homo_cpp(eta, graph, dgr, m, t, self));
+    rcpp_result_gen = Rcpp::wrap(rgraph_sf_homo(eta, graph, dgr, m, t, self));
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_sf_homo_new_cpp
-arma::sp_mat rgraph_sf_homo_new_cpp(const arma::colvec& eta, int m0, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_sf_homo_new_cpp(SEXP etaSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+// rgraph_sf_homo_new
+arma::sp_mat rgraph_sf_homo_new(const arma::colvec& eta, int m0, int m, int t, bool self);
+RcppExport SEXP netdiffuseR_rgraph_sf_homo_new(SEXP etaSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -376,7 +376,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_sf_homo_new_cpp(eta, m0, m, t, self));
+    rcpp_result_gen = Rcpp::wrap(rgraph_sf_homo_new(eta, m0, m, t, self));
     return rcpp_result_gen;
 END_RCPP
 }

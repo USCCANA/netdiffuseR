@@ -203,7 +203,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE, eta=NULL) {
     checkingUndirected(graph)
 
     # If calling eta, then use scale-free homophilic networks
-    scale_free_fun <- if (length(eta)) rgraph_sf_homo_cpp
+    scale_free_fun <- if (length(eta)) rgraph_sf_homo
     else rgraph_ba_cpp
 
     # Parsing the class
@@ -338,7 +338,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE, eta=NULL) {
   } else {
     # If calling eta, then use scale-free homophilic networks
     out <- if (!length(eta)) rgraph_ba_new_cpp(m0, m, t, self)
-    else rgraph_sf_homo_new_cpp(eta, m0, m, t, self)
+    else rgraph_sf_homo_new(eta, m0, m, t, self)
 
     ids <- 1:(m0+t)
 

@@ -223,9 +223,6 @@ arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
     if (++niter % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
-    int i = iter.row();
-    int j = iter.col();
-
     keeplooking = true;
     while (keeplooking) {
 

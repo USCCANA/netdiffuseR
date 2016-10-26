@@ -18,7 +18,7 @@ arma::sp_mat rewire_swap(
   if (undirected) indexes = sparse_indexes(sp_trimatl(newgraph));
   else            indexes = sparse_indexes(newgraph);
 
-  double dens = graph.n_nonzero/(graph.n_cols*graph.n_cols);
+  // double dens = graph.n_nonzero/(graph.n_cols*graph.n_cols);
   int s = 0;
   while (s++ < nsteps) {
 

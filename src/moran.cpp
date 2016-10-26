@@ -10,7 +10,7 @@ std::vector<double> moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
 
   // Checking dims
   if (w.n_cols != w.n_rows) stop("-w- is not a square matrix");
-  if (N        != w.n_cols) stop("-x- and -w- dimensions differ");
+  if (N != (int) w.n_cols) stop("-x- and -w- dimensions differ");
 
   // Weights sum
   double wsum = accu(w);

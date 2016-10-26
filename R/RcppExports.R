@@ -220,12 +220,12 @@ rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L, self = TRUE) {
     .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
 }
 
-rgraph_sf_homo_cpp <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo_cpp', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
+rgraph_sf_homo <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_sf_homo', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
 }
 
-rgraph_sf_homo_new_cpp <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo_new_cpp', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
+rgraph_sf_homo_new <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
 }
 
 #' Ring lattice graph
