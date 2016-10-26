@@ -115,6 +115,8 @@ dgr <- function(graph, cmode="degree",
 #' @param breaks Passed to \code{\link{hist}}.
 #' @param log Passed to \code{\link{plot}} (see \code{\link{par}}).
 #' @param hist.args Arguments passed to \code{\link{hist}}.
+#' @param xlab Character scalar. Passed to \code{\link{plot}}.
+#' @param ylab Character scalar. Passed to \code{\link{plot}}.
 #' @param ... Further arguments passed to \code{\link{plot}}.
 #' @param slice Integer scalar. In the case of dynamic graphs, number of time
 #'  point to plot.
@@ -122,9 +124,9 @@ dgr <- function(graph, cmode="degree",
 #' @param freq Logical scalar. When \code{TRUE} the y-axis will reflex counts,
 #'  otherwise densities.
 plot.diffnet_degSeq <- function(x, breaks = min(100L, nrow(x)/5), freq=FALSE, y=NULL, log="xy",
-                                hist.args=list(), slice=ncol(x), ...) {
+                                hist.args=list(), slice=ncol(x), xlab="Degree", ylab="Freq",...) {
   ans <- do.call(hist, c(hist.args, list(x=x[,slice], breaks = breaks, plot=FALSE)))
-  with(ans, plot(x=mids,y=if (freq) counts else density,log=log, ...))
+  with(ans, plot(x=mids,y=if (freq) counts else density,log=log, xlab=xlab, ylab=ylab,...))
   invisible(ans)
 }
 

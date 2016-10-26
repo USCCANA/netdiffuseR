@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-20)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-26)
 
 ## New features and changes
 
@@ -13,6 +13,9 @@
 * The function `rgraph_ba` gains a new argument, `self=TRUE`. By default behaves
   as before following Bollabas, but now can deviate to generate graphs with no
   autolinks.
+  
+* In `rgraph_ba`, the argument `eta` allows implementing De Almeida et al. (2013)
+  Scale-free homophilic networks.
   
 * The functions `exposure` and `dgr` are now pure R code (cpp functions were
   replace since there were no significant gains).

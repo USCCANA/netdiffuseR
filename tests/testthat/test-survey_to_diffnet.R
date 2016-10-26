@@ -4,8 +4,14 @@ context("Survey to diffnet")
 test_that("Error messages", {
   # Class checkings
   expect_error(
-    netdiffuseR:::check_var_class_and_coerce("Murder",USArrests,"character","integer"),
+    netdiffuseR:::check_var_class_and_coerce("Murder", USArrests, "character", "integer"),
     "is not supported"
+  )
+
+  # Class cohercing
+  expect_warning(
+    netdiffuseR:::check_var_class_and_coerce("Murder", USArrests, "numeric", "integer",
+                                             TRUE)
   )
 
   # Can't find variables
@@ -14,6 +20,22 @@ test_that("Error messages", {
     "can\'t be found"
   )
 
+  expect_error(
+    survey_to_diffnet(fakesurvey, "id1", c("net1", "net2", "net3"), "toa",
+                      "group"),
+    "can\'t be found"
+  )
+
+  # Infinite toavar
+  dat <- fakesurvey
+  dat$toa[1] <- Inf
+  expect_error(
+    survey_to_diffnet(dat, "id", c("net1", "net2", "net3"), "toa",
+                      "group"),
+    "Inf values"
+  )
+
+  # There can't be NA in the ids
   dat <- fakesurveyDyn
   dat$id[c(1,5)] <- NA
   expect_error(
@@ -24,9 +46,17 @@ test_that("Error messages", {
 
   dat <- fakesurveyDyn
   expect_error(
-    edgelist_to_diffnet(fakeEdgelist[,1:2], dat=dat, warn.coercion = FALSE,
+    edgelist_to_diffnet(as.matrix(fakeEdgelist[,1:2]), dat=dat, warn.coercion = FALSE,
                         idvar="id", toavar="toa", timevar="time", fill.missing = TRUE),
     "currently supported"
+  )
+
+  dat <- fakesurveyDyn
+  dat$time[1] <- Inf
+  expect_error(
+    edgelist_to_diffnet(as.matrix(fakeEdgelist[,1:2]), dat=dat, warn.coercion = FALSE,
+                        idvar="id", toavar="toa", timevar="time", fill.missing = "both"),
+    "Inf"
   )
 })
 

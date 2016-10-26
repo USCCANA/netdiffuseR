@@ -14,7 +14,7 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
 
 \method{plot}{diffnet_degSeq}(x, breaks = min(100L, nrow(x)/5),
   freq = FALSE, y = NULL, log = "xy", hist.args = list(),
-  slice = ncol(x), ...)
+  slice = ncol(x), xlab = "Degree", ylab = "Freq", ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -42,6 +42,10 @@ otherwise densities.}
 
 \item{slice}{Integer scalar. In the case of dynamic graphs, number of time
 point to plot.}
+
+\item{xlab}{Character scalar. Passed to \code{\link{plot}}.}
+
+\item{ylab}{Character scalar. Passed to \code{\link{plot}}.}
 
 \item{...}{Further arguments passed to \code{\link{plot}}.}
 }

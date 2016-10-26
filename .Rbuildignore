@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^man-roxygen$
 ^playground$
 .*\.old
 ^doc$
@@ -27,3 +28,5 @@ README[.]md
 ^NEWS\.md$
 ^cran-comments\.md$
 ^next_release\.md$
+
+^src/rgraph_scale_free.+$

@@ -1,5 +1,12 @@
 2016-10-20  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/*: Working with @template of roxygen2.
+	* R/diffnet-class.R: Removing unsued code.
+	* R/diffnet-methods: Fixing bugs in %*% and * for diffnet objs.
+	* R/random_graph.R: Implementing Scale-free homophilic nets.
+	* R/stats.R: Adding titles to plot.diffnet_degSeq.
+	* R/survey_to_diffnet.R: More data pre-processing.
+	* src/rgraph_scale_free.*: Added scale-free homophilic to rgraph_ba,
+	  and changed the name.
 	* R/rewire.R: New functions permute_graph and rewire_qap.
 	* man-roxygen/: Where templates live (roxygen2).
 	* src/rgraph.cpp: permute_graph.

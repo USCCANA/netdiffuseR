@@ -186,10 +186,48 @@ test_that("Arithmetic and others", {
   expect_equal(ans0,ans1)
   expect_equal(ans0,ans2)
 
-  # Multiply
+  # MMultiply
   ans0 <- g %*% g
   ans1 <- g
   ans1$graph <- Map(function(x) x %*% x, x=ans1$graph)
 
   expect_equal(ans0, ans1)
+
+  ans0 <- g %*% g$graph[[1]]
+  ans1 <- g
+  ans1$graph <- Map(function(x) x %*% g$graph[[1]], x=ans1$graph)
+
+  expect_equal(ans0, ans1)
+
+  ans0 <- g$graph[[1]] %*% g
+  ans1 <- g
+  ans1$graph <- Map(function(x) g$graph[[1]] %*% x, x=ans1$graph)
+
+  expect_equal(ans0, ans1)
+
+  # Multiply
+  ans0 <- g*2
+  ans1 <- g
+  ans1$graph <- Map(function(x) x*2, x=ans1$graph)
+
+  # Multiply and transpose
+  ans0 <- g*t(g)
+  ans1 <- g
+  ans1$graph <- Map(function(x) x*methods::getMethod("t","dgCMatrix")(x), x=ans1$graph)
+
+  expect_equal(ans0, ans1)
+
+  # Logical comparison
+  ans0 <- g & t(g)
+  ans1 <- g
+  ans1$graph <- Map(function(a,b) methods::as(a & b, "dgCMatrix"), a=g$graph, b=t(g$graph))
+
+  expect_equivalent(ans1, ans0)
+
+  ans0 <- g | t(g)
+  ans1 <- g
+  ans1$graph <- Map(function(a,b) methods::as(a | b, "dgCMatrix"), a=g$graph, b=t(g$graph))
+
+  expect_equivalent(ans1, ans0)
+
 })

@@ -9,11 +9,6 @@
 
 using namespace Rcpp;
 
-void is_square_sp_mat(const arma::sp_mat & mat);
-
-double min_int_na_cpp(const IntegerVector & x, const LogicalVector & isna);
-double max_int_na_cpp(const IntegerVector & x, const LogicalVector & isna);
-
 List toa_mat_cpp(const IntegerVector & year, int t0, int t1);
 
 arma::sp_mat edgelist_to_adjmat_cpp(

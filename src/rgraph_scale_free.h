@@ -12,4 +12,11 @@ arma::sp_mat rgraph_ba_cpp(
     arma::colvec dgr, int m = 1, int t = 10, bool self=true);
 
 arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10, bool self=true);
+
+arma::sp_mat rgraph_sf_homo_cpp(
+    const arma::colvec & eta, const arma::sp_mat & graph,
+    const arma::colvec & dgr, int m = 1, int t = 10, bool self=true);
+
+arma::sp_mat rgraph_sf_homo_new_cpp(
+    const arma::colvec & eta, int m0 = 1, int m = 1, int t = 10, bool self=true);
 #endif

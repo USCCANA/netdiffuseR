@@ -63,6 +63,48 @@ test_that("Barabasi-Albert model: methods", {
 
 })
 
+# De Almeida et al. ------------------------------------------------------------
+test_that("De Almeida model: Generic test", {
+  set.seed(8123)
+  eta <- sample(1:2, 11, TRUE)
+  graph <- rgraph_ba(m0=1, t = 10, eta=eta)
+  graph_big <- rgraph_ba(t = 3, graph = graph, eta=c(eta, eta[1:3]))
+
+  expect_is(graph, "dgCMatrix")
+  expect_equivalent(graph, graph_big[1:11, 1:11], info="Groing graph")
+
+  # Checking error
+  expect_error(rgraph_ba(t=10, eta=as.character(eta)), "vector")
+  eta[1] <- NA
+  expect_error(rgraph_ba(t=10, eta=eta), "cases")
+})
+
+test_that("De Almeida model: methods", {
+  set.seed(651)
+  eta <- sample(c(1,30), 10, TRUE)
+
+  # Creating dyngraph
+  graph <- vector("list", 3)
+  graph[[1]] <- rgraph_ba(m0=1, t = 9, eta=eta)
+  graph[[2]] <- rewire_graph(graph[[1]], .3)
+  graph[[3]] <- rewire_graph(graph[[2]], .3)
+
+  # Diffnet
+  toa <- sample(c(1:3,NA),10, TRUE)
+  diffnet <- as_diffnet(graph, toa, t0=1, t1=3)
+
+  # Array
+  graphar <- lapply(graph, as.matrix)
+  graphar <- array(unlist(graphar), dim=c(10,10,3))
+
+  set.seed(123); x_dn <- rgraph_ba(t=2, graph=diffnet, eta=c(eta, 1:2))$graph
+  set.seed(123); x_ar <- rgraph_ba(t=2, graph=graphar, eta=c(eta, 1:2))
+  set.seed(123); x_ls <- rgraph_ba(t=2, graph=diffnet$graph, eta=c(eta, 1:2))
+
+  expect_equivalent(x_dn, x_ar)
+  expect_equivalent(x_dn, x_ls)
+})
+
 # Watts-Strogatz model ---------------------------------------------------------
 
 test_that("Watts-Strogatz model: Rewiring shouldn't change the # of elements", {

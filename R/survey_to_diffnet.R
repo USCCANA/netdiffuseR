@@ -156,6 +156,13 @@ survey_to_diffnet <- function(
   if (any(!test))
     stop("Variables -", paste(varlist[!test], collapse = "-, -"),"- can't be found on -dat-.")
 
+  # If the range turns out to be infinite, then error
+  if (any(is.infinite(dat[[toavar]])))
+    stop("Invalid Times of Adoption (Inf values found).")
+
+  if (length(timevar) && any(is.infinite(dat[[timevar]])))
+    stop("Time can't have undefined values (Inf values found).")
+
   # Coercing data into numeric variables
   for (x in varlist) {
     dat[[x]] <- check_var_class_and_coerce(
@@ -313,14 +320,36 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
          " if specified, -timevar-. The following rows are incomplete:\n\t",
          paste0(test, collapse=", "), ".")
 
+  # If the range turns out to be infinite, then error
+  if (any(is.infinite(dat[[toavar]])))
+    stop("Invalid Times of Adoption (Inf values found).")
+
+  if (length(timevar) && any(is.infinite(dat[[timevar]])))
+    stop("Time can't have undefined values (Inf values found).")
+
   # Coercing data into numeric variables. idvar can be names
   for (x in varlist[-1])
     dat[[x]] <- check_var_class_and_coerce(
       x, dat, c("numeric", "integer"), "integer", warn.coercion)
 
+  # Converting into character (always for safety)
+  if (inherits(edgelist, "matrix")) {
+    edgelist <- apply(edgelist, 2, as.character)
+    edgelist <- as.data.frame(edgelist, stringsAsFactors=FALSE)
+  } else if (inherits(edgelist, "data.frame")) {
+    for (x in colnames(edgelist))
+      edgelist[[x]] <- check_var_class_and_coerce(
+        x, edgelist, c("factor", "integer", "numeric"), "character", warn.coercion)
+  }
+
+  dat[[idvar]] <- as.character(dat[[idvar]])
+
   # Step 0.2: Checking FILL data -----------------------------------------------
   ids.edgelist <- unique(c(edgelist[,1,drop=TRUE], edgelist[,2,drop=TRUE]))
+  ids.edgelist <- ids.edgelist[!is.na(ids.edgelist)]
+
   ids.dat      <- unique(dat[[idvar]])
+  ids.dat      <- ids.dat[!is.na(ids.dat)]
   if (length(fill.missing)) {
     # Checking argument
     if (!inherits(fill.missing, "character") ||
@@ -336,7 +365,8 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
       # If some missing, then filling with more edges
       if (length(test)) {
         warning("The following ids will be added to -edgelist-:\n\t",
-                paste0(test, collapse=", "),".")
+                paste0(test, collapse=", "),".",
+                ifelse(!keep.isolates, " The option keep.isolates has been changed to TRUE.", ""))
 
         nedgelist <- nrow(edgelist)
         edgelist  <- rbind(
@@ -381,12 +411,8 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
   # Step 1.2: Checking times in edgelist and in dat (if any) -------------------
   suppressWarnings(dat.ran.toavar <- range(dat[[toavar]], na.rm = TRUE))
 
-  # If the range turns out to be infinite, then error
-  if (any(!is.finite(dat.ran.toavar)))
-    stop("Invalid Times of Adoption. When computing its is undefine.")
-
   if (length(timevar)) {
-    dat.ran.timevar <- range(dat[[timevar]])
+    dat.ran.timevar <- range(dat[[timevar]], na.rm=TRUE)
 
     # range(toa) %within% range(timevar)
     if (dat.ran.toavar[1] < dat.ran.timevar[1] ||

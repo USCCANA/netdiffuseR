@@ -280,16 +280,16 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
         stop("The matrix/data.frame -graph.attrs- has incorrect number of rows.",
              " Has ", nrow(attrs), " and should have ", nper, ".")
 
-      # Checking the order of the data
-      attrs <- as.data.frame(attrs)
-      cnames <- colnames(attrs)
-      if (length(id.and.per.vars[2])) {
-        attrs <- merge(perdf, attrs, by.x="per", by.y=id.and.per.vars[2],
-                       all.x=TRUE, all.y=FALSE, sort=TRUE)
-        # Sorting names back
-        colnames(attrs)[1] <- id.and.per.vars[1]
-        attrs <- attrs[,cnames]
-      }
+      # # Checking the order of the data
+      # attrs <- as.data.frame(attrs)
+      # cnames <- colnames(attrs)
+      # if (length(id.and.per.vars[2])) {
+      #   attrs <- merge(perdf, attrs, by.x="per", by.y=id.and.per.vars[2],
+      #                  all.x=TRUE, all.y=FALSE, sort=TRUE)
+      #   # Sorting names back
+      #   colnames(attrs)[1] <- id.and.per.vars[1]
+      #   attrs <- attrs[,cnames]
+      # }
 
       # Checking colnames
       if (!length(cnames))
@@ -579,7 +579,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
-  if (meta$type=="static") stop("-graph- should be dynamic.")
+  if (meta$type=="static") stop("-graph- should be dynamic (see ?`netdiffuseR-graphs`).")
 
   # Step 1.2: Checking that lengths fit
   if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths (",

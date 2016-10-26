@@ -16,36 +16,6 @@
 
 using namespace Rcpp;
 
-void is_square_sp_mat(const arma::sp_mat & mat) {
-  if (mat.n_cols != mat.n_rows)
-    stop("It must be a square matrix");
-  return;
-}
-
-// Returns min from an integer vector accounting for NA objects
-double min_int_na_cpp(const IntegerVector & x, const LogicalVector & isna) {
-  int n =x.size();
-  double min = DBL_MAX;
-
-  for(int i=0;i<n;i++) {
-    if (isna[i]) continue;
-    if (min > x[i]) min = x[i];
-  }
-  return min;
-}
-
-// Returns max from an integer vector accounting for NA objects
-double max_int_na_cpp(const IntegerVector & x, const LogicalVector & isna) {
-  int n =x.size();
-  double max = -DBL_MAX;
-
-  for(int i=0;i<n;i++) {
-    if (isna[i]) continue;
-    if (max < x[i]) max = x[i];
-  }
-  return max;
-}
-
 // [[Rcpp::export]]
 List toa_mat_cpp(const IntegerVector & year, int t0, int t1) {
 
@@ -181,7 +151,8 @@ arma::icolvec isolated_cpp(
   int n = adjmat.n_cols;
 
   // Checking size
-  is_square_sp_mat(adjmat);
+  if ((int) adjmat.n_rows != n)
+    stop("It must be an square matrix.");
 
   arma::icolvec isolated(n, arma::fill::ones);
 
@@ -206,7 +177,8 @@ arma::sp_mat drop_isolated_cpp(
     arma::icolvec isolated, bool undirected=true) {
 
   // Checking size
-  is_square_sp_mat(adjmat);
+  if (adjmat.n_rows != adjmat.n_cols)
+    stop("It must be an square matrix.");
 
   if (isolated.n_rows==0u) isolated = isolated_cpp(adjmat, undirected);
   else if (isolated.n_rows != adjmat.n_cols) stop("-isolated- must have the same length as nrow(adjmat)");

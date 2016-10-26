@@ -1183,7 +1183,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
     x$graph <- mapply(`*`, x$graph, y$graph)
     return(x)
   } else if (inherits(x, "diffnet") & is.numeric(y)) {
-    x$graph <- mapply(`+`, x$graph, y)
+    x$graph <- mapply(`*`, x$graph, y)
     return(x)
 
   } else
@@ -1247,7 +1247,10 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 
 #' @export
 #' @rdname diffnetmatmult
-`%*%.default` <- function(x, y) base::`%*%`(x=x,y=y)
+`%*%.default` <- function(x, y) {
+  if (inherits(y, "diffnet")) `%*%.diffnet`(x,y)
+  else base::`%*%`(x=x,y=y)
+}
 
 #' @export
 #' @rdname diffnetmatmult
@@ -1262,12 +1265,14 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
   if (inherits(x, "diffnet") && inherits(y, "diffnet")) {
     x$graph <- mapply(base::`%*%`, x$graph, y$graph)
   } else if (inherits(x, "diffnet") && !inherits(y, "diffnet")) {
-    if (identical(dim(x)[-3], dim(y)))
+    if (identical(rep(dim(x)[1],2), dim(y)))
       x$graph <- mapply(base::`%*%`, x$graph, mat2dgCList(y, x))
     else stop("-y- must have the same dimmension as -x-")
   } else if (inherits(y, "diffnet") && !inherits(x, "diffnet")) {
-    if (identical(dim(y)[-3], dim(x)))
-      x$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
+    if (identical(rep(dim(y)[1],2), dim(x))) {
+      y$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
+      return(y)
+    }
     else stop("-y- must have the same dimmension as -x-")
   }
 
