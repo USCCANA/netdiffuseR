@@ -305,21 +305,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_er_cpp
-arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_er_cpp(n, p, undirected, weighted, self));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rgraph_ba_cpp
 arma::sp_mat rgraph_ba_cpp(const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t, bool self);
 RcppExport SEXP netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
@@ -377,6 +362,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
     rcpp_result_gen = Rcpp::wrap(rgraph_sf_homo_new(eta, m0, m, t, self));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rgraph_er_cpp
+arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
+RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    rcpp_result_gen = Rcpp::wrap(rgraph_er_cpp(n, p, undirected, weighted, self));
     return rcpp_result_gen;
 END_RCPP
 }

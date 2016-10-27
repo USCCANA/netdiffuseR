@@ -1,4 +1,7 @@
-2016-10-20  George G. Vega Yon <g.vegayon@gmail.com>
+2016-10-27  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rgraph_ba.*: Renamed files (and header def) to fix build error.
+
+2016-10-26  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/*: Working with @template of roxygen2.
 	* R/diffnet-class.R: Removing unsued code.
 	* R/diffnet-methods: Fixing bugs in %*% and * for diffnet objs.

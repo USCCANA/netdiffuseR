@@ -3,8 +3,8 @@
 *******************************************************************************/
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#ifndef NETDIFFUSER_RGRAPH_SCALE_FREE_
-#define NETDIFFUSER_RGRAPH_SCALE_FREE_
+#ifndef NETDIFFUSER_RGRAPH_BA_
+#define NETDIFFUSER_RGRAPH_BA_
 using namespace Rcpp;
 
 arma::sp_mat rgraph_ba_cpp(

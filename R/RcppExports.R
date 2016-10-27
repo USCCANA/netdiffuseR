@@ -208,10 +208,6 @@ rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, un
     .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire, althexagons)
 }
 
-rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
-}
-
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L, self = TRUE) {
     .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t, self)
 }
@@ -226,6 +222,10 @@ rgraph_sf_homo <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
 
 rgraph_sf_homo_new <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
     .Call('netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
+}
+
+rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
+    .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
 
 #' Ring lattice graph
