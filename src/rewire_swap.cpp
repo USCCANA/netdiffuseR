@@ -7,8 +7,8 @@ using namespace Rcpp;
 arma::sp_mat rewire_swap(
     const arma::sp_mat & graph, int nsteps=100,
     bool self=false, bool multiple=false,
-    bool undirected=false, double pr_rewire=0.5,
-    bool althexagons=false) {
+    bool undirected=false, double pr_rewire=0.5 //,bool althexagons=false
+    ) {
 
   // Clonning graph
   arma::sp_mat newgraph(graph);
@@ -54,7 +54,7 @@ arma::sp_mat rewire_swap(
     bool ismultiple = !multiple &&
       (newgraph.at(i, newj) != 0) | (newgraph.at(newi, j) != 0);
 
-    // Alternating Hexagons
+    /*// Alternating Hexagons
     // Ramachandra Rao, et al, The Indian Journal of Statistics
     if (ismultiple && althexagons && (unif_rand() < 0.5)) {
       // Case 1: will switch i1i2 and i2i3 (so j == newi)
@@ -103,7 +103,7 @@ arma::sp_mat rewire_swap(
       }
 
       continue;
-    }
+    }*/
 
     // Checking multiple
     if (ismultiple)

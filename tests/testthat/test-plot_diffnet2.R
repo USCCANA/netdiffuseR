@@ -32,4 +32,16 @@ test_that("methods of diffMap", {
   set.seed(1); ans_dn <- diffmap(dn)
   set.seed(1); ans_gp <- diffmap(dn$graph[[nslices(dn)]], dn$toa)
   expect_equal(ans_dn, ans_gp)
+
+  set.seed(123);ans0 <- plot_diffnet2(dn, add.map = "last", layout = ans_gp$coords)
+  set.seed(123);ans1 <- diffmap(dn, layout=ans_gp$coords)
+
+  # Should be the same as adding the map after
+  expect_equal(ans0$diffmap, ans1)
+  expect_output(print(ans1), "of class.+diffmap")
+  expect_output(print(ans1), "of class.+diffmap")
+  expect_silent(image(ans1))
+  expect_silent(plot(ans1))
 })
+
+

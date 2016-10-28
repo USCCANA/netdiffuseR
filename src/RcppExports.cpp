@@ -289,8 +289,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rewire_swap
-arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire, bool althexagons);
-RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP, SEXP althexagonsSEXP) {
+arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire);
+RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -300,8 +300,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     Rcpp::traits::input_parameter< double >::type pr_rewire(pr_rewireSEXP);
-    Rcpp::traits::input_parameter< bool >::type althexagons(althexagonsSEXP);
-    rcpp_result_gen = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected, pr_rewire, althexagons));
+    rcpp_result_gen = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected, pr_rewire));
     return rcpp_result_gen;
 END_RCPP
 }

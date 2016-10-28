@@ -1,3 +1,9 @@
+2016-10-28  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rewire_swap.cpp: 'Commented' alt.hexagons since the implementation
+	  is flawed.
+	* R/rewire.R: Idem.
+	* test/testthat/*.R: More tests.
+
 2016-10-27  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rgraph_ba.*: Renamed files (and header def) to fix build error.
 	* R/diffnet-methods.R: Fixing small bugs in -.diffnet and data-checks

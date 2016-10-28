@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-27)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-28)
 
 ## New features and changes
 

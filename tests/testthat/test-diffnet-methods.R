@@ -50,7 +50,7 @@ test_that("More plot methods", {
 })
 
 # plot_threshold, threshold and exposure ---------------------------------------
-
+context("Threshold functions")
 test_that("Returning threshold equal to the threshold fun (plot_threshold and )", {
   # Generating a random graph
   set.seed(123)
@@ -92,12 +92,12 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   expect_error(plot_threshold(diffnet, vertex.sides = 1.2), "integer")
   expect_error(plot_threshold(diffnet, vertex.rot = "a"), "numeric")
   expect_error(plot_threshold(diffnet, vertex.rot = rep(1,2)), "same length")
+  expect_error(plot_threshold(diffnet, vertex.sides=c(1L,2L)), "same length")
 
 })
 
+context("Infectiousness and susceptibility (plot methods)")
 # plot_infectsuscept, infection, susceptibility --------------------------------
-
-
 test_that("Returning threshold equal to the infect/suscept funs", {
   # Generating a random graph
   set.seed(123)
@@ -134,7 +134,7 @@ test_that("Returning threshold equal to the infect/suscept funs", {
 
 
 })
-
+context("Other methods")
 # Printing and summary of diffnet! ---------------------------------------------
 test_that("diffnet print and summary", {
   diffnet <- lapply(1:3, rgraph_ba, m0=1,t=9)
@@ -146,6 +146,8 @@ test_that("diffnet print and summary", {
   expect_output(print(diffnet_dir), "type.+ directed", ignore.case=TRUE)
 
   expect_output(summary(diffnet_und), "Diffusion network summary")
+
+  expect_equal(capture_output(str(diffnet)), capture_output(str(unclass(diffnet))))
 })
 
 test_that("summary.diffnet with slices", {
@@ -186,7 +188,7 @@ test_that('concatenating diffnet', {
 
 })
 
-# ------------------------------------------------------------------------------
+# Arithmetic and others---------------------------------------------------------
 test_that("Arithmetic and others", {
   # Pow
   set.seed(18181)
@@ -261,9 +263,13 @@ test_that("Arithmetic and others", {
   ans1 <- (1/10)/(1/g)
   expect_equivalent(ans0,ans1)
 
+  ans0 <- diffnetLapply(g, function(cumadopt,...) mean(cumadopt))
+  ans1 <- lapply(lapply(apply(g$cumadopt, 2, list), unlist), mean)
+
+  expect_equal(ans0,ans1)
 })
 
-# -----------------------------------------------------------------------------
+# nnodes and nlinks------------------------------------------------------------
 test_that("nnodes and nedges", {
   set.seed(21)
   dn <- rdiffnet(20,3)

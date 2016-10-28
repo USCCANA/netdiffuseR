@@ -31,7 +31,7 @@ or an integer vector with number of iterations (\code{algorithm="swap"}).}
 the first slice as a baseline for the rest of slices (see details).}
 
 \item{althexagons}{Logical scalar. When \code{TRUE} uses the compact alternating
-hexagons algorithm (see details).}
+hexagons algorithm (currently ignored [on development]).}
 }
 \description{
 Changes the structure of a graph by altering ties.

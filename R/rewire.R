@@ -12,7 +12,7 @@
 #' @param pr.change Numeric scalar. Probability ([0,1]) of doing a rewire (see details).
 #' @param algorithm Character scalar. Either \code{"swap"} or \code{"endpoints"}.
 #' @param althexagons Logical scalar. When \code{TRUE} uses the compact alternating
-#' hexagons algorithm (see details).
+#' hexagons algorithm (currently ignored [on development]).
 #' @details
 #' Both algorithms are implemented sequentially, this is, edge-wise checking
 #' self edges and multiple edges over the changing graph; in other words, at step
@@ -270,7 +270,7 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
     out[[i]] <- if (algorithm == "endpoints")
       rewire_endpoints(out[[j]], p[i], both.ends, self, multiple, undirected)
     else if (algorithm == "swap")
-      rewire_swap(out[[j]], p[i], self, multiple, undirected, pr.change, althexagons)
+      rewire_swap(out[[j]], p[i], self, multiple, undirected, pr.change) #, althexagons)
     else stop("No such rewiring algorithm: ", algorithm)
 
     # Names
@@ -287,7 +287,7 @@ rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multipl
   out <- if (algorithm == "endpoints")
     rewire_endpoints(graph, p, both.ends, self, multiple, undirected)
   else if (algorithm == "swap")
-    rewire_swap(graph, p, self, multiple, undirected, pr.change, althexagons)
+    rewire_swap(graph, p, self, multiple, undirected, pr.change) #, althexagons)
   else stop("No such rewiring algorithm: ", algorithm)
 
   rn <- rownames(out)
@@ -322,7 +322,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
         out[[j]], p[i], both.ends, self, multiple, undirected)
     } else if (algorithm == "swap") {
       rewire_swap(
-        out[[j]], p[i], self, multiple, undirected, pr.change, althexagons)
+        out[[j]], p[i], self, multiple, undirected, pr.change) #, althexagons)
     } else stop("No such rewiring algorithm: ", algorithm)
 
     rn <- rownames(graph[,,i])

@@ -129,7 +129,7 @@ plot_diffnet2.default <- function(
   nper <- length(pers)
 
   if (length(add.map) && !(add.map %in% c("first", "last")))
-    stop("When -add.map- is specified it should be either \'before\' or \'last\'.")
+    stop("When -add.map- is specified it should be either \'first\' or \'last\'.")
 
   if (!length(add.map) & no.graph)
     stop("If -no.graph=TRUE- then you should specify some value for -add.map-.")

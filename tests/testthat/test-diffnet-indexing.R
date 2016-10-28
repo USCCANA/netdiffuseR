@@ -24,6 +24,9 @@ test_that("Dynamic attributes assignment work", {
   expect_equal(eM, eL)
   expect_equal(eL, eD)
 
+  expect_error(x[["expoM"]] <- expoM[-1,], "incorrect size")
+  expect_error(x[["expoM"]] <- {expoL[[2]] <- "a";expoL}, "Not all elements")
+
   # Removing data
   expect_warning(x[["davinci"]] <- NULL)
   ans0 <- x
@@ -73,3 +76,40 @@ test_that("Subsetting diffnet objects", {
   expect_equal(graph[i,,j], subg_i[,,j], info = "The order doesn't matters 2")
   expect_error(graph[,,c(1, 6:10)], "k- must represent a range")
 })
+
+
+# Replacing values -------------------------------------------------------------
+test_that("[<-.diffnet method", {
+  set.seed(1231)
+  g <- rdiffnet(20, 3)
+
+  ans0 <- g
+  ans0$graph <- lapply(ans0$graph, function(x) {x[1,1] <- 10;x})
+  ans1 <- g
+  ans1[1,1] <- 10
+
+  expect_equal(ans0, ans1)
+
+  ans0 <- g
+  ans0$graph <- lapply(ans0$graph, function(x) {x[1,] <- 10;x})
+  ans1 <- g
+  ans1[1,] <- 10
+
+  expect_equal(ans0, ans1)
+
+  ans0 <- g
+  ans0$graph <- lapply(ans0$graph, function(x) {x[,1] <- 10;x})
+  ans1 <- g
+  ans1[,1] <- 10
+
+  expect_equal(ans0, ans1)
+
+  ans0 <- g
+  ans0$graph[[1]][,1] <- 10
+  ans1 <- g
+  ans1[,1,1] <- 10
+
+  expect_equal(ans0, ans1)
+})
+
+
