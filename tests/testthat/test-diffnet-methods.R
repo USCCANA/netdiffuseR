@@ -41,6 +41,12 @@ test_that("More plot methods", {
 
   ans1 <- plot_adopters(g)
   expect_output(print(ans1), "0[.]85")
+
+  # Invallid cex
+  expect_error(plot(g, vertex.cex="1"), "Invalid.+cex")
+  expect_error(plot_diffnet(g, vertex.cex="1"), "Invalid.+cex")
+
+  expect_silent(plot_adopters(g$cumadopt))
 })
 
 # plot_threshold, threshold and exposure ---------------------------------------
@@ -77,6 +83,16 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   expect_equivalent(as.matrix(thdn["threshold"]), threshold(expos, toa))
   expect_equivalent(th, thar)
   expect_equivalent(th, thdn)
+
+  expect_error(plot_threshold(graph), "expo.+should be pro.+diffnet")
+  expect_error(plot_threshold(diffnet, vertex.cex = "a"), "Invalid.+cex")
+
+  # Repeating cex
+  expect_silent(plot_threshold(diffnet, vertex.cex=.5))
+  expect_error(plot_threshold(diffnet, vertex.sides = 1.2), "integer")
+  expect_error(plot_threshold(diffnet, vertex.rot = "a"), "numeric")
+  expect_error(plot_threshold(diffnet, vertex.rot = rep(1,2)), "same length")
+
 })
 
 # plot_infectsuscept, infection, susceptibility --------------------------------
@@ -110,6 +126,12 @@ test_that("Returning threshold equal to the infect/suscept funs", {
 
   expect_equal(infsusdn$infect, infect)
   expect_equal(infsusdn$suscept, suscep)
+
+  expect_error(plot_infectsuscep(graph), "toa.+provided")
+  expect_error(suppressWarnings(plot_infectsuscep(diffnet), "undefined values"))
+  data("medInnovationsDiffNet")
+  expect_warning(plot_infectsuscep(medInnovationsDiffNet), "missing")
+
 
 })
 
@@ -182,9 +204,13 @@ test_that("Arithmetic and others", {
   ans0 <- g - c(1,2)
   ans1 <- g[-c(1,2)]
   ans2 <- g-g[-(3:100)]
+  ans3 <- g - c("1","2")
 
   expect_equal(ans0,ans1)
   expect_equal(ans0,ans2)
+  expect_equal(ans0,ans3)
+
+  expect_error(g-"z", "right-hand side")
 
   # MMultiply
   ans0 <- g %*% g
@@ -229,5 +255,32 @@ test_that("Arithmetic and others", {
   ans1$graph <- Map(function(a,b) methods::as(a | b, "dgCMatrix"), a=g$graph, b=t(g$graph))
 
   expect_equivalent(ans1, ans0)
+
+  # Divide by scalar
+  ans0 <- g/10
+  ans1 <- (1/10)/(1/g)
+  expect_equivalent(ans0,ans1)
+
+})
+
+# -----------------------------------------------------------------------------
+test_that("nnodes and nedges", {
+  set.seed(21)
+  dn <- rdiffnet(20,3)
+
+  ans0 <- nlinks(dn)
+  ans1 <- nlinks(dn$graph)
+  ans2 <- nlinks(as.array(dn))
+
+  expect_equal(ans0,ans1)
+  expect_equal(ans0,ans2)
+
+  ans0 <- nnodes(dn)
+  ans1 <- nnodes(dn$graph)
+  ans2 <- nnodes(as.array(dn))
+
+  expect_equal(ans0,ans1)
+  expect_equal(ans0,ans2)
+
 
 })

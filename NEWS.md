@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-26)
+# Changes in netdiffuseR version 1.16.7.9000 (2016-10-27)
 
 ## New features and changes
 
@@ -61,6 +61,8 @@
 
 * `^.diffnet` method was rasing to +1 power, e.g. `diffnet^2` was actually
   `diffnet^3`. Now solved.
+  
+* `/.diffnet` was not working.
 
 * `plot_diffnet` was computing the coordinates of the cells wrongly. Most of the
   time causing adding figures outside of the plotting area.

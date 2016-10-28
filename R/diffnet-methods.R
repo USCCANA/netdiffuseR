@@ -546,7 +546,7 @@ plot_threshold <- function(
   vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5),
   vertex.label="", vertex.lab.pos=NULL,  vertex.lab.cex=1,
   vertex.lab.adj = c(.5,.5), vertex.lab.col=rgb(.3,.3,.8,.9),
-  vertex.sides = 40, vertex.rot = 0,
+  vertex.sides = 40L, vertex.rot = 0,
   edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
   include.grid = TRUE, bty="n",
   vertex.bcol=vertex.col, jitter.factor=c(1,0), jitter.amount=c(.25,0),
@@ -659,7 +659,7 @@ plot_threshold.list <- function(
 
   # Checking sides
   test <- length(vertex.sides)
-  if (!inherits(vertex.sides, "integer") & !inherits(vertex.sides, "numeric")) {
+  if (!inherits(vertex.sides, "integer")) {
     stop("-vertex.sides- must be integer.")
   } else if (test == 1) {
     vertex.sides <- rep(vertex.sides, n)
@@ -1124,10 +1124,17 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 #' @rdname diffnet-arithmetic
 #' @export
 `/.diffnet` <- function(y, x) {
-  for (i in 1:x$meta$nper)
-    x$graph[[i]]@x <- y/(x$graph[[i]]@x)
 
-  x
+  if (inherits(x, "diffnet") && (inherits(y, "numeric") | inherits(y, "integer"))) {
+    for (i in 1:x$meta$nper)
+      x$graph[[i]]@x <- y/(x$graph[[i]]@x)
+    return(x)
+  } else if (inherits(y, "diffnet") && (inherits(x, "numeric") | inherits(x, "integer"))) {
+    for (i in 1:y$meta$nper)
+      y$graph[[i]]@x <- x/(y$graph[[i]]@x)
+    return(y)
+  } else stop("No method for x:", class(x), " and y:", class(y))
+
 }
 
 #' @rdname diffnet-arithmetic
@@ -1160,7 +1167,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
     # Checking labels exists
     test <- which(!(y %in% x$meta$ids))
     if (length(test))
-      stop("Some elements in -y- (right hand size of the expression) are not ",
+      stop("Some elements in -y- (right-hand side of the expression) are not ",
            "in the set of ids of the diffnet object:\n\t",
            paste0(y[test], collapse=", "),".")
 

@@ -115,3 +115,19 @@ test_that("Either as an array or as a list, dgr should work (directed)", {
 })
 
 options(diffnet.undirected=oldopt)
+
+# igraph and statnet -----------------------------------------------------------
+test_that("dgr on igraph and statnet", {
+  set.seed(1313)
+  g <- rgraph_ba(t=9, m=2, self=FALSE)
+
+  ans0 <- dgr(g)
+  ans1 <- suppressWarnings(dgr(igraph::graph_from_adjacency_matrix(g)))
+  ans2 <- dgr(network::network(as.matrix(g)))
+
+  expect_equal(ans0,ans1)
+  expect_equal(ans0,ans2)
+
+  expect_silent(plot(ans0))
+
+})

@@ -6,25 +6,46 @@ test_that("exposure calculations", {
   diffnet <- rdiffnet(40,5, seed.p.adopt = .1)
 
   # Default
-  exp_0_diffnet <- exposure(diffnet)
-  exp_0_manual <- as.matrix(do.call(cbind,lapply(diffnet$meta$pers, function(x) {
+  ans0 <- exposure(diffnet)
+  ans1 <- as.matrix(do.call(cbind,lapply(diffnet$meta$pers, function(x) {
     s <- diffnet$graph[[x]]
      ( s %*% diffnet$cumadopt[,x,drop=FALSE])/(1e-15+Matrix::rowSums(s))
   })))
+  ans2 <- exposure(diffnet$graph, cumadopt = diffnet$cumadopt)
+  ans3 <- exposure(as.array(diffnet), cumadopt = diffnet$cumadopt)
 
-  expect_equivalent(exp_0_diffnet, exp_0_manual)
+  expect_equivalent(ans0, ans1)
+  expect_equivalent(ans0, ans2)
+  expect_equivalent(ans0, ans3)
+
+  # With an attribute
+  X <- matrix(diffnet[["real_threshold"]], ncol=5, nrow=40, byrow = FALSE)
+  ans0 <- exposure(diffnet, attrs=X)
+  ans1 <- exposure(diffnet, attrs="real_threshold")
+  expect_equivalent(ans0, ans1)
+
+  expect_error(exposure(diffnet$graph, attrs="real_threshold"),"is only valid for")
 
   # Struct Equiv
   se <- struct_equiv(diffnet)
-  se <- lapply(se, function(x) methods::as((x$SE)^(-1), "dgCMatrix"))
-  exp_1_diffnet <- exposure(diffnet, alt.graph = se)
+  se <- lapply(se, function(x) {
+    ans <- methods::as(x$SE, "dgCMatrix")
+    ans@x <- 1/(ans@x + 1e-20)
+    ans
+  })
+  exp_1_diffnet <- exposure(diffnet, alt.graph = se, valued=TRUE)
+  se2 <- vector("list", length(se))
   exp_1_manual <- as.matrix(do.call(cbind,lapply(diffnet$meta$pers, function(x) {
-    s <- struct_equiv(diffnet$graph[[x]])$SE^(-1)
-    s[!is.finite(s)] <- 0
-    ( s %*% diffnet$cumadopt[,x,drop=FALSE])/(1e-15+base::rowSums(s))
+    s <- methods::as(struct_equiv(diffnet$graph[[x]])$SE, "dgCMatrix")
+    s@x <- 1/(s@x + 1e-20)
+    se2[[x]] <<- s
+    ( s %*% diffnet$cumadopt[,x,drop=FALSE])/(Matrix::rowSums(s) +1e-20)
   })))
 
-  # expect_equivalent(exp_1_diffnet, exp_1_manual)
+  expect_equivalent(unname(exp_1_diffnet), unname(exp_1_manual))
+
+  #
+
 })
 
 test_that("Times of Adoption", {

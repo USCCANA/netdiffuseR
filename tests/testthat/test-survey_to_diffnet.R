@@ -35,6 +35,61 @@ test_that("Error messages", {
     "Inf values"
   )
 
+  dat <- fakesurvey
+  dat$id <- with(dat, group*100 + id)
+  dat$toa[1] <- Inf
+  expect_error(
+  suppressWarnings(
+    edgelist_to_diffnet(fakeEdgelist[,1:2], dat=dat, toavar = "toa", idvar="id")
+  ), "Inf values found"
+  )
+
+  dat <- fakesurveyDyn
+  dat$time[1] <- Inf
+  expect_error(
+    survey_to_diffnet(dat, "id", c("net1", "net2", "net3"), "toa",
+                      "group", timevar = "time"),
+    "Inf values"
+  )
+
+  # Can't have NAs in timevar
+  dat <- fakesurveyDyn
+  dat$time[1] <- NA
+  expect_error(
+    survey_to_diffnet(dat, "id", c("net1", "net2", "net3"), "toa",
+                      "group", timevar = "time", warn.coercion = FALSE),
+    "timevar- have missing"
+  )
+
+  # Time invariant TOA
+  dat <- fakesurveyDyn
+  dat$toa[10] <- 1990
+  expect_error(
+    survey_to_diffnet(dat, "id", c("net1", "net2", "net3"), "toa",
+                      "group", timevar = "time", warn.coercion = FALSE),
+    "toavar- is not time-invariant"
+  )
+
+  # Times out of range
+  dat <- fakesurveyDyn
+  dat$id <- with(dat, group*100 + id)
+  dat$toa[1] <- 2001
+  expect_error(
+    suppressWarnings(
+      edgelist_to_diffnet(fakeEdgelist[,1:2], dat=dat, toavar = "toa", idvar="id",
+                          timevar = "time")
+    ), "Invalid range"
+  )
+
+  dat <- fakesurveyDyn
+  dat$id <- with(dat, group*100 + id)
+  expect_error(
+    suppressWarnings(
+      edgelist_to_diffnet(fakeEdgelist[,1:2], t0=rep(2001,nrow(fakeEdgelist)),dat=dat, toavar = "toa", idvar="id",
+                          timevar = "time")
+    ), "Time ranges in .*should be the same"
+  )
+
   # There can't be NA in the ids
   dat <- fakesurveyDyn
   dat$id[c(1,5)] <- NA

@@ -1,5 +1,9 @@
 2016-10-27  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rgraph_ba.*: Renamed files (and header def) to fix build error.
+	* R/diffnet-methods.R: Fixing small bugs in -.diffnet and data-checks
+	  in plot_threshold.
+	* test/testthat/*.R: More tests.
+	* R/stats.R: Small changes. 
 
 2016-10-26  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/*: Working with @template of roxygen2.

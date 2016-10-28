@@ -445,7 +445,7 @@ NULL
 
   ans <- ( graph %*% (attrs * cumadopt) )
 
-  if (normalized) as.vector(ans/( graph %*% attrs + 1e-15 ))
+  if (normalized) as.vector(ans/( graph %*% attrs + 1e-20 ))
   else as.vector(ans)
 }
 
@@ -513,7 +513,11 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
       se
 
-    } else alt.graph
+    } else {
+      if (!valued)
+        warning("The -alt.graph- will be treated as 0/1 graph (value=FALSE).")
+      alt.graph
+    }
 
 
   }
@@ -523,8 +527,8 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
     exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized, self)
   } else if ("list" %in% cls) {
     exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
-  } else if ("diffnet" %in% cls) {
-    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
+  #} else if ("diffnet" %in% cls) {
+  #  exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
   } else stopifnot_graph(graph)
 }
 
