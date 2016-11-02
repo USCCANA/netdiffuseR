@@ -89,7 +89,8 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
 
   # Repeating cex
   expect_silent(plot_threshold(diffnet, vertex.cex=.5))
-  expect_error(plot_threshold(diffnet, vertex.sides = 1.2), "integer")
+  expect_warning(plot_threshold(diffnet, vertex.sides = 1.2), "integer")
+  expect_error(plot_threshold(diffnet, vertex.sides = "1.2"), "integer")
   expect_error(plot_threshold(diffnet, vertex.rot = "a"), "numeric")
   expect_error(plot_threshold(diffnet, vertex.rot = rep(1,2)), "same length")
   expect_error(plot_threshold(diffnet, vertex.sides=c(1L,2L)), "same length")

@@ -1,14 +1,18 @@
-# Changes in netdiffuseR version 1.16.7.9000 (2016-10-28)
+# Changes in netdiffuseR version 1.16.8 (2016-11-01)
 
 ## New features and changes
 
-* The function `struct_test` now allows other types of graphs.
+* The title of the package is now 'Analysis of Diffusion and Contagion Processes
+  on Networks'.
+
+* The function `struct_test` now allows other types of graphs. Before it only
+  supported `diffnet` objects.
 
 * The function `rewire_graph` gains a new argument for the algorithm "swap". Now
   to ensure aperiodicity in MCMC a chance of skiping a rewire has been included.
 
 * The function `n_rewires` now has a default of 20 (before it was 100).
-  This is based on a theoretical result (more details in the manual).
+  This is based on Ray et al (2012) (more details in the manual).
   
 * The function `rgraph_ba` gains a new argument, `self=TRUE`. By default behaves
   as before following Bollabas, but now can deviate to generate graphs with no
@@ -17,8 +21,8 @@
 * In `rgraph_ba`, the argument `eta` allows implementing De Almeida et al. (2013)
   Scale-free homophilic networks.
   
-* The functions `exposure` and `dgr` are now pure R code (cpp functions were
-  replace since there were no significant gains).
+* The functions `exposure` and `dgr` are now pure R code (C++ functions were
+  replace since there were no significant speed gains).
   
 * `diffnet` class objects now have two new meta-values: name and behavior.
 
@@ -60,7 +64,7 @@
 ## Bug fixes
 
 * `^.diffnet` method was rasing to +1 power, e.g. `diffnet^2` was actually
-  `diffnet^3`. Now solved.
+  `diffnet^3`.
   
 * `/.diffnet` was not working.
 

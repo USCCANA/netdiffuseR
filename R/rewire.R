@@ -89,8 +89,11 @@
 #' around \code{nlinks(graph)*16}. We set the default to be 20.
 #'
 #' In the case of Markov chains, the variable \code{pr.change} allows making the
-#' algorithm aperiodic (Stanton and Pinar, 2012).
-#'
+#' algorithm aperiodic. This is relevant only if the
+#' probability self-loop to a particular state is null, for example, if
+#' we set \code{self=TRUE} and \code{muliple=TRUE}, then in every step the
+#' algorithm will be able to change the state. For more details see
+#' Stanton and Pinar (2012) [p. 3.5:9].
 #'
 #'
 #' @section \emph{Endpoints} algorithm:
@@ -204,7 +207,7 @@ rewire_graph <- function(graph, p,
                          algorithm="endpoints",
                          both.ends=FALSE, self=FALSE, multiple=FALSE,
                          undirected=getOption("diffnet.undirected"),
-                         pr.change=0.5,
+                         pr.change= ifelse(self, 0.5, 1),
                          copy.first=TRUE, althexagons=FALSE) {
 
   # Checking undirected (if exists)
@@ -360,12 +363,14 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 #' rewire_qap(g)
 #'
 #' @references
-#' B. S. Anderson, C. Butts, K. Carley, "The interaction of size and density with
-#' graph-level indices", Social Networks 21 (3) (1999) 239–267.
-#' \url{doi:10.1016/S0378-8733(99)00011-8}.
 #'
-#' N. Mantel, The detection of disease clustering and a generalized regression
-#' approach., Cancer research 27 (2) (1967) 209–20. \url{doi:10.1038/212665a0}.
+#' Anderson, B. S., Butts, C., & Carley, K. (1999). The interaction of size and
+#' density with graph-level indices. Social Networks, 21(3), 239–267.
+#' \url{http://dx.doi.org/10.1016/S0378-8733(99)00011-8}
+#'
+#' Mantel, N. (1967). The detection of disease clustering and a generalized
+#' regression approach. Cancer Research, 27(2), 209–20.
+#' \url{https://doi.org/10.1038/212665a0}
 #'
 #' @seealso This function can be used as null distribution in \code{struct_test}
 #' @family simulation functions

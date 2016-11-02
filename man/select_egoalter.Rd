@@ -65,7 +65,7 @@ At the same time, number 12 means that ego adopted the innovation in \eqn{t}, bu
 alter had already adopted in \eqn{t-1} (so it has it in both, \eqn{t} and \eqn{t-1}).
 }
 \examples{
-# Simple example
+# Simple example ------------------------------------------------------------
 set.seed(1312)
 dn <- rdiffnet(20, 5, seed.graph="small-world")
 

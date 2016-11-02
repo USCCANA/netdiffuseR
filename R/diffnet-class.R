@@ -321,9 +321,10 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 
 #' Creates a \code{diffnet} class object
 #'
-#' \code{diffnet} objects contain difussion of innovation networks. With adjacency
+#' \code{diffnet} objects contain difussion networks. With adjacency
 #' matrices and time of adoption (toa) vector as its main components, most of the
 #' package's functions have methods for this class of objects.
+#'
 #' @templateVar dynamic TRUE
 #' @templateVar undirected TRUE
 #' @templateVar self TRUE

@@ -169,7 +169,7 @@ throught time (dynamic).}
 }
 }
 \description{
-\code{diffnet} objects contain difussion of innovation networks. With adjacency
+\code{diffnet} objects contain difussion networks. With adjacency
 matrices and time of adoption (toa) vector as its main components, most of the
 package's functions have methods for this class of objects.
 }

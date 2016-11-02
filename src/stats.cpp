@@ -130,3 +130,152 @@ arma::sp_mat vertex_covariate_compare(const arma::sp_mat & graph, const NumericV
 
   return ans;
 }
+
+// [[Rcpp::export]]
+std::vector<double> moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
+  double xmean = mean(x);
+
+  int N = x.n_rows;
+
+  // Checking dims
+  if (w.n_cols != w.n_rows) stop("-w- is not a square matrix");
+  if (N != (int) w.n_cols) stop("-x- and -w- dimensions differ");
+
+  // Weights sum
+  double wsum = accu(w);
+
+  arma::colvec xcent = x - xmean;
+  double numer = accu((xcent * xcent.t()) % w);
+  double denom = accu(pow(xcent, 2.0));
+
+  /*/ Computing standard error
+  double s1, s2, s3, s4, s5;
+  arma::sp_mat::const_iterator b = w.begin();
+  arma::sp_mat::const_iterator e = w.end();
+
+  int i,j;
+  for (arma::sp_mat::const_iterator iter=b; iter!=e; ++iter) {
+  i = iter.col();
+  j = iter.row();
+
+  // Computing each count
+  if (i >= j) s1+= pow(w.at(i,j) + w.at(j,i),2.0);
+
+  }
+  s1 = sqrt(s1);
+
+  arma::colvec tmp(w.n_cols);
+  for (int i=0; i < (int) w.n_rows; i++)
+  tmp.at(i) = pow(accu(w.row(i)) + accu(w.col(i)), 2.0);
+
+  s2 = sum(tmp);
+
+  s3 = (1.0/N * accu(pow(xcent,4.0))) / pow(1.0/N * accu(pow(xcent,2.0)), 2.0);
+  s4 = (N*N - 3.0*N + 3.0)*s1 - N*s2 + 3.0 * wsum * wsum;
+  s5 = (N*N - N)*s1 - 2.0*N*s2 + 6.0*wsum*wsum;
+  */
+  std::vector<double> res(2);
+  res[0] = (x.size()/wsum)*(numer/(denom + 1e-15));
+
+  /*res[1] = (N*s4 - s3*s5)/((N - 1.0)*(N - 2.0)*(N - 3.0)*wsum*wsum) -
+   pow(-1.0/(N - 1.0), 2.0);*/
+  res[1] = 0;
+
+  return res;
+}
+
+
+// [[Rcpp::export]]
+List struct_equiv_cpp(
+    const arma::sp_mat & graph, // Must be a geodesic distances graph
+    double v = 1.0,
+    bool unscaled = false,
+    bool inv = false, double invrep = 0.0) {
+
+  int n = graph.n_cols;
+  if (graph.n_cols != graph.n_rows) stop("-graph- is not square.");
+
+  NumericMatrix d(n,n);
+
+  // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}
+  NumericVector dmax(n, -1e100);
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<i;j++) {
+
+      // Computing sum(z_ik - z_jk)
+      double sumik = 0.0;
+      double sumki = 0.0;
+      for(int k=0;k<n;k++) {
+        // Summation accross all but i and j
+        if (k == i || k == j) continue;
+        sumik += pow(graph.at(i,k)-graph.at(j,k), 2.0);
+        sumki += pow(graph.at(k,i)-graph.at(k,j), 2.0);
+      }
+
+      // Adding up the results
+      d.at(i,j) = pow(pow(graph.at(i,j) - graph.at(j,i), 2.0) + sumik + sumki, 0.5 );
+
+      // // If only inverse required
+      // if (inv && unscaled) d.at(i,j) = 1.0/(d.at(i,j) + 1e-15);
+
+      d.at(j,i) = d.at(i,j);
+    }
+  }
+
+  // // If only distance must be computed
+  // if (unscaled) return List::create(_["SE"]=d, _["d"]=d, _["gdist"]=graph);
+
+  // Computing distances
+  NumericMatrix SE(n,n);
+
+  for(int i=0;i<n;i++) {
+
+    // Getting the max of the line
+    for(int j=0;j<n;j++) {
+      if (i==j) continue;
+      if (dmax[i] < d.at(i,j)) dmax[i] = d.at(i,j);
+    }
+
+    // Computing sum(dmax - dkj)
+    double sumdmaxd = 0.0;
+    for(int k=0;k<n;k++) {
+      if (k==i) continue;
+      sumdmaxd += pow(dmax[i] - d.at(k,i), v);
+    }
+
+    // Computing (dmax - d)/sum(dmax - d)
+    for(int j=0;j<n;j++) {
+      if (i==j) continue;
+      SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-15);
+    }
+
+    // // If inverse required
+    // if (inv) {
+    //   for(int j=0;j<n;j++) {
+    //     SE.at(i,j) = 1/(SE.at(i,j) + 1e-10);
+    //   }
+    // }
+  }
+
+  return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
+}
+
+/** *R
+ set.seed(1234)
+ adjmat <- rand_graph_cpp()
+
+ struct_equiv <- function(adjmat, v=1, ...) {
+ geod <- sna::geodist(adjmat, inf.replace = 0, ...)
+ geod[["gdist"]] <- geod[["gdist"]]/max(geod[["gdist"]])
+ struct_equiv_cpp(geod[["gdist"]], v)
+ }
+
+ microbenchmark::microbenchmark(sna::sedist, struct_equiv, times=10000)
+
+# Use this implementation
+ new <- struct_equiv(adjmat)
+ old <- sna::sedist(adjmat, method = 'euclidean')
+ rowSums(new$SE)
+ new
+ old
+ */

@@ -1,5 +1,5 @@
-netdiffuseR: Network Analysis for Diffusion of Innovations
-==========================================================
+netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks
+======================================================================
 
 [![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser) [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) [![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR) [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
 
@@ -9,7 +9,7 @@ The package was developed as part of the paper Thomas W. Valente, Stephanie R. D
 
 From the description:
 
-> Empirical statistical analysis, visualization and simulation of network models of the diffusion of innovations. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995) <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among others.
+> Empirical statistical analysis, visualization and simulation of diffusion and contagion processes on networks. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995) <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among others.
 
 **Acknowledgements**: netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
 
@@ -221,6 +221,9 @@ plot_threshold(
 )
 ```
 
+    ## Warning in plot_threshold.list(graph$graph, expo, graph$toa,
+    ## include_censored, : -vertex.sides- will be coerced to integer.
+
 ![](README_files/figure-markdown_github/NiceThreshold-1.png)
 
 ### Adoption rate
@@ -256,13 +259,38 @@ plot_diffnet2(brfarmersDiffNet,
 ![](README_files/figure-markdown_github/plot_diffnet2-1.png)
 
 ``` r
-set.seed(1133)
-x <- rdiffnet(2e3, 10, seed.graph = 'small-world')
-plot_diffnet2(x, vertex.size = dgr(x)[,nslices(x)], add.map = "last",
-              diffmap.args = list(kde2d.args=list(n=100, h=c(10,10))))
+set.seed(1231)
+
+# Random scale-free diffusion network
+x <- rdiffnet(1000, 4, seed.graph="scale-free", seed.p.adopt = .025,
+                           rewire = FALSE, seed.nodes = "central",
+                           rgraph.arg=list(self=FALSE, m=4),
+                           threshold.dist = function(id) runif(1,.2,.4))
+
+# Diffusion map (no random toa)
+dm0 <- diffusionMap(x, kde2d.args=list(n=150, h=1), layout=igraph::layout_with_fr)
+
+# Random
+diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
+
+# Diffusion map (random toa)
+dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
+
+oldpar <- par(no.readonly = TRUE)
+col <- colorRampPalette(blues9)(100)
+par(mfrow=c(1,2), oma=c(1,0,0,0), cex=.8)
+image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
+image(dm1, col=col, main="Random Times of Adoption")
+par(mfrow=c(1,1))
+mtext("Both networks have the same distribution on times of adoption", 1,
+      outer = TRUE)
 ```
 
 ![](README_files/figure-markdown_github/plot_diffnet2%20with%20map-1.png)
+
+``` r
+par(oldpar)
+```
 
 ### Adopters classification
 
@@ -320,9 +348,9 @@ drawColorKey(Means, nlevels = 50, border="transparent",
 sessionInfo()
 ```
 
-    ## R version 3.3.1 (2016-06-21)
+    ## R version 3.3.2 (2016-10-31)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 14.04.5 LTS
+    ## Running under: Ubuntu 16.04.1 LTS
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -336,15 +364,15 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.16.7.9000
+    ## [1] netdiffuseR_1.16.8
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] statnet.common_3.3.0 Rcpp_0.12.7          lattice_0.20-34     
     ##  [4] digest_0.6.10        assertthat_0.1       MASS_7.3-45         
-    ##  [7] grid_3.3.1           formatR_1.4          magrittr_1.5        
-    ## [10] evaluate_0.9         stringi_1.1.2        SparseM_1.72        
+    ##  [7] grid_3.3.2           formatR_1.4          magrittr_1.5        
+    ## [10] evaluate_0.9         stringi_1.1.1        SparseM_1.72        
     ## [13] Matrix_1.2-7.1       sna_2.4              boot_1.3-18         
-    ## [16] rmarkdown_1.1        tools_3.3.1          stringr_1.1.0       
+    ## [16] rmarkdown_1.1        tools_3.3.2          stringr_1.1.0       
     ## [19] igraph_1.0.1         network_1.13.0       yaml_2.1.13         
     ## [22] htmltools_0.3.5      knitr_1.14           tibble_1.2
 

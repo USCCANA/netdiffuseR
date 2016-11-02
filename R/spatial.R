@@ -6,6 +6,17 @@
 #' @param ... Further arguments to be passed to the method.
 #' @return A square matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of
 #' size \code{(nnode(g)*nper)^2}
+#' @examples
+#' # Simple example ------------------------------------------------------------
+#' set.seed(23)
+#' g <- rgraph_er(n=10, p=.5, t=2,undirected=TRUE)
+#'
+#' # What we've done: A list with 2 bernoulli graphs
+#' g
+#'
+#' # Expanding to a 20*20 matrix with structural zeros on the diagonal
+#' # and on cell 'off' adjacency matrix
+#' diag_expand(g)
 #' @export
 diag_expand <- function(...) UseMethod("diag_expand")
 

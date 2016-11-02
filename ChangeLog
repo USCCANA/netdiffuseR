@@ -1,3 +1,8 @@
+2016-11-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/*: Re-organized functions + headers, reducing lib space.
+	* R/*: Tweaked a couple of examples for reducing running time.
+	* tests/testtat/*: idem.
+
 2016-10-28  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rewire_swap.cpp: 'Commented' alt.hexagons since the implementation
 	  is flawed.

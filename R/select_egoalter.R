@@ -51,7 +51,7 @@
 #' @export
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
 #' @examples
-#' # Simple example
+#' # Simple example ------------------------------------------------------------
 #' set.seed(1312)
 #' dn <- rdiffnet(20, 5, seed.graph="small-world")
 #'

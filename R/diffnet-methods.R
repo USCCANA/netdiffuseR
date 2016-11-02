@@ -659,9 +659,14 @@ plot_threshold.list <- function(
 
   # Checking sides
   test <- length(vertex.sides)
-  if (!inherits(vertex.sides, "integer")) {
+  if (!inherits(vertex.sides, c("integer", "numeric"))) {
     stop("-vertex.sides- must be integer.")
-  } else if (test == 1) {
+  } else if (inherits(vertex.sides, "numeric")) {
+    warning("-vertex.sides- will be coerced to integer.")
+    vertex.sides <- as.integer(vertex.sides)
+  }
+
+  if (test == 1) {
     vertex.sides <- rep(vertex.sides, n)
   } else if (test != n) {
     stop("-vertex.sides- must be of the same length as nnodes(graph).")

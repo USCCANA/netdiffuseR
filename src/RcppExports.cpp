@@ -137,15 +137,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// moran_cpp
-std::vector<double> moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
-RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
+// select_egoalter_cpp
+DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
+RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type w(wSEXP);
-    rcpp_result_gen = Rcpp::wrap(moran_cpp(x, w));
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat_t0(adjmat_t0SEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat_t1(adjmat_t1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t0(adopt_t0SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t1(adopt_t1SEXP);
+    rcpp_result_gen = Rcpp::wrap(select_egoalter_cpp(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -288,6 +290,50 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rgraph_er_cpp
+arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
+RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    rcpp_result_gen = Rcpp::wrap(rgraph_er_cpp(n, p, undirected, weighted, self));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ring_lattice
+arma::sp_mat ring_lattice(int n, int k, bool undirected);
+RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    rcpp_result_gen = Rcpp::wrap(ring_lattice(n, k, undirected));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rewire_endpoints
+arma::sp_mat rewire_endpoints(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
+RcppExport SEXP netdiffuseR_rewire_endpoints(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type both_ends(both_endsSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
+    rcpp_result_gen = Rcpp::wrap(rewire_endpoints(graph, p, both_ends, self, multiple, undirected));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rewire_swap
 arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire);
 RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP) {
@@ -301,6 +347,34 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
     Rcpp::traits::input_parameter< double >::type pr_rewire(pr_rewireSEXP);
     rcpp_result_gen = Rcpp::wrap(rewire_swap(graph, nsteps, self, multiple, undirected, pr_rewire));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rewire_ws
+arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p, bool self, bool multiple);
+RcppExport SEXP netdiffuseR_rewire_ws(SEXP GSEXP, SEXP KSEXP, SEXP pSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type G(GSEXP);
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    rcpp_result_gen = Rcpp::wrap(rewire_ws(G, K, p, self, multiple));
+    return rcpp_result_gen;
+END_RCPP
+}
+// permute_graph_cpp
+arma::sp_mat permute_graph_cpp(const arma::sp_mat& x, bool self, bool multiple);
+RcppExport SEXP netdiffuseR_permute_graph_cpp(SEXP xSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
+    rcpp_result_gen = Rcpp::wrap(permute_graph_cpp(x, self, multiple));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -364,92 +438,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rgraph_er_cpp
-arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgraph_er_cpp(n, p, undirected, weighted, self));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ring_lattice
-arma::sp_mat ring_lattice(int n, int k, bool undirected);
-RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(ring_lattice(n, k, undirected));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rewire_endpoints
-arma::sp_mat rewire_endpoints(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
-RcppExport SEXP netdiffuseR_rewire_endpoints(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type both_ends(both_endsSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(rewire_endpoints(graph, p, both_ends, self, multiple, undirected));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rewire_ws
-arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p, bool self, bool multiple);
-RcppExport SEXP netdiffuseR_rewire_ws(SEXP GSEXP, SEXP KSEXP, SEXP pSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::sp_mat >::type G(GSEXP);
-    Rcpp::traits::input_parameter< int >::type K(KSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
-    rcpp_result_gen = Rcpp::wrap(rewire_ws(G, K, p, self, multiple));
-    return rcpp_result_gen;
-END_RCPP
-}
-// permute_graph_cpp
-arma::sp_mat permute_graph_cpp(const arma::sp_mat& x, bool self, bool multiple);
-RcppExport SEXP netdiffuseR_permute_graph_cpp(SEXP xSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type multiple(multipleSEXP);
-    rcpp_result_gen = Rcpp::wrap(permute_graph_cpp(x, self, multiple));
-    return rcpp_result_gen;
-END_RCPP
-}
-// select_egoalter_cpp
-DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
-RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat_t0(adjmat_t0SEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat_t1(adjmat_t1SEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t0(adopt_t0SEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t1(adopt_t1SEXP);
-    rcpp_result_gen = Rcpp::wrap(select_egoalter_cpp(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1));
-    return rcpp_result_gen;
-END_RCPP
-}
 // vertex_covariate_dist
 arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const arma::mat& X, double p);
 RcppExport SEXP netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
@@ -486,6 +474,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type X(XSEXP);
     Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
     rcpp_result_gen = Rcpp::wrap(vertex_covariate_compare(graph, X, funname));
+    return rcpp_result_gen;
+END_RCPP
+}
+// moran_cpp
+std::vector<double> moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
+RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(moran_cpp(x, w));
     return rcpp_result_gen;
 END_RCPP
 }

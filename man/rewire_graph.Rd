@@ -6,8 +6,8 @@
 \usage{
 rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
   self = FALSE, multiple = FALSE,
-  undirected = getOption("diffnet.undirected"), pr.change = 0.5,
-  copy.first = TRUE, althexagons = FALSE)
+  undirected = getOption("diffnet.undirected"), pr.change = ifelse(self,
+  0.5, 1), copy.first = TRUE, althexagons = FALSE)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -113,7 +113,11 @@ it is shown that in order to achive such it is needed to perform
 around \code{nlinks(graph)*16}. We set the default to be 20.
 
 In the case of Markov chains, the variable \code{pr.change} allows making the
-algorithm aperiodic (Stanton and Pinar, 2012).
+algorithm aperiodic. This is relevant only if the
+probability self-loop to a particular state is null, for example, if
+we set \code{self=TRUE} and \code{muliple=TRUE}, then in every step the
+algorithm will be able to change the state. For more details see
+Stanton and Pinar (2012) [p. 3.5:9].
 }
 
 \section{\emph{Endpoints} algorithm}{

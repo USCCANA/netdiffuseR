@@ -26,7 +26,7 @@ test_that("methods of plot_diffnet2", {
 # ------------------------------------------------------------------------------
 test_that("methods of diffMap", {
   set.seed(11445)
-  dn <- rdiffnet(100, 10, seed.nodes = "central")
+  dn <- rdiffnet(50, 5, seed.nodes = "central")
 
   # Should get the same outputs
   set.seed(1); ans_dn <- diffmap(dn)

@@ -37,8 +37,8 @@ susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, 
     .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
 }
 
-moran_cpp <- function(x, w) {
-    .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
+select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
+    .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
 sparse_indexes <- function(mat) {
@@ -204,26 +204,6 @@ vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran
     .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
 }
 
-rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5) {
-    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
-}
-
-rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t, self)
-}
-
-rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
-}
-
-rgraph_sf_homo <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
-}
-
-rgraph_sf_homo_new <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
-}
-
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
     .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
@@ -251,6 +231,10 @@ rewire_endpoints <- function(graph, p, both_ends = FALSE, self = FALSE, multiple
     .Call('netdiffuseR_rewire_endpoints', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
 }
 
+rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5) {
+    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
+}
+
 rewire_ws <- function(G, K, p = 0.0, self = FALSE, multiple = FALSE) {
     .Call('netdiffuseR_rewire_ws', PACKAGE = 'netdiffuseR', G, K, p, self, multiple)
 }
@@ -259,8 +243,20 @@ permute_graph_cpp <- function(x, self = FALSE, multiple = FALSE) {
     .Call('netdiffuseR_permute_graph_cpp', PACKAGE = 'netdiffuseR', x, self, multiple)
 }
 
-select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
-    .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
+rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t, self)
+}
+
+rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
+}
+
+rgraph_sf_homo <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_sf_homo', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
+}
+
+rgraph_sf_homo_new <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
+    .Call('netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
 }
 
 #' @export
@@ -306,6 +302,10 @@ vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
 #' @export
 vertex_covariate_compare <- function(graph, X, funname) {
     .Call('netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, funname)
+}
+
+moran_cpp <- function(x, w) {
+    .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {

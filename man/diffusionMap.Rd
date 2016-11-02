@@ -8,7 +8,7 @@
 \alias{image.diffnet_diffmap}
 \alias{plot.diffnet_diffmap}
 \alias{print.diffnet_diffmap}
-\title{Creates a heatmap based on a graph layout and times of adoption}
+\title{Creates a heatmap based on a graph layout and a vertex attribute}
 \usage{
 diffusionMap(graph, ...)
 
@@ -60,8 +60,9 @@ A list of class \code{diffnet_diffmap}
 \item{h}{Bandwidth passed to \code{kde2d}.}
 }
 \description{
-Basically creates a smooth-scatter plot in which each observation is weighted
-by \code{x}.
+Using bi-dimensional kernel smoothers, creates a heatmap based on a graph layout
+and colored accordingly to \code{x}. This visualization technique is intended
+to be used with large graphs.
 }
 \details{
 The image is created using the function \code{kde2d} from
@@ -96,10 +97,10 @@ which basically maps \code{x} to a fix length sequence of numbers such that
 set.seed(1231)
 
 # Random scale-free diffusion network
-x <- netdiffuseR::rdiffnet(2000, 5, seed.graph="scale-free", seed.p.adopt = .025,
+x <- rdiffnet(1000, 4, seed.graph="scale-free", seed.p.adopt = .025,
                            rewire = FALSE, seed.nodes = "central",
                            rgraph.arg=list(self=FALSE, m=4),
-                           threshold.dist = function(id) .4)
+                           threshold.dist = function(id) runif(1,.2,.4))
 
 # Diffusion map (no random toa)
 dm0 <- diffusionMap(x, kde2d.args=list(n=150, h=.5), layout=igraph::layout_with_fr)
@@ -111,9 +112,9 @@ diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- colorRampPalette(blues9)(200)
+col <- colorRampPalette(blues9)(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0))
-image(dm0, col=col, main="Non-random Times of Adoption")
+image(dm0, col=col, main="Non-random Times of Adoption\\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")
 par(mfrow=c(1,1))
 mtext("Both networks have the same distribution on times of adoption", 1,
@@ -146,7 +147,7 @@ with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
 George G. Vega Yon
 }
 \references{
-Vega Yon, George G., and Valente, Thomas W., Visualizing Annotated
+Vega Yon, George G., and Valente, Thomas W., Visualizing Large Annotated
 Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working paper).
 }
 \seealso{
