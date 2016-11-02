@@ -173,5 +173,5 @@ test_that("Classify adopter", {
   ans <- ftable(classify(dn))
 
   expect_equal(sum(ans), 100, tolerance = .01)
-  expect_equal(colSums(ans)/100, c(0,1/3,1/3,1/3,0), tolerance = .005)
+  expect_equal(colSums(ans)/100, c(0, 0,1/3,1/3,1/3), tolerance = .005)
 })

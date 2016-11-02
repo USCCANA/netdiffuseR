@@ -3,13 +3,13 @@ sudo: required
 
 r:
   - release
-  - devel
+#  - devel # Not working
 
 os:
   - linux
   - osx
 
-# osx_image: xcode7.3
+osx_image: xcode7.3
 
 env:
  global:

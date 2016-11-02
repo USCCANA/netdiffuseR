@@ -1,3 +1,10 @@
+2016-11-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/stats.R: Fixed bug with NA in classify_adopters.default.
+	* tests/testthat/test-stats.R: Adjusted expectation according
+	  to change in classify.
+	* .travis.ci: r-devel not working.
+	* .appveyor: r-patch not working.
+
 2016-11-01  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/*: Re-organized functions + headers, reducing lib space.
 	* R/*: Tweaked a couple of examples for reducing running time.

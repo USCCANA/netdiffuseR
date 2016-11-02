@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.16.8 (2016-11-01)
+# Changes in netdiffuseR version 1.16.8 (2016-11-02)
 
 ## New features and changes
 
@@ -28,6 +28,8 @@
 
 * Elements -graph-, -toa-, -adopt- and -cumadopt- in `diffnet` class objects
   have lost their dimnames (more efficient storage).
+  
+* `classify_adopters` now always includes Non-Adopters.
   
 ## New functions
 

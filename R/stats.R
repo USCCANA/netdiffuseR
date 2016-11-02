@@ -958,11 +958,17 @@ classify_adopters.diffnet <- function(graph, include_censored=FALSE, ...) {
 
 #' @export
 #' @rdname classify_adopters
-classify_adopters.default <- function(graph, toa,
-                                      t0=NULL,
-                                      t1=NULL,
-                                      expo=NULL,
-                                      include_censored=FALSE, ...) {
+classify_adopters.default <- function(
+  graph,
+  toa,
+  t0=NULL,
+  t1=NULL,
+  expo=NULL,
+  include_censored=FALSE,
+  ...
+  ) {
+
+
   # Computing ranges
   ran_toa <- mean(toa, na.rm = TRUE) + sd(toa, na.rm = TRUE)*c(-1,0,1)
 
@@ -972,11 +978,11 @@ classify_adopters.default <- function(graph, toa,
   ran_thr <- mean(thr, na.rm = TRUE) + sd(thr, na.rm = TRUE)*c(-1,0,1)
 
   # Classifying
-  c_toa <- c("Early Adopters", "Early Majority", "Late Majority", "Laggards")
-  c_toa <- factor(findInterval(toa, ran_toa), 0:3, c_toa)
+  c_toa <- c("Non-Adopters", "Early Adopters", "Early Majority", "Late Majority", "Laggards")
+  c_toa <- factor(findInterval(toa, ran_toa), c(NA,0:3), c_toa, exclude=NULL)
 
-  c_thr <- c("Very Low Thresh.", "Low Thresh.", "High Thresh.", "Very High Thresh.")
-  c_thr <- factor(findInterval(thr, ran_thr), 0:3, c_thr)
+  c_thr <- c("Non-Adopters", "Very Low Thresh.", "Low Thresh.", "High Thresh.", "Very High Thresh.")
+  c_thr <- factor(findInterval(thr, ran_thr), c(NA,0:3), c_thr, exclude=NULL)
 
   structure(list(
     toa=c_toa,
@@ -990,13 +996,10 @@ classify_adopters.default <- function(graph, toa,
 #' @export
 #' @param as.pcent Logical scalar. When \code{TRUE} returns a table with percentages
 #' instead.
-#' @param addNA Logical scalar. When \code{TRUE} add an additional factor, \code{NA},
-#' to the values returned by \code{classify}.
 #' @param digits Integer scalar. Passed to \code{\link[base:round]{round}}.
 #' @rdname classify_adopters
-ftable.diffnet_adopters <- function(x, as.pcent=TRUE, addNA=TRUE, digits=2, ...) {
-  if (addNA)
-    x <- lapply(x[1:2], addNA)
+ftable.diffnet_adopters <- function(x, as.pcent=TRUE, digits=2, ...) {
+
   out <- with(x, stats::ftable(toa, thr, ...))
 
   if (as.pcent) round(out/sum(out)*100, digits)
