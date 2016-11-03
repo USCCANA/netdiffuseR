@@ -122,7 +122,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
 par(oldpar)
 
 # Example with Brazilian Farmers --------------------------------------------
-
+\dontrun{
 dn <- brfarmersDiffNet
 
 # Setting last TOA as NA
@@ -141,6 +141,7 @@ plot_diffnet2(dn, layout=coords, vertex.size = 300)
 out <- diffusionMap(dn, layout=coords, kde2d.args=list(n=100, h=50))
 col <- adjustcolor(colorRampPalette(c("white","lightblue", "yellow", "red"))(100),.5)
 with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
+}
 
 }
 \author{

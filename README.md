@@ -295,52 +295,35 @@ par(oldpar)
 ### Adopters classification
 
 ``` r
-out <- classify(kfamilyDiffNet, include_censored = TRUE, addNA=FALSE)
+out <- classify(kfamilyDiffNet, include_censored = TRUE)
 ftable(out)
 ```
 
-    ##                thr Very Low Thresh. Low Thresh. High Thresh. Very High Thresh.    NA
-    ## toa                                                                                 
-    ## Early Adopters                14.04        8.40         0.57              0.29  0.00
-    ## Early Majority                 5.64       11.65         5.54              2.58  0.00
-    ## Late Majority                  1.34        5.06         6.21              2.96  0.00
-    ## Laggards                       1.53        0.00         0.00             34.19  0.00
-    ## NA                             0.00        0.00         0.00              0.00  0.00
+    ##                thr Non-Adopters Very Low Thresh. Low Thresh. High Thresh. Very High Thresh.
+    ## toa                                                                                        
+    ## Non-Adopters               0.00             0.00        0.00         0.00              0.00
+    ## Early Adopters             0.00            14.04        8.40         0.57              0.29
+    ## Early Majority             0.00             5.64       11.65         5.54              2.58
+    ## Late Majority              0.00             1.34        5.06         6.21              2.96
+    ## Laggards                   0.00             1.53        0.00         0.00             34.19
 
 ``` r
-# Computing color
-age <- kfamilyDiffNet[["age"]]
-age[age==0] <- mean(age)
+# Plotting 
+oldpar <- par(no.readonly = TRUE)
+par(xpd=TRUE)
+plot(out, color=blues9[2:6], las = 2, xlab="Time of Adoption",
+     ylab="Threshold", main="")
 
-# Mean by class
-cl  <- as.data.frame(out)
-Means <- with(out, matrix(0, 4, 4,
-                        dimnames = list(levels(toa), levels(thr))))
-for (l in levels(out$toa))
-  for (h in levels(out$thr))
-    Means[l,h] <- mean(age[cl$toa==l & cl$thr==h], na.rm = TRUE)
-
-# Color palette
-Col <- Means
-Col[] <- (Means - min(Means, na.rm = TRUE))/
-  (max(Means, na.rm = TRUE) - min(Means, na.rm = TRUE))
-Col[is.nan(Col)] <- mean(Col, na.rm = TRUE)
-Col[] <- rgb(colorRamp(blues9)(Col), maxColorValue = 255)
-
-# Plotting and adding key
-levels(out$toa) <-
-  sapply(strsplit(levels(out$toa), " "), paste, collapse="\n             ")
-plot(out, color=Col, las = 2, xlab="Time of Adoption",
-     ylab="Threshold", main="", ftable.args=list(addNA=FALSE))
-
-drawColorKey(Means, nlevels = 50, border="transparent",
-             main="Age",
-             color.palette = colorRampPalette(blues9)(50),
-             key.pos = c(.8,.90,.1,.6)
-             )
+# Adding key
+legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
+       cex=.6, bty="n", inset=c(0,-.1))
 ```
 
 ![](README_files/figure-markdown_github/mosaic-1.png)
+
+``` r
+par(oldpar)
+```
 
 ### Session info
 
@@ -348,9 +331,9 @@ drawColorKey(Means, nlevels = 50, border="transparent",
 sessionInfo()
 ```
 
-    ## R version 3.3.2 (2016-10-31)
+    ## R version 3.3.1 (2016-06-21)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.1 LTS
+    ## Running under: Ubuntu 14.04.5 LTS
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -369,10 +352,10 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] statnet.common_3.3.0 Rcpp_0.12.7          lattice_0.20-34     
     ##  [4] digest_0.6.10        assertthat_0.1       MASS_7.3-45         
-    ##  [7] grid_3.3.2           formatR_1.4          magrittr_1.5        
-    ## [10] evaluate_0.9         stringi_1.1.1        SparseM_1.72        
+    ##  [7] grid_3.3.1           formatR_1.4          magrittr_1.5        
+    ## [10] evaluate_0.9         stringi_1.1.2        SparseM_1.72        
     ## [13] Matrix_1.2-7.1       sna_2.4              boot_1.3-18         
-    ## [16] rmarkdown_1.1        tools_3.3.2          stringr_1.1.0       
+    ## [16] rmarkdown_1.1        tools_3.3.1          stringr_1.1.0       
     ## [19] igraph_1.0.1         network_1.13.0       yaml_2.1.13         
     ## [22] htmltools_0.3.5      knitr_1.14           tibble_1.2
 

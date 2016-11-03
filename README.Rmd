@@ -224,39 +224,19 @@ par(oldpar)
 ### Adopters classification
 
 ```{r mosaic}
-out <- classify(kfamilyDiffNet, include_censored = TRUE, addNA=FALSE)
+out <- classify(kfamilyDiffNet, include_censored = TRUE)
 ftable(out)
 
-# Computing color
-age <- kfamilyDiffNet[["age"]]
-age[age==0] <- mean(age)
+# Plotting 
+oldpar <- par(no.readonly = TRUE)
+par(xpd=TRUE)
+plot(out, color=blues9[2:6], las = 2, xlab="Time of Adoption",
+     ylab="Threshold", main="")
 
-# Mean by class
-cl  <- as.data.frame(out)
-Means <- with(out, matrix(0, 4, 4,
-                        dimnames = list(levels(toa), levels(thr))))
-for (l in levels(out$toa))
-  for (h in levels(out$thr))
-    Means[l,h] <- mean(age[cl$toa==l & cl$thr==h], na.rm = TRUE)
-
-# Color palette
-Col <- Means
-Col[] <- (Means - min(Means, na.rm = TRUE))/
-  (max(Means, na.rm = TRUE) - min(Means, na.rm = TRUE))
-Col[is.nan(Col)] <- mean(Col, na.rm = TRUE)
-Col[] <- rgb(colorRamp(blues9)(Col), maxColorValue = 255)
-
-# Plotting and adding key
-levels(out$toa) <-
-  sapply(strsplit(levels(out$toa), " "), paste, collapse="\n             ")
-plot(out, color=Col, las = 2, xlab="Time of Adoption",
-     ylab="Threshold", main="", ftable.args=list(addNA=FALSE))
-
-drawColorKey(Means, nlevels = 50, border="transparent",
-             main="Age",
-             color.palette = colorRampPalette(blues9)(50),
-             key.pos = c(.8,.90,.1,.6)
-             )
+# Adding key
+legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
+       cex=.6, bty="n", inset=c(0,-.1))
+par(oldpar)
 ```
 
 
