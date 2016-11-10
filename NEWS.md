@@ -1,9 +1,9 @@
-# Changes in netdiffuseR version 1.16.8 (2016-11-02)
+# Changes in netdiffuseR version 1.17.0 (2016-11-10)
 
 ## New features and changes
 
-* The title of the package is now 'Analysis of Diffusion and Contagion Processes
-  on Networks'.
+* The title of the package is now _Analysis of Diffusion and Contagion Processes
+  on Networks_.
 
 * The function `struct_test` now allows other types of graphs. Before it only
   supported `diffnet` objects.
