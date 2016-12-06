@@ -1,3 +1,8 @@
+2016-12-05  George G. Vega Yon <g.vegayon@gmail.com>
+	* bootnet.r: Implementing Snijders and Borgatti's bootstrapping
+	  on networks.
+
+
 2016-11-03  George G. Vega Yon <g.vegayon@gmail.com>
 	* README.Rmd: In mosaicplot (workhorse of plot.diffnet_adopters), the
 	  color= option wasn't coloring cell by cell. So removed example.

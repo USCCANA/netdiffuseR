@@ -1,3 +1,5 @@
+# Changes in netdiffuseR version 1.18.99 (dev)
+
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)
 
 ## New features and changes
@@ -15,7 +17,7 @@
   This is based on Ray et al (2012) (more details in the manual).
   
 * The function `rgraph_ba` gains a new argument, `self=TRUE`. By default behaves
-  as before following Bollabas, but now can deviate to generate graphs with no
+  as before following Bollobas, but now can deviate to generate graphs with no
   autolinks.
   
 * In `rgraph_ba`, the argument `eta` allows implementing De Almeida et al. (2013)

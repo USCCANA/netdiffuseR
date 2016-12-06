@@ -43,7 +43,7 @@ with the number of rewires per links.}
 
 \item{recursive}{Ignored}
 
-\item{x}{A \code{diffnet_boot} class object.}
+\item{x}{A \code{diffnet_struct_test} class object.}
 
 \item{main}{Character scalar. Title of the histogram.}
 
@@ -64,7 +64,7 @@ this can be either \code{"distance"},\code{">"},\code{"<"},\code{"=="}, \code{">
 or \code{"<="}.}
 }
 \value{
-A list of class \code{diffnet_bot} containing the following:
+A list of class \code{diffnet_struct_test} containing the following:
 \item{graph}{The graph passed to \code{struct_test}.}
 \item{p.value}{The resulting p-value of the test (see details).}
 \item{t0}{The observed value of the statistic.}
@@ -165,5 +165,8 @@ Vega Yon, George G. and Valente, Thomas W. (On development).
 
 Davidson, R., & MacKinnon, J. G. (2004). Econometric Theory and Methods. New York:
 Oxford University Press.
+}
+\seealso{
+Other Functions for inference: \code{\link{bootnet}}
 }
 

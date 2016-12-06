@@ -9,13 +9,13 @@
 #' @param statistic A function that returns either a scalar or a vector.
 #' @param R Integer scalar. Number of repetitions.
 #' @param rewire.args List. Arguments to be passed to \code{\link{rewire_graph}}
-#' @param x A \code{diffnet_boot} class object.
+#' @param x A \code{diffnet_struct_test} class object.
 #' @param ... Further arguments passed to the method (see details).
 #' @param main Character scalar. Title of the histogram.
 #' @param xlab Character scalar. x-axis label.
 #' @param breaks Passed to \code{\link{hist}}.
 #' @param annotated Logical scalar. When TRUE marks the observed data average and the simulated data average.
-#' @return A list of class \code{diffnet_bot} containing the following:
+#' @return A list of class \code{diffnet_struct_test} containing the following:
 #' \item{graph}{The graph passed to \code{struct_test}.}
 #' \item{p.value}{The resulting p-value of the test (see details).}
 #' \item{t0}{The observed value of the statistic.}
@@ -72,7 +72,7 @@
 #'
 #' The function \code{n_rewires} proposes a vector of number of rewirings that
 #' are performed in each iteration.
-#' @export
+#' @family Functions for inference
 #' @references
 #' Vega Yon, George G. and Valente, Thomas W. (On development).
 #'
@@ -129,6 +129,7 @@ struct_test_pval <- function(meanobs, meansim) {
 }
 
 #' @rdname struct_test
+#' @export
 struct_test <- function(
   graph,
   statistic,
