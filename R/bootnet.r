@@ -2,6 +2,9 @@
 
 #' Network Bootstrapping
 #'
+#' Implements the bootstrapping method described in Snijders and Borgatti (1999).
+#' This function is essentially a wrapper of \code{\link[boot:boot]{boot}}.
+#'
 #' @templateVar undirected FALSE
 #' @templateVar self TRUE
 #' @templateVar valued FALSE
@@ -29,11 +32,62 @@
 #' \item{statistic}{The function \code{statistic} passed to \code{bootnet}.}
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
 #' \item{resample.args}{The list \code{resample.args} passed to \code{bootnet}.}
-"bootnet"
+#' @name bootnet
+#' @examples
+#' #
+#' set.seed(13)
+#' g <- rgraph_ba(t=99)
+#'
+#' ans <- bootnet(g, function(w, ...) length(w@x), R=100)
+#' ans
+NULL
+
+bootnet_fillselfR <- function(graph, index, E) {
+  n <- nrow(graph)
+
+  # Finding repeated ones
+  reps  <- vector("list", n)
+  for (i in 1:n) {
+    reps[[index[i]]] <- c(reps[[index[i]]], i)
+  }
+
+  # Adding samples
+  m    <- length(E)
+  dens <- length(E)/(n*n)
+  for (r in reps) {
+
+    # If it wasn't drawn more than once
+    if (length(r) < 2) next
+
+    # Sampling edges
+    for (j in 1:length(r)) {
+      for (k in j:length(r)) {
+
+        if (k == j) next
+        rand <- runif(2)
+
+        # Add accordingly to density
+        if (rand[1] <= dens) {
+          graph[r[j],r[k]] <- E[floor(rand[1]/dens*m) + 1]
+        }
+
+        if (rand[2] <= dens) {
+          graph[r[k],r[j]] <- E[floor(rand[2]/dens*m) + 1]
+        }
+      }
+
+    }
+  }
+
+  return(graph)
+}
 
 #' @rdname bootnet
+#' @param useR Logical scalar. When \code{TRUE}, autolinks are filled using an
+#' \R based rutine. Otherwise it uses the \pkg{Rcpp} implementation (default).
+#' This is intended for testing only.
 #' @export
-resample_graph <- function(graph, self=NULL, ...) {
+resample_graph <- function(graph, self=NULL, useR=FALSE,...) {
 
   # Parameters
   n   <- nrow(graph)
@@ -55,47 +109,17 @@ resample_graph <- function(graph, self=NULL, ...) {
   graph_i <- graph[index,][,index]
 
   # Checking self-edges
-  if (!self) {
-
-    # Finding repeated ones
-    reps  <- vector("list", n)
-    for (j in ids) {
-      k <- index[j]
-      reps[[k]] <- c(reps[[k]], j)
-    }
-
-    # Adding samples
-    for (r in reps) {
-
-      # If it wasn't drawn more than once
-      if (length(r) <= 1) next
-
-      # readline("(pause)")
-
-      # Sampling edges
-      for (j in seq_along(r))
-        for (k in seq_along(r)[-j])
-          graph_i[r[j],r[k]] <- sample(E, 1)
-    }
+  if (!self && useR) {
+    graph_i <- bootnet_fillselfR(graph_i, index, E)
+  } else if (!self & !useR) {
+    graph_i <- bootnet_fillself(graph_i, index, E)
   }
 
-  return(list(graph=graph_i, indicess=index))
-}
-#
-# set.seed(123)
-# g <- rgraph_ba(t = 5-1, self=FALSE)
-# bootnet(g, mean, 5)
-#
-# g
-#
-# set.seed(123)
-# G <- methods::as(matrix(0, ncol=4, nrow=4, dimnames = list(1:4,1:4)), "dgCMatrix")
-# G[1,2] <- 12
-# G[3,2] <- 32
-# G[4,2] <- 42
-# bootnet_sample(G, mean, 3, self = FALSE)
+  # Adding names
+  dimnames(graph_i) <- list(index,index)
 
-# G[c(2,4,2,4),][,c(2,4,2,4)]
+  return(graph_i)
+}
 
 bootnet_pval <- function(meanobs, meansim) {
   n <- length(meanobs)
@@ -132,7 +156,7 @@ bootnet <- function(
                          ...)
 
   # The t0 must be applied with no rewiring!
-  boot_res$t0 <- statistic(graph)
+  boot_res$t0 <- statistic(graph, ...)
 
   # Calc pval
   # To be conservative, in a two tail test we use the min of the two
@@ -146,7 +170,7 @@ bootnet <- function(
     p.value     = p.value,
     t0          = boot_res$t0,
     mean_t      = colMeans(boot_res$t, na.rm = TRUE),
-    var_t       = var(colMeans(boot_res$t, na.rm = TRUE)),
+    var_t       = apply(boot_res$t, 2, var, na.rm = TRUE),
     R           = R,
     statistic   = statistic,
     boot        = boot_res,
@@ -195,7 +219,7 @@ print.diffnet_bootnet <- function(x, ...) {
         "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         paste(rep("-",80), collapse=""),"\n",
         "  Observed mean         = ", paste0(sprintf("%12.4f",t0), collapse=", "), "\n",
-        "  Bootstrap Std. Errors = ", paste0(sprintf("%12.4f",mean_t), collapse=", "), "\n",
+        "  Bootstrap Std. Errors = ", paste0(sprintf("%12.4f",var_t), collapse=", "), "\n",
         "  p-value               = ", paste0(sprintf("%12.4f", p.value), collapse=", "),"\n",
         sep="")
   })

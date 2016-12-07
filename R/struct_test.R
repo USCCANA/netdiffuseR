@@ -172,7 +172,7 @@ struct_test <- function(
     p.value     = p.value,
     t0          = boot_res$t0,
     mean_t      = colMeans(boot_res$t, na.rm = TRUE),
-    var_t       = var(colMeans(boot_res$t, na.rm = TRUE)),
+    var_t       = apply(boot_res$t, 2, var, na.rm = TRUE),
     R           = R,
     statistic   = statistic,
     boot        = boot_res,

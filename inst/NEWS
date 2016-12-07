@@ -3,6 +3,12 @@
 CHANGES IN NETDIFFUSER VERSION 1.18.99 (DEV)
 
 
+New functions
+
+-   bootnet implements network bootstrapping based on Snijders and
+    Borgatti (1999)
+
+
 
 CHANGES IN NETDIFFUSER VERSION 1.17.0 (2016-11-10)
 

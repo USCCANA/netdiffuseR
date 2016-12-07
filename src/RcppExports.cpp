@@ -222,6 +222,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bootnet_fillself
+arma::sp_mat bootnet_fillself(arma::sp_mat& graph, const IntegerVector& index, const NumericVector& E);
+RcppExport SEXP netdiffuseR_bootnet_fillself(SEXP graphSEXP, SEXP indexSEXP, SEXP ESEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type index(indexSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type E(ESEXP);
+    rcpp_result_gen = Rcpp::wrap(bootnet_fillself(graph, index, E));
+    return rcpp_result_gen;
+END_RCPP
+}
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
 RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {

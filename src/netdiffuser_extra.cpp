@@ -143,3 +143,49 @@ NumericVector complete_cases_graph(arma::sp_mat & graph, const NumericVector & x
 
   return wrap(ans);
 }
+
+// [[Rcpp::export]]
+arma::sp_mat bootnet_fillself(
+    arma::sp_mat & graph,
+    const IntegerVector & index,
+    const NumericVector & E
+  ) {
+
+  // Parameters: Size and density of the graph
+  int n = index.length();
+  int m = E.length();
+  double dens = ((double) m) / (double) (n*n);
+
+  // Finding repeated values
+  std::vector< std::vector<int> > reps(n);
+  for (int i=0; i<n; i++) {
+    reps.at(index.at(i)-1).push_back(i);
+  }
+
+  // Sampling E
+  NumericVector rand(2);
+  for (int i=0; i<n; i++) {
+    // If has no elements
+    if (reps.at(i).size() < 2) continue;
+
+    std::vector<int> r(reps.at(i));
+
+    for (int j=0; j<r.size(); j++)
+      for (int k=j; k<r.size(); k++) {
+
+        if (j==k) continue;
+        rand = runif(2);
+
+        // Add accordingly to density
+        if (rand[0] <= dens)
+          graph.at(r.at(j),r.at(k)) = E.at(floor(rand[0]/dens*(m)));
+
+        // Add accordingly to density
+        if (rand[1] <= dens)
+          graph.at(r.at(k),r.at(j)) = E.at(floor(rand[1]/dens*(m)));
+      }
+
+  }
+
+  return graph;
+}

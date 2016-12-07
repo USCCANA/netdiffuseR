@@ -8,9 +8,7 @@
 \alias{resample_graph}
 \title{Network Bootstrapping}
 \usage{
-bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
-
-resample_graph(graph, self = NULL, ...)
+resample_graph(graph, self = NULL, useR = FALSE, ...)
 
 bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
 
@@ -27,15 +25,19 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
+\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+
+\item{useR}{Logical scalar. When \code{TRUE}, autolinks are filled using an
+\R based rutine. Otherwise it uses the \pkg{Rcpp} implementation (default).
+This is intended for testing only.}
+
+\item{...}{Further arguments passed to the method (see details).}
+
 \item{statistic}{An statistic}
 
 \item{R}{Number of reps}
 
 \item{resample.args}{List. Arguments to be passed to \code{\link{resample_graph}}}
-
-\item{...}{Further arguments passed to the method (see details).}
-
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
 
 \item{recursive}{Ignored}
 
@@ -65,7 +67,16 @@ A list of class \code{diffnet_bootnet} containing the following:
 \item{resample.args}{The list \code{resample.args} passed to \code{bootnet}.}
 }
 \description{
-Network Bootstrapping
+Implements the bootstrapping method described in Snijders and Borgatti (1999).
+This function is essentially a wrapper of \code{\link[boot:boot]{boot}}.
+}
+\examples{
+#
+set.seed(13)
+g <- rgraph_ba(t=99)
+
+ans <- bootnet(g, function(w, ...) length(w@x), R=100)
+ans
 }
 \references{
 Snijders, T. A. B., & Borgatti, S. P. (1999). Non-Parametric

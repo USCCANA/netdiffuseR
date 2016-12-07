@@ -32,4 +32,8 @@ double st_equal(double y0, double y1);
 void st_getfun(std::string funname, funcPtr & fun);
 NumericVector complete_cases_graph(arma::sp_mat & graph, NumericVector & x);
 
+arma::sp_mat bootnet_fillself(
+    arma::sp_mat & graph, const IntegerVector & index, const NumericVector & E
+  );
+
 #endif

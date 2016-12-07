@@ -65,6 +65,10 @@ sp_as_undirected <- function(x) {
     .Call('netdiffuseR_sp_as_undirected', PACKAGE = 'netdiffuseR', x)
 }
 
+bootnet_fillself <- function(graph, index, E) {
+    .Call('netdiffuseR_bootnet_fillself', PACKAGE = 'netdiffuseR', graph, index, E)
+}
+
 #' Distribution over a grid
 #'
 #' Distribution of pairs over a grid of fix size.

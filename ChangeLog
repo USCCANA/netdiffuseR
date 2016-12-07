@@ -1,3 +1,9 @@
+2016-12-06  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/bootnet.r: Still working on the BS.
+	* src/netdiffuser_extra.*: Adding bootnet_fillself to deal with i
+	  sampled more than once.
+	* R/struct_test.R: Fixing bug in variance calculation.
+
 2016-12-05  George G. Vega Yon <g.vegayon@gmail.com>
 	* bootnet.r: Implementing Snijders and Borgatti's bootstrapping
 	  on networks.

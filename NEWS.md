@@ -1,5 +1,10 @@
 # Changes in netdiffuseR version 1.18.99 (dev)
 
+## New functions
+
+* `bootnet` implements network bootstrapping based on Snijders and Borgatti (1999)
+
+
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)
 
 ## New features and changes
