@@ -32,6 +32,37 @@ test_that("Filling zeros", {
   expect_equal(ans1[-length(ans0)], ans1[-length(ans1)])
 })
 
+
+test_that("Methods", {
+  # Generating the data
+  set.seed(1291)
+
+  # Static graphs
+  graphdg <- rgraph_ba(t=9)
+  graphmt <- as.matrix(graphdg)
+
+  set.seed(123); ans0 <- resample_graph(graphdg)
+  set.seed(123); ans1 <- resample_graph(graphmt)
+
+  expect_equal(ans0, ans1)
+
+  # Dynamic graphs
+  graphls <- lapply(1:3, function(x) rgraph_ba(t=9))
+  names(graphls) <- 2001:2003
+  toa <- sample(c(2001:2003, NA), 10, TRUE)
+
+  graphdn <- as_diffnet(graphls, toa, t0=2001, t1=2003)$graph
+  graphar <- lapply(graphls, as.matrix)
+  graphar <- array(unlist(graphar), dim=c(10,10,3),
+                   dimnames = list(1:10, 1:10, 2001:2003))
+
+  set.seed(123); ans0 <- resample_graph(graphls)
+  set.seed(123); ans1 <- resample_graph(graphdn)
+  set.seed(123); ans2 <- resample_graph(graphar)
+
+  expect_equal(ans0, ans1)
+  expect_equal(ans0, ans2)
+})
 # rn(list=ls())
 # library(microbenchmark)
 # library(netdiffuseR)

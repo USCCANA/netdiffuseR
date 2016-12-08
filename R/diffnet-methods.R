@@ -1436,8 +1436,20 @@ nslices <- function(graph) {
 #' @export
 #' @rdname as_diffnet
 nodes <- function(graph) {
-  if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
-  graph$meta$ids
+  cls <- class(graph)
+  if ("diffnet" %in% cls)
+    return(graph$meta$ids)
+  else if ("list" %in% cls) {
+    ans <- rownames(graph[[1]])
+    if (!length(ans)) stop("There are not names to fetch")
+    else return(ans)
+  } else if (any(c("matrix", "dgCMatrix", "array") %in% cls)) {
+    ans <- rownames(graph)
+    if (!length(ans)) stop("There are not names to fetch")
+    else return(ans)
+  }
+  else stopifnot_graph(graph)
+
 }
 
 #' @export

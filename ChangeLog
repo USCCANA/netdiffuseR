@@ -1,3 +1,9 @@
+2016-12-07  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Removed unused function.
+	* R/bootnet.r: Adding methods for other types of graphs.
+	* R/rewire.R: Recycling code in list vs array.
+	* R/diffnet-methods.R: Adding new methods for -nodes-.
+
 2016-12-06  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/bootnet.r: Still working on the BS.
 	* src/netdiffuser_extra.*: Adding bootnet_fillself to deal with i

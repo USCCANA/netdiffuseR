@@ -311,30 +311,8 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
   if (!length(tn)) tn <- 1:t
   names(out) <- tn
 
-  # Checking p
-  if (length(p)==1)
-    p <- rep(p, t)
-
-  # Rewiring
-  for(i in 1:t) {
-    # Copy replaces the first from 2 to T with 1
-    j <- ifelse(copy.first, 1, i)
-
-    out[[i]] <- if (algorithm == "endpoints") {
-      rewire_endpoints(
-        out[[j]], p[i], both.ends, self, multiple, undirected)
-    } else if (algorithm == "swap") {
-      rewire_swap(
-        out[[j]], p[i], self, multiple, undirected, pr.change) #, althexagons)
-    } else stop("No such rewiring algorithm: ", algorithm)
-
-    rn <- rownames(graph[,,i])
-    if (!length(rn)) rn <- 1:n
-
-    dimnames(out[[i]]) <- list(rn, rn)
-  }
-
-  out
+  return(rewire_graph.list(out, p, algorithm, both.ends, self, multiple, undirected,
+                    pr.change, copy.first, althexagons))
 }
 
 #' Permute the values of a matrix

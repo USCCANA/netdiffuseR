@@ -88,10 +88,37 @@ bootnet_fillselfR <- function(graph, index, E) {
 #' This is intended for testing only.
 #' @export
 resample_graph <- function(graph, self=NULL, useR=FALSE,...) {
+  # Checking undirected (if exists)
+  checkingUndirected(graph)
+
+  cls <- class(graph)
+  out <- if ("dgCMatrix" %in% cls) {
+    resample_graph.dgCMatrix(graph, self, useR, ...)
+  } else if ("list" %in% cls) {
+    resample_graph.list(graph, self, useR, ...)
+  } else if ("matrix" %in% cls) {
+    resample_graph.dgCMatrix(methods::as(graph, "dgCMatrix"), self, useR, ...)
+  } else if ("diffnet" %in% cls) {
+    resample_graph.list(graph$graph, self, useR, ...)
+  } else if ("array" %in% cls) {
+    resample_graph.array(graph, self, useR, ...)
+  } else stopifnot_graph(graph)
+
+  attr(out, "undirected") <- FALSE
+
+  return(out)
+}
+
+resample_graph.dgCMatrix <- function(graph, self=NULL, useR=FALSE,
+                                     only_fill=FALSE, ...) {
 
   # Parameters
   n   <- nrow(graph)
-  ids <- 1L:n
+  ids <- if (!only_fill) {
+    1L:n
+  } else {
+    as.integer(rownames(graph))
+  }
 
   # Checking if self or not
   if (!length(self))
@@ -102,11 +129,15 @@ resample_graph <- function(graph, self=NULL, useR=FALSE,...) {
   if (!length(E))
     stop("The graph is empty.")
 
-  # Random sample (with replacement)
-  index <- sample(ids, n, TRUE)
-
   # Sample graph
-  graph_i <- graph[index,][,index]
+  if (!only_fill) {
+    # Random sample (with replacement)
+    index   <-sample(ids, n, TRUE)
+    graph_i <- graph[index,][,index]
+  } else {
+    index   <- ids
+    graph_i <- graph
+  }
 
   # Checking self-edges
   if (!self && useR) {
@@ -119,6 +150,46 @@ resample_graph <- function(graph, self=NULL, useR=FALSE,...) {
   dimnames(graph_i) <- list(index,index)
 
   return(graph_i)
+}
+
+resample_graph.list <- function(graph, self, useR, ...) {
+  t   <- length(graph)
+  out <- graph
+
+  # Names
+  tn <- names(graph)
+  if (!length(tn)) tn <- 1:t
+  names(out) <- tn
+
+  # Generating the first resample
+  out[[1]] <- resample_graph.dgCMatrix(graph[[1]], self, useR, ...)
+
+  # If a short list, then return its only element
+  if (t == 1) return(out)
+
+  # Repeating
+  n      <- nnodes(out)
+  newids <- as.integer(rownames(out[[1]]))
+  for (i in 2:t) {
+    dimnames(out[[i]]) <- list(1:n, 1:n)
+    out[[i]] <- resample_graph.dgCMatrix(
+      out[[i]][newids,][,newids], self, useR, only_fill = TRUE, ...)
+  }
+
+  return(out)
+}
+
+resample_graph.array <-function(graph, self, useR, ...) {
+  n   <- dim(graph)[1]
+  t   <- dim(graph)[3]
+  out <- apply(graph, 3, methods::as, Class="dgCMatrix")
+
+  # Checking time names
+  tn <- dimnames(graph)[[3]]
+  if (!length(tn)) tn <- 1:t
+  names(out) <- tn
+
+  return(resample_graph.list(out, self, useR, ...))
 }
 
 bootnet_pval <- function(meanobs, meansim) {
