@@ -9,7 +9,9 @@
 #' @templateVar self TRUE
 #' @templateVar valued FALSE
 #' @template graph_template
-#' @param statistic An statistic
+#' @param statistic A function that returns a vector with the statistic(s) of interest.
+#' The first argument must be the graph, and the second argument a vector of indices
+#' (see details)
 #' @param resample.args List. Arguments to be passed to \code{\link{resample_graph}}
 #' @param R Number of reps
 #' @param x A \code{diffnet_bootnet} class object.
@@ -18,6 +20,18 @@
 #' @param xlab Character scalar. x-axis label.
 #' @param breaks Passed to \code{\link{hist}}.
 #' @param annotated Logical scalar. When TRUE marks the observed data average and the simulated data average.
+#' @details
+#' Just like the \code{boot} function of the \pkg{boot} package, the \code{statistic}
+#' that is passed must have as arguments the original data (the graph in this case),
+#' and a vector of indicides. In each repetition, the graph that is passed is a
+#' resampled version generated as described in Snijders and Borgatti (1999). One
+#' important feature is that in those cases that an individual is drawn more than
+#' once, the algorithm, in particular, \code{resample_graph}, takes care of filling
+#' these pseudo autolinks that are not in the diagonal of the network. The vector
+#' of indices that is passed to \code{statistic}, an integer vector with range
+#' 1 to \eqn{n}, corresponds to the drawn sample of nodes, so the user can, for
+#' example, use it to get a subset of a \code{data.frame} that will be used with
+#' the \code{graph}.
 #' @export
 #' @family Functions for inference
 #' @references Snijders, T. A. B., & Borgatti, S. P. (1999). Non-Parametric
@@ -110,15 +124,7 @@ resample_graph <- function(graph, self=NULL, useR=FALSE,...) {
 }
 
 resample_graph.dgCMatrix <- function(graph, self=NULL, useR=FALSE,
-                                     only_fill=FALSE, ...) {
-
-  # Parameters
-  n   <- nrow(graph)
-  ids <- if (!only_fill) {
-    1L:n
-  } else {
-    as.integer(rownames(graph))
-  }
+                                     index=NULL, ...) {
 
   # Checking if self or not
   if (!length(self))
@@ -130,14 +136,13 @@ resample_graph.dgCMatrix <- function(graph, self=NULL, useR=FALSE,
     stop("The graph is empty.")
 
   # Sample graph
-  if (!only_fill) {
-    # Random sample (with replacement)
-    index   <-sample(ids, n, TRUE)
-    graph_i <- graph[index,][,index]
-  } else {
-    index   <- ids
-    graph_i <- graph
-  }
+  if (!length(index)) # Random sample (with replacement)
+    index   <-sample(1L:nrow(graph), nnodes(graph), TRUE)
+
+  graph_i <- graph[index,][,index]
+
+  # Getting ids
+  original_ids <- dimnames(graph_i)
 
   # Checking self-edges
   if (!self && useR) {
@@ -147,7 +152,8 @@ resample_graph.dgCMatrix <- function(graph, self=NULL, useR=FALSE,
   }
 
   # Adding names
-  dimnames(graph_i) <- list(index,index)
+  attr(graph_i, "sample_indices") <- index
+  dimnames(graph_i) <- original_ids
 
   return(graph_i)
 }
@@ -161,26 +167,26 @@ resample_graph.list <- function(graph, self, useR, ...) {
   if (!length(tn)) tn <- 1:t
   names(out) <- tn
 
-  # Generating the first resample
+  # Generating the first resample (since its dynamic, the sample_indices
+  # attribute must be outside)
   out[[1]] <- resample_graph.dgCMatrix(graph[[1]], self, useR, ...)
+  attr(out, "sample_indices") <- attr(out[[1]], "sample_indices")
 
   # If a short list, then return its only element
   if (t == 1) return(out)
 
   # Repeating
-  n      <- nnodes(out)
-  newids <- as.integer(rownames(out[[1]]))
+  newids <- attr(out, "sample_indices")
   for (i in 2:t) {
-    dimnames(out[[i]]) <- list(1:n, 1:n)
-    out[[i]] <- resample_graph.dgCMatrix(
-      out[[i]][newids,][,newids], self, useR, only_fill = TRUE, ...)
+    # Filling blanks and removing sample_indices
+    out[[i]] <- resample_graph.dgCMatrix(out[[i]], self, useR, newids, ...)
+    attr(out[[i]], "sample_indices") <- NULL
   }
 
   return(out)
 }
 
 resample_graph.array <-function(graph, self, useR, ...) {
-  n   <- dim(graph)[1]
   t   <- dim(graph)[3]
   out <- apply(graph, 3, methods::as, Class="dgCMatrix")
 
@@ -196,8 +202,8 @@ bootnet_pval <- function(meanobs, meansim) {
   n <- length(meanobs)
   ans <- vector("numeric",n)
   for (i in 1:n)
-    ans[i] <- 2*min(mean(meansim[,i] < meanobs[i]),
-                    mean(meansim[,i] > meanobs[i]))
+    ans[i] <- 2*min(mean(meansim[,i] < 0),
+                    mean(meansim[,i] > 0))
 
   ans
 }
@@ -219,7 +225,8 @@ bootnet <- function(
   # Preparing the call to boot
   resample.args$graph <- graph
   statisticpll <- function(d, i, fn, resample.args, ...) {
-    fn(do.call(resample_graph, resample.args),...)
+    g <- do.call(resample_graph, resample.args)
+    fn(g, attr(g, "sample_indices"),...)
   }
 
   # Calling boot
@@ -227,7 +234,7 @@ bootnet <- function(
                          ...)
 
   # The t0 must be applied with no rewiring!
-  boot_res$t0 <- statistic(graph, ...)
+  boot_res$t0 <- statistic(graph, 1:nnodes(graph), ...)
 
   # Calc pval
   # To be conservative, in a two tail test we use the min of the two

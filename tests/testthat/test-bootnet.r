@@ -23,10 +23,10 @@ test_that("Filling zeros", {
   g <- rgraph_ba(t = n-1, self=FALSE, m = 1)
 
   set.seed(1)
-  ans0 <- bootnet(g, function(w, ...) length(w@x), R=100)
+  ans0 <- bootnet(g, function(w, i, ...) length(w@x), R=100)
 
   set.seed(1)
-  ans1 <- bootnet(g, function(w, ...) length(w@x), R=100,
+  ans1 <- bootnet(g, function(w, i, ...) length(w@x), R=100,
                   resample.args = list(self=FALSE, useR=FALSE))
 
   expect_equal(ans1[-length(ans0)], ans1[-length(ans1)])
@@ -60,8 +60,8 @@ test_that("Methods", {
   set.seed(123); ans1 <- resample_graph(graphdn)
   set.seed(123); ans2 <- resample_graph(graphar)
 
-  expect_equal(ans0, ans1)
-  expect_equal(ans0, ans2)
+  expect_equivalent(ans0, ans1)
+  expect_equivalent(ans0, ans2)
 })
 # rn(list=ls())
 # library(microbenchmark)

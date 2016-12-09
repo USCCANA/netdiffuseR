@@ -32,6 +32,7 @@ NULL
 #' @importFrom utils getFromNamespace head str
 #' @importFrom boot boot
 #' @importFrom MASS bandwidth.nrd kde2d
+#' @importFrom MatchIt matchit
 NULL
 
 release_questions <- function() {

@@ -63,6 +63,7 @@ Collate:
     'infect_suscept.R'
     'misc.R'
     'moran.R'
+    'netmatch.r'
     'options.R'
     'package-doc.R'
     'plot_diffnet2.R'

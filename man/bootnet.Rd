@@ -33,7 +33,9 @@ This is intended for testing only.}
 
 \item{...}{Further arguments passed to the method (see details).}
 
-\item{statistic}{An statistic}
+\item{statistic}{A function that returns a vector with the statistic(s) of interest.
+The first argument must be the graph, and the second argument a vector of indices
+(see details)}
 
 \item{R}{Number of reps}
 
@@ -69,6 +71,19 @@ A list of class \code{diffnet_bootnet} containing the following:
 \description{
 Implements the bootstrapping method described in Snijders and Borgatti (1999).
 This function is essentially a wrapper of \code{\link[boot:boot]{boot}}.
+}
+\details{
+Just like the \code{boot} function of the \pkg{boot} package, the \code{statistic}
+that is passed must have as arguments the original data (the graph in this case),
+and a vector of indicides. In each repetition, the graph that is passed is a
+resampled version generated as described in Snijders and Borgatti (1999). One
+important feature is that in those cases that an individual is drawn more than
+once, the algorithm, in particular, \code{resample_graph}, takes care of filling
+these pseudo autolinks that are not in the diagonal of the network. The vector
+of indices that is passed to \code{statistic}, an integer vector with range
+1 to \eqn{n}, corresponds to the drawn sample of nodes, so the user can, for
+example, use it to get a subset of a \code{data.frame} that will be used with
+the \code{graph}.
 }
 \examples{
 #
