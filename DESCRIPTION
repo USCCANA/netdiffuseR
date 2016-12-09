@@ -25,6 +25,7 @@ Imports:
     network,
     Matrix,
     MASS,
+    MatchIt,
     SparseM,
     methods,
     grDevices,
