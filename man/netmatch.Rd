@@ -29,6 +29,10 @@ netmatch(dat, graph, timevar, depvar, covariates, treat_thr = rep(1L,
 Sets the threshold of \code{exposure} at which it is considered that an
 observation is treated.}
 
+\item{adopt_thr}{Either a numeric scalar or vector of length \code{nslices(graph)}.
+Sets the threshold of \code{depvar} at which it is considered that an observation
+has adopted a behavior.}
+
 \item{expo_pcent}{Logical scalar. When \code{TRUE}, exposure is computed
 non-normalized (so it is a count rather than a percentage).}
 
@@ -37,10 +41,6 @@ exposure. \code{expo_lag=1} defines exposure in T considering behavior and
 network at T-1.}
 
 \item{...}{Further arguments to be passed to \code{\link[MatchIt:matchit]{matchit}}.}
-
-\item{adop_thr}{Either a numeric scalar or vector of length \code{nslices(graph)}.
-Sets the threshold of \code{depvar} at which it is considered that an observation
-has adopted a behavior.}
 }
 \value{
 In the case of \code{netmatch_prepare}

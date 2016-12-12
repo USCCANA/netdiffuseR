@@ -11,7 +11,7 @@
 #' @param timevar Character scalar. Name of time variable
 #' @param depvar Character scalar. Name of the dependent variable
 #' @param covariates Character vector. Name(s) of the control variable(s).
-#' @param adop_thr Either a numeric scalar or vector of length \code{nslices(graph)}.
+#' @param adopt_thr Either a numeric scalar or vector of length \code{nslices(graph)}.
 #' Sets the threshold of \code{depvar} at which it is considered that an observation
 #' has adopted a behavior.
 #' @param treat_thr Either a numeric scalar or vector of length \code{nslices(graph)}.
@@ -174,20 +174,13 @@ netmatch <- function(
   if (length(mmethod) && ("cem" %in% mmethod)) {
 
     # Retrieving sub classes
-    subclasses <- match_obj$subclass
-    fATT       <- NULL
+    dat$weights <- match_obj$weights
+    subd        <- dat[which(dat$weights > 0), ,drop=FALSE]
 
-    # Computing treatment effects by subclass
-    for (s in unique(subclasses)) {
-      if (is.na(s)) next
-      subd <- dat[which(subclasses == s), ]
-      fATT <- c(fATT,
-                mean(subd$Y[subd$treat == 1], na.rm=TRUE) -
-                  mean(subd$Y[subd$treat == 0], na.rm=TRUE)
-      )
-    }
+    # Computing effect. At the end CEM gives weights (very simple)
+    fATT <- mean(with(subd[subd$treat == 1,], Y*weights), na.rm = TRUE) -
+      mean(with(subd[subd$treat == 0,], Y*weights), na.rm=TRUE)
 
-    fATT <- mean(fATT)
   } else {
     match_index <- match_obj$match.matrix
 
