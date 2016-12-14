@@ -102,6 +102,8 @@ pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
 #' @param color.palette Color palette of \code{length(nlevels)}.
 #' @param tick.width Numeric vector of length 2 indicating the length of the inner
 #'  and outer tick marks as percentage of the axis.
+#' @param labels Character vector. When provided, specifies using different
+#' labels for the tick marks than those provided by \code{tick.marjks}.
 #' @param add.box Logical scalar. When \code{TRUE} adds a box around the key.
 #' @param ... Further arguments to be passed to \code{\link[graphics:rect]{rect}}
 #' @export
@@ -118,7 +120,10 @@ pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
 #' @author George G. Vega Yon
 #' @keywords misc
 drawColorKey <- function(
-  x, tick.marks = pretty_within(x), main=NULL,
+  x,
+  tick.marks = pretty_within(x),
+  labels     = tick.marks,
+  main=NULL,
   key.pos=c(.925,.975,.05,.95),
   pos = 2, nlevels=length(tick.marks),
   color.palette=grDevices::colorRampPalette(c("lightblue", "yellow", "red"))(nlevels),
@@ -167,7 +172,7 @@ drawColorKey <- function(
   sgn <- ifelse(pos==2, 1, -1)
   if (!add.box) graphics::segments(coords[i], coords[3], coords[i], coords[4])
   graphics::segments(coords[i] - tw[1]*sgn, atick.marks, coords[i] + tw[2]*sgn, atick.marks)
-  graphics::text(coords[i] - sgn*tw[1], atick.marks, labels = tick.marks, pos=pos)
+  graphics::text(coords[i] - sgn*tw[1], atick.marks, labels = labels, pos=pos)
 
   # Adding box
   if (add.box) graphics::rect(coords[1], coords[3], coords[2], coords[4])

@@ -4,8 +4,8 @@
 \alias{drawColorKey}
 \title{Draw a color key in the current device}
 \usage{
-drawColorKey(x, tick.marks = pretty_within(x), main = NULL,
-  key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
+drawColorKey(x, tick.marks = pretty_within(x), labels = tick.marks,
+  main = NULL, key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
   nlevels = length(tick.marks),
   color.palette = (grDevices::colorRampPalette(c("lightblue", "yellow",
   "red")))(nlevels), tick.width = c(0.01, 0.0075), add.box = TRUE, ...)
@@ -14,6 +14,9 @@ drawColorKey(x, tick.marks = pretty_within(x), main = NULL,
 \item{x}{A numeric vector with the data (it is used to extract the range).}
 
 \item{tick.marks}{A numeric vector indicating the levels to be included in the axis.}
+
+\item{labels}{Character vector. When provided, specifies using different
+labels for the tick marks than those provided by \code{tick.marjks}.}
 
 \item{main}{Character scalar. Title of the key.}
 
