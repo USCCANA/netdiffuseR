@@ -79,12 +79,35 @@ test_that("Methods", {
 #   unit= "relative"
 # )
 
-rm(list=ls())
-library(netdiffuseR)
-set.seed(123)
-n <- 5
-g <- rgraph_ba(t = n-1, self=FALSE, m = 1)
+# rm(list=ls())
+# library(netdiffuseR)
+# set.seed(123)
+# n <- 5
+# g <- rgraph_ba(t = n-1, self=FALSE, m = 1)
+#
+# set.seed(1); ans0 <- bootnet(g, function(w, ...) ifelse(inherits(w, "list"), length(w$graph@x), length(w@x)), R=100)
+# set.seed(1); ans1 <- bootnet(g, function(w, ...) ifelse(inherits(w, "list"), length(w$graph@x), length(w@x)), R=100,
+#                              resample.args = list(self=FALSE, useR=FALSE))
+#
 
-set.seed(1); ans0 <- bootnet(g, function(w, ...) ifelse(inherits(w, "list"), length(w$graph@x), length(w@x)), R=100)
-set.seed(1); ans1 <- bootnet(g, function(w, ...) ifelse(inherits(w, "list"), length(w$graph@x), length(w@x)), R=100,
-                             resample.args = list(self=FALSE, useR=FALSE))
+# library(netdiffuseR)
+# n <- 100
+# G <- rgraph_ws(n=n, p = .5, undirected = FALSE, self=FALSE, k=4)
+# G <- list(G,G)
+# Y1 <- sample(c(0,1), n, TRUE)
+# Y2 <- Y1
+# Y2[Y2==0] <- sample(c(0,1), sum(Y2==0), TRUE)
+# X <- runif(n*2)
+# dat <- data.frame(Y=c(Y1, Y2), X, year=c(rep(1,n), rep(2,n)))
+# dat1 <- subset(dat, year==1)
+# dat2 <- subset(dat, year==2)
+#
+# ans1 <- bootnet(G, function(g, idx) {
+#   d <- rbind(dat1[idx,], dat2[idx,])
+#   suppressMessages(netmatch(d, g, "year", "Y", "X", treat_thr = 3, method="cem")$fATT)
+# }, R=1e3)
+#
+# ans2 <- struct_test(G, function(g, idx) {
+#   suppressMessages(netmatch(dat, g, "year", "Y", "X", treat_thr = 3, method="cem")$fATT)
+# }, R=1e3)
+#

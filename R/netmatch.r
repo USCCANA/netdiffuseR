@@ -174,12 +174,14 @@ netmatch <- function(
   if (length(mmethod) && ("cem" %in% mmethod)) {
 
     # Retrieving sub classes
-    dat$weights <- match_obj$weights
-    subd        <- dat[which(dat$weights > 0), ,drop=FALSE]
+    dat$wgts <- match_obj$weights
+    subd     <- dat[which(dat$wgts > 0), ,drop=FALSE]
 
     # Computing effect. At the end CEM gives weights (very simple)
-    fATT <- mean(with(subd[subd$treat == 1,], Y*weights), na.rm = TRUE) -
-      mean(with(subd[subd$treat == 0,], Y*weights), na.rm=TRUE)
+    # fATT <- mean(with(subd[subd$treat == 1,], Y*weights), na.rm = TRUE) -
+    #   mean(with(subd[subd$treat == 0,], Y*weights), na.rm=TRUE)
+    fATT <- with(subd[subd$treat==1], sum(Y*wgts)/sum(wgts)) -
+      with(subd[subd$treat==0], sum(Y*wgts)/sum(wgts))
 
   } else {
     match_index <- match_obj$match.matrix
