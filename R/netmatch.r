@@ -178,8 +178,6 @@ netmatch <- function(
     subd     <- dat[which(dat$wgts > 0), ,drop=FALSE]
 
     # Computing effect. At the end CEM gives weights (very simple)
-    # fATT <- mean(with(subd[subd$treat == 1,], Y*weights), na.rm = TRUE) -
-    #   mean(with(subd[subd$treat == 0,], Y*weights), na.rm=TRUE)
     fATT <- with(subd[subd$treat==1,, drop=FALSE], sum(Y*wgts)/sum(wgts)) -
       with(subd[subd$treat==0,, drop=FALSE], sum(Y*wgts)/sum(wgts))
 
@@ -207,7 +205,8 @@ netmatch <- function(
   # Wrapping up
   return(list(
     fATT      = fATT,
-    match_obj = match_obj
+    match_obj = match_obj,
+    exposures = dat$expo
   )
   )
 
