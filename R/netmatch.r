@@ -180,8 +180,8 @@ netmatch <- function(
     # Computing effect. At the end CEM gives weights (very simple)
     # fATT <- mean(with(subd[subd$treat == 1,], Y*weights), na.rm = TRUE) -
     #   mean(with(subd[subd$treat == 0,], Y*weights), na.rm=TRUE)
-    fATT <- with(subd[subd$treat==1], sum(Y*wgts)/sum(wgts)) -
-      with(subd[subd$treat==0], sum(Y*wgts)/sum(wgts))
+    fATT <- with(subd[subd$treat==1,, drop=FALSE], sum(Y*wgts)/sum(wgts)) -
+      with(subd[subd$treat==0,, drop=FALSE], sum(Y*wgts)/sum(wgts))
 
   } else {
     match_index <- match_obj$match.matrix
