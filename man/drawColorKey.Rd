@@ -51,9 +51,6 @@ plot(x, col=col, pch=19)
 drawColorKey(x, nlevels = 100, border="transparent",
  main="Key\\nLike A\\nBoss")
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other visualizations: \code{\link{dgr}},
   \code{\link{diffusionMap}},
@@ -64,5 +61,7 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
+\author{
+George G. Vega Yon
+}
 \keyword{misc}
-

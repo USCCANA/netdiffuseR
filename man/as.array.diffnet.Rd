@@ -40,4 +40,3 @@ Other diffnet methods: \code{\link{\%*\%}},
   \code{\link{diffnet-arithmetic}},
   \code{\link{diffnet_index}}
 }
-

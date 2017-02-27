@@ -52,4 +52,9 @@ List egonet_attrs_cpp(
     bool valued=true
   );
 
+arma::sp_umat approx_geodesicCpp(
+    const arma::sp_mat & G,
+    int n = 6,
+    bool warn = false
+);
 #endif

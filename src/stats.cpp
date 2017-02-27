@@ -260,6 +260,43 @@ List struct_equiv_cpp(
   return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
 }
 
+// [[Rcpp::export]]
+arma::sp_mat matrix_compare_cpp(
+    const arma::sp_mat & A,
+    const arma::sp_mat & B,
+    Function fun
+) {
+
+  // Checking dimmensions
+  int n = A.n_cols;
+  int m = A.n_rows;
+
+
+  // Comparing
+  typedef arma::sp_mat::const_iterator spiter;
+
+  arma::sp_umat done(n, m);
+  arma::sp_mat   ans(n, m);
+
+  // Iterating through matrix A
+  for (spiter iter=A.begin(); iter!= A.end(); iter++)
+    // Filling the value
+    ans.at(iter.row(), iter.col()) =
+      as< double >(fun(*iter, B.at(iter.row(), iter.col()) )),
+      done.at(iter.row(), iter.col()) = 1u;
+
+  // Iterating throught matrix B
+  for (spiter iter=B.begin(); iter!= B.end(); iter++)
+    if (done.at(iter.row(), iter.col()) != 1u)
+      // Filling the value
+      ans.at(iter.row(), iter.col()) =
+        as< double >(fun(A.at(iter.row(), iter.col()), *iter));
+
+
+  return ans;
+
+}
+
 /** *R
  set.seed(1234)
  adjmat <- rand_graph_cpp()

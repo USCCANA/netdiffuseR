@@ -146,6 +146,7 @@ Let \eqn{G} be the baseline graph and \eqn{G'} be a copy of it. Then, For \eqn{l
 The endpoints algorithm is used by default in \code{\link{rdiffnet}} and used
 to be the default in \code{\link{struct_test}} (now \code{swap} is the default).
 }
+
 \examples{
 # Checking the consistency of the "swap" ------------------------------------
 
@@ -180,9 +181,6 @@ baseline <- paste0(as.vector(x), collapse="")
 points(x=7,y=table(as.factor(w))[baseline]/nsim*100, pch=3, col="red")
 
 }
-\author{
-George G. Vega Yon
-}
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collectivedynamics of "small-world" networks.
 Nature, 393(6684), 440–442. \url{http://doi.org/10.1038/30918}
@@ -216,4 +214,6 @@ Other simulation functions: \code{\link{permute_graph}},
   \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
   \code{\link{ring_lattice}}
 }
-
+\author{
+George G. Vega Yon
+}

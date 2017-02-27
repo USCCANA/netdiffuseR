@@ -45,4 +45,3 @@ vertex_covariate_compare(G, x, "^2")
 vertex_covariate_compare(G, x, ">=")
 vertex_covariate_compare(G, x, "<=")
 }
-

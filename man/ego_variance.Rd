@@ -52,4 +52,3 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
-

@@ -109,9 +109,6 @@ adopt <- toa_mat(toa)
 
 plot_diffnet(graph, adopt$cumadopt)
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other visualizations: \code{\link{dgr}},
   \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
@@ -122,5 +119,7 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
+\author{
+George G. Vega Yon
+}
 \keyword{hplot}
-

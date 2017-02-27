@@ -23,9 +23,6 @@ This data frame is used to ilustrate some of the functions of the package,
 in particular, the \code{\link{survey_to_diffnet}} function. This dataset
 can be merged with the \code{\link{fakeEdgelist}}.
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{brfarmers}}, \code{\link{diffusion-data}},
@@ -35,4 +32,6 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}
 }
-
+\author{
+George G. Vega Yon
+}

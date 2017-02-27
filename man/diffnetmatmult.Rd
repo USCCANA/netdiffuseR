@@ -58,4 +58,3 @@ Other diffnet methods: \code{\link{as.array.diffnet}},
   \code{\link{diffnet-arithmetic}},
   \code{\link{diffnet_index}}
 }
-

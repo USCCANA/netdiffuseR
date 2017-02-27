@@ -22,7 +22,7 @@ Analysis of Diffusion and Contagion Processes on Networks
 
 netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
 }
+
 \author{
 Vega Yon, Dyal, Hayes & Valente
 }
-

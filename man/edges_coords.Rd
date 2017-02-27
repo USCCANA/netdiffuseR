@@ -112,4 +112,3 @@ with(ecoords, arrows(x0,y0,x1,y1, length=.1))
 }
 \keyword{dplot}
 \keyword{misc}
-

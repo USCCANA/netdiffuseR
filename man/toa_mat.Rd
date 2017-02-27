@@ -60,4 +60,3 @@ toa_mat(times, t0=2000, t1=2006)
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \keyword{manip}
-

@@ -28,6 +28,9 @@ double st_greaterequal(double y0, double y1);
 double st_smaller(double y0, double y1);
 double st_smallerequal(double y0, double y1);
 double st_equal(double y0, double y1);
+double st_min(double y0, double y1);
+double st_max(double y0, double y1);
+double st_mean(double y0, double y1);
 
 void st_getfun(std::string funname, funcPtr & fun);
 

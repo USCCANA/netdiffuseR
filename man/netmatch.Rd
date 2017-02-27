@@ -3,6 +3,7 @@
 \name{netmatch}
 \alias{netmatch}
 \alias{netmatch_prepare}
+\alias{netmatch}
 \title{Matching Estimators with Network Data}
 \usage{
 netmatch_prepare(dat, graph, timevar, depvar, covariates, treat_thr = rep(1L,
@@ -78,9 +79,6 @@ obtaining exactly the opposed outcome that matching based estimators pursue.
 A couple of good references for matching estimators are Imbens and Wooldridge
 (2009), and Sekhon (2008).
 }
-\author{
-George G. Vega Yon
-}
 \references{
 Aral, S., Muchnik, L., & Sundararajan, A. (2009). Distinguishing
 influence-based contagion from homophily-driven diffusion in dynamic networks.
@@ -97,4 +95,6 @@ Sekhon, J. S. (2008). The Neyman-Rubin Model of Causal Inference and Estimation
 Via Matching Methods. The Oxford Handbook of Political Methodology.
 \doi{10.1093/oxfordhb/9780199286546.003.0011}
 }
-
+\author{
+George G. Vega Yon
+}

@@ -2,8 +2,8 @@
 % Please edit documentation in R/plot_diffnet2.R
 \name{plot_diffnet2}
 \alias{plot_diffnet2}
-\alias{plot_diffnet2.default}
 \alias{plot_diffnet2.diffnet}
+\alias{plot_diffnet2.default}
 \title{Another way of visualizing diffusion}
 \usage{
 plot_diffnet2(graph, ...)
@@ -90,9 +90,6 @@ Another way of visualizing diffusion
 \details{
 If \code{key.width<=0} then no key is created.
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other visualizations: \code{\link{dgr}},
   \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
@@ -103,4 +100,6 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
-
+\author{
+George G. Vega Yon
+}

@@ -198,4 +198,3 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{medInnovations}}
 }
 \keyword{datasets}
-

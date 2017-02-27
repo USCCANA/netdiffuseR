@@ -30,10 +30,9 @@ when possible, where) the problem lies.
 
 The function was designed to be used with \code{\link{as_diffnet}}.
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 \code{\link{as_diffnet}}, \code{\link{netdiffuseR-graphs}}
 }
-
+\author{
+George G. Vega Yon
+}

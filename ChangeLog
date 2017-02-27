@@ -1,3 +1,13 @@
+2017-02-27  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Adding approx_geodesic.
+	* R/diffnet-class.R: Doc approx_geodesic in summary
+	* R/diffnet-methods.R: idem + add
+	* R/egonet.R: Adding example with static net
+	* R/stats.R: Adding matrix_compare and mentor_matching 
+	* src/adjmat.cpp: approx_geodesic
+	* src/stats.cpp: matrix_compare
+
+
 2016-12-14  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.R: Adding new option to the drawColorKey
 

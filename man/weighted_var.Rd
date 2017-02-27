@@ -35,4 +35,3 @@ where \eqn{w_i'=w_i/\sum_i w_i}{w(i)' = w(i)/sum(w)}, and
 \seealso{
 This function is used in \code{\link{diffmap}}.
 }
-

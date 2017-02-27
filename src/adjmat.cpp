@@ -324,3 +324,98 @@ gplot(g %*% g %*% g %*% g, displaylabels = TRUE, coord = coord, edge.lwd = 1)
 par(oldpar)
 
 */
+
+
+//[[Rcpp::export]]
+arma::sp_umat approx_geodesicCpp(
+    const arma::sp_mat & G,
+    int n = 6,
+    bool warn = false
+) {
+  int N = (int) G.n_cols;
+  arma::sp_umat ans(N,N);
+
+  typedef arma::sp_mat::const_iterator spiter;
+
+  // Going through the steps
+  arma::sp_mat pG = G;
+  arma::sp_mat G0 = G;
+  int change_count = 0;
+  n++;
+  for (unsigned int i=1u; i<n; i++) {
+
+    // Computing nsteps
+
+    for (spiter it = pG.begin(); it != pG.end(); it ++)
+      if (ans.at(it.row(), it.col()) == 0u)
+        ans.at(it.row(), it.col()) += i,
+          ++change_count;
+
+      // Was there any change?
+      if (!change_count) {
+        if (warn)
+          warning("The algorithm stopped at %i iterations.", i);
+        break;
+      } else change_count = 0;
+
+      // Graph power
+      pG *= G0;
+  }
+
+  // Filling diagonal with zeros
+  ans.diag().zeros();
+
+  return ans;
+}
+
+
+/***R
+
+library(sna)
+  library(netdiffuseR)
+  library(igraph)
+  library(microbenchmark)
+
+  set.seed(123)
+  g_sp  <- rgraph_ws(n=500, k = 3, p = .2, self = FALSE)
+  g_mat <- as.matrix(g_sp)
+  g_ig  <- graph_from_adjacency_matrix(g_sp)
+
+  microbenchmark(
+    sna = geodist(as.matrix(g_sp)),
+    nd  = approx_geodesic(g_sp, 6),
+    ig  = distances(graph_from_adjacency_matrix(g_sp)),
+    times = 100,
+    unit = "ms"
+  )
+
+# Unit: milliseconds
+# expr      min       lq     mean   median        uq       max neval cld
+#  sna 27.33856 29.28262 59.35928 31.26524 138.40798 147.51262   100   c
+#   nd 38.52021 38.77092 39.04785 38.88803  39.19057  41.01073   100  b
+#   ig 12.69440 13.17860 16.07290 13.52347  13.81422 246.60709   100 a
+
+  ans0 <- geodist(g_mat)[[2]]
+ans1 <- as.matrix(approx_geodesic(g_sp, 10))
+
+  are0 <- which(ans1[] != 0, arr.ind = TRUE)
+  prop.table(table(ans0 - ans1))
+
+  g_sp  <- kfamilyDiffNet$graph$`1`
+
+  microbenchmark(
+    sna = geodist(as.matrix(g_sp)),
+    nd  = approx_geodesic(g_sp, 10), times = 30,
+    unit = "ms"
+  )
+
+  ans0 <- geodist(as.matrix(g_sp))[[2]]
+ans1 <- as.matrix(approx_geodesic(g_sp, 20))
+
+  are0 <- which(ans1[] != 0, arr.ind = TRUE)
+  prop.table(table(ans0 - ans1))
+
+
+
+
+  */

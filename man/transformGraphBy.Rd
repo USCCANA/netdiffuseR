@@ -2,8 +2,8 @@
 % Please edit documentation in R/struct_equiv.R
 \name{transformGraphBy}
 \alias{transformGraphBy}
-\alias{transformGraphBy.dgCMatrix}
 \alias{transformGraphBy.diffnet}
+\alias{transformGraphBy.dgCMatrix}
 \title{Apply a function to a graph considering non-diagonal structural zeros}
 \usage{
 transformGraphBy(graph, INDICES, fun = function(g, ...) g, ...)
@@ -38,4 +38,3 @@ given by \code{INDICES}. See examples below
 # Rewiring a graph by
 
 }
-

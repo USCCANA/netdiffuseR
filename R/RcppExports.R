@@ -29,6 +29,10 @@ egonet_attrs_cpp <- function(graph, V, outer = TRUE, self = TRUE, self_attrs = F
     .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, self_attrs, valued)
 }
 
+approx_geodesicCpp <- function(G, n = 6L, warn = FALSE) {
+    .Call('netdiffuseR_approx_geodesicCpp', PACKAGE = 'netdiffuseR', G, n, warn)
+}
+
 infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, valued = FALSE, outgoing = TRUE) {
     .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
 }
@@ -314,6 +318,10 @@ moran_cpp <- function(x, w) {
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
     .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
+}
+
+matrix_compare_cpp <- function(A, B, fun) {
+    .Call('netdiffuseR_matrix_compare_cpp', PACKAGE = 'netdiffuseR', A, B, fun)
 }
 
 struct_test_mean <- function(y, funname, self = FALSE) {

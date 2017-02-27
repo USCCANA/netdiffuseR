@@ -39,9 +39,7 @@ of adoption.  Prior empirical event history approaches have used this approach
 omitting such observations leads to biased results (van den Bulte & Iyengar,
 2011).
 }
-\author{
-Thomas W. Valente
-}
+
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus
 Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.
@@ -91,4 +89,6 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}
 }
-
+\author{
+Thomas W. Valente
+}

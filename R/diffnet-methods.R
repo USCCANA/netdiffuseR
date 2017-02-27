@@ -1,7 +1,8 @@
 #' @export
 #' @rdname as_diffnet
 plot.diffnet <- function(
-  x,y=NULL, t=1, displaylabels = FALSE, vertex.col = c("blue", "grey"),
+  x,y=NULL, t=1, displaylabels = FALSE,
+  vertex.col = c(adopt="blue", noadopt="grey"),
   gmode=ifelse(x$meta$undirected, "graph", "digraph"),
   vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
   layout.par = NULL, main = "Diffusion network in time %d", ...) {
@@ -92,9 +93,13 @@ print.diffnet <- function(x, ...) {
 
 #' @export
 #' @rdname as_diffnet
-summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
-                            skip.moran=FALSE, valued=getOption("diffnet.valued",FALSE),
-                            mode="out", ...) {
+summary.diffnet <- function(
+  object,
+  slices     = NULL,
+  no.print   = FALSE,
+  skip.moran = FALSE,
+  valued     = getOption("diffnet.valued",FALSE),
+  ...) {
   # Subsetting
   if (!length(slices)) slices <- 1:object$meta$nper
 
@@ -125,13 +130,10 @@ summary.diffnet <- function(object, slices=NULL, no.print=FALSE,
     m <- vector("numeric", length(slices))
     for (i in 1:length(slices)) {
       # Computing distances
-      g <- igraph::graph_from_adjacency_matrix(object$graph[[slices[i]]])
-      g <- igraph::distances(g, mode=mode, ...)
-      g[!is.finite(g)] <- meta$n
+      g <- approx_geodesic(object$graph[[slices[i]]], ...)
 
       # Inverting it (only the diagonal may have 0)
-      g <- 1/g
-      diag(g) <- 0
+      g@x <- 1/g@x
 
       m[i] <- moran(object$cumadopt[,slices[i]], g)["I"]
     }
@@ -1502,3 +1504,4 @@ dim.diffnet <- function(x) {
   k <- length(with(x, c(colnames(vertex.static.attrs), names(vertex.dyn.attrs[[1]]))))
   as.integer(with(x$meta, c(n, k, nper)))
 }
+

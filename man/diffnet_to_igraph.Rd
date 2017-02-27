@@ -42,4 +42,3 @@ igraph::vertex_attr(x[[1]], "toa")
 Other graph formats: \code{\link{netdiffuseR-graphs}},
   \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
 }
-

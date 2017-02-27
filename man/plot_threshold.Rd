@@ -114,9 +114,6 @@ plot_threshold(graph, expos, toa)
 plot_threshold(graph, expos, toa, vertex.cex = "indegree")
 
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Use \code{\link{threshold}} to retrieve the corresponding threshold
 obtained returned by \code{\link{exposure}}.
@@ -129,5 +126,7 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_infectsuscep}},
   \code{\link{rescale_vertex_igraph}}
 }
+\author{
+George G. Vega Yon
+}
 \keyword{hplot}
-

@@ -20,4 +20,3 @@ types of \code{\link{diffnet_index}}, then returns with error.
 Intended for internal use only, this function is used in \code{\link{diffnet_index}}
 methods.
 }
-

@@ -3,6 +3,7 @@
 \name{infection}
 \alias{infection}
 \alias{susceptibility}
+\alias{susceptibility}
 \title{Susceptibility and Infection}
 \usage{
 infection(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
@@ -97,6 +98,7 @@ it will be \eqn{w_k = k}{w(k)=k}.
 Note that when \eqn{K=1}, the above formulas are equal to the ones presented
 in Valente et al. (2015).
 }
+
 \examples{
 
 # Creating a random dynamic graph
@@ -112,9 +114,6 @@ susceptibility(graph, toa)
 infection(graph, toa, K=4)
 susceptibility(graph, toa, K=4)
 
-}
-\author{
-George G. Vega Yon
 }
 \references{
 Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
@@ -138,5 +137,7 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
+\author{
+George G. Vega Yon
+}
 \keyword{univar}
-

@@ -27,9 +27,6 @@ matrix--is calculated as
 where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 it is only calculated fot \eqn{t>1}.
 }
-\author{
-George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
-}
 \seealso{
 Other statistics: \code{\link{classify_adopters}},
   \code{\link{dgr}}, \code{\link{ego_variance}},
@@ -38,5 +35,7 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
+\author{
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+}
 \keyword{univar}
-

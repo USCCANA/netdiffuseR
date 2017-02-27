@@ -30,4 +30,3 @@ plot(w,x)
 \seealso{
 Used in \code{\link{diffmap}} and \code{\link{plot_diffnet2}}
 }
-

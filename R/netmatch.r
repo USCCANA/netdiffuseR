@@ -178,6 +178,7 @@ netmatch <- function(
     dat0 <- MatchIt::match.data(match_obj, "control")
 
     # Computing effect. At the end CEM gives weights (very simple)
+    # coef(lm(Y~treat, data=match.data(match_obj), weights=weights))["treat"]
     fATT <- with(dat1, sum(Y*weights)/sum(weights)) -
       with(dat0, sum(Y*weights)/sum(weights))
 

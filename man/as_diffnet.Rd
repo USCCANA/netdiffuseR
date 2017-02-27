@@ -4,19 +4,20 @@
 \alias{as_diffnet}
 \alias{diffnet}
 \alias{diffnet-class}
+\alias{as.data.frame.diffnet}
 \alias{diffnet.attrs}
 \alias{diffnet.attrs<-}
 \alias{diffnet.toa}
 \alias{diffnet.toa<-}
-\alias{diffnetLapply}
-\alias{dim.diffnet}
-\alias{dimnames.diffnet}
-\alias{nodes}
 \alias{plot.diffnet}
 \alias{print.diffnet}
-\alias{str.diffnet}
 \alias{summary.diffnet}
+\alias{nodes}
+\alias{diffnetLapply}
+\alias{str.diffnet}
+\alias{dimnames.diffnet}
 \alias{t.diffnet}
+\alias{dim.diffnet}
 \title{Creates a \code{diffnet} class object}
 \usage{
 as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
@@ -26,6 +27,9 @@ as_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa, na.rm =
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"), name = "Diffusion Network",
   behavior = "Unspecified")
+
+\method{as.data.frame}{diffnet}(x, row.names = NULL, optional = FALSE,
+  attr.class = c("dyn", "static"), ...)
 
 diffnet.attrs(graph, element = c("vertex", "graph"), attr.class = c("dyn",
   "static"), as.df = FALSE)
@@ -37,16 +41,15 @@ diffnet.toa(graph)
 diffnet.toa(graph, i) <- value
 
 \method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
-  vertex.col = c("blue", "grey"), gmode = ifelse(x$meta$undirected, "graph",
-  "digraph"), vertex.cex = "degree", edge.col = "gray",
-  mode = "fruchtermanreingold", layout.par = NULL,
-  main = "Diffusion network in time \%d", ...)
+  vertex.col = c(adopt = "blue", noadopt = "grey"),
+  gmode = ifelse(x$meta$undirected, "graph", "digraph"),
+  vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
+  layout.par = NULL, main = "Diffusion network in time \%d", ...)
 
 \method{print}{diffnet}(x, ...)
 
 \method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
-  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE),
-  mode = "out", ...)
+  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
 
 nodes(graph)
 
@@ -88,18 +91,26 @@ order of the rows in the attribute data.}
 
 \item{behavior}{Character scalar. Name of the behavior been analyzed (innovation).}
 
-\item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
+\item{x}{A \code{diffnet} object.}
+
+\item{row.names}{Ignored.}
+
+\item{optional}{Ignored.}
 
 \item{attr.class}{Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
 or static (\code{"static"}).}
+
+\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, for
+\code{summary}, further arguments to be passed to \code{\link{approx_geodesic}},
+otherwise is ignored.}
+
+\item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
 
 \item{as.df}{Logical scalar. When TRUE returns a data.frame.}
 
 \item{value}{In the case of \code{diffnet.toa}, replacement, otherwise see below.}
 
 \item{i}{Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.}
-
-\item{x}{A \code{diffnet} object.}
 
 \item{y}{Ignored.}
 
@@ -116,16 +127,11 @@ or static (\code{"static"}).}
 \item{edge.col}{Character scalar/vector. Color of the edges.}
 
 \item{mode}{Character scalar. In the case of \code{plot}, passed to
-\code{\link[sna:gplot]{gplot}}. Otherwise, in the case of summary, passed to
-\code{\link[igraph:distances]{igraph::distances}}.}
+\code{\link[sna:gplot]{gplot}}.}
 
 \item{layout.par}{Layout parameters (see details).}
 
 \item{main}{Character. A title template to be passed to sprintf.}
-
-\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, for
-\code{summary}, further arguments to be passed to
-\code{\link[igraph:distances]{igraph::distances}}, otherwise is ignored.}
 
 \item{object}{A \code{diffnet} object.}
 
@@ -228,11 +234,13 @@ this is calculated as:
 Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
 \code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
 and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
-Moran's I is not reported. This can be useful when the graph is particuarly
-large (tens of thousands of vertices) as when doing so geodesic distances are
-not calculated, which avoids allocating a square matrix of size \eqn{n} on
-the memory. As a difference from the adjacency matrices, the matrix with the
-geodesic distances can't be stored as a sparse matrix (saving space).
+Moran's I is not reported. This can be useful for both: reducing computing
+time and saving memory as geodesic distance matrix can become large. Since
+version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
+which, as a difference from \code{\link[sna:geodist]{geodist}} from the
+\pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
+\pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
+details in \code{\link{approx_geodesic}}).
 }
 \section{Auxiliary functions}{
 
@@ -263,6 +271,7 @@ recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
 
 \code{nodes(graph)} is an alias for \code{graph$meta$ids}.
 }
+
 \examples{
 
 # Creating a random graph
@@ -292,6 +301,7 @@ diffnet.attrs(diffnet, "vertex", "static", as.df = TRUE)
 
 # Now as a data.frame (all of them)
 diffnet.attrs(diffnet, as.df = TRUE)
+as.data.frame(diffnet) # This is a wrapper
 
 # Unsorted data -------------------------------------------------------------
 # Loading example data
@@ -334,19 +344,18 @@ data(medInnovationsDiffNet)
 diffnetLapply(medInnovationsDiffNet, function(x, cumadopt, ...) {sum(cumadopt)})
 
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}
-
-Other data management functions: \code{\link{edgelist_to_adjmat}},
-  \code{\link{egonet_attrs}}, \code{\link{isolated}},
-  \code{\link{survey_to_diffnet}}
 
 Other diffnet methods: \code{\link{\%*\%}},
   \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},
   \code{\link{diffnet-arithmetic}},
   \code{\link{diffnet_index}}
-}
 
+Other data management functions: \code{\link{edgelist_to_adjmat}},
+  \code{\link{egonet_attrs}}, \code{\link{isolated}},
+  \code{\link{survey_to_diffnet}}
+}
+\author{
+George G. Vega Yon
+}

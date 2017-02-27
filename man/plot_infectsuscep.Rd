@@ -90,9 +90,6 @@ toa <- sample(1:(1+nper-1), n, TRUE)
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 }
-\author{
-George G. Vega Yon
-}
 \references{
 Aral, S., & Walker, D. (2012). "Identifying Influential and Susceptible Members
 of Social Networks". Science, 337(6092), 337–341.
@@ -110,5 +107,7 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
+\author{
+George G. Vega Yon
+}
 \keyword{hplot}
-

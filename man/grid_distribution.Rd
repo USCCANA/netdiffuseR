@@ -37,6 +37,7 @@ y <- rnorm(100)
 grid_distribution(x,y,20)
 }
 }
+
 \seealso{
 Used by \code{\link{plot_infectsuscep}}
 
@@ -50,4 +51,3 @@ Other visualizations: \code{\link{dgr}},
 }
 \keyword{dplot}
 \keyword{misc}
-

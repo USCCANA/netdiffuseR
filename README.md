@@ -347,21 +347,17 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.17.0
+    ## [1] netdiffuseR_1.18.99
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.0.1         Rcpp_0.12.7          knitr_1.15          
-    ##  [4] whisker_0.3-2        magrittr_1.5         roxygen2_5.0.1      
-    ##  [7] network_1.13.0       MASS_7.3-45          pkgload_0.0.0.9000  
-    ## [10] lattice_0.20-34      R6_2.2.0             stringr_1.1.0       
-    ## [13] tools_3.3.2          grid_3.3.2           sna_2.4             
-    ## [16] withr_1.0.2          htmltools_0.3.5      yaml_2.1.14         
-    ## [19] lazyeval_0.2.0       assertthat_0.1       rprojroot_1.1       
-    ## [22] digest_0.6.10        tibble_1.2           pkgdown_0.1.0.9000  
-    ## [25] crayon_1.3.2         Matrix_1.2-7.1       purrr_0.2.2         
-    ## [28] evaluate_0.10        statnet.common_3.3.0 rmarkdown_1.1.9017  
-    ## [31] stringi_1.1.2        desc_1.0.1           backports_1.0.4     
-    ## [34] boot_1.3-18          SparseM_1.74
+    ##  [1] statnet.common_3.3.0 Rcpp_0.12.8          lattice_0.20-34     
+    ##  [4] digest_0.6.10        rprojroot_1.1        MASS_7.3-45         
+    ##  [7] grid_3.3.2           backports_1.0.4      MatchIt_2.4-21      
+    ## [10] magrittr_1.5         evaluate_0.10        stringi_1.1.2       
+    ## [13] SparseM_1.74         Matrix_1.2-7.1       sna_2.4             
+    ## [16] boot_1.3-18          rmarkdown_1.2        tools_3.3.2         
+    ## [19] stringr_1.1.0        igraph_1.0.1         network_1.13.0      
+    ## [22] yaml_2.1.14          htmltools_0.3.5      knitr_1.15.1
 
 To-do list
 ----------

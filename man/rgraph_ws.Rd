@@ -54,9 +54,6 @@ plot(x2, layout=layout_in_circle, edge.curved=TRUE, main="Random")
 par(oldpar)
 
 }
-\author{
-George G. Vega Yon
-}
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
 networks. Nature, 393(6684), 440–2. \url{http://dx.doi.org/10.1038/30918}
@@ -70,4 +67,6 @@ Other simulation functions: \code{\link{permute_graph}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
   \code{\link{ring_lattice}}
 }
-
+\author{
+George G. Vega Yon
+}

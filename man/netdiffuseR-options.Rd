@@ -28,4 +28,3 @@ getOption("diffnet.self")
 \author{
 George G. Vega Yon
 }
-

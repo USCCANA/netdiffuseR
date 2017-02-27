@@ -336,8 +336,8 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, for
-#' \code{summary}, further arguments to be passed to
-#' \code{\link[igraph:distances]{igraph::distances}}, otherwise is ignored.
+#' \code{summary}, further arguments to be passed to \code{\link{approx_geodesic}},
+#' otherwise is ignored.
 #' @param x A \code{diffnet} object.
 #' @param object A \code{diffnet} object.
 #' @param y Ignored.
@@ -347,8 +347,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param vertex.cex Numeric scalar/vector. Size of the vertices.
 #' @param edge.col Character scalar/vector. Color of the edges.
 #' @param mode Character scalar. In the case of \code{plot}, passed to
-#' \code{\link[sna:gplot]{gplot}}. Otherwise, in the case of summary, passed to
-#' \code{\link[igraph:distances]{igraph::distances}}.
+#' \code{\link[sna:gplot]{gplot}}.
 #' @param layout.par Layout parameters (see details).
 #' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
@@ -426,11 +425,13 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
 #' \code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
 #' and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
-#' Moran's I is not reported. This can be useful when the graph is particuarly
-#' large (tens of thousands of vertices) as when doing so geodesic distances are
-#' not calculated, which avoids allocating a square matrix of size \eqn{n} on
-#' the memory. As a difference from the adjacency matrices, the matrix with the
-#' geodesic distances can't be stored as a sparse matrix (saving space).
+#' Moran's I is not reported. This can be useful for both: reducing computing
+#' time and saving memory as geodesic distance matrix can become large. Since
+#' version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
+#' which, as a difference from \code{\link[sna:geodist]{geodist}} from the
+#' \pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
+#' \pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
+#' details in \code{\link{approx_geodesic}}).
 #'
 #' @section Auxiliary functions:
 #'
@@ -493,6 +494,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'
 #' # Now as a data.frame (all of them)
 #' diffnet.attrs(diffnet, as.df = TRUE)
+#' as.data.frame(diffnet) # This is a wrapper
 #'
 #' # Unsorted data -------------------------------------------------------------
 #' # Loading example data
@@ -667,7 +669,21 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
 #' @export
 #' @rdname as_diffnet
-diffnet.attrs <- function(graph, element=c("vertex","graph"), attr.class=c("dyn","static"),as.df=FALSE) {
+#' @param row.names Ignored.
+#' @param optional Ignored.
+as.data.frame.diffnet <- function(x, row.names = NULL, optional = FALSE,
+                                  attr.class = c("dyn", "static"), ...) {
+  diffnet.attrs(x, element = "vertex", attr.class = attr.class, as.df = TRUE)
+}
+
+#' @export
+#' @rdname as_diffnet
+diffnet.attrs <- function(
+  graph,
+  element    = c("vertex","graph"),
+  attr.class = c("dyn","static"),
+  as.df      = FALSE
+  ) {
   nper <- graph$meta$nper
   pers <- graph$meta$pers
   n    <- graph$meta$n

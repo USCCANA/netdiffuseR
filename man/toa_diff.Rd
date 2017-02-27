@@ -39,4 +39,3 @@ toa_diff(times)
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
 \keyword{manip}
-

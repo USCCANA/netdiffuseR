@@ -39,9 +39,6 @@ moran(x, w/rowSums(as.array(w)))
 ape::Moran.I(x, w)
 }
 }
-\author{
-George G. Vega Yon
-}
 \references{
 Moran's I. (2015, September 3). In Wikipedia, The Free Encyclopedia.
 Retrieved 06:23, December 22, 2015, from
@@ -57,4 +54,6 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
-
+\author{
+George G. Vega Yon
+}

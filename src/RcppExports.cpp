@@ -99,6 +99,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// approx_geodesicCpp
+arma::sp_umat approx_geodesicCpp(const arma::sp_mat& G, int n, bool warn);
+RcppExport SEXP netdiffuseR_approx_geodesicCpp(SEXP GSEXP, SEXP nSEXP, SEXP warnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type G(GSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< bool >::type warn(warnSEXP);
+    rcpp_result_gen = Rcpp::wrap(approx_geodesicCpp(G, n, warn));
+    return rcpp_result_gen;
+END_RCPP
+}
 // infection_cpp
 NumericVector infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
 RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
@@ -514,6 +527,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type inv(invSEXP);
     Rcpp::traits::input_parameter< double >::type invrep(invrepSEXP);
     rcpp_result_gen = Rcpp::wrap(struct_equiv_cpp(graph, v, unscaled, inv, invrep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// matrix_compare_cpp
+arma::sp_mat matrix_compare_cpp(const arma::sp_mat& A, const arma::sp_mat& B, Function fun);
+RcppExport SEXP netdiffuseR_matrix_compare_cpp(SEXP ASEXP, SEXP BSEXP, SEXP funSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Function >::type fun(funSEXP);
+    rcpp_result_gen = Rcpp::wrap(matrix_compare_cpp(A, B, fun));
     return rcpp_result_gen;
 END_RCPP
 }

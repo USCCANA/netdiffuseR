@@ -117,6 +117,11 @@ double st_smaller(double y0, double y1) {return (double) (y0 < y1);}
 double st_smallerequal(double y0, double y1) {return (double) (y0 <= y1);}
 double st_equal(double y0, double y1) {return (double) (y0 == y1);}
 
+double st_min(double y0, double y1) {return fmin(y0, y1);}
+double st_max(double y0, double y1) {return fmax(y0, y1);}
+double st_mean(double y0, double y1) {return (y0 + y1) /2.0;}
+
+
 // XPtr<funcPtr> st_getfun(std::string funname) {
 void st_getfun(std::string funname, funcPtr & fun) {
   if      (funname == "distance")                           fun = &st_dist;
@@ -126,6 +131,9 @@ void st_getfun(std::string funname, funcPtr & fun) {
   else if ((funname == "smaller") | (funname == "<"))       fun =  &st_smaller;
   else if ((funname == "smallerequal") | (funname == "<=")) fun =  &st_smallerequal;
   else if ((funname == "equal") | (funname == "=="))        fun =  &st_equal;
+  else if ((funname == "min") | (funname == "minimum"))        fun =  &st_min;
+  else if ((funname == "max") | (funname == "maximum"))        fun =  &st_max;
+  else if ((funname == "mean") | (funname == "avg"))        fun =  &st_mean;
   else Rcpp::stop("Unkown function.");
 
   return ;

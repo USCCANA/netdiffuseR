@@ -91,9 +91,6 @@ for (i in seq(1, 1000, length.out = 4)) {
 par(oldpar)
 
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other visualizations: \code{\link{dgr}},
   \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
@@ -103,4 +100,6 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_infectsuscep}},
   \code{\link{plot_threshold}}
 }
-
+\author{
+George G. Vega Yon
+}

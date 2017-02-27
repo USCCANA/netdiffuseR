@@ -16,9 +16,6 @@ Generated for the package
 A data frame used for examples in reading edgelist format networks. This
 edgelist can be merged with the dataset \code{\link{fakesurvey}}.
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{brfarmers}}, \code{\link{diffusion-data}},
@@ -28,4 +25,6 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{medInnovationsDiffNet}},
   \code{\link{medInnovations}}
 }
-
+\author{
+George G. Vega Yon
+}

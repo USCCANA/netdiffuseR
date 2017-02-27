@@ -2,6 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{exposure}
 \alias{exposure}
+\alias{exposure}
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
@@ -200,9 +201,6 @@ stopifnot(all(test))
 
 
 }
-\author{
-George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
-}
 \references{
 Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 Equivalence". American Journal of Sociology, 92(6), 1287.
@@ -219,5 +217,7 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
+\author{
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+}
 \keyword{univar}
-

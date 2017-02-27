@@ -4,6 +4,20 @@
 
 * `bootnet` implements network bootstrapping based on Snijders and Borgatti (1999)
 
+* `mentor_matching` implements Valente and Davis (1999) Mentor matching algorithm.
+
+* `approx_geodesic` an alternative to `igraph::distances` and `sna::geodist`.
+  computes geodesics up to a certain number of steps and returns a sparse
+  matrix.
+  
+* `matrix_compare` Efficiently compare two sparse matrices looking only at the valued
+  cells
+
+  
+## Bugs
+
+* `dgr` returned with error when `self == TRUE`
+
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)
 

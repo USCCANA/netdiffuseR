@@ -54,9 +54,6 @@ threshold(expo, toa)
 diffnet <- as_diffnet(graph, toa)
 threshold(diffnet, alt.graph=se)
 }
-\author{
-George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
-}
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}
 
@@ -67,5 +64,7 @@ Other statistics: \code{\link{classify_adopters}},
   \code{\link{moran}}, \code{\link{struct_equiv}},
   \code{\link{vertex_covariate_dist}}
 }
+\author{
+George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+}
 \keyword{univar}
-

@@ -62,9 +62,6 @@ toa <- sample(c(NA, 2010L,2015L), 20, TRUE)
 mat <- toa_mat(toa)
 plot_adopters(mat$cumadopt)
 }
-\author{
-George G. Vega Yon
-}
 \seealso{
 Other visualizations: \code{\link{dgr}},
   \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
@@ -75,4 +72,6 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
-
+\author{
+George G. Vega Yon
+}
