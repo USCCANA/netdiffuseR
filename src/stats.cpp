@@ -261,7 +261,7 @@ List struct_equiv_cpp(
 }
 
 // [[Rcpp::export]]
-arma::sp_mat matrix_compare_cpp(
+arma::sp_mat matrix_compareCpp(
     const arma::sp_mat & A,
     const arma::sp_mat & B,
     Function fun

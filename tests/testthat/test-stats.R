@@ -175,3 +175,58 @@ test_that("Classify adopter", {
   expect_equal(sum(ans), 100, tolerance = .01)
   expect_equal(colSums(ans)/100, c(0, 0,1/3,1/3,1/3), tolerance = .005)
 })
+
+# ------------------------------------------------------------------------------
+test_that("Approximate geodesic", {
+  # RING
+  g  <- ring_lattice(20, 2)
+  ig <- igraph::graph_from_adjacency_matrix(g)
+
+  # Warning
+  expect_warning(approx_geodist(g, n = 1000, warn = TRUE))
+
+  ans0 <- as.matrix(approx_geodist(g, n = 100))
+  ans1 <- igraph::distances(ig, mode = "out")
+  expect_equivalent(ans0,  ans1)
+
+  # BARABASI ALBERT
+  set.seed(111222)
+  g  <- rgraph_ba(t=19, m =4, self = FALSE)
+  ig <- igraph::graph_from_adjacency_matrix(g)
+
+  ans0 <- approx_geodist(g)
+  ans1 <- igraph::distances(ig, mode = "out")
+  arenot0 <- which(as.matrix(ans0) != 0, arr.ind = TRUE)
+  expect_equal(ans0[arenot0],  ans1[arenot0])
+
+  # Watts-Strugatz
+  set.seed(111222)
+  g  <- rgraph_ws(n=20, k=4, p = .5)
+  ig <- igraph::graph_from_adjacency_matrix(g)
+
+  ans0 <- approx_geodist(g)
+  ans1 <- igraph::distances(ig, mode = "out")
+  arenot0 <- which(as.matrix(ans0) != 0, arr.ind = TRUE)
+  expect_equal(ans0[arenot0],  ans1[arenot0])
+
+})
+
+# ------------------------------------------------------------------------------
+test_that("Matrix comparison", {
+
+  set.seed(89)
+  A <- rgraph_ba(t = 9, m = 4)
+  B <- rgraph_ba(t = 9, m = 4)
+  A;B
+
+  # Comparing
+  ans0 <- as.matrix(matrix_compare(A,B, function(a,b) (a+b)/2))
+
+  ans1 <- matrix(0, ncol=10, nrow=10)
+  for (i in 1:10)
+    for (j in 1:10)
+      ans1[i,j] <- mean(c(A[i,j], B[i,j]))
+
+  expect_equivalent(ans0[], ans1[])
+
+})

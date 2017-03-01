@@ -320,8 +320,8 @@ struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invr
     .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
 }
 
-matrix_compare_cpp <- function(A, B, fun) {
-    .Call('netdiffuseR_matrix_compare_cpp', PACKAGE = 'netdiffuseR', A, B, fun)
+matrix_compareCpp <- function(A, B, fun) {
+    .Call('netdiffuseR_matrix_compareCpp', PACKAGE = 'netdiffuseR', A, B, fun)
 }
 
 struct_test_mean <- function(y, funname, self = FALSE) {

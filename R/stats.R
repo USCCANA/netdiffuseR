@@ -1136,9 +1136,75 @@ NULL
 #' @param B A matrix of size \code{n*m} of class \code{dgCMatrix}.
 #' @param fun A function that receives 2 arguments and returns a scalar.
 #'
+#' @details Instead of comparing element by element, the function
+#' loops through each matrix non-zero elements to make the comparisons, which
+#' in the case of sparse matrices can be more efficient (faster). Algorithmically
+#' it can be described as follows:
+#'
+#' \preformatted{
+#' # Matrix initialization
+#' init ans[n,m];
+#'
+#' # Looping through non-zero elements of A
+#' for e_A in E_A:
+#'   ans[e_A] = fun(A[e_A], B[e_A])
+#'
+#' # Looping through non-zero elements of B and applying the function
+#' # in e_B only if it was not applied while looping in E_A.
+#' for e_B in E_B:
+#'   if (ans[e_B] == Empty)
+#'     ans[e_B] = fun(A[e_B], B[e_B])
+#'
+#' }
+#'
+#' \code{compare_matrix} is just an alias for \code{matrix_compare}.
+#'
 #' @return An object of class \code{dgCMatrix} of size \code{n*m}.
 #' @export
+#' @examples
+#' # These two should yield the same results -----------------------------------
 #'
+#' # Creating two random matrices
+#' set.seed(89)
+#' A <- rgraph_ba(t = 9, m = 4)
+#' B <- rgraph_ba(t = 9, m = 4)
+#' A;B
+#'
+#' # Comparing
+#' ans0 <- matrix_compare(A,B, function(a,b) (a+b)/2)
+#'
+#' ans1 <- matrix(0, ncol=10, nrow=10)
+#' for (i in 1:10)
+#'   for (j in 1:10)
+#'     ans1[i,j] <- mean(c(A[i,j], B[i,j]))
+#'
+#' # Are these equal?
+#' all(ans0[] == ans1[]) # Should yield TRUE
+#'
+#' # More elaborated example (speed) -------------------------------------------
+#' \dontrun{
+#'
+#' set.seed(123123123)
+#' A <- rgraph_ba(t = 5e3, m = 2)
+#' B <- rgraph_ba(t = 5e3, m = 2)
+#'
+#' Am <- as.matrix(A)
+#' Bm <- as.matrix(B)
+#'
+#' compfun <- function(a,b)
+#'   ifelse(a > b, a, b)
+#'
+#' microbenchmark::microbenchmark(
+#'   diffnet = matrix_compare(A, B, compfun),
+#'   R       = ifelse(Am > Bm, Am, Bm),
+#'   times   = 10
+#' )
+#' # Unit: milliseconds
+#' #    expr       min        lq      mean    median       uq      max neval cld
+#' # diffnet  349.1731  350.8051  360.7358  353.5629  354.787  432.450    10  a
+#' #       R 1333.9946 1406.1971 2249.7132 1515.0995 1976.028 7691.428    10   b
+#'
+#' }
 matrix_compare <- function(A, B, fun) {
 
   # Checking objects class
@@ -1151,8 +1217,12 @@ matrix_compare <- function(A, B, fun) {
   if (any(dim(A) != dim(B)))
     stop("-A- and -B- must have the same dimmension.")
 
-  matrix_compare_cpp(A, B, fun)
+  matrix_compareCpp(A, B, fun)
 }
+
+#' @rdname matrix_compare
+#' @export
+compare_matrix <- matrix_compare
 
 
 #' Optimal Leader/Mentor Matching

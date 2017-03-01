@@ -165,8 +165,8 @@ arma::sp_mat bootnet_fillself(
 
     std::vector<int> r(reps.at(i));
 
-    for (int j=0; j<r.size(); j++)
-      for (int k=j; k<r.size(); k++) {
+    for (unsigned int j=0; j< r.size(); j++)
+      for (unsigned int k=j; k<r.size(); k++) {
 
         if (j==k) continue;
         rand = runif(2);

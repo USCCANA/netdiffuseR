@@ -329,7 +329,7 @@ par(oldpar)
 //[[Rcpp::export]]
 arma::sp_umat approx_geodesicCpp(
     const arma::sp_mat & G,
-    int n = 6,
+    unsigned int n = 6,
     bool warn = false
 ) {
   int N = (int) G.n_cols;
