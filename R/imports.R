@@ -5,7 +5,7 @@ NULL
 NULL
 
 #' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr
-#'  any_multiple graph_attr_names as_adj is.loop set_graph_attr
+#'  any_multiple graph_attr_names as_adj is.loop set_graph_attr V permute
 #' @importFrom network as.edgelist is.multiplex is.directed has.loops
 NULL
 

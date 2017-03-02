@@ -445,8 +445,17 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
     if (!inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "dgCMatrix")
     else g <- graph[[i]]
 
+    # Checking dimnames
+    if (!length(unlist(dimnames(g), recursive = TRUE)))
+      dimnames(g) <- list(1:nnodes(g), 1:nnodes(g))
+
+    # Creating igraph object
+    ig  <- igraph::graph_from_adjacency_matrix(g)
+    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(g)))
+
+
     # Plotting
-    igraph::plot.igraph(igraph::graph_from_adjacency_matrix(g),
+    igraph::plot.igraph(ig,
                         vertex.color = cols,
                         layout = coords_adjs,
                         edge.color = edge.col,

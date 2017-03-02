@@ -833,9 +833,9 @@ simmelian_mat <- function(graph, ...) {
 #'
 #' While both \pkg{igraph} and \pkg{sna} offer very good and computationally
 #' efficient routines for computing geodesic distances, both functions return
-#' dense matrices, i.e. not sparse, which can be trouble some cases. Furthermore,
-#' for the perspective of social network, path lengths of more than 6 steps,
-#' for example, may not be meanigful, or at least, relevant for the researcher.
+#' dense matrices, i.e. not sparse, which can be troublesome. Furthermore,
+#' from the perspective of social network analysis, path lengths of more than 6 steps,
+#' for example, may not be meaningful, or at least, relevant for the researcher.
 #' In such cases, \code{approx_geodesic} serves as a solution to this problem,
 #' computing geodesics up to the number of steps, \code{n}, desired, hence,
 #' if \code{n = 6}, once the algorithm finds all paths of 6 or less steps it
@@ -867,7 +867,8 @@ simmelian_mat <- function(graph, ...) {
 #'
 #' \code{approx_geodist} is just an allias for \code{approx_geodesic}.
 #'
-#' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
+#' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
+#' \code{nnodes(graph)^2} with geodesic distances up to \code{n}.
 #'
 #' @examples
 #' # A very simple example -----------------------------------------------------

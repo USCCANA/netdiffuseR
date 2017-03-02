@@ -139,7 +139,7 @@ test_that("vertex_mahalanobis_dist", {
 
   ans2 <-ans2*G
 
-  expect_equal(ans1,ans2)
+  expect_equivalent(ans1,ans2)
 })
 
 # ------------------------------------------------------------------------------
@@ -230,3 +230,4 @@ test_that("Matrix comparison", {
   expect_equivalent(ans0[], ans1[])
 
 })
+

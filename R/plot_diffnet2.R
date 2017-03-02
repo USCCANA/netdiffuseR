@@ -160,8 +160,13 @@ plot_diffnet2.default <- function(
     vertex.shape[type_non] <- "square"
   }
 
-  # Computing layout -----------------------------------------------------------
+  # Adjmat must have dimnames to make sure sorting in igraph is fine
+  if (!length(unlist(dimnames(graph), recursive = TRUE)))
+    dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
+
+  # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph, mode="undirected")
+  g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
 
   l <- if (!length(layout)) igraph::layout_nicely(g)
   else if (inherits(layout, "function")) layout(g)
@@ -393,9 +398,15 @@ diffusionMap.default <- function(
     x <- x.adj(x)
   }
 
+  # Adjmat must have dimnames to make sure sorting in igraph is fine
+  if (!length(unlist(dimnames(graph), recursive = TRUE)))
+    dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
+
 
   # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph)
+  g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
+
   coords <- if (is.function(layout)) layout(g)
   else if (!length(layout)) igraph::layout_nicely(g)
   else if (is.matrix(layout)) layout

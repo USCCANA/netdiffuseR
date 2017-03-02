@@ -1130,10 +1130,16 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 #' @name binary-functions
 NULL
 
-#' Element-wise comparison between two matrices
+#' Non-zero element-wise comparison between two sparse matrices
 #'
-#' @param A A matrix of size \code{n*m} of class \code{dgCMatrix}.
-#' @param B A matrix of size \code{n*m} of class \code{dgCMatrix}.
+#' Taking advantage of matrix sparseness, the function only evaluates
+#' \code{fun} between pairs of elements of \code{A} and \code{B} where
+#' either \code{A} or \code{B} have non-zero values. This can be helpful
+#' to implement other binary operators between sparse matrices that may
+#' not be implemented in the \pkg{Matrix} package.
+#'
+#' @param A A matrix of size \code{n*m} of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
+#' @param B A matrix of size \code{n*m} of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 #' @param fun A function that receives 2 arguments and returns a scalar.
 #'
 #' @details Instead of comparing element by element, the function
@@ -1223,144 +1229,4 @@ matrix_compare <- function(A, B, fun) {
 #' @rdname matrix_compare
 #' @export
 compare_matrix <- matrix_compare
-
-
-#' Optimal Leader/Mentor Matching
-#'
-#' Implementes the algorithm described in Valente and Davis (1999)
-#'
-#' @template graph_template
-#' @param n Number of leaders
-#' @param cmode Passed to \code{\link{dgr}}
-#' @param lead.ties.method Passed to \code{\link{rank}}
-#' @param geodist.args Passed to \code{\link{approx_geodesic}}.
-#'
-#' @details The algorithm works
-#'
-#' @return A data frame with the following columns:
-#' \item{degree}{Numeric. Degree of each vertex in the graph}
-#' \item{iselader}{Logical. \code{TRUE} when the vertex was picked as a leader.}
-#' \item{match}{Integer. The corresponding matched leader.}
-#'
-#' @references
-#' Valente, T. W., & Davis, R. L. (1999). Accelerating the Diffusion of
-#' Innovations Using Opinion Leaders. The ANNALS of the American Academy of
-#' Political and Social Science, 566(1), 55–67.
-#' \doi{doi.org/doi.org/10.1177/000271629956600105}
-#' @examples
-#'
-#' set.seed(1231)
-#' graph <- rgraph_ba(t=9, m = 2, self=FALSE)
-#'
-#' ans <- mentor_matching(graph, n = 2)
-#' head(ans)
-#' ig <- igraph::graph_from_adjacency_matrix(graph)
-#'
-#' plot(ig, vertex.color = ifelse(ans$isleader, "transparent", ans$match + 2))
-#'
-#' @export
-mentor_matching <- function(
-  graph,
-  n,
-  cmode            = "indegree",
-  lead.ties.method = "average",
-  geodist.args     = list()
-) {
-
-  cls <- class(graph)
-
-  if (any(c("dgCMatrix", "matrix") %in% cls)) {
-    .mentor_matching(graph, n, cmode, lead.ties.method, geodist.args)
-  } else if ("list" %in% cls) {
-    lapply(graph, .mentor_matching, n = n,
-           cmode = cmode, lead.ties.method = lead.ties.method,
-           geodist.args = geodist.args)
-  } else if ("array" %in% cls) {
-    apply(graph, 3, .mentor_matching, n = n,
-           cmode = cmode, lead.ties.method = lead.ties.method,
-           geodist.args = geodist.args)
-  } else if ("diffnet" %in% cls) {
-    lapply(graph$graph, .mentor_matching, n = n,
-           cmode = cmode, lead.ties.method = lead.ties.method,
-           geodist.args = geodist.args)
-  } else stopifnot_graph(graph)
-
-}
-
-
-.mentor_matching <- function(
-  graph,
-  n,
-  cmode            = "indegree",
-  lead.ties.method = "average",
-  geodist.args     = list()
-  ) {
-
-  # Step 1. Find the pcent with highest
-  d   <- dgr(graph, cmode = cmode)
-  r   <- -rank(d, ties.method = lead.ties.method)
-  r   <- as.integer(as.factor(r))
-  top <- which(r <= n)
-
-  # Step 2: Match each individual with their closest one
-  G   <- do.call(
-    approx_geodist,
-    c(list(graph = as.matrix(graph)), geodist.args)
-    )
-
-  ans <- sapply(1:nnodes(graph), function(i) {
-    x <- which(G[i,top] == min(G[i,top]))
-
-    # If there are any ties, then solve them by taking a look at i's
-    # neighbors
-    if (length(x) > 1) {
-
-      # Picking neighbors
-      j <- which(graph[i,-top] != 0)
-
-      # If all of them are top
-      if (!length(j))
-        return(sample(top, size = 1))
-
-      # Average pathlength per top
-      j <- sapply(top, function(h) {
-        mean(G[j,h])
-      })
-
-      # Choose the min
-      top[which.min(j)]
-
-    } else top[x]
-    })
-
-  # Returning
-  data.frame(
-    degree   = d,
-    isleader = 1:nnodes(graph) %in% top,
-    match    = ans
-    )
-
-}
-
-#' @export
-#' @rdname mentor_matching
-leader_matching <- mentor_matching
-
-# rm(list =ls())
-# library(netdiffuseR)
-# library(igraph)
-#
-# set.seed(8821)
-# g <- netdiffuseR::rgraph_ba(m = 3, t=19)
-# ans <- opinion_leaders(g, n = 3);ans
-#
-# ig <- graph_from_adjacency_matrix(g)
-#
-#
-# dgr(g, cmode = "indegree", self = TRUE)
-# degree(ig, mode="in")
-#
-# plot(ig, vertex.color = ans$isleader)
-
-
 

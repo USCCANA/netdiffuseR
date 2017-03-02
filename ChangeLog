@@ -1,3 +1,15 @@
+2017-03-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struct_equiv.R: Replaced approx_geodesic
+	* R/adjmat.R: Fixing man.
+	* R/diffnet-methods.R: 'Bug' when calling igraph::graph_from...
+	  didn't preserved sorting of vertices.
+	* R/igraph.R: idem.
+	* R/mentor.r: Migrating the algorithm to its own file.
+	* R/random_graph.R: WS now returns an adjmat with dimnames.
+	* R/stats.R: Working on doc.
+	* R/struct_equiv.R: Adding examples for transformGraphBy
+
+
 2017-02-27  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/adjmat.R: Adding approx_geodesic.
 	* R/diffnet-class.R: Doc approx_geodesic in summary
@@ -11,9 +23,11 @@
 2016-12-14  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.R: Adding new option to the drawColorKey
 
+
 2016-12-08  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/netmatch.r: New set of functions for matching with networks.
 	* R/bootnet.r: Documenting and fixing some bugs.	
+
 
 2016-12-07  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/netdiffuser_extra.cpp: Removed unused function.
@@ -21,11 +35,13 @@
 	* R/rewire.R: Recycling code in list vs array.
 	* R/diffnet-methods.R: Adding new methods for -nodes-.
 
+
 2016-12-06  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/bootnet.r: Still working on the BS.
 	* src/netdiffuser_extra.*: Adding bootnet_fillself to deal with i
 	  sampled more than once.
 	* R/struct_test.R: Fixing bug in variance calculation.
+
 
 2016-12-05  George G. Vega Yon <g.vegayon@gmail.com>
 	* bootnet.r: Implementing Snijders and Borgatti's bootstrapping
@@ -36,6 +52,7 @@
 	* README.Rmd: In mosaicplot (workhorse of plot.diffnet_adopters), the
 	  color= option wasn't coloring cell by cell. So removed example.
 
+
 2016-11-02  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/stats.R: Fixed bug with NA in classify_adopters.default.
 	* tests/testthat/test-stats.R: Adjusted expectation according
@@ -43,10 +60,12 @@
 	* .travis.ci: r-devel not working.
 	* .appveyor: r-patch not working.
 
+
 2016-11-01  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/*: Re-organized functions + headers, reducing lib space.
 	* R/*: Tweaked a couple of examples for reducing running time.
 	* tests/testtat/*: idem.
+
 
 2016-10-28  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rewire_swap.cpp: 'Commented' alt.hexagons since the implementation
@@ -54,12 +73,14 @@
 	* R/rewire.R: Idem.
 	* test/testthat/*.R: More tests.
 
+
 2016-10-27  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rgraph_ba.*: Renamed files (and header def) to fix build error.
 	* R/diffnet-methods.R: Fixing small bugs in -.diffnet and data-checks
 	  in plot_threshold.
 	* test/testthat/*.R: More tests.
 	* R/stats.R: Small changes. 
+
 
 2016-10-26  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/*: Working with @template of roxygen2.
@@ -73,6 +94,7 @@
 	* R/rewire.R: New functions permute_graph and rewire_qap.
 	* man-roxygen/: Where templates live (roxygen2).
 	* src/rgraph.cpp: permute_graph.
+
 
 2016-10-18  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-indexing.R: Fixing bug on [[<-.diffnet.

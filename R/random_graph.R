@@ -404,6 +404,7 @@ rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE,
 
   # WS model is directed
   attr(out, "undirected") <- FALSE
+  dimnames(out) <- list(1:n, 1:n)
   out
 }
 

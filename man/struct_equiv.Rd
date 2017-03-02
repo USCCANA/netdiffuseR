@@ -6,7 +6,7 @@
 \title{Structural Equivalence}
 \usage{
 struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
-  mode = "out", ...)
+  geodist.args = list(), ...)
 
 \method{print}{diffnet_se}(x, ...)
 }
@@ -19,9 +19,9 @@ struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
 
 \item{groupvar}{Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.}
 
-\item{mode}{Character scalar pased to \code{\link[igraph:distances]{igraph::distances}}}
+\item{geodist.args}{Character scalar pased to \code{\link{approx_geodesic}}.}
 
-\item{...}{Further arguments to be passed to \code{\link[igraph:distances]{igraph::distances}} (not valid for the print method).}
+\item{...}{Further arguments to be passed to \code{\link{approx_geodesic}} (not valid for the print method).}
 
 \item{x}{A \code{diffnet_se} class object.}
 }

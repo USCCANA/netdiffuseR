@@ -3,16 +3,16 @@
 \name{matrix_compare}
 \alias{matrix_compare}
 \alias{compare_matrix}
-\title{Element-wise comparison between two matrices}
+\title{Non-zero element-wise comparison between two sparse matrices}
 \usage{
 matrix_compare(A, B, fun)
 
 compare_matrix(A, B, fun)
 }
 \arguments{
-\item{A}{A matrix of size \code{n*m} of class \code{dgCMatrix}.}
+\item{A}{A matrix of size \code{n*m} of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
-\item{B}{A matrix of size \code{n*m} of class \code{dgCMatrix}.}
+\item{B}{A matrix of size \code{n*m} of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
 
 \item{fun}{A function that receives 2 arguments and returns a scalar.}
 }
@@ -20,7 +20,11 @@ compare_matrix(A, B, fun)
 An object of class \code{dgCMatrix} of size \code{n*m}.
 }
 \description{
-Element-wise comparison between two matrices
+Taking advantage of matrix sparseness, the function only evaluates
+\code{fun} between pairs of elements of \code{A} and \code{B} where
+either \code{A} or \code{B} have non-zero values. This can be helpful
+to implement other binary operators between sparse matrices that may
+not be implemented in the \pkg{Matrix} package.
 }
 \details{
 Instead of comparing element by element, the function

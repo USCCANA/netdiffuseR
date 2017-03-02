@@ -20,6 +20,7 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   expect_equal(dim(coords), c(11,2), info = "applying to list")
 
   # Array
+  dimnames(graphar) <- list(1:nnodes(graphar), 1:nnodes(graphar))
   coords <- plot_diffnet(graphar, toa_mat(toa)$cumadopt)
   expect_equal(dim(coords), c(11,2), info = "applying to array")
 

@@ -48,7 +48,7 @@ Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
 Classification/MSC: 90C35, 90B18, 91D30
-Collate:
+Collate: 
     'RcppExports.R'
     'imports.R'
     'graph_data.R'
@@ -62,6 +62,7 @@ Collate:
     'egonets.R'
     'igraph.R'
     'infect_suscept.R'
+    'mentor.r'
     'misc.R'
     'moran.R'
     'netmatch.r'

@@ -42,6 +42,10 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
       diag      = graph$meta$self
       )
 
+    # Computing positions
+    tempgraph <- igraph::permute(tempgraph, match(igraph::V(tempgraph)$name,
+                                                   graph$meta$ids))
+
     # Vertex Static Attributes
     for (k in static.attrs)
       tempgraph <-
