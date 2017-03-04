@@ -168,6 +168,7 @@ leader_matching <- mentor_matching
 #' between leaders and followers.
 #' @param y Ignored.
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
+#' @param main Character scalar. Passed to \code{\link[graphics:title]{title}}
 #' @rdname mentor_matching
 plot.diffnet_mentor <- function(
   x,

@@ -54,6 +54,8 @@ and followers respectively.}
 \item{add.legend}{Logical scalar. When \code{TRUE} generates a legend to distinguish
 between leaders and followers.}
 
+\item{main}{Character scalar. Passed to \code{\link[graphics:title]{title}}}
+
 \item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
 }
 \value{

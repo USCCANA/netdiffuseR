@@ -5,8 +5,7 @@
 \alias{print.diffnet_se}
 \title{Structural Equivalence}
 \usage{
-struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
-  geodist.args = list(), ...)
+struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL, ...)
 
 \method{print}{diffnet_se}(x, ...)
 }
@@ -18,8 +17,6 @@ struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL,
 \item{inf.replace}{Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.}
 
 \item{groupvar}{Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.}
-
-\item{geodist.args}{Character scalar pased to \code{\link{approx_geodesic}}.}
 
 \item{...}{Further arguments to be passed to \code{\link{approx_geodesic}} (not valid for the print method).}
 

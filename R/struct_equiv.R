@@ -7,7 +7,6 @@
 #' @param inf.replace Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.
 #' @param groupvar Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.
 #' @param ... Further arguments to be passed to \code{\link{approx_geodesic}} (not valid for the print method).
-#' @param geodist.args Character scalar pased to \code{\link{approx_geodesic}}.
 #' @param x A \code{diffnet_se} class object.
 #' @family statistics
 #' @keywords univar
@@ -91,18 +90,18 @@
 #'
 #'
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
-struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL, geodist.args=list(), ...) {
+struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL,  ...) {
 
   # Checking groupvar
   if ((length(groupvar)==1) && inherits(graph, "diffnet"))
     groupvar <- graph[[groupvar]]
 
   output <- switch (class(graph),
-    matrix = struct_equiv.matrix(graph, v, inf.replace, groupvar, geodist.args, ...),
-    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, geodist.args, ...),
-    array = struct_equiv.array(graph, v, inf.replace, groupvar, geodist.args, ...),
-    list = struct_equiv.list(graph, v, inf.replace, groupvar, geodist.args, ...),
-    diffnet = struct_equiv.list(graph$graph, v, inf.replace, groupvar, geodist.args, ...),
+    matrix = struct_equiv.matrix(graph, v, inf.replace, groupvar,  ...),
+    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, ...),
+    array = struct_equiv.array(graph, v, inf.replace, groupvar, ...),
+    list = struct_equiv.list(graph, v, inf.replace, groupvar, ...),
+    diffnet = struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...),
     stopifnot_graph(graph)
   )
 
@@ -131,7 +130,7 @@ print.diffnet_se <- function(x, ...) {
 
 
 # Apply per grouping variable
-struct_equiv_by <- function(graph, v, inf.replace, groupvar, geodist.args, ...) {
+struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
   # Checking length of the grouping variable
   if (length(groupvar) != nvertices(graph))
     stop("The length of -groupvar-, ",length(groupvar),
@@ -167,7 +166,7 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, geodist.args, ...) 
     ng   <- nvertices(subg)
 
     # Computing SE
-    out <- struct_equiv(subg, v, inf.replace, groupvar=NULL, geodist.args,...)
+    out <- struct_equiv(subg, v, inf.replace, groupvar=NULL, ...)
 
     # Appending values
     index <- (N + 1L):(N + ng)
@@ -306,15 +305,15 @@ transformGraphBy.dgCMatrix <- function(graph, INDICES, fun=function(g,...) g, ..
 
 # @rdname struct_equiv
 # @export
-struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, geodist.args, ...) {
+struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, ...) {
 
   # Running the algorithm
   if (length(groupvar)) {
-    output <- struct_equiv_by(graph, v, inf.replace, groupvar, geodist.args, ...)
+    output <- struct_equiv_by(graph, v, inf.replace, groupvar, ...)
   } else {
 
     # geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
-    geod   <- do.call(approx_geodist, c(list(graph=graph), geodist.args, ...))
+    geod   <- do.call(approx_geodist, c(list(graph=graph), ...))
     geod@x <- geod@x/max(geod@x, na.rm = TRUE)
 
     output <- struct_equiv_cpp(geod, v)
@@ -330,15 +329,15 @@ struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, geodist.args, .
 
 # @rdname struct_equiv
 # @export
-struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, geodist.args, ...) {
+struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
 
   if (length(groupvar)) {
-    output <- struct_equiv_by(graph, v, inf.replace, groupvar, geodist.args, ...)
+    output <- struct_equiv_by(graph, v, inf.replace, groupvar, ...)
   } else {
     # In order to use the SNA package functions, we need to coerce the graph
     # Into a -matrix.csc- object,
     # geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
-    geod   <- do.call(approx_geodist, c(list(graph=graph), geodist.args, ...))
+    geod   <- do.call(approx_geodist, c(list(graph=graph), ...))
     geod@x <- geod@x/max(geod@x, na.rm = TRUE)
 
     output <- struct_equiv_cpp(geod, v)
@@ -353,11 +352,11 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, geodist.args
 
 # @rdname struct_equiv
 # @export
-struct_equiv.array <- function(graph, v, inf.replace, groupvar, geodist.args, ...) {
+struct_equiv.array <- function(graph, v, inf.replace, groupvar, ...) {
   t <- dim(graph)[3]
   output <- vector("list", t)
   for(i in 1:t) {
-    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, groupvar, geodist.args, ...)
+    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, groupvar, ...)
   }
 
   # Naming
@@ -372,7 +371,7 @@ struct_equiv.array <- function(graph, v, inf.replace, groupvar, geodist.args, ..
 
 # @rdname struct_equiv
 # @export
-struct_equiv.list <- function(graph, v, inf.replace, groupvar, geodist.args, ...) {
+struct_equiv.list <- function(graph, v, inf.replace, groupvar, ...) {
   t <- length(graph)
   n <- nrow(graph[[1]])
   output <- vector("list", t)
@@ -381,11 +380,11 @@ struct_equiv.list <- function(graph, v, inf.replace, groupvar, geodist.args, ...
   if (!is.list(groupvar)) {
     for(i in 1:t)
       output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
-                                            v, inf.replace, groupvar, geodist.args,...)
+                                            v, inf.replace, groupvar, ...)
   } else {
     for(i in 1:t)
       output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
-                                            v, inf.replace, groupvar[[i]], geodist.args,...)
+                                            v, inf.replace, groupvar[[i]], ...)
   }
 
   # Naming
