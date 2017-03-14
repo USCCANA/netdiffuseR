@@ -122,8 +122,8 @@ ans
 
 # checking it worked, taking a look at node 1, 2, and 3
 max(someattr[which(net[1,] == 1),"a"]) == ans[1] # TRUE
-max(someattr[which(net[2,] == 2),"a"]) == ans[2] # TRUE
-max(someattr[which(net[3,] == 3),"a"]) == ans[3] # TRUE
+max(someattr[which(net[2,] == 1),"a"]) == ans[2] # TRUE
+max(someattr[which(net[3,] == 1),"a"]) == ans[3] # TRUE
 
 
 }

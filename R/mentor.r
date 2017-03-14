@@ -66,20 +66,42 @@ mentor_matching <- function(
 
   cls <- class(graph)
 
+  if (any(c("dgCMatrix", "matrix", "array") %in% cls)) {
+    # Adding labels in case there aren't any
+    if (!length(rownames(graph))) {
+      warning("-graph- as no labels (rownames). We'll add some from 1 to n.")
+      dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
+    }
+  }
+
   if (any(c("dgCMatrix", "matrix") %in% cls)) {
+
+    # Matrix method
     .mentor_matching(graph, n, cmode, lead.ties.method, geodist.args)
+
   } else if ("list" %in% cls) {
+
+    # List method
     lapply(graph, .mentor_matching, n = n,
            cmode = cmode, lead.ties.method = lead.ties.method,
            geodist.args = geodist.args)
+
   } else if ("array" %in% cls) {
+
+    # Array method
     apply(graph, 3, .mentor_matching, n = n,
           cmode = cmode, lead.ties.method = lead.ties.method,
           geodist.args = geodist.args)
+
   } else if ("diffnet" %in% cls) {
-    lapply(graph$graph, .mentor_matching, n = n,
+
+    # diffnet method
+    g <- graph$graph
+    g <- lapply(g, `dimnames<-`, value = list(nodes(graph), nodes(graph)))
+    lapply(g, .mentor_matching, n = n,
            cmode = cmode, lead.ties.method = lead.ties.method,
            geodist.args = geodist.args)
+
   } else stopifnot_graph(graph)
 
 }

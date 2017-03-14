@@ -12,7 +12,10 @@
   matrix.
   
 * `matrix_compare` Efficiently compare two sparse matrices looking only at the valued
-  cells
+  cells.
+  
+* `as_dgCMatrix` Coerce matrix-like objects into dgCMatrix objects (sparse matrices
+  from the `Matrix` package).
 
   
 ## Bugs
@@ -20,6 +23,9 @@
 * `dgr` returned with error when `self == TRUE`
 
 * In some calls to `igraph::graph_from_adj...` sorting of vertices was not preserved.
+
+* The `matrix` method in `egonet_attrs` was passing a list of vertices instead of
+  the attributes. Fixed.
 
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)

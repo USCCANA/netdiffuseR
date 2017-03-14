@@ -62,7 +62,7 @@ test_that("Methods of struct test", {
   expect_output(print(c(ans2,ans1,ans1)), "300")
 
   # Just printing
-  hist(ans1)
+  expect_silent(hist(ans1, ask=FALSE))
 })
 
 # ------------------------------------------------------------------------------

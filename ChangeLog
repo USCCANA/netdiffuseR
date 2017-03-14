@@ -1,3 +1,13 @@
+2017-03-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Working on doc.
+	* R/bootnet.r: Working on hist method.
+	* R/egonets.R: Fixing bug in matrix methods.
+	* R/mentor.R: Fixing bug in fetching nodes labels.
+	* R/misc.R: New function to coerce to dgCMatrix.
+	* R/struct_test.R: Working on print and hist methods.
+	* tests/testthat/*.r: Adding a bunch of new tests.
+
+
 2017-03-01  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/struct_equiv.R: Replaced approx_geodesic
 	* R/adjmat.R: Fixing man.

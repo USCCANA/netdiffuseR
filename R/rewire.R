@@ -348,7 +348,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 #'
 #' Mantel, N. (1967). The detection of disease clustering and a generalized
 #' regression approach. Cancer Research, 27(2), 209–20.
-#' \url{https://doi.org/10.1038/212665a0}
+#' \url{http://cancerres.aacrjournals.org/content/27/2_Part_1/209}
 #'
 #' @seealso This function can be used as null distribution in \code{struct_test}
 #' @family simulation functions

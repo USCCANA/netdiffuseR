@@ -103,8 +103,8 @@
 #'
 #' # checking it worked, taking a look at node 1, 2, and 3
 #' max(someattr[which(net[1,] == 1),"a"]) == ans[1] # TRUE
-#' max(someattr[which(net[2,] == 2),"a"]) == ans[2] # TRUE
-#' max(someattr[which(net[3,] == 3),"a"]) == ans[3] # TRUE
+#' max(someattr[which(net[2,] == 1),"a"]) == ans[2] # TRUE
+#' max(someattr[which(net[3,] == 1),"a"]) == ans[3] # TRUE
 #'
 #'
 #' @export
@@ -147,10 +147,10 @@ egonet_attrs <- function(
     class(graph),
     diffnet = egonet_attrs.list(
       graph$graph, attrs, if (!length(V)) 1:graph$meta$n else V, outer, fun, as.df, self, self.attrs, valued),
-    list      = egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    matrix    = egonet_attrs.matrix(methods::as(graph, "dgCMatrix"), V, attrs, outer, fun, self, self.attrs, valued),
-    dgCMatrix = egonet_attrs.matrix(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    array     = egonet_attrs.array(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued),
+    list      = egonet_attrs.list(graph              , attrs, V, outer, fun, as.df, self, self.attrs, valued),
+    matrix    = egonet_attrs.matrix(as_spmat(graph)  , attrs, V, outer, fun, as.df, self, self.attrs, valued),
+    dgCMatrix = egonet_attrs.matrix(graph            , attrs, V, outer, fun, as.df, self, self.attrs, valued),
+    array     = egonet_attrs.array(graph             , attrs, V, outer, fun, as.df, self, self.attrs, valued),
     stopifnot_graph(graph)
   )
 }
@@ -158,9 +158,9 @@ egonet_attrs <- function(
 egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued) {
 
   # Filling V
-  if (!length(V)) V <- seq_len(nrow(graph))
+  if (!length(V)) V <- seq_len(nrow(graph)) - 1L
 
-  ids <- egonet_attrs_cpp(graph, as.integer(V)-1L, outer, self, self.attrs, valued)
+  ids <- egonet_attrs_cpp(graph, V, outer, self, self.attrs, valued)
   sapply(lapply(ids, function(w) cbind(
     value = w[,"value"],
     id    = w[,"id"],

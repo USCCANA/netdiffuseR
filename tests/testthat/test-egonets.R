@@ -3,9 +3,9 @@ context("Egonets")
 test_that("Simple extraction throught clases", {
   set.seed(1931)
   # Generating data ----------
-  n <- 100
-  t <- 20
-  diffnet <- rdiffnet(100,20, seed.graph = "small-world")
+  n <- 50
+  t <- 10
+  diffnet <- rdiffnet(50,10, seed.graph = "small-world")
 
   # Adding attributes
 
@@ -33,6 +33,22 @@ test_that("Simple extraction throught clases", {
 
   expect_equal(en_diffnet_dn, en_diffnet_ar)
   expect_equal(en_diffnet_dn, en_list)
+
+  en_dgCMatrix <- egonet_attrs(
+    diffnet$graph[[1]],
+    diffnet.attrs(diffnet)[[1]],
+    fun=function(x) {
+      sum(x[,"threshold"] * x[,"d"], na.rm=TRUE)/sum(x[,"d"], na.rm=TRUE)
+      })
+
+  en_matrix <- egonet_attrs(
+    as.matrix(diffnet$graph[[1]]),
+    diffnet.attrs(diffnet)[[1]],
+    fun=function(x) {
+      sum(x[,"threshold"] * x[,"d"], na.rm=TRUE)/sum(x[,"d"], na.rm=TRUE)
+      })
+
+  expect_equal(en_dgCMatrix, en_matrix)
 })
 
 test_that("Error messages", {

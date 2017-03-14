@@ -42,6 +42,7 @@
 #' \item{p.value}{The resulting p-value of the test (see details).}
 #' \item{t0}{The observed value of the statistic.}
 #' \item{mean_t}{The average value of the statistic applied to the simulated networks.}
+#' \item{var_t}{A vector of length \code{length(t0)}. Bootstrap variances.}
 #' \item{R}{Number of simulations.}
 #' \item{statistic}{The function \code{statistic} passed to \code{bootnet}.}
 #' \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}
@@ -82,11 +83,11 @@ bootnet_fillselfR <- function(graph, index, E) {
 
         # Add accordingly to density
         if (rand[1] <= dens) {
-          graph[r[j],r[k]] <- E[floor(rand[1]/dens*m) + 1]
+          graph[r[j],r[k]] <- E[floor(rand[1]*m) + 1]
         }
 
         if (rand[2] <= dens) {
-          graph[r[k],r[j]] <- E[floor(rand[2]/dens*m) + 1]
+          graph[r[k],r[j]] <- E[floor(rand[2]*m) + 1]
         }
       }
 
@@ -243,19 +244,18 @@ bootnet <- function(
   p.value <- bootnet_pval(boot_res$t0, boot_res$t)
 
   # Creating the object
-  out <- list(
+  structure(list(
     graph       = graph,
     p.value     = p.value,
     t0          = boot_res$t0,
     mean_t      = colMeans(boot_res$t, na.rm = TRUE),
-    var_t       = apply(boot_res$t, 2, var, na.rm = TRUE),
+    var_t       = apply(boot_res$t, 2, var, na.rm=TRUE),
     R           = R,
     statistic   = statistic,
     boot        = boot_res,
     resample.args = resample.args
-  )
+  ), class="diffnet_bootnet")
 
-  return(structure(out, class="diffnet_bootnet"))
 }
 #
 # #' @export
@@ -272,6 +272,8 @@ c.diffnet_bootnet <- function(..., recursive=FALSE) {
   if (!all(sapply(nm, function(x) identical(x, nm[[1]]))))
     stop("arguments are not all the same type of \"diffnet_bootnet\" object")
 
+  # Checking
+
   # Checking graph dim
   res         <- args[[1]]
   res$boot    <- do.call(c, lapply(args, "[[", "boot"))
@@ -279,6 +281,7 @@ c.diffnet_bootnet <- function(..., recursive=FALSE) {
   #                                mean(boot$t > boot$t0)))
   res$p.value <- bootnet_pval(res$boot$t0, res$boot$t)
   res$mean_t  <- colMeans(res$boot$t, na.rm=TRUE)
+  res$var_t   <- apply(res$boot$t, 2, var, na.rm=TRUE)
   res$R       <- res$boot$R
 
   res
@@ -288,17 +291,24 @@ c.diffnet_bootnet <- function(..., recursive=FALSE) {
 #' @rdname bootnet
 print.diffnet_bootnet <- function(x, ...) {
 
+  # Neat column printing
+  netcol <- function(obs, bias, sd, pval) {
+    txt <- paste0(sprintf("%10.4f  %10.4f  %10.4f  %10.4f", obs, bias, sd, pval), collapse="\n")
+    paste(
+      sprintf("%10s  %10s  %10s  %10s", "original", "bias", "std. error", "p.val"),
+      txt, sep = "\n"
+    )
+  }
+
   with(x,  {
     nsim <- ifelse(!is.na(R), R, 0)
 
     cat("\nNetwork Bootstrap (Snijders and Borgatti, 1999)\n",
-        "# Num. of drawns  : ", formatC(nsim, digits = 0, format = "f", big.mark = ","),"\n",
+        "# Num. of draws   : ", formatC(nsim, digits = 0, format = "f", big.mark = ","),"\n",
         "# nodes           : ", formatC(nnodes(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
         "# of time periods : ", formatC(nslices(x$graph), digits = 0, format = "f", big.mark = ","),"\n",
-        paste(rep("-",80), collapse=""),"\n",
-        "  Observed mean         = ", paste0(sprintf("%12.4f",t0), collapse=", "), "\n",
-        "  Bootstrap Std. Errors = ", paste0(sprintf("%12.4f",var_t), collapse=", "), "\n",
-        "  p-value               = ", paste0(sprintf("%12.4f", p.value), collapse=", "),"\n",
+        paste(rep("-",options()$width), collapse=""),"\n",
+        netcol(t0, t0-apply(boot$t, 2, mean), sqrt(var_t), p.value),"\n",
         sep="")
   })
   invisible(x)
@@ -307,31 +317,41 @@ print.diffnet_bootnet <- function(x, ...) {
 #' @export
 #' @param b0 Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.
 #' @param b Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.
+#' @param ask Logical scalar. When \code{TRUE}, asks the user to type \code{<Enter>} to
+#' see each plot (as many as statistics where computed).
 #' @rdname bootnet
 hist.diffnet_bootnet <- function(
   x,
-  main="Empirical Distribution of Statistic",
-  xlab=expression(Values~of~t),
-  breaks=20,
-  annotated=TRUE,
-  b0=expression(atop(plain("") %up% plain("")), t[0]),
-  b =expression(atop(plain("") %up% plain("")), t[]),
+  main      = "Empirical Distribution of Statistic",
+  xlab      = expression(Values~of~t),
+  breaks    = 20,
+  annotated = TRUE,
+  b0        = expression(atop(plain("") %up% plain("")), t[0]),
+  b         = expression(atop(plain("") %up% plain("")), t[]),
+  ask       = TRUE,
   ...) {
 
-  out <- hist(x$boot$t,  breaks=breaks, plot=FALSE)
-  ran <- range(out$mids)
-  if (annotated) {
-    mt <- mean(x$boot$t, na.rm=TRUE)
-    ran <- range(c(ran, mt, x$boot$t0))
-    hist(x$boot$t, breaks=breaks, main=main, xlab=xlab, xlim = ran, ...)
-  } else {
-    hist(x$boot$t, breaks=breaks, main=main, xlab=xlab, ...)
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+  par(ask=ask)
+  for (i in 1:ncol(x$boot$t)) {
+    out <- hist(x$boot$t[,i],  breaks=breaks, plot=FALSE)
+    ran <- range(out$mids)
+
+    if (annotated) {
+      mt <- mean(x$boot$t[,i], na.rm=TRUE)
+      ran <- range(c(ran, mt, x$boot$t0[i]))
+      hist(x$boot$t[,i], breaks=breaks, main=main, xlab=xlab, xlim = ran, ...)
+    } else {
+      hist(x$boot$t[,i], breaks=breaks, main=main, xlab=xlab, ...)
+    }
+
+    # Adding margin note
+    if (annotated) {
+      mtext(b0, side = 1, at=x$boot$t0[i])
+      mtext(b, side = 1, at=mt)
+    }
   }
 
-  # Adding margin note
-  if (annotated) {
-    mtext(b0, side = 1, at=x$boot$t0)
-    mtext(b, side = 1, at=mt)
-  }
   invisible(out)
 }

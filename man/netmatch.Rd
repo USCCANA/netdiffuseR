@@ -57,6 +57,7 @@ level}
 \item{match_obj}{The output from \code{matchit}.}
 }
 \description{
+\strong{WARNING}: This function is still in development and has not been tested throughly.
 Following Aral et al. (2009), \code{netmatch} computes matching
 estimators for network data. The function \code{netmatch_prepare}, which
 prepares the data to be used with \code{\link[MatchIt:matchit]{matchit}} from

@@ -173,11 +173,11 @@ arma::sp_mat bootnet_fillself(
 
         // Add accordingly to density
         if (rand[0] <= dens)
-          graph.at(r.at(j),r.at(k)) = E.at(floor(rand[0]/dens*(m)));
+          graph.at(r.at(j),r.at(k)) = E.at(floor(rand[0]*m));
 
         // Add accordingly to density
         if (rand[1] <= dens)
-          graph.at(r.at(k),r.at(j)) = E.at(floor(rand[1]/dens*(m)));
+          graph.at(r.at(k),r.at(j)) = E.at(floor(rand[1]*m));
       }
 
   }

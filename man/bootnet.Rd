@@ -21,7 +21,7 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
   main = "Empirical Distribution of Statistic", xlab = expression(Values ~
   of ~ t), breaks = 20, annotated = TRUE, b0 = expression(atop(plain("")
   \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
-  t[]), ...)
+  t[]), ask = TRUE, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -57,6 +57,9 @@ The first argument must be the graph, and the second argument a vector of indice
 \item{b0}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.}
 
 \item{b}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.}
+
+\item{ask}{Logical scalar. When \code{TRUE}, asks the user to type \code{<Enter>} to
+see each plot (as many as statistics where computed).}
 }
 \value{
 A list of class \code{diffnet_bootnet} containing the following:
@@ -64,6 +67,7 @@ A list of class \code{diffnet_bootnet} containing the following:
 \item{p.value}{The resulting p-value of the test (see details).}
 \item{t0}{The observed value of the statistic.}
 \item{mean_t}{The average value of the statistic applied to the simulated networks.}
+\item{var_t}{A vector of length \code{length(t0)}. Bootstrap variances.}
 \item{R}{Number of simulations.}
 \item{statistic}{The function \code{statistic} passed to \code{bootnet}.}
 \item{boot}{A \code{boot} class object as return from the call to \code{boot}.}

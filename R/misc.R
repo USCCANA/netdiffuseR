@@ -286,3 +286,89 @@ rescale_vertex_igraph <- function(
 }
 
 
+#' Coerce a matrix-like objects to \code{dgCMatrix} (sparse matrix)
+#'
+#' This helper function allows easy convertion to sparse matrix objects
+#' from the \pkg{Matrix} package, \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
+#'
+#' @param x An object to be coerced into a sparse matrix.
+#' @param ... Further arguments passed to the method.
+#'
+#' @details
+#' In the case of the \code{igraph} and \code{network} methods, \code{...} is passed to
+#' \code{\link[igraph:as_adj]{as_adj}} and \code{\link[network:as.matrix.network]{as.matrix.network}}
+#' respectively.
+#'
+#' @return Either a list with \code{dgCMatrix} objects or a \code{dgCMatrix} object.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' set.seed(1231)
+#' x <- rgraph_er(10)
+#'
+#' # From matrix object
+#' as_dgCMatrix(as.matrix(x))
+#'
+#' # From a network object
+#' as_dgCMatrix(network::as.network(as.matrix(x)))
+#'
+#' # From igraph object
+#' as_dgCMatrix(igraph::graph_from_adjacency_matrix(x))
+#'
+#' # From array
+#' myarray <- array(dim=c(10,10,2))
+#' myarray[,,1] <- as.matrix(x)
+#' myarray[,,2] <- as.matrix(x)
+#'
+#' myarray
+#' as_dgCMatrix(myarray)
+#'
+#' # From a diffnet object
+#' as_dgCMatrix(medInnovationsDiffNet)
+#'
+#'
+as_dgCMatrix <- function(x, ...) {
+  UseMethod("as_dgCMatrix")
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as.dgCMatrix <- as_dgCMatrix
+
+#' @export
+#' @rdname as_dgCMatrix
+as_spmat <- as_dgCMatrix
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.default <- function(x, ...) {
+  methods::as(x, "dgCMatrix")
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.diffnet <- function(x, ...) {
+  ans <- x$graph
+  ans <- lapply(ans, `dimnames<-`, list(x$meta$ids,x$meta$ids))
+  ans
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.array <- function(x, ...) {
+  apply(x, 3, methods::as, Class="dgCMatrix")
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.igraph <- function(x, ...) {
+  igraph::as_adj(x, ...)
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.network <- function(x, ...) {
+  as_dgCMatrix(network::as.matrix.network(x))
+}

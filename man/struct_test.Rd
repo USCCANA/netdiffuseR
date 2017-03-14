@@ -24,7 +24,7 @@ struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
   main = "Empirical Distribution of Statistic", xlab = expression(Values ~
   of ~ t), breaks = 20, annotated = TRUE, b0 = expression(atop(plain("")
   \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
-  t[]), ...)
+  t[]), ask = TRUE, ...)
 
 struct_test_asymp(graph, Y, statistic_name = "distance", p = 2, ...)
 }
@@ -57,6 +57,9 @@ with the number of rewires per links.}
 \item{b0}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b0}.}
 
 \item{b}{Character scalar. When \code{annotated=TRUE}, label for the value of \code{b}.}
+
+\item{ask}{Logical scalar. When \code{TRUE}, asks the user to type \code{<Enter>} to see each plot (as
+many as statistics where computed).}
 
 \item{Y}{Numeric vector of length \eqn{n}.}
 

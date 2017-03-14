@@ -36,6 +36,10 @@
 #' not included on the graph. Incomplete cases are tagged using \code{\link{complete.cases}}
 #' and can be retrieved by the user by accessing the attribute \code{incomplete}.
 #'
+#' Were the case that either ego or alter are missing (i.e. \code{NA} values), the
+#' function will either way include the non-missing vertex. See below for an example
+#' of this.
+#'
 #' The function performs several checks before starting to create the adjacency
 #' matrix. These are:
 #' \itemize{
@@ -113,6 +117,18 @@
 #' # Creating a diffnet object with it so we can apply the plot_diffnet function
 #' diffnet <- as_diffnet(graph, toa=1:4)
 #' plot_diffnet(diffnet, label=rownames(diffnet))
+#'
+#' # Missing alter in the edgelist ---------------------------------------------
+#' data(fakeEdgelist)
+#'
+#' # Notice that edge 202 is isolated
+#' fakeEdgelist
+#'
+#' # The function still includes vertex 202
+#' edgelist_to_adjmat(fakeEdgelist[,1:2])
+#'
+#' edgelist
+#'
 #' @keywords manip
 #' @family data management functions
 #' @include graph_data.R
