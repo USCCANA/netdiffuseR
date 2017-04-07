@@ -87,7 +87,8 @@ suppressWarnings(plot(dgr(g)))
 
 }
 \seealso{
-Other statistics: \code{\link{classify_adopters}},
+Other statistics: \code{\link{bass}},
+  \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}},
   \code{\link{ego_variance}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},

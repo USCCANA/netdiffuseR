@@ -118,7 +118,8 @@ Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
 (2nd ed.). Cambridge: MIT Press.
 }
 \seealso{
-Other statistics: \code{\link{classify_adopters}},
+Other statistics: \code{\link{bass}},
+  \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
   \code{\link{ego_variance}}, \code{\link{exposure}},
   \code{\link{infection}}, \code{\link{moran}},

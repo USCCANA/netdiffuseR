@@ -1060,8 +1060,8 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
   # If not been added
   if (!add) {
     if (include.legend)
-      legend("topleft", bty="n",
-             legend = c("Cumulative adopters", "Adopters")[test], fill = bg)
+      legend("topleft", bty="n", pch=pch,
+             legend = c("Cumulative adopters", "Adopters")[test], pt.bg = bg, col=col)
 
     if (include.grid)
       grid()

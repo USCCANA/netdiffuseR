@@ -53,6 +53,7 @@ Collate:
     'imports.R'
     'graph_data.R'
     'adjmat.R'
+    'bass.r'
     'bootnet.r'
     'data.R'
     'diffnet-c.R'

@@ -83,7 +83,8 @@ Retrieved 20:31, September 27, 2016, from
 \seealso{
 \code{\link[stats:mahalanobis]{mahalanobis}} in the stats package.
 
-Other statistics: \code{\link{classify_adopters}},
+Other statistics: \code{\link{bass}},
+  \code{\link{classify_adopters}},
   \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
   \code{\link{ego_variance}}, \code{\link{exposure}},
   \code{\link{hazard_rate}}, \code{\link{infection}},

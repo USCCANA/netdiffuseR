@@ -16,6 +16,9 @@
   
 * `as_dgCMatrix` Coerce matrix-like objects into dgCMatrix objects (sparse matrices
   from the `Matrix` package).
+  
+* `fitbass` Fits the Bass Diffusion Model to an observed vector of cumulative
+  adopters. The estimation is done via `stats::nls`.
 
   
 ## Bugs
