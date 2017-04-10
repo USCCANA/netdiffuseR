@@ -70,7 +70,7 @@
 #'
 #' By default sets the threshold to be random for each node in the graph.
 #'
-#' If \code{sgraph} is provided, no random graph is generated and the simulation
+#' If \code{seed.graph} is provided, no random graph is generated and the simulation
 #' is applied using that graph instead.
 #'
 #' @examples

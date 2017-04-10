@@ -197,7 +197,7 @@ a <- "marginal"
 
 # Montecarlo
 bernoulli <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = er(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = er(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -207,7 +207,7 @@ bernoulli <- do.call(rbind, bernoulli)
 
 # Montecarlo
 scale_free <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ba(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ba(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -217,7 +217,7 @@ scale_free <- do.call(rbind, scale_free)
 
 # Montecarlo
 small_world <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ws(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ws(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -272,7 +272,7 @@ a <- "central"
 
 # Montecarlo
 bernoulli <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = er(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = er(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -282,7 +282,7 @@ bernoulli <- do.call(rbind, bernoulli)
 
 # Montecarlo
 scale_free <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ba(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ba(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -292,7 +292,7 @@ scale_free <- do.call(rbind, scale_free)
 
 # Montecarlo
 small_world <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ws(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ws(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -327,7 +327,7 @@ a <- "random"
 
 # Montecarlo
 bernoulli <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = er(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = er(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -337,7 +337,7 @@ bernoulli <- do.call(rbind, bernoulli)
 
 # Montecarlo
 scale_free <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ba(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ba(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
@@ -347,7 +347,7 @@ scale_free <- do.call(rbind, scale_free)
 
 # Montecarlo
 small_world <- lapply(seq_len(N), function(x) {
-  net <- rdiffnet(t=t, sgraph = ws(), seed.p.adopt = p, seed.nodes = a)
+  net <- rdiffnet(t=t, seed.graph = ws(), seed.p.adopt = p, seed.nodes = a)
   cumulative_adopt_count(net)["prop",]
 })
 
