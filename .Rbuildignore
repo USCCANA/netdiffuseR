@@ -3,6 +3,7 @@
 ^data-raw$
 ^man-roxygen$
 ^playground$
+^tutorials$
 .*\.old
 ^doc$
 .*\.Rhistory$
