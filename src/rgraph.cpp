@@ -490,6 +490,24 @@ arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
 //
 // -----------------------------------------------------------------------------
 
+// Checking if integer i is in x.
+int does_exists(const std::vector< unsigned int > & x, unsigned int val) {
+  int ans = -1;
+
+  // If the vector is empty, then nothing to see here
+  if (x.size() == 0)
+    return ans;
+
+  for (unsigned int i = 0; i < x.size(); i++) {
+    if (x.at(i) != val) continue;
+
+    ans = i;
+    break;
+  }
+
+  return ans;
+}
+
 // [[Rcpp::export]]
 arma::sp_mat rgraph_ba_cpp(
     const arma::sp_mat & graph,
@@ -502,11 +520,20 @@ arma::sp_mat rgraph_ba_cpp(
   int n = m0 + t;
 
   // Creating new graph and vector of degree
-  arma::sp_mat graph_new(n,n);
-  graph_new.submat(0,0,m0-1, m0-1) = graph;
-
   arma::colvec dgr_new(n, arma::fill::zeros);
   dgr_new.subvec(0, m0-1) = dgr;
+
+  std::vector< std::vector<unsigned int> > source(n);
+  std::vector< std::vector<double> > value(n);
+
+  // Setting the initial values
+  int nlocations = graph.n_nonzero;
+  arma::sp_mat::const_iterator iter;
+  for (iter = graph.begin(); iter != graph.end(); iter++) {
+    source.at(iter.row()).push_back(iter.col());
+    value.at(iter.row()).push_back(*iter);
+  }
+
 
   // Start the process, K is sum(dgr)
   int K = sum(dgr);
@@ -515,7 +542,7 @@ arma::sp_mat rgraph_ba_cpp(
   double randdraw, cump;
 
   // If self=true, then the prob are computed over m0+1, otherwise only over m0
-  int extra = self? 1 : 0;
+  int extra = self? 1 : 0, exists;
   for(int i=0;i<t;i++) {
     // Checling user interrup
     if (i % 1000 == 0)
@@ -536,7 +563,7 @@ arma::sp_mat rgraph_ba_cpp(
 
       // std::cout << j << " Iter, "<< m << " m\n";
       // Random selection
-      randdraw = unif_rand();
+      randdraw = R::runif(0,1); //unif_rand();
 
       // Calculating probabilities of been drawn. -cump- is the cumsum of the
       // probabilities
@@ -554,7 +581,16 @@ arma::sp_mat rgraph_ba_cpp(
 
         // Links to the set of previous vertices
         if (randdraw <= cump) {
-          graph_new.at(m0, k) += 1.0; // , graph_new.at(k, m0) += 1.0
+          exists = does_exists(source.at(m0), k);
+
+          if (exists < 0) {
+            source.at(m0).push_back(k);
+            value.at(m0).push_back(1.0);
+            ++nlocations;
+          } else {
+            ++value.at(m0).at(exists);
+          }
+
           dgr_new.at(k) += 1.0;
 
           // Sumation of degrees
@@ -565,6 +601,23 @@ arma::sp_mat rgraph_ba_cpp(
     }
     ++m0;
   }
+
+  // Now need to coerce into a -sp_mat-
+  arma::umat locations(2, nlocations);
+  arma::colvec values(nlocations);
+
+  int curloc = 0;
+  for (int i = 0; i<n; i++) {
+    for (unsigned int j = 0; j < source.at(i).size(); j++) {
+      locations.at(0, curloc) = i;
+      locations.at(1, curloc) = source.at(i).at(j);
+      values.at(curloc++) = value.at(i).at(j);
+    }
+
+  }
+
+  // Creating the sparse matrix
+  arma::sp_mat graph_new(locations, values, n, n, true, false);
 
   return graph_new;
 }

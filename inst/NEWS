@@ -21,6 +21,9 @@ New functions
 -   as_dgCMatrix Coerce matrix-like objects into dgCMatrix objects
     (sparse matrices from the Matrix package).
 
+-   fitbass Fits the Bass Diffusion Model to an observed vector of
+    cumulative adopters. The estimation is done via stats::nls.
+
 
 Bugs
 
@@ -31,6 +34,12 @@ Bugs
 
 -   The matrix method in egonet_attrs was passing a list of vertices
     instead of the attributes. Fixed.
+
+
+Improvements
+
+-   rgraph_er is now significantly faster (orders of magnitude compare
+    to previous versions). rgraph_ba is faster too.
 
 
 

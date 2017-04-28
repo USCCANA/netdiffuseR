@@ -34,7 +34,7 @@
 ## Improvements
 
 * `rgraph_er` is now significantly faster (orders of magnitude compare to
-  previous versions).
+  previous versions). `rgraph_ba` is faster too.
   
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)
