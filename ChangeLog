@@ -1,3 +1,8 @@
+2017-04-28  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rgraph.cpp: New version of the rgraph_er_cpp
+	  function, way faster using batch insertion of arma::sp_mat.
+
+
 2017-04-07  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/bass.r: Adding the bass function w/ corresponding
 	  tests and examples.

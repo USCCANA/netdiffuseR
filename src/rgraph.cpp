@@ -13,7 +13,9 @@ arma::sp_mat rgraph_er_cpp(
     int n=10, double p = 0.3, bool undirected=true,
     bool weighted=false, bool self=false) {
 
-  arma::sp_mat graph(n, n);
+  std::vector< unsigned int > source;
+  std::vector< unsigned int > target;
+  std::vector< double > vals;
 
   for(int i=0;i<n;i++) {
     // Checling user interrup
@@ -29,18 +31,38 @@ arma::sp_mat rgraph_er_cpp(
       if (!self && (i==j)) continue;
 
       /* Setting the value of the tie */
-      double w = unif_rand();
+      double w = unif_rand(); //R::runif(0, 1);
       if (w > (1-p)) {
         if (!weighted) w=1.0;
-        graph.at(i,j) = w;
-        if (undirected) graph.at(j,i) = w;
+
+        source.push_back(i);
+        target.push_back(j);
+        vals.push_back(w);
+
+        // Adding the mirror
+        if (undirected) {
+          source.push_back(j);
+          target.push_back(i);
+          vals.push_back(w);
+        }
       }
     }
   }
 
+  // Storing the data as sparse matrix
+  arma::sp_mat graph(
+      // Creating a umat
+      arma::join_cols(
+        arma::conv_to< arma::urowvec >::from(source),
+        arma::conv_to< arma::urowvec >::from(target)
+    ),
+    // Values
+    arma::conv_to< arma::colvec >::from(vals),
+    // Size, sorting and checking for zeros
+    n, n, true, false);
+
   return graph;
 }
-
 
 // -----------------------------------------------------------------------------
 //
@@ -546,6 +568,7 @@ arma::sp_mat rgraph_ba_cpp(
 
   return graph_new;
 }
+
 
 // [[Rcpp::export]]
 arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10, bool self=true) {
