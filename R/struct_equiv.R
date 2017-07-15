@@ -246,7 +246,7 @@ transformGraphBy <- function(graph, INDICES, fun=function(g,...) g, ...)
 #' @export
 #' @rdname transformGraphBy
 transformGraphBy.diffnet <- function(graph, INDICES, fun=function(g,...) g, ...) {
-  for (per in graph$meta$pers)
+  for (per in as.character(graph$meta$pers))
     graph$graph[[per]] <- transformGraphBy(graph$graph[[per]], INDICES, fun, ...)
 
   return(graph)

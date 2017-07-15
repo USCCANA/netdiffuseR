@@ -504,7 +504,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // moran_cpp
-std::vector<double> moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
+List moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
 RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -582,4 +582,54 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(ego_variance(graph, Y, funname, all));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"netdiffuseR_toa_mat_cpp", (DL_FUNC) &netdiffuseR_toa_mat_cpp, 3},
+    {"netdiffuseR_edgelist_to_adjmat_cpp", (DL_FUNC) &netdiffuseR_edgelist_to_adjmat_cpp, 6},
+    {"netdiffuseR_adjmat_to_edgelist_cpp", (DL_FUNC) &netdiffuseR_adjmat_to_edgelist_cpp, 2},
+    {"netdiffuseR_toa_diff_cpp", (DL_FUNC) &netdiffuseR_toa_diff_cpp, 1},
+    {"netdiffuseR_isolated_cpp", (DL_FUNC) &netdiffuseR_isolated_cpp, 2},
+    {"netdiffuseR_drop_isolated_cpp", (DL_FUNC) &netdiffuseR_drop_isolated_cpp, 3},
+    {"netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &netdiffuseR_egonet_attrs_cpp, 6},
+    {"netdiffuseR_approx_geodesicCpp", (DL_FUNC) &netdiffuseR_approx_geodesicCpp, 3},
+    {"netdiffuseR_infection_cpp", (DL_FUNC) &netdiffuseR_infection_cpp, 9},
+    {"netdiffuseR_susceptibility_cpp", (DL_FUNC) &netdiffuseR_susceptibility_cpp, 9},
+    {"netdiffuseR_select_egoalter_cpp", (DL_FUNC) &netdiffuseR_select_egoalter_cpp, 4},
+    {"netdiffuseR_sparse_indexes", (DL_FUNC) &netdiffuseR_sparse_indexes, 1},
+    {"netdiffuseR_angle", (DL_FUNC) &netdiffuseR_angle, 4},
+    {"netdiffuseR_sp_trimatl", (DL_FUNC) &netdiffuseR_sp_trimatl, 1},
+    {"netdiffuseR_sp_diag", (DL_FUNC) &netdiffuseR_sp_diag, 2},
+    {"netdiffuseR_unif_rand_w_exclusion", (DL_FUNC) &netdiffuseR_unif_rand_w_exclusion, 2},
+    {"netdiffuseR_sp_as_undirected", (DL_FUNC) &netdiffuseR_sp_as_undirected, 1},
+    {"netdiffuseR_bootnet_fillself", (DL_FUNC) &netdiffuseR_bootnet_fillself, 3},
+    {"netdiffuseR_grid_distribution", (DL_FUNC) &netdiffuseR_grid_distribution, 3},
+    {"netdiffuseR_edges_coords", (DL_FUNC) &netdiffuseR_edges_coords, 9},
+    {"netdiffuseR_edges_arrow", (DL_FUNC) &netdiffuseR_edges_arrow, 9},
+    {"netdiffuseR_vertices_coords", (DL_FUNC) &netdiffuseR_vertices_coords, 7},
+    {"netdiffuseR_rgraph_er_cpp", (DL_FUNC) &netdiffuseR_rgraph_er_cpp, 5},
+    {"netdiffuseR_ring_lattice", (DL_FUNC) &netdiffuseR_ring_lattice, 3},
+    {"netdiffuseR_rewire_endpoints", (DL_FUNC) &netdiffuseR_rewire_endpoints, 6},
+    {"netdiffuseR_rewire_swap", (DL_FUNC) &netdiffuseR_rewire_swap, 6},
+    {"netdiffuseR_rewire_ws", (DL_FUNC) &netdiffuseR_rewire_ws, 5},
+    {"netdiffuseR_permute_graph_cpp", (DL_FUNC) &netdiffuseR_permute_graph_cpp, 3},
+    {"netdiffuseR_rgraph_ba_cpp", (DL_FUNC) &netdiffuseR_rgraph_ba_cpp, 5},
+    {"netdiffuseR_rgraph_ba_new_cpp", (DL_FUNC) &netdiffuseR_rgraph_ba_new_cpp, 4},
+    {"netdiffuseR_rgraph_sf_homo", (DL_FUNC) &netdiffuseR_rgraph_sf_homo, 6},
+    {"netdiffuseR_rgraph_sf_homo_new", (DL_FUNC) &netdiffuseR_rgraph_sf_homo_new, 5},
+    {"netdiffuseR_vertex_covariate_dist", (DL_FUNC) &netdiffuseR_vertex_covariate_dist, 3},
+    {"netdiffuseR_vertex_mahalanobis_dist_cpp", (DL_FUNC) &netdiffuseR_vertex_mahalanobis_dist_cpp, 3},
+    {"netdiffuseR_vertex_covariate_compare", (DL_FUNC) &netdiffuseR_vertex_covariate_compare, 3},
+    {"netdiffuseR_moran_cpp", (DL_FUNC) &netdiffuseR_moran_cpp, 2},
+    {"netdiffuseR_struct_equiv_cpp", (DL_FUNC) &netdiffuseR_struct_equiv_cpp, 5},
+    {"netdiffuseR_matrix_compareCpp", (DL_FUNC) &netdiffuseR_matrix_compareCpp, 3},
+    {"netdiffuseR_struct_test_mean", (DL_FUNC) &netdiffuseR_struct_test_mean, 3},
+    {"netdiffuseR_struct_test_var", (DL_FUNC) &netdiffuseR_struct_test_var, 3},
+    {"netdiffuseR_ego_variance", (DL_FUNC) &netdiffuseR_ego_variance, 4},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_netdiffuseR(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

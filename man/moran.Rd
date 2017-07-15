@@ -4,7 +4,7 @@
 \alias{moran}
 \title{Computes Moran's I correlation index}
 \usage{
-moran(x, w, normalize.w = TRUE)
+moran(x, w, normalize.w = TRUE, alternative = "two.sided")
 }
 \arguments{
 \item{x}{Numeric vector of size \eqn{n}.}
@@ -14,21 +14,30 @@ either a object of class \code{\link{matrix}} or \code{\link[Matrix:dgCMatrix-cl
 from the \code{\link[Matrix]{Matrix}} package.}
 
 \item{normalize.w}{Logical scalar. When TRUE normalizes rowsums to one (or zero).}
+
+\item{alternative}{Character String. Specifies the alternative hypothesis that
+is tested against the null of no autocorrelation; must be of one \code{"two.sided"},
+\code{"less"}, or \code{"greater"}.}
 }
 \value{
-Numeric scalar with Moran's I.
+A list of class \code{diffnet_moran} with the following elements:
+\item{observed}{Numeric scalar. Observed correlation index.}
+\item{expected}{Numeric scalar. Expected correlation index equal to \eqn{-1/(N-1)}.}
+\item{sd}{Numeric scalar. Standard error under the null.}
+\item{p.value}{Numeric scalar. p-value of the specified \code{alternative}.}
 }
 \description{
 Natively built for computing Moran's I on \code{dgCMatrix} objects, this
-routine allows computing the I on large sparse matrices (graphs), feature that
-is not supported on \code{\link[ape:Moran.I]{ape::Moran.I}}.
+routine allows computing the I on large sparse matrices (graphs). Part of
+its implementation was based on \code{\link[ape:Moran.I]{ape::Moran.I}},
+which computes the I for dense matrices.
 }
 \examples{
 \dontrun{
 # Generating a small random graph
 set.seed(123)
 graph <- rgraph_ba(t = 4)
-w <- igraph::distances(igraph::graph_from_adjacency_matrix(graph))
+w <- approx_geodesic(graph)
 x <- rnorm(5)
 
 # Computing Moran's I

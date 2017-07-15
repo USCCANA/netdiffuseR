@@ -8,7 +8,7 @@ double struct_test_mean(NumericVector & y,
                         std::string funname, bool self=false) {
 
   int    n =y.size();
-  double m = (self? n*n/2:n*(n-1)/2);
+  double m = (self? n*n:n*(n-1));
   double ans = 0.0;
 
   // Fetching function
@@ -16,7 +16,7 @@ double struct_test_mean(NumericVector & y,
   st_getfun(funname, fun);
 
   for (int i=0;i<n;i++)
-    for (int j=i;j<n;j++) {
+    for (int j=0;j<n;j++) {
       if (self) ans+= fun(y[i], y[j])/m;
       else if (i!=j) ans+= fun(y[i], y[j])/m;
     }

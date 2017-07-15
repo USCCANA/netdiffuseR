@@ -135,7 +135,7 @@ summary.diffnet <- function(
       # Inverting it (only the diagonal may have 0)
       g@x <- 1/g@x
 
-      m[i] <- moran(object$cumadopt[,slices[i]], g)["I"]
+      m[i] <- moran(object$cumadopt[,slices[i]], g)[["observed"]]
     }
   }
   # Computing adopters, cumadopt and hazard rate

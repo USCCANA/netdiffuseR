@@ -1,3 +1,9 @@
+2017-07-14  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/stats.cpp: Moran's I now computing sd.
+	* R/moran.r: Idem.
+	* tests/testthat/test-moran.r: Idem.
+
+
 2017-04-28  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/rgraph.cpp: New version of the -rgraph_er_cpp- and -rgraph_ba_cpp-
 	  function, way faster using batch insertion of arma::sp_mat.

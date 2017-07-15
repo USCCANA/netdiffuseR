@@ -29,12 +29,17 @@
 
 * The `matrix` method in `egonet_attrs` was passing a list of vertices instead of
   the attributes. Fixed.
+  
+* `transformGraphBy` was returning with error when the time periods ranged other than
+  1, 2, ...
 
 
 ## Improvements
 
 * `rgraph_er` is now significantly faster (orders of magnitude compare to
   previous versions). `rgraph_ba` is faster too.
+  
+* `moran` now returns the sd, expected and p-value.
   
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)

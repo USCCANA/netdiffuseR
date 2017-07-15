@@ -25,7 +25,7 @@ arma::sp_mat vertex_covariate_compare(
     std::string symbol
   );
 
-double moran_cpp(
+List moran_cpp(
     const arma::colvec & x,
     const arma::sp_mat & w
   );
