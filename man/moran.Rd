@@ -32,6 +32,11 @@ routine allows computing the I on large sparse matrices (graphs). Part of
 its implementation was based on \code{\link[ape:Moran.I]{ape::Moran.I}},
 which computes the I for dense matrices.
 }
+\details{
+In the case that the vector \code{x} is close to constant (degenerate random
+variable), the statistic becomes irrelevant, and furthermore, the standard error
+tends to be undefined (\code{NaN}).
+}
 \examples{
 \dontrun{
 # Generating a small random graph
@@ -44,8 +49,7 @@ x <- rnorm(5)
 moran(x, w)
 
 # Comparing with the ape's package version
-moran(x, w/rowSums(as.array(w)))
-ape::Moran.I(x, w)
+ape::Moran.I(x, as.matrix(w))
 }
 }
 \references{

@@ -14,11 +14,13 @@ struct_equiv(graph, v = 1, inf.replace = 0, groupvar = NULL, ...)
 
 \item{v}{Numeric scalar. Cohesion constant (see details).}
 
-\item{inf.replace}{Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.}
+\item{inf.replace}{Deprecated.}
 
-\item{groupvar}{Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.}
+\item{groupvar}{Either a character scalar (if \code{graph} is diffnet), or a
+vector of size \eqn{n}.}
 
-\item{...}{Further arguments to be passed to \code{\link{approx_geodesic}} (not valid for the print method).}
+\item{...}{Further arguments to be passed to \code{\link{approx_geodesic}}
+(not valid for the print method).}
 
 \item{x}{A \code{diffnet_se} class object.}
 }

@@ -84,13 +84,13 @@ test_that("By group", {
 
   # We can set the original order (just in case) of the data
   diffnet <- diffnet[medInnovationsDiffNet$meta$ids]
-  diffnet
 
   # Checking everything is equal
-  test <- summary(medInnovationsDiffNet, no.print=TRUE) ==
+  expect_equal(
+    summary(medInnovationsDiffNet, no.print=TRUE),
     summary(diffnet, no.print=TRUE)
+    )
 
-  stopifnot(all(test))
 
   # METHOD 2: Using the 'groupvar' argument
   # Further, we can compare this with using the groupvar
@@ -98,8 +98,10 @@ test_that("By group", {
                                     groupvar="city", valued=TRUE)
 
   # These should be equivalent
-  test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se2", as.df=TRUE]]
-  stopifnot(all(test))
+  expect_equivalent(
+    diffnet[["expo_se", as.df=TRUE]],
+    diffnet[["expo_se2", as.df=TRUE]]
+    )
 
   # METHOD 3: Computing exposure, rbind and then adding it to the diffnet object
   expo_se3 <- NULL
@@ -116,9 +118,11 @@ test_that("By group", {
 
   diffnet[["expo_se3"]] <- expo_se3
 
-  test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se3", as.df=TRUE]]
-  expect_true(all(test))
-
+  # These should be equivalent
+  expect_equivalent(
+    diffnet[["expo_se", as.df=TRUE]],
+    diffnet[["expo_se3", as.df=TRUE]]
+  )
 
   # METHOD 4: Using the groupvar in struct_equiv
   se <- struct_equiv(diffnet, groupvar="city")
@@ -131,8 +135,11 @@ test_that("By group", {
 
   diffnet[["expo_se4"]] <- exposure(diffnet, alt.graph=se, valued=TRUE)
 
-  test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se4", as.df=TRUE]]
-  expect_true(all(test))
+  # These should be equivalent
+  expect_equivalent(
+    diffnet[["expo_se", as.df=TRUE]],
+    diffnet[["expo_se4", as.df=TRUE]]
+  )
 
 })
 

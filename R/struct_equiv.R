@@ -4,9 +4,11 @@
 #'
 #' @template graph_template
 #' @param v Numeric scalar. Cohesion constant (see details).
-#' @param inf.replace Numeric scalar scalar. Replacing inf values obtained from \code{\link[igraph:distances]{igraph::distances}}.
-#' @param groupvar Either a character scalar (if \code{graph} is diffnet), or a vector of size \eqn{n}.
-#' @param ... Further arguments to be passed to \code{\link{approx_geodesic}} (not valid for the print method).
+#' @param inf.replace Deprecated.
+#' @param groupvar Either a character scalar (if \code{graph} is diffnet), or a
+#' vector of size \eqn{n}.
+#' @param ... Further arguments to be passed to \code{\link{approx_geodesic}}
+#' (not valid for the print method).
 #' @param x A \code{diffnet_se} class object.
 #' @family statistics
 #' @keywords univar

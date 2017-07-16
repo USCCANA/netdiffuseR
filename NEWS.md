@@ -19,6 +19,9 @@
   
 * `fitbass` Fits the Bass Diffusion Model to an observed vector of cumulative
   adopters. The estimation is done via `stats::nls`.
+  
+* `netmatch` and `netmatch_prepare` (on development) implement matching estimators
+  with network data.
 
   
 ## Bugs
@@ -40,6 +43,8 @@
   previous versions). `rgraph_ba` is faster too.
   
 * `moran` now returns the sd, expected and p-value.
+
+* `exposure` now receives static graphs in `alt.graph` with a warning.
   
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)

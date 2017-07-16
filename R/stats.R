@@ -247,7 +247,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' \code{\link{toa_mat}}
 #' @param attrs Either a character scalar (if \code{graph} is diffnet),
 #' or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
-#' @param alt.graph Either a dynamic graph that should be used instead of \code{graph},
+#' @param alt.graph Either a graph that should be used instead of \code{graph},
 #' or \code{"se"} (see details).
 #' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
 #' @param normalized Logical scalar. When \code{TRUE}, the exposure will be between zero
@@ -279,6 +279,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' graph. Notice that when using a valued graph the option \code{valued} should
 #' be equal to \code{TRUE}, this check is run automatically when running the
 #' model using structural equivalence.
+#'
+#' If the \code{alt.graph} is static, then the function will warn about it
+#' and will recycle the graph to compute exposure at each time point.
 #'
 #' \bold{An important remark} is that when calculating \bold{structural equivalence} the
 #' function \bold{assumes that this is to be done to the entire graph} regardless of
@@ -370,7 +373,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' test <- summary(medInnovationsDiffNet, no.print=TRUE) ==
 #'    summary(diffnet, no.print=TRUE)
 #'
-#' stopifnot(all(test))
+#' stopifnot(all(test[!is.na(test)]))
 #'
 #' # METHOD 2: Using the 'groupvar' argument
 #' # Further, we can compare this with using the groupvar
@@ -379,7 +382,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' # These should be equivalent
 #' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se2", as.df=TRUE]]
-#' stopifnot(all(test))
+#' stopifnot(all(test[!is.na(test)]))
 #'
 #' # METHOD 3: Computing exposure, rbind and then adding it to the diffnet object
 #' expo_se3 <- NULL
@@ -397,7 +400,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' diffnet[["expo_se3"]] <- expo_se3
 #'
 #' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se3", as.df=TRUE]]
-#' stopifnot(all(test))
+#' stopifnot(all(test[!is.na(test)]))
 #'
 #'
 #' # METHOD 4: Using the groupvar in struct_equiv
@@ -412,7 +415,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' diffnet[["expo_se4"]] <- exposure(diffnet, alt.graph=se, valued=TRUE)
 #'
 #' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se4", as.df=TRUE]]
-#' stopifnot(all(test))
+#' stopifnot(all(test[!is.na(test)]))
 #'
 #'
 #'

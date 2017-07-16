@@ -96,8 +96,7 @@ order of the rows in the attribute data.}
 \item{attr.class}{Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
 or static (\code{"static"}).}
 
-\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot}, for
-\code{summary}, further arguments to be passed to \code{\link{approx_geodesic}},
+\item{...}{In the case of \code{plot}, further arguments passed to \code{gplot},
 otherwise is ignored.}
 
 \item{element}{Character vector/scalar. Indicates what to retrieve/alter.}
@@ -132,11 +131,6 @@ otherwise is ignored.}
 \item{FUN}{a function to be passed to lapply}
 
 \item{object}{A \code{diffnet} object.}
-
-\item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
-
-\item{slices}{Either an integer or character vector. While integer vectors are used as
-indexes, character vectors are used jointly with the time period labels.}
 }
 \value{
 A list of class \code{diffnet} with the following elements:
@@ -322,7 +316,8 @@ Default options are listed at \code{\link{netdiffuseR-options}}
 Other diffnet methods: \code{\link{\%*\%}},
   \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},
   \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet_index}}
+  \code{\link{diffnet_index}},
+  \code{\link{summary.diffnet}}
 
 Other data management functions: \code{\link{edgelist_to_adjmat}},
   \code{\link{egonet_attrs}}, \code{\link{isolated}},

@@ -14,6 +14,11 @@
 #' is tested against the null of no autocorrelation; must be of one \code{"two.sided"},
 #' \code{"less"}, or \code{"greater"}.
 #' @export
+#' @details
+#' In the case that the vector \code{x} is close to constant (degenerate random
+#' variable), the statistic becomes irrelevant, and furthermore, the standard error
+#' tends to be undefined (\code{NaN}).
+#'
 #' @family statistics
 #' @return A list of class \code{diffnet_moran} with the following elements:
 #' \item{observed}{Numeric scalar. Observed correlation index.}
@@ -38,8 +43,7 @@
 #' moran(x, w)
 #'
 #' # Comparing with the ape's package version
-#' moran(x, w/rowSums(as.array(w)))
-#' ape::Moran.I(x, w)
+#' ape::Moran.I(x, as.matrix(w))
 #' }
 #' @author George G. Vega Yon
 moran <- function(x, w, normalize.w=TRUE, alternative = "two.sided") {

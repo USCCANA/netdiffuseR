@@ -328,15 +328,13 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @templateVar dynamic TRUE
 #' @templateVar undirected TRUE
 #' @templateVar self TRUE
-#' @templateVar valued TRUE
 #' @templateVar multiple TRUE
 #' @template graph_template
 #' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
-#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot}, for
-#' \code{summary}, further arguments to be passed to \code{\link{approx_geodesic}},
+#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot},
 #' otherwise is ignored.
 #' @param x A \code{diffnet} object.
 #' @param object A \code{diffnet} object.
@@ -357,8 +355,6 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param graph.attrs Graph dynamic attributes (not supported yet).
 #' @param id.and.per.vars A character vector of length 2. Optionally specified to check the
 #' order of the rows in the attribute data.
-#' @param slices Either an integer or character vector. While integer vectors are used as
-#' indexes, character vectors are used jointly with the time period labels.
 #' @param element Character vector/scalar. Indicates what to retrieve/alter.
 #' @param attr.class Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
 #' or static (\code{"static"}).

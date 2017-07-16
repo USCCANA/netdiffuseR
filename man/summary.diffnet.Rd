@@ -8,7 +8,7 @@
   skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
 }
 \arguments{
-\item{object}{An object of class \code{\link[as_diffnet]{diffnet}}.}
+\item{object}{An object of class \code{\link[=as_diffnet]{diffnet}}.}
 
 \item{slices}{Either an integer or character vector. While integer vectors are used as
 indexes, character vectors are used jointly with the time period labels.}
@@ -16,6 +16,11 @@ indexes, character vectors are used jointly with the time period labels.}
 \item{no.print}{Logical scalar. When TRUE suppress screen messages.}
 
 \item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
+
+\item{valued}{Logical scalar. When \code{TRUE} weights will be considered.
+Otherwise non-zero values will be replaced by ones.}
+
+\item{...}{Further arguments to be passed to \code{\link{approx_geodesic}}.}
 }
 \value{
 A data frame with the following columns:
@@ -52,6 +57,18 @@ which, as a difference from \code{\link[sna:geodist]{geodist}} from the
 \pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
 \pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
 details in \code{\link{approx_geodesic}}).
+}
+\examples{
+data(medInnovationsDiffNet)
+summary(medInnovationsDiffNet)
+
+}
+\seealso{
+Other diffnet methods: \code{\link{\%*\%}},
+  \code{\link{as.array.diffnet}}, \code{\link{as_diffnet}},
+  \code{\link{c.diffnet}},
+  \code{\link{diffnet-arithmetic}},
+  \code{\link{diffnet_index}}
 }
 \author{
 George G. Vega Yon

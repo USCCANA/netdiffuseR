@@ -94,11 +94,14 @@ print.diffnet <- function(x, ...) {
 #' Summary of diffnet objects
 #'
 #' @export
-#' @param object An object of class \code{\link[as_diffnet]{diffnet}}.
+#' @param object An object of class \code{\link[=as_diffnet]{diffnet}}.
 #' @param slices Either an integer or character vector. While integer vectors are used as
 #' indexes, character vectors are used jointly with the time period labels.
+#' @param valued Logical scalar. When \code{TRUE} weights will be considered.
+#' Otherwise non-zero values will be replaced by ones.
 #' @param no.print Logical scalar. When TRUE suppress screen messages.
 #' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
+#' @param ... Further arguments to be passed to \code{\link{approx_geodesic}}.
 #' @details
 #' Moran's I is calculated over the
 #' cumulative adoption matrix using as weighting matrix the inverse of the geodesic
@@ -131,6 +134,13 @@ print.diffnet <- function(x, ...) {
 #' \item{moran_sd}{Numeric. Standard error of Moran's I under the null.}
 #' \item{moran_pval}{Numeric. P-value for the observed Moran's I.}
 #' @author George G. Vega Yon
+#'
+#' @examples
+#' data(medInnovationsDiffNet)
+#' summary(medInnovationsDiffNet)
+#'
+#' @family diffnet methods
+#'
 summary.diffnet <- function(
   object,
   slices     = NULL,
@@ -255,8 +265,8 @@ summary.diffnet <- function(
     paste(" Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)),
     paste(" Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)),
     paste(" # of nodes      :", sprintf("%d",meta$n)),
-    "\n Moran's I was computed on contemporaneous autocorrelation using geodesic",
-    " matrices. Significane levels  *** <= .01, ** <= .05, * <= .1.",
+    "\n Moran's I was computed on contemporaneous autocorrelation using 1/geodesic",
+    " values. Significane levels  *** <= .01, ** <= .05, * <= .1.",
     sep="\n"
   )
 
