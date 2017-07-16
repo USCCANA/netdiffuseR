@@ -18,7 +18,7 @@ rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE,
 
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{eta}{Numeric vector of length \code{t+m0}. When specified, it generates
 a scale-free homophilic network (see details).}

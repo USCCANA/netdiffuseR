@@ -35,7 +35,7 @@
 #' this is, \code{\link{rownames}}, \code{\link{colnames}}, \code{\link{dimnames}}
 #' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 #' when no names are provided, these will be created from scratch.
-#' @include imports.R
+#' @include imports.r
 #' @author George G. Vega Yon
 #' @family graph formats
 NULL

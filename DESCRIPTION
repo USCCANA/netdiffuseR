@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Analysis of Diffusion and Contagion Processes on Networks
-Version: 1.18.99
-Date: 2016-12-05
+Version: 1.18.0
+Date: 2017-07-16
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"), comment="Rewrite functions with Rcpp, plus new features"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("aut"), comment="Package's first version"),
@@ -50,27 +50,27 @@ BugReports: https://github.com/USCCANA/netdiffuseR/issues
 Classification/MSC: 90C35, 90B18, 91D30
 Collate: 
     'RcppExports.R'
-    'imports.R'
-    'graph_data.R'
-    'adjmat.R'
+    'imports.r'
+    'graph_data.r'
+    'adjmat.r'
     'bass.r'
     'bootnet.r'
-    'data.R'
+    'data.r'
     'diffnet-c.R'
     'diffnet-class.R'
-    'diffnet-indexing.R'
-    'diffnet-methods.R'
+    'diffnet-indexing.r'
+    'diffnet-methods.r'
     'egonets.R'
     'igraph.R'
-    'infect_suscept.R'
+    'infect_suscept.r'
     'mentor.r'
     'misc.R'
-    'moran.R'
+    'moran.r'
     'netmatch.r'
     'options.R'
-    'package-doc.R'
+    'package-doc.r'
     'plot_diffnet2.R'
-    'rewire.R'
+    'rewire.r'
     'random_graph.R'
     'rdiffnet.R'
     'read_write_foreign.R'

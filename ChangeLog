@@ -1,3 +1,7 @@
+2017-07-16  George G. Vega Yon <g.vegayon@gmail.com>
+	* rewire.r: The function rewire_graph now also allows the method
+	  QAP.
+
 2017-07-14  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/stats.cpp: Moran's I now computing sd.
 	* R/moran.r: Idem.

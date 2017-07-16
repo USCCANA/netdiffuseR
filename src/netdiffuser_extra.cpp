@@ -169,15 +169,14 @@ arma::sp_mat bootnet_fillself(
       for (unsigned int k=j; k<r.size(); k++) {
 
         if (j==k) continue;
-        rand = runif(2);
 
         // Add accordingly to density
-        if (rand[0] <= dens)
-          graph.at(r.at(j),r.at(k)) = E.at(floor(rand[0]*m));
+        if (unif_rand() <= dens)
+          graph.at(r.at(j),r.at(k)) = E.at(floor(unif_rand()*m));
 
         // Add accordingly to density
-        if (rand[1] <= dens)
-          graph.at(r.at(k),r.at(j)) = E.at(floor(rand[1]*m));
+        if (unif_rand() <= dens)
+          graph.at(r.at(k),r.at(j)) = E.at(floor(unif_rand()*m));
       }
 
   }

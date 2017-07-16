@@ -50,7 +50,7 @@
 #' @keywords distribution
 #' @concept Erdos-Renyi random graph
 #' @family simulation functions
-#' @include graph_data.R
+#' @include graph_data.r
 #' @author George G. Vega Yon
 rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
@@ -395,7 +395,7 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE, eta=NULL) {
 #' plot(x2, layout=layout_in_circle, edge.curved=TRUE, main="Random")
 #' par(oldpar)
 #'
-#' @include rewire.R
+#' @include rewire.r
 rgraph_ws <- function(n,k,p, both.ends=FALSE, self=FALSE, multiple=FALSE,
                       undirected=FALSE) {
   # out <- rewire_endpoints(ring_lattice(n, k, TRUE), p, both.ends,

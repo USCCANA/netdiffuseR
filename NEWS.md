@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.18.99 (dev)
+# Changes in netdiffuseR version 1.18.0 (2017-07-16)
 
 ## New functions
 
@@ -11,7 +11,7 @@
   computes geodesics up to a certain number of steps and returns a sparse
   matrix.
   
-* `matrix_compare` Efficiently compare two sparse matrices looking only at the valued
+* `matrix_compare` Efficiently compares two sparse matrices looking only at the valued
   cells.
   
 * `as_dgCMatrix` Coerce matrix-like objects into dgCMatrix objects (sparse matrices
@@ -24,7 +24,7 @@
   with network data.
 
   
-## Bugs
+## Bugs Fixes
 
 * `dgr` returned with error when `self == TRUE`
 
@@ -37,7 +37,7 @@
   1, 2, ...
 
 
-## Improvements
+## New Features
 
 * `rgraph_er` is now significantly faster (orders of magnitude compare to
   previous versions). `rgraph_ba` is faster too.
@@ -45,6 +45,8 @@
 * `moran` now returns the sd, expected and p-value.
 
 * `exposure` now receives static graphs in `alt.graph` with a warning.
+
+* `rewire_graph` now also uses QAP. This affects directly to `structu_test`.
   
 
 # Changes in netdiffuseR version 1.17.0 (2016-11-10)

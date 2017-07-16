@@ -20,6 +20,7 @@
 #' tends to be undefined (\code{NaN}).
 #'
 #' @family statistics
+#' @family Functions for inference
 #' @return A list of class \code{diffnet_moran} with the following elements:
 #' \item{observed}{Numeric scalar. Observed correlation index.}
 #' \item{expected}{Numeric scalar. Expected correlation index equal to \eqn{-1/(N-1)}.}

@@ -26,7 +26,7 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{useR}{Logical scalar. When \code{TRUE}, autolinks are filled using an
 \R based rutine. Otherwise it uses the \pkg{Rcpp} implementation (default).
@@ -81,11 +81,21 @@ This function is essentially a wrapper of \code{\link[boot:boot]{boot}}.
 Just like the \code{boot} function of the \pkg{boot} package, the \code{statistic}
 that is passed must have as arguments the original data (the graph in this case),
 and a vector of indicides. In each repetition, the graph that is passed is a
-resampled version generated as described in Snijders and Borgatti (1999). One
-important feature is that in those cases that an individual is drawn more than
-once, the algorithm, in particular, \code{resample_graph}, takes care of filling
-these pseudo autolinks that are not in the diagonal of the network. The vector
-of indices that is passed to \code{statistic}, an integer vector with range
+resampled version generated as described in Snijders and Borgatti (1999).
+
+When \code{self = FALSE}, for pairs of individuals that haven been drawn more than
+once the algorithm, in particular, \code{resample_graph}, takes care of filling
+these pseudo autolinks that are not in the diagonal of the network. By default
+it is assumed that these pseudo-autolinks depend on whether the original graph
+had any, hence, if the diagonal has any non-zero value the algorithm assumes that
+\code{self = TRUE}, skiping the 'filling algorithm'. It is important to notice
+that, in order to preserve the density of the original network, when
+assigning an edge value to a pair of the form \eqn{(i,i)} (pseudo-autolinks),
+such is done with probabilty proportional to the density of the network, in
+other words, before choosing from the existing list of edge values, the
+algorithm decides whether to set a zero value first.
+
+The vector of indices that is passed to \code{statistic}, an integer vector with range
 1 to \eqn{n}, corresponds to the drawn sample of nodes, so the user can, for
 example, use it to get a subset of a \code{data.frame} that will be used with
 the \code{graph}.
@@ -104,5 +114,6 @@ Standard Errors and Tests for Network Statistics. Connections, 22(2), 1–10.
 Retrieved from \url{https://insna.org/PDF/Connections/v22/1999_I-2_61-70.pdf}
 }
 \seealso{
-Other Functions for inference: \code{\link{struct_test}}
+Other Functions for inference: \code{\link{moran}},
+  \code{\link{struct_test}}
 }

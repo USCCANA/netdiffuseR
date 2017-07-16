@@ -36,9 +36,9 @@ that do not show in \code{idvar} are set to \code{NA} (see details).}
 
 \item{t}{Integer scalar. Repeat the network \code{t} times (if no \code{t0,t1} are provided).}
 
-\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
 
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{multiple}{Logical scalar. When \code{TRUE} allows multiple edges.}
 

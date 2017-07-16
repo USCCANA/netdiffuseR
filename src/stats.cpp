@@ -153,7 +153,6 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
   arma::sp_mat::const_iterator b;
 
   // S1
-  unsigned int i,j;
   arma::sp_mat wtw = w + w.t();
   for (b = wtw.begin(); b!= wtw.end(); b++)
     s1 += pow((*b), 2.0);
@@ -166,7 +165,7 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
   arma::sp_colvec w_rowsums = sum(w, 1);
   arma::sp_rowvec w_colsums = sum(w, 0);
 
-  for (i = 0; i < N; i++)
+  for (unsigned int i = 0; i < N; i++)
     s2 += pow(w_rowsums.at(i) + w_colsums.at(i), 2.0);
 
   // S3

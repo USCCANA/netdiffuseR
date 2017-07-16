@@ -10,12 +10,18 @@
 #' @param copy.first Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 #' the first slice as a baseline for the rest of slices (see details).
 #' @param pr.change Numeric scalar. Probability ([0,1]) of doing a rewire (see details).
-#' @param algorithm Character scalar. Either \code{"swap"} or \code{"endpoints"}.
+#' @param algorithm Character scalar. Either \code{"swap"}, \code{"endpoints"}, or \code{"qap"}
+#' (see \code{\link{rewire_qap}}).
 #' @param althexagons Logical scalar. When \code{TRUE} uses the compact alternating
 #' hexagons algorithm (currently ignored [on development]).
 #' @details
-#' Both algorithms are implemented sequentially, this is, edge-wise checking
-#' self edges and multiple edges over the changing graph; in other words, at step
+#' The algorithm \code{"qap"} is described in \code{\link{rewire_qap}}, and only
+#' uses \code{graph} from the arguments (since it is simply relabelling the graph).
+#'
+#'
+#' In the case of "swap" and "endpoints", both algorithms are implemented
+#' sequentially, this is, edge-wise checking self edges and multiple edges over
+#' the changing graph; in other words, at step
 #' \eqn{m} (in which either a new endpoint or edge is chosen, depending on the algorithm),
 #' the algorithms verify whether the proposed change creates either multiple edges
 #' or self edges using the resulting graph at step \eqn{m-1}.
@@ -274,6 +280,8 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
       rewire_endpoints(out[[j]], p[i], both.ends, self, multiple, undirected)
     else if (algorithm == "swap")
       rewire_swap(out[[j]], p[i], self, multiple, undirected, pr.change) #, althexagons)
+    else if (algorithm == "qap")
+      rewire_qap(out[[j]])
     else stop("No such rewiring algorithm: ", algorithm)
 
     # Names
@@ -291,6 +299,8 @@ rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multipl
     rewire_endpoints(graph, p, both.ends, self, multiple, undirected)
   else if (algorithm == "swap")
     rewire_swap(graph, p, self, multiple, undirected, pr.change) #, althexagons)
+  else if (algorithm == "qap")
+    rewire_qap(graph)
   else stop("No such rewiring algorithm: ", algorithm)
 
   rn <- rownames(out)

@@ -21,9 +21,9 @@ dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
 
 \item{cmode}{Character scalar. Either "indegree", "outdegree" or "degree".}
 
-\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle will be processed.}
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
 
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 

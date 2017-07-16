@@ -117,7 +117,7 @@ print.diffnet <- function(x, ...) {
 #' and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
 #' Moran's I is not reported. This can be useful for both: reducing computing
 #' time and saving memory as geodesic distance matrix can become large. Since
-#' version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
+#' version \code{1.18.0}, geodesic matrices are approximated using \code{approx_geodesic}
 #' which, as a difference from \code{\link[sna:geodist]{geodist}} from the
 #' \pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
 #' \pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more

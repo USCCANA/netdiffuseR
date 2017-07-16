@@ -24,14 +24,25 @@
 #' Just like the \code{boot} function of the \pkg{boot} package, the \code{statistic}
 #' that is passed must have as arguments the original data (the graph in this case),
 #' and a vector of indicides. In each repetition, the graph that is passed is a
-#' resampled version generated as described in Snijders and Borgatti (1999). One
-#' important feature is that in those cases that an individual is drawn more than
-#' once, the algorithm, in particular, \code{resample_graph}, takes care of filling
-#' these pseudo autolinks that are not in the diagonal of the network. The vector
-#' of indices that is passed to \code{statistic}, an integer vector with range
+#' resampled version generated as described in Snijders and Borgatti (1999).
+#'
+#' When \code{self = FALSE}, for pairs of individuals that haven been drawn more than
+#' once the algorithm, in particular, \code{resample_graph}, takes care of filling
+#' these pseudo autolinks that are not in the diagonal of the network. By default
+#' it is assumed that these pseudo-autolinks depend on whether the original graph
+#' had any, hence, if the diagonal has any non-zero value the algorithm assumes that
+#' \code{self = TRUE}, skiping the 'filling algorithm'. It is important to notice
+#' that, in order to preserve the density of the original network, when
+#' assigning an edge value to a pair of the form \eqn{(i,i)} (pseudo-autolinks),
+#' such is done with probabilty proportional to the density of the network, in
+#' other words, before choosing from the existing list of edge values, the
+#' algorithm decides whether to set a zero value first.
+#'
+#' The vector of indices that is passed to \code{statistic}, an integer vector with range
 #' 1 to \eqn{n}, corresponds to the drawn sample of nodes, so the user can, for
 #' example, use it to get a subset of a \code{data.frame} that will be used with
 #' the \code{graph}.
+#'
 #' @export
 #' @family Functions for inference
 #' @references Snijders, T. A. B., & Borgatti, S. P. (1999). Non-Parametric
@@ -79,15 +90,14 @@ bootnet_fillselfR <- function(graph, index, E) {
       for (k in j:length(r)) {
 
         if (k == j) next
-        rand <- runif(2)
 
         # Add accordingly to density
-        if (rand[1] <= dens) {
-          graph[r[j],r[k]] <- E[floor(rand[1]*m) + 1]
+        if (runif(1) <= dens) {
+          graph[r[j],r[k]] <- E[floor(runif(1)*m) + 1]
         }
 
-        if (rand[2] <= dens) {
-          graph[r[k],r[j]] <- E[floor(rand[2]*m) + 1]
+        if (runif(1) <= dens) {
+          graph[r[k],r[j]] <- E[floor(runif(1)*m) + 1]
         }
       }
 

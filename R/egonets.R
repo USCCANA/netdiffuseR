@@ -108,7 +108,7 @@
 #'
 #'
 #' @export
-#' @include graph_data.R
+#' @include graph_data.r
 #' @author George G. Vega Yon
 #' @family data management functions
 egonet_attrs <- function(

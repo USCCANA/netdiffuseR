@@ -12,9 +12,7 @@
 \usage{
 n_rewires(graph, p = c(20L, rep(0.1, nslices(graph) - 1)))
 
-struct_test(graph, statistic, R, rewire.args = list(p = n_rewires(graph),
-  undirected = getOption("diffnet.undirected", FALSE), copy.first = TRUE,
-  algorithm = "swap"), ...)
+struct_test(graph, statistic, R, rewire.args = list(), ...)
 
 \method{c}{diffnet_struct_test}(..., recursive = FALSE)
 
@@ -97,9 +95,15 @@ The output from the \code{hist} method is the same as \code{\link{hist.default}}
 \code{struct_test} is a wrapper for the function \code{\link[boot:boot]{boot}} from the
 \pkg{boot} package. Instead of resampling data--vertices or edges--in each iteration the function
 rewires the original graph using \code{\link{rewire_graph}} and applies
-the function defined by the user in \code{statistic}. In particular, the \code{"swap"} algorithm
-is used in order to preserve the degree sequence of the graph, in other words,
-each rewired version of the original graph has the same degree sequence.
+the function defined by the user in \code{statistic}.
+
+The default values to \code{rewire_graph} via \code{rewire.args} are:
+\tabular{ll}{
+\code{p}          \tab Number or Integer with default \code{n_rewires(graph)}. \cr
+\code{undirected} \tab Logical scalar with default \code{getOption("diffnet.undirected", FALSE)}. \cr
+\code{copy.first} \tab Logical scalar with \code{TRUE}. \cr
+\code{algorithm}  \tab Character scalar with default \code{"swap"}.
+}
 
 In \code{struct_test} \code{\dots} are passed to \code{boot}, otherwise are passed
 to the corresponding method (\code{\link{hist}} for instance).
@@ -168,7 +172,8 @@ Davidson, R., & MacKinnon, J. G. (2004). Econometric Theory and Methods. New Yor
 Oxford University Press.
 }
 \seealso{
-Other Functions for inference: \code{\link{bootnet}}
+Other Functions for inference: \code{\link{bootnet}},
+  \code{\link{moran}}
 }
 \author{
 George G. Vega Yon

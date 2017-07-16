@@ -21,7 +21,7 @@ egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
 
 \item{as.df}{Logical scalar. When TRUE returns a data.frame instead of a list (see details).}
 
-\item{self}{Logical scalar. When \code{TRUE} allows loops (self edges).}
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{self.attrs}{Logical scalar. When \code{TRUE} ego's attributes are included in the output
 as the first row.}

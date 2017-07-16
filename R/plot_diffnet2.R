@@ -67,7 +67,7 @@ plot_diffnet2 <- function(graph, ...) UseMethod("plot_diffnet2")
 
 #' @rdname plot_diffnet2
 #' @export
-#' @include diffnet-methods.R data.R
+#' @include diffnet-methods.r data.r
 plot_diffnet2.diffnet <- function(
   graph, toa=NULL,
   slice=nslices(graph),

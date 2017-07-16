@@ -131,7 +131,7 @@
 #'
 #' @keywords manip
 #' @family data management functions
-#' @include graph_data.R
+#' @include graph_data.r
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 edgelist_to_adjmat <- function(
   edgelist, w=NULL,
@@ -456,7 +456,7 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
-#' @include graph_data.R
+#' @include graph_data.r
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
@@ -550,7 +550,7 @@ toa_mat.integer <- function(times, labels=NULL,
 #' # Computing the TOA differences
 #' toa_diff(times)
 #' @keywords manip
-#' @include graph_data.R
+#' @include graph_data.r
 #' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
