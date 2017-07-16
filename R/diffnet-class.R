@@ -363,8 +363,6 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param attr.class Character vector/scalar. Indicates the class of the attribute, either dynamic (\code{"dyn"}),
 #' or static (\code{"static"}).
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
-#' @param no.print Logical scalar. When TRUE suppress screen messages.
-#' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
 #' @param name Character scalar. Name of the diffusion network (descriptive).
 #' @param behavior Character scalar. Name of the behavior been analyzed (innovation).
 #' @export
@@ -413,25 +411,6 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #'
 #' where \code{d=sqrt(dgr(graph))}.
 #'
-#' In the case of the \code{summary} method, Moran's I is calculated over the
-#' cumulative adoption matrix using as weighting matrix the inverse of the geodesic
-#' distance matrix. All this via \code{\link{moran}}. For each time period \code{t},
-#' this is calculated as:
-#'
-#' \preformatted{
-#'  m = moran(C[,t], G^(-1))
-#' }
-#'
-#' Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
-#' \code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
-#' and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
-#' Moran's I is not reported. This can be useful for both: reducing computing
-#' time and saving memory as geodesic distance matrix can become large. Since
-#' version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
-#' which, as a difference from \code{\link[sna:geodist]{geodist}} from the
-#' \pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
-#' \pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
-#' details in \code{\link{approx_geodesic}}).
 #'
 #' @section Auxiliary functions:
 #'

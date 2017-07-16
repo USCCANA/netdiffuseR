@@ -11,7 +11,6 @@
 \alias{diffnet.toa<-}
 \alias{plot.diffnet}
 \alias{print.diffnet}
-\alias{summary.diffnet}
 \alias{nodes}
 \alias{diffnetLapply}
 \alias{str.diffnet}
@@ -47,9 +46,6 @@ diffnet.toa(graph, i) <- value
   layout.par = NULL, main = "Diffusion network in time \%d", ...)
 
 \method{print}{diffnet}(x, ...)
-
-\method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
-  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
 
 nodes(graph)
 
@@ -133,18 +129,14 @@ otherwise is ignored.}
 
 \item{main}{Character. A title template to be passed to sprintf.}
 
+\item{FUN}{a function to be passed to lapply}
+
 \item{object}{A \code{diffnet} object.}
-
-\item{slices}{Either an integer or character vector. While integer vectors are used as
-indexes, character vectors are used jointly with the time period labels.}
-
-\item{no.print}{Logical scalar. When TRUE suppress screen messages.}
-
-\item{skip.moran}{Logical scalar. When TRUE Moran's I is not reported (see details).}
 
 \item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 
-\item{FUN}{a function to be passed to lapply}
+\item{slices}{Either an integer or character vector. While integer vectors are used as
+indexes, character vectors are used jointly with the time period labels.}
 }
 \value{
 A list of class \code{diffnet} with the following elements:
@@ -221,26 +213,6 @@ degree of the selected slice and will be normalized as
 \deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2 + .5}
 
 where \code{d=sqrt(dgr(graph))}.
-
-In the case of the \code{summary} method, Moran's I is calculated over the
-cumulative adoption matrix using as weighting matrix the inverse of the geodesic
-distance matrix. All this via \code{\link{moran}}. For each time period \code{t},
-this is calculated as:
-
-\preformatted{
- m = moran(C[,t], G^(-1))
-}
-
-Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
-\code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
-and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
-Moran's I is not reported. This can be useful for both: reducing computing
-time and saving memory as geodesic distance matrix can become large. Since
-version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
-which, as a difference from \code{\link[sna:geodist]{geodist}} from the
-\pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
-\pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
-details in \code{\link{approx_geodesic}}).
 }
 \section{Auxiliary functions}{
 

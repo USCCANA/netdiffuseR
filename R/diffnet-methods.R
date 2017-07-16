@@ -91,8 +91,46 @@ print.diffnet <- function(x, ...) {
   invisible(x)
 }
 
+#' Summary of diffnet objects
+#'
 #' @export
-#' @rdname as_diffnet
+#' @param object An object of class \code{\link[as_diffnet]{diffnet}}.
+#' @param slices Either an integer or character vector. While integer vectors are used as
+#' indexes, character vectors are used jointly with the time period labels.
+#' @param no.print Logical scalar. When TRUE suppress screen messages.
+#' @param skip.moran Logical scalar. When TRUE Moran's I is not reported (see details).
+#' @details
+#' Moran's I is calculated over the
+#' cumulative adoption matrix using as weighting matrix the inverse of the geodesic
+#' distance matrix. All this via \code{\link{moran}}. For each time period \code{t},
+#' this is calculated as:
+#'
+#' \preformatted{
+#'  m = moran(C[,t], G^(-1))
+#' }
+#'
+#' Where \code{C[,t]} is the t-th column of the cumulative adoption matrix,
+#' \code{G^(-1)} is the element-wise inverse of the geodesic matrix at time \code{t},
+#' and \code{moran} is \pkg{netdiffuseR}'s moran's I routine. When \code{skip.moran=TRUE}
+#' Moran's I is not reported. This can be useful for both: reducing computing
+#' time and saving memory as geodesic distance matrix can become large. Since
+#' version \code{1.18.99}, geodesic matrices are approximated using \code{approx_geodesic}
+#' which, as a difference from \code{\link[sna:geodist]{geodist}} from the
+#' \pkg{sna} package, and \code{\link[igraph:distances]{distances}} from the
+#' \pkg{igraph} package returns a matrix of class \code{dgCMatrix} (more
+#' details in \code{\link{approx_geodesic}}).
+#'
+#' @return A data frame with the following columns:
+#' \item{adopt}{Integer. Number of adopters at each time point.}
+#' \item{cum_adopt}{Integer. Number of cumulative adopters at each time point.}
+#' \item{cum_adopt_pcent}{Numeric. Proportion of comulative adopters at each time point.}
+#' \item{hazard}{Numeric. Hazard rate at each time point.}
+#' \item{density}{Numeric. Density of the network at each time point.}
+#' \item{moran_obs}{Numeric. Observed Moran's I.}
+#' \item{moran_exp}{Numeric. Expected Moran's I.}
+#' \item{moran_sd}{Numeric. Standard error of Moran's I under the null.}
+#' \item{moran_pval}{Numeric. P-value for the observed Moran's I.}
+#' @author George G. Vega Yon
 summary.diffnet <- function(
   object,
   slices     = NULL,
@@ -127,7 +165,10 @@ summary.diffnet <- function(
 
   # Computing moran's I
   if (!skip.moran) {
-    m <- vector("numeric", length(slices))
+
+    m <- matrix(NA, nrow=length(slices), ncol=4,
+                dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
+
     for (i in 1:length(slices)) {
       # Computing distances
       g <- approx_geodesic(object$graph[[slices[i]]], ...)
@@ -135,7 +176,7 @@ summary.diffnet <- function(
       # Inverting it (only the diagonal may have 0)
       g@x <- 1/g@x
 
-      m[i] <- moran(object$cumadopt[,slices[i]], g)[["observed"]]
+      m[i,] <- unlist(moran(object$cumadopt[,slices[i]], g))
     }
   }
   # Computing adopters, cumadopt and hazard rate
@@ -155,13 +196,18 @@ summary.diffnet <- function(
     density=d
   )
 
-  if (!skip.moran) out$moran <- m
+  if (!skip.moran) {
+    out <- cbind(out, m)
+  }
 
   if (no.print) return(out)
 
   # Function to print data.frames differently
-  header <- c(" Period ","Adopters","Cum Adopt.", "Cum Adopt. %",
-              "Hazard Rate","Density", if (!skip.moran) "Moran's I" else NULL)
+  header <- c(" Period "," Adopters "," Cum Adopt. (%) ",
+              " Hazard Rate "," Density ",
+              if (!skip.moran) c(" Moran's I (sd) ") else NULL
+              )
+
   slen   <- nchar(header)
   hline  <- paste(sapply(sapply(slen, rep.int, x="-"), paste0, collapse=""),
                   collapse=" ")
@@ -179,8 +225,25 @@ summary.diffnet <- function(
   for (i in 1:nrow(out)) {
     cat(sprintf(
       paste0("%",slen,"s", collapse=" "),
-      qf(meta$pers[slices[i]],0), qf(out[i,1],0), qf(out[i,2],0), qf(out[i,3]),
-      ifelse(i==1, "-",qf(out[i,4])), qf(out[i,5]), if (!skip.moran) qf(out[i,6]) else ""
+      qf(meta$pers[slices[i]],0), qf(out[i,1],0),
+      sprintf("%s (%s)",
+        qf(out$cum_adopt[i],0),
+        qf(out$cum_adopt_pcent[i])
+        ),
+      ifelse(i==1, "-",qf(out$hazard[i])), qf(out$density[i]),
+      if (!skip.moran) {
+        if (is.nan(out$moran_sd[i]))
+          " - "
+        else
+          sprintf("%s (%s) %-3s",
+                  qf(out$moran_obs[i]),
+                  qf(out$moran_sd[i]),
+                  ifelse(out$moran_pval[i] <= .01, "***",
+                         ifelse(out$moran_pval[i] <= .05, "**",
+                                ifelse(out$moran_pval[i] <= .10, "*", ""
+                              )))
+                )
+      } else ""
     ), "\n")
   }
 
@@ -192,6 +255,8 @@ summary.diffnet <- function(
     paste(" Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)),
     paste(" Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)),
     paste(" # of nodes      :", sprintf("%d",meta$n)),
+    "\n Moran's I was computed on contemporaneous autocorrelation using geodesic",
+    " matrices. Significane levels  *** <= .01, ** <= .05, * <= .1.",
     sep="\n"
   )
 

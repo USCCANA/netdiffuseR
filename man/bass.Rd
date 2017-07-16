@@ -100,7 +100,7 @@ at time \eqn{t}, \eqn{f(t)} is:
 and it's implemented in the \code{bass_f} function.
 
 For testing purposes only, the gradient of \eqn{F} with respect to \eqn{p}
-and \eqn{q} is implemented in \code{bass_dF}.#'
+and \eqn{q} is implemented in \code{bass_dF}.
 
 The estimation is done using \code{\link[stats:nls]{nls}}.
 }

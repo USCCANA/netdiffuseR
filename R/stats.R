@@ -514,6 +514,15 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
       se
 
     } else {
+      # In the case of static nets
+      if (inherits(alt.graph, "matrix"))
+        alt.graph <- methods::as(alt.graph, "dgCMatrix")
+
+      if (inherits(alt.graph, "dgCMatrix")) {
+        warning("When -alt.graph- is static, will be repeated \"t\" times to fit the data.")
+        alt.graph <- lapply(1:length(graph), function(x) alt.graph)
+      }
+
       if (!valued)
         warning("The -alt.graph- will be treated as 0/1 graph (value=FALSE).")
       alt.graph

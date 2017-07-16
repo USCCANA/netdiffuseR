@@ -18,7 +18,7 @@ concatenated diffnet objects' number of vertices.
 \description{
 Combining \code{\link{diffnet}} objects that share time periods and attributes names, but
 vertices ids (only valid for diffnet objects that have an empty intersection
-between vertices ids)
+between vertices ids).
 }
 \details{
 The diffnet objects in \code{...} must fulfill the following conditions:
