@@ -100,7 +100,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // approx_geodesicCpp
-arma::sp_umat approx_geodesicCpp(const arma::sp_mat& G, unsigned int n, bool warn);
+arma::sp_mat approx_geodesicCpp(const arma::sp_mat& G, unsigned int n, bool warn);
 RcppExport SEXP netdiffuseR_approx_geodesicCpp(SEXP GSEXP, SEXP nSEXP, SEXP warnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

@@ -4,3 +4,8 @@ all:
 check:
 	cd ..&&R CMD build netdiffuseR/ && \
 		R CMD check --as-cran netdiffuseR*.tar.gz
+
+checkv:
+	cd ..&&R CMD build netdiffuseR/ && \
+		R CMD check --as-cran --use-valgrind netdiffuseR*.tar.gz
+
