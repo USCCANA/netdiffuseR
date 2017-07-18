@@ -2,75 +2,75 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 toa_mat_cpp <- function(year, t0, t1) {
-    .Call('netdiffuseR_toa_mat_cpp', PACKAGE = 'netdiffuseR', year, t0, t1)
+    .Call('_netdiffuseR_toa_mat_cpp', PACKAGE = 'netdiffuseR', year, t0, t1)
 }
 
 edgelist_to_adjmat_cpp <- function(edgelist, weights = as.numeric( c()), n = 0L, undirected = FALSE, self = FALSE, multiple = FALSE) {
-    .Call('netdiffuseR_edgelist_to_adjmat_cpp', PACKAGE = 'netdiffuseR', edgelist, weights, n, undirected, self, multiple)
+    .Call('_netdiffuseR_edgelist_to_adjmat_cpp', PACKAGE = 'netdiffuseR', edgelist, weights, n, undirected, self, multiple)
 }
 
 adjmat_to_edgelist_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('netdiffuseR_adjmat_to_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
+    .Call('_netdiffuseR_adjmat_to_edgelist_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
 toa_diff_cpp <- function(year) {
-    .Call('netdiffuseR_toa_diff_cpp', PACKAGE = 'netdiffuseR', year)
+    .Call('_netdiffuseR_toa_diff_cpp', PACKAGE = 'netdiffuseR', year)
 }
 
 isolated_cpp <- function(adjmat, undirected = TRUE) {
-    .Call('netdiffuseR_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
+    .Call('_netdiffuseR_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, undirected)
 }
 
 drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
-    .Call('netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
+    .Call('_netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
 egonet_attrs_cpp <- function(graph, V, outer = TRUE, self = TRUE, self_attrs = FALSE, valued = TRUE) {
-    .Call('netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, self_attrs, valued)
+    .Call('_netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, self_attrs, valued)
 }
 
 approx_geodesicCpp <- function(G, n = 6L, warn = FALSE) {
-    .Call('netdiffuseR_approx_geodesicCpp', PACKAGE = 'netdiffuseR', G, n, warn)
+    .Call('_netdiffuseR_approx_geodesicCpp', PACKAGE = 'netdiffuseR', G, n, warn)
 }
 
 infection_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, valued = FALSE, outgoing = TRUE) {
-    .Call('netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
+    .Call('_netdiffuseR_infection_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
 }
 
 susceptibility_cpp <- function(graph, times, normalize = TRUE, K = 1L, r = 0.5, expdiscount = FALSE, n = 0L, valued = FALSE, outgoing = TRUE) {
-    .Call('netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
+    .Call('_netdiffuseR_susceptibility_cpp', PACKAGE = 'netdiffuseR', graph, times, normalize, K, r, expdiscount, n, valued, outgoing)
 }
 
 select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
-    .Call('netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
+    .Call('_netdiffuseR_select_egoalter_cpp', PACKAGE = 'netdiffuseR', adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
 sparse_indexes <- function(mat) {
-    .Call('netdiffuseR_sparse_indexes', PACKAGE = 'netdiffuseR', mat)
+    .Call('_netdiffuseR_sparse_indexes', PACKAGE = 'netdiffuseR', mat)
 }
 
 angle <- function(x0, y0, x1, y1) {
-    .Call('netdiffuseR_angle', PACKAGE = 'netdiffuseR', x0, y0, x1, y1)
+    .Call('_netdiffuseR_angle', PACKAGE = 'netdiffuseR', x0, y0, x1, y1)
 }
 
 sp_trimatl <- function(x) {
-    .Call('netdiffuseR_sp_trimatl', PACKAGE = 'netdiffuseR', x)
+    .Call('_netdiffuseR_sp_trimatl', PACKAGE = 'netdiffuseR', x)
 }
 
 sp_diag <- function(x, v) {
-    .Call('netdiffuseR_sp_diag', PACKAGE = 'netdiffuseR', x, v)
+    .Call('_netdiffuseR_sp_diag', PACKAGE = 'netdiffuseR', x, v)
 }
 
 unif_rand_w_exclusion <- function(n, e) {
-    .Call('netdiffuseR_unif_rand_w_exclusion', PACKAGE = 'netdiffuseR', n, e)
+    .Call('_netdiffuseR_unif_rand_w_exclusion', PACKAGE = 'netdiffuseR', n, e)
 }
 
 sp_as_undirected <- function(x) {
-    .Call('netdiffuseR_sp_as_undirected', PACKAGE = 'netdiffuseR', x)
+    .Call('_netdiffuseR_sp_as_undirected', PACKAGE = 'netdiffuseR', x)
 }
 
 bootnet_fillself <- function(graph, index, E) {
-    .Call('netdiffuseR_bootnet_fillself', PACKAGE = 'netdiffuseR', graph, index, E)
+    .Call('_netdiffuseR_bootnet_fillself', PACKAGE = 'netdiffuseR', graph, index, E)
 }
 
 #' Distribution over a grid
@@ -103,7 +103,7 @@ bootnet_fillself <- function(graph, index, E) {
 #' grid_distribution(x,y,20)
 #' }
 grid_distribution <- function(x, y, nlevels = 100L) {
-    .Call('netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, nlevels)
+    .Call('_netdiffuseR_grid_distribution', PACKAGE = 'netdiffuseR', x, y, nlevels)
 }
 
 #' Compute ego/alter edge coordinates considering alter's size and aspect ratio
@@ -201,19 +201,19 @@ grid_distribution <- function(x, y, nlevels = 100L) {
 #' with(ecoords, arrows(x0,y0,x1,y1, length=.1))
 #' @export
 edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_contemporary = TRUE, dev = as.numeric( c()), ran = as.numeric( c())) {
-    .Call('netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran)
+    .Call('_netdiffuseR_edges_coords', PACKAGE = 'netdiffuseR', graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran)
 }
 
 edges_arrow <- function(x0, y0, x1, y1, height, width, beta = 1.5707963267949, dev = as.numeric( c()), ran = as.numeric( c())) {
-    .Call('netdiffuseR_edges_arrow', PACKAGE = 'netdiffuseR', x0, y0, x1, y1, height, width, beta, dev, ran)
+    .Call('_netdiffuseR_edges_arrow', PACKAGE = 'netdiffuseR', x0, y0, x1, y1, height, width, beta, dev, ran)
 }
 
 vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran = as.numeric( c())) {
-    .Call('netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
+    .Call('_netdiffuseR_vertices_coords', PACKAGE = 'netdiffuseR', x, y, size, nsides, rot, dev, ran)
 }
 
 rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE, self = FALSE) {
-    .Call('netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
+    .Call('_netdiffuseR_rgraph_er_cpp', PACKAGE = 'netdiffuseR', n, p, undirected, weighted, self)
 }
 
 #' Ring lattice graph
@@ -232,49 +232,49 @@ rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE,
 #' @export
 #' @family simulation functions
 ring_lattice <- function(n, k, undirected = FALSE) {
-    .Call('netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k, undirected)
+    .Call('_netdiffuseR_ring_lattice', PACKAGE = 'netdiffuseR', n, k, undirected)
 }
 
 rewire_endpoints <- function(graph, p, both_ends = FALSE, self = FALSE, multiple = FALSE, undirected = FALSE) {
-    .Call('netdiffuseR_rewire_endpoints', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
+    .Call('_netdiffuseR_rewire_endpoints', PACKAGE = 'netdiffuseR', graph, p, both_ends, self, multiple, undirected)
 }
 
 rewire_swap <- function(graph, nsteps = 100L, self = FALSE, multiple = FALSE, undirected = FALSE, pr_rewire = 0.5) {
-    .Call('netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
+    .Call('_netdiffuseR_rewire_swap', PACKAGE = 'netdiffuseR', graph, nsteps, self, multiple, undirected, pr_rewire)
 }
 
 rewire_ws <- function(G, K, p = 0.0, self = FALSE, multiple = FALSE) {
-    .Call('netdiffuseR_rewire_ws', PACKAGE = 'netdiffuseR', G, K, p, self, multiple)
+    .Call('_netdiffuseR_rewire_ws', PACKAGE = 'netdiffuseR', G, K, p, self, multiple)
 }
 
 permute_graph_cpp <- function(x, self = FALSE, multiple = FALSE) {
-    .Call('netdiffuseR_permute_graph_cpp', PACKAGE = 'netdiffuseR', x, self, multiple)
+    .Call('_netdiffuseR_permute_graph_cpp', PACKAGE = 'netdiffuseR', x, self, multiple)
 }
 
 rgraph_ba_cpp <- function(graph, dgr, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t, self)
+    .Call('_netdiffuseR_rgraph_ba_cpp', PACKAGE = 'netdiffuseR', graph, dgr, m, t, self)
 }
 
 rgraph_ba_new_cpp <- function(m0 = 1L, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
+    .Call('_netdiffuseR_rgraph_ba_new_cpp', PACKAGE = 'netdiffuseR', m0, m, t, self)
 }
 
 rgraph_sf_homo <- function(eta, graph, dgr, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
+    .Call('_netdiffuseR_rgraph_sf_homo', PACKAGE = 'netdiffuseR', eta, graph, dgr, m, t, self)
 }
 
 rgraph_sf_homo_new <- function(eta, m0 = 1L, m = 1L, t = 10L, self = TRUE) {
-    .Call('netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
+    .Call('_netdiffuseR_rgraph_sf_homo_new', PACKAGE = 'netdiffuseR', eta, m0, m, t, self)
 }
 
 #' @export
 #' @rdname vertex_covariate_dist
 vertex_covariate_dist <- function(graph, X, p = 2.0) {
-    .Call('netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
+    .Call('_netdiffuseR_vertex_covariate_dist', PACKAGE = 'netdiffuseR', graph, X, p)
 }
 
 vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
-    .Call('netdiffuseR_vertex_mahalanobis_dist_cpp', PACKAGE = 'netdiffuseR', graph, X, S)
+    .Call('_netdiffuseR_vertex_mahalanobis_dist_cpp', PACKAGE = 'netdiffuseR', graph, X, S)
 }
 
 #' Comparisons at dyadic level
@@ -309,27 +309,27 @@ vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
 #' vertex_covariate_compare(G, x, "<=")
 #' @export
 vertex_covariate_compare <- function(graph, X, funname) {
-    .Call('netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, funname)
+    .Call('_netdiffuseR_vertex_covariate_compare', PACKAGE = 'netdiffuseR', graph, X, funname)
 }
 
 moran_cpp <- function(x, w) {
-    .Call('netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
+    .Call('_netdiffuseR_moran_cpp', PACKAGE = 'netdiffuseR', x, w)
 }
 
 struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
-    .Call('netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
+    .Call('_netdiffuseR_struct_equiv_cpp', PACKAGE = 'netdiffuseR', graph, v, unscaled, inv, invrep)
 }
 
 matrix_compareCpp <- function(A, B, fun) {
-    .Call('netdiffuseR_matrix_compareCpp', PACKAGE = 'netdiffuseR', A, B, fun)
+    .Call('_netdiffuseR_matrix_compareCpp', PACKAGE = 'netdiffuseR', A, B, fun)
 }
 
 struct_test_mean <- function(y, funname, self = FALSE) {
-    .Call('netdiffuseR_struct_test_mean', PACKAGE = 'netdiffuseR', y, funname, self)
+    .Call('_netdiffuseR_struct_test_mean', PACKAGE = 'netdiffuseR', y, funname, self)
 }
 
 struct_test_var <- function(y, funname, self = FALSE) {
-    .Call('netdiffuseR_struct_test_var', PACKAGE = 'netdiffuseR', y, funname, self)
+    .Call('_netdiffuseR_struct_test_var', PACKAGE = 'netdiffuseR', y, funname, self)
 }
 
 #' Computes variance of \eqn{Y} at ego level
@@ -363,6 +363,6 @@ struct_test_var <- function(y, funname, self = FALSE) {
 #' @seealso \code{\link{struct_test}}
 #' @family statistics
 ego_variance <- function(graph, Y, funname, all = FALSE) {
-    .Call('netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname, all)
+    .Call('_netdiffuseR_ego_variance', PACKAGE = 'netdiffuseR', graph, Y, funname, all)
 }
 

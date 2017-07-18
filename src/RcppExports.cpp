@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // toa_mat_cpp
 List toa_mat_cpp(const IntegerVector& year, int t0, int t1);
-RcppExport SEXP netdiffuseR_toa_mat_cpp(SEXP yearSEXP, SEXP t0SEXP, SEXP t1SEXP) {
+RcppExport SEXP _netdiffuseR_toa_mat_cpp(SEXP yearSEXP, SEXP t0SEXP, SEXP t1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,7 @@ END_RCPP
 }
 // edgelist_to_adjmat_cpp
 arma::sp_mat edgelist_to_adjmat_cpp(const arma::mat& edgelist, NumericVector weights, int n, bool undirected, bool self, bool multiple);
-RcppExport SEXP netdiffuseR_edgelist_to_adjmat_cpp(SEXP edgelistSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP undirectedSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+RcppExport SEXP _netdiffuseR_edgelist_to_adjmat_cpp(SEXP edgelistSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP undirectedSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,7 @@ END_RCPP
 }
 // adjmat_to_edgelist_cpp
 arma::mat adjmat_to_edgelist_cpp(const arma::sp_mat& adjmat, bool undirected);
-RcppExport SEXP netdiffuseR_adjmat_to_edgelist_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
+RcppExport SEXP _netdiffuseR_adjmat_to_edgelist_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -49,7 +49,7 @@ END_RCPP
 }
 // toa_diff_cpp
 IntegerMatrix toa_diff_cpp(const IntegerVector& year);
-RcppExport SEXP netdiffuseR_toa_diff_cpp(SEXP yearSEXP) {
+RcppExport SEXP _netdiffuseR_toa_diff_cpp(SEXP yearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,7 +60,7 @@ END_RCPP
 }
 // isolated_cpp
 arma::icolvec isolated_cpp(const arma::sp_mat& adjmat, bool undirected);
-RcppExport SEXP netdiffuseR_isolated_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
+RcppExport SEXP _netdiffuseR_isolated_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -72,7 +72,7 @@ END_RCPP
 }
 // drop_isolated_cpp
 arma::sp_mat drop_isolated_cpp(const arma::sp_mat& adjmat, arma::icolvec isolated, bool undirected);
-RcppExport SEXP netdiffuseR_drop_isolated_cpp(SEXP adjmatSEXP, SEXP isolatedSEXP, SEXP undirectedSEXP) {
+RcppExport SEXP _netdiffuseR_drop_isolated_cpp(SEXP adjmatSEXP, SEXP isolatedSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +85,7 @@ END_RCPP
 }
 // egonet_attrs_cpp
 List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, bool outer, bool self, bool self_attrs, bool valued);
-RcppExport SEXP netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP self_attrsSEXP, SEXP valuedSEXP) {
+RcppExport SEXP _netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP self_attrsSEXP, SEXP valuedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -101,7 +101,7 @@ END_RCPP
 }
 // approx_geodesicCpp
 arma::sp_mat approx_geodesicCpp(const arma::sp_mat& G, unsigned int n, bool warn);
-RcppExport SEXP netdiffuseR_approx_geodesicCpp(SEXP GSEXP, SEXP nSEXP, SEXP warnSEXP) {
+RcppExport SEXP _netdiffuseR_approx_geodesicCpp(SEXP GSEXP, SEXP nSEXP, SEXP warnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -114,7 +114,7 @@ END_RCPP
 }
 // infection_cpp
 NumericVector infection_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
-RcppExport SEXP netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
+RcppExport SEXP _netdiffuseR_infection_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -133,7 +133,7 @@ END_RCPP
 }
 // susceptibility_cpp
 NumericVector susceptibility_cpp(List graph, const arma::colvec& times, bool normalize, int K, double r, bool expdiscount, int n, bool valued, bool outgoing);
-RcppExport SEXP netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
+RcppExport SEXP _netdiffuseR_susceptibility_cpp(SEXP graphSEXP, SEXP timesSEXP, SEXP normalizeSEXP, SEXP KSEXP, SEXP rSEXP, SEXP expdiscountSEXP, SEXP nSEXP, SEXP valuedSEXP, SEXP outgoingSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -152,7 +152,7 @@ END_RCPP
 }
 // select_egoalter_cpp
 DataFrame select_egoalter_cpp(const arma::sp_mat& adjmat_t0, const arma::sp_mat& adjmat_t1, const NumericVector& adopt_t0, const NumericVector& adopt_t1);
-RcppExport SEXP netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {
+RcppExport SEXP _netdiffuseR_select_egoalter_cpp(SEXP adjmat_t0SEXP, SEXP adjmat_t1SEXP, SEXP adopt_t0SEXP, SEXP adopt_t1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -166,7 +166,7 @@ END_RCPP
 }
 // sparse_indexes
 arma::umat sparse_indexes(const arma::sp_mat& mat);
-RcppExport SEXP netdiffuseR_sparse_indexes(SEXP matSEXP) {
+RcppExport SEXP _netdiffuseR_sparse_indexes(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -177,7 +177,7 @@ END_RCPP
 }
 // angle
 double angle(double x0, double y0, double x1, double y1);
-RcppExport SEXP netdiffuseR_angle(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP) {
+RcppExport SEXP _netdiffuseR_angle(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -191,7 +191,7 @@ END_RCPP
 }
 // sp_trimatl
 arma::sp_mat sp_trimatl(const arma::sp_mat& x);
-RcppExport SEXP netdiffuseR_sp_trimatl(SEXP xSEXP) {
+RcppExport SEXP _netdiffuseR_sp_trimatl(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -202,7 +202,7 @@ END_RCPP
 }
 // sp_diag
 arma::sp_mat sp_diag(const arma::sp_mat& x, const arma::vec& v);
-RcppExport SEXP netdiffuseR_sp_diag(SEXP xSEXP, SEXP vSEXP) {
+RcppExport SEXP _netdiffuseR_sp_diag(SEXP xSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -214,7 +214,7 @@ END_RCPP
 }
 // unif_rand_w_exclusion
 int unif_rand_w_exclusion(int n, int e);
-RcppExport SEXP netdiffuseR_unif_rand_w_exclusion(SEXP nSEXP, SEXP eSEXP) {
+RcppExport SEXP _netdiffuseR_unif_rand_w_exclusion(SEXP nSEXP, SEXP eSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -226,7 +226,7 @@ END_RCPP
 }
 // sp_as_undirected
 arma::sp_mat sp_as_undirected(const arma::sp_mat& x);
-RcppExport SEXP netdiffuseR_sp_as_undirected(SEXP xSEXP) {
+RcppExport SEXP _netdiffuseR_sp_as_undirected(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -237,7 +237,7 @@ END_RCPP
 }
 // bootnet_fillself
 arma::sp_mat bootnet_fillself(arma::sp_mat& graph, const IntegerVector& index, const NumericVector& E);
-RcppExport SEXP netdiffuseR_bootnet_fillself(SEXP graphSEXP, SEXP indexSEXP, SEXP ESEXP) {
+RcppExport SEXP _netdiffuseR_bootnet_fillself(SEXP graphSEXP, SEXP indexSEXP, SEXP ESEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -250,7 +250,7 @@ END_RCPP
 }
 // grid_distribution
 List grid_distribution(const arma::vec& x, const arma::vec& y, int nlevels);
-RcppExport SEXP netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
+RcppExport SEXP _netdiffuseR_grid_distribution(SEXP xSEXP, SEXP ySEXP, SEXP nlevelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -263,7 +263,7 @@ END_RCPP
 }
 // edges_coords
 NumericMatrix edges_coords(const arma::sp_mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary, NumericVector dev, NumericVector ran);
-RcppExport SEXP netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP, SEXP devSEXP, SEXP ranSEXP) {
+RcppExport SEXP _netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP, SEXP devSEXP, SEXP ranSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -282,7 +282,7 @@ END_RCPP
 }
 // edges_arrow
 arma::mat edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran);
-RcppExport SEXP netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP) {
+RcppExport SEXP _netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -301,7 +301,7 @@ END_RCPP
 }
 // vertices_coords
 List vertices_coords(const arma::colvec& x, const arma::colvec& y, const arma::colvec& size, const arma::colvec& nsides, const arma::colvec& rot, NumericVector dev, NumericVector ran);
-RcppExport SEXP netdiffuseR_vertices_coords(SEXP xSEXP, SEXP ySEXP, SEXP sizeSEXP, SEXP nsidesSEXP, SEXP rotSEXP, SEXP devSEXP, SEXP ranSEXP) {
+RcppExport SEXP _netdiffuseR_vertices_coords(SEXP xSEXP, SEXP ySEXP, SEXP sizeSEXP, SEXP nsidesSEXP, SEXP rotSEXP, SEXP devSEXP, SEXP ranSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -318,7 +318,7 @@ END_RCPP
 }
 // rgraph_er_cpp
 arma::sp_mat rgraph_er_cpp(int n, double p, bool undirected, bool weighted, bool self);
-RcppExport SEXP netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_rgraph_er_cpp(SEXP nSEXP, SEXP pSEXP, SEXP undirectedSEXP, SEXP weightedSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -333,7 +333,7 @@ END_RCPP
 }
 // ring_lattice
 arma::sp_mat ring_lattice(int n, int k, bool undirected);
-RcppExport SEXP netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {
+RcppExport SEXP _netdiffuseR_ring_lattice(SEXP nSEXP, SEXP kSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -346,7 +346,7 @@ END_RCPP
 }
 // rewire_endpoints
 arma::sp_mat rewire_endpoints(const arma::sp_mat& graph, double p, bool both_ends, bool self, bool multiple, bool undirected);
-RcppExport SEXP netdiffuseR_rewire_endpoints(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
+RcppExport SEXP _netdiffuseR_rewire_endpoints(SEXP graphSEXP, SEXP pSEXP, SEXP both_endsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -362,7 +362,7 @@ END_RCPP
 }
 // rewire_swap
 arma::sp_mat rewire_swap(const arma::sp_mat& graph, int nsteps, bool self, bool multiple, bool undirected, double pr_rewire);
-RcppExport SEXP netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP) {
+RcppExport SEXP _netdiffuseR_rewire_swap(SEXP graphSEXP, SEXP nstepsSEXP, SEXP selfSEXP, SEXP multipleSEXP, SEXP undirectedSEXP, SEXP pr_rewireSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -378,7 +378,7 @@ END_RCPP
 }
 // rewire_ws
 arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p, bool self, bool multiple);
-RcppExport SEXP netdiffuseR_rewire_ws(SEXP GSEXP, SEXP KSEXP, SEXP pSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+RcppExport SEXP _netdiffuseR_rewire_ws(SEXP GSEXP, SEXP KSEXP, SEXP pSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -393,7 +393,7 @@ END_RCPP
 }
 // permute_graph_cpp
 arma::sp_mat permute_graph_cpp(const arma::sp_mat& x, bool self, bool multiple);
-RcppExport SEXP netdiffuseR_permute_graph_cpp(SEXP xSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
+RcppExport SEXP _netdiffuseR_permute_graph_cpp(SEXP xSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -406,7 +406,7 @@ END_RCPP
 }
 // rgraph_ba_cpp
 arma::sp_mat rgraph_ba_cpp(const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_rgraph_ba_cpp(SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -421,7 +421,7 @@ END_RCPP
 }
 // rgraph_ba_new_cpp
 arma::sp_mat rgraph_ba_new_cpp(int m0, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_ba_new_cpp(SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_rgraph_ba_new_cpp(SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -435,7 +435,7 @@ END_RCPP
 }
 // rgraph_sf_homo
 arma::sp_mat rgraph_sf_homo(const arma::colvec& eta, const arma::sp_mat& graph, const arma::colvec& dgr, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_sf_homo(SEXP etaSEXP, SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_rgraph_sf_homo(SEXP etaSEXP, SEXP graphSEXP, SEXP dgrSEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -451,7 +451,7 @@ END_RCPP
 }
 // rgraph_sf_homo_new
 arma::sp_mat rgraph_sf_homo_new(const arma::colvec& eta, int m0, int m, int t, bool self);
-RcppExport SEXP netdiffuseR_rgraph_sf_homo_new(SEXP etaSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_rgraph_sf_homo_new(SEXP etaSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP tSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -466,7 +466,7 @@ END_RCPP
 }
 // vertex_covariate_dist
 arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const arma::mat& X, double p);
-RcppExport SEXP netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
+RcppExport SEXP _netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -479,7 +479,7 @@ END_RCPP
 }
 // vertex_mahalanobis_dist_cpp
 arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat& graph, const arma::mat& X, const arma::mat& S);
-RcppExport SEXP netdiffuseR_vertex_mahalanobis_dist_cpp(SEXP graphSEXP, SEXP XSEXP, SEXP SSEXP) {
+RcppExport SEXP _netdiffuseR_vertex_mahalanobis_dist_cpp(SEXP graphSEXP, SEXP XSEXP, SEXP SSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -492,7 +492,7 @@ END_RCPP
 }
 // vertex_covariate_compare
 arma::sp_mat vertex_covariate_compare(const arma::sp_mat& graph, const NumericVector& X, std::string funname);
-RcppExport SEXP netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP funnameSEXP) {
+RcppExport SEXP _netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP funnameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -505,7 +505,7 @@ END_RCPP
 }
 // moran_cpp
 List moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
-RcppExport SEXP netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
+RcppExport SEXP _netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -517,7 +517,7 @@ END_RCPP
 }
 // struct_equiv_cpp
 List struct_equiv_cpp(const arma::sp_mat& graph, double v, bool unscaled, bool inv, double invrep);
-RcppExport SEXP netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP, SEXP unscaledSEXP, SEXP invSEXP, SEXP invrepSEXP) {
+RcppExport SEXP _netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP, SEXP unscaledSEXP, SEXP invSEXP, SEXP invrepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -532,7 +532,7 @@ END_RCPP
 }
 // matrix_compareCpp
 arma::sp_mat matrix_compareCpp(const arma::sp_mat& A, const arma::sp_mat& B, Function fun);
-RcppExport SEXP netdiffuseR_matrix_compareCpp(SEXP ASEXP, SEXP BSEXP, SEXP funSEXP) {
+RcppExport SEXP _netdiffuseR_matrix_compareCpp(SEXP ASEXP, SEXP BSEXP, SEXP funSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -545,7 +545,7 @@ END_RCPP
 }
 // struct_test_mean
 double struct_test_mean(NumericVector& y, std::string funname, bool self);
-RcppExport SEXP netdiffuseR_struct_test_mean(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_struct_test_mean(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -558,7 +558,7 @@ END_RCPP
 }
 // struct_test_var
 double struct_test_var(NumericVector& y, std::string funname, bool self);
-RcppExport SEXP netdiffuseR_struct_test_var(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
+RcppExport SEXP _netdiffuseR_struct_test_var(SEXP ySEXP, SEXP funnameSEXP, SEXP selfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -571,7 +571,7 @@ END_RCPP
 }
 // ego_variance
 NumericVector ego_variance(const arma::sp_mat& graph, const NumericVector& Y, std::string funname, bool all);
-RcppExport SEXP netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP, SEXP allSEXP) {
+RcppExport SEXP _netdiffuseR_ego_variance(SEXP graphSEXP, SEXP YSEXP, SEXP funnameSEXP, SEXP allSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -585,47 +585,47 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"netdiffuseR_toa_mat_cpp", (DL_FUNC) &netdiffuseR_toa_mat_cpp, 3},
-    {"netdiffuseR_edgelist_to_adjmat_cpp", (DL_FUNC) &netdiffuseR_edgelist_to_adjmat_cpp, 6},
-    {"netdiffuseR_adjmat_to_edgelist_cpp", (DL_FUNC) &netdiffuseR_adjmat_to_edgelist_cpp, 2},
-    {"netdiffuseR_toa_diff_cpp", (DL_FUNC) &netdiffuseR_toa_diff_cpp, 1},
-    {"netdiffuseR_isolated_cpp", (DL_FUNC) &netdiffuseR_isolated_cpp, 2},
-    {"netdiffuseR_drop_isolated_cpp", (DL_FUNC) &netdiffuseR_drop_isolated_cpp, 3},
-    {"netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &netdiffuseR_egonet_attrs_cpp, 6},
-    {"netdiffuseR_approx_geodesicCpp", (DL_FUNC) &netdiffuseR_approx_geodesicCpp, 3},
-    {"netdiffuseR_infection_cpp", (DL_FUNC) &netdiffuseR_infection_cpp, 9},
-    {"netdiffuseR_susceptibility_cpp", (DL_FUNC) &netdiffuseR_susceptibility_cpp, 9},
-    {"netdiffuseR_select_egoalter_cpp", (DL_FUNC) &netdiffuseR_select_egoalter_cpp, 4},
-    {"netdiffuseR_sparse_indexes", (DL_FUNC) &netdiffuseR_sparse_indexes, 1},
-    {"netdiffuseR_angle", (DL_FUNC) &netdiffuseR_angle, 4},
-    {"netdiffuseR_sp_trimatl", (DL_FUNC) &netdiffuseR_sp_trimatl, 1},
-    {"netdiffuseR_sp_diag", (DL_FUNC) &netdiffuseR_sp_diag, 2},
-    {"netdiffuseR_unif_rand_w_exclusion", (DL_FUNC) &netdiffuseR_unif_rand_w_exclusion, 2},
-    {"netdiffuseR_sp_as_undirected", (DL_FUNC) &netdiffuseR_sp_as_undirected, 1},
-    {"netdiffuseR_bootnet_fillself", (DL_FUNC) &netdiffuseR_bootnet_fillself, 3},
-    {"netdiffuseR_grid_distribution", (DL_FUNC) &netdiffuseR_grid_distribution, 3},
-    {"netdiffuseR_edges_coords", (DL_FUNC) &netdiffuseR_edges_coords, 9},
-    {"netdiffuseR_edges_arrow", (DL_FUNC) &netdiffuseR_edges_arrow, 9},
-    {"netdiffuseR_vertices_coords", (DL_FUNC) &netdiffuseR_vertices_coords, 7},
-    {"netdiffuseR_rgraph_er_cpp", (DL_FUNC) &netdiffuseR_rgraph_er_cpp, 5},
-    {"netdiffuseR_ring_lattice", (DL_FUNC) &netdiffuseR_ring_lattice, 3},
-    {"netdiffuseR_rewire_endpoints", (DL_FUNC) &netdiffuseR_rewire_endpoints, 6},
-    {"netdiffuseR_rewire_swap", (DL_FUNC) &netdiffuseR_rewire_swap, 6},
-    {"netdiffuseR_rewire_ws", (DL_FUNC) &netdiffuseR_rewire_ws, 5},
-    {"netdiffuseR_permute_graph_cpp", (DL_FUNC) &netdiffuseR_permute_graph_cpp, 3},
-    {"netdiffuseR_rgraph_ba_cpp", (DL_FUNC) &netdiffuseR_rgraph_ba_cpp, 5},
-    {"netdiffuseR_rgraph_ba_new_cpp", (DL_FUNC) &netdiffuseR_rgraph_ba_new_cpp, 4},
-    {"netdiffuseR_rgraph_sf_homo", (DL_FUNC) &netdiffuseR_rgraph_sf_homo, 6},
-    {"netdiffuseR_rgraph_sf_homo_new", (DL_FUNC) &netdiffuseR_rgraph_sf_homo_new, 5},
-    {"netdiffuseR_vertex_covariate_dist", (DL_FUNC) &netdiffuseR_vertex_covariate_dist, 3},
-    {"netdiffuseR_vertex_mahalanobis_dist_cpp", (DL_FUNC) &netdiffuseR_vertex_mahalanobis_dist_cpp, 3},
-    {"netdiffuseR_vertex_covariate_compare", (DL_FUNC) &netdiffuseR_vertex_covariate_compare, 3},
-    {"netdiffuseR_moran_cpp", (DL_FUNC) &netdiffuseR_moran_cpp, 2},
-    {"netdiffuseR_struct_equiv_cpp", (DL_FUNC) &netdiffuseR_struct_equiv_cpp, 5},
-    {"netdiffuseR_matrix_compareCpp", (DL_FUNC) &netdiffuseR_matrix_compareCpp, 3},
-    {"netdiffuseR_struct_test_mean", (DL_FUNC) &netdiffuseR_struct_test_mean, 3},
-    {"netdiffuseR_struct_test_var", (DL_FUNC) &netdiffuseR_struct_test_var, 3},
-    {"netdiffuseR_ego_variance", (DL_FUNC) &netdiffuseR_ego_variance, 4},
+    {"_netdiffuseR_toa_mat_cpp", (DL_FUNC) &_netdiffuseR_toa_mat_cpp, 3},
+    {"_netdiffuseR_edgelist_to_adjmat_cpp", (DL_FUNC) &_netdiffuseR_edgelist_to_adjmat_cpp, 6},
+    {"_netdiffuseR_adjmat_to_edgelist_cpp", (DL_FUNC) &_netdiffuseR_adjmat_to_edgelist_cpp, 2},
+    {"_netdiffuseR_toa_diff_cpp", (DL_FUNC) &_netdiffuseR_toa_diff_cpp, 1},
+    {"_netdiffuseR_isolated_cpp", (DL_FUNC) &_netdiffuseR_isolated_cpp, 2},
+    {"_netdiffuseR_drop_isolated_cpp", (DL_FUNC) &_netdiffuseR_drop_isolated_cpp, 3},
+    {"_netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &_netdiffuseR_egonet_attrs_cpp, 6},
+    {"_netdiffuseR_approx_geodesicCpp", (DL_FUNC) &_netdiffuseR_approx_geodesicCpp, 3},
+    {"_netdiffuseR_infection_cpp", (DL_FUNC) &_netdiffuseR_infection_cpp, 9},
+    {"_netdiffuseR_susceptibility_cpp", (DL_FUNC) &_netdiffuseR_susceptibility_cpp, 9},
+    {"_netdiffuseR_select_egoalter_cpp", (DL_FUNC) &_netdiffuseR_select_egoalter_cpp, 4},
+    {"_netdiffuseR_sparse_indexes", (DL_FUNC) &_netdiffuseR_sparse_indexes, 1},
+    {"_netdiffuseR_angle", (DL_FUNC) &_netdiffuseR_angle, 4},
+    {"_netdiffuseR_sp_trimatl", (DL_FUNC) &_netdiffuseR_sp_trimatl, 1},
+    {"_netdiffuseR_sp_diag", (DL_FUNC) &_netdiffuseR_sp_diag, 2},
+    {"_netdiffuseR_unif_rand_w_exclusion", (DL_FUNC) &_netdiffuseR_unif_rand_w_exclusion, 2},
+    {"_netdiffuseR_sp_as_undirected", (DL_FUNC) &_netdiffuseR_sp_as_undirected, 1},
+    {"_netdiffuseR_bootnet_fillself", (DL_FUNC) &_netdiffuseR_bootnet_fillself, 3},
+    {"_netdiffuseR_grid_distribution", (DL_FUNC) &_netdiffuseR_grid_distribution, 3},
+    {"_netdiffuseR_edges_coords", (DL_FUNC) &_netdiffuseR_edges_coords, 9},
+    {"_netdiffuseR_edges_arrow", (DL_FUNC) &_netdiffuseR_edges_arrow, 9},
+    {"_netdiffuseR_vertices_coords", (DL_FUNC) &_netdiffuseR_vertices_coords, 7},
+    {"_netdiffuseR_rgraph_er_cpp", (DL_FUNC) &_netdiffuseR_rgraph_er_cpp, 5},
+    {"_netdiffuseR_ring_lattice", (DL_FUNC) &_netdiffuseR_ring_lattice, 3},
+    {"_netdiffuseR_rewire_endpoints", (DL_FUNC) &_netdiffuseR_rewire_endpoints, 6},
+    {"_netdiffuseR_rewire_swap", (DL_FUNC) &_netdiffuseR_rewire_swap, 6},
+    {"_netdiffuseR_rewire_ws", (DL_FUNC) &_netdiffuseR_rewire_ws, 5},
+    {"_netdiffuseR_permute_graph_cpp", (DL_FUNC) &_netdiffuseR_permute_graph_cpp, 3},
+    {"_netdiffuseR_rgraph_ba_cpp", (DL_FUNC) &_netdiffuseR_rgraph_ba_cpp, 5},
+    {"_netdiffuseR_rgraph_ba_new_cpp", (DL_FUNC) &_netdiffuseR_rgraph_ba_new_cpp, 4},
+    {"_netdiffuseR_rgraph_sf_homo", (DL_FUNC) &_netdiffuseR_rgraph_sf_homo, 6},
+    {"_netdiffuseR_rgraph_sf_homo_new", (DL_FUNC) &_netdiffuseR_rgraph_sf_homo_new, 5},
+    {"_netdiffuseR_vertex_covariate_dist", (DL_FUNC) &_netdiffuseR_vertex_covariate_dist, 3},
+    {"_netdiffuseR_vertex_mahalanobis_dist_cpp", (DL_FUNC) &_netdiffuseR_vertex_mahalanobis_dist_cpp, 3},
+    {"_netdiffuseR_vertex_covariate_compare", (DL_FUNC) &_netdiffuseR_vertex_covariate_compare, 3},
+    {"_netdiffuseR_moran_cpp", (DL_FUNC) &_netdiffuseR_moran_cpp, 2},
+    {"_netdiffuseR_struct_equiv_cpp", (DL_FUNC) &_netdiffuseR_struct_equiv_cpp, 5},
+    {"_netdiffuseR_matrix_compareCpp", (DL_FUNC) &_netdiffuseR_matrix_compareCpp, 3},
+    {"_netdiffuseR_struct_test_mean", (DL_FUNC) &_netdiffuseR_struct_test_mean, 3},
+    {"_netdiffuseR_struct_test_var", (DL_FUNC) &_netdiffuseR_struct_test_var, 3},
+    {"_netdiffuseR_ego_variance", (DL_FUNC) &_netdiffuseR_ego_variance, 4},
     {NULL, NULL, 0}
 };
 

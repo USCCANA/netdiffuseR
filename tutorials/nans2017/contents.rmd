@@ -5,7 +5,29 @@ date: "7/15/2017"
 output: html_document
 ---
 
-# Simulation of diffusion networks
+# Introduction
+
+## Today's objectives:
+
+1.  Read data into netdiffuseR
+
+2.  Simulate diffusion networks
+
+3.  Use the visualization tools
+
+4.  Use statistical inference tools
+
+
+## Dynamic of work
+
+1.  We will introduce a concept/function
+
+2.  We will provide examples
+
+3.  Attendees will be asked to answer a couple of questions using netdiffuseR
+
+
+# Simulation of diffusion networks: rdiffnet
 
 *   Disease spreading
 
@@ -22,7 +44,7 @@ output: html_document
     what set of $n$ initiators maximizes diffusion?
 
 
-# Reading networks
+# Reading networks: survey_to_diffnet
 
 *   Survey data
 
