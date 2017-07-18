@@ -161,10 +161,10 @@ oldpar <- par(no.readonly = TRUE)
 par(mfrow=c(2,2))
 
 # Now we use the hist method for the -diffnet_boot- class
-hist(test1, main="Distribution of Statistic on rewired\nnetwork (City 1)")
-hist(test2, main="Distribution of Statistic on rewired\nnetwork (City 2)")
-hist(test3, main="Distribution of Statistic on rewired\nnetwork (City 3)")
-hist(test4, main="Distribution of Statistic on rewired\nnetwork (City 4)")
+hist(test1, main="Distribution of Statistic on rewired\nnetwork (City 1)", ask = FALSE)
+hist(test2, main="Distribution of Statistic on rewired\nnetwork (City 2)", ask = FALSE)
+hist(test3, main="Distribution of Statistic on rewired\nnetwork (City 3)", ask = FALSE)
+hist(test4, main="Distribution of Statistic on rewired\nnetwork (City 4)", ask = FALSE)
 
 # Returning to the previous graphical parameters
 par(oldpar)

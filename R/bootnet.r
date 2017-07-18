@@ -341,9 +341,12 @@ hist.diffnet_bootnet <- function(
   ask       = TRUE,
   ...) {
 
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
-  par(ask=ask)
+  if (ask) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+    par(ask=ask)
+  }
+
   for (i in 1:ncol(x$boot$t)) {
     out <- hist(x$boot$t[,i],  breaks=breaks, plot=FALSE)
     ran <- range(out$mids)

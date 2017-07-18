@@ -261,9 +261,11 @@ hist.diffnet_struct_test <- function(
   ...) {
 
   # Par parameters
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
-  par(ask=ask)
+  if (ask) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+    par(ask=ask)
+  }
 
   out <- vector("list", ncol(x$boot$t))
   for (i in 1:ncol(x$boot$t)) {

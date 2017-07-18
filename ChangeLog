@@ -1,5 +1,11 @@
+2017-07-17  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/adjmat.cpp: Function for computing geodesics is now more
+	  efficient by using batch constructors when updating matrices.
+	* R/bootnet.r, R/struct_test.r: Fixing hist methods.
+
+
 2017-07-16  George G. Vega Yon <g.vegayon@gmail.com>
-	* rewire.r: The function rewire_graph now also allows the method
+	* R/rewire.r: The function rewire_graph now also allows the method
 	  QAP.
 
 2017-07-14  George G. Vega Yon <g.vegayon@gmail.com>

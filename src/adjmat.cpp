@@ -356,8 +356,11 @@ arma::sp_mat approx_geodesicCpp(
     // Iterating throught the power graph's elements
     for (spiter it = pG.begin(); it != pG.end(); it ++) {
 
+      if (it.row() == it.col())
+        continue;
+
       // Checking user interrupt
-      if (++nsteps % 500)
+      if (++nsteps % 1000)
         Rcpp::checkUserInterrupt();
 
       if (ans.at(it.row(), it.col()) == 0u) {
@@ -395,9 +398,6 @@ arma::sp_mat approx_geodesicCpp(
     // Graph power
     pG *= G0;
   }
-
-  // Filling diagonal with zeros
-  ans.diag().zeros();
 
   return ans;
 }
