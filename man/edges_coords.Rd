@@ -21,7 +21,7 @@ of the x-axis (see \code{\link{symbols}}).}
 
 \item{undirected}{Logical scalar. Whether the graph is undirected or not.}
 
-\item{no_contemporary}{Logical scalar. Whether to return (calcular) edges'
+\item{no_contemporary}{Logical scalar. Whether to return (compute) edges'
 coordiantes for vertices with the same time of adoption (see details).}
 
 \item{dev}{Numeric vector of size 2. Height and width of the device (see details).}

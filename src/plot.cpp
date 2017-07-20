@@ -120,7 +120,7 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' @param vertex_cex Numeric vector of size \eqn{n}. Vertices' sizes in terms
 //' of the x-axis (see \code{\link{symbols}}).
 //' @param undirected Logical scalar. Whether the graph is undirected or not.
-//' @param no_contemporary Logical scalar. Whether to return (calcular) edges'
+//' @param no_contemporary Logical scalar. Whether to return (compute) edges'
 //' coordiantes for vertices with the same time of adoption (see details).
 //' @param dev Numeric vector of size 2. Height and width of the device (see details).
 //' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
