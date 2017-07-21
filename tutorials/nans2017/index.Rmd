@@ -1,0 +1,11 @@
+---
+title: "netdiffuseR at NASN 2017"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+netdiffuseR in NANS 2017

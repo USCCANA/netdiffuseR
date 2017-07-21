@@ -1,0 +1,131 @@
+---
+title: "Statistical inference"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+# Moran's I
+
+*   Moran's I tests for spatial autocorrelation.
+    
+*   __netdiffuseR__ implements the test in `moran`, which is suited for sparse matrices.
+
+*   We can use Moran's I as a first look to whether there is something happening:
+    let that be influence or homophily.
+
+## Using geodesics
+
+*   One approach is to use the geodesic (shortes path length) matrix to account for indirect
+    influence.
+    
+*   In the case of sparse matrices, and furthermore, in the presence of structural holes
+    it is more convenient to calculate the distance matrix taking this into account.
+    
+*   __netdiffuseR__ has a function to do so, the `approx_geodesic` function which,
+    using graph powers, computes the shortest path up to `n` steps. This could be
+    faster (if you only care up to `n` steps) than `igraph` or `sns`:
+
+    ```{r geodesic_speed, cache=TRUE}
+    # Extracting the large adjacency matrix (stacked)
+    dgc <- diag_expand(medInnovationsDiffNet$graph)
+    ig  <- igraph::graph_from_adjacency_matrix(dgc)
+    mat <- network::as.network(as.matrix(dgc))
+    
+    # Measuring times
+    times <- microbenchmark::microbenchmark(
+      netdiffuseR = netdiffuseR::approx_geodesic(dgc),
+      igraph = igraph::distances(ig),
+      sna = sna::geodist(mat),
+      times = 50, unit="relative"
+    )
+    ```
+    
+    ```{r geodesic_speed-box, autodep=TRUE, echo=FALSE}
+    microbenchmark:::boxplot.microbenchmark(times)
+    ```
+
+*   The `summary.diffnet` method already runs Moran's for you. What happens under the hood is:
+    
+    ```{r}
+    # For each time point we compute the geodesic distances matrix
+    W <- approx_geodesic(medInnovationsDiffNet$graph[[1]])
+    
+    # We get the element-wise inverse
+    W@x <- 1/W@x
+    
+    # And then compute moran
+    moran(medInnovationsDiffNet$cumadopt[,1], W)
+    ```
+
+
+
+# Structural dependence and permutation tests
+
+
+- A novel statistical method (work-in-progress) that allows conducting inference.
+- Included in the package, tests whether a particular network statistic actually depends on network structure
+- Suitable to be applied to network thresholds (you can't use thresholds in regression-like models!)
+
+## Idea
+
+-   Let $\mathcal{G} = (V,E)$ be a graph, $\gamma$ a vertex attribute, and $\beta = f(\gamma,\mathcal{G})$, then
+
+    $$\gamma \perp \mathcal{G} \implies \mathbb{E}\left[\beta(\gamma,\mathcal{G})|\mathcal{G}\right] = \mathbb{E}\left[\beta(\gamma,\mathcal{G})\right]$$
+
+- This is, if for example time of adoption is independent on the structure of the network, then the average threshold level will be independent from the network structure as well.
+
+- Another way of looking at this is that the test will allow us to see how probable is to have this combination of network structure and network threshold (if it is uncommon then we say that the diffusion model is highly likely)
+
+
+## Example Not random TOA
+
+-     To use this test, __netdiffuseR__ has the `struct_test` function.
+-     Basically it simulates networks with the same density and computes a particular statistic every time, generating an EDF (Empirical Distribution Function) under the Null hyphothesis (p-values).
+    
+    ```{r Struct non-random-toa, cache=TRUE}
+    # Simulating network
+    set.seed(1123)
+    net <- rdiffnet(n=500, t=10, seed.graph = "small-world")
+    
+    # Running the test
+    test <- struct_test(
+      graph     = net, 
+      statistic = function(x) mean(threshold(x), na.rm = TRUE),
+      R         = 1e3,
+      ncpus=4, parallel="multicore"
+      )
+    
+    # See the output
+    test
+    ```
+
+```{r, echo=FALSE}
+hist(test)
+```
+
+-   Now we shuffle toas, so that is random
+    
+    ```{r random-toa, cache=TRUE}
+    # Resetting TOAs (now will be completely random)
+    diffnet.toa(net) <- sample(diffnet.toa(net), nnodes(net), TRUE)
+    
+    # Running the test
+    test <- struct_test(
+      graph     = net, 
+      statistic = function(x) mean(threshold(x), na.rm = TRUE),
+      R         = 1e3,
+      ncpus=4, parallel="multicore"
+      )
+    
+    # See the output
+    test
+    ```
+    
+    ```{r, echo=FALSE}
+    hist(test)
+```

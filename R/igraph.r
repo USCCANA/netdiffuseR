@@ -1,18 +1,23 @@
 #' Convertion between graph classes
+#'
 #' @param graph Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.
 #' @param slices An integer vector indicating the slices to subset.
 #' @return Either a list of \code{length(slices)} \code{igraph}
 #' (\code{diffnet_to_igraph}), or a \code{diffnet} object (\code{igraph_to_diffnet})
 #' objects.
-#' @export
-#' @family graph formats
+#'
+#' @family Foreign
 #' @examples
 #' # Reading the meddical innovation data into igraph --------------------------
 #' x <- diffnet_to_igraph(medInnovationsDiffNet)
 #'
 #' # Fetching the times of adoption
 #' igraph::vertex_attr(x[[1]], "toa")
-#'
+#' @name igraph
+NULL
+
+#' @rdname igraph
+#' @export
 diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
 
   if (!inherits(graph, "diffnet")) stopifnot_graph(graph)
@@ -22,7 +27,7 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
 
   # Listing attributes
   static.attrs <- colnames(graph$vertex.static.attrs)
-  dynamic.attrs <- colnames(graph$vertex.dyn.attrs)
+  dynamic.attrs <- colnames(graph$vertex.dyn.attrs[[1]])
 
   # Creating container
   out <- vector("list", length(slices))
@@ -54,7 +59,7 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
     # Vertex Dyn Attributes
     for (k in dynamic.attrs)
       tempgraph <-
-      igraph::set_vertex_attr(graph=tempgraph, name=k, graph[[k]][[s]])
+      igraph::set_vertex_attr(graph=tempgraph, name=k, value=graph[[k]][[s]])
 
     # Time of adoption
     tempgraph <- set_vertex_attr(
@@ -72,7 +77,7 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
 }
 
 #' @export
-#' @rdname diffnet_to_igraph
+#' @rdname igraph
 #' @param toavar Character scalar. Name of the attribute that holds the times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{as_diffnet}}.
 #' @param t1 Integer scalar. Passed to \code{\link{as_diffnet}}.

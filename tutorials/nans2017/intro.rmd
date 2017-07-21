@@ -1,0 +1,63 @@
+---
+title: "Introduction"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+# Diffusion Network Object (diffnet)
+
+- __netdiffuseR__ has its own class of objects: `diffnet`.
+
+- Most of the package's functions accept different types of graphs:
+    * Static: `matrix`, `dgCMatrix` (from the __Matrix__ pkg), 
+    * Dynamic: `list` + `dgCMatrix`, `array`, `diffnet`
+  
+- But `diffnet` is the class from which you get the most.
+
+- From __netdiffuseR__'s perspective, network data comes in three classes:
+
+    1. Raw R network data: Datasets with edgelist, attributes, survey data, etc.
+    2. Already R data: already read into R using igraph, statnet, etc. (`igraph_to_diffnet`, `network_to_diffnet`, etc.)
+    3. Graph files: DL, UCINET, pajek, etc. (`read_pajek`, `read_dl`, `read_ucinet`, etc.)
+
+- In this presentation we will show focus on 1.
+
+# What is a `diffnet` object
+
+A diffusion network, a.k.a. `diffnet` object, is a `list` that holds the following objects:
+
+- `graph`: A `list` with $t$ `dgCMatrix` matrices of size $n\times n$,
+- `toa`: An integer vector of length $n$,
+- `adopt`: A matrix of size $n\times t$,
+- `cumadopt`: A matrix of size $n\times t$,
+- `vertex.static.attrs`: A `data.frame` of size $n\times k$,
+- `vertex.dyn.attrs`: A list with $t$ dataframes of size $n\times k$,
+- `graph.attrs`: Currently ignored..., and
+- `meta`: A list with metadata about the object.
+
+These are created using `as_diffnet` (or its wrappers).
+
+
+# What does netdiffuseR includes
+
+-   Among __netdiffuseR__ features, we find three classical Diffusion Network Datasets:
+    
+    - `brfarmersDiffNet` Brazilian farmers and the innovation of Hybrid Corn Seed (1966).
+    - `medInnovationsDiffNet` Doctors and the innovation of Tetracycline (1955).
+    - `kfamilyDiffNet` Korean women and Family Planning methods (1973).
+    
+    ```{r printing}
+    brfarmersDiffNet
+    medInnovationsDiffNet
+    kfamilyDiffNet
+    ```
+
+-   Functions to compute:
+    
+    *   (complex) Exposure
+    *   

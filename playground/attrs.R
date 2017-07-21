@@ -4,6 +4,7 @@ set.seed(123)
 diffnet <- rdiffnet(20, 5, seed.graph = "small-world", rewire.args = list(p=.2))
 
 
+
 get_egonet_attrs <- function(...) UseMethod("get_egonet_attrs")
 
 get_egonet_attrs.default <-function(graph, attrs, i=1:ncol(graph), what=c("indegree")) {

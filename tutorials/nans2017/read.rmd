@@ -1,0 +1,156 @@
+---
+title: "Reading Data"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(comment = "#")
+library(netdiffuseR)
+library(igraph)
+library(networkDynamic)
+```
+
+# Basic Diffusion Network
+
+*   To create `diffnet` objects we only need a network and times of adoption:
+
+    ```{r 2-static-net}
+    set.seed(9)
+    
+    # Network
+    net <- rgraph_ws(500, 4, .2)
+    net <- replicate(5, net, "list")
+    
+    # Times of adoption
+    toa <- sample(c(NA, 2010:2014), 500, TRUE)
+    
+    diffnet_static <- as_diffnet(net, toa)
+    summary(diffnet_static)
+    ```
+
+# Static survey
+
+*   netdiffuseR can also read survey (nomination) data:
+    
+    ```{r 2-static-survey}
+    data("fakesurvey")
+    fakesurvey
+    ```
+
+*   In group one 4 nominates id 6, who does not show in the data, and in group two 1 nominates 3, 4, and 8, also individuals who don't show up in the survey.
+    
+    ```{r 2-static-survey-cont1}
+    d1 <- survey_to_diffnet(
+      dat      = fakesurvey,                # Dataset
+      idvar    = "id",                      # The name of the idvar
+      netvars  = c("net1", "net2", "net3"), # Name of the nomination variables
+      groupvar = "group",                   # Group variable (if any)
+      toavar   = "toa"                      # Name of the time of adoption variable
+      ); d1
+    ```
+    
+*   If you want to include those, you can use the option `no.unsurveyed`
+    
+    ```{r}
+    d2 <- survey_to_diffnet(
+      dat      = fakesurvey,
+      idvar    = "id",
+      netvars  = c("net1", "net2", "net3"),
+      groupvar = "group",
+      toavar   = "toa",
+      no.unsurveyed = FALSE
+      ); d2
+    ```
+
+*   We can also check the difference
+    
+    
+    ```{r}
+    d2 - d1
+    rownames(d2 - d1)
+    ```
+
+# Dynamic survey
+
+```{r 2-static-dynsurvey}
+data("fakesurveyDyn")
+fakesurveyDyn
+```
+
+```{r 2-static-dynsurvey-cont1}
+diffnet_dynsurvey <- survey_to_diffnet(
+  dat      = fakesurveyDyn,
+  idvar    = "id",
+  netvars  = c("net1", "net2", "net3"),
+  groupvar = "group",
+  toavar   = "toa",
+  timevar  = "time"
+  )
+
+plot_diffnet(diffnet_dynsurvey)
+```
+
+# Other formats
+
+*   The package also supports working with other network formats.
+
+*   Besides of `.net` (Pajek), and `ml` (UCINET), netdiffuseR can actually
+    convert between classes: `igraph`, `network`, and `networkDynamic`.
+    
+        
+    ```{r foreign, warnings=FALSE, messages=FALSE}
+    dn_ig  <- diffnet_to_igraph(medInnovationsDiffNet) #; dn_ig[[1]]
+    dn_net <- diffnet_to_network(medInnovationsDiffNet)
+    dn_ndy <- diffnet_to_networkDynamic(medInnovationsDiffNet); dn_ndy
+    ```
+    
+    First two examples it creates a list of objects, the later actually
+    creates a single object
+      
+    ```{r networkDyn}
+    networkDynamic_to_diffnet(dn_ndy, toavar = "toa")
+    ```
+
+# Problems
+
+2.  Using the rda file _problem2.rda_, read in the edgelist `net_edgelist` and the adjacency
+    matrix `net_list` as a diffnet object together with the data.frame `X`.
+    
+```{r 2-generates-data, echo=FALSE, cache=TRUE, warning=FALSE, message=FALSE, results='hide'}
+library(igraph)
+library(networkDynamic)
+# source("diffnet_to_network.r")
+set.seed(81231)
+
+# Generating random data
+net_list     <- rgraph_er(20, 5)
+net_edgelist <- adjmat_to_edgelist(net_list)
+
+X <- data.frame(
+  idnum     = rep(1:20, 5),
+  var1      = rnorm(20*5),
+  YearAdopt = rep(sample(c(NA, 1:5), 20, TRUE), 5),
+  year      = sort(rep(1:5, 20))
+  )
+
+# Diffnet object
+diffnet_0 <- edgelist_to_diffnet(
+  edgelist = net_edgelist[,1:2],
+  t0       = net_edgelist[, "time"],
+  dat      = X,
+  idvar    = "idnum",
+  toavar   = "YearAdopt",
+  timevar  = "year"
+)
+
+# Igraph object
+igraph_0  <- diffnet_to_igraph(diffnet_0)
+network_0 <- diffnet_to_networkDynamic(diffnet_0)
+
+
+# Storing the data
+save(diffnet_0, igraph_0, network_0, X, net_edgelist, net, file = "problem2.rda")
+```
+
+3.  With the new diffnet object, apply the same analysis as before.
+    Which strategy maximizes adoption?
