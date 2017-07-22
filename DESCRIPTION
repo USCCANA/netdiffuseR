@@ -23,6 +23,7 @@ Imports:
     Rcpp (>= 0.12.1),
     sna,
     network,
+    networkDynamic,
     Matrix,
     MASS,
     MatchIt,

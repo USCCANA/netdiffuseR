@@ -47,7 +47,7 @@ test_that("Barabasi-Albert model: methods", {
 
   # Diffnet
   toa <- sample(c(1:3,NA),10, TRUE)
-  diffnet <- as_diffnet(graph, toa, t0=1, t1=3)
+  diffnet <- new_diffnet(graph, toa, t0=1, t1=3)
 
   # Array
   graphar <- lapply(graph, as.matrix)
@@ -91,7 +91,7 @@ test_that("De Almeida model: methods", {
 
   # Diffnet
   toa <- sample(c(1:3,NA),10, TRUE)
-  diffnet <- as_diffnet(graph, toa, t0=1, t1=3)
+  diffnet <- new_diffnet(graph, toa, t0=1, t1=3)
 
   # Array
   graphar <- lapply(graph, as.matrix)

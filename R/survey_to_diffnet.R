@@ -20,7 +20,7 @@ check_var_class_and_coerce <- function(var, dat, class.ok, class.target, warn.co
 #'
 #' These convenient functions turn network nomination datasets and edgelists with
 #' vertex attributes datasets into diffnet objects. Both work as wrappers of
-#' \code{\link{edgelist_to_adjmat}} and \code{\link{as_diffnet}}.
+#' \code{\link{edgelist_to_adjmat}} and \code{\link{new_diffnet}}.
 #'
 #' @inheritParams edgelist_to_adjmat
 #' @param dat A data frame.
@@ -32,7 +32,7 @@ check_var_class_and_coerce <- function(var, dat, class.ok, class.target, warn.co
 #' @param no.unsurveyed Logical scalar. When \code{TRUE} the nominated individuals
 #' that do not show in \code{idvar} are set to \code{NA} (see details).
 #' @param warn.coercion Logical scalar. When \code{TRUE} warns coercion from numeric to integer.
-#' @param ... Further arguments to be passed to \code{\link{as_diffnet}}.
+#' @param ... Further arguments to be passed to \code{\link{new_diffnet}}.
 #' @details
 #'
 #' All of \code{netvars}, \code{toavar} and \code{groupvar}
@@ -276,13 +276,13 @@ survey_to_diffnet <- function(
     stop("It seems that -toavar- is not time-invariant.")
 
   if (length(tran) == 1) {
-    as_diffnet(
+    new_diffnet(
       graph=graph, toa=toa,
       vertex.static.attrs = vertex.attrs[[1]],
       ...
     )
   } else {
-    as_diffnet(
+    new_diffnet(
       graph=graph, toa=toa,
       vertex.dyn.attrs = vertex.attrs,
       ...
@@ -510,12 +510,12 @@ edgelist_to_diffnet <- function(edgelist, w=NULL,
 
   # Step 4: Wrapping all together, creating the diffnet object -----------------
   if (length(timevar)) {
-    as_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
+    new_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
                vertex.dyn.attrs = vertex.attrs,
                undirected=undirected, self=self,
                multiple=multiple)
   } else {
-    as_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
+    new_diffnet(adjmat, toa=toa, t0 = dat.ran[1], t1=dat.ran[2],
                vertex.static.attrs = vertex.attrs,
                undirected=undirected, self=self,
                multiple=multiple)

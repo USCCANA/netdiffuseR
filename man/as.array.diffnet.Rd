@@ -36,8 +36,8 @@ as.array(mydiffnet)
 \code{\link{diffnet}}.
 
 Other diffnet methods: \code{\link{\%*\%}},
-  \code{\link{as_diffnet}}, \code{\link{c.diffnet}},
+  \code{\link{c.diffnet}},
   \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet_index}},
-  \code{\link{summary.diffnet}}
+  \code{\link{diffnet-class}}, \code{\link{diffnet_index}},
+  \code{\link{plot.diffnet}}, \code{\link{summary.diffnet}}
 }

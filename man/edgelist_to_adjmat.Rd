@@ -157,7 +157,7 @@ edgelist
 
 }
 \seealso{
-Other data management functions: \code{\link{as_diffnet}},
+Other data management functions: \code{\link{diffnet-class}},
   \code{\link{egonet_attrs}}, \code{\link{isolated}},
   \code{\link{survey_to_diffnet}}
 }

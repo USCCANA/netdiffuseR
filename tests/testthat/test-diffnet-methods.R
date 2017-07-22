@@ -13,7 +13,7 @@ test_that("Should return coords of dim n x 2 (plot_diffnet)", {
   graphar <- unlist(lapply(graph, as.matrix))
   graphar <- array(graphar, dim = c(11,11,3))
 
-  diffnet <- as_diffnet(graph, toa, undirected = FALSE)
+  diffnet <- new_diffnet(graph, toa, undirected = FALSE)
 
   # List
   coords <- plot_diffnet(graph, toa_mat(toa)$cumadopt)
@@ -63,7 +63,7 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
 
   graph <- lapply(1:nper, function(x) rgraph_ba(m0 = 1,m=1, t=n-1))
   graphar <- array(unlist(lapply(graph, as.matrix)), dim=c(n,n,nper))
-  diffnet <- as_diffnet(graph, toa)
+  diffnet <- new_diffnet(graph, toa)
 
   # Computing exposure
   expos <- exposure(graph, adopt$cumadopt)
@@ -110,7 +110,7 @@ test_that("Returning threshold equal to the infect/suscept funs", {
 
   toa <- sample(2000:(2000+nper-1), n, TRUE)
 
-  diffnet <- as_diffnet(graph, toa)
+  diffnet <- new_diffnet(graph, toa)
 
   infsus <- plot_infectsuscep(graph, toa, logscale  = FALSE, h=0)
   infsusar <- plot_infectsuscep(graphar, toa, logscale  = FALSE, h=0)
@@ -141,8 +141,8 @@ context("Other methods")
 test_that("diffnet print and summary", {
   diffnet <- lapply(1:3, rgraph_ba, m0=1,t=9)
   toa <- sample(c(2001:2003, NA), 10, TRUE)
-  diffnet_und <- as_diffnet(diffnet, toa, undirected = TRUE)
-  diffnet_dir <- as_diffnet(diffnet, toa, undirected = FALSE)
+  diffnet_und <- new_diffnet(diffnet, toa, undirected = TRUE)
+  diffnet_dir <- new_diffnet(diffnet, toa, undirected = FALSE)
 
   expect_output(print(diffnet_und), "type.+ undirected", ignore.case=TRUE)
   expect_output(print(diffnet_dir), "type.+ directed", ignore.case=TRUE)

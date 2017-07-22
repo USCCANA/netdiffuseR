@@ -50,7 +50,7 @@ that do not show in \code{idvar} are set to \code{NA} (see details).}
 
 \item{warn.coercion}{Logical scalar. When \code{TRUE} warns coercion from numeric to integer.}
 
-\item{...}{Further arguments to be passed to \code{\link{as_diffnet}}.}
+\item{...}{Further arguments to be passed to \code{\link{new_diffnet}}.}
 
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
 alter -target- (see details).}
@@ -70,7 +70,7 @@ A \code{\link{diffnet}} object.
 \description{
 These convenient functions turn network nomination datasets and edgelists with
 vertex attributes datasets into diffnet objects. Both work as wrappers of
-\code{\link{edgelist_to_adjmat}} and \code{\link{as_diffnet}}.
+\code{\link{edgelist_to_adjmat}} and \code{\link{new_diffnet}}.
 }
 \details{
 All of \code{netvars}, \code{toavar} and \code{groupvar}
@@ -171,7 +171,7 @@ all(
 \seealso{
 \code{\link{fakesurvey}}, \code{\link{fakesurveyDyn}}
 
-Other data management functions: \code{\link{as_diffnet}},
+Other data management functions: \code{\link{diffnet-class}},
   \code{\link{edgelist_to_adjmat}},
   \code{\link{egonet_attrs}}, \code{\link{isolated}}
 }

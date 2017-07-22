@@ -128,7 +128,7 @@ max(someattr[which(net[3,] == 1),"a"]) == ans[3] # TRUE
 
 }
 \seealso{
-Other data management functions: \code{\link{as_diffnet}},
+Other data management functions: \code{\link{diffnet-class}},
   \code{\link{edgelist_to_adjmat}}, \code{\link{isolated}},
   \code{\link{survey_to_diffnet}}
 }

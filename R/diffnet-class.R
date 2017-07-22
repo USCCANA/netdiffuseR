@@ -330,24 +330,12 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @templateVar self TRUE
 #' @templateVar multiple TRUE
 #' @template graph_template
-#' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
 #' @param toa Numeric vector of size \eqn{n}. Times of adoption.
 #' @param t0 Integer scalar. Passed to \code{\link{toa_mat}}.
 #' @param t1 Integer scalar. Passed to \code{\link{toa_mat}}.
-#' @param ... In the case of \code{plot}, further arguments passed to \code{gplot},
-#' otherwise is ignored.
+#' @param ... Further arguments passed to the jmethod.
 #' @param x A \code{diffnet} object.
 #' @param object A \code{diffnet} object.
-#' @param y Ignored.
-#' @param t Integer scalar indicating the time slice to plot.
-#' @param displaylabels Logical scalar. When TRUE, \code{plot} shows vertex labels.
-#' @param vertex.col Character scalar/vector. Color of the vertices.
-#' @param vertex.cex Numeric scalar/vector. Size of the vertices.
-#' @param edge.col Character scalar/vector. Color of the edges.
-#' @param mode Character scalar. In the case of \code{plot}, passed to
-#' \code{\link[sna:gplot]{gplot}}.
-#' @param layout.par Layout parameters (see details).
-#' @param main Character. A title template to be passed to sprintf.
 #' @param i Indices specifying elements to replace. See \code{\link[base:Extract]{Extract}}.
 #' @param value In the case of \code{diffnet.toa}, replacement, otherwise see below.
 #' @param vertex.dyn.attrs Vertices dynamic attributes (see details).
@@ -361,7 +349,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param name Character scalar. Name of the diffusion network (descriptive).
 #' @param behavior Character scalar. Name of the behavior been analyzed (innovation).
-#' @export
+#'
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
 #'
@@ -394,18 +382,6 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' does not check the way the rows are sorted, further it assumes that the data
 #' is in the correct order.
 #'
-#' Plotting is done via the function \code{\link[sna:gplot]{gplot}},
-#' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
-#' the (\pkg{sna}) package.
-#'
-#' \code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
-#' scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
-#' \code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
-#' degree of the selected slice and will be normalized as
-#'
-#' \deqn{vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{vertex.cex = d/[max(d) - min(d)]* 2 + .5}
-#'
-#' where \code{d=sqrt(dgr(graph))}.
 #'
 #'
 #' @section Auxiliary functions:
@@ -452,7 +428,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' toa <- sample(c(2001L:2005L,NA), 10, TRUE)
 #'
 #' # Creating diffnet object
-#' diffnet <- as_diffnet(graph, toa)
+#' diffnet <- new_diffnet(graph, toa)
 #' diffnet
 #' summary(diffnet)
 #'
@@ -495,7 +471,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' attrs <- attrs[order(runif(n)),]
 #'
 #' # Now, recreating the old diffnet object (notice -id.and.per.vars- arg)
-#' fs_diffnet_new <- as_diffnet(graph, toa=toa, vertex.dyn.attrs=attrs,
+#' fs_diffnet_new <- new_diffnet(graph, toa=toa, vertex.dyn.attrs=attrs,
 #'    id.and.per.vars = c("id", "per"))
 #'
 #' # Now, retrieving attributes. The 'new one' will have more (repeated)
@@ -539,7 +515,31 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' }
 #' }
 #' @author George G. Vega Yon
-as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
+#' @name diffnet-class
+NULL
+
+#' @export
+#' @rdname diffnet-class
+as_diffnet <- function(graph, ...) {
+  UseMethod("as_diffnet")
+}
+
+#' @export
+#' @rdname diffnet-class
+as_diffnet.default <- function(graph, ...) {
+  new_diffnet(graph, ...)
+}
+
+#' @export
+#' @param toavar Character scalar. Name of the variable that holds the time of adoption.
+#' @rdname diffnet-class
+as_diffnet.networkDynamic <- function(graph, toavar, ...) {
+  networkDynamic_to_diffnet(graph, toavar)
+}
+
+#' @export
+#' @rdname diffnet-class
+new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
                        vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
                        id.and.per.vars = NULL,
                        graph.attrs = NULL,
@@ -557,7 +557,9 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
-  if (meta$type=="static") stop("-graph- should be dynamic (see ?`netdiffuseR-graphs`).")
+  if (meta$type=="static")
+    warning("-graph- is static and will be recycled (see ?new_diffnet).")
+
 
   # Step 1.2: Checking that lengths fit
   if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths (",
@@ -578,16 +580,22 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
   mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
-  tdiff <- meta$nper - ncol(mat[[1]])
-  if (tdiff < 0)
-    stop("Range of -toa- is bigger than the number of slices in -graph- (",
-         ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
-         "There must be at least as many slices as range of toa.")
-  else if (tdiff > 0)
-    stop("Range of -toa- is smaller than the number of slices in -graph- (",
-         ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
-         "Please provide lower and upper boundaries for the values in -toa- ",
-         "using -t0- and -t- (see ?toa_mat).")
+
+  if (meta$type != "static") {
+    tdiff <- meta$nper - ncol(mat[[1]])
+    if (tdiff < 0)
+      stop("Range of -toa- is bigger than the number of slices in -graph- (",
+           ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
+           "There must be at least as many slices as range of toa.")
+    else if (tdiff > 0)
+      stop("Range of -toa- is smaller than the number of slices in -graph- (",
+           ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
+           "Please provide lower and upper boundaries for the values in -toa- ",
+           "using -t0- and -t- (see ?toa_mat).")
+  } else {
+    graph <- lapply(1:ncol(mat[[1]]), function(x) methods::as(graph, "dgCMatrix"))
+    meta  <- classify_graph(graph)
+  }
 
   meta$pers <- as.integer(colnames(mat$adopt))
 
@@ -643,7 +651,7 @@ as_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm 
 }
 
 #' @export
-#' @rdname as_diffnet
+#' @rdname diffnet-class
 #' @param row.names Ignored.
 #' @param optional Ignored.
 as.data.frame.diffnet <- function(x, row.names = NULL, optional = FALSE,
@@ -652,7 +660,7 @@ as.data.frame.diffnet <- function(x, row.names = NULL, optional = FALSE,
 }
 
 #' @export
-#' @rdname as_diffnet
+#' @rdname diffnet-class
 diffnet.attrs <- function(
   graph,
   element    = c("vertex","graph"),
@@ -703,20 +711,20 @@ diffnet.attrs <- function(
   out
 }
 
-#' @rdname as_diffnet
+#' @rdname diffnet-class
 #' @export
 `diffnet.attrs<-` <- function(graph, element="vertex", attr.class="static", value) {
   .Defunct("[[<-.diffnet")
 }
 
-#' @rdname as_diffnet
+#' @rdname diffnet-class
 #' @export
 diffnet.toa <- function(graph) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")
   graph$toa
 }
 
-#' @rdname as_diffnet
+#' @rdname diffnet-class
 #' @export
 `diffnet.toa<-` <- function(graph, i, value) {
   if (!inherits(graph, "diffnet")) stop("-graph- must be a 'diffnet' object")

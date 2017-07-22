@@ -2,11 +2,12 @@
 NULL
 
 #' @importFrom sna gplot as.sociomatrix.sna
-NULL
-
 #' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr
-#'  any_multiple graph_attr_names as_adj is.loop set_graph_attr V permute
-#' @importFrom network as.edgelist is.multiplex is.directed has.loops
+#'  any_multiple graph_attr_names as_adj is.loop set_graph_attr V permute make_graph
+#'  layout_nicely graph_attr
+#' @importFrom network as.edgelist is.multiplex is.directed has.loops as.network
+#'  get.network.attribute list.vertex.attributes
+#' @importFrom networkDynamic networkDynamic network.extract network.collapse
 NULL
 
 #' @useDynLib netdiffuseR
