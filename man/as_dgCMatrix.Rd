@@ -67,7 +67,8 @@ myarray
 as_dgCMatrix(myarray)
 
 # From a diffnet object
-as_dgCMatrix(medInnovationsDiffNet)
+ans <- as_dgCMatrix(medInnovationsDiffNet)
+str(ans)
 
 
 }

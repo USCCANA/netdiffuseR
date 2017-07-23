@@ -99,11 +99,11 @@ graph[["real_threshold"]]
 
 # Accessing to subsets of the adjacency matrix
 graph[1,,1:3, drop=TRUE]
-graph[,,1:3, drop=TRUE]
+graph[,,1:3, drop=TRUE][[1]]
 
 # ... Now, as diffnet objects (the default)
 graph[1,,1:3, drop=FALSE]
-graph[,,1:3, drop=FALSE]
+graph[,,1:3, drop=FALSE][[1]]
 
 # Changing values in the adjacency matrix
 graph[1, , , drop=TRUE]

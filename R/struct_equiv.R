@@ -99,11 +99,11 @@ struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL,  ...) {
     groupvar <- graph[[groupvar]]
 
   output <- switch (class(graph),
-    matrix = struct_equiv.matrix(graph, v, inf.replace, groupvar,  ...),
+    matrix    = struct_equiv.dgCMatrix(methods::as(graph, "dgCMatrix"), v, inf.replace, groupvar,  ...),
     dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, ...),
-    array = struct_equiv.array(graph, v, inf.replace, groupvar, ...),
-    list = struct_equiv.list(graph, v, inf.replace, groupvar, ...),
-    diffnet = struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...),
+    array     = struct_equiv.list(apply(graph, 3, methods::as, Class="dgCMatrix"), v, inf.replace, groupvar, ...),
+    list      = struct_equiv.list(graph, v, inf.replace, groupvar, ...),
+    diffnet   = struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...),
     stopifnot_graph(graph)
   )
 
@@ -307,30 +307,6 @@ transformGraphBy.dgCMatrix <- function(graph, INDICES, fun=function(g,...) g, ..
 
 # @rdname struct_equiv
 # @export
-struct_equiv.matrix <- function(graph, v, inf.replace, groupvar, ...) {
-
-  # Running the algorithm
-  if (length(groupvar)) {
-    output <- struct_equiv_by(graph, v, inf.replace, groupvar, ...)
-  } else {
-
-    # geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
-    geod   <- do.call(approx_geodist, c(list(graph=graph), ...))
-    geod@x <- geod@x/max(geod@x, na.rm = TRUE)
-
-    output <- struct_equiv_cpp(geod, v)
-
-    # Names
-    rn <- rownames(graph)
-    if (!length(rn)) rn <- 1:nrow(graph)
-    output <- lapply(output, "dimnames<-", value=list(rn, rn))
-  }
-
-  return(output)
-}
-
-# @rdname struct_equiv
-# @export
 struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
 
   if (length(groupvar)) {
@@ -350,24 +326,6 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
     output <- lapply(output, "dimnames<-", value=list(rn, rn))
   }
   return(output)
-}
-
-# @rdname struct_equiv
-# @export
-struct_equiv.array <- function(graph, v, inf.replace, groupvar, ...) {
-  t <- dim(graph)[3]
-  output <- vector("list", t)
-  for(i in 1:t) {
-    output[[i]] <- struct_equiv.matrix(graph[,,i], v, inf.replace, groupvar, ...)
-  }
-
-  # Naming
-  tn <- dimnames(graph)[[3]]
-  if (!length(tn)) tn <- 1:t
-
-  names(output) <- tn
-
-  output
 }
 
 
