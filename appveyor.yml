@@ -21,10 +21,15 @@ environment:
   - R_VERSION: devel
     R_ARCH: x64
 
+  - R_VERSION: devel
+    R_ARCH: i382
+
   - R_VERSION: release
 
+  - R_VERSION: release
+    R_ARCH: i382
+
 build_script:
-  - Rscript -e "install.packages('https://cran.r-project.org/bin/windows/contrib/3.2/igraph_1.0.1.zip', repos=NULL)"
   - travis-tool.sh r_install RSiena survival
   - travis-tool.sh install_deps
 

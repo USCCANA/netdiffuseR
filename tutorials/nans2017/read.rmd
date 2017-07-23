@@ -191,5 +191,5 @@ network_0 <- diffnet_to_networkDynamic(diffnet_0)
 save(diffnet_0, igraph_0, network_0, X, net_edgelist, net, file = "problem2.rda")
 ```
 
-3.  With the new diffnet object, apply the same analysis as before.
+1.  With the new diffnet object, apply the same analysis as before.
     Which strategy maximizes adoption?

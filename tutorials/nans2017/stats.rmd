@@ -128,4 +128,74 @@ hist(test)
     
     ```{r, echo=FALSE}
     hist(test)
+    ```
+
+# Problems
+
+Using the dataset `problems_stats1.rda`
+
+1.  Compute a lagged version of Moran's I and compare it with the one from `summary`.
+
+2.  Fit the following probit model $adopt = Exposure*\gamma + Measure*\beta + \varepsilon$.
+
+
+```{r datagen, echo=FALSE, cache=TRUE}
+set.seed(1)
+
+n <- 250
+nper <- 5
+X <- cbind(Measure=rnorm(n))
+y <- cbind(sample(c(0, 1), n, TRUE, prob = c(.9, .1)))
+
+
+# Baseline network
+W <- methods::getMethod("t", signature = "dgCMatrix")(rgraph_ws(n, k=10, p = .2))
+
+sim_space <- function(W, y, X, pers = 4, lag = FALSE, rho = .2, beta=.5) {
+  W <- as.matrix(W)
+  W <- W/(rowSums(W) + 1e-20)
+  n <- nrow(W)
+  for (i in 1:pers) {
+    if (!lag)
+      ynew <- (solve(diag(n) - rho*W) %*% (X*beta) + rnorm(n)) > 0
+    else
+      ynew <- (rho * (W %*% y[,i - as.integer(i != 1),drop=FALSE]) + beta*X + rnorm(n)) > 0
+    
+    y <- cbind(y, ifelse(
+      y[,i - as.integer(i != 1),drop=FALSE] == 1,
+      y[,i - as.integer(i != 1),drop=FALSE], 
+      ynew)
+      )
+  }
+  
+  y
+}
+
+ans <- sim_space(W, y, X, pers = nper, lag=TRUE)
+toa <- ncol(ans) - apply(ans, 1, sum)
+X <- cbind(X, toa=ifelse(toa == 0, NA, toa))
+
+save(X, W, file="problems_stats1.rda")
 ```
+
+```{r sol, eval=FALSE, echo=FALSE}
+# out <- struct_test(
+#   new_diffnet(W, X[,"toa"]),
+#   function(g) mean(threshold(g, lags = 1L), na.rm=TRUE),
+#   R=500,
+#   rewire.args = list(algorithm="qap"),
+#   parallel="multicore",ncpus=5);out
+
+load("problems_stats1.rda")
+dn <- new_diffnet(W, toa=X[,2], vertex.static.attrs = X[,1,drop=FALSE])
+
+dn[["cohesive_exposure"]] <- cbind(NA, exposure(dn)[,-nslices(dn)])
+dn[["adopted"]] <- dn$cumadopt
+
+dat <- as.data.frame(dn)
+ans <- glm(adopted ~ Measure + cohesive_exposure, family = binomial(link="probit"),
+    data = dat, subset = is.na(toa) | (per <= toa))
+
+summary(ans)
+```
+
