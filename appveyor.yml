@@ -20,14 +20,14 @@ environment:
   matrix:
   - R_VERSION: devel
     R_ARCH: x64
-
-  - R_VERSION: devel
-    R_ARCH: i382
-
-  - R_VERSION: release
+    R_BUILD_ARGS: --multiarch
+    R_CHECK_ARGS: --multiarch
 
   - R_VERSION: release
-    R_ARCH: i382
+    R_ARCH: x64
+    R_BUILD_ARGS: --multiarch --no-manual
+    R_CHECK_ARGS: --multiarch --as-cran
+
 
 build_script:
   - travis-tool.sh r_install RSiena survival
