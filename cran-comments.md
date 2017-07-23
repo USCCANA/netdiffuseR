@@ -1,3 +1,9 @@
+## Resubmission
+
+* While version 1.18.0 was recently sent to CRAN, this version fixes
+  some critical bugs that were identified right after that.
+  
+
 ## Test environments
 
 * Local Ubuntu 14.04.5 LTS, R version 3.4.0 (2017-04-21).

@@ -9,41 +9,67 @@ knitr::opts_chunk$set(comment = "#")
 
 ```
 
-# Diffusion Network Object (diffnet)
 
-- __netdiffuseR__ has its own class of objects: `diffnet`.
+# Network Diffusion of Innovations
 
-- Most of the package's functions accept different types of graphs:
-    * Static: `matrix`, `dgCMatrix` (from the __Matrix__ pkg), 
-    * Dynamic: `list` + `dgCMatrix`, `array`, `diffnet`
-  
-- But `diffnet` is the class from which you get the most.
+## Diffusion networks
 
-- From __netdiffuseR__'s perspective, network data comes in three classes:
-
-    1. Raw R network data: Datasets with edgelist, attributes, survey data, etc.
-    2. Already R data: already read into R using igraph, statnet, etc. (`igraph_to_diffnet`, `network_to_diffnet`, etc.)
-    3. Graph files: DL, UCINET, pajek, etc. (`read_pajek`, `read_dl`, `read_ucinet`, etc.)
-
-- In this presentation we will show focus on 1.
-
-# What is a `diffnet` object
-
-A diffusion network, a.k.a. `diffnet` object, is a `list` that holds the following objects:
-
-- `graph`: A `list` with $t$ `dgCMatrix` matrices of size $n\times n$,
-- `toa`: An integer vector of length $n$,
-- `adopt`: A matrix of size $n\times t$,
-- `cumadopt`: A matrix of size $n\times t$,
-- `vertex.static.attrs`: A `data.frame` of size $n\times k$,
-- `vertex.dyn.attrs`: A list with $t$ dataframes of size $n\times k$,
-- `graph.attrs`: Currently ignored..., and
-- `meta`: A list with metadata about the object.
-
-These are created using `as_diffnet` (or its wrappers).
+```{r valente1995, echo=FALSE, fig.align='center'}
+knitr::include_graphics("valente_1995.jpg")
+```
 
 
-# What does netdiffuseR includes
+*   Tries to explain how new ideas and practices (innovations) spread within and between
+  communities.
+
+*   While a lot of factors have been shown to influence diffusion (Spatial,
+    Economic, Cultural, Biological, etc.), Social Networks is a prominent one.
+
+*   More complex than __contagion__ $\implies$ a single tie is no longer enough
+    for an innovation to spread across a social system.
+
+*   We think of this in terms of adoption thresholds and social exposure.
+
+
+## Thresholds
+
+*   Network thresholds (Valente, 1995), $\tau$, are defined as the required proportion or number of neighbors that leads you to adopt a particular        behavior (innovation), $a=1$. In (very) general terms\pause
+    
+    $$
+    a_i = \left\{\begin{array}{ll}
+    1 &\mbox{if } \tau_i\leq E_i \\
+    0 & \mbox{Otherwise}
+    \end{array}\right. \qquad
+    E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+    $$
+    
+    Where $E_i$ is i's exposure to the innovation and $\mathbf{X}$ is the adjacency matrix (the network).
+
+*   This can be generalized and extended to include covariates and other weighting schemes (that's what __netdiffuseR__ is all about).
+
+
+# netdiffuseR
+
+## Overview
+
+__netdiffuseR__ is an R package that:
+
+*   Is designed for Visualizing, Analyzing and Simulating network diffusion data (in general).
+
+*   Depends on some pretty popular packages:
+
+    *   _RcppArmadillo_: So it's fast,
+    *   _Matrix_: So it's big,
+    *   _statnet_ and _igraph_: So it's not from scratch
+
+*   Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)
+
+*   Already on CRAN with ~4,000 downloads since its first version, Feb 2016,
+
+*   A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.
+
+
+## Datasets
 
 -   Among __netdiffuseR__ features, we find three classical Diffusion Network Datasets:
     
@@ -57,7 +83,24 @@ These are created using `as_diffnet` (or its wrappers).
     kfamilyDiffNet
     ```
 
--   Functions to compute:
-    
-    *   (complex) Exposure
-    *   
+## Visualization methods
+
+```{r viz, cache=TRUE}
+set.seed(12315)
+x <- rdiffnet(
+  300, t = 4, rgraph.args = list(k=8, p=.3),
+  seed.graph = "small-world",
+  seed.nodes = "central"
+  )
+
+plot(x)
+plot_diffnet(x)
+plot_diffnet2(x)
+plot_diffnet2(x, add.map = "last", diffmap.alpha = .75, include.white = NULL)
+plot_adopters(x)
+plot_threshold(x)
+plot_infectsuscep(x, K=2, logscale = FALSE)
+plot_hazard(x)
+```
+
+

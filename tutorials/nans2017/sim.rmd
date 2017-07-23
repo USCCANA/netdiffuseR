@@ -88,7 +88,7 @@ diffnet_disease <- rdiffnet(
   t = 5, 
   seed.graph = "small-world",
   rgraph.args = list(k = 4, p = .3),
-  seed.nodes = "central",
+  seed.nodes = "random",
   seed.p.adopt = .05,
   rewire = TRUE,
   threshold.dist = function(i) 1L,

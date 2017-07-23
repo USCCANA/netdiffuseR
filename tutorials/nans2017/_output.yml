@@ -6,3 +6,6 @@ html_document:
   toc_float: true
   code_folding: show
   code_download: true
+  include:
+    after_body: footer.html
+      
