@@ -6,7 +6,8 @@
 \usage{
 rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(p = 0.1, undirected = FALSE),
+  rewire.args = list(p = 0.1, undirected = getOption("diffnet.undirected",
+  FALSE), self = getOption("diffnet.self", FALSE)),
   threshold.dist = function(x) runif(1), exposure.args = list(outgoing =
   TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE),
   name = "A diffusion network", behavior = "Random contagion")

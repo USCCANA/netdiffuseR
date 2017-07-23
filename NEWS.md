@@ -1,3 +1,27 @@
+# Changes in netdiffuseR version 1.18.1 (2017-07-22)
+
+## New functions
+
+* `network_to_diffnet`, `diffnet_to_network` convertion between 
+  diffnet and network objects.
+  
+* `networkDynamic_to_diffnet`, `diffnet_to_networkDynamc` convertion
+  between diffnet and networkDynamic objects.
+
+
+## New features
+
+* `new_diffnet` and `as_diffnet` now receive static networks as well.
+
+
+## Bug fixes
+
+* `diffnet_to_igraph` was copying over a single adjacency matrix,
+  which did a difference in dynamic networks.
+  
+* `diffnet_to_igraph` was not considering loops correctly.
+
+
 # Changes in netdiffuseR version 1.18.0 (2017-07-16)
 
 ## New functions

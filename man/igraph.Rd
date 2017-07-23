@@ -8,18 +8,21 @@
 \usage{
 diffnet_to_igraph(graph, slices = 1:nslices(graph))
 
-igraph_to_diffnet(graph, toavar, t0 = NULL, t1 = NULL, ...)
+igraph_to_diffnet(graph = NULL, graph.list = NULL, toavar, t0 = NULL,
+  t1 = NULL, ...)
 }
 \arguments{
 \item{graph}{Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.}
 
 \item{slices}{An integer vector indicating the slices to subset.}
 
+\item{graph.list}{A list of \code{igraph} objects.}
+
 \item{toavar}{Character scalar. Name of the attribute that holds the times of adoption.}
 
-\item{t0}{Integer scalar. Passed to \code{\link{as_diffnet}}.}
+\item{t0}{Integer scalar. Passed to \code{\link[=diffnet-class]{new_diffnet}}.}
 
-\item{t1}{Integer scalar. Passed to \code{\link{as_diffnet}}.}
+\item{t1}{Integer scalar. Passed to \code{\link[=diffnet-class]{new_diffnet}}.}
 
 \item{...}{Further arguments passed to \code{\link{as_diffnet}}.}
 }

@@ -2,10 +2,12 @@
 % Please edit documentation in R/network.r
 \name{network}
 \alias{network}
+\alias{networkDynamic}
 \alias{diffnet_to_network}
 \alias{diffnet_to_networkDynamic}
 \alias{networkDynamic_to_diffnet}
-\title{Convertion between graph classes}
+\alias{network_to_diffnet}
+\title{Convertion between \code{diffnet}, \code{network} and \code{networkDynamic}}
 \usage{
 diffnet_to_network(graph, slices = 1:nslices(graph), ...)
 
@@ -13,6 +15,9 @@ diffnet_to_networkDynamic(graph, slices = 1:nslices(graph),
   diffnet2net.args = list(), netdyn.args = list())
 
 networkDynamic_to_diffnet(graph, toavar)
+
+network_to_diffnet(graph = NULL, graph.list = NULL, toavar, t0 = NULL,
+  t1 = NULL)
 }
 \arguments{
 \item{graph}{An object of class \code{\link{diffnet}}}
@@ -26,6 +31,12 @@ networkDynamic_to_diffnet(graph, toavar)
 \item{netdyn.args}{List of arguments passed to \code{\link[networkDynamic:networkDynamic]{networkDynamic}}}
 
 \item{toavar}{Character scalar. Name of the vertex attribute that holds the times of adoption.}
+
+\item{graph.list}{A list of \code{network} objects.}
+
+\item{t0}{Integer scalar. Passed to \code{\link[=diffnet-class]{new_diffnet}}.}
+
+\item{t1}{Integer scalar. Passed to \code{\link[=diffnet-class]{new_diffnet}}.}
 }
 \value{
 \code{diffnet_to_network} returns a list of length \code{length(slices)} in which
@@ -36,7 +47,7 @@ adoption).
 An object of class \code{networkDynamic}.
 }
 \description{
-Convertion between graph classes
+Convertion between \code{diffnet}, \code{network} and \code{networkDynamic}
 }
 \details{
 \code{diffnet_to_networkDynamic} calls \code{diffnet_to_network} and
@@ -55,10 +66,36 @@ By default, \code{diffnet_to_networkDynamic} passes \code{net.obs.period} as
 
 By default, \code{networkDynamic_to_diffnet} uses the first slice as reference for
 vertex attributes and times of adoption.
+
+By default, \code{network_to_diffnet} uses the first element of \code{graph}
+(a list) as reference for vertex attributes and times of adoption.
 }
+\section{Caveats}{
+
+Since \code{diffnet} does not support edges attributes, these will be lost when
+converting from \code{network}-type objects. The same applies to \code{network}
+attributes.
+}
+
 \examples{
+# Cohersing a diffnet to a list of networks ---------------------------------
+set.seed(1)
+ans <- diffnet_to_network(rdiffnet(20, 2))
+ans
+
+# and back
+network_to_diffnet(graph.list = ans, toavar="toa")
+
+# If it was static, we can use -graph- instead
+network_to_diffnet(ans[[1]], toavar="toa")
+
+# Medical Innovations  diffnet to a networkDynamic --------------------------
 data(medInnovationsDiffNet)
-diffnet_to_networkDynamic(medInnovationsDiffNet)
+ans <- diffnet_to_networkDynamic(medInnovationsDiffNet)
+
+# and back
+networkDynamic_to_diffnet(ans, toavar = "toa")
+
 }
 \seealso{
 Other Foreign: \code{\link{igraph}},

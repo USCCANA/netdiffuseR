@@ -89,18 +89,28 @@
 #'  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 #'
 #' @author George G. Vega Yon
-rdiffnet <- function(n, t,
-                     seed.nodes="random", seed.p.adopt=0.05,
-                     seed.graph="scale-free", rgraph.args=list(),
-                     rewire=TRUE, rewire.args=list(p=.1, undirected=FALSE),
-                     threshold.dist=function(x) runif(1),
-                     exposure.args=list(
-                       outgoing=TRUE, valued=getOption("diffnet.valued", FALSE),
-                       normalized=TRUE
-                       ),
-                     name="A diffusion network",
-                     behavior="Random contagion"
-                     ) {
+rdiffnet <- function(
+  n,
+  t,
+  seed.nodes="random",
+  seed.p.adopt=0.05,
+  seed.graph="scale-free",
+  rgraph.args=list(),
+  rewire=TRUE,
+  rewire.args=list(
+    p=.1,
+    undirected= getOption("diffnet.undirected", FALSE),
+    self = getOption("diffnet.self", FALSE)
+    ),
+  threshold.dist=function(x) runif(1),
+  exposure.args=list(
+    outgoing=TRUE,
+    valued=getOption("diffnet.valued", FALSE),
+    normalized=TRUE
+    ),
+  name="A diffusion network",
+  behavior="Random contagion"
+  ) {
 
   # Step 0.0: Creating the network seed ----------------------------------------
   # Checking the class of the seed.graph
@@ -199,8 +209,7 @@ rdiffnet <- function(n, t,
   # Step 0.1: Rewiring or not ------------------------------------------------
 
   # Rewiring
-  rewire.args$graph <- sgraph
-  if (rewire) sgraph <- do.call(rewire_graph, rewire.args)
+  if (rewire) sgraph <- do.call(rewire_graph, c(list(graph=sgraph), rewire.args))
 
   # Number of initial adopters
   if (n*seed.p.adopt < 1) warning("Set of initial adopters set to 1.")
@@ -270,8 +279,19 @@ rdiffnet <- function(n, t,
     stop("No diffusion in this network (Ups!) try changing the seed or the parameters.")
   }
 
-  as_diffnet(sgraph, as.integer(toa), undirected=FALSE, t0=1, t1=t,
-             vertex.static.attrs = data.frame(real_threshold=thr),
-             name=name,behavior = behavior)
+  # Checking attributes
+  isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
+
+  # Creating diffnet object
+  new_diffnet(
+    graph      = sgraph,
+    toa        = as.integer(toa),
+    self       = isself,
+    t0         = 1,
+    t1         = t,
+    vertex.static.attrs = data.frame(real_threshold=thr),
+    name       = name,
+    behavior   = behavior
+  )
 }
 
