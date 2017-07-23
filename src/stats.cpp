@@ -86,7 +86,7 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
 //' @param funname Character scalar. Comparison to make (see details).
 //' @details
 //'
-//' This auxiliary function takes advantage of the sparcity of \code{graph} and
+//' This auxiliary function takes advantage of the sparseness of \code{graph} and
 //' applies a function in the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}
 //' only to \eqn{(i,j)} that have no empty entry. In other words, applies a compares
 //' elements of \code{X} only between vertices that have a link; making

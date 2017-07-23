@@ -37,7 +37,7 @@ matrices are set to one.}
 A diffnet class object
 }
 \description{
-Addition, substraction, network power of diffnet and logical operators such as
+Addition, subtraction, network power of diffnet and logical operators such as
 \code{&} and \code{|} as objects
 }
 \details{

@@ -15,7 +15,7 @@ approx_geodist(graph, n = 6L, warn = FALSE)
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{n}{Integer scalar. Degree of approximation. Bigger values increase
-precission (see details).}
+precision (see details).}
 
 \item{warn}{Logical scalar. When \code{TRUE}, it warns if the algorithm
 performs less steps than required.}

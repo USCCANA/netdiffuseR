@@ -95,7 +95,7 @@ attributes, both dynamic and static. See the examples section for a demonstratio
 degree.
 
 When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
-case of a social network exposure will be computed based on the incomming ties.
+case of a social network exposure will be computed based on the incoming ties.
 
 If \code{normalize=FALSE} then denominator, \eqn{S_t \times x_t}{S(t) \%*\% x(t)},
 is not included. This can be useful when, for example, exposure needs to be
@@ -129,7 +129,7 @@ eDE <- exposure(graph, attrs=dgr(graph))
 graph[["deg"]] <- dgr(graph)
 eDE2 <- exposure(graph, attrs="deg")
 
-# Comparing using incomming edges -------------------------------------------
+# Comparing using incoming edges -------------------------------------------
 eIN <- exposure(graph, outgoing=FALSE)
 
 # Structral equivalence for different communities ---------------------------

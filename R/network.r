@@ -1,4 +1,4 @@
-#' Convertion between \code{diffnet}, \code{network} and \code{networkDynamic}
+#' Coercion between \code{diffnet}, \code{network} and \code{networkDynamic}
 #'
 #' @param graph An object of class \code{\link{diffnet}}
 #' @param slices An integer vector indicating the slices to subset
@@ -87,9 +87,10 @@ diffnet_to_network <- function(graph, slices = 1:nslices(graph), ...) {
 #' @param netdyn.args List of arguments passed to \code{\link[networkDynamic:networkDynamic]{networkDynamic}}
 #' @return An object of class \code{networkDynamic}.
 #' @examples
-#' # Medical Innovations  diffnet to a networkDynamic --------------------------
-#' data(medInnovationsDiffNet)
-#' ans <- diffnet_to_networkDynamic(medInnovationsDiffNet)
+#' # A random diffusion network ------------------------------------------------
+#' set.seed(87)
+#' dn  <- rdiffnet(50, 4)
+#' ans <- diffnet_to_networkDynamic(dn)
 #'
 #' # and back
 #' networkDynamic_to_diffnet(ans, toavar = "toa")

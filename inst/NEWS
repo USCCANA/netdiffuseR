@@ -5,11 +5,11 @@ CHANGES IN NETDIFFUSER VERSION 1.18.1 (2017-07-22)
 
 New functions
 
--   network_to_diffnet, diffnet_to_network convertion between diffnet
-    and network objects.
+-   network_to_diffnet, diffnet_to_network coercion between diffnet and
+    network objects.
 
--   networkDynamic_to_diffnet, diffnet_to_networkDynamc convertion
-    between diffnet and networkDynamic objects.
+-   networkDynamic_to_diffnet, diffnet_to_networkDynamc coercion between
+    diffnet and networkDynamic objects.
 
 
 New features
@@ -23,6 +23,8 @@ Bug fixes
     did a difference in dynamic networks.
 
 -   diffnet_to_igraph was not considering loops correctly.
+
+-   In unexpected situations egonet_attrs was crashing.
 
 
 

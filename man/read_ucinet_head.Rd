@@ -25,7 +25,7 @@ An array including dimnames (if there are) and the following attributes:
 \item{dow}{Integer. Day of the week the file was created.}
 \item{labtype}{}
 \item{infile.dt}{Character scalar. Type of data of the array.}
-\item{dim}{Integer vector. Dimmensions of the array.}
+\item{dim}{Integer vector. Dimensions of the array.}
 \item{tit}{Character scalar. Title of the file.}
 \item{haslab}{Logical vector. Whether  each dim has a label.}
 }

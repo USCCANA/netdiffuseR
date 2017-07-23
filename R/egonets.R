@@ -13,9 +13,7 @@
 #' @template graph_template
 #' @param attrs If \code{graph} is static, Numeric matrix with \eqn{n} rows, otherwise a list of numeric matrices with \eqn{n} rows.
 #' @param V Integer vector. Set of vertices from which the attributes will be retrieved.
-#' @param direction Character scalar. Either \code{"outgoing"}, \code{"incomming"}.
-#' @param self.attrs Logical scalar. When \code{TRUE} ego's attributes are included in the output
-#'  as the first row.
+#' @param direction Character scalar. Either \code{"outgoing"}, \code{"incoming"}.
 #' @param fun Function. Applied to each
 #' @param as.df Logical scalar. When TRUE returns a data.frame instead of a list (see details).
 #' @details
@@ -59,6 +57,9 @@
 #' Where for each \eqn{i}, \code{dat} will be a matrix with as many rows
 #' as individuals in his egonetwork. Such matrix holds the column names of the
 #' attributes in the network.
+#'
+#' When \code{self = TRUE}, it will include ego's attributes, regardless
+#' the network has loops or not.
 #'
 #' @return A list with ego alters's attributes. By default, if the graph is static, the
 #' output is a list of length \code{length(V)} with matrices having the following
@@ -117,13 +118,12 @@ egonet_attrs <- function(
   fun = function(x) x,
   as.df = FALSE,
   self = getOption("diffnet.self"),
-  self.attrs = FALSE,
   valued = getOption("diffnet.valued")
 ) {
 
-  if (direction == "incomming") outer <- FALSE
+  if (direction == "incoming") outer <- FALSE
   else if (direction == "outgoing") outer <- TRUE
-  else stop("-direction- must be either 'incomming' or 'outgoing'")
+  else stop("-direction- must be either 'incoming' or 'outgoing'")
 
   # Checking if no dim has been specified
   if (!inherits(graph, "diffnet"))
@@ -143,63 +143,54 @@ egonet_attrs <- function(
     }
   } # else stopifnot_graph(graph)
 
+  # Checking the set of vertices
+  if (!length(V))
+    V <- 1L:nnodes(graph)
+
   switch(
     class(graph),
     diffnet = egonet_attrs.list(
-      graph$graph, attrs, if (!length(V)) 1:graph$meta$n else V, outer, fun, as.df, self, self.attrs, valued),
-    list      = egonet_attrs.list(graph              , attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    matrix    = egonet_attrs.matrix(as_spmat(graph)  , attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    dgCMatrix = egonet_attrs.matrix(graph            , attrs, V, outer, fun, as.df, self, self.attrs, valued),
-    array     = egonet_attrs.array(graph             , attrs, V, outer, fun, as.df, self, self.attrs, valued),
+      graph$graph, attrs, if (!length(V)) 1:graph$meta$n else V, outer, fun, as.df, self, valued),
+    list      = egonet_attrs.list(graph              , attrs, V, outer, fun, as.df, self, valued),
+    matrix    = egonet_attrs.matrix(as_spmat(graph)  , attrs, V, outer, fun, as.df, self, valued),
+    dgCMatrix = egonet_attrs.matrix(graph            , attrs, V, outer, fun, as.df, self, valued),
+    array     = egonet_attrs.array(graph             , attrs, V, outer, fun, as.df, self, valued),
     stopifnot_graph(graph)
   )
 }
 
-egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued) {
+egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, valued) {
 
-  # Filling V
-  if (!length(V)) V <- seq_len(nrow(graph)) - 1L
-
-  ids <- egonet_attrs_cpp(graph, V, outer, self, self.attrs, valued)
+  ids <- egonet_attrs_cpp(graph, V - 1L, outer, self, valued)
   sapply(lapply(ids, function(w) cbind(
-    value = w[,"value"],
-    id    = w[,"id"],
-    attrs[w[,"id"],,drop=FALSE]
+    w, attrs[w[,"id"],,drop=FALSE]
   )), fun)
 }
 
-egonet_attrs.array <- function(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued) {
+egonet_attrs.array <- function(graph, attrs, V, outer, fun, as.df, self, valued) {
   # Coercing into list
   dn <- dimnames(graph)[[3]]
   if (!length(dn)) dimnames(graph)[[3]] <- 1:dim(graph)[3]
 
-  # Filling V
-  if (!length(V)) V <- seq_len(nrow(graph))
-
   graph <- apply(graph, 3, methods::as, Class='dgCMatrix')
-  egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued)
+  egonet_attrs.list(graph, attrs, V, outer, fun, as.df, self, valued)
 
 }
 
 # For lists
-egonet_attrs.list <- function(graph, attrs, V, outer, fun, as.df, self, self.attrs, valued) {
+egonet_attrs.list <- function(graph, attrs, V, outer, fun, as.df, self, valued) {
   nper <- length(graph)
   if (nper != length(attrs))
     stop("-graph- and -attrs- must have the same length")
-
-  # Checking V
-  if (!length(V)) V <- seq_len(nrow(graph[[1]]))
 
   # Period times
   tn <- names(graph)
   if (!length(tn)) tn <- 1:nper
 
   out <- lapply(1:nper, function(x) {
-      ids <- egonet_attrs_cpp(graph[[x]], as.integer(V)-1L, outer, self, self.attrs, valued)
-      lapply(ids, function(w) cbind(
-        value = w[,"value"],
-        id    = w[,"id"],
-        attrs[[x]][w[,"id"],,drop=FALSE]
+      ans <- egonet_attrs_cpp(graph[[x]], as.integer(V)-1L, outer, self, valued)
+      lapply(ans, function(w) cbind(
+        w, attrs[[x]][w[,"id"],,drop=FALSE]
         ))
   })
 
@@ -209,6 +200,7 @@ egonet_attrs.list <- function(graph, attrs, V, outer, fun, as.df, self, self.att
   # Naming
   names(out) <- tn
 
+  # Applying the function
   out <- lapply(out, lapply, fun)
 
   # In case of data.frame

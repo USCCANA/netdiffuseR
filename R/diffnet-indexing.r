@@ -20,7 +20,7 @@
 #' attribute, depending on whether it is static or dynamic the function will return
 #' either a data frame--static attributes--or a list of these--dynamic attributes.
 #' For the assigning method, \verb{[[<-.diffnet}, the function will infer what
-#' kind of attribute is by analyzing the dimmensions of \code{value}, in particular
+#' kind of attribute is by analyzing the dimensions of \code{value}, in particular
 #' we have the following possible cases:
 #'
 #' \tabular{llr}{
@@ -55,7 +55,7 @@
 #' adoption and cumulative adoption matrices. Importantly, \code{k} have no
 #' gaps, and it should be within the graph time period range.
 #'
-#' @return In the case of the asignning methods, a diffnet object. Otherwise,
+#' @return In the case of the assigning methods, a diffnet object. Otherwise,
 #' for \code{[[.diffnet} a vector extracted from one of the attributes data frames,
 #' and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
 #' \code{[i,j]} elements from the adjacency matrix.

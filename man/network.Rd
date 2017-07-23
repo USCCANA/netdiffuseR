@@ -7,7 +7,7 @@
 \alias{diffnet_to_networkDynamic}
 \alias{networkDynamic_to_diffnet}
 \alias{network_to_diffnet}
-\title{Convertion between \code{diffnet}, \code{network} and \code{networkDynamic}}
+\title{Coercion between \code{diffnet}, \code{network} and \code{networkDynamic}}
 \usage{
 diffnet_to_network(graph, slices = 1:nslices(graph), ...)
 
@@ -47,7 +47,7 @@ adoption).
 An object of class \code{networkDynamic}.
 }
 \description{
-Convertion between \code{diffnet}, \code{network} and \code{networkDynamic}
+Coercion between \code{diffnet}, \code{network} and \code{networkDynamic}
 }
 \details{
 \code{diffnet_to_networkDynamic} calls \code{diffnet_to_network} and
@@ -89,9 +89,10 @@ network_to_diffnet(graph.list = ans, toavar="toa")
 # If it was static, we can use -graph- instead
 network_to_diffnet(ans[[1]], toavar="toa")
 
-# Medical Innovations  diffnet to a networkDynamic --------------------------
-data(medInnovationsDiffNet)
-ans <- diffnet_to_networkDynamic(medInnovationsDiffNet)
+# A random diffusion network ------------------------------------------------
+set.seed(87)
+dn  <- rdiffnet(50, 4)
+ans <- diffnet_to_networkDynamic(dn)
 
 # and back
 networkDynamic_to_diffnet(ans, toavar = "toa")

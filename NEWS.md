@@ -2,10 +2,10 @@
 
 ## New functions
 
-* `network_to_diffnet`, `diffnet_to_network` convertion between 
+* `network_to_diffnet`, `diffnet_to_network` coercion between 
   diffnet and network objects.
   
-* `networkDynamic_to_diffnet`, `diffnet_to_networkDynamc` convertion
+* `networkDynamic_to_diffnet`, `diffnet_to_networkDynamc` coercion
   between diffnet and networkDynamic objects.
 
 
@@ -20,6 +20,8 @@
   which did a difference in dynamic networks.
   
 * `diffnet_to_igraph` was not considering loops correctly.
+
+* In unexpected situations `egonet_attrs` was crashing.
 
 
 # Changes in netdiffuseR version 1.18.0 (2017-07-16)

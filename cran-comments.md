@@ -1,7 +1,8 @@
 ## Resubmission
 
 * While version 1.18.0 was recently sent to CRAN, this version fixes
-  some critical bugs that were identified right after that.
+  some critical bugs that were identified right after that. This
+  includes a bug caught by CRAN on windows.
   
 
 ## Test environments

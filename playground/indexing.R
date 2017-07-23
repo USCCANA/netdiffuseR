@@ -9,7 +9,7 @@
 #' @param j Index of the j-th column of the adjacency matrix (see details)
 #' @param k Index of the k-th slice of the adjacency matrix (see details).
 #' @param value Value to assign (see details)
-#' @return In the case of the asignning methods, a diffnet object. Otherwise,
+#' @return In the case of the assignning methods, a diffnet object. Otherwise,
 #' for \code{[[.diffnet} a vector extracted from one of the attributes data frames,
 #' and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
 #' \code{[i,j]} elements from the adjacency matrix.
@@ -19,7 +19,7 @@
 #' attribute, depending on whether it is static or dynamic the function will return
 #' either a data frame--static attributes--or a list of these--dynamic attributes.
 #' For the assigning method, \code{[[<-.diffnet}, the function will infer what
-#' kind of attribute is by analyzing the dimmensions of \code{value}, in particular
+#' kind of attribute is by analyzing the dimensions of \code{value}, in particular
 #' we have the following possible cases:
 #'
 #' \tabular{llr}{

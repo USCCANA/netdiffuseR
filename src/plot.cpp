@@ -32,7 +32,7 @@ arma::vec seq_cpp(double from, double to, int lengthout) {
 //' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
 //' \item{y}{Numeric vector of size \code{nlevels} with the class marks for y}
 //' \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
-//' of the elements in terms of frecuency}
+//' of the elements in terms of frequency}
 //' @section Examples:
 //' \preformatted{
 //' # Generating random vectors of size 100

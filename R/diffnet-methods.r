@@ -1194,7 +1194,7 @@ plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
 
 #' \code{diffnet} Arithmetic and Logical Operators
 #'
-#' Addition, substraction, network power of diffnet and logical operators such as
+#' Addition, subtraction, network power of diffnet and logical operators such as
 #' \code{&} and \code{|} as objects
 #'
 #' @param x A \code{diffnet} class object.
@@ -1306,7 +1306,7 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
     y <- which(x$meta$ids %in% y)
     x[-y,,drop=FALSE]
   } else
-    stop("Substraction between -",class(x),"- and -", class(y), "- not supported.")
+    stop("Subtraction between -",class(x),"- and -", class(y), "- not supported.")
 }
 
 #' @export
@@ -1314,10 +1314,10 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
 `*.diffnet` <- function(x,y) {
   if (inherits(x, "diffnet") & inherits(y, "diffnet")) {
 
-    # Checking dimmensions
+    # Checking dimensions
     test <- all(dim(x) == dim(y))
     if (!test)
-      stop('Both -x- and -y- must have the same dimmensions.')
+      stop('Both -x- and -y- must have the same dimensions.')
 
     x$graph <- mapply(`*`, x$graph, y$graph)
     return(x)
@@ -1406,13 +1406,13 @@ graph_power <- function(x, y, valued=getOption("diffnet.valued", FALSE)) {
   } else if (inherits(x, "diffnet") && !inherits(y, "diffnet")) {
     if (identical(rep(dim(x)[1],2), dim(y)))
       x$graph <- mapply(base::`%*%`, x$graph, mat2dgCList(y, x))
-    else stop("-y- must have the same dimmension as -x-")
+    else stop("-y- must have the same dimension as -x-")
   } else if (inherits(y, "diffnet") && !inherits(x, "diffnet")) {
     if (identical(rep(dim(y)[1],2), dim(x))) {
       y$graph <- mapply(base::`%*%`, mat2dgCList(x, y), y$graph)
       return(y)
     }
-    else stop("-y- must have the same dimmension as -x-")
+    else stop("-y- must have the same dimension as -x-")
   }
 
   x

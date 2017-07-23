@@ -38,7 +38,7 @@ a filtered diffnet object.}
 \item{...}{Further argumnets to be passed to the method (on development)}
 }
 \value{
-In the case of the asignning methods, a diffnet object. Otherwise,
+In the case of the assigning methods, a diffnet object. Otherwise,
 for \code{[[.diffnet} a vector extracted from one of the attributes data frames,
 and for \code{[.diffnet} a list of length \code{length(k)} with the corresponding
 \code{[i,j]} elements from the adjacency matrix.
@@ -53,7 +53,7 @@ data frames, static and dynamic. By providing the \code{name} of the correspondi
 attribute, depending on whether it is static or dynamic the function will return
 either a data frame--static attributes--or a list of these--dynamic attributes.
 For the assigning method, \verb{[[<-.diffnet}, the function will infer what
-kind of attribute is by analyzing the dimmensions of \code{value}, in particular
+kind of attribute is by analyzing the dimensions of \code{value}, in particular
 we have the following possible cases:
 
 \tabular{llr}{

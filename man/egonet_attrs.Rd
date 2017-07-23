@@ -6,7 +6,7 @@
 \usage{
 egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
   fun = function(x) x, as.df = FALSE, self = getOption("diffnet.self"),
-  self.attrs = FALSE, valued = getOption("diffnet.valued"))
+  valued = getOption("diffnet.valued"))
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -15,16 +15,13 @@ egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
 
 \item{V}{Integer vector. Set of vertices from which the attributes will be retrieved.}
 
-\item{direction}{Character scalar. Either \code{"outgoing"}, \code{"incomming"}.}
+\item{direction}{Character scalar. Either \code{"outgoing"}, \code{"incoming"}.}
 
 \item{fun}{Function. Applied to each}
 
 \item{as.df}{Logical scalar. When TRUE returns a data.frame instead of a list (see details).}
 
 \item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
-
-\item{self.attrs}{Logical scalar. When \code{TRUE} ego's attributes are included in the output
-as the first row.}
 
 \item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
 }
@@ -95,6 +92,9 @@ Furthermore, we could use the \emph{median} centered instead, for example
 Where for each \eqn{i}, \code{dat} will be a matrix with as many rows
 as individuals in his egonetwork. Such matrix holds the column names of the
 attributes in the network.
+
+When \code{self = TRUE}, it will include ego's attributes, regardless
+the network has loops or not.
 }
 \examples{
 # Simple example with diffnet -----------------------------------------------

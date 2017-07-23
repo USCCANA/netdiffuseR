@@ -1,3 +1,9 @@
+2017-07-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/adjmat.cpp: rewriting egonet_attrs_cpp. Now more efficient
+	  should correct errors produced on windows.
+	* R/*: Fixing various bugs and spelling.
+
+
 2017-07-17  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/adjmat.cpp: Function for computing geodesics is now more
 	  efficient by using batch constructors when updating matrices.

@@ -169,7 +169,7 @@
 #'
 #' x
 #'
-#' # Simulations (increase the number for more precission)
+#' # Simulations (increase the number for more precision)
 #' set.seed(8612)
 #' nsim <- 1e4
 #' w <- sapply(seq_len(nsim), function(y) {

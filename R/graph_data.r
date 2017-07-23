@@ -4,7 +4,7 @@
 #'
 #' @name netdiffuseR-graphs
 #' @details The \pkg{netdiffuseR} package can handle different types of graph
-#' objects. Two general classes are defined accross the package's functions:
+#' objects. Two general classes are defined across the package's functions:
 #' static graphs, and dynamic graphs.
 #' \itemize{
 #'  \item{In the case of \strong{static graphs}, these are represented as adjacency

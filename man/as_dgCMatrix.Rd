@@ -36,7 +36,7 @@ as_spmat(x, ...)
 Either a list with \code{dgCMatrix} objects or a \code{dgCMatrix} object.
 }
 \description{
-This helper function allows easy convertion to sparse matrix objects
+This helper function allows easy coercion to sparse matrix objects
 from the \pkg{Matrix} package, \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 }
 \details{

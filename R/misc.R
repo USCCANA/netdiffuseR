@@ -288,7 +288,7 @@ rescale_vertex_igraph <- function(
 
 #' Coerce a matrix-like objects to \code{dgCMatrix} (sparse matrix)
 #'
-#' This helper function allows easy convertion to sparse matrix objects
+#' This helper function allows easy coercion to sparse matrix objects
 #' from the \pkg{Matrix} package, \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 #'
 #' @param x An object to be coerced into a sparse matrix.

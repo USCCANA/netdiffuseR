@@ -1,4 +1,4 @@
-#' Convertion between graph classes
+#' Coercion between graph classes
 #'
 #' @param graph Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.
 #' @param slices An integer vector indicating the slices to subset.

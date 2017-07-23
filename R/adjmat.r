@@ -538,7 +538,7 @@ toa_mat.integer <- function(times, labels=NULL,
 #' @inheritParams toa_mat
 #' @details Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 #' toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
-#' adopted the innovation sonner.
+#' adopted the innovation sooner.
 #' @return An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
 #' adoption between each pair of nodes.
 #' @export
@@ -841,7 +841,7 @@ simmelian_mat <- function(graph, ...) {
 #'
 #' @template graph_template
 #' @param n Integer scalar. Degree of approximation. Bigger values increase
-#' precission (see details).
+#' precision (see details).
 #' @param warn Logical scalar. When \code{TRUE}, it warns if the algorithm
 #' performs less steps than required.
 #'

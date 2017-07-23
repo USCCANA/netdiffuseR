@@ -18,7 +18,7 @@ Returns a list with three elements
 \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
 \item{y}{Numeric vector of size \code{nlevels} with the class marks for y}
 \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
-of the elements in terms of frecuency}
+of the elements in terms of frequency}
 }
 \description{
 Distribution of pairs over a grid of fix size.

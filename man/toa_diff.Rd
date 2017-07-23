@@ -25,7 +25,7 @@ each pair of nodes
 \details{
 Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
-adopted the innovation sonner.
+adopted the innovation sooner.
 }
 \examples{
 # Generating a random vector of time

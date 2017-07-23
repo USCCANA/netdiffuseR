@@ -20,7 +20,7 @@ transformGraphBy(graph, INDICES, fun = function(g, ...) g, ...)
 \item{INDICES}{A vector of length \eqn{n}.}
 
 \item{fun}{A function. This function must return a matrix of class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} with the same dimmension as
+\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} with the same dimension as
 \code{dim(g)}.}
 
 \item{...}{Further arguments passed to \code{fun}}

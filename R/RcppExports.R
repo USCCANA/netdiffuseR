@@ -25,8 +25,8 @@ drop_isolated_cpp <- function(adjmat, isolated, undirected = TRUE) {
     .Call('_netdiffuseR_drop_isolated_cpp', PACKAGE = 'netdiffuseR', adjmat, isolated, undirected)
 }
 
-egonet_attrs_cpp <- function(graph, V, outer = TRUE, self = TRUE, self_attrs = FALSE, valued = TRUE) {
-    .Call('_netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, self_attrs, valued)
+egonet_attrs_cpp <- function(graph, V, outer = TRUE, self = TRUE, valued = TRUE) {
+    .Call('_netdiffuseR_egonet_attrs_cpp', PACKAGE = 'netdiffuseR', graph, V, outer, self, valued)
 }
 
 approx_geodesicCpp <- function(G, n = 6L, warn = FALSE) {
@@ -92,7 +92,7 @@ bootnet_fillself <- function(graph, index, E) {
 #' \item{x}{Numeric vector of size \code{nlevels} with the class marks for x}
 #' \item{y}{Numeric vector of size \code{nlevels} with the class marks for y}
 #' \item{z}{Numeric matrix of size \code{nlevels} by \code{nlevels} with the distribution %
-#' of the elements in terms of frecuency}
+#' of the elements in terms of frequency}
 #' @section Examples:
 #' \preformatted{
 #' # Generating random vectors of size 100
@@ -283,7 +283,7 @@ vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
 #' @param funname Character scalar. Comparison to make (see details).
 #' @details
 #'
-#' This auxiliary function takes advantage of the sparcity of \code{graph} and
+#' This auxiliary function takes advantage of the sparseness of \code{graph} and
 #' applies a function in the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}
 #' only to \eqn{(i,j)} that have no empty entry. In other words, applies a compares
 #' elements of \code{X} only between vertices that have a link; making

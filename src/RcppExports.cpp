@@ -84,8 +84,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // egonet_attrs_cpp
-List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, bool outer, bool self, bool self_attrs, bool valued);
-RcppExport SEXP _netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP self_attrsSEXP, SEXP valuedSEXP) {
+List egonet_attrs_cpp(const arma::sp_mat& graph, const arma::uvec V, bool outer, bool self, bool valued);
+RcppExport SEXP _netdiffuseR_egonet_attrs_cpp(SEXP graphSEXP, SEXP VSEXP, SEXP outerSEXP, SEXP selfSEXP, SEXP valuedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,9 +93,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::uvec >::type V(VSEXP);
     Rcpp::traits::input_parameter< bool >::type outer(outerSEXP);
     Rcpp::traits::input_parameter< bool >::type self(selfSEXP);
-    Rcpp::traits::input_parameter< bool >::type self_attrs(self_attrsSEXP);
     Rcpp::traits::input_parameter< bool >::type valued(valuedSEXP);
-    rcpp_result_gen = Rcpp::wrap(egonet_attrs_cpp(graph, V, outer, self, self_attrs, valued));
+    rcpp_result_gen = Rcpp::wrap(egonet_attrs_cpp(graph, V, outer, self, valued));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -591,7 +590,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdiffuseR_toa_diff_cpp", (DL_FUNC) &_netdiffuseR_toa_diff_cpp, 1},
     {"_netdiffuseR_isolated_cpp", (DL_FUNC) &_netdiffuseR_isolated_cpp, 2},
     {"_netdiffuseR_drop_isolated_cpp", (DL_FUNC) &_netdiffuseR_drop_isolated_cpp, 3},
-    {"_netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &_netdiffuseR_egonet_attrs_cpp, 6},
+    {"_netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &_netdiffuseR_egonet_attrs_cpp, 5},
     {"_netdiffuseR_approx_geodesicCpp", (DL_FUNC) &_netdiffuseR_approx_geodesicCpp, 3},
     {"_netdiffuseR_infection_cpp", (DL_FUNC) &_netdiffuseR_infection_cpp, 9},
     {"_netdiffuseR_susceptibility_cpp", (DL_FUNC) &_netdiffuseR_susceptibility_cpp, 9},

@@ -303,7 +303,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' degree.
 #'
 #' When \code{outgoing=FALSE}, \eqn{S} is replaced by its transposed, so in the
-#' case of a social network exposure will be computed based on the incomming ties.
+#' case of a social network exposure will be computed based on the incoming ties.
 #'
 #' If \code{normalize=FALSE} then denominator, \eqn{S_t \times x_t}{S(t) \%*\% x(t)},
 #' is not included. This can be useful when, for example, exposure needs to be
@@ -345,7 +345,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' graph[["deg"]] <- dgr(graph)
 #' eDE2 <- exposure(graph, attrs="deg")
 #'
-#' # Comparing using incomming edges -------------------------------------------
+#' # Comparing using incoming edges -------------------------------------------
 #' eIN <- exposure(graph, outgoing=FALSE)
 #'
 #' # Structral equivalence for different communities ---------------------------
@@ -572,7 +572,7 @@ exposure.array <- function(
   tn <- colnames(cumadopt)
   if (!length(tn)) tn <- 1:ncol(cumadopt)
 
-  # Calculating the exposure, and asigning names
+  # Calculating the exposure, and assigning names
   output <- exposure_for(graphl, cumadopt, attrs, outgoing, valued, normalized,
                          self)
   dimnames(output) <- list(rn, tn)
@@ -1233,7 +1233,7 @@ matrix_compare <- function(A, B, fun) {
     stop("-B- must be a dgCMatrix.")
 
   if (any(dim(A) != dim(B)))
-    stop("-A- and -B- must have the same dimmension.")
+    stop("-A- and -B- must have the same dimension.")
 
   matrix_compareCpp(A, B, fun)
 }

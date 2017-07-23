@@ -4,7 +4,7 @@
 \alias{igraph}
 \alias{diffnet_to_igraph}
 \alias{igraph_to_diffnet}
-\title{Convertion between graph classes}
+\title{Coercion between graph classes}
 \usage{
 diffnet_to_igraph(graph, slices = 1:nslices(graph))
 
@@ -32,7 +32,7 @@ Either a list of \code{length(slices)} \code{igraph}
 objects.
 }
 \description{
-Convertion between graph classes
+Coercion between graph classes
 }
 \examples{
 # Reading the meddical innovation data into igraph --------------------------

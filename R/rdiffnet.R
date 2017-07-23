@@ -34,7 +34,7 @@
 #'  \item Afterwards, if \code{rewire=TRUE} \eqn{t-1} slices of the network are created
 #'  by iteratively rewiring the baseline graph.
 #'  \item The \code{threshold.dist} function is applied to each node in the graph.
-#'  \item Simulation starts at \eqn{t=2} asigning adopters in each time period
+#'  \item Simulation starts at \eqn{t=2} assigning adopters in each time period
 #'  accordingly to each vertex's threshold and exposure.
 #' }
 #'
@@ -185,7 +185,7 @@ rdiffnet <- function(
   }
   if (missing(n)) n <- meta$n
 
-  # Checking dimmensions
+  # Checking dimensions
   test <- class(sgraph)
   if ("list" %in% test) {
     # Checking if all the graphs follow the condition

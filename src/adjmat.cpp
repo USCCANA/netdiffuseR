@@ -217,67 +217,51 @@ isolated_cpp(lonenet)
 // [[Rcpp::export]]
 List egonet_attrs_cpp(
     const arma::sp_mat & graph, const arma::uvec V,
-    bool outer=true, bool self=true, bool self_attrs=false, bool valued=true) {
+    bool outer=true, bool self=true, bool valued=true) {
 
-  // General variables
-  int N = V.n_elem;
+  // Creating containers
+  std::vector< std::vector< unsigned int >> id(graph.n_rows);
+  std::vector< std::vector< double >> value(graph.n_rows);
 
-  // Column names
-  CharacterVector cnames(2);
+  typedef arma::sp_mat::const_iterator spiter;
 
-  cnames[0] = "value";
-  cnames[1] = "id";
+  // We will fill it with zeros
+  arma::uvec useit(graph.n_rows, arma::fill::zeros);
+  for (unsigned int i = 0u; i < V.size(); i++)
+    useit.at(V.at(i)) = 1u;
 
-  // Depending on inner or outer edges:
-  //  - outer: Accounts for the rows
-  //  - inner: Accounts for the columns
-  arma::sp_mat tgraph;
-  if (outer) tgraph = graph.t();
-  else tgraph = graph;
+  // Finding values
+  unsigned int i, j;
+  for (spiter it = graph.begin(); it != graph.end(); it ++) {
 
-  List data(N);
+    // Depending on outer or not
+    if (outer) i = it.row(), j = it.col();
+    else j = it.row(), i = it.col();
 
-  for (int v=0;v<N;v++) {
-    // Index
-    int e = V.at(v);
+    if (useit.at(i) == 0u)
+      continue;
 
-    // Analyzing the case when is undirected
-    int rm = 0;
-    if (graph.at(e,e) && !self) rm = 1;
-
-    // Individual specific variables
-    arma::sp_mat g = tgraph.col(e);
-    NumericMatrix out(g.n_nonzero-rm + (self_attrs ? 1 : 0),2);
-    // We add two so:
-    //  - we can include the value of the edge
-    //  - we cna include the id number of the vertex (wich goes from 1 to n)
-
-    // Retrieving the desired set of attributes
-    if (self_attrs) {
-      out(0,0) = tgraph.at(v,v);
-      out(0,1) = v + 1;
-    }
-    int nloop = (self_attrs ? 1 : 0);
-    for (unsigned i = 0u;i < g.n_nonzero;i++) {
-
-      // Edge index
-      int index = g.row_indices[i];
-      if (!self && index == e) continue;
-      out(nloop,1) = index + 1;
-
-      // Edge value
-      if (valued) out(nloop,0) = g.values[i];
-      else out(nloop,0) = 1.0;
-
-      // Increasing after success
-      nloop++;
-    }
-
-    colnames(out) = cnames;
-
-    data[v] = out;
+    // Adding coordinates
+    id.at(i).push_back(j + 1u);
+    value.at(i).push_back( (valued)? (*it) : 1.0 );
   }
 
+  // Coercing output
+  List data(V.size());
+
+  for (i = 0u; i < V.size(); i++) {
+
+    // If self
+    if (self)
+      id.at(V.at(i)).push_back( V.at(i) + 1u),
+      value.at(V.at(i)).push_back( graph.at(V.at(i), V.at(i)));
+
+    // Creating the dataframe
+    data.at(i) = DataFrame::create(
+      _["id"]    = Rcpp::wrap(id.at(V.at(i))),
+      _["value"] = Rcpp::wrap(value.at(V.at(i)))
+      );
+  }
 
   return data;
 }
