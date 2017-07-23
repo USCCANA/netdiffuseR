@@ -20,13 +20,15 @@ environment:
   matrix:
   - R_VERSION: devel
     R_ARCH: x64
-    R_BUILD_ARGS: --multiarch
-    R_CHECK_ARGS: --multiarch
+    R_BUILD_ARGS: --multiarch --no-manual
+    R_CHECK_ARGS: --multiarch --as-cran
+    R_CHECK_INSTALL_ARGS: --install-args=--build --multiarch
 
   - R_VERSION: release
     R_ARCH: x64
     R_BUILD_ARGS: --multiarch --no-manual
     R_CHECK_ARGS: --multiarch --as-cran
+    R_CHECK_INSTALL_ARGS: --install-args=--build --multiarch
 
 
 build_script:

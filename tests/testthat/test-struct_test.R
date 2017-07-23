@@ -21,6 +21,7 @@ test_that("struct_test should be reproducible (parallel version)", {
 
   # I don't want to run this test
   skip_on_cran()
+  skip_on_appveyor()
 
   # Generating data
   set.seed(1231)
