@@ -77,7 +77,7 @@
 #'
 #' # ... Now, as diffnet objects (the default)
 #' graph[1,,1:3, drop=FALSE]
-#' graph[,,1:3, drop=FALSE][[1]]
+#' graph[,,1:3, drop=FALSE]
 #'
 #' # Changing values in the adjacency matrix
 #' graph[1, , , drop=TRUE]

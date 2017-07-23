@@ -130,6 +130,43 @@ hist(test)
     hist(test)
     ```
 
+# Regression analysis
+
+*   In regression analysis we want to see if exposure, once we control for other
+    covariates, had any effect on the adoption of a behavior.
+
+*   In general, the big problem here is when we have a latent variable that 
+    co-determines both network and behavior.
+    
+*   Unless we can control for such variable, regression analysis will be
+    generically biased.
+    
+*   On the other hand, if you can claim that either such variable doesn't exists
+    or you actually can control for it, then we have two options: lagged exposure
+    models, or contemporaneous exposure models. We will focus on the former.
+
+
+## Lagged exposure models
+
+*   In this type of models we usually have the following
+
+    $$
+    y_t = f(W_{t-1}, y_{t-1}, X_i) + \varepsilon
+    $$
+    
+    Furthermore, in the case of adoption we have
+    
+    $$
+    y_{it} = \left\{
+    \begin{array}{ll}
+    1 & \mbox{if}\quad \gamma y_{it-1} + \rho\sum_{j\neq i}\frac{W_{ijt-1}y_{it-1}}{\sum_{j\neq i}W_{ijt-1}} > 0\\
+    0 & \mbox{otherwise}
+    \end{array}
+    \right.
+    $$
+
+## Contemporaneous exposure models
+
 # Problems
 
 Using the dataset `problems_stats1.rda`
