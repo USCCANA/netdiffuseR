@@ -159,13 +159,67 @@ hist(test)
     $$
     y_{it} = \left\{
     \begin{array}{ll}
-    1 & \mbox{if}\quad \gamma y_{it-1} + \rho\sum_{j\neq i}\frac{W_{ijt-1}y_{it-1}}{\sum_{j\neq i}W_{ijt-1}} > 0\\
+    1 & \mbox{if}\quad \rho\sum_{j\neq i}\frac{W_{ijt-1}y_{it-1}}{\sum_{j\neq i}W_{ijt-1}} + X_{it}\beta > 0\\
     0 & \mbox{otherwise}
     \end{array}
     \right.
     $$
+    
+*   In netdiffuseR is as easy as doing the following:
+    
+    ```{r dataforreg}
+    # fakedata
+    set.seed(121)
+    
+    W   <- rgraph_ws(1e3, 8, .2)
+    X   <- cbind(var1 = rnorm(1e3))
+    toa <- sample(c(NA,1:5), 1e3, TRUE)
+    
+    dn  <- new_diffnet(W, toa=toa, vertex.static.attrs = X)
+    
+    # Computing exposure and adoption for regression
+    dn[["cohesive_expo"]] <- cbind(NA, exposure(dn)[,-nslices(dn)])
+    dn[["adopt"]]         <- dn$cumadopt
+
+    
+    # Generating the data and running the model
+    dat <- as.data.frame(dn)
+    ans <- glm(adopt ~ cohesive_expo + var1 + factor(per),
+               data = dat,
+               family = binomial(link="probit"),
+               subset = is.na(toa) | (per <= toa))
+    summary(ans)
+    ```
 
 ## Contemporaneous exposure models
+
+*   Similar to he lagged exposure models, we usually have the following
+
+    $$
+    y_t = f(W_t, y_t, X_t) + \varepsilon
+    $$
+    
+    Furthermore, in the case of adoption we have
+    
+    $$
+    y_{it} = \left\{
+    \begin{array}{ll}
+    1 & \mbox{if}\quad \rho\sum_{j\neq i}\frac{W_{ijt}y_{it}}{\sum_{j\neq i}W_{ijt}} + X_{it}\beta > 0\\
+    0 & \mbox{otherwise}
+    \end{array}
+    \right.
+    $$
+    
+*   Unfortunately, since $y_t$ is in both sides of the equation, this models cannot
+    be fitted using a standard probit or logit regression.
+    
+*   Two alternatives to solve this:
+    
+    a.  Using Instrumental Variables Probit (ivprobit in both R and Stata)
+    
+    b.  Use a Spatial Autoregressive (SAR) Probit (SpatialProbit and ProbitSpatial in R).
+    
+*   We won't cover these here.
 
 # Problems
 
@@ -174,19 +228,20 @@ Using the dataset `problems_stats1.rda`
 1.  Compute a lagged version of Moran's I and compare it with the one from `summary`.
 
 2.  Fit the following probit model $adopt = Exposure*\gamma + Measure*\beta + \varepsilon$.
+    What happens if you exclude the time fixed effects?
 
 
 ```{r datagen, echo=FALSE, cache=TRUE}
 set.seed(1)
 
-n <- 250
+n <- 500
 nper <- 5
 X <- cbind(Measure=rnorm(n))
 y <- cbind(sample(c(0, 1), n, TRUE, prob = c(.9, .1)))
 
 
 # Baseline network
-W <- methods::getMethod("t", signature = "dgCMatrix")(rgraph_ws(n, k=10, p = .2))
+W <- (rgraph_ws(n, k=8, p = .2))
 
 sim_space <- function(W, y, X, pers = 4, lag = FALSE, rho = .2, beta=.5) {
   W <- as.matrix(W)
@@ -227,11 +282,14 @@ load("problems_stats1.rda")
 dn <- new_diffnet(W, toa=X[,2], vertex.static.attrs = X[,1,drop=FALSE])
 
 dn[["cohesive_exposure"]] <- cbind(NA, exposure(dn)[,-nslices(dn)])
-dn[["adopted"]] <- dn$cumadopt
+dn[["adopted"]]           <- dn$cumadopt
 
 dat <- as.data.frame(dn)
-ans <- glm(adopted ~ Measure + cohesive_exposure, family = binomial(link="probit"),
-    data = dat, subset = is.na(toa) | (per <= toa))
+ans <- glm(adopted ~ cohesive_exposure + Measure + factor(per),
+           family = binomial(link="probit"),
+           data = dat,
+           subset = is.na(toa) | (per <= toa)
+           )
 
 summary(ans)
 ```

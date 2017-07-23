@@ -104,3 +104,33 @@ plot_hazard(x)
 ```
 
 
+# Problems
+
+1.  Using the diffnet object in `data_intro.rmd`, use the function `plot_threshold` specifying
+    shapes and colors according to the variables ItrustMyFriends and Age. Do you see any pattern?
+
+```{r datasim, echo=FALSE, eval=TRUE}
+set.seed(1252)
+dat <- data.frame(
+  ItrustMyFriends = sample(c(0,1), 200, TRUE),
+  Age = 10 + rpois(200, 4)
+  )
+net <- rgraph_er(100, p = .05)
+net <- diag_expand(list(net, net))
+net[cbind(1:10, 101:110)] <- 1 
+
+# Generating the process
+diffnet <- rdiffnet(
+  threshold.dist = 2 + dat$ItrustMyFriends*2,
+  seed.graph = net, t=4,
+  seed.nodes = c(9:20),
+  exposure.args = list(normalize=FALSE))
+
+diffnet[["ItrustMyFriends"]] <- dat$ItrustMyFriends
+diffnet[["Age"]] <- dat$Age
+
+# What they should see
+# plot_threshold(diffnet, vertex.col = dat+1)
+save(diffnet, file = "problems_intro.rda")
+```
+
