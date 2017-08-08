@@ -9,8 +9,8 @@ The following document details expectations for the comming versions. There is n
 - Review manuals: Description of arguments and name of the functions.
 - ~~Aliases creation: `select_egoalter` `table_...`~~
 - New meta on the diffnet class:
-    * name: 'A diffnet network'
-    * description 'Diffnet network with no description'
+    * ~~name: 'A diffnet network'~~
+    * ~~description 'Diffnet network with no description'~~
     * timestamp (maybe auto update) 'DATE'
     * author: 'user'
     * netdiffuseR.version: 1.16.6
@@ -27,7 +27,7 @@ The following document details expectations for the comming versions. There is n
 
 ## Developing
 
-- `diffnet_to_networkDynamic`, `networkDynamic_to_diffnet`. Need to reach out the author of Carter Butts: Is there any way to access networkDynamic objects formal definition??
+- ~~`diffnet_to_networkDynamic`, `networkDynamic_to_diffnet`. Need to reach out the author of Carter Butts: Is there any way to access networkDynamic objects formal definition??~~
 
 - ~~`rewire_dgr_preserve`: A brief comparison on igraph and netdiffuseR rewiring algorithms shows that igraph has no significan speed improvement in small-medium graphs. This may be due to having a similar rewiring algorithm. The dgr preserve should work in a similar fashion and should incorporate the call to `std::<vector>remove` method.~~
 

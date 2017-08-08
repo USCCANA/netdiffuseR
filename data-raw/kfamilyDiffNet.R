@@ -2,7 +2,8 @@ rm(list=ls())
 
 library(foreign)
 
-kfamily <- read.dta("data-raw/kfp_v3_labels_fixed.dta")
+# kfamily <- read.dta("data-raw/kfp_v3_labels_fixed.dta")
+load("data/kfamily.rdata")
 
 # Subsetting
 netvars <- names(kfamily)[grepl("^net", names(kfamily))]

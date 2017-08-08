@@ -9,8 +9,6 @@
 
 using namespace Rcpp;
 
-arma::umat sparse_indexes(const arma::sp_mat & mat);
-
 double angle(double x0, double y0, double x1, double y1);
 
 arma::sp_mat sp_trimatl(const arma::sp_mat & x);

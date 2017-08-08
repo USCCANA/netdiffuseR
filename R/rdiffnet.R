@@ -73,6 +73,22 @@
 #' If \code{seed.graph} is provided, no random graph is generated and the simulation
 #' is applied using that graph instead.
 #'
+#' \code{rewire.args} has the following default options:
+#'
+#' \tabular{ll}{
+#'   \code{p}          \tab \code{.1} \cr
+#'   \code{undirected} \tab \code{getOption("diffnet.undirected", FALSE)} \cr
+#'   \code{self}       \tab \code{getOption("diffnet.self", FALSE)}
+#' }
+#'
+#' \code{exposure.args} has the following default options:
+#'
+#' \tabular{ll}{
+#'   \code{outgoing} \tab \code{TRUE} \cr
+#'   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
+#'   \code{normalized} \tab \code{TRUE}
+#' }
+#'
 #' @examples
 #' # Asimple example -----------------------------------------------------------
 #' set.seed(123)
@@ -88,29 +104,31 @@
 #' newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
 #'  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 #'
+#'
 #' @author George G. Vega Yon
 rdiffnet <- function(
   n,
   t,
-  seed.nodes="random",
-  seed.p.adopt=0.05,
-  seed.graph="scale-free",
-  rgraph.args=list(),
-  rewire=TRUE,
-  rewire.args=list(
-    p=.1,
-    undirected= getOption("diffnet.undirected", FALSE),
-    self = getOption("diffnet.self", FALSE)
-    ),
-  threshold.dist=function(x) runif(1),
-  exposure.args=list(
-    outgoing=TRUE,
-    valued=getOption("diffnet.valued", FALSE),
-    normalized=TRUE
-    ),
-  name="A diffusion network",
-  behavior="Random contagion"
+  seed.nodes     = "random",
+  seed.p.adopt   = 0.05,
+  seed.graph     = "scale-free",
+  rgraph.args    = list(),
+  rewire         = TRUE,
+  rewire.args    = list(),
+  threshold.dist = function(x) runif(1),
+  exposure.args  = list(),
+  name           = "A diffusion network",
+  behavior       = "Random contagion"
   ) {
+
+  # Checking options
+  if (!length(rewire.args[["p"]])) rewire.args[["p"]] <- .1
+  if (!length(rewire.args[["undirected"]])) rewire.args[["undirected"]] <- getOption("diffnet.undirected", FALSE)
+  if (!length(rewire.args[["self"]])) rewire.args[["self"]] <- getOption("diffnet.self", FALSE)
+
+  if (!length(exposure.args[["outgoing"]])) exposure.args[["outgoing"]] <- TRUE
+  if (!length(exposure.args[["valued"]])) exposure.args[["valued"]] <- getOption("diffnet.valued", FALSE)
+  if (!length(exposure.args[["normalized"]])) exposure.args[["normalized"]] <- TRUE
 
   # Step 0.0: Creating the network seed ----------------------------------------
   # Checking the class of the seed.graph
@@ -137,15 +155,23 @@ rdiffnet <- function(
 
   # In the case of calling a function
   } else if ("character" %in% test) {
+
+    # Scale-free networks ------------------------------------------------------
     if (seed.graph == "scale-free") {
+
       if (!length(rgraph.args$m0))
         rgraph.args$t <- n-1L
 
       sgraph <- do.call(rgraph_ba, rgraph.args)
+
+    # Bernoulli graphs ---------------------------------------------------------
     } else if (seed.graph == "bernoulli") {
+
       rgraph.args$n <- n
 
       sgraph <- do.call(rgraph_er, rgraph.args)
+
+    # Small-world network ------------------------------------------------------
     } else if (seed.graph == "small-world") {
 
       rgraph.args$n <- n
@@ -153,6 +179,7 @@ rdiffnet <- function(
       if (!length(rgraph.args$p)) rgraph.args$p <- .1
 
       sgraph <- do.call(rgraph_ws, rgraph.args)
+
     } else
       stop("Invalid -seed.graph-. It should be either ",
            "'scale-free\', \'bernoulli\' or \'small-world\'.")
@@ -161,19 +188,24 @@ rdiffnet <- function(
     graph <- rep(list(sgraph), t)
 
   } else if (test %in% c("matrix", "dgCMatrix", "array")) {
+
     # If not dgCMatrix
-    if ("array" %in% test) {
+    if ("array" %in% test)
       sgraph <- apply(seed.graph, 3, function(x) methods::as(x, "dgCMatrix"))
-    } else {
+    else
       sgraph <- methods::as(seed.graph, "dgCMatrix")
-    }
+
   } else if ("list" %in% test) {
+
     sgraph <- seed.graph
+
   } else if ("diffnet" %in% test) {
+
     sgraph <- seed.graph$graph
-  }else {
+
+  } else
     stop("Invalid argument for -seed.graph-. No support for objects of class -",test,"-.")
-  }
+
 
   # Checking baseline graph --------------------------------------------------
   meta <- classify_graph(sgraph)
@@ -196,23 +228,31 @@ rdiffnet <- function(
 
   # If static, t must be provided, otherwise t should be missing
   if (meta$nper == 1) {
-    if (missing(t)) {
+
+    if (missing(t))
       stop("When -seed.graph- is static, -t- must be provided.")
-    } else {
+    else
       sgraph <- rep(list(sgraph), t)
-    }
+
   } else {
-    if (!missing(t)) warning("When -seed.graph- is dynamic, -t- shouldn't be provided.")
+
+    if (!missing(t))
+      warning("When -seed.graph- is dynamic, -t- shouldn't be provided.")
+
     t <- meta$nper
+
   }
 
   # Step 0.1: Rewiring or not ------------------------------------------------
 
   # Rewiring
-  if (rewire) sgraph <- do.call(rewire_graph, c(list(graph=sgraph), rewire.args))
+  if (rewire)
+    sgraph <- do.call(rewire_graph, c(list(graph=sgraph), rewire.args))
 
   # Number of initial adopters
-  if (n*seed.p.adopt < 1) warning("Set of initial adopters set to 1.")
+  if (n*seed.p.adopt < 1)
+    warning("Set of initial adopters set to 1.")
+
   n0 <- max(1, n*seed.p.adopt)
 
   # Step 0.1: Setting the seed nodes -------------------------------------------
@@ -220,22 +260,32 @@ rdiffnet <- function(
   toa   <- matrix(NA, ncol=1, nrow= n)
 
   if (length(seed.nodes) == 1) {
+
     if (seed.nodes %in% c("central","marginal")) {
+
+      # Creating a degree ranking
       d <- dgr(sgraph)[,1,drop=FALSE]
       decre <- ifelse(seed.nodes == "central", TRUE, FALSE)
       d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
       d <- d[1:floor(n0)]
       d <- as.numeric(d)
+
     } else if (seed.nodes == "random") {
+
       d <- sample.int(n, floor(n0))
+
     } else
       stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+
   } else if (!inherits(seed.nodes, "character")) {
+
     d <- seed.nodes
-  } else stop("Unsupported -seed.nodes- value. See the manual for references.")
+
+  } else
+    stop("Unsupported -seed.nodes- value. See the manual for references.")
 
   # Setting seed nodes via vector
-  toa[d] <- 1L
+  toa[d]       <- 1L
   cumadopt[d,] <- 1L
 
   # Step 3.0: Thresholds -------------------------------------------------------
@@ -250,14 +300,18 @@ rdiffnet <- function(
         stop("Incorrect length for -threshold.dist- (",length(threshold.dist),")",
              ". It should be a vector of length ",n,".")
     } else if (is.vector(threshold.dist)) {
+
       thr <- threshold.dist
 
       # Must match the length of n
       if (length(thr) != n)
         stop("Incorrect length for -threshold.dist- (",length(threshold.dist),")",
              ". It should be a vector of length ",n,".")
+
     } else {
+
       stop("-threshold.dist- must be either a vector of length -n- or a function.")
+
     }
   }
 

@@ -96,7 +96,7 @@ correctly encoded, so when going back (using \code{edgelist_to_adjmat})
 # Base data
 set.seed(123)
 n <- 5
-edgelist <- rgraph_er(n, as.edgelist=TRUE)[,c("ego","alter")]
+edgelist <- rgraph_er(n, as.edgelist=TRUE, p=.2)[,c("ego","alter")]
 times <- sample.int(3, nrow(edgelist), replace=TRUE)
 w <- abs(rnorm(nrow(edgelist)))
 

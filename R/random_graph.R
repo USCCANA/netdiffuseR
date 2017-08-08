@@ -52,7 +52,7 @@
 #' @family simulation functions
 #' @include graph_data.r
 #' @author George G. Vega Yon
-rgraph_er <- function(n=10, t=1, p=0.3, undirected=getOption("diffnet.undirected"), weighted=FALSE,
+rgraph_er <- function(n=10, t=1, p=0.01, undirected=getOption("diffnet.undirected"), weighted=FALSE,
                        self=getOption("diffnet.self"), as.edgelist=FALSE) {
 
   # Generating the random graph

@@ -70,7 +70,7 @@
 #' # Base data
 #' set.seed(123)
 #' n <- 5
-#' edgelist <- rgraph_er(n, as.edgelist=TRUE)[,c("ego","alter")]
+#' edgelist <- rgraph_er(n, as.edgelist=TRUE, p=.2)[,c("ego","alter")]
 #' times <- sample.int(3, nrow(edgelist), replace=TRUE)
 #' w <- abs(rnorm(nrow(edgelist)))
 #'
@@ -481,6 +481,16 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
   return(ans)
 }
 
+toa_mat.default <- function(per, t0, t1) {
+  ans <- matrix(0L, ncol=t1-t0+1L, nrow=length(per))
+  ans[cbind(1L:nrow(ans), per - t0 + 1L)] <- 1L
+
+  list(
+    adopt = ans,
+    cumadopt = t(apply(ans, 1, cumsum))
+  )
+}
+
 # @rdname toa_mat
 # @export
 toa_mat.numeric <- function(times, labels=NULL,
@@ -502,7 +512,7 @@ toa_mat.integer <- function(times, labels=NULL,
                             t0 = min(times, na.rm = TRUE),
                             t1 = max(times, na.rm=TRUE)) {
   # Rescaling
-  output <- toa_mat_cpp(times, t0, t1)
+  output <- toa_mat.default(times, t0, t1)
 
   # Naming
   cn <- t0:t1
@@ -601,6 +611,8 @@ toa_diff.integer <- function(times, t0, labels) {
 #' Find and remove unconnected vertices from the graph.
 #' @templateVar undirected TRUE
 #' @template graph_template
+#' @templateVar undirected 1
+#' @templateVar self 1
 #' @export
 #' @return
 #' When \code{graph} is an adjacency matrix:
@@ -641,188 +653,79 @@ toa_diff.integer <- function(times, t0, labels) {
 #' @keywords manip
 #' @family data management functions
 #' @author George G. Vega Yon
-isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
-  switch (class(graph),
-    matrix = isolated.matrix(graph, undirected),
-    dgCMatrix = isolated.dgCMatrix(graph, undirected),
-    array = isolated.array(graph, undirected),
-    list = isolated.list(graph, undirected),
-    diffnet = isolated.list(graph$graph, graph$meta$undirected),
+isolated <- function(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+) {
+  ans <- switch (class(graph),
+    matrix    = isolated.default(methods::as(graph, "dgCMatrix"), undirected, self),
+    dgCMatrix = isolated.default(graph, undirected, self),
+    array     = lapply(apply(graph, 3, methods::as, Class="dgCMatrix"), isolated.default,
+                       undirected=undirected, self=self),
+    list      = lapply(graph, isolated.default, undirected=undirected, self=self),
+    diffnet   = lapply(graph$graph, isolated.default, undirected=undirected, self=self),
     stopifnot_graph(graph)
   )
+
+  if (any(class(graph) %in% c("list", "diffnet", "array")))
+    apply(do.call(cbind, ans), 1, all)
+  else ans
   # UseMethod("isolated")
 }
 
 # @export
 # @rdname isolated
-isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
-  out <- isolated_cpp(methods::as(graph, "dgCMatrix"), undirected)
-  dimnames(out) <- list(rownames(graph), "isolated")
-  out
+isolated.default <- function(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+) {
+
+  graph@x <- rep(1.0, length(graph@x))
+  d <- Matrix::rowSums(graph)
+  if (undirected)
+    d <- d + Matrix::colSums(graph)
+
+  if (!self)
+    d <- d - Matrix::diag(graph)
+
+  unname(d == 0)
 }
 
-# @export
-# @rdname isolated
-isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")) {
-  out <- isolated_cpp(graph, undirected)
-  dimnames(out) <- list(rownames(graph), "isolated")
-  out
+isolated.list <- function(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+  ) {
+
+  ids <- lapply(graph, isolated.default, undirected=undirected, self=self)
+
+  apply(do.call(cbind, ids), 1, all)
+
 }
 
-# @export
-# @rdname isolated
-isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
-  nper <- as.integer(dim(graph)[3])
-  n    <- as.integer(dim(graph)[2])
-
-  # Creating output list and anciliary vector (to see if is isolated or not!)
-  # iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
-  iso <- methods::new("dgCMatrix", Dim=c(n,nper), p=rep(0L,nper + 1L))
-
-  for(i in 1:nper)
-    iso[,i] <- isolated_cpp(methods::as(graph[,,i], "dgCMatrix"), undirected)
-
-  # Names
-  rn <- rownames(graph)
-  if (!length(rn)) rn <- 1:n
-  tn <- dimnames(graph)[[3]]
-  if (!length(tn)) tn <- 1:nper
-
-  isolated <- structure(
-    ifelse(apply(iso, 1, sum)==nper, 1, 0),
-    dim=c(dim(graph)[1],1), dimnames = list(rn, "isolated"))
-
-  # Naming
-  dimnames(iso) <- list(rn, tn)
-
-  list(
-    isolated_t=iso,
-    isolated=isolated
-  )
-}
-
-# @export
-# @rdname isolated
-isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
-  nper<- as.integer(length(graph))
-  n   <- as.integer(nrow(graph[[1]]))
-
-  # Creating output list and anciliary vector (to see if is isolated or not!)
-  # iso  <- Matrix::Matrix(0, ncol=nper, nrow=n, sparse=TRUE)
-  iso <- methods::new("dgCMatrix", Dim=c(n,nper), p=rep(0L,nper + 1L))
-
-  for(i in 1:nper)
-    iso[,i] <- isolated_cpp(graph[[i]], undirected)
-  isolated <- structure(
-    ifelse(apply(iso, 1, sum)==nper, 1, 0),
-    dim=c(n,1), dimnames=list(rownames(graph[[1]]), "isolated")
-  )
-
-  # Naming
-  dimnames(iso) <- list(rownames(graph[[1]]), names(graph))
-
-  list(
-    isolated_t=iso,
-    isolated=isolated
-  )
-}
 
 #' @export
 #' @rdname isolated
-drop_isolated <- function(graph, undirected=getOption("diffnet.undirected")) {
-  out <- switch (class(graph),
-    matrix = drop_isolated.matrix(graph, undirected),
-    list = drop_isolated.list(graph, undirected),
-    diffnet = drop_isolated.list(graph$graph, graph$meta$undirected),
-    dgCMatrix = drop_isolated.dgCMatrix(graph, undirected),
-    array = drop_isolated.array(graph, undirected),
-    stopifnot_graph(graph)
-  )
+drop_isolated <- function(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+) {
 
-  if (inherits(graph, "diffnet")) {
-    graph$graph <- out
-    graph$meta$n <- nrow(out[[1]])
-    graph$meta$ids <- row.names(out[[1]])
+  # Find isolates
+  ids <- which(!isolated(graph))
 
-    toa <- toa_mat(out, t0=graph$meta$pers[1], t1=graph$meta$pers[graph$meta$nper])
-    graph$adopt <- toa$adopt
-    graph$cumadopt <- toa$cumadopt
+  if (inherits(graph, "list"))
+    lapply(graph, "[", i=ids, j=ids, drop=FALSE)
+  else if (inherits(graph, "diffnet"))
+    graph[ids,]
+  else if (inherits(graph, "dgCMatrix"))
+    graph[ids,,drop=FALSE][,ids,drop=FALSE]
+  else if (inherits(graph, "array"))
+    graph[ids,,,drop=FALSE][,ids,,drop=FALSE]
 
-    return(graph)
-  }
-
-  return(out)
-}
-
-# @rdname isolated
-# @export
-drop_isolated.matrix <- function(graph, undirected=getOption("diffnet.undirected")) {
-  iso <- isolated(graph, undirected)
-  out <- drop_isolated_cpp(methods::as(graph, "dgCMatrix"), iso, undirected)
-
-  # Indexing the set of non-zero elements
-  iso <- rownames(iso[which(iso==0),,drop=FALSE])
-  dimnames(out) <- list(iso, iso)
-  out
-}
-
-# @rdname isolated
-# @export
-drop_isolated.dgCMatrix <- function(graph, undirected=getOption("diffnet.undirected")) {
-  iso <- isolated(graph, undirected)
-  out <- drop_isolated_cpp(graph, iso, undirected)
-
-  # Indexing the set of non-zero elements
-  iso <- rownames(iso[which(iso==0),,drop=FALSE])
-  dimnames(out) <- list(iso, iso)
-  out
-}
-
-# @rdname isolated
-# @export
-drop_isolated.array <- function(graph, undirected=getOption("diffnet.undirected")) {
-  # Getting isolated vecs
-  iso <- isolated.array(graph, undirected)[[2]]
-  ison <- rownames(iso[which(iso==0),,drop=FALSE])
-
-  m   <- sum(iso)
-  n   <- dim(graph)[1]
-  t   <- dim(graph)[3]
-  out <- vector("list", t)
-
-  # Checking time names
-  tn <- dimnames(graph)[[3]]
-  if (!length(tn)) tn <- 1:t
-  names(out) <- tn
-
-  # Removing
-  for(i in 1:t) {
-    out[[i]] <- drop_isolated_cpp(methods::as(graph[,,i], "dgCMatrix"), iso, undirected)
-    dimnames(out[[i]]) <- list(ison, ison)
-  }
-
-  out
-}
-
-# @rdname isolated
-# @export
-drop_isolated.list <- function(graph, undirected=getOption("diffnet.undirected")) {
-  # Getting isolated vecs
-  iso <- isolated.list(graph, undirected)[[2]]
-  ison <- rownames(iso[which(iso==0),,drop=FALSE])
-  # m   <- sum(iso)
-  # n   <- nrow(graph[[1]])
-  t   <- length(graph)
-  out <- vector("list", t)
-  names(out) <- names(graph)
-
-  # Removing
-  for(i in 1:t) {
-    out[[i]] <- drop_isolated_cpp(graph[[i]], iso, undirected)
-    dimnames(out[[i]]) <- list(ison,ison)
-  }
-
-  out
 }
 
 

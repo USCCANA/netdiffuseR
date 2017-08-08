@@ -9,11 +9,6 @@
 
 using namespace Rcpp;
 
-List toa_mat_cpp(
-    const IntegerVector & year,
-    int t0,
-    int t1
-  );
 
 arma::sp_mat edgelist_to_adjmat_cpp(
     const arma::mat & edgelist,
@@ -33,16 +28,6 @@ IntegerMatrix toa_diff_cpp(
     const IntegerVector & year
   );
 
-arma::icolvec isolated_cpp(
-    const arma::sp_mat & adjmat,
-    bool undirected=true
-  );
-
-arma::sp_mat drop_isolated_cpp(
-    const arma::sp_mat & adjmat,
-    arma::icolvec isolated,
-    bool undirected=true
-  );
 
 List egonet_attrs_cpp(
     const arma::sp_mat & graph,

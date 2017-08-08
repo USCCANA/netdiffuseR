@@ -103,7 +103,7 @@ context("Time of Adoption (toa_mat, toa_dif)")
 times <- c(2001L, 2004L, 2003L, 2008L)
 
 graph <- lapply(2001:2008, function(x) rgraph_er(4))
-diffnet <- as_diffnet(graph, times)
+diffnet <- new_diffnet(graph, times)
 
 test_that("Should warn about -times- not been integer", {
   expect_warning(toa_mat(as.numeric(times)), "will be coersed to integer")
@@ -171,17 +171,16 @@ test_that("Finding isolated nodes", {
   iso23[c(2,3),1:4] <- 0
   iso23[1:4,c(2,3)] <- 0
 
-  expect_equal(which(isolated(iso2)==1), 2, info = "only one (dgCMatrix)")
-  expect_equal(which(isolated(iso23)==1), c(2,3), info = "two (dgCMatrix)")
-  expect_equal(which(isolated(as.matrix(iso2))==1), 2, info = "only one (matrix)")
-  expect_equal(which(isolated(as.matrix(iso23))==1), c(2,3), info = "two (matrix)")
+  expect_equal(which(isolated(iso2)), c(2,3), info = "only one (dgCMatrix)")
+  expect_equal(which(isolated(iso23)), 2:4, info = "two (dgCMatrix)")
 
   # Test with sparse matrix
-  iso2 <- as(iso2, "dgCMatrix")
-  iso23 <- as(iso23, "dgCMatrix")
+  iso2 <- methods::as(iso2, "dgCMatrix")
+  iso23 <- methods::as(iso23, "dgCMatrix")
 
-  expect_equal(which(isolated(iso2)==1), 2, info = "only one (array)")
-  expect_equal(which(isolated(iso23)==1), c(2,3), info = "two (array)")
+  expect_equal(which(isolated(iso2)), c(2,3), info = "only one (dgCMatrix)")
+  expect_equal(which(isolated(iso23)), 2:4, info = "two (dgCMatrix)")
+
 
   # Dynamic graphs -------------------------------------------------------------
 
@@ -192,15 +191,11 @@ test_that("Finding isolated nodes", {
   iso23 <- lapply(dynadjmat, "[<-", i=c(2,3), j=1:4, value=0)
   iso23 <- lapply(iso23, "[<-", i=1:4, j=c(2,3), value=0)
 
-  expect_equal(which(isolated(iso2)$isolated==1), 2, info = "only one (list)")
-  expect_equal(which(isolated(iso23)$isolated==1), c(2,3), info = "two (list)")
+  expect_equal(which(isolated(iso2)), 2:3, info = "only one (list)")
+  expect_equal(which(isolated(iso23)), 2:4, info = "two (list)")
 
-  # Test with array
-  iso2 <- array(unlist(lapply(iso2, as.matrix)), dim=c(4,4,3))
-  iso23 <- array(unlist(lapply(iso23, as.matrix)), dim=c(4,4,3))
-
-  expect_equal(which(isolated(iso2)$isolated==1), 2, info = "only one (array)")
-  expect_equal(which(isolated(iso23)$isolated==1), c(2,3), info = "two (array)")
+  dn <- new_diffnet(iso23, sample(1:3, 4, TRUE), t0=1, t1=3)
+  expect_equal(isolated(dn), isolated(iso23))
 
 })
 
@@ -215,17 +210,12 @@ test_that("Dropping isolated nodes", {
   iso23[c(2,3),1:4] <- 0
   iso23[1:4,c(2,3)] <- 0
 
-  expect_equal(dim(drop_isolated(iso2)), c(3,3))
-  expect_equal(dim(drop_isolated(iso23)), c(2,2))
+  expect_equal(dim(drop_isolated(iso2)), c(2,2))
+  expect_equal(dim(drop_isolated(iso23)), c(1,1))
 
   # Test with sparse matrix
   iso2 <- as(iso2, "dgCMatrix")
   iso23 <- as(iso23, "dgCMatrix")
-
-  expect_equal(dim(drop_isolated(iso2)), c(3,3), info = "only one (dgCMatrix)")
-  expect_equal(dim(drop_isolated(iso23)), c(2,2), info = "two (dgCMatrix)")
-  expect_equal(dim(drop_isolated(as.matrix(iso2))), c(3,3), info = "only one (matrix)")
-  expect_equal(dim(drop_isolated(as.matrix(iso23))), c(2,2), info = "two (matrix)")
 
   # Dynamic graphs -------------------------------------------------------------
 
@@ -236,8 +226,8 @@ test_that("Dropping isolated nodes", {
   iso23 <- lapply(dynadjmat, "[<-", i=c(2,3), j=1:4, value=0)
   iso23 <- lapply(iso23, "[<-", i=1:4, j=c(2,3), value=0)
 
-  expect_equal(dim(drop_isolated(iso2)[[1]]), c(3,3))
-  expect_equal(dim(drop_isolated(iso23)[[1]]), c(2,2))
+  expect_equal(dim(drop_isolated(iso2)[[1]]), c(2,2))
+  expect_equal(dim(drop_isolated(iso23)[[1]]), c(1,1))
 
   # Test with array
   iso2 <- array(unlist(lapply(iso2, as.matrix)), dim=c(4,4,3),
@@ -250,6 +240,6 @@ test_that("Dropping isolated nodes", {
     c(d[1],d[2], length(x))
   }
 
-  expect_equal(dim_list(drop_isolated(iso2)), c(3,3,3))
-  expect_equal(dim_list(drop_isolated(iso23)), c(2,2,3))
+  expect_equal(dim(drop_isolated(iso2)), c(2,2,3))
+  expect_equal(dim(drop_isolated(iso23)), c(1,1,3))
 })

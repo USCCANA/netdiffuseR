@@ -5,7 +5,7 @@
 \alias{bernoulli}
 \title{Erdos-Renyi model}
 \usage{
-rgraph_er(n = 10, t = 1, p = 0.3,
+rgraph_er(n = 10, t = 1, p = 0.01,
   undirected = getOption("diffnet.undirected"), weighted = FALSE,
   self = getOption("diffnet.self"), as.edgelist = FALSE)
 }

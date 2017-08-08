@@ -6,19 +6,6 @@
 
 using namespace Rcpp;
 
-// toa_mat_cpp
-List toa_mat_cpp(const IntegerVector& year, int t0, int t1);
-RcppExport SEXP _netdiffuseR_toa_mat_cpp(SEXP yearSEXP, SEXP t0SEXP, SEXP t1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerVector& >::type year(yearSEXP);
-    Rcpp::traits::input_parameter< int >::type t0(t0SEXP);
-    Rcpp::traits::input_parameter< int >::type t1(t1SEXP);
-    rcpp_result_gen = Rcpp::wrap(toa_mat_cpp(year, t0, t1));
-    return rcpp_result_gen;
-END_RCPP
-}
 // edgelist_to_adjmat_cpp
 arma::sp_mat edgelist_to_adjmat_cpp(const arma::mat& edgelist, NumericVector weights, int n, bool undirected, bool self, bool multiple);
 RcppExport SEXP _netdiffuseR_edgelist_to_adjmat_cpp(SEXP edgelistSEXP, SEXP weightsSEXP, SEXP nSEXP, SEXP undirectedSEXP, SEXP selfSEXP, SEXP multipleSEXP) {
@@ -55,31 +42,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type year(yearSEXP);
     rcpp_result_gen = Rcpp::wrap(toa_diff_cpp(year));
-    return rcpp_result_gen;
-END_RCPP
-}
-// isolated_cpp
-arma::icolvec isolated_cpp(const arma::sp_mat& adjmat, bool undirected);
-RcppExport SEXP _netdiffuseR_isolated_cpp(SEXP adjmatSEXP, SEXP undirectedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat(adjmatSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(isolated_cpp(adjmat, undirected));
-    return rcpp_result_gen;
-END_RCPP
-}
-// drop_isolated_cpp
-arma::sp_mat drop_isolated_cpp(const arma::sp_mat& adjmat, arma::icolvec isolated, bool undirected);
-RcppExport SEXP _netdiffuseR_drop_isolated_cpp(SEXP adjmatSEXP, SEXP isolatedSEXP, SEXP undirectedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type adjmat(adjmatSEXP);
-    Rcpp::traits::input_parameter< arma::icolvec >::type isolated(isolatedSEXP);
-    Rcpp::traits::input_parameter< bool >::type undirected(undirectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(drop_isolated_cpp(adjmat, isolated, undirected));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -160,17 +122,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t0(adopt_t0SEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type adopt_t1(adopt_t1SEXP);
     rcpp_result_gen = Rcpp::wrap(select_egoalter_cpp(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sparse_indexes
-arma::umat sparse_indexes(const arma::sp_mat& mat);
-RcppExport SEXP _netdiffuseR_sparse_indexes(SEXP matSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type mat(matSEXP);
-    rcpp_result_gen = Rcpp::wrap(sparse_indexes(mat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -584,18 +535,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_netdiffuseR_toa_mat_cpp", (DL_FUNC) &_netdiffuseR_toa_mat_cpp, 3},
     {"_netdiffuseR_edgelist_to_adjmat_cpp", (DL_FUNC) &_netdiffuseR_edgelist_to_adjmat_cpp, 6},
     {"_netdiffuseR_adjmat_to_edgelist_cpp", (DL_FUNC) &_netdiffuseR_adjmat_to_edgelist_cpp, 2},
     {"_netdiffuseR_toa_diff_cpp", (DL_FUNC) &_netdiffuseR_toa_diff_cpp, 1},
-    {"_netdiffuseR_isolated_cpp", (DL_FUNC) &_netdiffuseR_isolated_cpp, 2},
-    {"_netdiffuseR_drop_isolated_cpp", (DL_FUNC) &_netdiffuseR_drop_isolated_cpp, 3},
     {"_netdiffuseR_egonet_attrs_cpp", (DL_FUNC) &_netdiffuseR_egonet_attrs_cpp, 5},
     {"_netdiffuseR_approx_geodesicCpp", (DL_FUNC) &_netdiffuseR_approx_geodesicCpp, 3},
     {"_netdiffuseR_infection_cpp", (DL_FUNC) &_netdiffuseR_infection_cpp, 9},
     {"_netdiffuseR_susceptibility_cpp", (DL_FUNC) &_netdiffuseR_susceptibility_cpp, 9},
     {"_netdiffuseR_select_egoalter_cpp", (DL_FUNC) &_netdiffuseR_select_egoalter_cpp, 4},
-    {"_netdiffuseR_sparse_indexes", (DL_FUNC) &_netdiffuseR_sparse_indexes, 1},
     {"_netdiffuseR_angle", (DL_FUNC) &_netdiffuseR_angle, 4},
     {"_netdiffuseR_sp_trimatl", (DL_FUNC) &_netdiffuseR_sp_trimatl, 1},
     {"_netdiffuseR_sp_diag", (DL_FUNC) &_netdiffuseR_sp_diag, 2},

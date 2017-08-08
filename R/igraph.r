@@ -140,8 +140,15 @@ igraph_to_diffnet <- function(
   if (!length(t0)) t0 <- min(toa, na.rm = TRUE)
   if (!length(t1)) t1 <- max(toa, na.rm = TRUE)
 
-  mat <- if (!islist) igraph::as_adj(graph, attr="weight")
-  else lapply(graph.list, igraph::as_adj, attr="weight")
+  mat <- if (!islist) {
+    wattr <- igraph::list.edge.attributes(graph)
+    wattr <- if ("weights" %in% wattr) "weights" else NULL
+    igraph::as_adj(graph, attr = wattr, sparse = TRUE)
+  } else lapply(graph.list, function(g) {
+    wattr <- igraph::list.edge.attributes(g)
+    wattr <- if ("weights" %in% wattr) "weights" else NULL
+    igraph::as_adj(g, attr=wattr, sparse=TRUE)
+    })
 
   # Adjusting sizes
   if (!islist)

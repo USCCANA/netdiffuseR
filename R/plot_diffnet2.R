@@ -298,6 +298,7 @@ plot_diffnet2.default <- function(
 #'
 #' # Example with a random graph --------------------------------------------------
 #'
+#' \dontrun{
 #' set.seed(1231)
 #'
 #' # Random scale-free diffusion network
@@ -324,6 +325,7 @@ plot_diffnet2.default <- function(
 #' mtext("Both networks have the same distribution on times of adoption", 1,
 #'       outer = TRUE)
 #' par(oldpar)
+#' }
 #'
 #' # Example with Brazilian Farmers --------------------------------------------
 #' \dontrun{

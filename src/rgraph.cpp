@@ -140,20 +140,21 @@ arma::sp_mat rewire_endpoints(
   arma::sp_mat newgraph(graph);
 
   // Getting the indexes
-  arma::umat indexes = sparse_indexes(graph);
 
-  for (unsigned i= 0;i<indexes.n_rows; i++) {
+// for (unsigned i= 0;i<indexes.n_rows; i++) {
+  unsigned int i = 0;
+  for (arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); it++) {
 
     // Checking user interrupt
-    if (i % 1000 == 0)
+    if (++i % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
     // Checking whether to change it or not
     if (unif_rand() > p) continue;
 
     // Indexes
-    int j = indexes.at(i, 0);
-    int k = indexes.at(i, 1);
+    int j = it.row();
+    int k = it.col();
 
     // In the case of undirected graphs, we only modify the lower triangle
     // The upper triangle part will be rewritten during the rand.
@@ -200,8 +201,22 @@ arma::sp_mat rewire_swap(
 
   // Getting the indexes
   arma::umat indexes(graph.n_nonzero, 2);
-  if (undirected) indexes = sparse_indexes(sp_trimatl(newgraph));
-  else            indexes = sparse_indexes(newgraph);
+  unsigned int m = 0;
+  for (arma::sp_mat::const_iterator it = newgraph.begin(); it != newgraph.end(); it++) {
+
+    // Checking cases
+    if      (!self      && (it.row() == it.col())) continue;
+    else if (undirected && (it.row() <  it.col())) continue;
+
+    // Filling the matrix
+    indexes.at(m,0) = it.row();
+    indexes.at(m++,1) = it.col();
+
+  }
+
+  // Shedding rows
+  if (m < indexes.n_rows)
+    indexes.shed_rows(m, indexes.n_rows - 1u);
 
   // double dens = graph.n_nonzero/(graph.n_cols*graph.n_cols);
   int s = 0;
@@ -343,12 +358,10 @@ set.seed(1133)
 x <- barabasi.game(1e4)
 y <- as_adj(x)
 
-ind <- netdiffuseR:::sparse_indexes(y)
 
 microbenchmark(
   ig      = rewire(x, keeping_degseq(niter = 100)),
   nd      = netdiffuseR:::rewire_swap(y, 100),
-  # nd_fast = netdiffuseR:::rewire_swap_fast(y, ind, 100),
   unit="relative"
 )
 

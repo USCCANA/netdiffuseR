@@ -245,14 +245,10 @@ NumericMatrix edges_coords(
 
   yexpand = yexpand * (dev[0]/dev[1]);
 
-  // The the filled elements of the graph
-  arma::umat indexes = sparse_indexes(graph);
+  for(arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); it++) {
 
-  // for(int i=0;i<n;i++) {
-  for(unsigned I=0;I<indexes.n_rows;I++) {
-
-    int i = indexes.at(I,0);
-    int j = indexes.at(I,1);
+    int i = it.row();
+    int j = it.col();
 
     // Checking conditions
     if (undirected && (i < j)) continue;

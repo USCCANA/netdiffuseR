@@ -512,6 +512,10 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
   icol <- t(matrix(0:(mfrow.par[2]-1), nrow=mfrow.par[1], ncol=mfrow.par[2], byrow = TRUE))
 
   # 2. Set up frame
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+  par(mai = c(.1, .05, .05, .05), oma = rep(0,4))
+
   plot.new()
   ylim <- grDevices::extendrange(ylim, ylim)
   plot.window(
@@ -571,17 +575,19 @@ plot_diffnet.list <- function(graph, cumadopt, slices,
 
 
     # Plotting
-    igraph::plot.igraph(ig,
-                        vertex.color = cols,
-                        layout = coords_adjs,
-                        edge.color = edge.col,
-                        vertex.size = rescale.fun(vertex.cex),
-                        vertex.label=label,
-                        add=TRUE, rescale=FALSE,
-                        edge.arrow.size=edge.arrow.size,
-                        vertex.frame.color = vertex.frame.color,
-                        vertex.shape=shapes,
-                        ...)
+    igraph::plot.igraph(
+      ig,
+      vertex.color       = cols,
+      layout             = coords_adjs,
+      edge.color         = edge.col,
+      vertex.size        = rescale.fun(vertex.cex),
+      vertex.label       = label,
+      add                = TRUE,
+      rescale            = FALSE,
+      edge.arrow.size    = edge.arrow.size,
+      vertex.frame.color = vertex.frame.color,
+      vertex.shape       = shapes,
+      ...)
   }
 
   # Legend

@@ -20,15 +20,12 @@ README[.]md
 ^README\_files$
 [.]travis[.]yml
 ^appveyor\.yml$
-
 # Not-ready vignettes
 ^vignettes/simulating.+\.Rmd$
 ^vignettes/structural.+\.Rmd$
-
 # CRAN
 ^NEWS\.md$
 ^cran-comments\.md$
 ^next_release\.md$
-
 ^src/rgraph_scale_free.+$
 makefile

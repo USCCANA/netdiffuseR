@@ -6,11 +6,9 @@
 \usage{
 rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(p = 0.1, undirected = getOption("diffnet.undirected",
-  FALSE), self = getOption("diffnet.self", FALSE)),
-  threshold.dist = function(x) runif(1), exposure.args = list(outgoing =
-  TRUE, valued = getOption("diffnet.valued", FALSE), normalized = TRUE),
-  name = "A diffusion network", behavior = "Random contagion")
+  rewire.args = list(), threshold.dist = function(x) runif(1),
+  exposure.args = list(), name = "A diffusion network",
+  behavior = "Random contagion")
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
@@ -97,6 +95,22 @@ By default sets the threshold to be random for each node in the graph.
 
 If \code{seed.graph} is provided, no random graph is generated and the simulation
 is applied using that graph instead.
+
+\code{rewire.args} has the following default options:
+
+\tabular{ll}{
+  \code{p}          \tab \code{.1} \cr
+  \code{undirected} \tab \code{getOption("diffnet.undirected", FALSE)} \cr
+  \code{self}       \tab \code{getOption("diffnet.self", FALSE)}
+}
+
+\code{exposure.args} has the following default options:
+
+\tabular{ll}{
+  \code{outgoing} \tab \code{TRUE} \cr
+  \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
+  \code{normalized} \tab \code{TRUE}
+}
 }
 \examples{
 # Asimple example -----------------------------------------------------------
@@ -112,6 +126,7 @@ y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
 # Re thinking the Adoption of Tetracycline ----------------------------------
 newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
+
 
 }
 \seealso{

@@ -2,7 +2,8 @@ rm(list=ls())
 library(foreign)
 
 # Preparing the data -----------------------------------------------------------
-brfarmers <- read.dta("data-raw/brfarmers.dta")
+# brfarmers <- read.dta("data-raw/brfarmers.dta")
+load("data/brfarmers.rdata")
 
 # Adding factors
 

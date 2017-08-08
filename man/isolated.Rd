@@ -5,14 +5,18 @@
 \alias{drop_isolated}
 \title{Find and remove isolated vertices}
 \usage{
-isolated(graph, undirected = getOption("diffnet.undirected"))
+isolated(graph, undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE))
 
-drop_isolated(graph, undirected = getOption("diffnet.undirected"))
+drop_isolated(graph, undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE))
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
+
+\item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 }
 \value{
 When \code{graph} is an adjacency matrix:

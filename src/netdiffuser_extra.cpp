@@ -1,31 +1,6 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
-// Returns a M x 2 matrix (M: # of non-zero elements) with the set of coordinates
-// of the non-zero elements of an sparse matrix. Indices are from 0 to (n-1)
-// [[Rcpp::export]]
-arma::umat sparse_indexes(const arma::sp_mat & mat) {
-
-  int n  = mat.n_nonzero;
-  arma::umat indices(n,2);
-
-  // If the matrix is empty (which makes no sense)
-  if (!n) return indices;
-
-  // More efficient implementation
-  arma::sp_mat::const_iterator begin = mat.begin();
-  arma::sp_mat::const_iterator end   = mat.end();
-
-  int i = 0;
-  for (arma::sp_mat::const_iterator it = begin; it != end; ++it) {
-    indices.at(i, 0) = it.row();
-    indices.at(i++, 1) = it.col();
-  }
-
-  // return indices;
-  return indices;
-}
-
 //   I  ) (x(i) < x(j)) & (y(i) < y(j)) = + Works fine iff
 //   II ) (x(i) > x(j)) & (y(i) < y(j)) = - must add pi
 //   III) (x(i) > x(j)) & (y(i) > y(j)) = +

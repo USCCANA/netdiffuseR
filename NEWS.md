@@ -1,3 +1,23 @@
+# Changes in netdiffuseR version 1.18.2999 (dev)
+
+## New functions
+
+## Bug fixes
+
+* `igraph_to_diffnet` was failing with the graph had no weights.
+
+* `drop_isolated` was not behaving well for diffnet objects.
+
+
+## Other changes
+
+* Replacing some C++ functions by R functions in cases in which there
+  was no decrease in performance.
+  
+* `plot_diffnet` function now has smaller margins, so looks more appealing.
+
+
+
 # Changes in netdiffuseR version 1.18.1 (2017-07-22)
 
 ## New functions

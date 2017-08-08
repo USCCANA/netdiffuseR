@@ -747,8 +747,8 @@ diffnet.toa <- function(graph) {
 
   # checking stack
   nper <- ncol(mat[[1]])
-  graph$adopt    <- mat$adopt
-  graph$cumadopt <- mat$cumadopt
+  graph$adopt    <- unname(mat$adopt)
+  graph$cumadopt <- unname(mat$cumadopt)
 
   graph
 

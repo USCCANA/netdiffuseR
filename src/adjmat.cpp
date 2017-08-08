@@ -17,32 +17,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List toa_mat_cpp(const IntegerVector & year, int t0, int t1) {
-
-  // Pin down NAs
-  LogicalVector isna = is_na(year);
-
-  // Measuring time
-  int n = year.size();
-
-  // Creating output
-  List out(2);
-  arma::mat adopt(n,t1 - t0 + 1, arma::fill::zeros);
-
-  for(int i=0;i<n;i++) {
-    if (isna[i]) continue;
-    adopt(i,year[i]-t0) = 1.0;
-  }
-
-  arma::mat cumadopt = cumsum(adopt, 1);
-
-  /* Adopt_mat -> cumadopt
-    Adopt_mat1 -> adopt
-  */
-  return List::create(_["adopt"]=adopt, _["cumadopt"]=cumadopt);
-}
-
-// [[Rcpp::export]]
 arma::sp_mat edgelist_to_adjmat_cpp(
     const arma::mat & edgelist,
     NumericVector weights = NumericVector::create(),
@@ -103,14 +77,13 @@ arma::mat adjmat_to_edgelist_cpp(
     const arma::sp_mat & adjmat,
     bool undirected = true) {
 
-  arma::umat coords = sparse_indexes(adjmat);
-  int m = coords.n_rows;
+  unsigned int m = adjmat.n_nonzero, i = 0u;
   arma::mat edgelist(m, 3);
 
-  for (int i=0;i<m;i++) {
-    edgelist.at(i,0) = coords.at(i, 0) + 1;
-    edgelist.at(i,1) = coords.at(i, 1) + 1;
-    edgelist.at(i,2) = adjmat.at(coords.at(i,0), coords.at(i,1));
+  for (arma::sp_mat::const_iterator it = adjmat.begin(); it != adjmat.end(); it++) {
+    edgelist.at(i,0) = it.row() + 1;
+    edgelist.at(i,1) = it.col() + 1;
+    edgelist.at(i++,2) = (*it);
   }
 
   return edgelist;
@@ -143,68 +116,6 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
   return diff;
 }
 
-// [[Rcpp::export]]
-arma::icolvec isolated_cpp(
-    const arma::sp_mat & adjmat,
-    bool undirected=true) {
-
-  int n = adjmat.n_cols;
-
-  // Checking size
-  if ((int) adjmat.n_rows != n)
-    stop("It must be an square matrix.");
-
-  arma::icolvec isolated(n, arma::fill::ones);
-
-  // Looping through (all) the matrix. Setting the value to 0
-  // whenever there's a link (for both individuals).
-
-  for(int i=0;i<n;i++) {
-    // First, need to get the size of the loop
-    int m=n;
-    if (undirected) m = i;
-    for(int j=0;j<m;j++)
-      if ((adjmat.at(i,j)!=0))
-        isolated[i]=0, isolated[j]=0;
-  }
-
-  return isolated;
-}
-
-// [[Rcpp::export]]
-arma::sp_mat drop_isolated_cpp(
-    const arma::sp_mat & adjmat,
-    arma::icolvec isolated, bool undirected=true) {
-
-  // Checking size
-  if (adjmat.n_rows != adjmat.n_cols)
-    stop("It must be an square matrix.");
-
-  if (isolated.n_rows==0u) isolated = isolated_cpp(adjmat, undirected);
-  else if (isolated.n_rows != adjmat.n_cols) stop("-isolated- must have the same length as nrow(adjmat)");
-
-  int m = sum(isolated);
-  arma::sp_mat newadjmat(adjmat.n_cols-m,adjmat.n_cols-m);
-
-  // Rcpp::warning()
-
-  // Indexes of the new adjacency matrix
-  int ii=0;
-  int ji=0;
-  for(unsigned i=0;i<adjmat.n_cols;i++) {
-
-    // If an isolated was found, continue next
-    if (isolated[i]) continue;
-    for(unsigned j=0;j<adjmat.n_cols;j++) {
-      if (isolated[j]) continue;
-      newadjmat.at(ii,ji++)=adjmat.at(i,j);
-    }
-    // Continue next
-    ii++,ji=0;
-  }
-
-  return newadjmat;
-}
 
 /** *R
 set.seed(123)
