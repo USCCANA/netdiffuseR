@@ -535,7 +535,7 @@ arma::sp_mat rgraph_ba_cpp(
   double randdraw, cump;
 
   // If self=true, then the prob are computed over m0+1, otherwise only over m0
-  int extra = self? 1 : 0, exists;
+  int extra = self? 1 : 0;
   for(int i=0;i<t;i++) {
     // Checling user interrup
     if (i % 1000 == 0)
