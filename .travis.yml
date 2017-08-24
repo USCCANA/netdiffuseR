@@ -1,10 +1,11 @@
 dist: trusty
 language: r
-sudo: required
+sudo: false
+cache: packages
 
 r:
   - release
-  - devel # Not working
+  - devel
   - oldrel
 
 os:
@@ -28,8 +29,8 @@ r_packages:
   - survival
 
 
-before_install:
-  - if [ $TRAVIS_OS_NAME == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2 && sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; rm gfortran-4.8.2-darwin13.tar.bz2 ; fi
+#before_install:
+#  - if [ $TRAVIS_OS_NAME == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2 && sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; rm gfortran-4.8.2-darwin13.tar.bz2 ; fi
 
 after_success:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then Rscript -e 'covr::codecov()'; fi
