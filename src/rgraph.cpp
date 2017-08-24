@@ -609,6 +609,12 @@ arma::sp_mat rgraph_ba_cpp(
 }
 
 
+// The bag algorithm should be straight forward.
+// For each time that node i receives a link, add it to the bag, which we
+// know what is the size in the beginning.
+// Later, to draw a new vertex, it suffices to bag[runif()*length(bag)],
+// so we get him from the bag.
+
 // [[Rcpp::export]]
 arma::sp_mat rgraph_ba_new_cpp(int m0 = 1, int m = 1, int t = 10, bool self=true) {
   int n = m0;
