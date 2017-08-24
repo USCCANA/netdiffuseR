@@ -1,4 +1,4 @@
-all:
+news:
 	Rscript -e "rmarkdown::pandoc_convert('NEWS.md', 'plain', output='inst/NEWS')"&& \
 	head -n 80 inst/NEWS
 check:
