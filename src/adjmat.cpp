@@ -131,8 +131,8 @@ List egonet_attrs_cpp(
     bool outer=true, bool self=true, bool valued=true) {
 
   // Creating containers
-  std::vector< std::vector< unsigned int >> id(graph.n_rows);
-  std::vector< std::vector< double >> value(graph.n_rows);
+  std::vector< std::vector< unsigned int > > id(graph.n_rows);
+  std::vector< std::vector< double > > value(graph.n_rows);
 
   typedef arma::sp_mat::const_iterator spiter;
 
