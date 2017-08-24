@@ -113,10 +113,19 @@ test_that("vertex_covariate_distance", {
   X <- matrix(runif(n*2, -1,1), ncol=2)
   W <- rgraph_ws(n,4,.2)
 
+  # Mahalanobis
   D <- vertex_covariate_dist(W,X)
   D2 <- methods::as(matrix(0, n,n), "dgCMatrix")
 
   D2 <- methods::as(as.matrix(dist(X)), "dgCMatrix")*W
+
+  expect_equal(sum(D2-D), 0)
+
+  # minkowski
+  D <- vertex_covariate_dist(W,X, p=1)
+  D2 <- methods::as(matrix(0, n,n), "dgCMatrix")
+
+  D2 <- methods::as(as.matrix(dist(X, method = "minkowski", p=1)), "dgCMatrix")*W
 
   expect_equal(sum(D2-D), 0)
 })

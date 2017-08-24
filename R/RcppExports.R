@@ -262,6 +262,7 @@ vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
 }
 
 #' Comparisons at dyadic level
+#'
 #' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
 #' @param X A numeric vector of length \eqn{n}.
 #' @param funname Character scalar. Comparison to make (see details).
@@ -278,8 +279,11 @@ vertex_mahalanobis_dist_cpp <- function(graph, X, S) {
 #' \code{"distance"}, \code{"^2"} or \code{"quaddistance"}, \code{">"} or \code{"greater"},
 #' \code{"<"} or \code{"smaller"}, \code{">="} or \code{"greaterequal"},
 #' \code{"<="} or \code{"smallerequal"}, \code{"=="} or \code{"equal"}.
+#'
+#'
 #' @return A matrix \code{dgCMatrix} of size \eqn{n\times n}{n*n} with values in
 #' the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}.
+#' @family dyadic-level comparison functions
 #' @examples
 #'
 #' # Basic example ------------------------------------------------------------

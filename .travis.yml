@@ -3,7 +3,8 @@ sudo: required
 
 r:
   - release
-#  - devel # Not working
+  - devel # Not working
+  - oldrel
 
 os:
   - linux

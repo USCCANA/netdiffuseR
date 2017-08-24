@@ -1,3 +1,12 @@
+2017-08-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/egonets.R: Working on possible bug reported by CRAN.
+	* R/stats.R: Documentation.
+	* src/Makevars*: Adding OpenMP support via RcppArmadillo update
+	* src/stats.cpp: Fixing bug in vertex_covariate_distance
+	  plus making some speed fixes.
+	* src/rgraph.cpp: More efficient rgraph_ba_cpp.
+ 
+
 2017-07-23  George G. Vega Yon <g.vegayon@gmail.com>
 	* : Working on making the package more light weight.
 	* : Checking included datasets duplicated columns.

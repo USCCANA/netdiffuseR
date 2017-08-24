@@ -57,4 +57,6 @@ test_that("Error messages", {
 
   expect_error(egonet_attrs(graph, attrs=1), "must be a list")
   expect_error(egonet_attrs(graph, attrs=vector("list",18)), "as many elements as")
+  expect_error(egonet_attrs(graph, attrs=vector("list", 20), V = -1), "out of range")
+  expect_error(egonet_attrs(graph, attrs=vector("list", 20), V = NA), "is empty")
 })

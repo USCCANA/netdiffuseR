@@ -503,24 +503,6 @@ arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
 //
 // -----------------------------------------------------------------------------
 
-// Checking if integer i is in x.
-int does_exists(const std::vector< unsigned int > & x, unsigned int val) {
-  int ans = -1;
-
-  // If the vector is empty, then nothing to see here
-  if (x.size() == 0)
-    return ans;
-
-  for (unsigned int i = 0; i < x.size(); i++) {
-    if (x.at(i) != val) continue;
-
-    ans = i;
-    break;
-  }
-
-  return ans;
-}
-
 // [[Rcpp::export]]
 arma::sp_mat rgraph_ba_cpp(
     const arma::sp_mat & graph,
@@ -537,14 +519,12 @@ arma::sp_mat rgraph_ba_cpp(
   dgr_new.subvec(0, m0-1) = dgr;
 
   std::vector< std::vector<unsigned int> > source(n);
-  std::vector< std::vector<double> > value(n);
 
   // Setting the initial values
   int nlocations = graph.n_nonzero;
   arma::sp_mat::const_iterator iter;
   for (iter = graph.begin(); iter != graph.end(); iter++) {
-    source.at(iter.row()).push_back(iter.col());
-    value.at(iter.row()).push_back(*iter);
+    source[iter.row()].push_back(iter.col());
   }
 
 
@@ -594,15 +574,9 @@ arma::sp_mat rgraph_ba_cpp(
 
         // Links to the set of previous vertices
         if (randdraw <= cump) {
-          exists = does_exists(source.at(m0), k);
 
-          if (exists < 0) {
-            source.at(m0).push_back(k);
-            value.at(m0).push_back(1.0);
-            ++nlocations;
-          } else {
-            ++value.at(m0).at(exists);
-          }
+          source[m0].push_back(k);
+          ++nlocations;
 
           dgr_new.at(k) += 1.0;
 
@@ -617,20 +591,19 @@ arma::sp_mat rgraph_ba_cpp(
 
   // Now need to coerce into a -sp_mat-
   arma::umat locations(2, nlocations);
-  arma::colvec values(nlocations);
+  arma::colvec values(nlocations, arma::fill::ones);
 
   int curloc = 0;
   for (int i = 0; i<n; i++) {
-    for (unsigned int j = 0; j < source.at(i).size(); j++) {
+    for (unsigned int j = 0; j < source[i].size(); j++) {
       locations.at(0, curloc) = i;
-      locations.at(1, curloc) = source.at(i).at(j);
-      values.at(curloc++) = value.at(i).at(j);
+      locations.at(1, curloc++) = source[i][j];
     }
 
   }
 
   // Creating the sparse matrix
-  arma::sp_mat graph_new(locations, values, n, n, true, false);
+  arma::sp_mat graph_new(true, locations, values, n, n, true, false);
 
   return graph_new;
 }

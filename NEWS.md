@@ -8,6 +8,9 @@
 
 * `drop_isolated` was not behaving well for diffnet objects.
 
+* `vertex_covariate_dist` was incorrectly specified. Only the default p=2
+  were OK. Now fixed and the tests/ folder includes a tests on this. 
+
 
 ## Other changes
 

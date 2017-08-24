@@ -6,7 +6,7 @@
 \usage{
 egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
   fun = function(x) x, as.df = FALSE, self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"))
+  valued = getOption("diffnet.valued"), ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -24,6 +24,8 @@ egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
 \item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
 
 \item{valued}{Logical scalar. When \code{TRUE} weights will be considered. Otherwise non-zero values will be replaced by ones.}
+
+\item{...}{Further arguments to be passed to \code{fun}.}
 }
 \value{
 A list with ego alters's attributes. By default, if the graph is static, the
@@ -99,7 +101,7 @@ the network has loops or not.
 \examples{
 # Simple example with diffnet -----------------------------------------------
 set.seed(1001)
-diffnet <- rdiffnet(150, 20, seed.graph="small-world")
+diffnet <- rdiffnet(150, 5, seed.graph="small-world")
 
 # Adding attributes
 indeg <- dgr(diffnet, cmode="indegree")

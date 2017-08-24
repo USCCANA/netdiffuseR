@@ -2,6 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{matrix_compare}
 \alias{matrix_compare}
+\alias{binary-functions}
 \alias{compare_matrix}
 \title{Non-zero element-wise comparison between two sparse matrices}
 \usage{
@@ -85,13 +86,17 @@ compfun <- function(a,b)
 
 microbenchmark::microbenchmark(
   diffnet = matrix_compare(A, B, compfun),
-  R       = ifelse(Am > Bm, Am, Bm),
+  R       = matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)),
   times   = 10
 )
 # Unit: milliseconds
-#    expr       min        lq      mean    median       uq      max neval cld
-# diffnet  349.1731  350.8051  360.7358  353.5629  354.787  432.450    10  a
-#       R 1333.9946 1406.1971 2249.7132 1515.0995 1976.028 7691.428    10   b
+#    expr       min        lq      mean    median        uq      max neval
+# diffnet  352.7989  355.0193  583.5366  357.7138  364.7604 2493.914    10
+#       R 1648.9607 1744.6762 2491.2435 1947.4344 2729.1274 6260.011    10
 
 }
+}
+\seealso{
+Other dyadic-level comparison functions: \code{\link{vertex_covariate_compare}},
+  \code{\link{vertex_covariate_dist}}
 }

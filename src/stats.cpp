@@ -33,18 +33,12 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
 
   // Creating objects
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
-  arma::sp_mat::const_iterator b = graph.begin();
-  arma::sp_mat::const_iterator e = graph.end();
 
   // Iterating over elements of graph
-  int i,j;
-  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++) {
 
-    i = iter.row();
-    j = iter.col();
-
-    ans.at(i,j) = pow(
-      arma::as_scalar((X.row(i) - X.row(j)) * (X.row(i) - X.row(j)).t()),
+    ans.at(iter.row(),iter.col()) = pow(
+      arma::accu(pow(arma::abs(X.row(iter.row()) - X.row(iter.col())), p)),
       1/p
     );
   }
@@ -53,27 +47,25 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
 }
 
 // [[Rcpp::export]]
-arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
-                                   const arma::mat & X,
-                                   const arma::mat & S) {
+arma::sp_mat vertex_mahalanobis_dist_cpp(
+    const arma::sp_mat & graph,
+    const arma::mat & X,
+    const arma::mat & S
+  ) {
 
   // Creating objects
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
-  arma::sp_mat::const_iterator b = graph.begin();
-  arma::sp_mat::const_iterator e = graph.end();
 
   arma::mat Sinv = S.i();
 
   // Iterating over elements of graph
-  int i,j;
-  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++) {
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++) {
 
-    i = iter.row();
-    j = iter.col();
-
-    ans.at(i,j) = pow(
-      arma::as_scalar((X.row(i) - X.row(j)) * Sinv * (X.row(i) - X.row(j)).t()),
-      0.5
+    ans.at(iter.row(),iter.col()) = pow(
+      arma::as_scalar(
+        (X.row(iter.row()) - X.row(iter.col())) * Sinv * (X.row(iter.row()) - X.row(iter.col())).t()
+    ),
+    0.5
     );
   }
 
@@ -81,6 +73,7 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
 }
 
 //' Comparisons at dyadic level
+//'
 //' @param graph A matrix of size \eqn{n\times n}{n*n} of class \code{dgCMatrix}.
 //' @param X A numeric vector of length \eqn{n}.
 //' @param funname Character scalar. Comparison to make (see details).
@@ -97,8 +90,11 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
 //' \code{"distance"}, \code{"^2"} or \code{"quaddistance"}, \code{">"} or \code{"greater"},
 //' \code{"<"} or \code{"smaller"}, \code{">="} or \code{"greaterequal"},
 //' \code{"<="} or \code{"smallerequal"}, \code{"=="} or \code{"equal"}.
+//'
+//'
 //' @return A matrix \code{dgCMatrix} of size \eqn{n\times n}{n*n} with values in
 //' the form of \eqn{funname(x_i,x_j)}{funname(X[i],X[j])}.
+//' @family dyadic-level comparison functions
 //' @examples
 //'
 //' # Basic example ------------------------------------------------------------
@@ -112,20 +108,21 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat & graph,
 //' vertex_covariate_compare(G, x, "<=")
 //' @export
 // [[Rcpp::export]]
-arma::sp_mat vertex_covariate_compare(const arma::sp_mat & graph, const NumericVector & X,
-                                      std::string funname) {
+arma::sp_mat vertex_covariate_compare(
+    const arma::sp_mat & graph,
+    const NumericVector & X,
+    std::string funname
+  ) {
 
   // Creating objects
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
-  arma::sp_mat::const_iterator b = graph.begin();
-  arma::sp_mat::const_iterator e = graph.end();
 
   // Fetching function
   funcPtr fun;
   st_getfun(funname, fun);
 
   // Iterating over elements of graph
-  for (arma::sp_mat::const_iterator iter = b; iter != e; iter++)
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++)
     ans.at(iter.row(),iter.col()) = fun(X[iter.row()], X[iter.col()]);
 
   return ans;
@@ -276,27 +273,53 @@ arma::sp_mat matrix_compareCpp(
   int n = A.n_cols;
   int m = A.n_rows;
 
-
   // Comparing
   typedef arma::sp_mat::const_iterator spiter;
 
-  arma::sp_umat done(n, m);
-  arma::sp_mat   ans(n, m);
+  arma::sp_mat Bcpy(B);
+
+  std::vector< double > val(A.n_nonzero + B.n_nonzero);
+  std::vector< unsigned int > row(A.n_nonzero + B.n_nonzero),
+    col(A.n_nonzero + B.n_nonzero);
 
   // Iterating through matrix A
-  for (spiter iter=A.begin(); iter!= A.end(); iter++)
+  unsigned int i = 0u;
+  for (spiter iter=A.begin(); iter!= A.end(); iter++) {
+
+    row[i] = iter.row();
+    col[i] = iter.col();
+
     // Filling the value
-    ans.at(iter.row(), iter.col()) =
-      as< double >(fun(*iter, B.at(iter.row(), iter.col()) )),
-      done.at(iter.row(), iter.col()) = 1u;
+    // ans.at(iter.row(), iter.col()) =
+    val[i++] = as< double >(fun(*iter, B.at(iter.row(), iter.col()) ));
+    Bcpy.at(iter.row(), iter.col()) = 0;
+
+  }
 
   // Iterating throught matrix B
-  for (spiter iter=B.begin(); iter!= B.end(); iter++)
-    if (done.at(iter.row(), iter.col()) != 1u)
-      // Filling the value
-      ans.at(iter.row(), iter.col()) =
-        as< double >(fun(A.at(iter.row(), iter.col()), *iter));
+  for (spiter iter=Bcpy.begin(); iter!= Bcpy.end(); iter++) {
 
+    row[i] = iter.row();
+    col[i] = iter.col();
+
+    // Filling the value
+    // ans.at(iter.row(), iter.col()) =
+    val[i++] = as< double >(fun(A.at(iter.row(), iter.col()), *iter));
+  }
+
+  row.erase(row.begin() + i, row.end());
+  col.erase(col.begin() + i, col.end());
+  val.erase(val.begin() + i, val.end());
+
+  // Batch constructor
+  arma::sp_mat ans(
+      arma::join_cols(
+        arma::conv_to< arma::urowvec >::from(row),
+        arma::conv_to< arma::urowvec >::from(col)
+      ),
+      arma::conv_to< arma::colvec >::from(val), n, m,
+      true, false
+  );
 
   return ans;
 

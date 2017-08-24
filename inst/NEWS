@@ -1,5 +1,32 @@
 
 
+CHANGES IN NETDIFFUSER VERSION 1.18.2999 (DEV)
+
+
+New functions
+
+
+Bug fixes
+
+-   igraph_to_diffnet was failing with the graph had no weights.
+
+-   drop_isolated was not behaving well for diffnet objects.
+
+-   vertex_covariate_dist was incorrectly specified. Only the default
+    p=2 were OK. Now fixed and the tests/ folder includes a tests
+    on this.
+
+
+Other changes
+
+-   Replacing some C++ functions by R functions in cases in which there
+    was no decrease in performance.
+
+-   plot_diffnet function now has smaller margins, so looks
+    more appealing.
+
+
+
 CHANGES IN NETDIFFUSER VERSION 1.18.1 (2017-07-22)
 
 

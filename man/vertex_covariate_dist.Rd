@@ -5,6 +5,7 @@
 \alias{vertex_covariate_dist}
 \alias{p-norm}
 \alias{mahalanobis}
+\alias{minkowski}
 \alias{vertex_mahalanobis_dist}
 \title{Computes covariate distance between connected vertices}
 \usage{
@@ -33,12 +34,13 @@ Faster than \code{\link{dist}}, these functions compute distance metrics
 between pairs of vertices that are connected (otherwise skip).
 
 The function \code{vertex_covariate_dist} is the simil of \code{\link{dist}}
-and returns p-norms. It is implemented as follows (for each pair of vertices):
+and returns p-norms (Minkowski distance). It is implemented as follows (for
+each pair of vertices):
 
 \deqn{%
-D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
+D_{ij} = \left(\sum_{k=1}^K \left|X_{ik} - X_{jk}\right|^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
 }{%
-D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
+D(i,j) = [\sum_k abs(X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
 }
 
 In the case of mahalanobis distance, for each pair of vertex \eqn{(i,j)}, the
@@ -90,6 +92,9 @@ Other statistics: \code{\link{bass}},
   \code{\link{hazard_rate}}, \code{\link{infection}},
   \code{\link{moran}}, \code{\link{struct_equiv}},
   \code{\link{threshold}}
+
+Other dyadic-level comparison functions: \code{\link{matrix_compare}},
+  \code{\link{vertex_covariate_compare}}
 }
 \author{
 George G. Vega Yon

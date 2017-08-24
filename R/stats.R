@@ -1051,12 +1051,13 @@ plot.diffnet_adopters <- function(x, y = NULL,
 #' between pairs of vertices that are connected (otherwise skip).
 #'
 #' The function \code{vertex_covariate_dist} is the simil of \code{\link{dist}}
-#' and returns p-norms. It is implemented as follows (for each pair of vertices):
+#' and returns p-norms (Minkowski distance). It is implemented as follows (for
+#' each pair of vertices):
 #'
 #' \deqn{%
-#' D_{ij} = \left(\sum_{k=1}^K (X_{ik} - X_{jk})^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
+#' D_{ij} = \left(\sum_{k=1}^K \left|X_{ik} - X_{jk}\right|^{p} \right)^{1/p}\mbox{ if }graph_{i,j}\neq 0
 #' }{%
-#' D(i,j) = [\sum_k (X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
+#' D(i,j) = [\sum_k abs(X(i,k) - X(j,k))^p]^(1/p)  if graph(i,j) != 0
 #' }
 #'
 #' In the case of mahalanobis distance, for each pair of vertex \eqn{(i,j)}, the
@@ -1102,8 +1103,9 @@ plot.diffnet_adopters <- function(x, y = NULL,
 #' Retrieved 20:31, September 27, 2016, from
 #' \url{https://en.wikipedia.org/w/index.php?title=Mahalanobis_distance&oldid=741488252}
 #' @author George G. Vega Yon
-#' @aliases p-norm mahalanobis
+#' @aliases p-norm mahalanobis minkowski
 #' @family statistics
+#' @family dyadic-level comparison functions
 #' @seealso \code{\link[stats:mahalanobis]{mahalanobis}} in the stats package.
 NULL
 
@@ -1133,14 +1135,6 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 
   return(ans)
 }
-
-
-#' Useful functions for binary comparisons in sparse matrices
-#'
-#' @details ASD
-#'
-#' @name binary-functions
-NULL
 
 #' Non-zero element-wise comparison between two sparse matrices
 #'
@@ -1214,15 +1208,17 @@ NULL
 #'
 #' microbenchmark::microbenchmark(
 #'   diffnet = matrix_compare(A, B, compfun),
-#'   R       = ifelse(Am > Bm, Am, Bm),
+#'   R       = matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)),
 #'   times   = 10
 #' )
 #' # Unit: milliseconds
-#' #    expr       min        lq      mean    median       uq      max neval cld
-#' # diffnet  349.1731  350.8051  360.7358  353.5629  354.787  432.450    10  a
-#' #       R 1333.9946 1406.1971 2249.7132 1515.0995 1976.028 7691.428    10   b
+#' #    expr       min        lq      mean    median        uq      max neval
+#' # diffnet  352.7989  355.0193  583.5366  357.7138  364.7604 2493.914    10
+#' #       R 1648.9607 1744.6762 2491.2435 1947.4344 2729.1274 6260.011    10
 #'
 #' }
+#' @aliases binary-functions
+#' @family dyadic-level comparison functions
 matrix_compare <- function(A, B, fun) {
 
   # Checking objects class
