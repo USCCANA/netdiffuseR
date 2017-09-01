@@ -125,20 +125,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// angle
-double angle(double x0, double y0, double x1, double y1);
-RcppExport SEXP _netdiffuseR_angle(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
-    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
-    Rcpp::traits::input_parameter< double >::type x1(x1SEXP);
-    Rcpp::traits::input_parameter< double >::type y1(y1SEXP);
-    rcpp_result_gen = Rcpp::wrap(angle(x0, y0, x1, y1));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sp_trimatl
 arma::sp_mat sp_trimatl(const arma::sp_mat& x);
 RcppExport SEXP _netdiffuseR_sp_trimatl(SEXP xSEXP) {
@@ -543,7 +529,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdiffuseR_infection_cpp", (DL_FUNC) &_netdiffuseR_infection_cpp, 9},
     {"_netdiffuseR_susceptibility_cpp", (DL_FUNC) &_netdiffuseR_susceptibility_cpp, 9},
     {"_netdiffuseR_select_egoalter_cpp", (DL_FUNC) &_netdiffuseR_select_egoalter_cpp, 4},
-    {"_netdiffuseR_angle", (DL_FUNC) &_netdiffuseR_angle, 4},
     {"_netdiffuseR_sp_trimatl", (DL_FUNC) &_netdiffuseR_sp_trimatl, 1},
     {"_netdiffuseR_sp_diag", (DL_FUNC) &_netdiffuseR_sp_diag, 2},
     {"_netdiffuseR_unif_rand_w_exclusion", (DL_FUNC) &_netdiffuseR_unif_rand_w_exclusion, 2},

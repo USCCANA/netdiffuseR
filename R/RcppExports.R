@@ -33,10 +33,6 @@ select_egoalter_cpp <- function(adjmat_t0, adjmat_t1, adopt_t0, adopt_t1) {
     .Call(`_netdiffuseR_select_egoalter_cpp`, adjmat_t0, adjmat_t1, adopt_t0, adopt_t1)
 }
 
-angle <- function(x0, y0, x1, y1) {
-    .Call(`_netdiffuseR_angle`, x0, y0, x1, y1)
-}
-
 sp_trimatl <- function(x) {
     .Call(`_netdiffuseR_sp_trimatl`, x)
 }

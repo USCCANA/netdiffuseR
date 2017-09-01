@@ -255,7 +255,7 @@ NumericMatrix edges_coords(
     if (no_contemporary && (toa(i)==toa(j)) ) continue;
 
     // Computing angle
-    double a = angle(x(i), y(i)/yexpand, x(j), y(j)/yexpand);
+    double a = atan2((y(j) - y(i))/yexpand, x(j) - x(i));
     alpha.push_back(a);
 
     // Adding the xs and the ys
@@ -353,7 +353,7 @@ arma::mat edges_arrow(
   yexpand = yexpand * (dev[0]/dev[1]);
 
   // Computing angle and adjusting for sign
-  double alpha = angle(x0, y0/yexpand, x1, y1/yexpand);
+  double alpha = atan2((y1 - y0)/yexpand, x1 - x0);
 
   // Filling coords ------------------------------------------------------------
   coords.at(0,0) = x1;
