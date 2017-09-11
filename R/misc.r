@@ -105,6 +105,11 @@ pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
 #' @param labels Character vector. When provided, specifies using different
 #' labels for the tick marks than those provided by \code{tick.marjks}.
 #' @param add.box Logical scalar. When \code{TRUE} adds a box around the key.
+#' @param na.col Character scalar. If specified, adds an aditional box indicating the NA color.
+#' @param na.height Numeric scalar. Relative height of the NA box. Only use if
+#' \code{na.col} is not \code{NULL}.
+#' @param na.lab Character scalar. Label of the \code{NA} block. Only use if
+#' \code{na.col} is not \code{NULL}.
 #' @param ... Further arguments to be passed to \code{\link[graphics:rect]{rect}}
 #' @export
 #' @return Invisible \code{NULL}.
@@ -126,8 +131,11 @@ drawColorKey <- function(
   main=NULL,
   key.pos=c(.925,.975,.05,.95),
   pos = 2, nlevels=length(tick.marks),
-  color.palette=grDevices::colorRampPalette(c("lightblue", "yellow", "red"))(nlevels),
+  color.palette=grDevices::colorRampPalette(c("steelblue", "gray", "tomato"))(nlevels),
   tick.width=c(.01,.0075), add.box=TRUE,
+  na.col = NULL,
+  na.height = .1,
+  na.lab = "n/a",
   ...) {
 
   # Checking the pos argument
@@ -143,6 +151,15 @@ drawColorKey <- function(
     y*key.pos[3], -y*(1-key.pos[4])
   ))
 
+  # Giving an space for the NA, putting the starting point
+  # a 10% higher.
+  if (length(na.col)) {
+    na.coords <- coords[3]
+    coords[3] <- coords[3] + (coords[4] - coords[3])*na.height
+  } else {
+    na.coords <- 0
+  }
+
   # Adjusting for text
   if (length(main)) {
     nlines <- length(strsplit(main, "\n")[[1]])
@@ -150,7 +167,6 @@ drawColorKey <- function(
     # nchars <- min(max(nchar(tick.marks)),5)
     # coords[1] <- coords[1] + par("cxy")
   }
-
 
   s <- seq(coords[3], coords[4], length.out = nlevels + 1)
   rcoords <- data.frame(
@@ -172,12 +188,53 @@ drawColorKey <- function(
 
   i <- switch (pos,NA,1,NA,2)
   sgn <- ifelse(pos==2, 1, -1)
-  if (!add.box) graphics::segments(coords[i], coords[3], coords[i], coords[4])
+
+  # Drawing the box
+  if (!add.box)
+    graphics::segments(
+      x0 = coords[i],
+      y0 = ifelse(length(na.col), na.coords, coords[3]),
+      x1 = coords[i], y1 = coords[4])
+
   graphics::segments(coords[i] - tw[1]*sgn, atick.marks, coords[i] + tw[2]*sgn, atick.marks)
   graphics::text(coords[i] - sgn*tw[1], atick.marks, labels = labels, pos=pos)
 
   # Adding box
-  if (add.box) graphics::rect(coords[1], coords[3], coords[2], coords[4])
+  if (add.box)
+    graphics::rect(
+      xleft = coords[1],
+      ybottom = ifelse(length(na.col), na.coords, coords[3]),
+      xright = coords[2], ytop = coords[4])
+
+  # Adding the NA if any
+  if (length(na.col)) {
+
+    # Drawing the rectangle
+    graphics::rect(
+      xleft   = coords[1],
+      ybottom = na.coords,
+      xright  = coords[2],
+      ytop    = coords[3],
+      col     = na.col,
+      border  = "transparent"
+    )
+
+    # Adding text
+    # graphics::segments(
+    #   x0 = coords[i] - tw[1]*sgn,
+    #   y0 = (coords[3] + na.coords)/2,
+    #   x1 = coords[i] + tw[2]*sgn,
+    #   y1 = (coords[3] + na.coords)/2
+    # )
+
+    # graphics::text(coords[i] - sgn*tw[1], atick.marks, labels = labels, pos=pos)
+    graphics::text(
+      x = coords[i] - sgn*tw[1],
+      y = (coords[3] + na.coords)/2,
+      labels = na.lab,
+      pos = pos
+    )
+  }
 
   if (length(main))
     graphics::text(

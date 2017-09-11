@@ -18,7 +18,6 @@ test_that("methods of plot_diffnet2", {
   # Should get the same outputs
   set.seed(1);ans_dn <- plot_diffnet2(dn)
   set.seed(1);ans_gp <- plot_diffnet2(dn$graph[[nslices(dn)]], dn$toa)
-  set.seed(1);ans_gp <- plot_diffnet2(dn$graph[[nslices(dn)]], dn$toa)
   expect_equal(ans_dn, ans_gp)
 
 })

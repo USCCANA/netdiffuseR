@@ -33,14 +33,8 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 #' @param color.ramp A function as returned by \code{\link[grDevices:colorRamp]{colorRamp}}.
 #' @param layout Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param key.width Numeric scalar. Sets the proportion of the plot (x-axis) that the key uses.
-#' @param key.title Character scalar. Title of the key (vertex colors).
+#' @param key.args List. Further arguments to be passed to \code{\link{drawColorKey}}.
 #' @param main Character scalar. Title of the graph.
-#' @param vertex.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param vertex.shape Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param vertex.label Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param vertex.frame.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param edge.arrow.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param edge.curved Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param add.map Character scalar. When \code{"first"} plots a \code{\link{diffusionMap}} before the
 #'  graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds nothing.
 #' @param diffmap.args List. If \code{add.map=TRUE}, arguments passed to \code{diffusionMap}.
@@ -52,6 +46,16 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 #' @param no.graph Logical scala. When \code{TRUE} the graph is not drawn. This only makes
 #' sense when the option \code{add.map} is active.
 #' @details If \code{key.width<=0} then no key is created.
+#'
+#' By defult, the function passes the following values to \code{plot.igraph}:
+#'
+#' \itemize{
+#' \item{\code{vertex.label} equals to \code{""}}
+#' \item{\code{vertex.frame.color} equals to \code{"white"}}
+#' \item{\code{add} equals to \code{TRUE}}
+#' \item{\code{rescale} equals to \code{FALSE}}
+#' \item{\code{vertex.size} equals to \code{rescale.fun(vertex.size)}}
+#' }
 #'
 #' @return A list with the following elements
 #' \item{layout}{A numeric matrix with vertex coordinates.}
@@ -69,35 +73,19 @@ plot_diffnet2 <- function(graph, ...) UseMethod("plot_diffnet2")
 #' @export
 #' @include diffnet-methods.r data.r
 plot_diffnet2.diffnet <- function(
-  graph, toa=NULL,
-  slice=nslices(graph),
-  color.ramp = grDevices::colorRamp(c("skyblue","yellow", "red")),
-  layout = NULL,
-  key.width = .10,
-  key.title = "Time of Adoption",
-  main = "Diffusion dynamics",
-  vertex.size = NULL,
-  vertex.shape = NULL,
-  vertex.label = "",
-  vertex.frame.color="gray",
-  edge.arrow.size=.5,
-  edge.curved=FALSE,
-  add.map = NULL,
-  diffmap.args=list(kde2d.args=list(n=100)),
-  diffmap.alpha=.5,
-  include.white="first",
-  rescale.fun= rescale_vertex_igraph,
-  no.graph=FALSE,
+  graph,
+  slice = nslices(graph),
   ...
 ) {
+
+  if (!exists("toa"))
+    toa <- graph$toa
+
   plot_diffnet2.default(
-    graph=graph$graph[[slice]], toa=if (length(toa)) toa else graph$toa, pers=graph$meta$pers,
-    color.ramp=color.ramp, layout=layout, key.width=key.width, key.title=key.title,
-    main=main,
-    vertex.size=vertex.size, vertex.shape=vertex.shape, vertex.label=vertex.label,
-    vertex.frame.color=vertex.frame.color, edge.arrow.size=edge.arrow.size,
-    edge.curved=edge.curved, add.map=add.map, diffmap.args=diffmap.args,diffmap.alpha,include.white,
-    rescale.fun,no.graph,...)
+    graph         = graph$graph[[slice]],
+    toa           = toa,
+    pers          = graph$meta$pers,
+    ...)
 }
 
 #' @rdname plot_diffnet2
@@ -105,25 +93,27 @@ plot_diffnet2.diffnet <- function(
 plot_diffnet2.default <- function(
   graph,
   toa,
-  pers = min(toa, na.rm = TRUE):max(toa, na.rm = TRUE),
-  color.ramp = grDevices::colorRamp(c("skyblue","yellow", "red")),
-  layout = NULL,
-  key.width = .10,
-  key.title = "Time of\nAdoption",
-  main = "Diffusion dynamics",
-  vertex.size = NULL,
-  vertex.shape = NULL,
-  vertex.label = "",
-  vertex.frame.color="gray",
-  edge.arrow.size=.5,
-  edge.curved=FALSE,
-  add.map=NULL,
-  diffmap.args=list(kde2d.args=list(n=100)),
-  diffmap.alpha=.5,
+  pers          = min(toa, na.rm = TRUE):max(toa, na.rm = TRUE),
+  color.ramp    = grDevices::colorRamp(c("steelblue","gray", "tomato")),
+  layout        = NULL,
+  key.width     = 0.1,
+  key.args      = list(),
+  main          = "Diffusion dynamics",
+  add.map       = NULL,
+  diffmap.args  = list(kde2d.args=list(n=100)),
+  diffmap.alpha = .5,
   include.white = "first",
-  rescale.fun=rescale_vertex_igraph,
-  no.graph=FALSE,
+  rescale.fun   = rescale_vertex_igraph,
+  no.graph      = FALSE,
   ...) {
+
+  # Modifying some arguments
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+  par(xpd = NA)
+
+  # Collecting arguments
+  igraph.args <- list(...)
 
   # Some constants
   nper <- length(pers)
@@ -161,9 +151,9 @@ plot_diffnet2.default <- function(
   col <- rgb(col[,1], col[,2], col[,3], col[,4], maxColorValue = 255)
 
   # Shapes
-  if (!no.graph && !length(vertex.shape)) {
-    vertex.shape <- rep("circle", nnodes(graph))
-    vertex.shape[type_non] <- "square"
+  if (!no.graph && !length(igraph.args$vertex.shape)) {
+    igraph.args$vertex.shape <- rep("circle", nnodes(graph))
+    igraph.args$vertex.shape[type_non] <- "square"
   }
 
   # Adjmat must have dimnames to make sure sorting in igraph is fine
@@ -174,12 +164,12 @@ plot_diffnet2.default <- function(
   g <- igraph::graph_from_adjacency_matrix(graph, mode="undirected")
   g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
 
-  l <- if (!length(layout)) igraph::layout_nicely(g)
+  igraph.args$layout <- if (!length(layout)) igraph::layout_nicely(g)
   else if (inherits(layout, "function")) layout(g)
   else layout
 
-  xran <- range(l[,1])
-  yran <- range(l[,2])
+  xran <- range(igraph.args$layout[,1])
+  yran <- range(igraph.args$layout[,2])
 
   # Adjusting
   if (key.width > 0)
@@ -193,7 +183,7 @@ plot_diffnet2.default <- function(
   if (length(add.map)) {
 
     dm <- do.call(diffusionMap.default, c(diffmap.args, list(graph=graph, x=toa,
-                                                             layout = l)))
+                                                             layout = igraph.args$layout)))
     # Levels
     dmlvls <- pretty(range(dm$map$z), diffmap.args$kde2d.args$n)
 
@@ -216,20 +206,26 @@ plot_diffnet2.default <- function(
   } else dm <- NULL
 
   # Plotting graph -------------------------------------------------------------
+
+  # Setting up parameters
+  if (!length(igraph.args$vertex.label)) igraph.args$vertex.label <- ""
+  if (!length(igraph.args$vertex.frame.color)) igraph.args$vertex.frame.color <- "white"
+  if (length(igraph.args$add) && !igraph.args$add)
+    warning("-add- has been set to add=TRUE.")
+  if (length(igraph.args$rescale) && igraph.args$rescale)
+    warning("-rescale- has been set to rescale=FALSE.")
+
+  igraph.args$add <- TRUE
+  igraph.args$rescale <- FALSE
+  igraph.args$vertex.size <- rescale.fun(igraph.args$vertex.size)
+
+  # Calling igraph
   if (!no.graph)
-    igraph::plot.igraph(
-      g, layout=l,
-      vertex.color=col,
-      vertex.label=vertex.label,
-      vertex.shape=vertex.shape,
-      vertex.size=rescale.fun(vertex.size),
-      vertex.frame.color=vertex.frame.color,
-      edge.arrow.size=edge.arrow.size,
-      edge.curved=edge.curved,
-      add=TRUE, rescale=FALSE,
-      xlim=xran, ylim=yran,
-      ...
+    do.call(
+      what = igraph::plot.igraph,
+      args = c(list(g, vertex.color = col, xlim=xran, ylim=yran),igraph.args)
     )
+
 
   if (length(add.map) && (add.map=="last"))
       graphics::.filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
@@ -249,18 +245,30 @@ plot_diffnet2.default <- function(
 
     color.palette <- grDevices::colorRampPalette(color.palette, TRUE)
 
-    drawColorKey(
-      toa, key.pos = c(1-key.width, 0.975, 0.05, 0.95),
-      nlevels = 100, main = key.title, border="transparent",
-      color.palette = color.palette(100))
+    # Filling missings
+    if (!length(key.args$main))   key.args$main <- "Time of Adoption"
+    if (!length(key.args$na.col)) key.args$na.col <- "transparent"
+    if (!length(key.args$na.lab)) key.args$na.lab <- "Non-adopters"
+    if (!length(key.args$border)) key.args$border <- "transparent"
+
+    do.call(
+      what = drawColorKey,
+      args = c(
+        list(toa, key.pos = c(1-key.width, 0.975, 0.05, 0.95), nlevels = 100,
+             color.palette = color.palette(100)),
+        key.args
+      )
+    )
   }
 
 
-  invisible(list(layout=l,vertex.color=col,
-                 vertex.label=vertex.label,
-                 vertex.shape=vertex.shape,
-                 vertex.size=vertex.size,
-                 diffmap=dm))
+  invisible(list(
+    layout       = igraph.args$layout,
+    vertex.color = col,
+    vertex.size  = igraph.args$vertex.size,
+    vertex.shape = igraph.args$vertex.shape,
+    diffmap      = dm)
+    )
 }
 
 

@@ -1,6 +1,8 @@
 2017-09-11  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/plot_diffnet2.r: Change name of the file and fixed bug in setting
 	  the color of the colorKey.
+	* R/diffnet-methods.r: Simplifying functions.
+	* R/misc.r: Idem.
 
 
 2017-09-01  George G. Vega Yon <g.vegayon@gmail.com>

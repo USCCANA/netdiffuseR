@@ -359,7 +359,7 @@ summary.diffnet <- function(
 #' of the device and the last two in the bottom.
 #'
 #' The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
-#' and adopters respectively. The new adopters (default color \code{"red"}) have a different
+#' and adopters respectively. The new adopters (default color \code{"tomato"}) have a different
 #' color that the adopters when the graph is at their time of adoption, hence,
 #' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 #' be plotted in red.
@@ -388,73 +388,56 @@ summary.diffnet <- function(
 #' @keywords hplot
 #' @export
 #' @author George G. Vega Yon
-plot_diffnet <- function(
-  graph, cumadopt,
-  slices=NULL,
-  undirected=TRUE,
-  vertex.col=c("white", "red", "blue"),
-  vertex.shape=c("square", "circle", "circle"),
-  vertex.cex="degree",
-  label=NA,
-  edge.col="gray",
-  mode="fruchtermanreingold", layout.par=NULL,
-  mfrow.par=NULL, main="Network in period %d",
-  gmode=ifelse(undirected, "graph", "digraph"),
-  lgd = list(x="bottom", legend=c("Non-adopters", "New adopters","Adopters"), pch=21,
-             bty="n", cex=1.2, horiz=TRUE), coords=NULL,
-  vertex.frame.color="gray",
-  edge.arrow.size=.25,
-  intra.space=c(.15,.15),
-  key.height = 0.1,
-  rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100),
-  ...
+plot_diffnet <- function(...) UseMethod("plot_diffnet")
+
+#' @export
+#' @rdname plot_diffnet
+plot_diffnet.diffnet <- function(
+  graph, ...
 ) {
-  switch (class(graph),
-    array = plot_diffnet.array(
-      graph, cumadopt, slices, undirected, vertex.col, vertex.shape, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
-      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
-    list = plot_diffnet.list(
-      graph, cumadopt, slices, undirected, vertex.col, vertex.shape, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
-      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
-    diffnet = plot_diffnet.list(
-      graph$graph, graph$cumadopt, slices, graph$meta$undirected,
-      vertex.col, vertex.shape, vertex.cex, label,
-      edge.col, mode, layout.par, mfrow.par, main, gmode, lgd, coords,
-      vertex.frame.color, edge.arrow.size, intra.space, key.height, rescale.fun,...),
-    stopifnot_graph(graph)
+
+  plot_diffnet.default(
+    graph    = graph$graph,
+    cumadopt = graph$cumadopt,
+    undirected = graph$meta$undirected,
+    ...
   )
+
+
 }
 
-# @export
-# @rdname plot_diffnet
-plot_diffnet.array <- function(graph, ...) {
-  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
-  plot_diffnet.list(graph, ...)
-}
-
-# @export
-# @rdname plot_diffnet
-plot_diffnet.list <- function(graph, cumadopt, slices,
-                         undirected=TRUE,
-                         vertex.col=c("white", "red", "blue"),
-                         vertex.shape=c("square", "circle", "circle"),
-                         vertex.cex="degree",
-                         label=NA,
-                         edge.col="gray",
-                         mode="fruchtermanreingold", layout.par=NULL,
-                         mfrow.par=NULL, main="Network in period %d",
-                         gmode=ifelse(undirected, "graph", "digraph"),
-                         lgd = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+#' @rdname plot_diffnet
+#' @export
+plot_diffnet.default <- function(
+  graph, cumadopt, slices = 1:nslices(graph),
+  undirected         = TRUE,
+  vertex.col         = c("white", "tomato", "steelblue"),
+  vertex.shape       = c("square", "circle", "circle"),
+  vertex.cex         = "degree",
+  label              = NA,
+  edge.col           = "gray",
+  mode               = "fruchtermanreingold",
+  layout.par         = NULL,
+  mfrow.par          = NULL,
+  main               = "Network in period %d",
+  gmode              = ifelse(undirected, "graph", "digraph"),
+  lgd                = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
                                     bty="n", cex=1.2, horiz=TRUE),
-                         coords=NULL,
-                         vertex.frame.color="gray",
-                         edge.arrow.size=.25,
-                         intra.space=c(.15,.15),
-                         key.height = 0.1,
-                         rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100),
-                         ...) {
+  coords             = NULL,
+  vertex.frame.color = "gray",
+  edge.arrow.size    = .25,
+  intra.space        = c(.15,.15),
+  key.height         = 0.1,
+  rescale.fun        = function(x) rescale_vertex_igraph(x, adjust = 100),
+  ...) {
+
+  # Checking class
+  if (inherits(graph, "array")) {
+    graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
+  } else if (!inherits(graph, "list"))
+    stopifnot_graph(graph)
+
+
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)

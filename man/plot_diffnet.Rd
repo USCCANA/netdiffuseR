@@ -2,20 +2,28 @@
 % Please edit documentation in R/diffnet-methods.r
 \name{plot_diffnet}
 \alias{plot_diffnet}
+\alias{plot_diffnet.diffnet}
+\alias{plot_diffnet.default}
 \title{Plot the diffusion process}
 \usage{
-plot_diffnet(graph, cumadopt, slices = NULL, undirected = TRUE,
-  vertex.col = c("white", "red", "blue"), vertex.shape = c("square",
-  "circle", "circle"), vertex.cex = "degree", label = NA,
-  edge.col = "gray", mode = "fruchtermanreingold", layout.par = NULL,
-  mfrow.par = NULL, main = "Network in period \%d",
+plot_diffnet(...)
+
+\method{plot_diffnet}{diffnet}(graph, ...)
+
+\method{plot_diffnet}{default}(graph, cumadopt, slices = 1:nslices(graph),
+  undirected = TRUE, vertex.col = c("white", "tomato", "steelblue"),
+  vertex.shape = c("square", "circle", "circle"), vertex.cex = "degree",
+  label = NA, edge.col = "gray", mode = "fruchtermanreingold",
+  layout.par = NULL, mfrow.par = NULL, main = "Network in period \%d",
   gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x = "bottom",
-  legend = c("Non-adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
+  legend = c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
   cex = 1.2, horiz = TRUE), coords = NULL, vertex.frame.color = "gray",
   edge.arrow.size = 0.25, intra.space = c(0.15, 0.15), key.height = 0.1,
   rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100), ...)
 }
 \arguments{
+\item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
+
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{cumadopt}{\eqn{n\times T}{n*T} matrix.}
@@ -58,8 +66,6 @@ the graph are used.}
 \item{key.height}{Numeric scalar. Sets the proportion of the plot (y-axis) that the key uses.}
 
 \item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
-
-\item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 }
 \value{
 Calculated coordinates for the grouped graph (invisible).
@@ -84,7 +90,7 @@ and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 of the device and the last two in the bottom.
 
 The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
-and adopters respectively. The new adopters (default color \code{"red"}) have a different
+and adopters respectively. The new adopters (default color \code{"tomato"}) have a different
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 be plotted in red.
