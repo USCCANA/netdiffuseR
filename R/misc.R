@@ -127,7 +127,9 @@ drawColorKey <- function(
   key.pos=c(.925,.975,.05,.95),
   pos = 2, nlevels=length(tick.marks),
   color.palette=grDevices::colorRampPalette(c("lightblue", "yellow", "red"))(nlevels),
-  tick.width=c(.01,.0075), add.box=TRUE, ...) {
+  tick.width=c(.01,.0075), add.box=TRUE,
+  ...) {
+
   # Checking the pos argument
   test <- which((key.pos > 1) | (key.pos < 0))
   if (length(test))

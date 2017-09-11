@@ -16,6 +16,8 @@ Bug fixes
     p=2 were OK. Now fixed and the tests/ folder includes a tests
     on this.
 
+-   plot_diffnet2 was not passing color.ramp to drawColorKey. Now fixed.
+
 
 Other changes
 

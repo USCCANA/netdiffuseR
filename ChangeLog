@@ -1,3 +1,8 @@
+2017-09-11  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.r: Change name of the file and fixed bug in setting
+	  the color of the colorKey.
+
+
 2017-09-01  George G. Vega Yon <g.vegayon@gmail.com>
 	* src/netdiffuser_extra.cpp: Since atan2 checks the quadrant, 
 	  the angle() function is no longer needed.

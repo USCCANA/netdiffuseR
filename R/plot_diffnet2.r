@@ -151,8 +151,14 @@ plot_diffnet2.default <- function(
   t01 <- pers
   t01 <- c(t01[1], t01[nper])
   col <- color.ramp( (toa - t01[1])/(t01[2] - t01[1]) )
+
+  # Adding alpha
+  if (ncol(col) < 4)
+    col <- cbind(col, 255)
+
   col[type_non,] <- 255
-  col <- rgb(col[,1], col[,2], col[,3], maxColorValue = 255)
+
+  col <- rgb(col[,1], col[,2], col[,3], col[,4], maxColorValue = 255)
 
   # Shapes
   if (!no.graph && !length(vertex.shape)) {
@@ -229,9 +235,26 @@ plot_diffnet2.default <- function(
       graphics::.filled.contour(dm$map$x, dm$map$y, dm$map$z, levels = dmlvls, col=dmcol)
 
   # # Plotting boxes -------------------------------------------------------------
-  if (key.width > 0)
-    drawColorKey(toa, key.pos = c(1-key.width, 0.975, 0.05, 0.95),
-                 nlevels = 100, main = key.title, border="transparent")
+  if (key.width > 0) {
+    # Adjusting the color
+    color.palette <- color.ramp(c(0,.5,1))
+
+    if (ncol(color.palette) < 4)
+      color.palette <- cbind(color.palette, 255)
+
+    color.palette <- grDevices::rgb(
+      color.palette[,1], color.palette[,2], color.palette[,3],
+      color.palette[,4],
+      maxColorValue = 255)
+
+    color.palette <- grDevices::colorRampPalette(color.palette, TRUE)
+
+    drawColorKey(
+      toa, key.pos = c(1-key.width, 0.975, 0.05, 0.95),
+      nlevels = 100, main = key.title, border="transparent",
+      color.palette = color.palette(100))
+  }
+
 
   invisible(list(layout=l,vertex.color=col,
                  vertex.label=vertex.label,
