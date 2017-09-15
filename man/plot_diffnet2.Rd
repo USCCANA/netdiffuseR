@@ -8,7 +8,7 @@
 \usage{
 plot_diffnet2(graph, ...)
 
-\method{plot_diffnet2}{diffnet}(graph, slice = nslices(graph), ...)
+\method{plot_diffnet2}{diffnet}(graph, toa, slice = nslices(graph), ...)
 
 \method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
   TRUE):max(toa, na.rm = TRUE),
@@ -24,9 +24,9 @@ plot_diffnet2(graph, ...)
 
 \item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
-\item{slice}{Integer scalar. Number of slice to use as baseline for drawing the graph.}
-
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
+
+\item{slice}{Integer scalar. Number of slice to use as baseline for drawing the graph.}
 
 \item{pers}{Integer vector of length \eqn{T} indicating the time periods of the data.}
 

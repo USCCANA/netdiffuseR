@@ -74,11 +74,12 @@ plot_diffnet2 <- function(graph, ...) UseMethod("plot_diffnet2")
 #' @include diffnet-methods.r data.r
 plot_diffnet2.diffnet <- function(
   graph,
+  toa,
   slice = nslices(graph),
   ...
 ) {
 
-  if (!exists("toa"))
+  if (missing(toa))
     toa <- graph$toa
 
   plot_diffnet2.default(

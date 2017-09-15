@@ -655,18 +655,33 @@ plot_diffnet.default <- function(
 #' @author George G. Vega Yon
 plot_threshold <- function(
   graph, expo, toa,
-  include_censored=FALSE,
-  t0=min(toa, na.rm = TRUE), attrs=NULL,
-  undirected=getOption("diffnet.undirected"), no.contemporary=TRUE,
-  main="Time of Adoption by Network Threshold", xlab="Time", ylab="Threshold",
-  vertex.cex="degree", vertex.col=rgb(.3,.3,.8,.5),
-  vertex.label="", vertex.lab.pos=NULL,  vertex.lab.cex=1,
-  vertex.lab.adj = c(.5,.5), vertex.lab.col=rgb(.3,.3,.8,.9),
-  vertex.sides = 40L, vertex.rot = 0,
-  edge.width = 2, edge.col = rgb(.6,.6,.6,.1), arrow.length=.20,
-  include.grid = TRUE, bty="n",
-  vertex.bcol=vertex.col, jitter.factor=c(1,0), jitter.amount=c(.25,0),
-  xlim=NULL, ylim=NULL, ...
+  include_censored = FALSE,
+  t0               = min(toa, na.rm = TRUE),
+  attrs            = NULL,
+  undirected       = getOption("diffnet.undirected"),
+  no.contemporary  = TRUE,
+  main             = "Time of Adoption by\nNetwork Threshold",
+  xlab             = "Time",
+  ylab             = "Threshold",
+  vertex.cex       = "degree",
+  vertex.col       = grDevices::adjustcolor("tomato", .8),
+  vertex.label     = "",
+  vertex.lab.pos   = NULL,
+  vertex.lab.cex   = 1,
+  vertex.lab.adj   = c(.5,.5),
+  vertex.lab.col   = "gray27",
+  vertex.sides     = 40L,
+  vertex.rot       = 0,
+  edge.width       = 2,
+  edge.col         = rgb(.6,.6,.6,.1),
+  arrow.length     = .20,
+  include.grid     = TRUE, bty="n",
+  vertex.bcol      = "white",
+  jitter.factor    = c(1,0),
+  jitter.amount    = c(.25,0),
+  xlim             = NULL,
+  ylim             = NULL,
+  ...
 ) {
 
   if (missing(expo))
@@ -931,12 +946,26 @@ plot_threshold.list <- function(
 #' out <- plot_infectsuscep(graph, toa, K=3, logscale = FALSE)
 #' @author George G. Vega Yon
 plot_infectsuscep <- function(
-  graph, toa, t0=NULL,normalize=TRUE, K=1L, r=0.5, expdiscount=FALSE, bins=20,nlevels=round(bins/2), h=NULL,
-  logscale=TRUE, main="Distribution of Infectiousness and\nSusceptibility",
-  xlab="Infectiousness of ego", ylab="Susceptibility of ego",
-  sub=ifelse(logscale, "(in log-scale)", NA),
-  color.palette = grDevices::colorRampPalette(grDevices::blues9),
-  include.grid=TRUE, exclude.zeros=FALSE, valued=getOption("diffnet.valued",FALSE), ...
+  graph,
+  toa,
+  t0            = NULL,
+  normalize     = TRUE,
+  K             = 1L,
+  r             = 0.5,
+  expdiscount   = FALSE,
+  bins          = 20,
+  nlevels       = round(bins/2),
+  h             = NULL,
+  logscale      = TRUE,
+  main          = "Distribution of Infectiousness and\nSusceptibility",
+  xlab          = "Infectiousness of ego",
+  ylab          = "Susceptibility of ego",
+  sub           = ifelse(logscale, "(in log-scale)", NA),
+  color.palette = grDevices::colorRampPalette(c("skyblue","tomato")),
+  include.grid  = TRUE,
+  exclude.zeros = FALSE,
+  valued        = getOption("diffnet.valued",FALSE),
+  ...
 ) {
 
   # Checking the times argument
@@ -1106,13 +1135,24 @@ plot_infectsuscep.list <- function(graph, toa, t0, normalize,
 #' @return A matrix as described in \code{\link{cumulative_adopt_count}}.
 #' @export
 #' @author George G. Vega Yon
-plot_adopters <- function(obj, freq=FALSE, what=c("adopt","cumadopt"),
-                          add=FALSE, include.legend=TRUE, include.grid=TRUE,
-                          pch=c(21,24), type=c("b", "b"),
-                          ylim=if (!freq) c(0,1) else NULL, lty=c(1,1), col=c("black","black"),
-                          bg = c("lightblue","gray"),
-                          xlab="Time", ylab=ifelse(freq, "Frequency", "Proportion"),
-                          main="Adopters and Cumulative Adopters", ...) {
+plot_adopters <- function(
+  obj,
+  freq           = FALSE,
+  what           = c("adopt","cumadopt"),
+  add            = FALSE,
+  include.legend = TRUE,
+  include.grid   = TRUE,
+  pch            = c(21,24),
+  type           = c("b", "b"),
+  ylim           = if (!freq) c(0,1) else NULL,
+  lty            = c(1,1),
+  col            = c("black","black"),
+  bg             = c("tomato","gray"),
+  xlab           = "Time",
+  ylab           = ifelse(freq, "Frequency", "Proportion"),
+  main           = "Adopters and Cumulative Adopters",
+  ...
+  ) {
 
   # Checking what
   if (any(!(what %in% c("adopt", "cumadopt"))))

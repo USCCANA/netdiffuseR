@@ -1,6 +1,11 @@
 # Changes in netdiffuseR version 1.18.2999 (dev)
 
-## New functions
+## New functions and features
+
+* `rdiffnet` now allows passing scalars for `threshold.dist`, more over, the user
+  can also ask the function to just warn when there is no diffusion instead of
+  returning with error.
+  
 
 ## Bug fixes
 

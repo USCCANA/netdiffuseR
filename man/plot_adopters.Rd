@@ -7,8 +7,8 @@
 plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
   add = FALSE, include.legend = TRUE, include.grid = TRUE, pch = c(21,
   24), type = c("b", "b"), ylim = if (!freq) c(0, 1) else NULL, lty = c(1,
-  1), col = c("black", "black"), bg = c("lightblue", "gray"),
-  xlab = "Time", ylab = ifelse(freq, "Frequency", "Proportion"),
+  1), col = c("black", "black"), bg = c("tomato", "gray"), xlab = "Time",
+  ylab = ifelse(freq, "Frequency", "Proportion"),
   main = "Adopters and Cumulative Adopters", ...)
 }
 \arguments{

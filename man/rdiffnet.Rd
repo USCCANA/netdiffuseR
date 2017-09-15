@@ -2,13 +2,14 @@
 % Please edit documentation in R/rdiffnet.R
 \name{rdiffnet}
 \alias{rdiffnet}
+\alias{rdiffnet}
 \title{Random diffnet network}
 \usage{
 rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(), threshold.dist = function(x) runif(1),
-  exposure.args = list(), name = "A diffusion network",
-  behavior = "Random contagion")
+  rewire.args = list(), threshold.dist = runif(n), exposure.args = list(),
+  name = "A diffusion network", behavior = "Random contagion",
+  stop.no.diff = TRUE)
 }
 \arguments{
 \item{n}{Integer scalar. Number of vertices.}
@@ -29,13 +30,17 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
 \item{rewire.args}{List. Arguments to be passed to \code{\link{rewire_graph}}.}
 
 \item{threshold.dist}{Either a function to be applied via \code{\link{sapply}},
-or a vector/matrix with \eqn{n} elements. Sets the adoption threshold for each node.}
+a numeric scalar, or a vector/matrix with \eqn{n} elements. Sets the adoption
+threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
 
 \item{name}{Character scalar. Passed to \code{\link{as_diffnet}}.}
 
 \item{behavior}{Character scalar. Passed to \code{\link{as_diffnet}}.}
+
+\item{stop.no.diff}{Logical scalar. When \code{TRUE}, the function will return
+with error if there was no diffusion. Otherwise it throws a warning.}
 }
 \value{
 A random \code{\link{diffnet}} class object.

@@ -211,7 +211,7 @@ diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- colorRampPalette(blues9)(100)
+col <- colorRampPalette(c("white", "tomato"))(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0), cex=.8)
 image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")

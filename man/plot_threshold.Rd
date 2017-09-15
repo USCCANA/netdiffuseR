@@ -6,15 +6,15 @@
 \usage{
 plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
   na.rm = TRUE), attrs = NULL, undirected = getOption("diffnet.undirected"),
-  no.contemporary = TRUE, main = "Time of Adoption by Network Threshold",
+  no.contemporary = TRUE, main = "Time of Adoption by\\nNetwork Threshold",
   xlab = "Time", ylab = "Threshold", vertex.cex = "degree",
-  vertex.col = rgb(0.3, 0.3, 0.8, 0.5), vertex.label = "",
+  vertex.col = grDevices::adjustcolor("tomato", 0.8), vertex.label = "",
   vertex.lab.pos = NULL, vertex.lab.cex = 1, vertex.lab.adj = c(0.5, 0.5),
-  vertex.lab.col = rgb(0.3, 0.3, 0.8, 0.9), vertex.sides = 40L,
-  vertex.rot = 0, edge.width = 2, edge.col = rgb(0.6, 0.6, 0.6, 0.1),
-  arrow.length = 0.2, include.grid = TRUE, bty = "n",
-  vertex.bcol = vertex.col, jitter.factor = c(1, 0),
-  jitter.amount = c(0.25, 0), xlim = NULL, ylim = NULL, ...)
+  vertex.lab.col = "gray27", vertex.sides = 40L, vertex.rot = 0,
+  edge.width = 2, edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
+  include.grid = TRUE, bty = "n", vertex.bcol = "white",
+  jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
+  ylim = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}

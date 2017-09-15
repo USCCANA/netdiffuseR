@@ -80,3 +80,14 @@ test_that("All should be equal!", {
 
   expect_equal(net1, net2)
 })
+
+
+test_that("Error and warning on rdiffnet", {
+
+  set.seed(111)
+
+  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,10)), "Incorrect length")
+  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,100)), "No diffusion")
+  expect_warning(rdiffnet(100, 5, threshold.dist = rep(10,100), stop.no.diff = FALSE), "No diffusion")
+
+})

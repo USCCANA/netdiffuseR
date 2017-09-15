@@ -1,3 +1,11 @@
+2017-09-15  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Making the coding more neat.
+	* R/plot_diffnet2.r: Changing defaults
+
+	* R/rdiffnet.r: Working on way the function is written. Also now
+	  threshold.dist can be a scalar and no diffusion can be ok as well.
+
+
 2017-09-11  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/plot_diffnet2.r: Change name of the file and fixed bug in setting
 	  the color of the colorKey.
