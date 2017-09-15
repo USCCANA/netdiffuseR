@@ -328,26 +328,14 @@ summary.diffnet <- function(
 #' @param vertex.col A character vector of size 3 with colors names.
 #' @param vertex.shape A character vector of size 3 with shape names.
 #' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
-#' @param label Character vector of size \eqn{n}. If no provided, rownames of
-#' the graph are used.
-#' @param edge.col Character scalar/vector. Color of the edge.
-#' @param mode Character scalar. Name of the layout algorithm to implement (see details).
-#' @param layout.par Layout parameters (see details).
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}
 #' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
-#' @param gmode Character scalar. See \code{\link[sna:gplot]{gplot}.}
-#' @param vertex.frame.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
-#' @param edge.arrow.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
 #' @param intra.space Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
-#' @param key.height Numeric scalar. Sets the proportion of the plot (y-axis) that the key uses.
 #' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
 #' @param ... Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param coords Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.
 #' @param lgd List of arguments to be passed to \code{\link{legend}}.
 #'
-#' @details Plotting is done via the function \code{\link[sna:gplot]{gplot}},
-#' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
-#' the (\pkg{sna}) package.
+#' @details Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #'
 #' In order to center the attention on the diffusion process itself, the
 #' positions of each vertex are computed only once by aggregating the networks
@@ -364,14 +352,6 @@ summary.diffnet <- function(
 #' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 #' be plotted in red.
 #'
-#' \code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
-#' scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
-#' \code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
-#' degree of the cumulated graph and will be normalized as
-#'
-#' \deqn{vertex.cex = [d - \min(d) + .1]/[\max(d) - \min(d) + .1]\times 2}{vertex.cex = [d - min(d) + .1]/[max(d) - min(d) + .1]* 2}
-#'
-#' where \eqn{d=\sqrt{dgr(graph)}}{d=sqrt(dgr(graph))}.
 #'
 #' @examples
 #' # Generating a random graph
@@ -397,7 +377,7 @@ plot_diffnet.diffnet <- function(
 ) {
 
   plot_diffnet.default(
-    graph    = graph$graph,
+    graph    = as_dgCMatrix(graph),
     cumadopt = graph$cumadopt,
     undirected = graph$meta$undirected,
     ...
@@ -409,62 +389,36 @@ plot_diffnet.diffnet <- function(
 #' @rdname plot_diffnet
 #' @export
 plot_diffnet.default <- function(
-  graph, cumadopt, slices = 1:nslices(graph),
-  undirected         = TRUE,
-  vertex.col         = c("white", "tomato", "steelblue"),
-  vertex.shape       = c("square", "circle", "circle"),
-  vertex.cex         = "degree",
-  label              = NA,
-  edge.col           = "gray",
-  mode               = "fruchtermanreingold",
-  layout.par         = NULL,
-  mfrow.par          = NULL,
-  main               = "Network in period %d",
-  gmode              = ifelse(undirected, "graph", "digraph"),
-  lgd                = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
-                                    bty="n", cex=1.2, horiz=TRUE),
-  coords             = NULL,
-  vertex.frame.color = "gray",
-  edge.arrow.size    = .25,
-  intra.space        = c(.15,.15),
-  key.height         = 0.1,
-  rescale.fun        = function(x) rescale_vertex_igraph(x, adjust = 100),
+  graph, cumadopt,
+  slices       = 1:nslices(graph),
+  vertex.col   = c("white", "tomato", "steelblue"),
+  vertex.shape = c("square", "circle", "circle"),
+  vertex.cex   = rowMeans(dgr(graph)),
+  mfrow.par    = NULL,
+  main         = "Network in period %s",
+  legend.args  = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
+                              bty="n", cex=1.2, horiz=TRUE),
+  intra.space  = c(.15,.15),
+  rescale.fun  = function(x) rescale_vertex_igraph(x),
   ...) {
-
-  # Checking class
-  if (inherits(graph, "array")) {
-    graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
-  } else if (!inherits(graph, "list"))
-    stopifnot_graph(graph)
-
-
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
-  graph    <- graph[slices]
+  graph <- graph[slices]
+
+  # Checking class
+  if (inherits(graph, "array")) {
+    # Coercing into a list
+    graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
+
+
+  } else if (!inherits(graph, "list"))
+    stopifnot_graph(graph)
+
   cumadopt <- cumadopt[,slices,drop=FALSE]
 
   t <- length(graph)
   n <- nrow(graph[[1]])
-  cumgraph <- Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
-  for(i in 1:t) {
-    cumgraph <- cumgraph + graph[[i]]
-  }
-
-  # Getting the coords
-  fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
-
-  # In order to be using SNA functions, we need to coerse the graph
-  # into an object from SparseM
-  if (!length(coords)) coords <- fun(methods::as(cumgraph, "matrix.csc"), layout.par)
-
-  # Computing sizes
-  if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
-    if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(cumgraph, cmode = vertex.cex, undirected=undirected)
-    } else {
-      stop("Invalid -vertex.cex-")
-    }
 
   # Figuring out the dimension
   if (!length(mfrow.par)) {
@@ -481,32 +435,26 @@ plot_diffnet.default <- function(
     else mfrow.par <- c(ceiling(t/4),4)
   }
 
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+  graphics::par(mfrow = mfrow.par, mar = rep(1,4), oma = c(3,0,0,0))
 
-  # 1. Computing dims ----------------------------------------------------------
-  intra.space <- intra.space + 1
-  xrange <- range(coords[,1])
-  xlim   <- xrange + c(0, (xrange[2]-xrange[1])*intra.space[1]*(mfrow.par[2] - 1))
+  # Checking igraph arguments
+  igraph.args <- list(...)
+  if (!length(igraph.args$vertex.label))
+    igraph.args$vertex.label <- NA
+  if (length(igraph.args$add))
+    stop("-add- should not be specified.")
+  if (!length(igraph.args$edge.color))
+    igraph.args$edge.color <- grDevices::adjustcolor("gray", .7)
+  if (!length(igraph.args$vertex.frame.color))
+    igraph.args$vertex.frame.color <- "white"
+  if (!length(igraph.args$edge.arrow.size))
+    igraph.args$edge.arrow.size <- .25
 
-  yrange <- range(coords[,2])
-  ylim   <- yrange - c((yrange[2]-yrange[1])*intra.space[2]*(mfrow.par[1] - 1), 0)
-
-  # Adjustems depending on the number of slice
-  irow <- t(matrix(0:(mfrow.par[1]-1), nrow=mfrow.par[1], ncol=mfrow.par[2], byrow = FALSE))
-  icol <- t(matrix(0:(mfrow.par[2]-1), nrow=mfrow.par[1], ncol=mfrow.par[2], byrow = TRUE))
-
-  # 2. Set up frame
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
-  par(mai = c(.1, .05, .05, .05), oma = rep(0,4))
-
-  plot.new()
-  ylim <- grDevices::extendrange(ylim, ylim)
-  plot.window(
-    grDevices::extendrange(xlim),
-    ylim - c((ylim[2]-ylim[1])*key.height, 0))
-
-  # 3. Plotting
+  # 3. Plotting ----------------------------------------------------------------
   times <- as.integer(names(graph))
+
   for (i in 1:t) {
     # Colors, new adopters are painted differently
     cols <- ifelse(!cumadopt[,i], vertex.col[1],
@@ -516,67 +464,51 @@ plot_diffnet.default <- function(
     shapes <- ifelse(!cumadopt[,i], vertex.shape[1],
                      ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.shape[2], vertex.shape[3]))
 
-    # Computing coords
-    coords_adjs <- cbind(
-      coords[,1] + icol[i]*intra.space[1]*(xrange[2]-xrange[1]),
-      coords[,2] - irow[i]*intra.space[2]*(yrange[2]-yrange[1]))
-
-    # Title
-    if (length(main)) {
-      # Creating the title and computing how much space should be
-      itit <- sprintf(main, slices[i])
-      nlines <- length(strsplit(main, "\n")[[1]])
-      tspace <- par("cxy")[2]*(nlines + .5)
-
-      # Adjusting coords
-      ystart <- range(coords_adjs[,2])
-      coords_adjs[,2] <- (coords_adjs[,2] - ystart[1])/(ystart[2] - ystart[1])*(
-        ystart[2] - ystart[1] - tspace) + ystart[1]
-
-      # Including text
-      xstart <- range(coords_adjs[,1])
-      text(
-        x = (xstart[2] + xstart[1])/2,
-        y = ystart[2] - tspace,
-        labels = itit,
-        pos=3
-      )
-
-    }
-
-    # Coercing into the right method
-    if (!inherits(graph[[i]], "dgCMatrix")) g <- methods::as(graph[[i]], "dgCMatrix")
-    else g <- graph[[i]]
-
     # Checking dimnames
-    if (!length(unlist(dimnames(g), recursive = TRUE)))
-      dimnames(g) <- list(1:nnodes(g), 1:nnodes(g))
+    if (!length(nodes(graph)))
+      dimnames(graph[[i]]) <- list(1:nnodes(graph[[i]]), 1:nnodes(graph[[i]]))
 
     # Creating igraph object
-    ig  <- igraph::graph_from_adjacency_matrix(g)
-    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(g)))
+    ig  <- igraph::graph_from_adjacency_matrix(graph[[i]])
+    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(graph[[i]])))
 
+    # Computing layout
+    if (!length(igraph.args$layout)) {
+      igraph.args$layout <- igraph::layout_nicely(ig)
+    } else if (length(igraph.args$layout) && is.function(igraph.args$layout)) {
+      igraph.args$layout <- igraph.args$layout(ig)
+    }
+
+    graphics::plot.new()
+    graphics::plot.window(xlim=c(-1,1), ylim=c(-1,1))
 
     # Plotting
-    igraph::plot.igraph(
-      ig,
-      vertex.color       = cols,
-      layout             = coords_adjs,
-      edge.color         = edge.col,
-      vertex.size        = rescale.fun(vertex.cex),
-      vertex.label       = label,
-      add                = TRUE,
-      rescale            = FALSE,
-      edge.arrow.size    = edge.arrow.size,
-      vertex.frame.color = vertex.frame.color,
-      vertex.shape       = shapes,
-      ...)
+    do.call(
+      igraph::plot.igraph,
+      c(
+      list(
+        ig,
+        vertex.color       = cols,
+        vertex.size        = rescale.fun(vertex.cex),
+        add                = TRUE,
+        vertex.shape       = shapes
+        ),
+      igraph.args)
+      )
+
+    # Adding a legend (title)
+    if (length(main))
+      graphics::legend("topleft", legend = sprintf(main, names(graph)[i]), bty = "n")
+    box()
   }
 
   # Legend
-  do.call(legend, c(lgd, list(pt.bg=vertex.col)))
+  graphics::par(mfrow=c(1,1), new=TRUE, mar=rep(0,4), oma = rep(0,4), xpd=NA)
+  graphics::plot.new()
+  graphics::plot.window(c(0,1), c(0,1))
+  do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.col)))
 
-  invisible(coords)
+  invisible(igraph.args$layout)
 
 }
 

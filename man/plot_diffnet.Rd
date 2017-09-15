@@ -11,15 +11,12 @@ plot_diffnet(...)
 \method{plot_diffnet}{diffnet}(graph, ...)
 
 \method{plot_diffnet}{default}(graph, cumadopt, slices = 1:nslices(graph),
-  undirected = TRUE, vertex.col = c("white", "tomato", "steelblue"),
-  vertex.shape = c("square", "circle", "circle"), vertex.cex = "degree",
-  label = NA, edge.col = "gray", mode = "fruchtermanreingold",
-  layout.par = NULL, mfrow.par = NULL, main = "Network in period \%d",
-  gmode = ifelse(undirected, "graph", "digraph"), lgd = list(x = "bottom",
-  legend = c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n",
-  cex = 1.2, horiz = TRUE), coords = NULL, vertex.frame.color = "gray",
-  edge.arrow.size = 0.25, intra.space = c(0.15, 0.15), key.height = 0.1,
-  rescale.fun = function(x) rescale_vertex_igraph(x, adjust = 100), ...)
+  vertex.col = c("white", "tomato", "steelblue"), vertex.shape = c("square",
+  "circle", "circle"), vertex.cex = rowMeans(dgr(graph)), mfrow.par = NULL,
+  main = "Network in period \%s", legend.args = list(x = "bottom", legend =
+  c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n", cex = 1.2,
+  horiz = TRUE), intra.space = c(0.15, 0.15), rescale.fun = function(x)
+  rescale_vertex_igraph(x), ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -30,42 +27,23 @@ plot_diffnet(...)
 
 \item{slices}{Integer vector. Indicates what slices to plot. By default all are plotted.}
 
-\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
-
 \item{vertex.col}{A character vector of size 3 with colors names.}
 
 \item{vertex.shape}{A character vector of size 3 with shape names.}
 
 \item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices.}
 
-\item{label}{Character vector of size \eqn{n}. If no provided, rownames of
-the graph are used.}
-
-\item{edge.col}{Character scalar/vector. Color of the edge.}
-
-\item{mode}{Character scalar. Name of the layout algorithm to implement (see details).}
-
-\item{layout.par}{Layout parameters (see details).}
-
 \item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}}
 
 \item{main}{Character scalar. A title template to be passed to \code{\link{sprintf}.}}
 
-\item{gmode}{Character scalar. See \code{\link[sna:gplot]{gplot}.}}
-
-\item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
-
-\item{coords}{Numeric matrix of size \eqn{n\times 2}{n * 2} with vertices coordinates.}
-
-\item{vertex.frame.color}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
-
-\item{edge.arrow.size}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
-
 \item{intra.space}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
 
-\item{key.height}{Numeric scalar. Sets the proportion of the plot (y-axis) that the key uses.}
-
 \item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
+
+\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
+
+\item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
 }
 \value{
 Calculated coordinates for the grouped graph (invisible).
@@ -76,9 +54,7 @@ Creates a colored network plot showing the structure of the graph through time
 in the network.
 }
 \details{
-Plotting is done via the function \code{\link[sna:gplot]{gplot}},
-and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
-the (\pkg{sna}) package.
+Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 
 In order to center the attention on the diffusion process itself, the
 positions of each vertex are computed only once by aggregating the networks
@@ -94,15 +70,6 @@ and adopters respectively. The new adopters (default color \code{"tomato"}) have
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 be plotted in red.
-
-\code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
-scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
-\code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
-degree of the cumulated graph and will be normalized as
-
-\deqn{vertex.cex = [d - \min(d) + .1]/[\max(d) - \min(d) + .1]\times 2}{vertex.cex = [d - min(d) + .1]/[max(d) - min(d) + .1]* 2}
-
-where \eqn{d=\sqrt{dgr(graph)}}{d=sqrt(dgr(graph))}.
 }
 \examples{
 # Generating a random graph
