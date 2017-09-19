@@ -36,7 +36,7 @@ test_that("More plot methods", {
   g <- rdiffnet(20, 4)
 
   ans1  <- plot(g)
-  ans2 <- plot(g, coord=ans1)
+  ans2 <- plot(g, layout=ans1)
 
   expect_equal(ans1, ans2)
 
@@ -44,8 +44,8 @@ test_that("More plot methods", {
   expect_output(print(ans1), "0[.]85")
 
   # Invallid cex
-  expect_error(plot(g, vertex.cex="1"), "Invalid.+cex")
-  expect_error(plot_diffnet(g, vertex.cex="1"), "Invalid.+cex")
+  expect_error(plot(g, vertex.size="1"), "Invalid.+size")
+  expect_error(plot_diffnet(g, vertex.size="1"), "Invalid.+size")
 
   expect_silent(plot_adopters(g$cumadopt))
 })
@@ -86,10 +86,10 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   expect_equivalent(th, thdn)
 
   expect_error(plot_threshold(graph), "expo.+should be pro.+diffnet")
-  expect_error(plot_threshold(diffnet, vertex.cex = "a"), "Invalid.+cex")
+  expect_error(plot_threshold(diffnet, vertex.size = "a"), "Invalid.+size")
 
   # Repeating cex
-  expect_silent(plot_threshold(diffnet, vertex.cex=.5))
+  expect_silent(plot_threshold(diffnet, vertex.size=.5))
   expect_warning(plot_threshold(diffnet, vertex.sides = 1.2), "integer")
   expect_error(plot_threshold(diffnet, vertex.sides = "1.2"), "integer")
   expect_error(plot_threshold(diffnet, vertex.rot = "a"), "numeric")

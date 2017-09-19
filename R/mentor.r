@@ -177,13 +177,9 @@ leader_matching <- mentor_matching
 
 #' @export
 #' @param x An object of class \code{diffnet_mentor}.
-#' @param vertex.size Numeric vector of length \code{nnodes(attr(x, "graph"))}.
-#' Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
+#' @template plotting_template
 #' @param lead.cols Character vector of length \code{attr(x,"nleaders")}. Colors
 #' to be applied to each group. (see details)
-#' @param vertex.frame.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param vertex.label.color Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param edge.arrow.size Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param vshapes Character scalar of length 2. Shapes to identify leaders (mentors)
 #' and followers respectively.
 #' @param add.legend Logical scalar. When \code{TRUE} generates a legend to distinguish
@@ -195,17 +191,20 @@ leader_matching <- mentor_matching
 plot.diffnet_mentor <- function(
   x,
   y            = NULL,
-  vertex.size  = rescale_vertex_igraph(dgr(attr(x, "graph")),
-                                       minmax.relative.size = c(.01, .03)),
+  vertex.size  = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
   lead.cols    = grDevices::topo.colors(attr(x, "nleaders")),
-  vertex.frame.color = "gray",
-  vertex.label.color = "black",
   vshapes      = c(Leader="square", Follower="circle"),
-  edge.arrow.size = .5,
   add.legend   = TRUE,
   main         = "Mentoring Network",
   ...) {
 
+
+  igraph.args <- list(...)
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+
+  igraph.args <- set_igraph_plotting_defaults(igraph.args)
 
   # Creating igraph obj
   ig <- cbind(
@@ -225,17 +224,14 @@ plot.diffnet_mentor <- function(
 
   igraph::V(ig)$shape <- vshapes[2-x[["isleader"]]]
 
-  igraph::plot.igraph(
-    x   = ig,
-    add = TRUE,
-    vertex.color = lead.cols[as.integer(factor(x[["match"]]))],
-    vertex.size = vertex.size,
-    vertex.frame.color = vertex.frame.color,
-    vertex.label.color = vertex.label.color,
-    edge.arrow.size = edge.arrow.size,
-    ...
+  igraph.args$vertex.size <- rescale_vertex_igraph(
+    compute_vertex_size(ig, vertex.size),
+    minmax.relative.size = minmax.relative.size
   )
 
+  igraph.args$vertex.color <- lead.cols[as.integer(factor(x[["match"]]))]
+
+  do.call(igraph::plot.igraph, c(list(x = ig), igraph.args))
 
   if (add.legend) {
 
@@ -262,21 +258,6 @@ plot.diffnet_mentor <- function(
 
 }
 
-# rm(list =ls())
-# library(netdiffuseR)
-# library(igraph)
-#
-# set.seed(8821)
-# g <- netdiffuseR::rgraph_ba(m = 3, t=19)
-# ans <- opinion_leaders(g, n = 3);ans
-#
-# ig <- graph_from_adjacency_matrix(g)
-#
-#
-# dgr(g, cmode = "indegree", self = TRUE)
-# degree(ig, mode="in")
-#
-# plot(ig, vertex.color = ans$isleader)
 
 
 

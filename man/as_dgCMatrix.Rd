@@ -9,26 +9,32 @@
 \alias{as_dgCMatrix.array}
 \alias{as_dgCMatrix.igraph}
 \alias{as_dgCMatrix.network}
+\alias{as_dgCMatrix.list}
 \title{Coerce a matrix-like objects to \code{dgCMatrix} (sparse matrix)}
 \usage{
-as_dgCMatrix(x, ...)
+as_dgCMatrix(x, make.dimnames = TRUE, ...)
 
-as.dgCMatrix(x, ...)
+as.dgCMatrix(x, make.dimnames = TRUE, ...)
 
-as_spmat(x, ...)
+as_spmat(x, make.dimnames = TRUE, ...)
 
-\method{as_dgCMatrix}{default}(x, ...)
+\method{as_dgCMatrix}{default}(x, make.dimnames = TRUE, ...)
 
-\method{as_dgCMatrix}{diffnet}(x, ...)
+\method{as_dgCMatrix}{diffnet}(x, make.dimnames = TRUE, ...)
 
-\method{as_dgCMatrix}{array}(x, ...)
+\method{as_dgCMatrix}{array}(x, make.dimnames = TRUE, ...)
 
-\method{as_dgCMatrix}{igraph}(x, ...)
+\method{as_dgCMatrix}{igraph}(x, make.dimnames = TRUE, ...)
 
-\method{as_dgCMatrix}{network}(x, ...)
+\method{as_dgCMatrix}{network}(x, make.dimnames = TRUE, ...)
+
+\method{as_dgCMatrix}{list}(x, make.dimnames = TRUE, ...)
 }
 \arguments{
 \item{x}{An object to be coerced into a sparse matrix.}
+
+\item{make.dimnames}{Logical scalar. When \code{TRUE}, it makes sure that the
+returned object has dimnames.}
 
 \item{...}{Further arguments passed to the method.}
 }

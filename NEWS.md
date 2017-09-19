@@ -5,6 +5,10 @@
 * `rdiffnet` now allows passing scalars for `threshold.dist`, more over, the user
   can also ask the function to just warn when there is no diffusion instead of
   returning with error.
+
+* `plot.diffnet`, `plot_diffnet`, `plot.diffnet_mentor`, and `plot_diffnet2` use igraph for plotting. 
+  Also, users can now pass "degree" for -vertex.size- (vertex.cex not used anymore),
+  allowing to "automatically" scale vertices by (in/out/.)degree.
   
 
 ## Bug fixes

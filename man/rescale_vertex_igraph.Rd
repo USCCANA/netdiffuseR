@@ -2,10 +2,21 @@
 % Please edit documentation in R/misc.r
 \name{rescale_vertex_igraph}
 \alias{rescale_vertex_igraph}
+\alias{igraph_vertex_rescale}
+\alias{vertex_rescale_igraph}
 \title{Rescale vertex size to be used in \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 \usage{
 rescale_vertex_igraph(vertex.size, par.usr = par("usr"),
-  minmax.relative.size = c(0.005, 0.025), adjust = 200)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
+  0.04)), adjust = 200)
+
+igraph_vertex_rescale(vertex.size, par.usr = par("usr"),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
+  0.04)), adjust = 200)
+
+vertex_rescale_igraph(vertex.size, par.usr = par("usr"),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
+  0.04)), adjust = 200)
 }
 \arguments{
 \item{vertex.size}{Numeric vector of unscaled vertices' sizes. This is unit-free.}
@@ -53,6 +64,8 @@ the max and min values of \eqn{v} respectively, and \eqn{\bar s}{s_max} and
 \eqn{\underbar s}{s_min} are the max and min size that vertices take in terms
 of \code{minmax.relative.size} and \code{par.usr}. The adjusted value \eqn{v'}
 is then multiplied by \code{adjust}.
+
+\code{igraph_vertex_rescale} and \code{vertex_rescale_igraph} are aliases.
 }
 \examples{
 

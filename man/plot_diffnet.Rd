@@ -11,12 +11,13 @@ plot_diffnet(...)
 \method{plot_diffnet}{diffnet}(graph, ...)
 
 \method{plot_diffnet}{default}(graph, cumadopt, slices = 1:nslices(graph),
-  vertex.col = c("white", "tomato", "steelblue"), vertex.shape = c("square",
-  "circle", "circle"), vertex.cex = rowMeans(dgr(graph)), mfrow.par = NULL,
-  main = "Network in period \%s", legend.args = list(x = "bottom", legend =
-  c("Non adopters", "New adopters", "Adopters"), pch = 21, bty = "n", cex = 1.2,
-  horiz = TRUE), intra.space = c(0.15, 0.15), rescale.fun = function(x)
-  rescale_vertex_igraph(x), ...)
+  vertex.color = c("white", "tomato", "steelblue"),
+  vertex.shape = c("square", "circle", "circle"), vertex.size = "degree",
+  mfrow.par = NULL, main = "Network in period \%s", legend.args = list(x =
+  "bottom", legend = c("Non adopters", "New adopters", "Adopters"), pch = 21,
+  bty = "n", cex = 1.2, horiz = TRUE), intra.space = c(0.15, 0.15),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
+  0.05)), ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -27,23 +28,22 @@ plot_diffnet(...)
 
 \item{slices}{Integer vector. Indicates what slices to plot. By default all are plotted.}
 
-\item{vertex.col}{A character vector of size 3 with colors names.}
+\item{vertex.color}{A character vector of size 3 with colors names.}
 
 \item{vertex.shape}{A character vector of size 3 with shape names.}
 
-\item{vertex.cex}{Numeric vector of size \eqn{n}. Size of the vertices.}
+\item{vertex.size}{Either a numeric scalar or vector of size \eqn{n}, or any
+of the following values: "indegree", "degree", or "outdegree" (see details).}
 
 \item{mfrow.par}{Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}}
 
 \item{main}{Character scalar. A title template to be passed to \code{\link{sprintf}.}}
 
+\item{legend.args}{List of arguments to be passed to \code{\link{legend}}.}
+
 \item{intra.space}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
 
-\item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
-
-\item{undirected}{Logical scalar. When \code{TRUE} only the lower triangle of the adjacency matrix will considered (faster).}
-
-\item{lgd}{List of arguments to be passed to \code{\link{legend}}.}
+\item{minmax.relative.size}{Passed to \code{\link{rescale_vertex_igraph}}.}
 }
 \value{
 Calculated coordinates for the grouped graph (invisible).
@@ -56,6 +56,17 @@ in the network.
 \details{
 Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 
+When \code{vertex.size} is either of \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}, \code{vertex.size} will be replace with \code{dgr(.,cmode = )}
+so that the vertex size reflects the desired degree.
+
+The argument \code{minmax.relative.size} is passed to \code{\link{rescale_vertex_igraph}}
+which adjusts \code{vertex.size} so that the largest and smallest vertices
+have a relative size of \code{minmax.relative.size[2]} and
+\code{minmax.relative.size[1]} respectively with respect to the x-axis.
+
+Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
+
 In order to center the attention on the diffusion process itself, the
 positions of each vertex are computed only once by aggregating the networks
 through time, this is, instead of computing the layout for each time \eqn{t},
@@ -65,7 +76,7 @@ The \code{mfrow.par} sets how to arrange the plots on the device. If \eqn{T=5}
 and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 of the device and the last two in the bottom.
 
-The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
+The argument \code{vertex.color} contains the colors of non-adopters, new-adopters,
 and adopters respectively. The new adopters (default color \code{"tomato"}) have a different
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will

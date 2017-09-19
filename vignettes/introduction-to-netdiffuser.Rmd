@@ -72,7 +72,7 @@ par(oldpar)
 An interesting way of visualizing the diffusion process is using the `plot_diffnet` function. In this case, instead of plotting all the 20 periods (networks), we only focus on a subset (henceforth we use the `slices` argument).
 
 ```{r}
-plot_diffnet(diffnet_ran, slices = c(1,4,8,12,16,20), coords=coords)
+plot_diffnet(diffnet_ran, slices = c(1,4,8,12,16,20), layout=coords)
 ```
 
 

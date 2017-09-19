@@ -65,7 +65,10 @@ dgr <- function(graph, cmode="degree",
   } else if ("network" %in% cls) {
     graph <- as_generic_graph.network(graph)
     dgr.dgCMatrix(graph$graph[[1]], cmode, graph$meta$undirected, self, valued)
-  } else stopifnot_graph(graph)
+  } else if ("matrix.csc" %in% cls) {
+    dgr.dgCMatrix(methods::as(graph, "dgCMatrix"))
+  } else
+    stopifnot_graph(graph)
 
   return(structure(ans, class=c("diffnet_degSeq", class(ans))))
 }

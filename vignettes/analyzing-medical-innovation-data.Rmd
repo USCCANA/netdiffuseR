@@ -91,7 +91,7 @@ And the ones included in the package:
 
 ```{r graphs}
 plot_diffnet(diffnet, slices=c(1,4,8,12,16,18))
-plot_threshold(diffnet, undirected = FALSE, vertex.cex = 1/5)
+plot_threshold(diffnet, undirected = FALSE, vertex.size = 1/5)
 plot_adopters(diffnet)
 plot_hazard(diffnet)
 ```

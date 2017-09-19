@@ -12,14 +12,11 @@ mentor_matching(graph, n, cmode = "indegree", lead.ties.method = "average",
 leader_matching(graph, n, cmode = "indegree", lead.ties.method = "average",
   geodist.args = list())
 
-\method{plot}{diffnet_mentor}(x, y = NULL,
-  vertex.size = rescale_vertex_igraph(dgr(attr(x, "graph")),
-  minmax.relative.size = c(0.01, 0.03)),
-  lead.cols = grDevices::topo.colors(attr(x, "nleaders")),
-  vertex.frame.color = "gray", vertex.label.color = "black",
-  vshapes = c(Leader = "square", Follower = "circle"),
-  edge.arrow.size = 0.5, add.legend = TRUE, main = "Mentoring Network",
-  ...)
+\method{plot}{diffnet_mentor}(x, y = NULL, vertex.size = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
+  0.05)), lead.cols = grDevices::topo.colors(attr(x, "nleaders")),
+  vshapes = c(Leader = "square", Follower = "circle"), add.legend = TRUE,
+  main = "Mentoring Network", ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -36,20 +33,16 @@ leader_matching(graph, n, cmode = "indegree", lead.ties.method = "average",
 
 \item{y}{Ignored.}
 
-\item{vertex.size}{Numeric vector of length \code{nnodes(attr(x, "graph"))}.
-Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
+\item{vertex.size}{Either a numeric scalar or vector of size \eqn{n}, or any
+of the following values: "indegree", "degree", or "outdegree" (see details).}
+
+\item{minmax.relative.size}{Passed to \code{\link{rescale_vertex_igraph}}.}
 
 \item{lead.cols}{Character vector of length \code{attr(x,"nleaders")}. Colors
 to be applied to each group. (see details)}
 
-\item{vertex.frame.color}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
-
-\item{vertex.label.color}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
-
 \item{vshapes}{Character scalar of length 2. Shapes to identify leaders (mentors)
 and followers respectively.}
-
-\item{edge.arrow.size}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 
 \item{add.legend}{Logical scalar. When \code{TRUE} generates a legend to distinguish
 between leaders and followers.}
@@ -90,6 +83,17 @@ The algorithm works as follows:
     randomly.
   }
 }
+
+Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
+
+When \code{vertex.size} is either of \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}, \code{vertex.size} will be replace with \code{dgr(.,cmode = )}
+so that the vertex size reflects the desired degree.
+
+The argument \code{minmax.relative.size} is passed to \code{\link{rescale_vertex_igraph}}
+which adjusts \code{vertex.size} so that the largest and smallest vertices
+have a relative size of \code{minmax.relative.size[2]} and
+\code{minmax.relative.size[1]} respectively with respect to the x-axis.
 }
 \examples{
 # A simple example ----------------------------------------------------------

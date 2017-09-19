@@ -145,7 +145,7 @@ diffnet <- rdiffnet(500, 20,
 diffnet
 
 # Threshold with fixed vertex size
-plot_threshold(diffnet, vertex.cex = .4)
+plot_threshold(diffnet, vertex.size = .4)
 ```
 
 Using more features

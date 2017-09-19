@@ -285,6 +285,8 @@ drawColorKey <- function(
 #' of \code{minmax.relative.size} and \code{par.usr}. The adjusted value \eqn{v'}
 #' is then multiplied by \code{adjust}.
 #'
+#' \code{igraph_vertex_rescale} and \code{vertex_rescale_igraph} are aliases.
+#'
 #' @return An integer vector of the same length as \code{vertex.size} with
 #' rescaled values.
 #' @export
@@ -329,7 +331,7 @@ drawColorKey <- function(
 rescale_vertex_igraph <- function(
   vertex.size,
   par.usr=par("usr"),
-  minmax.relative.size=c(.005,.025),
+  minmax.relative.size= getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
   adjust=200
 ) {
   if (!length(vertex.size)) return(
@@ -344,6 +346,96 @@ rescale_vertex_igraph <- function(
   return(vertex.size*adjust/2)
 }
 
+#' @rdname rescale_vertex_igraph
+#' @export
+igraph_vertex_rescale <- rescale_vertex_igraph
+
+#' @rdname rescale_vertex_igraph
+#' @export
+vertex_rescale_igraph <- rescale_vertex_igraph
+
+# Function to create vertex size accordingly to the
+compute_vertex_size <- function(x, vertex.size, slice=1L) {
+
+  # If it is null
+  if (!length(vertex.size))
+    return(rep(1L, nnodes(x)))
+
+  # If it is of length 1
+  if (length(vertex.size) == 1) {
+
+    # Matching degree
+    cmodes <- c("indegree", "degree", "outdegree")
+    if (is.character(vertex.size))
+      cmode <- cmodes[pmatch(vertex.size, cmodes)]
+
+    if (is.na(cmode))
+      stop("Invalid -vertex.size-.\"",vertex.size,"\" is not supported, it should be either \"",
+           paste(cmodes, collapse = "\", \""), ".")
+
+
+    # Repeating the values
+    return(dgr(x, cmode = cmode)[,slice])
+  }
+
+  # Applyging the function accordignly
+  if (is.numeric(vertex.size)) {
+
+    return(vertex.size)
+
+  } else
+    stop("Invalid -vertex.size-. It cannot be of class -", class(vertex.size),
+         "-. Valid values are either a numeric vector/scalar, or any of ",
+         "\"degree\", \"indegree\", or \"outdegree\".")
+
+}
+
+add_graph_dimnames <- function(...) UseMethod("add_graph_dimnames")
+
+add_graph_dimnames.array <- function(x, ...) {
+  # Updating row and colnames if necesary
+  if (!length(rownames(x)))
+    rownames(x) <- 1L:nrow(x)
+  if (!length(colnames(x)))
+    colnames(x) <- 1L:ncol(x)
+  if (length(dimnames(x)) != 3)
+    dimnames(x)[[3]] <- 1L:nslices(x)
+
+  x
+}
+
+add_graph_dimnames.matrix <- function(x, ...) {
+  # Updating row and colnames if necesary
+  if (!length(rownames(x)))
+    rownames(x) <- 1L:nrow(x)
+  if (!length(colnames(x)))
+    colnames(x) <- 1L:ncol(x)
+
+  x
+}
+
+add_graph_dimnames.dgCMatrix <- function(x, ...) {
+  # Updating row and colnames if necesary
+  if (!length(rownames(x)))
+    rownames(x) <- 1L:nrow(x)
+  if (!length(colnames(x)))
+    colnames(x) <- 1L:ncol(x)
+
+  x
+}
+
+add_graph_dimnames.list <- function(x, ...) {
+  # Updating row and colnames if necesary
+  x <- lapply(x, add_graph_dimnames.dgCMatrix)
+
+  if (!length(names(x)))
+    names(x) <- 1L:nslices(x)
+
+  x
+}
+
+
+
 
 #' Coerce a matrix-like objects to \code{dgCMatrix} (sparse matrix)
 #'
@@ -351,6 +443,8 @@ rescale_vertex_igraph <- function(
 #' from the \pkg{Matrix} package, \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.
 #'
 #' @param x An object to be coerced into a sparse matrix.
+#' @param make.dimnames Logical scalar. When \code{TRUE}, it makes sure that the
+#' returned object has dimnames.
 #' @param ... Further arguments passed to the method.
 #'
 #' @details
@@ -389,7 +483,7 @@ rescale_vertex_igraph <- function(
 #' str(ans)
 #'
 #'
-as_dgCMatrix <- function(x, ...) {
+as_dgCMatrix <- function(x, make.dimnames = TRUE, ...) {
   UseMethod("as_dgCMatrix")
 }
 
@@ -403,13 +497,20 @@ as_spmat <- as_dgCMatrix
 
 #' @export
 #' @rdname as_dgCMatrix
-as_dgCMatrix.default <- function(x, ...) {
-  methods::as(x, "dgCMatrix")
+as_dgCMatrix.default <- function(x, make.dimnames = TRUE, ...) {
+
+  ans <- methods::as(x, "dgCMatrix")
+
+  # Updating row and colnames if necesary
+  if (make.dimnames)
+    return(add_graph_dimnames.dgCMatrix(ans))
+
+  ans
 }
 
 #' @export
 #' @rdname as_dgCMatrix
-as_dgCMatrix.diffnet <- function(x, ...) {
+as_dgCMatrix.diffnet <- function(x, make.dimnames = TRUE, ...) {
   ans <- x$graph
   ans <- lapply(ans, `dimnames<-`, list(x$meta$ids,x$meta$ids))
   ans
@@ -417,18 +518,34 @@ as_dgCMatrix.diffnet <- function(x, ...) {
 
 #' @export
 #' @rdname as_dgCMatrix
-as_dgCMatrix.array <- function(x, ...) {
-  apply(x, 3, methods::as, Class="dgCMatrix")
+as_dgCMatrix.array <- function(x, make.dimnames = TRUE, ...) {
+
+  ans <- apply(x, 3, methods::as, Class="dgCMatrix")
+
+  # Updating row and colnames if necesary
+  if (make.dimnames)
+    return(add_graph_dimnames.list(ans))
+
+  ans
+
 }
 
 #' @export
 #' @rdname as_dgCMatrix
-as_dgCMatrix.igraph <- function(x, ...) {
-  igraph::as_adj(x, ...)
+as_dgCMatrix.igraph <- function(x, make.dimnames = TRUE, ...) {
+  as_dgCMatrix(igraph::as_adj(x, ...), make.dimnames = make.dimnames)
 }
 
 #' @export
 #' @rdname as_dgCMatrix
-as_dgCMatrix.network <- function(x, ...) {
-  as_dgCMatrix(network::as.matrix.network(x))
+as_dgCMatrix.network <- function(x, make.dimnames = TRUE, ...) {
+  as_dgCMatrix(network::as.matrix.network(x), make.dimnames = make.dimnames)
+}
+
+#' @export
+#' @rdname as_dgCMatrix
+as_dgCMatrix.list <- function(x, make.dimnames=TRUE, ...) {
+
+  lapply(x, as_dgCMatrix, make.dimnames = make.dimnames)
+
 }

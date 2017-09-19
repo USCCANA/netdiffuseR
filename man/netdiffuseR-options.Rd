@@ -12,6 +12,7 @@ The full list of options follows:
 \item{valued}{FALSE}
 \item{outgoing}{TRUE}
 \item{keep.isolates}{TRUE}
+\item{minmax.relative.size}{\code{c(0.025, 0.05)}}
 }
 \description{
 \pkg{netdiffuseR} default options

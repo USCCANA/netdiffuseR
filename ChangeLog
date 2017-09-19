@@ -1,3 +1,9 @@
+2017-09-18  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Rewritten plot functions.
+	* R/misc.r: New function to set size according to degree.
+	* R/igraph.r: New set of functions and default (aesthetics).
+
+
 2017-09-15  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-methods.r: Making the coding more neat.
 	* R/plot_diffnet2.r: Changing defaults

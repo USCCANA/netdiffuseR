@@ -2,36 +2,14 @@
 #'
 #' @param x An object of class \code{\link[=diffnet-class]{diffnet}}
 #' @param t Integer scalar indicating the time slice to plot.
-#' @param displaylabels Logical scalar. When TRUE, \code{plot} shows vertex labels.
-#' @param vertex.col Character scalar/vector. Color of the vertices.
-#' @param vertex.cex Numeric scalar/vector. Size of the vertices.
-#' @param edge.col Character scalar/vector. Color of the edges.
-#' @param mode Character scalar. In the case of \code{plot}, passed to
-#' \code{\link[sna:gplot]{gplot}}.
-#' @param layout.par Layout parameters (see details).
-#' @param gmode Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}
+#' @param vertex.color Character scalar/vector. Color of the vertices.
+#' @template plotting_template
 #' @param main Character. A title template to be passed to sprintf.
-#' @param ... Further arguments passed to \code{\link[sna:gplot]{gplot}}.
+#' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param y Ignored.
 #' @export
 #'
 #' @family diffnet methods
-#' @details
-#' Plotting is done via the function \code{\link[sna:gplot]{gplot}},
-#' and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
-#' the (\pkg{sna}) package.
-#'
-#' \code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
-#' scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
-#' \code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
-#' degree of the selected slice and will be normalized as
-#'
-#' \deqn{
-#'   vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{%
-#'   vertex.cex = d/[max(d) - min(d)]* 2 + .5 %
-#'  }
-#'
-#' where \code{d=sqrt(dgr(graph))}.
 #'
 #' @return A matrix with the coordinates of the vertices.
 #' @author George G. Vega Yon
@@ -42,54 +20,54 @@
 #'
 #'
 plot.diffnet <- function(
-  x,y=NULL, t=1, displaylabels = FALSE,
-  vertex.col = c(adopt="blue", noadopt="grey"),
-  gmode=ifelse(x$meta$undirected, "graph", "digraph"),
-  vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
-  layout.par = NULL, main = "Diffusion network in time %d", ...) {
+  x,y=NULL, t=1,
+  vertex.color  = c(adopt="steelblue", noadopt="white"),
+  vertex.size = "degree",
+  main        = "Diffusion network in time %d",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
+  ...) {
 
   # Listing arguments
-  args <- list(...)
+  igraph.args <- list(...)
 
   # Checking that the time period is actually within
   if (!(t %in% 1:x$meta$nper))
     stop("-t- must be an integer within 1 and ",x$meta$nper,".")
 
   # Extracting the graph to be plotted
-  graph <- methods::as(x$graph[[t]], "matrix.csc")
+  graph <- diffnet_to_igraph(x)[[t]]
 
   # Setting the colors
-  cols <- with(x, ifelse(cumadopt[,t], vertex.col[1], vertex.col[2]))
+  cols <- with(x, ifelse(cumadopt[,t], vertex.color[1], vertex.color[2]))
 
-  # Calcularing layout
+  igraph.args <- set_igraph_plotting_defaults(igraph.args)
 
-   if ("coord" %in% names(args)) {
-     coords <- args[["coord"]]
-     args[["coord"]] <- NULL
-   } else {
-     fun <- getFromNamespace(paste0("gplot.layout.",mode), "sna")
-     coords <- fun(graph, layout.par)
-   }
+  if (!length(igraph.args$layout))
+    igraph.args$layout <- igraph::layout_nicely(graph)
 
-  # Computing sizes
-  if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character"))
-    if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(x$graph[[t]], cmode=vertex.cex, undirected = x$meta$undirected)
-      vertex.cex <- sqrt(vertex.cex)
-      r <- range(vertex.cex)
+  igraph.args$vertex.color  <- cols
 
-      # If all the vertices have the same degree
-      vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)*2
-    } else {
-      stop("Invalid -vertex.cex-")
-    }
+  graphics::plot.new()
+  graphics::plot.window(
+    xlim = c(-1,1),
+    ylim = c(-1,1)
+    )
 
-  do.call(sna::gplot, c(list(dat=graph, displaylabels=displaylabels, vertex.col=cols,
-             coord=coords, edge.col=edge.col, label=x$meta$ids,
-             main=sprintf(main, x$meta$pers[t]), vertex.cex=vertex.cex, gmode=gmode),
-             args))
+  igraph.args$vertex.size <-
+    rescale_vertex_igraph(
+      compute_vertex_size(x$graph[[t]], vertex.size),
+      minmax.relative.size = minmax.relative.size
+      )
 
-  invisible(coords)
+  do.call(igraph::plot.igraph, c(
+    list(
+      x           = graph
+    ), igraph.args))
+
+  if (length(main))
+    graphics::title(main = sprintf(main, x$meta$pers[t]))
+
+  invisible(igraph.args$layout)
 }
 
 #' @export
@@ -321,19 +299,17 @@ summary.diffnet <- function(
 #' in the network.
 #'
 #' @templateVar dynamic TRUE
-#' @templateVar undirected TRUE
 #' @template graph_template
 #' @param cumadopt \eqn{n\times T}{n*T} matrix.
 #' @param slices Integer vector. Indicates what slices to plot. By default all are plotted.
-#' @param vertex.col A character vector of size 3 with colors names.
+#' @param vertex.color A character vector of size 3 with colors names.
 #' @param vertex.shape A character vector of size 3 with shape names.
-#' @param vertex.cex Numeric vector of size \eqn{n}. Size of the vertices.
+#' @template plotting_template
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}
 #' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
 #' @param intra.space Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
-#' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
 #' @param ... Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
-#' @param lgd List of arguments to be passed to \code{\link{legend}}.
+#' @param legend.args List of arguments to be passed to \code{\link{legend}}.
 #'
 #' @details Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #'
@@ -346,7 +322,7 @@ summary.diffnet <- function(
 #' and \code{mfrow.par=c(2,3)}, the first three networks will be in the top
 #' of the device and the last two in the bottom.
 #'
-#' The argument \code{vertex.col} contains the colors of non-adopters, new-adopters,
+#' The argument \code{vertex.color} contains the colors of non-adopters, new-adopters,
 #' and adopters respectively. The new adopters (default color \code{"tomato"}) have a different
 #' color that the adopters when the graph is at their time of adoption, hence,
 #' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
@@ -379,7 +355,6 @@ plot_diffnet.diffnet <- function(
   plot_diffnet.default(
     graph    = as_dgCMatrix(graph),
     cumadopt = graph$cumadopt,
-    undirected = graph$meta$undirected,
     ...
   )
 
@@ -391,29 +366,30 @@ plot_diffnet.diffnet <- function(
 plot_diffnet.default <- function(
   graph, cumadopt,
   slices       = 1:nslices(graph),
-  vertex.col   = c("white", "tomato", "steelblue"),
+  vertex.color   = c("white", "tomato", "steelblue"),
   vertex.shape = c("square", "circle", "circle"),
-  vertex.cex   = rowMeans(dgr(graph)),
+  vertex.size   = "degree",
   mfrow.par    = NULL,
   main         = "Network in period %s",
   legend.args  = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
                               bty="n", cex=1.2, horiz=TRUE),
   intra.space  = c(.15,.15),
-  rescale.fun  = function(x) rescale_vertex_igraph(x),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
   ...) {
+
+
+  # Coercing into a dgCMatrix list
+  graph <- as_dgCMatrix(graph)
 
   # Checking slices
   if (!length(slices)) slices <- 1:ncol(cumadopt)
   graph <- graph[slices]
 
-  # Checking class
-  if (inherits(graph, "array")) {
-    # Coercing into a list
-    graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
-
-
-  } else if (!inherits(graph, "list"))
+  if (!is.list(graph))
     stopifnot_graph(graph)
+
+  # Making sure it has names
+  graph <- add_graph_dimnames.list(graph)
 
   cumadopt <- cumadopt[,slices,drop=FALSE]
 
@@ -441,24 +417,15 @@ plot_diffnet.default <- function(
 
   # Checking igraph arguments
   igraph.args <- list(...)
-  if (!length(igraph.args$vertex.label))
-    igraph.args$vertex.label <- NA
-  if (length(igraph.args$add))
-    stop("-add- should not be specified.")
-  if (!length(igraph.args$edge.color))
-    igraph.args$edge.color <- grDevices::adjustcolor("gray", .7)
-  if (!length(igraph.args$vertex.frame.color))
-    igraph.args$vertex.frame.color <- "white"
-  if (!length(igraph.args$edge.arrow.size))
-    igraph.args$edge.arrow.size <- .25
+  igraph.args <- set_igraph_plotting_defaults(igraph.args)
 
   # 3. Plotting ----------------------------------------------------------------
   times <- as.integer(names(graph))
 
   for (i in 1:t) {
     # Colors, new adopters are painted differently
-    cols <- ifelse(!cumadopt[,i], vertex.col[1],
-                   ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.col[2], vertex.col[3]))
+    cols <- ifelse(!cumadopt[,i], vertex.color[1],
+                   ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.color[2], vertex.color[3]))
 
     # Shapes
     shapes <- ifelse(!cumadopt[,i], vertex.shape[1],
@@ -469,7 +436,7 @@ plot_diffnet.default <- function(
       dimnames(graph[[i]]) <- list(1:nnodes(graph[[i]]), 1:nnodes(graph[[i]]))
 
     # Creating igraph object
-    ig  <- igraph::graph_from_adjacency_matrix(graph[[i]])
+    ig  <- igraph::graph_from_adjacency_matrix(graph[[i]], mode = "directed")
     ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(graph[[i]])))
 
     # Computing layout
@@ -488,10 +455,12 @@ plot_diffnet.default <- function(
       c(
       list(
         ig,
-        vertex.color       = cols,
-        vertex.size        = rescale.fun(vertex.cex),
-        add                = TRUE,
-        vertex.shape       = shapes
+        vertex.color = cols,
+        vertex.size  = rescale_vertex_igraph(
+          compute_vertex_size(graph[[i]], vertex.size),
+          minmax.relative.size = minmax.relative.size
+          ),
+        vertex.shape = shapes
         ),
       igraph.args)
       )
@@ -499,14 +468,14 @@ plot_diffnet.default <- function(
     # Adding a legend (title)
     if (length(main))
       graphics::legend("topleft", legend = sprintf(main, names(graph)[i]), bty = "n")
-    box()
+    graphics::box()
   }
 
   # Legend
   graphics::par(mfrow=c(1,1), new=TRUE, mar=rep(0,4), oma = rep(0,4), xpd=NA)
   graphics::plot.new()
   graphics::plot.window(c(0,1), c(0,1))
-  do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.col)))
+  do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.color)))
 
   invisible(igraph.args$layout)
 
@@ -530,8 +499,8 @@ plot_diffnet.default <- function(
 #' @param main Character scalar. Title of the plot.
 #' @param xlab Character scalar. x-axis label.
 #' @param ylab Character scalar. y-axis label.
-#' @param vertex.cex Numeric vector of size \eqn{n}. Relative size of the vertices.
-#' @param vertex.col Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
+#' @param vertex.size Numeric vector of size \eqn{n}. Relative size of the vertices.
+#' @param vertex.color Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
 #' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices.
 #' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
 #' @param vertex.lab.cex Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.
@@ -561,7 +530,7 @@ plot_diffnet.default <- function(
 #' By default \code{vertex.label=""} plots no labels.
 #'
 #' Vertices are drawn using an internal function for generating polygons.
-#' Polygons are inscribed in a circle of radius \code{vertex.cex}, and can be
+#' Polygons are inscribed in a circle of radius \code{vertex.size}, and can be
 #' rotated using \code{vertex.rot}. The number of sides of each polygon
 #' is set via \code{vertex.sides}.
 #'
@@ -581,7 +550,7 @@ plot_diffnet.default <- function(
 #' plot_threshold(graph, expos, toa)
 #'
 #' # Calculating degree (for sizing the vertices)
-#' plot_threshold(graph, expos, toa, vertex.cex = "indegree")
+#' plot_threshold(graph, expos, toa, vertex.size = "indegree")
 #'
 #' @export
 #' @author George G. Vega Yon
@@ -595,8 +564,8 @@ plot_threshold <- function(
   main             = "Time of Adoption by\nNetwork Threshold",
   xlab             = "Time",
   ylab             = "Threshold",
-  vertex.cex       = "degree",
-  vertex.col       = grDevices::adjustcolor("tomato", .8),
+  vertex.size       = "degree",
+  vertex.color       = grDevices::adjustcolor("steelblue", .8),
   vertex.label     = "",
   vertex.lab.pos   = NULL,
   vertex.lab.cex   = 1,
@@ -626,7 +595,7 @@ plot_threshold <- function(
   switch (class(graph),
     array = plot_threshold.array(
       graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label,
+      vertex.size, vertex.color, vertex.label,
       vertex.lab.pos, vertex.lab.cex, vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
@@ -634,7 +603,7 @@ plot_threshold <- function(
       xlim, ylim, ...),
     list = plot_threshold.list(
       graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+      vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
       vertex.lab.adj, vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
@@ -649,7 +618,7 @@ plot_threshold <- function(
       plot_threshold.list(
       graph$graph, expo,
       graph$toa, include_censored, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
-      vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+      vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
       vertex.lab.adj,vertex.lab.col,
       vertex.sides, vertex.rot,
       edge.width, edge.col,
@@ -673,7 +642,7 @@ plot_threshold.list <- function(
   graph, expo, toa, include_censored, t0, attrs,
   undirected, no.contemporary,
   main, xlab, ylab,
-  vertex.cex, vertex.col, vertex.label, vertex.lab.pos, vertex.lab.cex,
+  vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
   vertex.lab.adj,vertex.lab.col,
   vertex.sides, vertex.rot,
   edge.width, edge.col, arrow.length,
@@ -705,20 +674,20 @@ plot_threshold.list <- function(
   # Step 2: Checking colors and sizes
 
   # Computing sizes
-  if ((length(vertex.cex) == 1) && inherits(vertex.cex, "character")) {
-    if (vertex.cex %in% c("degree", "indegree", "outdegree")) {
-      vertex.cex <- dgr(cumgraph, cmode=vertex.cex, undirected = undirected)
-      vertex.cex <- sqrt(vertex.cex)
-      r <- range(vertex.cex)
+  if ((length(vertex.size) == 1) && inherits(vertex.size, "character")) {
+    if (vertex.size %in% c("degree", "indegree", "outdegree")) {
+      vertex.size <- dgr(cumgraph, cmode=vertex.size, undirected = undirected)
+      vertex.size <- sqrt(vertex.size)
+      r <- range(vertex.size)
 
       # If all the vertices have the same degree
-      vertex.cex <- (vertex.cex - r[1]+ .1)/(r[2] - r[1] + .1)/4
+      vertex.size <- (vertex.size - r[1]+ .1)/(r[2] - r[1] + .1)/4
     } else {
-      stop("Invalid -vertex.cex-")
+      stop("Invalid -vertex.size-")
     }
-  } else if (length(vertex.cex)==1) {
-    vertex.cex <- rep(vertex.cex, n)
-  } else if (inherits(vertex.cex, "character")) stop("Invalid value for -vertex.cex-.")
+  } else if (length(vertex.size)==1) {
+    vertex.size <- rep(vertex.size, n)
+  } else if (inherits(vertex.size, "character")) stop("Invalid value for -vertex.size-.")
 
   # Checking sides
   test <- length(vertex.sides)
@@ -751,9 +720,9 @@ plot_threshold.list <- function(
   else if (test != n) stop("-vertex.bcol- must be either of length 1 or nnodes(graph).")
 
   # Checking colors
-  test <- length(vertex.col)
-  if (test == 1) vertex.col <- rep(vertex.col, n)
-  else if (test != n) stop("-vertex.col- must be either of length 1 or nnodes(graph).")
+  test <- length(vertex.color)
+  if (test == 1) vertex.color <- rep(vertex.color, n)
+  else if (test != n) stop("-vertex.color- must be either of length 1 or nnodes(graph).")
 
   # Plotting
   # oldpar <- par(no.readonly = TRUE)
@@ -769,7 +738,7 @@ plot_threshold.list <- function(
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
-  edges <- edges_coords(cumgraph, toa, jit, y, vertex.cex, undirected, no.contemporary,
+  edges <- edges_coords(cumgraph, toa, jit, y, vertex.size, undirected, no.contemporary,
                         dev=par("pin"), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
@@ -787,14 +756,14 @@ plot_threshold.list <- function(
 
   # Drawing the vertices and its labels
   # Computing the coordinates
-  pol <- vertices_coords(jit, y, vertex.cex, vertex.sides, vertex.rot, par("pin"), ran)
+  pol <- vertices_coords(jit, y, vertex.size, vertex.sides, vertex.rot, par("pin"), ran)
 
   # Plotting
   lapply(seq_len(length(pol)),
          function(x) {
            polygon(pol[[x]][,1], pol[[x]][,2],
                    border = vertex.bcol[x],
-                   col    = vertex.col[x])
+                   col    = vertex.color[x])
            })
 
   # Positioning labels can be harsh, so we try with this algorithm
@@ -1467,6 +1436,8 @@ nvertices <- function(graph) {
          dgCMatrix = nrow(graph),
          list      = nrow(graph[[1]]),
          diffnet   = graph$meta$n,
+         igraph    = igraph::vcount(graph),
+         network   = network::network.size(graph),
          stopifnot_graph(graph)
          )
 }
@@ -1500,6 +1471,8 @@ nedges <- function(graph) {
       x
       },
     diffnet   = lapply(graph$graph, function(x) sum(x@x != 0)),
+    igraph    = igraph::ecount(graph),
+    network   = network::network.edgecount(graph),
     stopifnot_graph(graph)
   )
 }

@@ -118,7 +118,8 @@ as_generic_graph.network <- function(graph) {
 }
 
 stopifnot_graph <- function(x)
-  stop("No method for graph of class -",class(x),"-. Please refer to the manual 'netdiffuseR-graphs'.")
+  stop("No method for graph of class -",class(x),"- for ", deparse(sys.call()) #match.call()
+       ,". Please refer to the manual 'netdiffuseR-graphs'.")
 
 #' Analyze an R object to identify the class of graph (if any)
 #' @template graph_template

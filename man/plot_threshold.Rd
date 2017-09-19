@@ -7,11 +7,12 @@
 plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
   na.rm = TRUE), attrs = NULL, undirected = getOption("diffnet.undirected"),
   no.contemporary = TRUE, main = "Time of Adoption by\\nNetwork Threshold",
-  xlab = "Time", ylab = "Threshold", vertex.cex = "degree",
-  vertex.col = grDevices::adjustcolor("tomato", 0.8), vertex.label = "",
-  vertex.lab.pos = NULL, vertex.lab.cex = 1, vertex.lab.adj = c(0.5, 0.5),
-  vertex.lab.col = "gray27", vertex.sides = 40L, vertex.rot = 0,
-  edge.width = 2, edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
+  xlab = "Time", ylab = "Threshold", vertex.size = "degree",
+  vertex.color = grDevices::adjustcolor("steelblue", 0.8),
+  vertex.label = "", vertex.lab.pos = NULL, vertex.lab.cex = 1,
+  vertex.lab.adj = c(0.5, 0.5), vertex.lab.col = "gray27",
+  vertex.sides = 40L, vertex.rot = 0, edge.width = 2,
+  edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
   include.grid = TRUE, bty = "n", vertex.bcol = "white",
   jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
   ylim = NULL, ...)
@@ -40,9 +41,9 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
 
 \item{ylab}{Character scalar. y-axis label.}
 
-\item{vertex.cex}{Numeric vector of size \eqn{n}. Relative size of the vertices.}
+\item{vertex.size}{Numeric vector of size \eqn{n}. Relative size of the vertices.}
 
-\item{vertex.col}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.}
+\item{vertex.color}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.}
 
 \item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
 
@@ -91,7 +92,7 @@ When \code{vertex.label=NULL} the function uses vertices ids as labels.
 By default \code{vertex.label=""} plots no labels.
 
 Vertices are drawn using an internal function for generating polygons.
-Polygons are inscribed in a circle of radius \code{vertex.cex}, and can be
+Polygons are inscribed in a circle of radius \code{vertex.size}, and can be
 rotated using \code{vertex.rot}. The number of sides of each polygon
 is set via \code{vertex.sides}.
 }
@@ -111,7 +112,7 @@ expos <- exposure(graph, adopt$cumadopt)
 plot_threshold(graph, expos, toa)
 
 # Calculating degree (for sizing the vertices)
-plot_threshold(graph, expos, toa, vertex.cex = "indegree")
+plot_threshold(graph, expos, toa, vertex.size = "indegree")
 
 }
 \seealso{

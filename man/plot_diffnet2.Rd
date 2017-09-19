@@ -16,8 +16,9 @@ plot_diffnet2(graph, ...)
   layout = NULL, key.width = 0.1, key.args = list(),
   main = "Diffusion dynamics", add.map = NULL,
   diffmap.args = list(kde2d.args = list(n = 100)), diffmap.alpha = 0.5,
-  include.white = "first", rescale.fun = rescale_vertex_igraph,
-  no.graph = FALSE, ...)
+  include.white = "first", vertex.size = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
+  0.05)), no.graph = FALSE, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -50,7 +51,10 @@ graph itself. If \code{"last"} then it adds it at the end. When \code{NULL} adds
 \item{include.white}{Character scalar. Includes white in the color palette used in the map.
 When \code{include.white=NULL} then it won't include it.}
 
-\item{rescale.fun}{A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}}
+\item{vertex.size}{Either a numeric scalar or vector of size \eqn{n}, or any
+of the following values: "indegree", "degree", or "outdegree" (see details).}
+
+\item{minmax.relative.size}{Passed to \code{\link{rescale_vertex_igraph}}.}
 
 \item{no.graph}{Logical scala. When \code{TRUE} the graph is not drawn. This only makes
 sense when the option \code{add.map} is active.}
@@ -68,6 +72,17 @@ A list with the following elements
 Another way of visualizing diffusion
 }
 \details{
+Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
+
+When \code{vertex.size} is either of \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}, \code{vertex.size} will be replace with \code{dgr(.,cmode = )}
+so that the vertex size reflects the desired degree.
+
+The argument \code{minmax.relative.size} is passed to \code{\link{rescale_vertex_igraph}}
+which adjusts \code{vertex.size} so that the largest and smallest vertices
+have a relative size of \code{minmax.relative.size[2]} and
+\code{minmax.relative.size[1]} respectively with respect to the x-axis.
+
 If \code{key.width<=0} then no key is created.
 
 By defult, the function passes the following values to \code{plot.igraph}:

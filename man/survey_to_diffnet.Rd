@@ -144,7 +144,7 @@ x <- survey_to_diffnet(
    fakesurveyDyn, "id", c("net1", "net2", "net3"), "toa", "group" ,
    timevar = "time", keep.isolates = TRUE, warn.coercion=FALSE)
 
-plot_diffnet(x, vertex.cex = 1.5, label = rownames(x))
+plot_diffnet(x, vertex.label = rownames(x))
 
 # Reproducing medInnovationsDiffNet object ----------------------------------
 data(medInnovations)

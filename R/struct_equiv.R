@@ -314,7 +314,6 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
   } else {
     # In order to use the SNA package functions, we need to coerce the graph
     # Into a -matrix.csc- object,
-    # geod <- igraph::distances(graph_from_adjacency_matrix(graph), mode=mode, ...)
     geod   <- do.call(approx_geodist, c(list(graph=graph), ...))
     geod@x <- geod@x/max(geod@x, na.rm = TRUE)
 

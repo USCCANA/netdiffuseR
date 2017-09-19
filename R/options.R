@@ -13,6 +13,7 @@
 #' \item{valued}{FALSE}
 #' \item{outgoing}{TRUE}
 #' \item{keep.isolates}{TRUE}
+#' \item{minmax.relative.size}{\code{c(0.025, 0.05)}}
 #' @name netdiffuseR-options
 #' @author George G. Vega Yon
 NULL
@@ -24,6 +25,7 @@ NULL
     diffnet.tol=1e-8,
     diffnet.valued=FALSE,
     diffnet.outgoing=TRUE,
-    diffnet.keep.isolates=TRUE
+    diffnet.keep.isolates=TRUE,
+    diffnet.minmax.relative.size = c(0.01, 0.04)
   )
 }

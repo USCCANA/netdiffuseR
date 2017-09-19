@@ -4,11 +4,11 @@
 \alias{plot.diffnet}
 \title{S3 plotting method for diffnet objects.}
 \usage{
-\method{plot}{diffnet}(x, y = NULL, t = 1, displaylabels = FALSE,
-  vertex.col = c(adopt = "blue", noadopt = "grey"),
-  gmode = ifelse(x$meta$undirected, "graph", "digraph"),
-  vertex.cex = "degree", edge.col = "gray", mode = "fruchtermanreingold",
-  layout.par = NULL, main = "Diffusion network in time \%d", ...)
+\method{plot}{diffnet}(x, y = NULL, t = 1, vertex.color = c(adopt =
+  "steelblue", noadopt = "white"), vertex.size = "degree",
+  main = "Diffusion network in time \%d",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
+  0.05)), ...)
 }
 \arguments{
 \item{x}{An object of class \code{\link[=diffnet-class]{diffnet}}}
@@ -17,24 +17,16 @@
 
 \item{t}{Integer scalar indicating the time slice to plot.}
 
-\item{displaylabels}{Logical scalar. When TRUE, \code{plot} shows vertex labels.}
+\item{vertex.color}{Character scalar/vector. Color of the vertices.}
 
-\item{vertex.col}{Character scalar/vector. Color of the vertices.}
-
-\item{gmode}{Character scalar. Passed to \code{\link[sna:gplot]{sna::gplot}.}}
-
-\item{vertex.cex}{Numeric scalar/vector. Size of the vertices.}
-
-\item{edge.col}{Character scalar/vector. Color of the edges.}
-
-\item{mode}{Character scalar. In the case of \code{plot}, passed to
-\code{\link[sna:gplot]{gplot}}.}
-
-\item{layout.par}{Layout parameters (see details).}
+\item{vertex.size}{Either a numeric scalar or vector of size \eqn{n}, or any
+of the following values: "indegree", "degree", or "outdegree" (see details).}
 
 \item{main}{Character. A title template to be passed to sprintf.}
 
-\item{...}{Further arguments passed to \code{\link[sna:gplot]{gplot}}.}
+\item{minmax.relative.size}{Passed to \code{\link{rescale_vertex_igraph}}.}
+
+\item{...}{Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 }
 \value{
 A matrix with the coordinates of the vertices.
@@ -43,21 +35,16 @@ A matrix with the coordinates of the vertices.
 S3 plotting method for diffnet objects.
 }
 \details{
-Plotting is done via the function \code{\link[sna:gplot]{gplot}},
-and its layout via \code{\link[sna:gplot.layout]{gplot.layout}}, both from
-the (\pkg{sna}) package.
+Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 
-\code{vertex.cex} can either be a numeric scalar, a numeric vector or a character
-scalar taking any of the following values \code{"degree"}, \code{"indegree"}, or
-\code{"outdegree"}. The later will be passed to \code{\link{dgr}} to calculate
-degree of the selected slice and will be normalized as
+When \code{vertex.size} is either of \code{"degree"}, \code{"indegree"}, or
+\code{"outdegree"}, \code{vertex.size} will be replace with \code{dgr(.,cmode = )}
+so that the vertex size reflects the desired degree.
 
-\deqn{
-  vertex.cex = d/[max(d) - min(d)]\times 2 + .5}{%
-  vertex.cex = d/[max(d) - min(d)]* 2 + .5 %
- }
-
-where \code{d=sqrt(dgr(graph))}.
+The argument \code{minmax.relative.size} is passed to \code{\link{rescale_vertex_igraph}}
+which adjusts \code{vertex.size} so that the largest and smallest vertices
+have a relative size of \code{minmax.relative.size[2]} and
+\code{minmax.relative.size[1]} respectively with respect to the x-axis.
 }
 \examples{
 

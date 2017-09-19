@@ -795,7 +795,7 @@ simmelian_mat <- function(graph, ...) {
 #' approx_geodesic(g, 6)
 #' sna::geodist(as.matrix(g))[[2]]
 #' igraph::distances(
-#'   igraph::graph_from_adjacency_matrix(g),
+#'   igraph::graph_from_adjacency_matrix(g, mode = "directed"),
 #'   mode = "out"
 #' )
 #'

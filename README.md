@@ -202,7 +202,7 @@ diffnet
 
 ``` r
 # Threshold with fixed vertex size
-plot_threshold(diffnet, vertex.cex = .4)
+plot_threshold(diffnet, vertex.size = .4)
 ```
 
 ![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)
@@ -226,6 +226,21 @@ plot_threshold(
 
     ## Warning in plot_threshold.list(graph$graph, expo, graph$toa,
     ## include_censored, : -vertex.sides- will be coerced to integer.
+
+    ## Warning in plot.window(...): "vertex.cex" is not a graphical parameter
+
+    ## Warning in plot.xy(xy, type, ...): "vertex.cex" is not a graphical
+    ## parameter
+
+    ## Warning in axis(side = side, at = at, labels = labels, ...): "vertex.cex"
+    ## is not a graphical parameter
+
+    ## Warning in axis(side = side, at = at, labels = labels, ...): "vertex.cex"
+    ## is not a graphical parameter
+
+    ## Warning in box(...): "vertex.cex" is not a graphical parameter
+
+    ## Warning in title(...): "vertex.cex" is not a graphical parameter
 
 ![](README_files/figure-markdown_github/NiceThreshold-1.png)
 

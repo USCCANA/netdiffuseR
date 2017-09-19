@@ -29,6 +29,7 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 #' @templateVar toa TRUE
 #' @templateVar slice TRUE
 #' @template graph_template
+#' @template plotting_template
 #' @param pers Integer vector of length \eqn{T} indicating the time periods of the data.
 #' @param color.ramp A function as returned by \code{\link[grDevices:colorRamp]{colorRamp}}.
 #' @param layout Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
@@ -41,7 +42,6 @@ round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
 #' @param diffmap.alpha Numeric scalar between [0,1]. Alpha level for the map.
 #' @param include.white Character scalar. Includes white in the color palette used in the map.
 #'  When \code{include.white=NULL} then it won't include it.
-#' @param rescale.fun A function to rescale vertex size. By defult it is set to be \code{\link{rescale_vertex_igraph}}
 #' @param ... Further arguments passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param no.graph Logical scala. When \code{TRUE} the graph is not drawn. This only makes
 #' sense when the option \code{add.map} is active.
@@ -104,7 +104,8 @@ plot_diffnet2.default <- function(
   diffmap.args  = list(kde2d.args=list(n=100)),
   diffmap.alpha = .5,
   include.white = "first",
-  rescale.fun   = rescale_vertex_igraph,
+  vertex.size   = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
   no.graph      = FALSE,
   ...) {
 
@@ -169,15 +170,11 @@ plot_diffnet2.default <- function(
   else if (inherits(layout, "function")) layout(g)
   else layout
 
-  xran <- range(igraph.args$layout[,1])
-  yran <- range(igraph.args$layout[,2])
-
-  # Adjusting
-  if (key.width > 0)
-    xran[2] <- (xran[2] - xran[1]*(key.width + .1))/(1 - key.width - .1)
+  # Keywidth
+  key.width <- max(0, key.width)
 
   graphics::plot.new()
-  graphics::plot.window(xlim=xran, ylim=yran, xaxs="i", yaxs="i")
+  graphics::plot.window(xlim=c(-1,1 + 2*key.width), ylim=c(-1,1))
   graphics::title(main=main)
 
   # If adding map! -------------------------------------------------------------
@@ -209,22 +206,20 @@ plot_diffnet2.default <- function(
   # Plotting graph -------------------------------------------------------------
 
   # Setting up parameters
-  if (!length(igraph.args$vertex.label)) igraph.args$vertex.label <- ""
-  if (!length(igraph.args$vertex.frame.color)) igraph.args$vertex.frame.color <- "white"
-  if (length(igraph.args$add) && !igraph.args$add)
-    warning("-add- has been set to add=TRUE.")
-  if (length(igraph.args$rescale) && igraph.args$rescale)
-    warning("-rescale- has been set to rescale=FALSE.")
+  igraph.args <- set_igraph_plotting_defaults(igraph.args)
 
-  igraph.args$add <- TRUE
-  igraph.args$rescale <- FALSE
-  igraph.args$vertex.size <- rescale.fun(igraph.args$vertex.size)
+  igraph.args$vertex.size <- rescale_vertex_igraph(
+    compute_vertex_size(g, vertex.size),
+    minmax.relative.size = minmax.relative.size
+    )
+
+  igraph.args$vertex.color <- col
 
   # Calling igraph
   if (!no.graph)
     do.call(
       what = igraph::plot.igraph,
-      args = c(list(g, vertex.color = col, xlim=xran, ylim=yran),igraph.args)
+      args = c(list(g),igraph.args)
     )
 
 
@@ -438,7 +433,7 @@ diffusionMap.default <- function(
 
 
   # Computing positions
-  g <- igraph::graph_from_adjacency_matrix(graph)
+  g <- igraph::graph_from_adjacency_matrix(graph, mode = "directed")
   g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
 
   coords <- if (is.function(layout)) layout(g)

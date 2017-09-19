@@ -191,3 +191,34 @@ igraph_to_diffnet <- function(
              ...))
 
 }
+
+
+# This is for creating themes for igraph plotting ------------------------------
+
+# The default themes
+igraph_plotting_defaults <- list(
+  vertex.frame.color = "gray",
+  edge.color         = grDevices::adjustcolor("gray", .8),
+  edge.arrow.size    = .25,
+  vertex.label       = NA,
+  edge.curved        = TRUE,
+  rescale            = TRUE,
+  add                = TRUE
+)
+
+# This function changes defaults accordignly
+set_igraph_plotting_defaults <- function(x) {
+
+  # All igraph plots are added
+  if (length(x$add) && !x$add)
+    stop("The argument -add- cannot be changed to FALSE.")
+
+  # Checking all the reminder arguments
+  for (default in names(igraph_plotting_defaults)) {
+    if (!length(x[[default]]))
+      x[[default]] <- igraph_plotting_defaults[[default]]
+  }
+
+  x
+
+}
