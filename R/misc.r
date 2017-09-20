@@ -126,16 +126,18 @@ pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {
 #' @keywords misc
 drawColorKey <- function(
   x,
-  tick.marks = pretty_within(x),
-  labels     = tick.marks,
-  main=NULL,
-  key.pos=c(.925,.975,.05,.95),
-  pos = 2, nlevels=length(tick.marks),
-  color.palette=grDevices::colorRampPalette(c("steelblue", "gray", "tomato"))(nlevels),
-  tick.width=c(.01,.0075), add.box=TRUE,
-  na.col = NULL,
-  na.height = .1,
-  na.lab = "n/a",
+  tick.marks    = pretty_within(x),
+  labels        = tick.marks,
+  main          = NULL,
+  key.pos       = c(.925,.975,.05,.95),
+  pos           = 2,
+  nlevels       = length(tick.marks),
+  color.palette = grDevices::colorRampPalette(c("steelblue", "gray", "tomato"))(nlevels),
+  tick.width    = c(.01,.0075),
+  add.box       = TRUE,
+  na.col        = NULL,
+  na.height     = .1,
+  na.lab        = "n/a",
   ...) {
 
   # Checking the pos argument
@@ -362,17 +364,15 @@ compute_vertex_size <- function(x, vertex.size, slice=1L) {
     return(rep(1L, nnodes(x)))
 
   # If it is of length 1
-  if (length(vertex.size) == 1) {
+  if (length(vertex.size) == 1 && is.character(vertex.size)) {
 
     # Matching degree
     cmodes <- c("indegree", "degree", "outdegree")
-    if (is.character(vertex.size))
-      cmode <- cmodes[pmatch(vertex.size, cmodes)]
+    cmode <- cmodes[pmatch(vertex.size, cmodes)]
 
     if (is.na(cmode))
       stop("Invalid -vertex.size-.\"",vertex.size,"\" is not supported, it should be either \"",
            paste(cmodes, collapse = "\", \""), ".")
-
 
     # Repeating the values
     return(dgr(x, cmode = cmode)[,slice])

@@ -370,7 +370,7 @@ plot_diffnet.default <- function(
   vertex.shape = c("square", "circle", "circle"),
   vertex.size   = "degree",
   mfrow.par    = NULL,
-  main         = "Network in period %s",
+  main         = c("Network in period %s", "Diffusion Network"),
   legend.args  = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
                               bty="n", cex=1.2, horiz=TRUE),
   intra.space  = c(.15,.15),
@@ -413,7 +413,10 @@ plot_diffnet.default <- function(
 
   oldpar <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(oldpar))
-  graphics::par(mfrow = mfrow.par, mar = rep(1,4), oma = c(3,0,0,0))
+  graphics::par(
+    mfrow = mfrow.par, mar = rep(1,4),
+    oma = c(3,0,ifelse(length(main) > 1, 3, 0), 0)
+    )
 
   # Checking igraph arguments
   igraph.args <- list(...)
@@ -467,7 +470,7 @@ plot_diffnet.default <- function(
 
     # Adding a legend (title)
     if (length(main))
-      graphics::legend("topleft", legend = sprintf(main, names(graph)[i]), bty = "n")
+      graphics::legend("topleft", legend = sprintf(main[1], names(graph)[i]), bty = "n")
     graphics::box()
   }
 
@@ -475,6 +478,8 @@ plot_diffnet.default <- function(
   graphics::par(mfrow=c(1,1), new=TRUE, mar=rep(0,4), oma = rep(0,4), xpd=NA)
   graphics::plot.new()
   graphics::plot.window(c(0,1), c(0,1))
+  if (length(main) > 1)
+    title(main = main)
   do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.color)))
 
   invisible(igraph.args$layout)

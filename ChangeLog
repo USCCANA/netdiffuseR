@@ -1,3 +1,8 @@
+2017-09-20  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.r: Fixed bug in compute_size.
+	* R/diffnet-methods.r: Added title to plot_diffnet.
+
+
 2017-09-18  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-methods.r: Rewritten plot functions.
 	* R/misc.r: New function to set size according to degree.

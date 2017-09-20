@@ -351,11 +351,11 @@ sessionInfo()
 
     ## R version 3.4.1 (2017-06-30)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 14.04.5 LTS
+    ## Running under: Ubuntu 16.04.3 LTS
     ## 
     ## Matrix products: default
-    ## BLAS: /usr/lib/libblas/libblas.so.3.0
-    ## LAPACK: /usr/lib/lapack/liblapack.so.3.0
+    ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
+    ## LAPACK: /usr/lib/lapack/liblapack.so.3.6.0
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -377,9 +377,9 @@ sessionInfo()
     ##  [7] MASS_7.3-47          lattice_0.20-35      stringr_1.2.0       
     ## [10] tools_3.4.1          MatchIt_3.0.1        grid_3.4.1          
     ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.14         
-    ## [16] rprojroot_1.2        digest_0.6.12        Matrix_1.2-11       
-    ## [19] evaluate_0.10.1      rmarkdown_1.6        statnet.common_3.3.0
-    ## [22] stringi_1.1.5        compiler_3.4.1       backports_1.1.0     
+    ## [16] rprojroot_1.2        digest_0.6.10        Matrix_1.2-11       
+    ## [19] evaluate_0.10.1      rmarkdown_1.6        statnet.common_4.0.0
+    ## [22] stringi_1.1.1        compiler_3.4.1       backports_1.1.0     
     ## [25] boot_1.3-20          SparseM_1.77         pkgconfig_2.0.1
 
 To-do list

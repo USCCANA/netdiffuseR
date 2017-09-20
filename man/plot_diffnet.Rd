@@ -13,9 +13,10 @@ plot_diffnet(...)
 \method{plot_diffnet}{default}(graph, cumadopt, slices = 1:nslices(graph),
   vertex.color = c("white", "tomato", "steelblue"),
   vertex.shape = c("square", "circle", "circle"), vertex.size = "degree",
-  mfrow.par = NULL, main = "Network in period \%s", legend.args = list(x =
-  "bottom", legend = c("Non adopters", "New adopters", "Adopters"), pch = 21,
-  bty = "n", cex = 1.2, horiz = TRUE), intra.space = c(0.15, 0.15),
+  mfrow.par = NULL, main = c("Network in period \%s", "Diffusion Network"),
+  legend.args = list(x = "bottom", legend = c("Non adopters", "New adopters",
+  "Adopters"), pch = 21, bty = "n", cex = 1.2, horiz = TRUE),
+  intra.space = c(0.15, 0.15),
   minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
   0.05)), ...)
 }
