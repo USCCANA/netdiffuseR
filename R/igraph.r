@@ -197,13 +197,16 @@ igraph_to_diffnet <- function(
 
 # The default themes
 igraph_plotting_defaults <- list(
-  vertex.frame.color = "gray",
-  edge.color         = grDevices::adjustcolor("gray", .8),
-  edge.arrow.size    = .25,
-  vertex.label       = NA,
-  edge.curved        = TRUE,
-  rescale            = TRUE,
-  add                = TRUE
+  vertex.frame.color  = "black",
+  edge.color          = grDevices::adjustcolor("gray", .8),
+  edge.arrow.size     = .25,
+  vertex.label        = NA,
+  vertex.label.color  = "black",
+  vertex.label.family = "sans",
+  vertex.label.dist   = 1,
+  edge.curved         = TRUE,
+  rescale             = TRUE,
+  add                 = TRUE
 )
 
 # This function changes defaults accordignly

@@ -9,10 +9,10 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
   no.contemporary = TRUE, main = "Time of Adoption by\\nNetwork Threshold",
   xlab = "Time", ylab = "Threshold", vertex.size = "degree",
   vertex.color = grDevices::adjustcolor("steelblue", 0.8),
-  vertex.label = "", vertex.lab.pos = NULL, vertex.lab.cex = 1,
-  vertex.lab.adj = c(0.5, 0.5), vertex.lab.col = "gray27",
+  vertex.label = "", vertex.label.pos = NULL, vertex.label.cex = 1,
+  vertex.label.adj = c(0.5, 0.5), vertex.label.color = "gray27",
   vertex.sides = 40L, vertex.rot = 0, edge.width = 2,
-  edge.col = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
+  edge.color = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
   include.grid = TRUE, bty = "n", vertex.bcol = "white",
   jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
   ylim = NULL, ...)
@@ -47,13 +47,13 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
 
 \item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
 
-\item{vertex.lab.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
+\item{vertex.label.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
 
-\item{vertex.lab.cex}{Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.}
+\item{vertex.label.cex}{Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.}
 
-\item{vertex.lab.adj}{Passed to \code{\link{text}}.}
+\item{vertex.label.adj}{Passed to \code{\link{text}}.}
 
-\item{vertex.lab.col}{Passed to \code{\link{text}}.}
+\item{vertex.label.color}{Passed to \code{\link{text}}.}
 
 \item{vertex.sides}{Either a vector of size \eqn{n} or a scalar indicating the
 number of sides of each vertex (see details).}
@@ -63,7 +63,7 @@ rotation in radians of each vertex (see details).}
 
 \item{edge.width}{Numeric. Width of the edges.}
 
-\item{edge.col}{Character. Color of the edges.}
+\item{edge.color}{Character. Color of the edges.}
 
 \item{arrow.length}{Numeric value to be passed to \code{\link{arrows}}.}
 

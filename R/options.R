@@ -26,6 +26,6 @@ NULL
     diffnet.valued=FALSE,
     diffnet.outgoing=TRUE,
     diffnet.keep.isolates=TRUE,
-    diffnet.minmax.relative.size = c(0.01, 0.04)
+    diffnet.minmax.relative.size = c(0.01, 0.03)
   )
 }

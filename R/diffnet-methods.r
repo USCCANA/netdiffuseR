@@ -24,7 +24,7 @@ plot.diffnet <- function(
   vertex.color  = c(adopt="steelblue", noadopt="white"),
   vertex.size = "degree",
   main        = "Diffusion network in time %d",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
   ...) {
 
   # Listing arguments
@@ -307,9 +307,10 @@ summary.diffnet <- function(
 #' @template plotting_template
 #' @param mfrow.par Vector of size 2 with number of rows and columns to be passed to \code{\link{par}.}
 #' @param main Character scalar. A title template to be passed to \code{\link{sprintf}.}
-#' @param intra.space Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}
 #' @param ... Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #' @param legend.args List of arguments to be passed to \code{\link{legend}}.
+#' @param background Either a function to be called before plotting each slice, a color
+#' to specify the backgroupd color, or \code{NULL} (in which case nothing is done).
 #'
 #' @details Plotting is done via the function \code{\link[igraph:plot.igraph]{plot.igraph}}.
 #'
@@ -327,6 +328,15 @@ summary.diffnet <- function(
 #' color that the adopters when the graph is at their time of adoption, hence,
 #' when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 #' be plotted in red.
+#'
+#' \code{legend.args} has the following default parameter:
+#' \tabular{ll}{
+#'   \code{x} \tab \code{"bottom"} \cr
+#'   \code{legend} \tab \code{c("Non adopters", "New adopters","Adopters")} \cr
+#'   \code{pch} \tab \code{sapply(vertex.shape, switch, circle = 21, square = 22, 21)} \cr
+#'   \code{bty} \tab \code{"n"} \cr
+#'   \code{horiz} \tab \code{TRUE} \cr
+#' }
 #'
 #'
 #' @examples
@@ -352,10 +362,16 @@ plot_diffnet.diffnet <- function(
   graph, ...
 ) {
 
-  plot_diffnet.default(
-    graph    = as_dgCMatrix(graph),
-    cumadopt = graph$cumadopt,
-    ...
+  args <- list(...)
+
+  if (!length(args$slices)) args$slices <- as.character(graph$meta$pers)
+
+  do.call(
+    plot_diffnet.default,
+    c(
+      list(graph = as_dgCMatrix(graph), cumadopt = graph$cumadopt),
+      args
+    )
   )
 
 
@@ -365,35 +381,51 @@ plot_diffnet.diffnet <- function(
 #' @export
 plot_diffnet.default <- function(
   graph, cumadopt,
-  slices       = 1:nslices(graph),
-  vertex.color   = c("white", "tomato", "steelblue"),
+  slices       = NULL,
+  vertex.color = c("white", "tomato", "steelblue"),
   vertex.shape = c("square", "circle", "circle"),
-  vertex.size   = "degree",
+  vertex.size  = "degree",
   mfrow.par    = NULL,
   main         = c("Network in period %s", "Diffusion Network"),
-  legend.args  = list(x="bottom", legend=c("Non adopters", "New adopters","Adopters"), pch=21,
-                              bty="n", cex=1.2, horiz=TRUE),
-  intra.space  = c(.15,.15),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
+  legend.args  = list(),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
+  background   = grDevices::gray(.9),
   ...) {
 
+  # Setting parameters
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+
+  # Setting legend parameters, if specified
+  if (length(legend.args) | (!length(legend.args) & is.list(legend.args))) {
+    if (!length(legend.args$x)) legend.args$x <- "bottom"
+    if (!length(legend.args$legend))
+      legend.args$legend <-c("Non adopters", "New adopters","Adopters")
+    if (!length(legend.args$pch)) {
+      legend.args$pch <- sapply(vertex.shape, switch, circle = 21, square = 22, 21)
+    }
+    if (!length(legend.args$bty)) legend.args$bty <- "n"
+    if (!length(legend.args$horiz)) legend.args$horiz <-TRUE
+  }
+
+
+  igraph.args <- list(...)
 
   # Coercing into a dgCMatrix list
   graph <- as_dgCMatrix(graph)
-
-  # Checking slices
-  if (!length(slices)) slices <- 1:ncol(cumadopt)
-  graph <- graph[slices]
 
   if (!is.list(graph))
     stopifnot_graph(graph)
 
   # Making sure it has names
   graph <- add_graph_dimnames.list(graph)
+  colnames(cumadopt) <- names(graph)
 
-  cumadopt <- cumadopt[,slices,drop=FALSE]
+  # Checking slices
+  if (!length(slices))
+    slices <- names(graph)
 
-  t <- length(graph)
+  t <- length(slices)
   n <- nrow(graph[[1]])
 
   # Figuring out the dimension
@@ -411,36 +443,75 @@ plot_diffnet.default <- function(
     else mfrow.par <- c(ceiling(t/4),4)
   }
 
-  oldpar <- graphics::par(no.readonly = TRUE)
-  on.exit(graphics::par(oldpar))
+
+  # Computing legend and main width/height
+  legend_height_i <- 0
+  if (length(legend.args) && length(legend.args$legend)) {
+    legend_height_i <- max(sapply(
+      legend.args$legend,
+      graphics::strheight,
+      units="inches",
+      cex = if (length(legend.args$cex)) legend.args$cex else NULL
+      ))*2.5
+  }
+
+  main_height_i <- graphics::strheight(
+    main[2],
+    units = "inches",
+    cex = if ("cex.main" %in% igraph.args) igraph.args$main.cex else NULL
+  )*1.5
+
   graphics::par(
-    mfrow = mfrow.par, mar = rep(1,4),
-    oma = c(3,0,ifelse(length(main) > 1, 3, 0), 0)
+    mfrow = mfrow.par, mar = rep(.25,4),
+    omi = c(legend_height_i, 0, main_height_i, 0),
+    xpd = NA, xaxs = "i", yaxs="i"
     )
 
-  # Checking igraph arguments
-  igraph.args <- list(...)
+  # Setting igraph defaults
   igraph.args <- set_igraph_plotting_defaults(igraph.args)
 
   # 3. Plotting ----------------------------------------------------------------
   times <- as.integer(names(graph))
 
-  for (i in 1:t) {
+  # Set types:
+  # - 1: Non adopter
+  # - 2: Adopter in s
+  # - 3: Adopter prior to s
+  set_type <- function() {
+
+    i <- match(s, colnames(cumadopt))
+    j <- match(s, slices)
+
+    # If we are looking at the first of both
+    if (i==1 & j ==1)
+      return(ifelse(!cumadopt[,s], 1L, 2L))
+
+    # Otherwise, we look at something more complicated
+    type <- ifelse(!cumadopt[,s] , 1L, NA)
+
+    if (j > 1) {
+      type <- ifelse(!is.na(type), type,
+                     ifelse(cumadopt[,slices[j-1]], 3L, 2L))
+    } else if (i > 1) {
+      type <- ifelse(!is.na(type), type,
+                     ifelse(cumadopt[, i-1], 3L, 2L))
+    }
+
+    type
+
+  }
+
+  for (s in slices) {
     # Colors, new adopters are painted differently
-    cols <- ifelse(!cumadopt[,i], vertex.color[1],
-                   ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.color[2], vertex.color[3]))
 
-    # Shapes
-    shapes <- ifelse(!cumadopt[,i], vertex.shape[1],
-                     ifelse(!cumadopt[,i-(i!=1)] | rep(i,n) == 1, vertex.shape[2], vertex.shape[3]))
-
-    # Checking dimnames
-    if (!length(nodes(graph)))
-      dimnames(graph[[i]]) <- list(1:nnodes(graph[[i]]), 1:nnodes(graph[[i]]))
+    # Setting color and shape depending on the type of vertex these are.
+    type   <- set_type()
+    cols   <- vertex.color[type]
+    shapes <- vertex.shape[type]
 
     # Creating igraph object
-    ig  <- igraph::graph_from_adjacency_matrix(graph[[i]], mode = "directed")
-    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(graph[[i]])))
+    ig  <- igraph::graph_from_adjacency_matrix(graph[[s]], mode = "directed")
+    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(graph[[s]])))
 
     # Computing layout
     if (!length(igraph.args$layout)) {
@@ -450,7 +521,12 @@ plot_diffnet.default <- function(
     }
 
     graphics::plot.new()
-    graphics::plot.window(xlim=c(-1,1), ylim=c(-1,1))
+    graphics::plot.window(xlim=c(-1.1,1.1), ylim=c(-1.1,1.1))
+
+    # Should we paint or do something else?
+    if (is.function(background)) background()
+    else if (length(background))
+      rect(-1.1,-1.1,1.1,1.1, col=background, border=background)
 
     # Plotting
     do.call(
@@ -460,7 +536,7 @@ plot_diffnet.default <- function(
         ig,
         vertex.color = cols,
         vertex.size  = rescale_vertex_igraph(
-          compute_vertex_size(graph[[i]], vertex.size),
+          compute_vertex_size(graph, vertex.size, match(s, names(graph))),
           minmax.relative.size = minmax.relative.size
           ),
         vertex.shape = shapes
@@ -470,17 +546,24 @@ plot_diffnet.default <- function(
 
     # Adding a legend (title)
     if (length(main))
-      graphics::legend("topleft", legend = sprintf(main[1], names(graph)[i]), bty = "n")
-    graphics::box()
+      graphics::legend("topleft", legend = sprintf(main[1], names(graph[s])), bty = "n")
+
   }
 
   # Legend
-  graphics::par(mfrow=c(1,1), new=TRUE, mar=rep(0,4), oma = rep(0,4), xpd=NA)
+  graphics::par(
+    mfrow = c(1,1), mai = rep(0,4), new = TRUE, xpd=NA,
+    omi = c(0, 0, main_height_i, 0)
+  )
+
+  # graphics::par(mfrow=c(1,1), new=TRUE, mar=rep(0,4), oma = rep(0,4), xpd=NA)
   graphics::plot.new()
   graphics::plot.window(c(0,1), c(0,1))
   if (length(main) > 1)
-    title(main = main)
-  do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.color)))
+    title(main = main[2], outer=TRUE)
+
+  if (length(legend.args))
+    do.call(graphics::legend, c(legend.args, list(pt.bg=vertex.color)))
 
   invisible(igraph.args$layout)
 
@@ -507,10 +590,10 @@ plot_diffnet.default <- function(
 #' @param vertex.size Numeric vector of size \eqn{n}. Relative size of the vertices.
 #' @param vertex.color Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.
 #' @param vertex.label Character vector of size \eqn{n}. Labels of the vertices.
-#' @param vertex.lab.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
-#' @param vertex.lab.cex Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.
-#' @param vertex.lab.adj Passed to \code{\link{text}}.
-#' @param vertex.lab.col Passed to \code{\link{text}}.
+#' @param vertex.label.pos Integer value to be passed to \code{\link{text}} via \code{pos}.
+#' @param vertex.label.cex Either a numeric scalar or vector of size \eqn{n}. Passed to \code{text}.
+#' @param vertex.label.adj Passed to \code{\link{text}}.
+#' @param vertex.label.color Passed to \code{\link{text}}.
 #' @param jitter.amount Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
 #' @param jitter.factor Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
 #' @param vertex.bcol Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.
@@ -519,7 +602,7 @@ plot_diffnet.default <- function(
 #' @param vertex.rot Either a vector of size \eqn{n} or a scalar indicating the
 #' rotation in radians of each vertex (see details).
 #' @param edge.width Numeric. Width of the edges.
-#' @param edge.col Character. Color of the edges.
+#' @param edge.color Character. Color of the edges.
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
 #' @param bty See \code{\link{par}}.
@@ -569,17 +652,17 @@ plot_threshold <- function(
   main             = "Time of Adoption by\nNetwork Threshold",
   xlab             = "Time",
   ylab             = "Threshold",
-  vertex.size       = "degree",
-  vertex.color       = grDevices::adjustcolor("steelblue", .8),
+  vertex.size      = "degree",
+  vertex.color     = grDevices::adjustcolor("steelblue", .8),
   vertex.label     = "",
-  vertex.lab.pos   = NULL,
-  vertex.lab.cex   = 1,
-  vertex.lab.adj   = c(.5,.5),
-  vertex.lab.col   = "gray27",
+  vertex.label.pos = NULL,
+  vertex.label.cex = 1,
+  vertex.label.adj = c(.5,.5),
+  vertex.label.color = "gray27",
   vertex.sides     = 40L,
   vertex.rot       = 0,
   edge.width       = 2,
-  edge.col         = rgb(.6,.6,.6,.1),
+  edge.color       = rgb(.6,.6,.6,.1),
   arrow.length     = .20,
   include.grid     = TRUE, bty="n",
   vertex.bcol      = "white",
@@ -601,17 +684,17 @@ plot_threshold <- function(
     array = plot_threshold.array(
       graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
       vertex.size, vertex.color, vertex.label,
-      vertex.lab.pos, vertex.lab.cex, vertex.lab.adj,vertex.lab.col,
+      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
       vertex.sides, vertex.rot,
-      edge.width, edge.col,
+      edge.width, edge.color,
       arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
       xlim, ylim, ...),
     list = plot_threshold.list(
       graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
-      vertex.lab.adj, vertex.lab.col,
+      vertex.size, vertex.color, vertex.label,
+      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
       vertex.sides, vertex.rot,
-      edge.width, edge.col,
+      edge.width, edge.color,
       arrow.length, include.grid, bty, vertex.bcol,jitter.factor, jitter.amount,
       xlim, ylim, ...),
     diffnet = {
@@ -623,10 +706,10 @@ plot_threshold <- function(
       plot_threshold.list(
       graph$graph, expo,
       graph$toa, include_censored, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
-      vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
-      vertex.lab.adj,vertex.lab.col,
+      vertex.size, vertex.color, vertex.label,
+      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
       vertex.sides, vertex.rot,
-      edge.width, edge.col,
+      edge.width, edge.color,
       arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
       xlim, ylim, ...)
       },
@@ -647,10 +730,10 @@ plot_threshold.list <- function(
   graph, expo, toa, include_censored, t0, attrs,
   undirected, no.contemporary,
   main, xlab, ylab,
-  vertex.size, vertex.color, vertex.label, vertex.lab.pos, vertex.lab.cex,
-  vertex.lab.adj,vertex.lab.col,
+  vertex.size, vertex.color, vertex.label, vertex.label.pos, vertex.label.cex,
+  vertex.label.adj,vertex.label.color,
   vertex.sides, vertex.rot,
-  edge.width, edge.col, arrow.length,
+  edge.width, edge.color, arrow.length,
   include.grid, bty, vertex.bcol,
   jitter.factor, jitter.amount, xlim, ylim, ...) {
   # Step 0: Getting basic info
@@ -731,7 +814,7 @@ plot_threshold.list <- function(
 
   # Plotting
   # oldpar <- par(no.readonly = TRUE)
-  plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main,
+  graphics::plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main,
        xaxs="i", yaxs="i",...)
 
   # Should there be a grid??
@@ -747,8 +830,6 @@ plot_threshold.list <- function(
                         dev=par("pin"), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
-  # with(edges, segments(x0, y0, x1, y1, lwd = edge.width, col = edge.col))
-
   ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
   e_arrows <- apply(edges, 1, function(x) {
       y <- edges_arrow(x["x0"], x["y0"], x["x1"], x["y1"],
@@ -756,7 +837,7 @@ plot_threshold.list <- function(
                    height=arrow.length,
                    beta=pi*(2/3),
                    dev=par("pin"), ran=ran)
-      polygon(y[,1], y[,2], col=edge.col, border=edge.col)
+      graphics::polygon(y[,1], y[,2], col = edge.color, border = edge.color)
     })
 
   # Drawing the vertices and its labels
@@ -766,18 +847,18 @@ plot_threshold.list <- function(
   # Plotting
   lapply(seq_len(length(pol)),
          function(x) {
-           polygon(pol[[x]][,1], pol[[x]][,2],
+           graphics::polygon(pol[[x]][,1], pol[[x]][,2],
                    border = vertex.bcol[x],
                    col    = vertex.color[x])
            })
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
-  text(x=jit, y=y, labels = vertex.label,
-       pos = vertex.lab.pos,
-       cex = vertex.lab.cex,
-       col = vertex.lab.col,
-       adj = vertex.lab.adj
+  graphics::text(x=jit, y=y, labels = vertex.label,
+       pos = vertex.label.pos,
+       cex = vertex.label.cex,
+       col = vertex.label.color,
+       adj = vertex.label.adj
        )
 
   # par(oldpar)

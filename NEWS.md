@@ -8,7 +8,10 @@
 
 * `plot.diffnet`, `plot_diffnet`, `plot.diffnet_mentor`, and `plot_diffnet2` use igraph for plotting. 
   Also, users can now pass "degree" for -vertex.size- (vertex.cex not used anymore),
-  allowing to "automatically" scale vertices by (in/out/.)degree.
+  allowing to "automatically" scale vertices by (in/out/.)degree. Also, 
+  plotting arguments like vertex.* or edge.* are standarized so these match igraph.
+  
+* `plot_diffnet` has a new parameter: `background`.
   
 
 ## Bug fixes

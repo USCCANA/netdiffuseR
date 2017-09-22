@@ -1,13 +1,7 @@
 ---
-title: "README"
-author: "George G. Vega Yon"
-date: paste("Compiled on", Sys.date())
-output: 
-  md_document:
-    variant: markdown_github
+title: "netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks"
+output: github_document
 ---
-
-# netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks
 
 [![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR)
 [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
@@ -106,7 +100,7 @@ For the case of windows and mac users, they can find binary versions of the pack
 This example has been taken from the package's vignettes:
 
 
-```{r}
+```{r loading}
 library(netdiffuseR)
 ```
 
@@ -150,16 +144,15 @@ plot_threshold(diffnet, vertex.size = .4)
 
 Using more features
 
-```{r NiceThreshold}
+```{r NiceThreshold, cache=FALSE}
 data("medInnovationsDiffNet")
 size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.label   = nodes(medInnovationsDiffNet),
-  vertex.cex     = size/10, vertex.lab.pos = NULL,
-  vertex.lab.cex = size/4,
-  vertex.sides   = medInnovationsDiffNet[["city"]] + 2,
+  vertex.color     = c("tomato", "steelblue", "black", "gray")[medInnovationsDiffNet[["city"]]],
+  vertex.label.cex = size/4,
+  vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
 )
@@ -188,8 +181,7 @@ plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 
 ```{r plot_diffnet2}
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
-plot_diffnet2(brfarmersDiffNet,
-              vertex.size = dgr(brfarmersDiffNet)[,3])
+plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
 ```{r plot_diffnet2 with map, }

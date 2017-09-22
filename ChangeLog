@@ -1,3 +1,9 @@
+2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Working on plotting methods. Adding arguments
+	  consistency across the package, and fixing some bugs in plot_diffnet
+	  regarding the colors of vertices.
+
+
 2017-09-20  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.r: Fixed bug in compute_size.
 	* R/diffnet-methods.r: Added title to plot_diffnet.

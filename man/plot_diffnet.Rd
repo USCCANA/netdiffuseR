@@ -10,15 +10,13 @@ plot_diffnet(...)
 
 \method{plot_diffnet}{diffnet}(graph, ...)
 
-\method{plot_diffnet}{default}(graph, cumadopt, slices = 1:nslices(graph),
+\method{plot_diffnet}{default}(graph, cumadopt, slices = NULL,
   vertex.color = c("white", "tomato", "steelblue"),
   vertex.shape = c("square", "circle", "circle"), vertex.size = "degree",
   mfrow.par = NULL, main = c("Network in period \%s", "Diffusion Network"),
-  legend.args = list(x = "bottom", legend = c("Non adopters", "New adopters",
-  "Adopters"), pch = 21, bty = "n", cex = 1.2, horiz = TRUE),
-  intra.space = c(0.15, 0.15),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025,
-  0.05)), ...)
+  legend.args = list(),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
+  0.04)), background = grDevices::gray(0.9), ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -42,9 +40,10 @@ of the following values: "indegree", "degree", or "outdegree" (see details).}
 
 \item{legend.args}{List of arguments to be passed to \code{\link{legend}}.}
 
-\item{intra.space}{Passed to \code{\link[igraph:plot.igraph]{plot.igraph}}}
-
 \item{minmax.relative.size}{Passed to \code{\link{rescale_vertex_igraph}}.}
+
+\item{background}{Either a function to be called before plotting each slice, a color
+to specify the backgroupd color, or \code{NULL} (in which case nothing is done).}
 }
 \value{
 Calculated coordinates for the grouped graph (invisible).
@@ -82,6 +81,15 @@ and adopters respectively. The new adopters (default color \code{"tomato"}) have
 color that the adopters when the graph is at their time of adoption, hence,
 when the graph been plotted is in \eqn{t=2} and \eqn{toa=2} the vertex will
 be plotted in red.
+
+\code{legend.args} has the following default parameter:
+\tabular{ll}{
+  \code{x} \tab \code{"bottom"} \cr
+  \code{legend} \tab \code{c("Non adopters", "New adopters","Adopters")} \cr
+  \code{pch} \tab \code{sapply(vertex.shape, switch, circle = 21, square = 22, 21)} \cr
+  \code{bty} \tab \code{"n"} \cr
+  \code{horiz} \tab \code{TRUE} \cr
+}
 }
 \examples{
 # Generating a random graph

@@ -105,7 +105,7 @@ plot_diffnet2.default <- function(
   diffmap.alpha = .5,
   include.white = "first",
   vertex.size   = "degree",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.025, 0.05)),
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
   no.graph      = FALSE,
   ...) {
 

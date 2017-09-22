@@ -1,5 +1,5 @@
 netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks
-======================================================================
+================
 
 [![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser) [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) [![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR) [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
 
@@ -165,7 +165,7 @@ summary(diffnet)
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 ```
 
-![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/plot_infectsuscept-1.png)
 
 ``` r
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
@@ -176,7 +176,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
     ## When applying logscale some observations are missing.
 
-![](README_files/figure-markdown_github/plot_infectsuscept-2.png)
+![](README_files/figure-markdown_github-ascii_identifiers/plot_infectsuscept-2.png)
 
 ### Threshold
 
@@ -205,7 +205,7 @@ diffnet
 plot_threshold(diffnet, vertex.size = .4)
 ```
 
-![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/BoringThreshold,%20plot_threshold-1.png)
 
 Using more features
 
@@ -215,10 +215,9 @@ size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.label   = nodes(medInnovationsDiffNet),
-  vertex.cex     = size/10, vertex.lab.pos = NULL,
-  vertex.lab.cex = size/4,
-  vertex.sides   = medInnovationsDiffNet[["city"]] + 2,
+  vertex.color     = c("tomato", "steelblue", "black", "gray")[medInnovationsDiffNet[["city"]]],
+  vertex.label.cex = size/4,
+  vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
 )
@@ -227,22 +226,7 @@ plot_threshold(
     ## Warning in plot_threshold.list(graph$graph, expo, graph$toa,
     ## include_censored, : -vertex.sides- will be coerced to integer.
 
-    ## Warning in plot.window(...): "vertex.cex" is not a graphical parameter
-
-    ## Warning in plot.xy(xy, type, ...): "vertex.cex" is not a graphical
-    ## parameter
-
-    ## Warning in axis(side = side, at = at, labels = labels, ...): "vertex.cex"
-    ## is not a graphical parameter
-
-    ## Warning in axis(side = side, at = at, labels = labels, ...): "vertex.cex"
-    ## is not a graphical parameter
-
-    ## Warning in box(...): "vertex.cex" is not a graphical parameter
-
-    ## Warning in title(...): "vertex.cex" is not a graphical parameter
-
-![](README_files/figure-markdown_github/NiceThreshold-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/NiceThreshold-1.png)
 
 ### Adoption rate
 
@@ -250,7 +234,7 @@ plot_threshold(
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Adopters-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/Adopters-1.png)
 
 ### Hazard rate
 
@@ -258,7 +242,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Hazard-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/Hazard-1.png)
 
 ### Diffusion process
 
@@ -266,15 +250,17 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet-1.png)
 
 ``` r
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
-plot_diffnet2(brfarmersDiffNet,
-              vertex.size = dgr(brfarmersDiffNet)[,3])
+plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet2-1.png)
+    ## Warning in as_generic_graph.igraph(graph): The -igraph- object has multiple
+    ## edges. Only one of each will be retrieved.
+
+![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet2-1.png)
 
 ``` r
 set.seed(1231)
@@ -304,7 +290,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet2%20with%20map-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet2%20with%20map-1.png)
 
 ``` r
 par(oldpar)
@@ -337,7 +323,7 @@ legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
        cex=.6, bty="n", inset=c(0,-.1))
 ```
 
-![](README_files/figure-markdown_github/mosaic-1.png)
+![](README_files/figure-markdown_github-ascii_identifiers/mosaic-1.png)
 
 ``` r
 par(oldpar)
@@ -351,11 +337,11 @@ sessionInfo()
 
     ## R version 3.4.1 (2017-06-30)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.3 LTS
+    ## Running under: Ubuntu 14.04.5 LTS
     ## 
     ## Matrix products: default
-    ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
-    ## LAPACK: /usr/lib/lapack/liblapack.so.3.6.0
+    ## BLAS: /usr/lib/libblas/libblas.so.3.0
+    ## LAPACK: /usr/lib/lapack/liblapack.so.3.0
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -377,9 +363,9 @@ sessionInfo()
     ##  [7] MASS_7.3-47          lattice_0.20-35      stringr_1.2.0       
     ## [10] tools_3.4.1          MatchIt_3.0.1        grid_3.4.1          
     ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.14         
-    ## [16] rprojroot_1.2        digest_0.6.10        Matrix_1.2-11       
-    ## [19] evaluate_0.10.1      rmarkdown_1.6        statnet.common_4.0.0
-    ## [22] stringi_1.1.1        compiler_3.4.1       backports_1.1.0     
+    ## [16] rprojroot_1.2        digest_0.6.12        Matrix_1.2-11       
+    ## [19] evaluate_0.10.1      rmarkdown_1.6        statnet.common_3.3.0
+    ## [22] stringi_1.1.5        compiler_3.4.1       backports_1.1.0     
     ## [25] boot_1.3-20          SparseM_1.77         pkgconfig_2.0.1
 
 To-do list
