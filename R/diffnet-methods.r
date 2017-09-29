@@ -526,7 +526,7 @@ plot_diffnet.default <- function(
     # Should we paint or do something else?
     if (is.function(background)) background()
     else if (length(background))
-      rect(-1.1,-1.1,1.1,1.1, col=background, border=background)
+      graphics::rect(-1.1,-1.1,1.1,1.1, col=background, border=background)
 
     # Plotting
     do.call(
