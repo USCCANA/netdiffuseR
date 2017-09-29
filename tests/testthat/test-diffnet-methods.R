@@ -85,7 +85,7 @@ test_that("Returning threshold equal to the threshold fun (plot_threshold and )"
   expect_equivalent(th, thar)
   expect_equivalent(th, thdn)
 
-  expect_error(plot_threshold(graph), "expo.+should be pro.+diffnet")
+  expect_error(plot_threshold(graph), "expo.+should be pro")
   expect_error(plot_threshold(diffnet, vertex.size = "a"), "Invalid.+size")
 
   # Repeating cex

@@ -2,18 +2,28 @@
 % Please edit documentation in R/diffnet-methods.r
 \name{plot_threshold}
 \alias{plot_threshold}
+\alias{plot_threshold.diffnet}
+\alias{plot_threshold.array}
+\alias{plot_threshold.default}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
-  na.rm = TRUE), attrs = NULL, undirected = getOption("diffnet.undirected"),
-  no.contemporary = TRUE, main = "Time of Adoption by\\nNetwork Threshold",
-  xlab = "Time", ylab = "Threshold", vertex.size = "degree",
+plot_threshold(graph, expo, ...)
+
+\method{plot_threshold}{diffnet}(graph, expo, ...)
+
+\method{plot_threshold}{array}(graph, expo, ...)
+
+\method{plot_threshold}{default}(graph, expo, toa, include_censored = FALSE,
+  t0 = min(toa, na.rm = TRUE), attrs = NULL,
+  undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
+  main = "Time of Adoption by\\nNetwork Threshold", xlab = "Time",
+  ylab = "Threshold", vertex.size = "degree",
   vertex.color = grDevices::adjustcolor("steelblue", 0.8),
   vertex.label = "", vertex.label.pos = NULL, vertex.label.cex = 1,
   vertex.label.adj = c(0.5, 0.5), vertex.label.color = "gray27",
   vertex.sides = 40L, vertex.rot = 0, edge.width = 2,
   edge.color = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
-  include.grid = TRUE, bty = "n", vertex.bcol = "white",
+  include.grid = TRUE, vertex.bcol = "white", bty = "n",
   jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
   ylim = NULL, ...)
 }
@@ -21,6 +31,8 @@ plot_threshold(graph, expo, toa, include_censored = FALSE, t0 = min(toa,
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
+
+\item{...}{Additional arguments passed to \code{\link{plot}}.}
 
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
 
@@ -69,9 +81,9 @@ rotation in radians of each vertex (see details).}
 
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
 
-\item{bty}{See \code{\link{par}}.}
-
 \item{vertex.bcol}{Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.}
+
+\item{bty}{See \code{\link{par}}.}
 
 \item{jitter.factor}{Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.}
 
@@ -80,8 +92,6 @@ rotation in radians of each vertex (see details).}
 \item{xlim}{Passed to \code{\link{plot}}.}
 
 \item{ylim}{Passed to \code{\link{plot}}.}
-
-\item{...}{Additional arguments passed to \code{\link{plot}}.}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,

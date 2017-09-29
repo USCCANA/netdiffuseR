@@ -381,7 +381,8 @@ compute_vertex_size <- function(x, vertex.size, slice=1L) {
   # Applyging the function accordignly
   if (is.numeric(vertex.size)) {
 
-    return(vertex.size)
+    if (length(vertex.size) == 1) return(rep(vertex.size, nnodes(x)))
+    else return(vertex.size)
 
   } else
     stop("Invalid -vertex.size-. It cannot be of class -", class(vertex.size),

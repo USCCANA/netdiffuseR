@@ -596,7 +596,7 @@ plot_diffnet.default <- function(
 #' @param vertex.label.color Passed to \code{\link{text}}.
 #' @param jitter.amount Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
 #' @param jitter.factor Numeric vector of size 2 (for x and y) passed to \code{\link{jitter}}.
-#' @param vertex.bcol Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.
+#' @param vertex.frame.color Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.
 #' @param vertex.sides Either a vector of size \eqn{n} or a scalar indicating the
 #' number of sides of each vertex (see details).
 #' @param vertex.rot Either a vector of size \eqn{n} or a scalar indicating the
@@ -642,8 +642,44 @@ plot_diffnet.default <- function(
 #'
 #' @export
 #' @author George G. Vega Yon
-plot_threshold <- function(
-  graph, expo, toa,
+plot_threshold <- function(graph, expo, ...) UseMethod("plot_threshold")
+
+#' @export
+#' @rdname plot_threshold
+plot_threshold.diffnet <- function(graph, expo, ...) {
+  # If graph is diffnet, then we should do something different (because the
+  # first toa may not be the firts one as toa may be stacked to the right.
+  # see ?as_diffnet)
+  # graph$toa <- graph$toa - min(graph$meta$pers) + 1L
+
+  if (missing(expo))
+    expo <- exposure(graph)
+
+  args <- list(...)
+
+  if (!length(args$undirected)) args$undirected <- graph$meta$undirected
+  if (!length(args$t0)) args$t0 <- graph$meta$pers[1]
+  if (length(args$toa)) {
+    warning("While -graph- has its own toa variable, the user is providing one.")
+  } else {
+    args$toa <- graph$toa
+  }
+
+  do.call(plot_threshold.default, c(list(graph = graph$graph, expo=expo), args))
+}
+
+#' @export
+#' @rdname plot_threshold
+plot_threshold.array <- function(graph, expo, ...) {
+  plot_threshold.default(as_dgCMatrix(graph), expo = expo, ...)
+}
+
+#' @export
+#' @rdname plot_threshold
+plot_threshold.default <- function(
+  graph,
+  expo,
+  toa,
   include_censored = FALSE,
   t0               = min(toa, na.rm = TRUE),
   attrs            = NULL,
@@ -658,88 +694,39 @@ plot_threshold <- function(
   vertex.label.pos = NULL,
   vertex.label.cex = 1,
   vertex.label.adj = c(.5,.5),
-  vertex.label.color = "gray27",
+  vertex.label.color = NULL,
   vertex.sides     = 40L,
   vertex.rot       = 0,
   edge.width       = 2,
-  edge.color       = rgb(.6,.6,.6,.1),
-  arrow.length     = .20,
-  include.grid     = TRUE, bty="n",
-  vertex.bcol      = "white",
+  edge.color       = NULL,
+  arrow.length     = nslices(graph)/80,
+  include.grid     = TRUE,
+  vertex.frame.color = NULL,
+  bty              = "n",
   jitter.factor    = c(1,0),
   jitter.amount    = c(.25,0),
   xlim             = NULL,
   ylim             = NULL,
   ...
-) {
+  ) {
 
+  # Setting default parameters
+  set_plotting_defaults(c("edge.color", "vertex.frame.color", "vertex.label.color"))
+
+  # # Checking out defaults
+  # if (!length(edge.color)) edge.color <- igraph_plotting_defaults$edge.color
+  # if (!length(edge.color)) edge.color <- igraph_plotting_defaults$vertex.frame.color
+
+  # Checking if exposure was provided
   if (missing(expo))
-    if (!inherits(graph, "diffnet")) {
-      stop("-expo- should be provided when -graph- is not of class 'diffnet'")
-    } else {
-      expo <- exposure(graph)
-    }
+    stop("expo should be provided")
 
-  switch (class(graph),
-    array = plot_threshold.array(
-      graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.size, vertex.color, vertex.label,
-      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
-      vertex.sides, vertex.rot,
-      edge.width, edge.color,
-      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
-      xlim, ylim, ...),
-    list = plot_threshold.list(
-      graph, expo, toa, include_censored, t0, attrs, undirected, no.contemporary, main, xlab, ylab,
-      vertex.size, vertex.color, vertex.label,
-      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
-      vertex.sides, vertex.rot,
-      edge.width, edge.color,
-      arrow.length, include.grid, bty, vertex.bcol,jitter.factor, jitter.amount,
-      xlim, ylim, ...),
-    diffnet = {
-      # If graph is diffnet, then we should do something different (because the
-      # first toa may not be the firts one as toa may be stacked to the right.
-      # see ?as_diffnet)
-      # graph$toa <- graph$toa - min(graph$meta$pers) + 1L
+  # Checking the type of graph
+  graph <- as_dgCMatrix(graph)
 
-      plot_threshold.list(
-      graph$graph, expo,
-      graph$toa, include_censored, t0=graph$meta$pers[1], attrs, graph$meta$undirected, no.contemporary, main, xlab, ylab,
-      vertex.size, vertex.color, vertex.label,
-      vertex.label.pos, vertex.label.cex, vertex.label.adj,vertex.label.color,
-      vertex.sides, vertex.rot,
-      edge.width, edge.color,
-      arrow.length, include.grid, bty, vertex.bcol, jitter.factor, jitter.amount,
-      xlim, ylim, ...)
-      },
-    stopifnot_graph(graph)
-  )
-}
-
-# @export
-# @rdname plot_threshold
-plot_threshold.array <- function(graph, ...) {
-  graph <- apply(graph, 3, methods::as, Class="dgCMatrix")
-  plot_threshold.list(graph, ...)
-}
-
-# @export
-# @rdname plot_threshold
-plot_threshold.list <- function(
-  graph, expo, toa, include_censored, t0, attrs,
-  undirected, no.contemporary,
-  main, xlab, ylab,
-  vertex.size, vertex.color, vertex.label, vertex.label.pos, vertex.label.cex,
-  vertex.label.adj,vertex.label.color,
-  vertex.sides, vertex.rot,
-  edge.width, edge.color, arrow.length,
-  include.grid, bty, vertex.bcol,
-  jitter.factor, jitter.amount, xlim, ylim, ...) {
   # Step 0: Getting basic info
   t <- length(graph)
   n <- nrow(graph[[1]])
-
 
   # Step 1: Creating the cumulative graph
   # Matrix::sparseMatrix(i={}, j={}, dims=c(n, n))
@@ -762,20 +749,7 @@ plot_threshold.list <- function(
   # Step 2: Checking colors and sizes
 
   # Computing sizes
-  if ((length(vertex.size) == 1) && inherits(vertex.size, "character")) {
-    if (vertex.size %in% c("degree", "indegree", "outdegree")) {
-      vertex.size <- dgr(cumgraph, cmode=vertex.size, undirected = undirected)
-      vertex.size <- sqrt(vertex.size)
-      r <- range(vertex.size)
-
-      # If all the vertices have the same degree
-      vertex.size <- (vertex.size - r[1]+ .1)/(r[2] - r[1] + .1)/4
-    } else {
-      stop("Invalid -vertex.size-")
-    }
-  } else if (length(vertex.size)==1) {
-    vertex.size <- rep(vertex.size, n)
-  } else if (inherits(vertex.size, "character")) stop("Invalid value for -vertex.size-.")
+  vertex.size <- compute_vertex_size(graph, vertex.size)
 
   # Checking sides
   test <- length(vertex.sides)
@@ -802,19 +776,9 @@ plot_threshold.list <- function(
     stop("-vertex.rot- must be of the same length as nnodes(graph).")
   }
 
-  # Checking colors
-  test <- length(vertex.bcol)
-  if (test == 1) vertex.bcol <- rep(vertex.bcol, n)
-  else if (test != n) stop("-vertex.bcol- must be either of length 1 or nnodes(graph).")
-
-  # Checking colors
-  test <- length(vertex.color)
-  if (test == 1) vertex.color <- rep(vertex.color, n)
-  else if (test != n) stop("-vertex.color- must be either of length 1 or nnodes(graph).")
-
   # Plotting
   # oldpar <- par(no.readonly = TRUE)
-  graphics::plot(NULL, xlim=xlim, ylim=ylim, bty=bty, xlab=xlab, ylab=ylab, main=main,
+  graphics::plot(NULL, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, main=main,
        xaxs="i", yaxs="i",...)
 
   # Should there be a grid??
@@ -826,31 +790,31 @@ plot_threshold.list <- function(
 
   # Drawing arrows, first we calculate the coordinates of the edges, for this we
   # use the function edges_coords. This considers aspect ratio of the plot.
+  vertex.size <- igraph_vertex_rescale(vertex.size, adjust=1)
   edges <- edges_coords(cumgraph, toa, jit, y, vertex.size, undirected, no.contemporary,
                         dev=par("pin"), ran=c(xlim[2]-xlim[1], ylim[2]-ylim[1]))
   edges <- as.data.frame(edges)
 
   ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
-  e_arrows <- apply(edges, 1, function(x) {
-      y <- edges_arrow(x["x0"], x["y0"], x["x1"], x["y1"],
-                   width=arrow.length,
-                   height=arrow.length,
-                   beta=pi*(2/3),
-                   dev=par("pin"), ran=ran)
-      graphics::polygon(y[,1], y[,2], col = edge.color, border = edge.color)
-    })
+
+  # Plotting the edges
+  mapply(function(x0, y0, x1, y1, col) {
+    y <- edges_arrow(x0, y0, x1, y1, width=arrow.length, height=arrow.length,
+                     beta=pi*(2/3), dev=par("pin"), ran=ran)
+
+    graphics::polygon(y[,1], y[,2], col = col, border = col)
+
+  }, x0 = edges[,"x0"], y0 = edges[,"y0"], x1 = edges[,"x1"], y1 = edges[,"y1"],
+  col = edge.color)
 
   # Drawing the vertices and its labels
   # Computing the coordinates
   pol <- vertices_coords(jit, y, vertex.size, vertex.sides, vertex.rot, par("pin"), ran)
 
   # Plotting
-  lapply(seq_len(length(pol)),
-         function(x) {
-           graphics::polygon(pol[[x]][,1], pol[[x]][,2],
-                   border = vertex.bcol[x],
-                   col    = vertex.color[x])
-           })
+  mapply(function(coords,border,col)
+    graphics::polygon(coords[,1], coords[,2], border = border, col=col),
+    coords = pol, border = vertex.frame.color, col=vertex.color)
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n

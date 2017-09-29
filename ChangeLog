@@ -1,4 +1,9 @@
 2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet_methods.r: Keep working on consistency
+	* R/igraph.r: New function to set defaults for any plot function.
+
+
+2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet-methods.r: Working on plotting methods. Adding arguments
 	  consistency across the package, and fixing some bugs in plot_diffnet
 	  regarding the colors of vertices.

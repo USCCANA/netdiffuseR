@@ -223,5 +223,21 @@ set_igraph_plotting_defaults <- function(x) {
   }
 
   x
+}
+
+# This function sets the default values for plotting parameters looking at
+# parameters available in igraph_plotting_defaults
+set_plotting_defaults <- function(params) {
+  env <- parent.frame()
+  for (param in params) {
+    if (!exists(param, envir = env))
+      stop("No such parameter!")
+
+    val <- get(param, envir = env)
+    if (!length(val)) {
+      assign(param, igraph_plotting_defaults[[param]], pos = env)
+    }
+
+  }
 
 }
