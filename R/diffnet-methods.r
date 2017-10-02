@@ -40,7 +40,7 @@ plot.diffnet <- function(
   # Setting the colors
   cols <- with(x, ifelse(cumadopt[,t], vertex.color[1], vertex.color[2]))
 
-  igraph.args <- set_igraph_plotting_defaults(igraph.args)
+  set_igraph_plotting_defaults("igraph.args")
 
   if (!length(igraph.args$layout))
     igraph.args$layout <- igraph::layout_nicely(graph)
@@ -364,8 +364,6 @@ plot_diffnet.diffnet <- function(
 
   args <- list(...)
 
-  if (!length(args$slices)) args$slices <- as.character(graph$meta$pers)
-
   do.call(
     plot_diffnet.default,
     c(
@@ -421,12 +419,18 @@ plot_diffnet.default <- function(
   graph <- add_graph_dimnames.list(graph)
   colnames(cumadopt) <- names(graph)
 
+  # Checking parameters
+  t <- nslices(graph)
+  n <- nrow(graph[[1]])
+
   # Checking slices
-  if (!length(slices))
-    slices <- names(graph)
+  if (!length(slices)) {
+    slices <- names(graph)[unique(floor(seq(1, t, length.out = min(t, 4))))]
+  } else if (is.numeric(slices)) {
+    slices <- names(graph)[slices]
+  }
 
   t <- length(slices)
-  n <- nrow(graph[[1]])
 
   # Figuring out the dimension
   if (!length(mfrow.par)) {
@@ -468,7 +472,7 @@ plot_diffnet.default <- function(
     )
 
   # Setting igraph defaults
-  igraph.args <- set_igraph_plotting_defaults(igraph.args)
+  set_igraph_plotting_defaults("igraph.args")
 
   # 3. Plotting ----------------------------------------------------------------
   times <- as.integer(names(graph))
@@ -520,13 +524,14 @@ plot_diffnet.default <- function(
       igraph.args$layout <- igraph.args$layout(ig)
     }
 
+    # Computing subtitle height
     graphics::plot.new()
-    graphics::plot.window(xlim=c(-1.1,1.1), ylim=c(-1.1,1.1))
+    graphics::plot.window(xlim=c(-1.15,1.15), ylim=c(-1.15,1.15))
 
     # Should we paint or do something else?
     if (is.function(background)) background()
     else if (length(background))
-      graphics::rect(-1.1,-1.1,1.1,1.1, col=background, border=background)
+      graphics::rect(-1.15,-1.15,1.15,1.15, col=background, border=background)
 
     # Plotting
     do.call(
@@ -546,7 +551,7 @@ plot_diffnet.default <- function(
 
     # Adding a legend (title)
     if (length(main))
-      graphics::legend("topleft", legend = sprintf(main[1], names(graph[s])), bty = "n")
+      subtitle(x = sprintf(main[1], names(graph[s])))
 
   }
 

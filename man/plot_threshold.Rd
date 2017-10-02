@@ -20,12 +20,11 @@ plot_threshold(graph, expo, ...)
   ylab = "Threshold", vertex.size = "degree",
   vertex.color = grDevices::adjustcolor("steelblue", 0.8),
   vertex.label = "", vertex.label.pos = NULL, vertex.label.cex = 1,
-  vertex.label.adj = c(0.5, 0.5), vertex.label.color = "gray27",
-  vertex.sides = 40L, vertex.rot = 0, edge.width = 2,
-  edge.color = rgb(0.6, 0.6, 0.6, 0.1), arrow.length = 0.2,
-  include.grid = TRUE, vertex.bcol = "white", bty = "n",
-  jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
-  ylim = NULL, ...)
+  vertex.label.adj = c(0.5, 0.5), vertex.label.color = NULL,
+  vertex.sides = 40L, vertex.rot = 0, edge.width = 2, edge.color = NULL,
+  arrow.length = nslices(graph)/80, include.grid = TRUE,
+  vertex.frame.color = NULL, bty = "n", jitter.factor = c(1, 0),
+  jitter.amount = c(0.25, 0), xlim = NULL, ylim = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -81,7 +80,7 @@ rotation in radians of each vertex (see details).}
 
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
 
-\item{vertex.bcol}{Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.}
+\item{vertex.frame.color}{Either a vector of size \eqn{n} or a scalar indicating colors of vertices' borders.}
 
 \item{bty}{See \code{\link{par}}.}
 

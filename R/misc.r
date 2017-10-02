@@ -550,3 +550,15 @@ as_dgCMatrix.list <- function(x, make.dimnames=TRUE, ...) {
   lapply(x, as_dgCMatrix, make.dimnames = make.dimnames)
 
 }
+
+
+subtitle <- function(
+  x,
+  coords = graphics::par("usr")[c(1, 4)] - c(0, graphics::strheight(x)*1.5/2),
+  pos    = 4,
+  cex    = 1
+  ) {
+
+  text(x = coords[1], y = coords[2], labels = x, pos = pos, cex=cex, offset=0)
+
+}

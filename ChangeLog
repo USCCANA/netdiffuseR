@@ -1,3 +1,8 @@
+2017-10-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/igraph.r: Working on function to set default plot params.
+	* R/rdiffnet-methods.r: Cleaner code.
+
+
 2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet_methods.r: Keep working on consistency
 	* R/igraph.r: New function to set defaults for any plot function.

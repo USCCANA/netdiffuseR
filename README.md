@@ -223,8 +223,8 @@ plot_threshold(
 )
 ```
 
-    ## Warning in plot_threshold.list(graph$graph, expo, graph$toa,
-    ## include_censored, : -vertex.sides- will be coerced to integer.
+    ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 =
+    ## min(toa, : -vertex.sides- will be coerced to integer.
 
 ![](README_files/figure-markdown_github-ascii_identifiers/NiceThreshold-1.png)
 

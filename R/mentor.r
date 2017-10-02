@@ -204,7 +204,7 @@ plot.diffnet_mentor <- function(
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 
-  igraph.args <- set_igraph_plotting_defaults(igraph.args)
+  set_igraph_plotting_defaults("igraph.args")
 
   # Creating igraph obj
   ig <- cbind(

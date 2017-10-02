@@ -159,8 +159,9 @@ plot_diffnet2.default <- function(
   }
 
   # Adjmat must have dimnames to make sure sorting in igraph is fine
-  if (!length(unlist(dimnames(graph), recursive = TRUE)))
-    dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
+  graph <- add_graph_dimnames.dgCMatrix(graph)
+  # if (!length(unlist(dimnames(graph), recursive = TRUE)))
+  #   dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
 
   # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph, mode="undirected")
@@ -174,7 +175,7 @@ plot_diffnet2.default <- function(
   key.width <- max(0, key.width)
 
   graphics::plot.new()
-  graphics::plot.window(xlim=c(-1,1 + 2*key.width), ylim=c(-1,1))
+  graphics::plot.window(xlim=c(-1,1 + 5*key.width), ylim=c(-1,1))
   graphics::title(main=main)
 
   # If adding map! -------------------------------------------------------------
@@ -206,7 +207,7 @@ plot_diffnet2.default <- function(
   # Plotting graph -------------------------------------------------------------
 
   # Setting up parameters
-  igraph.args <- set_igraph_plotting_defaults(igraph.args)
+  set_igraph_plotting_defaults("igraph.args")
 
   igraph.args$vertex.size <- rescale_vertex_igraph(
     compute_vertex_size(g, vertex.size),
@@ -246,6 +247,13 @@ plot_diffnet2.default <- function(
     if (!length(key.args$na.col)) key.args$na.col <- "transparent"
     if (!length(key.args$na.lab)) key.args$na.lab <- "Non-adopters"
     if (!length(key.args$border)) key.args$border <- "transparent"
+    if (!length(key.args$tick.marks)) {
+      toaran <- range(toa, na.rm=TRUE)
+      key.args$tick.marks <-
+        unique(floor(seq(toaran[1], toaran[2], length.out = 5)))
+    }
+
+
 
     do.call(
       what = drawColorKey,

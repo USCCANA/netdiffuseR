@@ -210,19 +210,22 @@ igraph_plotting_defaults <- list(
 )
 
 # This function changes defaults accordignly
-set_igraph_plotting_defaults <- function(x) {
+# The function takes -obj_name- which is the name of the object that holds
+# the igraph parameters, and modifies it in the parent frame directly (so
+# no copying over the functions, edition of the environment itself).
+set_igraph_plotting_defaults <- function(obj_name) {
+
+  env <- parent.frame()
 
   # All igraph plots are added
-  if (length(x$add) && !x$add)
+  if (length(env[[obj_name]]$add) && !env[[obj_name]]$add)
     stop("The argument -add- cannot be changed to FALSE.")
 
   # Checking all the reminder arguments
   for (default in names(igraph_plotting_defaults)) {
-    if (!length(x[[default]]))
-      x[[default]] <- igraph_plotting_defaults[[default]]
+    if (!length(env[[obj_name]][[default]]))
+      env[[obj_name]][[default]] <- igraph_plotting_defaults[[default]]
   }
-
-  x
 }
 
 # This function sets the default values for plotting parameters looking at
@@ -233,10 +236,9 @@ set_plotting_defaults <- function(params) {
     if (!exists(param, envir = env))
       stop("No such parameter!")
 
-    val <- get(param, envir = env)
-    if (!length(val)) {
-      assign(param, igraph_plotting_defaults[[param]], pos = env)
-    }
+    if (!length(env[[param]]))
+      env[[param]] <- igraph_plotting_defaults[[param]]
+
 
   }
 
