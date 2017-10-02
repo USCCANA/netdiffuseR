@@ -153,11 +153,6 @@ struct_test <- function(
   if (!length(rewire.args$copy.first)) rewire.args$copy.first <- TRUE
   if (!length(rewire.args$algorithm)) rewire.args$algorithm <- "swap"
 
-
-  # # Checking class
-  # if (!inherits(graph, "diffnet"))
-  #   stop("-graph- must be of class diffnet.")
-
   # Preparing the call to boot
   rewire.args$graph <- graph
   statisticpll <- function(d, i, fn, rewire.args, ...) {

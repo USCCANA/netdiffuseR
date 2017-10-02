@@ -2,6 +2,8 @@
 	* R/igraph.r: Working on function to set default plot params.
 	* R/rdiffnet-methods.r: Cleaner code.
 
+	* R/rdiffnet.r: New function rdiffnet_multiple.
+
 
 2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/diffnet_methods.r: Keep working on consistency

@@ -5,7 +5,6 @@ cache: packages
 
 r:
   - release
-  - devel
   - oldrel
 
 os:

@@ -230,7 +230,78 @@ rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
   sgraph
 }
 
+#' @rdname rdiffnet
+#' @export
+#' @param R Integer scalar. Number of simulations to be done.
+#' @param statistic A Function to be applied to each simulated diffusion network.
+#' @param ... Further arguments to be passed to \code{rdiffnet}.
+#' @param ncpus Integer scalar. Number of processors to be used (see details).
+#' @param cl An object of class \code{\link[parallel:makeCluster]{c("SOCKcluster", "cluster")}}
+#' (see details).
+#' @details
+#' The function \code{rdiffnet_multiple} is a wrapper of \code{rdiffnet} wich allows
+#' simulating multiple diffusion networks with the same parameters and apply
+#' the same function to all of them. This function is designed to allow the user
+#' to perform larger simulation studies in which the distribution of a particular
+#' statistic is observed.
+#'
+#' When \code{cl} is provided, then simulations are done via
+#' \code{\link[parallel:parSapply]{parSapply}}. If \code{ncpus} is greater than
+#' 1, then the function creates a cluster via \code{\link[parallel:makeCluster]{makeCluster}}
+#' which is stopped (removed) one the process is complete.
+#'
+#' @return \code{rdiffnet_multiple} returns either a vector or an array depending
+#' on what \code{statistic} is (see \code{\link{sapply}} and
+#' \code{\link[parallel:parSapply]{parSapply}}).
+#'
+#' @examples
+#' # Simulation study comparing the diffusion with diff sets of seed nodes -----
+#'
+#' # Random seed nodes
+#' set.seed(1)
+#' ans0 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+#'     n = 100, t = 4, seed.nodes = "random", stop.no.diff=FALSE)
+#'
+#' # Central seed nodes
+#' set.seed(1)
+#' ans1 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+#'     n = 100, t = 4, seed.nodes = "central", stop.no.diff=FALSE)
+#'
+#' boxplot(cbind(Random = ans0, Central = ans1), main="Number of adopters")
+rdiffnet_multiple <- function(
+  R,
+  statistic,
+  ...,
+  ncpus = 1L,
+  cl    = NULL
+) {
 
+  # Checking the type of answer that it returns
+
+
+  # Calling parallel
+  if ((ncpus > 1) | length(cl)) {
+
+    # Creating the cluster
+    if (!length(cl)) {
+      cl <- parallel::makeCluster(ncpus)
+      on.exit(parallel::stopCluster(cl))
+    }
+
+    # Calling the function
+    parallel::parSapply(cl, X=seq_len(R), function(i, statistic, ...) {
+      statistic(netdiffuseR::rdiffnet(...))
+    }, statistic = statistic, ...)
+
+  } else {
+
+    # If no parallel apply
+    sapply(X=seq_len(R), function(i, statistic, ...) {
+      statistic(netdiffuseR::rdiffnet(...))
+    }, statistic = statistic, ...)
+  }
+
+}
 
 #' @rdname rdiffnet
 #' @export

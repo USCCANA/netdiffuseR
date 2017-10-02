@@ -2,9 +2,12 @@
 % Please edit documentation in R/rdiffnet.R
 \name{rdiffnet}
 \alias{rdiffnet}
+\alias{rdiffnet_multiple}
 \alias{rdiffnet}
 \title{Random diffnet network}
 \usage{
+rdiffnet_multiple(R, statistic, ..., ncpus = 1L, cl = NULL)
+
 rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
   rewire.args = list(), threshold.dist = runif(n), exposure.args = list(),
@@ -12,6 +15,17 @@ rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   stop.no.diff = TRUE)
 }
 \arguments{
+\item{R}{Integer scalar. Number of simulations to be done.}
+
+\item{statistic}{A Function to be applied to each simulated diffusion network.}
+
+\item{...}{Further arguments to be passed to \code{rdiffnet}.}
+
+\item{ncpus}{Integer scalar. Number of processors to be used (see details).}
+
+\item{cl}{An object of class \code{\link[parallel:makeCluster]{c("SOCKcluster", "cluster")}}
+(see details).}
+
 \item{n}{Integer scalar. Number of vertices.}
 
 \item{t}{Integer scalar. Time length.}
@@ -44,6 +58,10 @@ with error if there was no diffusion. Otherwise it throws a warning.}
 }
 \value{
 A random \code{\link{diffnet}} class object.
+
+\code{rdiffnet_multiple} returns either a vector or an array depending
+on what \code{statistic} is (see \code{\link{sapply}} and
+\code{\link[parallel:parSapply]{parSapply}}).
 }
 \description{
 Simulates a diffusion network by creating a random dynamic network and
@@ -116,6 +134,17 @@ is applied using that graph instead.
   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
   \code{normalized} \tab \code{TRUE}
 }
+
+The function \code{rdiffnet_multiple} is a wrapper of \code{rdiffnet} wich allows
+simulating multiple diffusion networks with the same parameters and apply
+the same function to all of them. This function is designed to allow the user
+to perform larger simulation studies in which the distribution of a particular
+statistic is observed.
+
+When \code{cl} is provided, then simulations are done via
+\code{\link[parallel:parSapply]{parSapply}}. If \code{ncpus} is greater than
+1, then the function creates a cluster via \code{\link[parallel:makeCluster]{makeCluster}}
+which is stopped (removed) one the process is complete.
 }
 \examples{
 # Asimple example -----------------------------------------------------------
@@ -133,6 +162,19 @@ newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 
 
+# Simulation study comparing the diffusion with diff sets of seed nodes -----
+
+# Random seed nodes
+set.seed(1)
+ans0 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+    n = 100, t = 4, seed.nodes = "random", stop.no.diff=FALSE)
+
+# Central seed nodes
+set.seed(1)
+ans1 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+    n = 100, t = 4, seed.nodes = "central", stop.no.diff=FALSE)
+
+boxplot(cbind(Random = ans0, Central = ans1), main="Number of adopters")
 }
 \seealso{
 Other simulation functions: \code{\link{permute_graph}},

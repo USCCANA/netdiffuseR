@@ -146,12 +146,10 @@ Using more features
 
 ```{r NiceThreshold, cache=FALSE}
 data("medInnovationsDiffNet")
-size <- sqrt(1 + dgr(medInnovationsDiffNet)[,1])
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
   vertex.color     = c("tomato", "steelblue", "black", "gray")[medInnovationsDiffNet[["city"]]],
-  vertex.label.cex = size/4,
   vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)

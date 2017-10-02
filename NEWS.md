@@ -12,6 +12,9 @@
   plotting arguments like vertex.* or edge.* are standarized so these match igraph.
   
 * `plot_diffnet` has a new parameter: `background`.
+
+* `rdiffnet_multiple`, a wrapper of `rdiffnet`, allows performing simulations studies
+  by running simulating multiple diffusion networks using `rdiffnet`.
   
 
 ## Bug fixes
