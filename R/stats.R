@@ -126,11 +126,23 @@ dgr <- function(graph, cmode="degree",
 #' @param y Ignored
 #' @param freq Logical scalar. When \code{TRUE} the y-axis will reflex counts,
 #'  otherwise densities.
-plot.diffnet_degSeq <- function(x, breaks = min(100L, nrow(x)/5), freq=FALSE, y=NULL, log="xy",
-                                hist.args=list(), slice=ncol(x), xlab="Degree", ylab="Freq",...) {
+plot.diffnet_degSeq <- function(
+  x,
+  breaks = min(100L, nrow(x)/5),
+  freq=FALSE,
+  y=NULL,
+  log="xy",
+  hist.args=list(),
+  slice=ncol(x),
+  xlab="Degree",
+  ylab="Freq",
+  ...
+  ) {
+
   ans <- do.call(hist, c(hist.args, list(x=x[,slice], breaks = breaks, plot=FALSE)))
   with(ans, plot(x=mids,y=if (freq) counts else density,log=log, xlab=xlab, ylab=ylab,...))
   invisible(ans)
+
 }
 
 # @rdname dgr
@@ -430,7 +442,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @name exposure
 NULL
 
-#
+# Workhorse of exposure plotting
 .exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
 
   # Getting the parameters
@@ -460,11 +472,18 @@ NULL
 
 #' @export
 #' @rdname exposure
-exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
-                     outgoing=getOption("diffnet.outgoing", TRUE),
-                     valued=getOption("diffnet.valued", FALSE), normalized=TRUE,
-                     groupvar=NULL, self=getOption("diffnet.self"),
-                     ...) {
+exposure <- function(
+  graph,
+  cumadopt,
+  attrs      = NULL,
+  alt.graph  = NULL,
+  outgoing   = getOption("diffnet.outgoing", TRUE),
+  valued     = getOption("diffnet.valued", FALSE),
+  normalized = TRUE,
+  groupvar   = NULL,
+  self       = getOption("diffnet.self"),
+  ...
+  ) {
 
   # Checking diffnet attributes
   if (length(attrs) == 1 && inherits(attrs, "character")) {
@@ -526,7 +545,7 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
       if (inherits(alt.graph, "dgCMatrix")) {
         warning("When -alt.graph- is static, will be repeated \"t\" times to fit the data.")
-        alt.graph <- lapply(1:length(graph), function(x) alt.graph)
+        alt.graph <- replicate(nslices(graph), alt.graph)
       }
 
       if (!valued)
@@ -537,49 +556,9 @@ exposure <- function(graph, cumadopt, attrs = NULL, alt.graph=NULL,
 
   }
 
-  cls <- class(graph)
-  if ("array" %in% cls) {
-    exposure.array(graph, cumadopt, attrs, outgoing, valued, normalized, self)
-  } else if ("list" %in% cls) {
-    exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
-  #} else if ("diffnet" %in% cls) {
-  #  exposure.list(graph, cumadopt, attrs, outgoing, valued, normalized, self)
+  if (is.array(graph) | is.list(graph)) {
+    exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized, self)
   } else stopifnot_graph(graph)
-}
-
-# @rdname exposure
-# @export
-exposure.array <- function(
-  graph, cumadopt, attrs,
-  outgoing, valued, normalized, self) {
-
-  # Preparing the data
-  n <- nrow(graph)
-  t <- dim(graph)[3]
-  graphl <- vector("list", t)
-  for (i in 1:t)
-    graphl[[i]] <- methods::as(graph[,,i], "dgCMatrix")
-
-  # attrs can be either
-  #  degree, indegree, outdegree, or a user defined vector.
-  #  by default is user equal to 1
-  da <- dim(attrs)
-  if (!length(da)) stop("-attrs- must be a matrix of size n by T.")
-  if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
-                                     "It must be of size that -cumadopt-.")
-
-  # Dimnames
-  rn <- rownames(cumadopt)
-  if (!length(rn)) rn <- 1:nrow(cumadopt)
-
-  tn <- colnames(cumadopt)
-  if (!length(tn)) tn <- 1:ncol(cumadopt)
-
-  # Calculating the exposure, and assigning names
-  output <- exposure_for(graphl, cumadopt, attrs, outgoing, valued, normalized,
-                         self)
-  dimnames(output) <- list(rn, tn)
-  output
 }
 
 # @rdname exposure
@@ -596,26 +575,14 @@ exposure.list <- function(
   if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
                                      "It must be of size that -cumadopt-.")
 
-  n <- nrow(graph[[1]])
-  t <- length(graph)
-
-  # Coercing into dgCMatrices
-  test <- !sapply(graph, inherits, what="dgCMatrix")
-  if (any(test))
-    graph[which(test)] <- lapply(graph[which(test)],
-                                 function(x) methods::as(x, "dgCMatrix"))
+  add_dimnames.mat(cumadopt)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
                          self)
 
-  rn <- rownames(cumadopt)
-  if (!length(rn)) rn <- 1:nrow(cumadopt)
-
-  tn <- colnames(cumadopt)
-  if (!length(tn)) tn <- 1:ncol(cumadopt)
-
-  dimnames(output) <- list(rn, tn)
+  dimnames(output) <- dimnames(cumadopt)
   output
+
 }
 
 exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
@@ -695,7 +662,7 @@ cumulative_adopt_count <- function(obj) {
 #' @param no.plot Logical scalar. When TRUE, suppress plotting (only returns hazard rates).
 #' @param add Logical scalar. When TRUE it adds the hazard rate to the current plot.
 #' @param ylim Numeric vector. See \code{\link{plot}}.
-#' @param ... further arguments to be passed to \code{\link{par}}
+#' @param ... further arguments to be passed to the method.
 #' @details
 #'
 #' This function computes hazard rate, plots it and returns the hazard rate vector
@@ -783,12 +750,9 @@ hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 
 #' @rdname hazard_rate
 #' @export
-plot_hazard <- function(x,main="Hazard Rate", xlab="Time", ylab="Hazard Rate", type="b",
-                        include.grid=TRUE, bg="lightblue", add=FALSE, ylim=c(0,1), pch=21,
-                        ...) {
+plot_hazard <- function(x, ...) {
   hr <- hazard_rate(x, no.plot = TRUE)
-  plot.diffnet_hr(x=hr, main=main, xlab=xlab, ylab=ylab, type=type, include.grid=include.grid, bg=bg,
-                  add=add, ylim=ylim, pch=pch, ...)
+  do.call(plot.diffnet_hr, c(list(x=hr), ...))
 }
 
 #' @rdname hazard_rate

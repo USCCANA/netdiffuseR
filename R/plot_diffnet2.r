@@ -159,9 +159,7 @@ plot_diffnet2.default <- function(
   }
 
   # Adjmat must have dimnames to make sure sorting in igraph is fine
-  graph <- add_graph_dimnames.dgCMatrix(graph)
-  # if (!length(unlist(dimnames(graph), recursive = TRUE)))
-  #   dimnames(graph) <- list(1:nnodes(graph), 1:nnodes(graph))
+  add_dimnames.mat(graph)
 
   # Computing positions
   g <- igraph::graph_from_adjacency_matrix(graph, mode="undirected")

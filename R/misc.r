@@ -391,48 +391,38 @@ compute_vertex_size <- function(x, vertex.size, slice=1L) {
 
 }
 
-add_graph_dimnames <- function(...) UseMethod("add_graph_dimnames")
+add_dimnames.mat <- function(x) {
+  # Getting the parameters
+  env <- parent.frame()
+  x   <- as.character(match.call()$x)
 
-add_graph_dimnames.array <- function(x, ...) {
   # Updating row and colnames if necesary
-  if (!length(rownames(x)))
-    rownames(x) <- 1L:nrow(x)
-  if (!length(colnames(x)))
-    colnames(x) <- 1L:ncol(x)
-  if (length(dimnames(x)) != 3)
-    dimnames(x)[[3]] <- 1L:nslices(x)
+  if (!length(rownames(env[[x]])))
+    rownames(env[[x]]) <- 1L:nrow(env[[x]])
+  if (!length(colnames(env[[x]])))
+    colnames(env[[x]]) <- 1L:ncol(env[[x]])
+  if (length(dim(env[[x]])) == 3 && length(dimnames(env[[x]])) != 3)
+    dimnames(env[[x]])[[3]] <- 1L:nslices(env[[x]])
 
-  x
 }
 
-add_graph_dimnames.matrix <- function(x, ...) {
+add_dimnames.list <- function(x) {
+
+  # Getting the call and the environments
+  env <- parent.frame()
+  x   <- as.character(match.call()$x)
+
   # Updating row and colnames if necesary
-  if (!length(rownames(x)))
-    rownames(x) <- 1L:nrow(x)
-  if (!length(colnames(x)))
-    colnames(x) <- 1L:ncol(x)
+  for (i in 1:length(env[[x]])) {
+    if (!length(rownames(env[[x]][[i]])))
+      rownames(env[[x]][[i]]) <- 1L:nrow(env[[x]][[i]])
+    if (!length(colnames(env[[x]][[i]])))
+      colnames(env[[x]][[i]]) <- 1L:ncol(env[[x]][[i]])
+  }
 
-  x
-}
+  if (!length(names(env[[x]])))
+    names(env[[x]]) <- 1L:nslices(env[[x]])
 
-add_graph_dimnames.dgCMatrix <- function(x, ...) {
-  # Updating row and colnames if necesary
-  if (!length(rownames(x)))
-    rownames(x) <- 1L:nrow(x)
-  if (!length(colnames(x)))
-    colnames(x) <- 1L:ncol(x)
-
-  x
-}
-
-add_graph_dimnames.list <- function(x, ...) {
-  # Updating row and colnames if necesary
-  x <- lapply(x, add_graph_dimnames.dgCMatrix)
-
-  if (!length(names(x)))
-    names(x) <- 1L:nslices(x)
-
-  x
 }
 
 
@@ -504,7 +494,7 @@ as_dgCMatrix.default <- function(x, make.dimnames = TRUE, ...) {
 
   # Updating row and colnames if necesary
   if (make.dimnames)
-    return(add_graph_dimnames.dgCMatrix(ans))
+    add_dimnames.mat(ans)
 
   ans
 }
@@ -525,7 +515,7 @@ as_dgCMatrix.array <- function(x, make.dimnames = TRUE, ...) {
 
   # Updating row and colnames if necesary
   if (make.dimnames)
-    return(add_graph_dimnames.list(ans))
+    add_dimnames.list(ans)
 
   ans
 

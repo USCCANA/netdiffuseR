@@ -209,6 +209,14 @@ igraph_plotting_defaults <- list(
   add                 = TRUE
 )
 
+plotting_defaults <- c(
+  color  = "steelblue",
+  family = "sans",
+  lwd    = 2,
+  border = igraph_plotting_defaults$edge.color,
+  igraph_plotting_defaults
+)
+
 # This function changes defaults accordignly
 # The function takes -obj_name- which is the name of the object that holds
 # the igraph parameters, and modifies it in the parent frame directly (so
@@ -237,7 +245,7 @@ set_plotting_defaults <- function(params) {
       stop("No such parameter!")
 
     if (!length(env[[param]]))
-      env[[param]] <- igraph_plotting_defaults[[param]]
+      env[[param]] <- plotting_defaults[[param]]
 
 
   }

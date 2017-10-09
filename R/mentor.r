@@ -201,8 +201,9 @@ plot.diffnet_mentor <- function(
 
 
   igraph.args <- list(...)
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar))
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+  graphics::par(xpd = NA)
 
   set_igraph_plotting_defaults("igraph.args")
 

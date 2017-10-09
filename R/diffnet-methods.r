@@ -416,7 +416,7 @@ plot_diffnet.default <- function(
     stopifnot_graph(graph)
 
   # Making sure it has names
-  graph <- add_graph_dimnames.list(graph)
+  add_dimnames.list(graph)
   colnames(cumadopt) <- names(graph)
 
   # Checking parameters

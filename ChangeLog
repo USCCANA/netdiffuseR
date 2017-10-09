@@ -1,3 +1,10 @@
+2017-10-09  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.r: add_dimnames is now based on environments and more general.
+	* R/stats.r: Cleanning code
+
+	* *: Trying to pin down problem with Armadillo 0.8+. Solved.
+
+
 2017-10-02  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/igraph.r: Working on function to set default plot params.
 	* R/rdiffnet-methods.r: Cleaner code.

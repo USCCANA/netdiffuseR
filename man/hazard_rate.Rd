@@ -9,9 +9,7 @@
 \usage{
 hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
-plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
-  type = "b", include.grid = TRUE, bg = "lightblue", add = FALSE,
-  ylim = c(0, 1), pch = 21, ...)
+plot_hazard(x, ...)
 
 \method{plot}{diffnet_hr}(x, y = NULL, main = "Hazard Rate",
   xlab = "Time", ylab = "Hazard Rate", type = "b", include.grid = TRUE,
@@ -25,9 +23,11 @@ plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
 
 \item{include.grid}{Logical scalar. When TRUE includes a grid on the plot.}
 
-\item{...}{further arguments to be passed to \code{\link{par}}}
+\item{...}{further arguments to be passed to the method.}
 
 \item{x}{An object of class \code{diffnet_hr}.}
+
+\item{y}{ignored.}
 
 \item{main}{Character scalar. Title of the plot}
 
@@ -39,13 +39,11 @@ plot_hazard(x, main = "Hazard Rate", xlab = "Time", ylab = "Hazard Rate",
 
 \item{bg}{Character scalar. Color of the points.}
 
+\item{pch}{Integer scalar. See \code{\link{par}}.}
+
 \item{add}{Logical scalar. When TRUE it adds the hazard rate to the current plot.}
 
 \item{ylim}{Numeric vector. See \code{\link{plot}}.}
-
-\item{pch}{Integer scalar. See \code{\link{par}}.}
-
-\item{y}{ignored.}
 }
 \value{
 A row vector of size \eqn{T} with hazard rates for \eqn{t>1} of class \code{diffnet_hr}.

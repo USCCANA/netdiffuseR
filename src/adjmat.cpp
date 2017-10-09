@@ -46,21 +46,21 @@ arma::sp_mat edgelist_to_adjmat_cpp(
 
   for(int i=0;i<m;i++) {
     // Ids of the vertices
-    int ego   = ((int) edgelist(i,0)) - 1;
-    int alter = ((int) edgelist(i,1)) - 1;
+    unsigned int ego   = ((unsigned int) edgelist(i,0)) - 1u;
+    unsigned int alter = ((unsigned int) edgelist(i,1)) - 1u;
 
     // If self edges are not allowed
-    if (!self && (ego == alter)) continue;
+    if (!self && (ego == alter))
+      continue;
 
     // If undirected, the order does not matters
-    if (undirected) {
-      int tmp=ego;
-      if (ego > alter) ego = alter, alter=tmp;
-    }
+    if (undirected && (ego > alter))
+      std::swap(alter, ego);
 
-    // If multiple edges are not allowed.
-    if (multiple | (adjmat(ego, alter) == 0))
+    // If multiple edges are allowed.
+    if (multiple | (adjmat(ego, alter) == 0.0))
       adjmat.at(ego, alter) += w[i];
+
 
     // If undirected, must include in the switch
     if (undirected)
