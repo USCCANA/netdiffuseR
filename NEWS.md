@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.18.2999 (dev)
+# Changes in netdiffuseR version 1.19.0 (2017-10-16)
 
 ## New functions and features
 
@@ -15,6 +15,9 @@
 
 * `rdiffnet_multiple`, a wrapper of `rdiffnet`, allows performing simulations studies
   by running simulating multiple diffusion networks using `rdiffnet`.
+  
+* `exposure` has a new parameter: `lags`. By default lags = 0, returns a lagged
+  exposure matrix.
   
 
 ## Bug fixes
@@ -36,6 +39,8 @@
   
 * `plot_diffnet` function now has smaller margins, so looks more appealing.
 
+* New examples in vignettes "netdiffuseR showcase: Medical Innovations", and
+  "Simulating diffusion networks: Using the `rdiffnet` function".
 
 
 # Changes in netdiffuseR version 1.18.1 (2017-07-22)

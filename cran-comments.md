@@ -1,15 +1,7 @@
-## Resubmission
-
-* While version 1.18.0 was recently sent to CRAN, this version fixes
-  some critical bugs that were identified right after that. This
-  includes a bug caught by CRAN on windows.
-  
-
 ## Test environments
 
-* Local Ubuntu 14.04.5 LTS, R version 3.4.0 (2017-04-21).
-* Ubuntu 12.04.5 LTS (on travis-ci), R-rel 3.4.1 (2017-06-30).
-* Windows Server 2012 R2 x64 (on AppVeyor), R Under development (unstable) (2017-07-17 r72924), and R version 3.4.1 (2017-06-30).
+* Ubuntu 14.04 LTS (on travis-ci), R-rel 3.4.1 (2017-01-27), and R-rel 3.3.3 (2017-01-27).
+* Windows Server 2012 R2 x64 (on AppVeyor), R version 3.4.2 (2017-09-28), R version 3.4.2 (2017-09-28).
 * OS X El Capitan 10.11.6 (on travis-ci), R version 3.4.1 (2017-06-30).
 
 ## R CMD check results

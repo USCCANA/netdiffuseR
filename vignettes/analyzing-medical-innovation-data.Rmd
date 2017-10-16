@@ -172,20 +172,40 @@ par(oldpar)
 
 # Retrieving the data to create a panel/envent history/longitudinal data
 
-To use the data for statistical models we can retrieve the data stored in the `diffnet` object and coerce it as a `data.frame`. First, to show the richness of the package, we will compute exposure at each time period and add it as a dynamic vertex attribute.
+To use the data for statistical models we can retrieve the data stored in the `diffnet` object and coerce it as a `data.frame`. First, we will compute __lagged__ exposure at each time period and add it as a dynamic vertex attribute, including a dummy variable called `adopted` equal to 1 if the individual adopted at that time point.
 
 ```{r Computing-exposure}
-# Calculating exposure
-expo <- exposure(diffnet)
+# Calculating lagged exposure
+expo <- exposure(diffnet, lags = 1L)
 head(expo)
 
 # Netdiffuser automatically identifies whether the input is dynamic or not.
-diffnet[["netexp"]] <- expo
+diffnet[["lagged_expo"]] <- expo
+diffnet[["adopted"]]  <- toa_mat(diffnet)$cumadopt
 ```
 
 Now we can create a data frame from our `diffnet` object
 
-```{r}
-mydata <- diffnet.attrs(diffnet, as.df = TRUE)
+```{r Creating the diffnet model}
+# Getting the data
+mydata <- as.data.frame(diffnet)
 ```
+
+The following model illustrates how can we use netdiffuseR to run a lagged exposure model. In this (toy) model we are including fixed effects for time (`per`), `city`, belief in science (`belief`) and age, and only including observations prior to the adoption of the behavior, and excluding observations from the last time point.
+
+
+```{r Running the model}
+# Running a model
+summary(
+  glm(adopted ~ lagged_expo + factor(per) + factor(city) + belief + 
+        proage + I(proage^2),
+      dat    = mydata, 
+      subset = (per <= toa) & per < 18,
+      family = binomial(link="logit"))
+)
+```
+
+As shown, we find no lagged exposure effects and the adoption was mainly drive by belief in science and age of the MD.
+
+
 

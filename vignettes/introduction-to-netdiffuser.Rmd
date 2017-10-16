@@ -119,3 +119,25 @@ plot_infectsuscep(diffnet_mar, bins=15, K=3,
 plot_threshold(diffnet_ran)
 ```
 
+## Multiple simulations using `rdiffnet_multiple`
+
+The `rdiffnet_multiple` is a wrapper of `rdiffnet` that allows performing simulation studies. In particular, the user can defined a set of shared parameters across simulations and retrieve one or more statistics from each one of them. The followin example is included in the manual of the function:
+
+```{r Multiple-simulations}
+# Simulating a diffusion process with all the defaults but setting 
+# -seed.nodes- to be random
+set.seed(1)
+ans0 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+                          n = 100, t = 4, seed.nodes = "random", stop.no.diff=FALSE)
+
+# Simulating a diffusion process with all the defaults but setting 
+# -seed.nodes- to be central
+set.seed(1)
+ans1 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
+                          n = 100, t = 4, seed.nodes = "central", stop.no.diff=FALSE)
+
+boxplot(cbind(Random = ans0, Central = ans1),
+        main="Distribution of number of adopters in\ndifferent seedscenarios",
+        sub = "(50 simulations each)", ylab="Number of adopters")
+```
+

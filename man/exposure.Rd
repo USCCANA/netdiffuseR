@@ -8,7 +8,7 @@
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
   outgoing = getOption("diffnet.outgoing", TRUE),
   valued = getOption("diffnet.valued", FALSE), normalized = TRUE,
-  groupvar = NULL, self = getOption("diffnet.self"), ...)
+  groupvar = NULL, self = getOption("diffnet.self"), lags = 0L, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -32,6 +32,9 @@ and one (see details).}
 \item{groupvar}{Passed to \code{\link{struct_equiv}}.}
 
 \item{self}{Logical scalar. When \code{TRUE} autolinks (loops, self edges) are allowed (see details).}
+
+\item{lags}{Integer scalar. When different from 0, the resulting exposure
+matrix will be the lagged exposure as specified (see examples).}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}
@@ -103,6 +106,18 @@ computed as a count instead of a proportion. A good example of this can be
 found at the examples section of the function \code{\link{rdiffnet}}.
 }
 \examples{
+# Calculating lagged exposure -----------------------------------------------
+
+set.seed(8)
+graph <- rdiffnet(20, 4)
+
+expo0 <- exposure(graph)
+expo1 <- exposure(graph, lags = 1)
+
+# These should be equivalent
+stopifnot(all(expo0[, -4] == expo1[, -1])) # No stop!
+
+
 # Calculating the exposure based on Structural Equivalence ------------------
 set.seed(113132)
 graph <- rdiffnet(100, 10)

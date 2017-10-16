@@ -1,3 +1,9 @@
+2017-10-16  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/stats.R: New argument for exposure.
+	* : Adding new examples in vignettes.
+	* : Getting ready for cran.
+
+
 2017-10-09  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/misc.r: add_dimnames is now based on environments and more general.
 	* R/stats.r: Cleanning code

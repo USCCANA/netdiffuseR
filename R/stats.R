@@ -270,6 +270,8 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param ... Further arguments passed to \code{\link{struct_equiv}} (only used when
 #' \code{alt.graph="se"}).
 #' @param groupvar Passed to \code{\link{struct_equiv}}.
+#' @param lags Integer scalar. When different from 0, the resulting exposure
+#' matrix will be the lagged exposure as specified (see examples).
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -334,6 +336,18 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'  (2nd ed.). Cresskill N.J.: Hampton Press.
 #'
 #' @examples
+#' # Calculating lagged exposure -----------------------------------------------
+#'
+#' set.seed(8)
+#' graph <- rdiffnet(20, 4)
+#'
+#' expo0 <- exposure(graph)
+#' expo1 <- exposure(graph, lags = 1)
+#'
+#' # These should be equivalent
+#' stopifnot(all(expo0[, -4] == expo1[, -1])) # No stop!
+#'
+#'
 #' # Calculating the exposure based on Structural Equivalence ------------------
 #' set.seed(113132)
 #' graph <- rdiffnet(100, 10)
@@ -470,6 +484,27 @@ NULL
 # library(microbenchmark)
 # microbenchmark(.exposure, netdiffuseR:::exposure_cpp)
 
+check_lags <- function(npers, lags) {
+
+  # Checking length
+  if (length(lags) != 1L)
+    stop("-lags- should be a scalar (length 1). Right now it has lenght ",
+         length(lags))
+
+  # Checking class
+  lags <- as.integer(lags)
+  if (is.na(lags))
+    stop("-lags- cannot be NA. It should be an integer scalar.")
+
+  # Should fit the range of data. A lag cannot be greater than npers.
+  # it has to be strictly smaller
+  if (abs(lags) >= npers)
+    stop("-abs(lags)- cannot be greater than ",npers-1L,". Right now lags=",lags,".")
+
+  lags
+
+}
+
 #' @export
 #' @rdname exposure
 exposure <- function(
@@ -482,6 +517,7 @@ exposure <- function(
   normalized = TRUE,
   groupvar   = NULL,
   self       = getOption("diffnet.self"),
+  lags       = 0L,
   ...
   ) {
 
@@ -556,8 +592,12 @@ exposure <- function(
 
   }
 
+  # Checking lags
+  lags <- check_lags(nslices(graph), lags)
+
   if (is.array(graph) | is.list(graph)) {
-    exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized, self)
+    exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized,
+                  self, lags)
   } else stopifnot_graph(graph)
 }
 
@@ -565,7 +605,7 @@ exposure <- function(
 # @export
 exposure.list <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized, self) {
+  outgoing, valued, normalized, self, lags) {
 
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
@@ -578,18 +618,28 @@ exposure.list <- function(
   add_dimnames.mat(cumadopt)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
-                         self)
+                         self, lags)
 
   dimnames(output) <- dimnames(cumadopt)
   output
 
 }
 
-exposure_for <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
+exposure_for <- function(
+  graph, cumadopt, attrs, outgoing, valued, normalized,
+  self, lags) {
+
   out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
-  for (i in 1:nslices(graph))
-    out[,i]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                 outgoing, valued, normalized, self)
+
+  if (lags >= 0L) {
+    for (i in 1:(nslices(graph) - lags))
+      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+                               outgoing, valued, normalized, self)
+  } else {
+    for (i in (1-lags):nslices(graph))
+      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+                               outgoing, valued, normalized, self)
+  }
   return(out)
 }
 
@@ -752,7 +802,9 @@ hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
 #' @export
 plot_hazard <- function(x, ...) {
   hr <- hazard_rate(x, no.plot = TRUE)
-  do.call(plot.diffnet_hr, c(list(x=hr), ...))
+
+  dots <- list(...)
+  do.call(plot.diffnet_hr, c(list(x=hr), dots))
 }
 
 #' @rdname hazard_rate

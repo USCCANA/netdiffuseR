@@ -44,7 +44,19 @@ test_that("exposure calculations", {
 
   expect_equivalent(unname(exp_1_diffnet), unname(exp_1_manual))
 
-  #
+  # Lagged exposure
+  ans0 <- exposure(diffnet)
+  ans1 <- exposure(diffnet, lags = 1)
+  ans2 <- exposure(diffnet, lags = 2)
+  ans3 <- exposure(diffnet, lags = -1)
+
+  expect_equivalent(ans0[,-5], ans1[,-1])
+  expect_equivalent(ans0[,-(4:5)], ans2[,-(1:2)])
+  expect_equivalent(ans0[,-1], ans3[,-5])
+
+  expect_error(exposure(diffnet, lags=5), "cannot be greater")
+  expect_error(exposure(diffnet, lags=NA))
+  expect_error(exposure(diffnet, lags=c(1:2)))
 
 })
 

@@ -107,7 +107,7 @@ When \code{rewire=TRUE}, the networks that follow t=1 will be generated using th
 \code{\link{rewire_graph}} function as \eqn{G(t) = R(G(t-1))}, where \eqn{R}
 is the rewiring algorithm.
 
-The argument \code{threshold.dist} sets the threshold for each vertex in the graph.
+If a function, the argument \code{threshold.dist} sets the threshold for each vertex in the graph.
 It is applied using \code{sapply} as follows
 
 \preformatted{
@@ -144,7 +144,7 @@ statistic is observed.
 When \code{cl} is provided, then simulations are done via
 \code{\link[parallel:parSapply]{parSapply}}. If \code{ncpus} is greater than
 1, then the function creates a cluster via \code{\link[parallel:makeCluster]{makeCluster}}
-which is stopped (removed) one the process is complete.
+which is stopped (removed) once the process is complete.
 }
 \examples{
 # Asimple example -----------------------------------------------------------
