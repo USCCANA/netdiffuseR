@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thomas W. Valente and George G. Vega Yon" />
+
+
+<title>netdiffuseR at NASN 2017</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/FileSaver.min.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("index.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">netdiffuseR at NANS 2017</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intro.html">Introduction</a>
+</li>
+<li>
+  <a href="sim.html">Simulations</a>
+</li>
+<li>
+  <a href="read.html">Reading data</a>
+</li>
+<li>
+  <a href="stats.html">Statistical inference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">netdiffuseR at NASN 2017</h1>
+<h4 class="author"><em>Thomas W. Valente and George G. Vega Yon</em></h4>
+
+</div>
+
+
+<p>netdiffuseR in NANS 2017</p>
+<p>From the description:</p>
+<blockquote>
+<p>Empirical statistical analysis, visualization and simulation of diffusion and contagion processes on networks. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) <a href="DOI:10.1016/j.socscimed.2015.10.001" class="uri">DOI:10.1016/j.socscimed.2015.10.001</a>; Valente (1995) <a href="ISBN:9781881303213" class="uri">ISBN:9781881303213</a>, Myers (2000) <a href="DOI:10.1086/303110" class="uri">DOI:10.1086/303110</a>, Iyengar and others (2011) <a href="DOI:10.1287/mksc.1100.0566" class="uri">DOI:10.1287/mksc.1100.0566</a>, Burt (1987) <a href="DOI:10.1086/228667" class="uri">DOI:10.1086/228667</a>; among others.</p>
+</blockquote>
+<p><strong>Acknowledgements</strong>: netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.</p>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAibmV0ZGlmZnVzZVIgYXQgTkFTTiAyMDE3IgphdXRob3I6ICJUaG9tYXMgVy4gVmFsZW50ZSBhbmQgR2VvcmdlIEcuIFZlZ2EgWW9uIgotLS0KCmBgYHtyIHNldHVwLCBlY2hvPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoY29tbWVudCA9ICIjIikKCmBgYAoKbmV0ZGlmZnVzZVIgaW4gTkFOUyAyMDE3CgoKRnJvbSB0aGUgZGVzY3JpcHRpb246Cgo+IEVtcGlyaWNhbCBzdGF0aXN0aWNhbCBhbmFseXNpcywgdmlzdWFsaXphdGlvbiBhbmQgc2ltdWxhdGlvbiBvZiBkaWZmdXNpb24gYW5kIGNvbnRhZ2lvbiBwcm9jZXNzZXMgb24gbmV0d29ya3MuIFRoZSBwYWNrYWdlIGltcGxlbWVudHMgYWxnb3JpdGhtcyBmb3IgY2FsY3VsYXRpbmcgbmV0d29yayBkaWZmdXNpb24gc3RhdGlzdGljcyBzdWNoIGFzIHRyYW5zbWlzc2lvbiByYXRlLCBoYXphcmQgcmF0ZXMsIGV4cG9zdXJlIG1vZGVscywgbmV0d29yayB0aHJlc2hvbGQgbGV2ZWxzLCBpbmZlY3Rpb3VzbmVzcyAoY29udGFnaW9uKSwgYW5kIHN1c2NlcHRpYmlsaXR5LiBUaGUgcGFja2FnZSBpcyBpbnNwaXJlZCBieSB3b3JrIHB1Ymxpc2hlZCBpbiBWYWxlbnRlLCBldCBhbC4sICgyMDE1KSBET0k6MTAuMTAxNi9qLnNvY3NjaW1lZC4yMDE1LjEwLjAwMTsgVmFsZW50ZSAoMTk5NSkgSVNCTjo5NzgxODgxMzAzMjEzLCBNeWVycyAoMjAwMCkgRE9JOjEwLjEwODYvMzAzMTEwLCBJeWVuZ2FyIGFuZCBvdGhlcnMgKDIwMTEpIERPSToxMC4xMjg3L21rc2MuMTEwMC4wNTY2LCBCdXJ0ICgxOTg3KSBET0k6MTAuMTA4Ni8yMjg2Njc7IGFtb25nIG90aGVycy4KCl9fQWNrbm93bGVkZ2VtZW50c19fOiBuZXRkaWZmdXNlUiB3YXMgY3JlYXRlZCB3aXRoIHRoZSBzdXBwb3J0IG9mIGdyYW50IFIwMQpDQTE1NzU3NyBmcm9tIHRoZSBOYXRpb25hbCBDYW5jZXIgSW5zdGl0dXRlL05hdGlvbmFsIEluc3RpdHV0ZXMgb2YgSGVhbHRoLg==</div>
+<p>
+  <center><a href="http://cana.usc.edu" target="_new">University of Southern California<br>Center for Applied Network Analysis (<b>CANA</b>)</a>
+  </center>
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

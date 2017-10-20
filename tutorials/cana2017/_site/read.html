@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thomas W. Valente and George G. Vega Yon" />
+
+
+<title>Reading Data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/FileSaver.min.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("read.rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">netdiffuseR at NANS 2017</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intro.html">Introduction</a>
+</li>
+<li>
+  <a href="sim.html">Simulations</a>
+</li>
+<li>
+  <a href="read.html">Reading data</a>
+</li>
+<li>
+  <a href="stats.html">Statistical inference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Reading Data</h1>
+<h4 class="author"><em>Thomas W. Valente and George G. Vega Yon</em></h4>
+
+</div>
+
+
+<div id="diffusion-network-object-diffnet" class="section level1">
+<h1>Diffusion Network Object (diffnet)</h1>
+<ul>
+<li><p><strong>netdiffuseR</strong> has its own class of objects: <code>diffnet</code>.</p></li>
+<li>Most of the package’s functions accept different types of graphs:
+<ul>
+<li>Static: <code>matrix</code>, <code>dgCMatrix</code> (from the <strong>Matrix</strong> pkg),</li>
+<li>Dynamic: <code>list</code> + <code>dgCMatrix</code>, <code>array</code>, <code>diffnet</code></li>
+</ul></li>
+<li><p>But <code>diffnet</code> is the class from which you get the most.</p></li>
+<li><p>From <strong>netdiffuseR</strong>’s perspective, network data comes in three classes:</p>
+<ol style="list-style-type: decimal">
+<li>Raw R network data: Datasets with edgelist, attributes, survey data, etc.</li>
+<li>Already R data: already read into R using igraph, statnet, etc. (<code>igraph_to_diffnet</code>, <code>network_to_diffnet</code>, etc.)</li>
+<li>Graph files: DL, UCINET, pajek, etc. (<code>read_pajek</code>, <code>read_dl</code>, <code>read_ucinet</code>, etc.)</li>
+</ol></li>
+<li><p>In this presentation we will show focus on 1.</p></li>
+</ul>
+</div>
+<div id="what-is-a-diffnet-object" class="section level1">
+<h1>What is a <code>diffnet</code> object</h1>
+<p>A diffusion network, a.k.a. <code>diffnet</code> object, is a <code>list</code> that holds the following objects:</p>
+<ul>
+<li><code>graph</code>: A <code>list</code> with <span class="math inline">\(t\)</span> <code>dgCMatrix</code> matrices of size <span class="math inline">\(n\times n\)</span>,</li>
+<li><code>toa</code>: An integer vector of length <span class="math inline">\(n\)</span>,</li>
+<li><code>adopt</code>: A matrix of size <span class="math inline">\(n\times t\)</span>,</li>
+<li><code>cumadopt</code>: A matrix of size <span class="math inline">\(n\times t\)</span>,</li>
+<li><code>vertex.static.attrs</code>: A <code>data.frame</code> of size <span class="math inline">\(n\times k\)</span>,</li>
+<li><code>vertex.dyn.attrs</code>: A list with <span class="math inline">\(t\)</span> dataframes of size <span class="math inline">\(n\times k\)</span>,</li>
+<li><code>graph.attrs</code>: Currently ignored…, and</li>
+<li><code>meta</code>: A list with metadata about the object.</li>
+</ul>
+<p>These are created using <code>new_diffnet</code> (or its wrappers).</p>
+</div>
+<div id="basic-diffusion-network" class="section level1">
+<h1>Basic Diffusion Network</h1>
+<ul>
+<li><p>To create <code>diffnet</code> objects we only need a network and times of adoption:</p>
+<pre class="r"><code>set.seed(9)
+
+# Network
+net &lt;- rgraph_ws(500, 4, .2)
+
+# Times of adoption
+toa &lt;- sample(c(NA, 2010:2014), 500, TRUE)
+
+diffnet_static &lt;- as_diffnet(net, toa)</code></pre>
+<pre><code># Warning in new_diffnet(graph, ...): -graph- is static and will be recycled
+# (see ?new_diffnet).</code></pre>
+<pre class="r"><code>summary(diffnet_static)</code></pre>
+<pre><code># Diffusion network summary statistics
+# Name     : Diffusion Network
+# Behavior : Unspecified
+# -----------------------------------------------------------------------------
+#  Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran&#39;s I (sd)  
+# -------- ---------- ---------------- ------------- --------- ---------------- 
+#     2010         90        90 (0.18)             -      0.01  0.00 (0.00)     
+#     2011         72       162 (0.32)          0.18      0.01  0.00 (0.00) *   
+#     2012         79       241 (0.48)          0.23      0.01 -0.00 (0.00)     
+#     2013         83       324 (0.65)          0.32      0.01 -0.01 (0.00) **  
+#     2014         93       417 (0.83)          0.53      0.01 -0.01 (0.00) *   
+# -----------------------------------------------------------------------------
+#  Left censoring  : 0.18 (90)
+#  Right centoring : 0.17 (83)
+#  # of nodes      : 500
+# 
+#  Moran&#39;s I was computed on contemporaneous autocorrelation using 1/geodesic
+#  values. Significane levels  *** &lt;= .01, ** &lt;= .05, * &lt;= .1.</code></pre></li>
+</ul>
+</div>
+<div id="static-survey" class="section level1">
+<h1>Static survey</h1>
+<ul>
+<li><p>netdiffuseR can also read survey (nomination) data:</p>
+<pre class="r"><code>data(&quot;fakesurvey&quot;)
+fakesurvey</code></pre>
+<pre><code>#   id toa group net1 net2 net3 age gender
+# 1  1   1     1   NA   NA   NA  30      M
+# 2  2   5     1    3    1   NA  35      F
+# 3  3   5     1   NA    2   NA  31      F
+# 4  4   3     1    6    5   NA  30      M
+# 5  5   2     1    4    4    3  40      F
+# 6  1   4     2    3    4    8  29      F
+# 7  2   3     2    3   NA   NA  35      M
+# 8  5   3     2   10    1   NA  50      M
+# 9 10  NA     2    5    1   NA  19      F
+#                                     note
+# 1                         No nominations
+# 2                          Nothing weird
+# 3                 Only nominates in net2
+# 4 Nominates someone who wasn&#39;t interview
+# 5                  Nominates 4 two times
+# 6               Only nominates outsiders
+# 7                               Isolated
+# 8                          Nothing weird
+# 9                            Non-adopter</code></pre></li>
+<li><p>In group one 4 nominates id 6, who does not show in the data, and in group two 1 nominates 3, 4, and 8, also individuals who don’t show up in the survey.</p>
+<pre class="r"><code>d1 &lt;- survey_to_diffnet(
+  dat      = fakesurvey,                # Dataset
+  idvar    = &quot;id&quot;,                      # The name of the idvar
+  netvars  = c(&quot;net1&quot;, &quot;net2&quot;, &quot;net3&quot;), # Name of the nomination variables
+  groupvar = &quot;group&quot;,                   # Group variable (if any)
+  toavar   = &quot;toa&quot;                      # Name of the time of adoption variable
+  ); d1</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Diffusion Network
+#  Behavior           : Unspecified
+#  # of nodes         : 9 (101, 102, 103, 104, 105, 201, 202, 205, ...)
+#  # of time periods  : 5 (1 - 5)
+#  Type               : directed
+#  Final prevalence   : 0.89
+#  Static attributes  : group, net1, net2, net3, age, gender, note (7)
+#  Dynamic attributes : -</code></pre></li>
+<li><p>If you want to include those, you can use the option <code>no.unsurveyed</code></p>
+<pre class="r"><code>d2 &lt;- survey_to_diffnet(
+  dat      = fakesurvey,
+  idvar    = &quot;id&quot;,
+  netvars  = c(&quot;net1&quot;, &quot;net2&quot;, &quot;net3&quot;),
+  groupvar = &quot;group&quot;,
+  toavar   = &quot;toa&quot;,
+  no.unsurveyed = FALSE
+  ); d2</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Diffusion Network
+#  Behavior           : Unspecified
+#  # of nodes         : 13 (101, 102, 103, 104, 105, 106, 201, 202, ...)
+#  # of time periods  : 5 (1 - 5)
+#  Type               : directed
+#  Final prevalence   : 0.62
+#  Static attributes  : group, net1, net2, net3, age, gender, note (7)
+#  Dynamic attributes : -</code></pre></li>
+<li><p>We can also check the difference</p>
+<pre class="r"><code>d2 - d1</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Diffusion Network
+#  Behavior           : Unspecified
+#  # of nodes         : 4 (106, 203, 204, 208)
+#  # of time periods  : 5 (1 - 5)
+#  Type               : directed
+#  Final prevalence   : 0.00
+#  Static attributes  : group, net1, net2, net3, age, gender, note (7)
+#  Dynamic attributes : -</code></pre>
+<pre class="r"><code>rownames(d2 - d1)</code></pre>
+<pre><code># [1] &quot;106&quot; &quot;203&quot; &quot;204&quot; &quot;208&quot;</code></pre></li>
+</ul>
+</div>
+<div id="dynamic-survey" class="section level1">
+<h1>Dynamic survey</h1>
+<pre class="r"><code>data(&quot;fakesurveyDyn&quot;)
+fakesurveyDyn</code></pre>
+<pre><code>#    id  toa group net1 net2 net3 age gender
+# 1   1 1991     1   NA   NA   NA  30      M
+# 2   2 1990     1    3    1   NA  35      F
+# 3   3 1991     1   NA    2   NA  31      F
+# 4   4 1990     1    6    5   NA  30      M
+# 5   5 1991     1    4    4    3  40      F
+# 6   1 1991     2    3    4    8  29      F
+# 7   2 1990     2    3   NA   NA  35      M
+# 8   5 1990     2   10    1   NA  50      M
+# 9  10 1990     2    5    1   NA  19      F
+# 10  1 1991     1   NA   NA   NA  31      M
+# 11  2 1990     1    3    1   NA  36      F
+# 12  3 1991     1   NA    2   NA  32      F
+# 13  4 1990     1    6    5   NA  31      M
+# 14  5 1991     1    4    4    3  41      F
+# 15  1 1991     2    3    4    8  30      F
+# 16  2 1990     2    1   NA   NA  36      M
+# 17  5 1990     2   10    1   NA  51      M
+# 18 10 1990     2    5    1   NA  20      F
+#                                                   note time
+# 1                           First wave: No nominations 1990
+# 2                            First wave: Nothing weird 1990
+# 3                   First wave: Only nominates in net2 1990
+# 4   First wave: Nominates someone who wasn&#39;t interview 1990
+# 5                    First wave: Nominates 4 two times 1990
+# 6                 First wave: Only nominates outsiders 1990
+# 7                                 First wave: Isolated 1990
+# 8                            First wave: Nothing weird 1990
+# 9                              First wave: Non-adopter 1990
+# 10                         Second wave: No nominations 1991
+# 11                          Second wave: Nothing weird 1991
+# 12                 Second wave: Only nominates in net2 1991
+# 13 Second wave: Nominates someone who wasn&#39;t interview 1991
+# 14                  Second wave: Nominates 4 two times 1991
+# 15               Second wave: Only nominates outsiders 1991
+# 16                   Second wave: Now is not isolated! 1991
+# 17                          Second wave: Nothing weird 1991
+# 18                            Second wave: Non-adopter 1991</code></pre>
+<pre class="r"><code>diffnet_dynsurvey &lt;- survey_to_diffnet(
+  dat      = fakesurveyDyn,
+  idvar    = &quot;id&quot;,
+  netvars  = c(&quot;net1&quot;, &quot;net2&quot;, &quot;net3&quot;),
+  groupvar = &quot;group&quot;,
+  toavar   = &quot;toa&quot;,
+  timevar  = &quot;time&quot;
+  )</code></pre>
+<pre><code># Warning in check_var_class_and_coerce(x, dat, c(&quot;numeric&quot;, &quot;integer&quot;),
+# &quot;integer&quot;, : Coercing -net1- into integer.</code></pre>
+<pre><code># Warning in check_var_class_and_coerce(x, dat, c(&quot;numeric&quot;, &quot;integer&quot;),
+# &quot;integer&quot;, : Coercing -time- into integer.</code></pre>
+<pre class="r"><code>plot_diffnet(diffnet_dynsurvey)</code></pre>
+<p><img src="read_files/figure-html/2-static-dynsurvey-cont1-1.png" width="672" /></p>
+</div>
+<div id="other-formats" class="section level1">
+<h1>Other formats</h1>
+<ul>
+<li><p>The package also supports working with other network formats.</p></li>
+<li><p>Besides of <code>.net</code> (Pajek), and <code>ml</code> (UCINET), netdiffuseR can actually convert between classes: <code>igraph</code>, <code>network</code>, and <code>networkDynamic</code>.</p>
+<pre class="r"><code>data(&quot;medInnovationsDiffNet&quot;)
+dn_ig  &lt;- diffnet_to_igraph(medInnovationsDiffNet)
+# dn_ig # For some issue with lazy eval, knitr won&#39;t print this
+
+dn_net &lt;- diffnet_to_network(medInnovationsDiffNet)
+dn_net[[1]]</code></pre>
+<pre><code>#  Network attributes:
+#   vertices = 125 
+#   directed = TRUE 
+#   hyper = FALSE 
+#   loops = FALSE 
+#   multiple = FALSE 
+#   bipartite = FALSE 
+#   name = Medical Innovation 
+#   behavior = Adoption of Tetracycline 
+#   total edges= 294 
+#     missing edges= 0 
+#     non-missing edges= 294 
+# 
+#  Vertex attribute names: 
+#     ado adopt attend belief catbak city club coll commun ctl date detail detail2 dichot drug expect free friends here home house info journ journ2 length meet most net1_1 net1_2 net1_3 net2_1 net2_2 net2_3 net3_1 net3_2 net3_3 nojourn nonpoor office origid paadico perc position presc proage proage2 proximty recall recon reltend science social sourinfo special study tend thresh toa vertex.names young 
+# 
+# No edge attributes</code></pre>
+<pre class="r"><code>dn_ndy &lt;- diffnet_to_networkDynamic(medInnovationsDiffNet)</code></pre>
+<pre><code># Argument base.net not specified, using first element of network.list instead
+# Created net.obs.period to describe network
+#  Network observation period info:
+#   Number of observation spells: 1 
+#   Maximal time range observed: 1 until 18 
+#   Temporal mode: discrete 
+#   Time unit: step 
+#   Suggested time increment: 1</code></pre>
+<pre class="r"><code>dn_ndy</code></pre>
+<pre><code># NetworkDynamic properties:
+#   distinct change times: 18 
+#   maximal time range: 1 until  18 
+# 
+# Includes optional net.obs.period attribute:
+#  Network observation period info:
+#   Number of observation spells: 1 
+#   Maximal time range observed: 1 until 18 
+#   Temporal mode: discrete 
+#   Time unit: step 
+#   Suggested time increment: 1 
+# 
+#  Network attributes:
+#   vertices = 125 
+#   directed = TRUE 
+#   hyper = FALSE 
+#   loops = FALSE 
+#   multiple = FALSE 
+#   bipartite = FALSE 
+#   behavior = Adoption of Tetracycline 
+#   name = Medical Innovation 
+#   net.obs.period: (not shown)
+#   total edges= 294 
+#     missing edges= 0 
+#     non-missing edges= 294 
+# 
+#  Vertex attribute names: 
+#     active ado adopt attend belief catbak city club coll commun ctl date detail detail2 dichot drug expect free friends here home house info journ journ2 length meet most net1_1 net1_2 net1_3 net2_1 net2_2 net2_3 net3_1 net3_2 net3_3 nojourn nonpoor office origid paadico perc position presc proage proage2 proximty recall recon reltend science social sourinfo special study tend thresh toa vertex.names young 
+# 
+#  Edge attribute names: 
+#     active</code></pre>
+<p>First two examples it creates a list of objects, the later actually creates a single object</p>
+<pre class="r"><code>networkDynamic_to_diffnet(dn_ndy, toavar = &quot;toa&quot;)</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Medical Innovation
+#  Behavior           : Adoption of Tetracycline
+#  # of nodes         : 125 (1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, ...)
+#  # of time periods  : 18 (1 - 18)
+#  Type               : directed
+#  Final prevalence   : 1.00
+#  Static attributes  : -
+#  Dynamic attributes : ado, adopt, attend, belief, catbak, city, club, co... (59)</code></pre></li>
+</ul>
+</div>
+<div id="problems" class="section level1">
+<h1>Problems</h1>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Using the rda file <em>problem2.rda</em>, read in the edgelist <code>net_edgelist</code> and the adjacency matrix <code>net_list</code> as a diffnet object together with the data.frame <code>X</code>.</p></li>
+<li><p>With the new diffnet object, apply the same analysis as before. Which strategy maximizes adoption?</p></li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUmVhZGluZyBEYXRhIgphdXRob3I6ICJUaG9tYXMgVy4gVmFsZW50ZSBhbmQgR2VvcmdlIEcuIFZlZ2EgWW9uIgotLS0KCmBgYHtyIHNldHVwLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCBtZXNzYWdlPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoY29tbWVudCA9ICIjIikKbGlicmFyeShuZXRkaWZmdXNlUikKbGlicmFyeShpZ3JhcGgpCmxpYnJhcnkobmV0d29ya0R5bmFtaWMpCmBgYAoKIyBEaWZmdXNpb24gTmV0d29yayBPYmplY3QgKGRpZmZuZXQpCgotIF9fbmV0ZGlmZnVzZVJfXyBoYXMgaXRzIG93biBjbGFzcyBvZiBvYmplY3RzOiBgZGlmZm5ldGAuCgotIE1vc3Qgb2YgdGhlIHBhY2thZ2UncyBmdW5jdGlvbnMgYWNjZXB0IGRpZmZlcmVudCB0eXBlcyBvZiBncmFwaHM6CiAgICAqIFN0YXRpYzogYG1hdHJpeGAsIGBkZ0NNYXRyaXhgIChmcm9tIHRoZSBfX01hdHJpeF9fIHBrZyksIAogICAgKiBEeW5hbWljOiBgbGlzdGAgKyBgZGdDTWF0cml4YCwgYGFycmF5YCwgYGRpZmZuZXRgCiAgCi0gQnV0IGBkaWZmbmV0YCBpcyB0aGUgY2xhc3MgZnJvbSB3aGljaCB5b3UgZ2V0IHRoZSBtb3N0LgoKLSBGcm9tIF9fbmV0ZGlmZnVzZVJfXydzIHBlcnNwZWN0aXZlLCBuZXR3b3JrIGRhdGEgY29tZXMgaW4gdGhyZWUgY2xhc3NlczoKCiAgICAxLiBSYXcgUiBuZXR3b3JrIGRhdGE6IERhdGFzZXRzIHdpdGggZWRnZWxpc3QsIGF0dHJpYnV0ZXMsIHN1cnZleSBkYXRhLCBldGMuCiAgICAyLiBBbHJlYWR5IFIgZGF0YTogYWxyZWFkeSByZWFkIGludG8gUiB1c2luZyBpZ3JhcGgsIHN0YXRuZXQsIGV0Yy4gKGBpZ3JhcGhfdG9fZGlmZm5ldGAsIGBuZXR3b3JrX3RvX2RpZmZuZXRgLCBldGMuKQogICAgMy4gR3JhcGggZmlsZXM6IERMLCBVQ0lORVQsIHBhamVrLCBldGMuIChgcmVhZF9wYWpla2AsIGByZWFkX2RsYCwgYHJlYWRfdWNpbmV0YCwgZXRjLikKCi0gSW4gdGhpcyBwcmVzZW50YXRpb24gd2Ugd2lsbCBzaG93IGZvY3VzIG9uIDEuCgojIFdoYXQgaXMgYSBgZGlmZm5ldGAgb2JqZWN0CgpBIGRpZmZ1c2lvbiBuZXR3b3JrLCBhLmsuYS4gYGRpZmZuZXRgIG9iamVjdCwgaXMgYSBgbGlzdGAgdGhhdCBob2xkcyB0aGUgZm9sbG93aW5nIG9iamVjdHM6CgotIGBncmFwaGA6IEEgYGxpc3RgIHdpdGggJHQkIGBkZ0NNYXRyaXhgIG1hdHJpY2VzIG9mIHNpemUgJG5cdGltZXMgbiQsCi0gYHRvYWA6IEFuIGludGVnZXIgdmVjdG9yIG9mIGxlbmd0aCAkbiQsCi0gYGFkb3B0YDogQSBtYXRyaXggb2Ygc2l6ZSAkblx0aW1lcyB0JCwKLSBgY3VtYWRvcHRgOiBBIG1hdHJpeCBvZiBzaXplICRuXHRpbWVzIHQkLAotIGB2ZXJ0ZXguc3RhdGljLmF0dHJzYDogQSBgZGF0YS5mcmFtZWAgb2Ygc2l6ZSAkblx0aW1lcyBrJCwKLSBgdmVydGV4LmR5bi5hdHRyc2A6IEEgbGlzdCB3aXRoICR0JCBkYXRhZnJhbWVzIG9mIHNpemUgJG5cdGltZXMgayQsCi0gYGdyYXBoLmF0dHJzYDogQ3VycmVudGx5IGlnbm9yZWQuLi4sIGFuZAotIGBtZXRhYDogQSBsaXN0IHdpdGggbWV0YWRhdGEgYWJvdXQgdGhlIG9iamVjdC4KClRoZXNlIGFyZSBjcmVhdGVkIHVzaW5nIGBuZXdfZGlmZm5ldGAgKG9yIGl0cyB3cmFwcGVycykuCgoKIyBCYXNpYyBEaWZmdXNpb24gTmV0d29yawoKKiAgIFRvIGNyZWF0ZSBgZGlmZm5ldGAgb2JqZWN0cyB3ZSBvbmx5IG5lZWQgYSBuZXR3b3JrIGFuZCB0aW1lcyBvZiBhZG9wdGlvbjoKCiAgICBgYGB7ciAyLXN0YXRpYy1uZXR9CiAgICBzZXQuc2VlZCg5KQogICAgCiAgICAjIE5ldHdvcmsKICAgIG5ldCA8LSByZ3JhcGhfd3MoNTAwLCA0LCAuMikKICAgIAogICAgIyBUaW1lcyBvZiBhZG9wdGlvbgogICAgdG9hIDwtIHNhbXBsZShjKE5BLCAyMDEwOjIwMTQpLCA1MDAsIFRSVUUpCiAgICAKICAgIGRpZmZuZXRfc3RhdGljIDwtIGFzX2RpZmZuZXQobmV0LCB0b2EpCiAgICBzdW1tYXJ5KGRpZmZuZXRfc3RhdGljKQogICAgYGBgCgojIFN0YXRpYyBzdXJ2ZXkKCiogICBuZXRkaWZmdXNlUiBjYW4gYWxzbyByZWFkIHN1cnZleSAobm9taW5hdGlvbikgZGF0YToKICAgIAogICAgYGBge3IgMi1zdGF0aWMtc3VydmV5fQogICAgZGF0YSgiZmFrZXN1cnZleSIpCiAgICBmYWtlc3VydmV5CiAgICBgYGAKCiogICBJbiBncm91cCBvbmUgNCBub21pbmF0ZXMgaWQgNiwgd2hvIGRvZXMgbm90IHNob3cgaW4gdGhlIGRhdGEsIGFuZCBpbiBncm91cCB0d28gMSBub21pbmF0ZXMgMywgNCwgYW5kIDgsIGFsc28gaW5kaXZpZHVhbHMgd2hvIGRvbid0IHNob3cgdXAgaW4gdGhlIHN1cnZleS4KICAgIAogICAgYGBge3IgMi1zdGF0aWMtc3VydmV5LWNvbnQxfQogICAgZDEgPC0gc3VydmV5X3RvX2RpZmZuZXQoCiAgICAgIGRhdCAgICAgID0gZmFrZXN1cnZleSwgICAgICAgICAgICAgICAgIyBEYXRhc2V0CiAgICAgIGlkdmFyICAgID0gImlkIiwgICAgICAgICAgICAgICAgICAgICAgIyBUaGUgbmFtZSBvZiB0aGUgaWR2YXIKICAgICAgbmV0dmFycyAgPSBjKCJuZXQxIiwgIm5ldDIiLCAibmV0MyIpLCAjIE5hbWUgb2YgdGhlIG5vbWluYXRpb24gdmFyaWFibGVzCiAgICAgIGdyb3VwdmFyID0gImdyb3VwIiwgICAgICAgICAgICAgICAgICAgIyBHcm91cCB2YXJpYWJsZSAoaWYgYW55KQogICAgICB0b2F2YXIgICA9ICJ0b2EiICAgICAgICAgICAgICAgICAgICAgICMgTmFtZSBvZiB0aGUgdGltZSBvZiBhZG9wdGlvbiB2YXJpYWJsZQogICAgICApOyBkMQogICAgYGBgCiAgICAKKiAgIElmIHlvdSB3YW50IHRvIGluY2x1ZGUgdGhvc2UsIHlvdSBjYW4gdXNlIHRoZSBvcHRpb24gYG5vLnVuc3VydmV5ZWRgCiAgICAKICAgIGBgYHtyfQogICAgZDIgPC0gc3VydmV5X3RvX2RpZmZuZXQoCiAgICAgIGRhdCAgICAgID0gZmFrZXN1cnZleSwKICAgICAgaWR2YXIgICAgPSAiaWQiLAogICAgICBuZXR2YXJzICA9IGMoIm5ldDEiLCAibmV0MiIsICJuZXQzIiksCiAgICAgIGdyb3VwdmFyID0gImdyb3VwIiwKICAgICAgdG9hdmFyICAgPSAidG9hIiwKICAgICAgbm8udW5zdXJ2ZXllZCA9IEZBTFNFCiAgICAgICk7IGQyCiAgICBgYGAKCiogICBXZSBjYW4gYWxzbyBjaGVjayB0aGUgZGlmZmVyZW5jZQogICAgCiAgICAKICAgIGBgYHtyfQogICAgZDIgLSBkMQogICAgcm93bmFtZXMoZDIgLSBkMSkKICAgIGBgYAoKIyBEeW5hbWljIHN1cnZleQoKYGBge3IgMi1zdGF0aWMtZHluc3VydmV5fQpkYXRhKCJmYWtlc3VydmV5RHluIikKZmFrZXN1cnZleUR5bgpgYGAKCmBgYHtyIDItc3RhdGljLWR5bnN1cnZleS1jb250MX0KZGlmZm5ldF9keW5zdXJ2ZXkgPC0gc3VydmV5X3RvX2RpZmZuZXQoCiAgZGF0ICAgICAgPSBmYWtlc3VydmV5RHluLAogIGlkdmFyICAgID0gImlkIiwKICBuZXR2YXJzICA9IGMoIm5ldDEiLCAibmV0MiIsICJuZXQzIiksCiAgZ3JvdXB2YXIgPSAiZ3JvdXAiLAogIHRvYXZhciAgID0gInRvYSIsCiAgdGltZXZhciAgPSAidGltZSIKICApCgpwbG90X2RpZmZuZXQoZGlmZm5ldF9keW5zdXJ2ZXkpCmBgYAoKIyBPdGhlciBmb3JtYXRzCgoqICAgVGhlIHBhY2thZ2UgYWxzbyBzdXBwb3J0cyB3b3JraW5nIHdpdGggb3RoZXIgbmV0d29yayBmb3JtYXRzLgoKKiAgIEJlc2lkZXMgb2YgYC5uZXRgIChQYWplayksIGFuZCBgbWxgIChVQ0lORVQpLCBuZXRkaWZmdXNlUiBjYW4gYWN0dWFsbHkKICAgIGNvbnZlcnQgYmV0d2VlbiBjbGFzc2VzOiBgaWdyYXBoYCwgYG5ldHdvcmtgLCBhbmQgYG5ldHdvcmtEeW5hbWljYC4KICAgIAogICAgICAgIAogICAgYGBge3IgZm9yZWlnbiwgd2FybmluZ3M9RkFMU0UsIG1lc3NhZ2VzPUZBTFNFLCBjYWNoZT1UUlVFfQogICAgZGF0YSgibWVkSW5ub3ZhdGlvbnNEaWZmTmV0IikKICAgIGRuX2lnICA8LSBkaWZmbmV0X3RvX2lncmFwaChtZWRJbm5vdmF0aW9uc0RpZmZOZXQpCiAgICAjIGRuX2lnICMgRm9yIHNvbWUgaXNzdWUgd2l0aCBsYXp5IGV2YWwsIGtuaXRyIHdvbid0IHByaW50IHRoaXMKICAgIAogICAgZG5fbmV0IDwtIGRpZmZuZXRfdG9fbmV0d29yayhtZWRJbm5vdmF0aW9uc0RpZmZOZXQpCiAgICBkbl9uZXRbWzFdXQogICAgCiAgICBkbl9uZHkgPC0gZGlmZm5ldF90b19uZXR3b3JrRHluYW1pYyhtZWRJbm5vdmF0aW9uc0RpZmZOZXQpCiAgICBkbl9uZHkKICAgIGBgYAogICAgCiAgICBGaXJzdCB0d28gZXhhbXBsZXMgaXQgY3JlYXRlcyBhIGxpc3Qgb2Ygb2JqZWN0cywgdGhlIGxhdGVyIGFjdHVhbGx5CiAgICBjcmVhdGVzIGEgc2luZ2xlIG9iamVjdAogICAgICAKICAgIGBgYHtyIG5ldHdvcmtEeW59CiAgICBuZXR3b3JrRHluYW1pY190b19kaWZmbmV0KGRuX25keSwgdG9hdmFyID0gInRvYSIpCiAgICBgYGAKCiMgUHJvYmxlbXMKCjIuICBVc2luZyB0aGUgcmRhIGZpbGUgX3Byb2JsZW0yLnJkYV8sIHJlYWQgaW4gdGhlIGVkZ2VsaXN0IGBuZXRfZWRnZWxpc3RgIGFuZCB0aGUgYWRqYWNlbmN5CiAgICBtYXRyaXggYG5ldF9saXN0YCBhcyBhIGRpZmZuZXQgb2JqZWN0IHRvZ2V0aGVyIHdpdGggdGhlIGRhdGEuZnJhbWUgYFhgLgogICAgCmBgYHtyIDItZ2VuZXJhdGVzLWRhdGEsIGVjaG89RkFMU0UsIGNhY2hlPVRSVUUsIHdhcm5pbmc9RkFMU0UsIG1lc3NhZ2U9RkFMU0UsIHJlc3VsdHM9J2hpZGUnfQpsaWJyYXJ5KGlncmFwaCkKbGlicmFyeShuZXR3b3JrRHluYW1pYykKIyBzb3VyY2UoImRpZmZuZXRfdG9fbmV0d29yay5yIikKc2V0LnNlZWQoODEyMzEpCgojIEdlbmVyYXRpbmcgcmFuZG9tIGRhdGEKbmV0X2xpc3QgICAgIDwtIHJncmFwaF9lcigyMCwgNSkKbmV0X2VkZ2VsaXN0IDwtIGFkam1hdF90b19lZGdlbGlzdChuZXRfbGlzdCkKClggPC0gZGF0YS5mcmFtZSgKICBpZG51bSAgICAgPSByZXAoMToyMCwgNSksCiAgdmFyMSAgICAgID0gcm5vcm0oMjAqNSksCiAgWWVhckFkb3B0ID0gcmVwKHNhbXBsZShjKE5BLCAxOjUpLCAyMCwgVFJVRSksIDUpLAogIHllYXIgICAgICA9IHNvcnQocmVwKDE6NSwgMjApKQogICkKCiMgRGlmZm5ldCBvYmplY3QKZGlmZm5ldF8wIDwtIGVkZ2VsaXN0X3RvX2RpZmZuZXQoCiAgZWRnZWxpc3QgPSBuZXRfZWRnZWxpc3RbLDE6Ml0sCiAgdDAgICAgICAgPSBuZXRfZWRnZWxpc3RbLCAidGltZSJdLAogIGRhdCAgICAgID0gWCwKICBpZHZhciAgICA9ICJpZG51bSIsCiAgdG9hdmFyICAgPSAiWWVhckFkb3B0IiwKICB0aW1ldmFyICA9ICJ5ZWFyIgopCgojIElncmFwaCBvYmplY3QKaWdyYXBoXzAgIDwtIGRpZmZuZXRfdG9faWdyYXBoKGRpZmZuZXRfMCkKbmV0d29ya18wIDwtIGRpZmZuZXRfdG9fbmV0d29ya0R5bmFtaWMoZGlmZm5ldF8wKQoKCiMgU3RvcmluZyB0aGUgZGF0YQpzYXZlKGRpZmZuZXRfMCwgaWdyYXBoXzAsIG5ldHdvcmtfMCwgWCwgbmV0X2VkZ2VsaXN0LCBuZXQsIGZpbGUgPSAicHJvYmxlbTIucmRhIikKYGBgCgoxLiAgV2l0aCB0aGUgbmV3IGRpZmZuZXQgb2JqZWN0LCBhcHBseSB0aGUgc2FtZSBhbmFseXNpcyBhcyBiZWZvcmUuCiAgICBXaGljaCBzdHJhdGVneSBtYXhpbWl6ZXMgYWRvcHRpb24/Cg==</div>
+<p>
+  <center><a href="http://cana.usc.edu" target="_new">University of Southern California<br>Center for Applied Network Analysis (<b>CANA</b>)</a>
+  </center>
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
