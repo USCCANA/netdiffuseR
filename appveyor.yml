@@ -21,7 +21,7 @@ environment:
   - R_VERSION: release
     R_ARCH: x64
 
-  - R_VERSION: dev
+  - R_VERSION: devel
 
 
 build_script:
