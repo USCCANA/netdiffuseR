@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thomas W. Valente and George G. Vega Yon" />
+
+
+<title>Introduction</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/FileSaver.min.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("intro.rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">netdiffuseR at NANS 2017</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intro.html">Introduction</a>
+</li>
+<li>
+  <a href="sim.html">Simulations</a>
+</li>
+<li>
+  <a href="read.html">Reading data</a>
+</li>
+<li>
+  <a href="stats.html">Statistical inference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Introduction</h1>
+<h4 class="author"><em>Thomas W. Valente and George G. Vega Yon</em></h4>
+
+</div>
+
+
+<div id="network-diffusion-of-innovations" class="section level1">
+<h1>Network Diffusion of Innovations</h1>
+<div id="diffusion-networks" class="section level2">
+<h2>Diffusion networks</h2>
+<p><img src="valente_1995.jpg" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>Tries to explain how new ideas and practices (innovations) spread within and between communities.</p></li>
+<li><p>While a lot of factors have been shown to influence diffusion (Spatial, Economic, Cultural, Biological, etc.), Social Networks is a prominent one.</p></li>
+<li><p>More complex than <strong>contagion</strong> <span class="math inline">\(\implies\)</span> a single tie is no longer enough for an innovation to spread across a social system.</p></li>
+<li><p>We think of this in terms of adoption thresholds and social exposure.</p></li>
+</ul>
+</div>
+<div id="thresholds" class="section level2">
+<h2>Thresholds</h2>
+<ul>
+<li><p>Network thresholds (Valente, 1995), <span class="math inline">\(\tau\)</span>, are defined as the required proportion or number of neighbors that leads you to adopt a particular behavior (innovation), <span class="math inline">\(a=1\)</span>. In (very) general terms</p>
+<p><span class="math display">\[
+a_i = \left\{\begin{array}{ll}
+1 &amp;\mbox{if } \tau_i\leq E_i \\
+0 &amp; \mbox{Otherwise}
+\end{array}\right. \qquad
+E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+\]</span></p>
+<p>Where <span class="math inline">\(E_i\)</span> is i’s exposure to the innovation and <span class="math inline">\(\mathbf{X}\)</span> is the adjacency matrix (the network).</p></li>
+<li><p>This can be generalized and extended to include covariates and other weighting schemes (that’s what <strong>netdiffuseR</strong> is all about).</p></li>
+</ul>
+</div>
+</div>
+<div id="netdiffuser" class="section level1">
+<h1>netdiffuseR</h1>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><strong>netdiffuseR</strong> is an R package that:</p>
+<ul>
+<li><p>Is designed for Visualizing, Analyzing and Simulating network diffusion data (in general).</p></li>
+<li><p>Depends on some pretty popular packages:</p>
+<ul>
+<li><em>RcppArmadillo</em>: So it’s fast,</li>
+<li><em>Matrix</em>: So it’s big,</li>
+<li><em>statnet</em> and <em>igraph</em>: So it’s not from scratch</li>
+</ul></li>
+<li><p>Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)</p></li>
+<li><p>Already on CRAN with ~4,000 downloads since its first version, Feb 2016,</p></li>
+<li><p>A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.</p></li>
+</ul>
+</div>
+<div id="datasets" class="section level2">
+<h2>Datasets</h2>
+<ul>
+<li><p>Among <strong>netdiffuseR</strong> features, we find three classical Diffusion Network Datasets:</p>
+<ul>
+<li><code>brfarmersDiffNet</code> Brazilian farmers and the innovation of Hybrid Corn Seed (1966).</li>
+<li><code>medInnovationsDiffNet</code> Doctors and the innovation of Tetracycline (1955).</li>
+<li><code>kfamilyDiffNet</code> Korean women and Family Planning methods (1973).</li>
+</ul>
+<pre class="r"><code>brfarmersDiffNet</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Brazilian Farmers
+#  Behavior           : Adoption of Hybrid Corn Seeds
+#  # of nodes         : 692 (1001, 1002, 1004, 1005, 1007, 1009, 1010, 1020, ...)
+#  # of time periods  : 21 (1946 - 1966)
+#  Type               : directed
+#  Final prevalence   : 1.00
+#  Static attributes  : village, idold, age, liveout, visits, contact, coo... (146)
+#  Dynamic attributes : -</code></pre>
+<pre class="r"><code>medInnovationsDiffNet</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Medical Innovation
+#  Behavior           : Adoption of Tetracycline
+#  # of nodes         : 125 (1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, ...)
+#  # of time periods  : 18 (1 - 18)
+#  Type               : directed
+#  Final prevalence   : 1.00
+#  Static attributes  : city, detail, meet, coll, attend, proage, length, ... (58)
+#  Dynamic attributes : -</code></pre>
+<pre class="r"><code>kfamilyDiffNet</code></pre>
+<pre><code># Dynamic network of class -diffnet-
+#  Name               : Korean Family Planning
+#  Behavior           : Family Planning Methods
+#  # of nodes         : 1047 (10002, 10003, 10005, 10007, 10010, 10011, 10012, 10014, ...)
+#  # of time periods  : 11 (1 - 11)
+#  Type               : directed
+#  Final prevalence   : 1.00
+#  Static attributes  : village, recno1, studno1, area1, id1, nmage1, nmag... (430)
+#  Dynamic attributes : -</code></pre></li>
+</ul>
+</div>
+<div id="visualization-methods" class="section level2">
+<h2>Visualization methods</h2>
+<pre class="r"><code>set.seed(12315)
+x &lt;- rdiffnet(
+  300, t = 4, rgraph.args = list(k=8, p=.3),
+  seed.graph = &quot;small-world&quot;,
+  seed.nodes = &quot;central&quot;
+  )
+
+plot(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-1.png" width="672" /></p>
+<pre class="r"><code>plot_diffnet(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-2.png" width="672" /></p>
+<pre class="r"><code>plot_diffnet2(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-3.png" width="672" /></p>
+<pre class="r"><code>plot_diffnet2(x, add.map = &quot;last&quot;, diffmap.alpha = .75, include.white = NULL)</code></pre>
+<p><img src="intro_files/figure-html/viz-4.png" width="672" /></p>
+<pre class="r"><code>plot_adopters(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-5.png" width="672" /></p>
+<pre class="r"><code>plot_threshold(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-6.png" width="672" /></p>
+<pre class="r"><code>plot_infectsuscep(x, K=2, logscale = FALSE)</code></pre>
+<p><img src="intro_files/figure-html/viz-7.png" width="672" /></p>
+<pre class="r"><code>plot_hazard(x)</code></pre>
+<p><img src="intro_files/figure-html/viz-8.png" width="672" /></p>
+</div>
+</div>
+<div id="problems" class="section level1">
+<h1>Problems</h1>
+<ol style="list-style-type: decimal">
+<li>Using the diffnet object in <code>data_intro.rmd</code>, use the function <code>plot_threshold</code> specifying shapes and colors according to the variables ItrustMyFriends and Age. Do you see any pattern?</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIgphdXRob3I6ICJUaG9tYXMgVy4gVmFsZW50ZSBhbmQgR2VvcmdlIEcuIFZlZ2EgWW9uIgotLS0KCmBgYHtyIHNldHVwLCBlY2hvPUZBTFNFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQpsaWJyYXJ5KG5ldGRpZmZ1c2VSKQprbml0cjo6b3B0c19jaHVuayRzZXQoY29tbWVudCA9ICIjIikKCmBgYAoKCiMgTmV0d29yayBEaWZmdXNpb24gb2YgSW5ub3ZhdGlvbnMKCiMjIERpZmZ1c2lvbiBuZXR3b3JrcwoKYGBge3IgdmFsZW50ZTE5OTUsIGVjaG89RkFMU0UsIGZpZy5hbGlnbj0nY2VudGVyJ30Ka25pdHI6OmluY2x1ZGVfZ3JhcGhpY3MoInZhbGVudGVfMTk5NS5qcGciKQpgYGAKCgoqICAgVHJpZXMgdG8gZXhwbGFpbiBob3cgbmV3IGlkZWFzIGFuZCBwcmFjdGljZXMgKGlubm92YXRpb25zKSBzcHJlYWQgd2l0aGluIGFuZCBiZXR3ZWVuCiAgY29tbXVuaXRpZXMuCgoqICAgV2hpbGUgYSBsb3Qgb2YgZmFjdG9ycyBoYXZlIGJlZW4gc2hvd24gdG8gaW5mbHVlbmNlIGRpZmZ1c2lvbiAoU3BhdGlhbCwKICAgIEVjb25vbWljLCBDdWx0dXJhbCwgQmlvbG9naWNhbCwgZXRjLiksIFNvY2lhbCBOZXR3b3JrcyBpcyBhIHByb21pbmVudCBvbmUuCgoqICAgTW9yZSBjb21wbGV4IHRoYW4gX19jb250YWdpb25fXyAkXGltcGxpZXMkIGEgc2luZ2xlIHRpZSBpcyBubyBsb25nZXIgZW5vdWdoCiAgICBmb3IgYW4gaW5ub3ZhdGlvbiB0byBzcHJlYWQgYWNyb3NzIGEgc29jaWFsIHN5c3RlbS4KCiogICBXZSB0aGluayBvZiB0aGlzIGluIHRlcm1zIG9mIGFkb3B0aW9uIHRocmVzaG9sZHMgYW5kIHNvY2lhbCBleHBvc3VyZS4KCgojIyBUaHJlc2hvbGRzCgoqICAgTmV0d29yayB0aHJlc2hvbGRzIChWYWxlbnRlLCAxOTk1KSwgJFx0YXUkLCBhcmUgZGVmaW5lZCBhcyB0aGUgcmVxdWlyZWQgcHJvcG9ydGlvbiBvciBudW1iZXIgb2YgbmVpZ2hib3JzIHRoYXQgbGVhZHMgeW91IHRvIGFkb3B0IGEgcGFydGljdWxhciAgICAgICAgYmVoYXZpb3IgKGlubm92YXRpb24pLCAkYT0xJC4gSW4gKHZlcnkpIGdlbmVyYWwgdGVybXNccGF1c2UKICAgIAogICAgJCQKICAgIGFfaSA9IFxsZWZ0XHtcYmVnaW57YXJyYXl9e2xsfQogICAgMSAmXG1ib3h7aWYgfSBcdGF1X2lcbGVxIEVfaSBcXAogICAgMCAmIFxtYm94e090aGVyd2lzZX0KICAgIFxlbmR7YXJyYXl9XHJpZ2h0LiBccXF1YWQKICAgIEVfaSBcZXF1aXYgXGZyYWN7XHN1bV97alxuZXEgaX1cbWF0aGJme1h9X3tpan1hX2p9e1xzdW1fe2pcbmVxIGl9XG1hdGhiZntYfV97aWp9fQogICAgJCQKICAgIAogICAgV2hlcmUgJEVfaSQgaXMgaSdzIGV4cG9zdXJlIHRvIHRoZSBpbm5vdmF0aW9uIGFuZCAkXG1hdGhiZntYfSQgaXMgdGhlIGFkamFjZW5jeSBtYXRyaXggKHRoZSBuZXR3b3JrKS4KCiogICBUaGlzIGNhbiBiZSBnZW5lcmFsaXplZCBhbmQgZXh0ZW5kZWQgdG8gaW5jbHVkZSBjb3ZhcmlhdGVzIGFuZCBvdGhlciB3ZWlnaHRpbmcgc2NoZW1lcyAodGhhdCdzIHdoYXQgX19uZXRkaWZmdXNlUl9fIGlzIGFsbCBhYm91dCkuCgoKIyBuZXRkaWZmdXNlUgoKIyMgT3ZlcnZpZXcKCl9fbmV0ZGlmZnVzZVJfXyBpcyBhbiBSIHBhY2thZ2UgdGhhdDoKCiogICBJcyBkZXNpZ25lZCBmb3IgVmlzdWFsaXppbmcsIEFuYWx5emluZyBhbmQgU2ltdWxhdGluZyBuZXR3b3JrIGRpZmZ1c2lvbiBkYXRhIChpbiBnZW5lcmFsKS4KCiogICBEZXBlbmRzIG9uIHNvbWUgcHJldHR5IHBvcHVsYXIgcGFja2FnZXM6CgogICAgKiAgIF9SY3BwQXJtYWRpbGxvXzogU28gaXQncyBmYXN0LAogICAgKiAgIF9NYXRyaXhfOiBTbyBpdCdzIGJpZywKICAgICogICBfc3RhdG5ldF8gYW5kIF9pZ3JhcGhfOiBTbyBpdCdzIG5vdCBmcm9tIHNjcmF0Y2gKCiogICBDYW4gaGFuZGxlIGJpZyBncmFwaHMsIG1vcmUgdGhhbiA0IGJpbGxpb24gZWxlbWVudHMgYWRqYWNlbmN5IG1hdHJpeCAoUFIgZm9yIFJjcHBBcm1hZGlsbG8pCgoqICAgQWxyZWFkeSBvbiBDUkFOIHdpdGggfjQsMDAwIGRvd25sb2FkcyBzaW5jZSBpdHMgZmlyc3QgdmVyc2lvbiwgRmViIDIwMTYsCgoqICAgQSBsb3Qgb2YgZmVhdHVyZXMgdG8gbWFrZSBpdCBlYXN5IHRvIHJlYWQgbmV0d29yayAoZHluYW1pYykgZGF0YSwgbWFraW5nIGl0IGEgbmljZSBjb21wYW5pb24gb2Ygb3RoZXIgbmV0IHBhY2thZ2VzLgoKCiMjIERhdGFzZXRzCgotICAgQW1vbmcgX19uZXRkaWZmdXNlUl9fIGZlYXR1cmVzLCB3ZSBmaW5kIHRocmVlIGNsYXNzaWNhbCBEaWZmdXNpb24gTmV0d29yayBEYXRhc2V0czoKICAgIAogICAgLSBgYnJmYXJtZXJzRGlmZk5ldGAgQnJhemlsaWFuIGZhcm1lcnMgYW5kIHRoZSBpbm5vdmF0aW9uIG9mIEh5YnJpZCBDb3JuIFNlZWQgKDE5NjYpLgogICAgLSBgbWVkSW5ub3ZhdGlvbnNEaWZmTmV0YCBEb2N0b3JzIGFuZCB0aGUgaW5ub3ZhdGlvbiBvZiBUZXRyYWN5Y2xpbmUgKDE5NTUpLgogICAgLSBga2ZhbWlseURpZmZOZXRgIEtvcmVhbiB3b21lbiBhbmQgRmFtaWx5IFBsYW5uaW5nIG1ldGhvZHMgKDE5NzMpLgogICAgCiAgICBgYGB7ciBwcmludGluZ30KICAgIGJyZmFybWVyc0RpZmZOZXQKICAgIG1lZElubm92YXRpb25zRGlmZk5ldAogICAga2ZhbWlseURpZmZOZXQKICAgIGBgYAoKIyMgVmlzdWFsaXphdGlvbiBtZXRob2RzCgpgYGB7ciB2aXosIGNhY2hlPVRSVUV9CnNldC5zZWVkKDEyMzE1KQp4IDwtIHJkaWZmbmV0KAogIDMwMCwgdCA9IDQsIHJncmFwaC5hcmdzID0gbGlzdChrPTgsIHA9LjMpLAogIHNlZWQuZ3JhcGggPSAic21hbGwtd29ybGQiLAogIHNlZWQubm9kZXMgPSAiY2VudHJhbCIKICApCgpwbG90KHgpCnBsb3RfZGlmZm5ldCh4KQpwbG90X2RpZmZuZXQyKHgpCnBsb3RfZGlmZm5ldDIoeCwgYWRkLm1hcCA9ICJsYXN0IiwgZGlmZm1hcC5hbHBoYSA9IC43NSwgaW5jbHVkZS53aGl0ZSA9IE5VTEwpCnBsb3RfYWRvcHRlcnMoeCkKcGxvdF90aHJlc2hvbGQoeCkKcGxvdF9pbmZlY3RzdXNjZXAoeCwgSz0yLCBsb2dzY2FsZSA9IEZBTFNFKQpwbG90X2hhemFyZCh4KQpgYGAKCgojIFByb2JsZW1zCgoxLiAgVXNpbmcgdGhlIGRpZmZuZXQgb2JqZWN0IGluIGBkYXRhX2ludHJvLnJtZGAsIHVzZSB0aGUgZnVuY3Rpb24gYHBsb3RfdGhyZXNob2xkYCBzcGVjaWZ5aW5nCiAgICBzaGFwZXMgYW5kIGNvbG9ycyBhY2NvcmRpbmcgdG8gdGhlIHZhcmlhYmxlcyBJdHJ1c3RNeUZyaWVuZHMgYW5kIEFnZS4gRG8geW91IHNlZSBhbnkgcGF0dGVybj8KCmBgYHtyIGRhdGFzaW0sIGVjaG89RkFMU0UsIGV2YWw9VFJVRX0Kc2V0LnNlZWQoMTI1MikKZGF0IDwtIGRhdGEuZnJhbWUoCiAgSXRydXN0TXlGcmllbmRzID0gc2FtcGxlKGMoMCwxKSwgMjAwLCBUUlVFKSwKICBBZ2UgPSAxMCArIHJwb2lzKDIwMCwgNCkKICApCm5ldCA8LSByZ3JhcGhfZXIoMTAwLCBwID0gLjA1KQpuZXQgPC0gZGlhZ19leHBhbmQobGlzdChuZXQsIG5ldCkpCm5ldFtjYmluZCgxOjEwLCAxMDE6MTEwKV0gPC0gMSAKCiMgR2VuZXJhdGluZyB0aGUgcHJvY2VzcwpkaWZmbmV0IDwtIHJkaWZmbmV0KAogIHRocmVzaG9sZC5kaXN0ID0gMiArIGRhdCRJdHJ1c3RNeUZyaWVuZHMqMiwKICBzZWVkLmdyYXBoID0gbmV0LCB0PTQsCiAgc2VlZC5ub2RlcyA9IGMoOToyMCksCiAgZXhwb3N1cmUuYXJncyA9IGxpc3Qobm9ybWFsaXplZD1GQUxTRSkpCgpkaWZmbmV0W1siSXRydXN0TXlGcmllbmRzIl1dIDwtIGRhdCRJdHJ1c3RNeUZyaWVuZHMKZGlmZm5ldFtbIkFnZSJdXSA8LSBkYXQkQWdlCgojIFdoYXQgdGhleSBzaG91bGQgc2VlCiMgcGxvdF90aHJlc2hvbGQoZGlmZm5ldCwgdmVydGV4LmNvbCA9IGRhdCsxKQpzYXZlKGRpZmZuZXQsIGZpbGUgPSAicHJvYmxlbXNfaW50cm8ucmRhIikKYGBgCgo=</div>
+<p>
+  <center><a href="http://cana.usc.edu" target="_new">University of Southern California<br>Center for Applied Network Analysis (<b>CANA</b>)</a>
+  </center>
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
