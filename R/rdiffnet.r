@@ -368,6 +368,8 @@ rdiffnet <- function(
   if (rewire)
     sgraph <- do.call(rewire_graph, c(list(graph=sgraph), rewire.args))
 
+  sgraph <- lapply(sgraph, `attr<-`, which="undirected", value=NULL)
+
   # Number of initial adopters
   if ((seed.p.adopt > 1) | (seed.p.adopt < 0)) {
     stop("The proportion of initial adopters should be a number in [0,1]")

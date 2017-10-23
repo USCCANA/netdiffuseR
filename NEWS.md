@@ -31,6 +31,10 @@
   
 * `plot_diffnet2` was not passing `color.ramp` to `drawColorKey`. Now fixed.
 
+* `plot.diffnet_mentor` had a bug. Uncesary permutation of vertices was done,
+  but it actually had no visible effect. Similar problem was corrected in
+  `diffnet_to_igraph`, and other plot methods using igraph for plotting.
+
 
 ## Other changes
 

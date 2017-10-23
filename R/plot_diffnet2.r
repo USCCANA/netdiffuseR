@@ -162,8 +162,7 @@ plot_diffnet2.default <- function(
   add_dimnames.mat(graph)
 
   # Computing positions
-  g <- igraph::graph_from_adjacency_matrix(graph, mode="undirected")
-  g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
+  g <- igraph::graph_from_adjacency_matrix(graph, weighted = TRUE)
 
   igraph.args$layout <- if (!length(layout)) igraph::layout_nicely(g)
   else if (inherits(layout, "function")) layout(g)
@@ -439,8 +438,7 @@ diffusionMap.default <- function(
 
 
   # Computing positions
-  g <- igraph::graph_from_adjacency_matrix(graph, mode = "directed")
-  g <- igraph::permute(g, match(igraph::V(g)$name, nodes(graph)))
+  g <- igraph::graph_from_adjacency_matrix(graph, weighted = TRUE)
 
   coords <- if (is.function(layout)) layout(g)
   else if (!length(layout)) igraph::layout_nicely(g)

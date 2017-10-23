@@ -8,16 +8,12 @@ test_that("igraph back and forth", {
   ig <- diffnet_to_igraph(dn0)
   dn1 <- igraph_to_diffnet(graph.list = ig, toavar="toa")
 
-  dn0$graph <- as.array(dn0)
-  dn1$graph <- as.array(dn1)
-
   attrs0 <- as.data.frame(dn0)
   attrs1 <- as.data.frame(dn1)
 
-  dn0$vertex.static.attrs <- NULL
-  dn0$vertex.dyn.attrs <- NULL
-  dn1$vertex.static.attrs <- NULL
+  dn1$vertex.static.attrs <- dn1$vertex.dyn.attrs[[1]]
   dn1$vertex.dyn.attrs <- NULL
+  dn0$vertex.dyn.attrs <- NULL
 
   expect_equal(dn0, dn1)
 
@@ -29,16 +25,8 @@ test_that("igraph back and forth", {
   ig <- diffnet_to_igraph(dn0)
   dn1 <- igraph_to_diffnet(ig[[1]], toavar="toa", t0 = 1, t1 = 4)
 
-  dn0$graph <- as.array(dn0)
-  dn1$graph <- as.array(dn1)
-
   attrs0 <- as.data.frame(dn0)
   attrs1 <- as.data.frame(dn1)
-
-  dn0$vertex.static.attrs <- NULL
-  dn0$vertex.dyn.attrs <- NULL
-  dn1$vertex.static.attrs <- NULL
-  dn1$vertex.dyn.attrs <- NULL
 
   expect_equal(dn0, dn1)
 

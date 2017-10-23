@@ -543,11 +543,12 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
                        vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
                        id.and.per.vars = NULL,
                        graph.attrs = NULL,
-                       undirected=getOption("diffnet.undirected"),
-                       self=getOption("diffnet.self"),
-                       multiple=getOption("diffnet.multiple"),
-                       name = "Diffusion Network",
-                       behavior = "Unspecified") {
+                       undirected = getOption("diffnet.undirected"),
+                       self       = getOption("diffnet.self"),
+                       multiple   = getOption("diffnet.multiple"),
+                       name       = "Diffusion Network",
+                       behavior   = "Unspecified"
+                       ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
   if (inherits(graph, "diffnet")) {

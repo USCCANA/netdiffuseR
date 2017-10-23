@@ -514,8 +514,7 @@ plot_diffnet.default <- function(
     shapes <- vertex.shape[type]
 
     # Creating igraph object
-    ig  <- igraph::graph_from_adjacency_matrix(graph[[s]], mode = "directed")
-    ig  <- igraph::permute(ig, match(igraph::V(ig)$name, nodes(graph[[s]])))
+    ig  <- igraph::graph_from_adjacency_matrix(graph[[s]], weighted = TRUE)
 
     # Computing layout
     if (!length(igraph.args$layout)) {

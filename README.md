@@ -353,7 +353,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.18.2999
+    ## [1] netdiffuseR_1.19.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] igraph_1.1.2         Rcpp_0.12.13         knitr_1.17          

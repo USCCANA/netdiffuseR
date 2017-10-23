@@ -47,11 +47,6 @@ diffnet_to_igraph <- function(graph, slices=1:nslices(graph)) {
       diag      = graph$meta$self
       )
 
-    # Computing positions
-    tempgraph <- igraph::permute(
-      tempgraph, match(igraph::V(tempgraph)$name, graph$meta$ids)
-      )
-
     # Vertex Static Attributes
     for (k in static.attrs)
       tempgraph <-
@@ -157,13 +152,14 @@ igraph_to_diffnet <- function(
   # Getting the attributes
   vertex.static.attrs <- NULL
   vertex.dyn.attrs    <- NULL
-  if (!islist)
+  if (!islist) {
     vertex.static.attrs <- as.data.frame(
       igraph::vertex.attributes(graph))
-  else
+  } else {
     vertex.dyn.attrs <- lapply(graph.list, function(x) {
       as.data.frame(igraph::vertex.attributes(x))
     })
+  }
 
   # Removing toa
   if (length(vertex.static.attrs)) {
@@ -188,6 +184,7 @@ igraph_to_diffnet <- function(
              name                = igraph::graph_attr(graph.list[[1]], "name"),
              behavior            = igraph::graph_attr(graph.list[[1]], "behavior"),
              self                = any(igraph::is.loop(graph.list[[1]])),
+             undirected          = !igraph::is.directed(graph.list[[1]]),
              ...))
 
 }

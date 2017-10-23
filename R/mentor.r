@@ -213,11 +213,9 @@ plot.diffnet_mentor <- function(
     as.character(x[["match"]])
   )
 
-  ig <- igraph::graph_from_edgelist(ig)
-
-  # Igraph's indices are not the same as the data!
-  indx <- match(igraph::V(ig)$name, x[["name"]])
-  ig <- igraph::permute(ig, indx)
+  ig <- edgelist_to_adjmat(ig)
+  ig <- ig[x[["name"]],][,x[["name"]]]
+  ig <- igraph::graph_from_adjacency_matrix(ig, weighted = NULL)
 
   # Creating plot
   graphics::plot.new()
