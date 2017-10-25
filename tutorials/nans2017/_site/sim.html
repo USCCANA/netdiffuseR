@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thomas W. Valente and George G. Vega Yon" />
+
+
+<title>Simulation of diffusion networks: rdiffnet</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/FileSaver.min.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("sim.rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">netdiffuseR at NANS 2017</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intro.html">Introduction</a>
+</li>
+<li>
+  <a href="sim.html">Simulations</a>
+</li>
+<li>
+  <a href="read.html">Reading data</a>
+</li>
+<li>
+  <a href="stats.html">Statistical inference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Simulation of diffusion networks: rdiffnet</h1>
+<h4 class="author"><em>Thomas W. Valente and George G. Vega Yon</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Before start, a recapt of concepts that we will be using here</p>
+<ol style="list-style-type: decimal">
+<li>Exposure: What proportion/number of your neighbors has adopted an innovation.</li>
+<li>Threshold: What was the proportion/number of your neighbors had adopted by the time you adopted.</li>
+<li>Infectiousness: How much <span class="math inline">\(i\)</span>’s adoption affects her alters</li>
+<li>Susceptibility: How much <span class="math inline">\(i\)</span>’s alters’ adoption affects her.</li>
+<li>Structural equivalence: How similar are <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> in terms of position on the network.</li>
+</ol>
+</div>
+<div id="simulating-diffusion-networks" class="section level1">
+<h1>Simulating diffusion networks</h1>
+<p>We will simulate a diffusion network with the following parameters:</p>
+<ol style="list-style-type: decimal">
+<li>Will have 1,000 vertices,</li>
+<li>Will span 20 time periods,</li>
+<li>The set of early adopters will be random,</li>
+<li>Early adopters will be a 10% of the network,</li>
+<li>The graph will be small-world,</li>
+<li>Will use the WS algorithmwith <span class="math inline">\(p=.2\)</span> (probability of rewire).</li>
+<li>Threshold levels will be uniformly distributed between [0.3, 0.7]</li>
+</ol>
+<p>To generate such diffusion network we can use the <code>rdiffnet</code> function included in the package:</p>
+<pre class="r"><code># Setting the seed for the RNG
+set.seed(1213)
+
+# Generating a random diffusion network
+net &lt;- rdiffnet(
+  n              = 1e3,                         # 1.
+  t              = 20,                          # 2.
+  seed.nodes     = &quot;random&quot;,                    # 3.
+  seed.p.adopt   = .1,                          # 4.
+  seed.graph     = &quot;small-world&quot;,               # 5.
+  rgraph.args    = list(p=.2),                  # 6.
+  threshold.dist = function(x) runif(1, .3, .7) # 7.
+  )</code></pre>
+<ul>
+<li><p>The function <code>rdiffnet</code> generates random diffusion networks. Main features:</p>
+<ol style="list-style-type: decimal">
+<li><p>Simulating random graph or using your own,</p></li>
+<li><p>Setting threshold levels per node,</p></li>
+<li><p>Network rewiring throughout the simulation, and</p></li>
+<li><p>Setting the seed nodes.</p></li>
+</ol></li>
+<li><p>The simulation algorithm is as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>If required, a baseline graph is created,</p></li>
+<li><p>Set of initial adopters and threshold is established,</p></li>
+<li><p>Se set of t networks is created (if required), and</p></li>
+<li><p>Simulation starts at t=2, assigning adopters based on exposures and thresholds:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>For each <span class="math inline">\(i \in N\)</span>, if its exposure at <span class="math inline">\(t-1\)</span> is greater than its threshold, then adopts, otherwise continue without change.</p></li>
+<li><p>next <span class="math inline">\(i\)</span></p></li>
+</ol></li>
+</ol></li>
+</ul>
+</div>
+<div id="disease-spreading" class="section level1">
+<h1>Disease spreading</h1>
+<pre class="r"><code>library(netdiffuseR)
+
+set.seed(09)
+diffnet_disease &lt;- rdiffnet(
+  n = 5e2,
+  t = 5, 
+  seed.graph = &quot;small-world&quot;,
+  rgraph.args = list(k = 4, p = .3),
+  seed.nodes = &quot;random&quot;,
+  seed.p.adopt = .05,
+  rewire = TRUE,
+  threshold.dist = function(i) 1L,
+  exposure.args = list(normalized = FALSE)
+  )</code></pre>
+<pre class="r"><code>summary(diffnet_disease)</code></pre>
+<pre><code># Diffusion network summary statistics
+# Name     : A diffusion network
+# Behavior : Random contagion
+# -----------------------------------------------------------------------------
+#  Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran&#39;s I (sd)  
+# -------- ---------- ---------------- ------------- --------- ---------------- 
+#        1         25        25 (0.05)             -      0.01 -0.00 (0.00)     
+#        2        100       125 (0.25)          0.21      0.01  0.01 (0.00) *** 
+#        3        228       353 (0.71)          0.61      0.01  0.01 (0.00) *** 
+#        4        141       494 (0.99)          0.96      0.01  0.00 (0.00) *** 
+#        5          6       500 (1.00)          1.00      0.01               -  
+# -----------------------------------------------------------------------------
+#  Left censoring  : 0.05 (25)
+#  Right centoring : 0.00 (0)
+#  # of nodes      : 500
+# 
+#  Moran&#39;s I was computed on contemporaneous autocorrelation using 1/geodesic
+#  values. Significane levels  *** &lt;= .01, ** &lt;= .05, * &lt;= .1.</code></pre>
+<pre class="r"><code>plot_diffnet(diffnet_disease, slices = c(1, 3, 5))</code></pre>
+<p><img src="sim_files/figure-html/plot-disease-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># We want to use igraph to compute layout
+igdf &lt;- diffnet_to_igraph(diffnet_disease, slices=c(1,2))[[1]]
+pos &lt;- igraph::layout_with_drl(igdf)
+
+plot_diffnet2(diffnet_disease, vertex.size = dgr(diffnet_disease)[,1], layout=pos)</code></pre>
+<p><img src="sim_files/figure-html/plot-disease-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="complex-contagion" class="section level1">
+<h1>Complex contagion</h1>
+<pre class="r"><code>set.seed(09)
+diffnet_complex &lt;- rdiffnet(
+  seed.graph = diffnet_disease$graph,
+  seed.nodes = which(diffnet_disease$toa == 1),
+  rewire = FALSE,
+  threshold.dist = function(i) rbeta(1, 3, 10),
+  name = &quot;Complex Sim&quot;,
+  behavior = &quot;More complex than contact&quot;
+)</code></pre>
+<pre class="r"><code>plot_adopters(diffnet_disease, what = &quot;cumadopt&quot;, include.legend = FALSE)
+plot_adopters(diffnet_complex, bg=&quot;tomato&quot;, add=TRUE, what = &quot;cumadopt&quot;)
+legend(&quot;topleft&quot;, legend = c(&quot;Disease&quot;, &quot;Complex&quot;), col = c(&quot;lightblue&quot;, &quot;tomato&quot;),
+       bty = &quot;n&quot;, pch=19)</code></pre>
+<p><img src="sim_files/figure-html/plot-complex-and-disease-1.png" width="672" /></p>
+</div>
+<div id="mentor-matching" class="section level1">
+<h1>Mentor Matching</h1>
+<pre class="r"><code># Finding mentors
+mentors &lt;- mentor_matching(diffnet_disease, 25, lead.ties.method = &quot;random&quot;)
+
+# Simulating diffusion with these mentors
+set.seed(09)
+diffnet_mentored &lt;- rdiffnet(
+  seed.graph = diffnet_complex,
+  seed.nodes = which(mentors$`1`$isleader),
+  rewire = FALSE,
+  threshold.dist = diffnet_complex[[&quot;real_threshold&quot;]],
+  name = &quot;Diffusion using Mentors&quot;
+)
+
+summary(diffnet_mentored)</code></pre>
+<pre><code># Diffusion network summary statistics
+# Name     : Diffusion using Mentors
+# Behavior : Random contagion
+# -----------------------------------------------------------------------------
+#  Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran&#39;s I (sd)  
+# -------- ---------- ---------------- ------------- --------- ---------------- 
+#        1         25        25 (0.05)             -      0.01 -0.00 (0.00)     
+#        2         92       117 (0.23)          0.19      0.01  0.01 (0.00) *** 
+#        3        152       269 (0.54)          0.40      0.01  0.01 (0.00) *** 
+#        4        150       419 (0.84)          0.65      0.01  0.01 (0.00) *** 
+#        5         73       492 (0.98)          0.90      0.01 -0.00 (0.00) **  
+# -----------------------------------------------------------------------------
+#  Left censoring  : 0.05 (25)
+#  Right centoring : 0.02 (8)
+#  # of nodes      : 500
+# 
+#  Moran&#39;s I was computed on contemporaneous autocorrelation using 1/geodesic
+#  values. Significane levels  *** &lt;= .01, ** &lt;= .05, * &lt;= .1.</code></pre>
+<pre class="r"><code>cumulative_adopt_count(diffnet_complex)</code></pre>
+<pre><code>#          1      2          3           4           5
+# num  25.00 88.000 229.000000 395.0000000 485.0000000
+# prop  0.05  0.176   0.458000   0.7900000   0.9700000
+# rate  0.00  2.520   1.602273   0.7248908   0.2278481</code></pre>
+<pre class="r"><code>cumulative_adopt_count(diffnet_mentored)</code></pre>
+<pre><code>#          1       2          3           4           5
+# num  25.00 117.000 269.000000 419.0000000 492.0000000
+# prop  0.05   0.234   0.538000   0.8380000   0.9840000
+# rate  0.00   3.680   1.299145   0.5576208   0.1742243</code></pre>
+</div>
+<div id="example-by-changing-threshold" class="section level1">
+<h1>Example by changing threshold</h1>
+<pre class="r"><code>
+# Simulating a scale-free homophilic network
+set.seed(1231)
+X &lt;- rep(c(1,1,1,1,1,0,0,0,0,0), 50)
+net &lt;- rgraph_ba(t = 499, m=4, eta = X)
+
+# Taking a look in igraph
+ig  &lt;- igraph::graph_from_adjacency_matrix(net)
+plot(ig, vertex.color = c(&quot;azure&quot;, &quot;tomato&quot;)[X+1], vertex.label = NA,
+     vertex.size = sqrt(dgr(net)))</code></pre>
+<p><img src="sim_files/figure-html/sim-sim-1.png" width="672" /></p>
+<pre class="r"><code>
+# Now, simulating a bunch of diffusion processes
+nsim &lt;- 500L
+ans_1and2 &lt;- vector(&quot;list&quot;, nsim)
+set.seed(223)
+for (i in 1:nsim) {
+  # We just want the cum adopt count
+  ans_1and2[[i]] &lt;- 
+    cumulative_adopt_count(
+      rdiffnet(
+        seed.graph = net,
+        t = 10,
+        threshold.dist = sample(1:2, 500L, TRUE),
+        seed.nodes = &quot;random&quot;,
+        seed.p.adopt = .10,
+        exposure.args = list(outgoing = FALSE, normalized = FALSE),
+        rewire = FALSE
+        )
+      )
+  
+  # Are we there yet?
+  if (!(i %% 50))
+    message(&quot;Simulation &quot;, i,&quot; of &quot;, nsim, &quot; done.&quot;)
+}
+# Simulation 50 of 500 done.
+# Simulation 100 of 500 done.
+# Simulation 150 of 500 done.
+# Simulation 200 of 500 done.
+# Simulation 250 of 500 done.
+# Simulation 300 of 500 done.
+# Simulation 350 of 500 done.
+# Simulation 400 of 500 done.
+# Simulation 450 of 500 done.
+# Simulation 500 of 500 done.
+
+# Extracting prop
+ans_1and2 &lt;- do.call(rbind, lapply(ans_1and2, &quot;[&quot;, i=&quot;prop&quot;, j=))
+
+ans_2and3 &lt;- vector(&quot;list&quot;, nsim)
+set.seed(223)
+for (i in 1:nsim) {
+  # We just want the cum adopt count
+  ans_2and3[[i]] &lt;- 
+    cumulative_adopt_count(
+      rdiffnet(
+        seed.graph = net,
+        t = 10,
+        threshold.dist = sample(2:3, 500L, TRUE),
+        seed.nodes = &quot;random&quot;,
+        seed.p.adopt = .10,
+        exposure.args = list(outgoing = FALSE, normalized = FALSE),
+        rewire = FALSE
+        )
+      )
+  
+  # Are we there yet?
+  if (!(i %% 50))
+    message(&quot;Simulation &quot;, i,&quot; of &quot;, nsim, &quot; done.&quot;)
+}
+# Simulation 50 of 500 done.
+# Simulation 100 of 500 done.
+# Simulation 150 of 500 done.
+# Simulation 200 of 500 done.
+# Simulation 250 of 500 done.
+# Simulation 300 of 500 done.
+# Simulation 350 of 500 done.
+# Simulation 400 of 500 done.
+# Simulation 450 of 500 done.
+# Simulation 500 of 500 done.
+
+ans_2and3 &lt;- do.call(rbind, lapply(ans_2and3, &quot;[&quot;, i=&quot;prop&quot;, j=))</code></pre>
+<pre class="r"><code>boxplot(ans_1and2, col=&quot;ivory&quot;)
+boxplot(ans_2and3, col=&quot;tomato&quot;, add=TRUE)</code></pre>
+<p><img src="sim_files/figure-html/sim-sim-results-1.png" width="672" /></p>
+<ul>
+<li>Example simulating a thousand networks by changing threshold levels. The final prevalence, or hazard as a function of threshold levels.</li>
+</ul>
+</div>
+<div id="problems" class="section level1">
+<h1>Problems</h1>
+<ol style="list-style-type: decimal">
+<li>Given the following types of networks: Small-world, Scale-free, Bernoulli, what set of <span class="math inline">\(n\)</span> initiators maximizes diffusion?</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2ltdWxhdGlvbiBvZiBkaWZmdXNpb24gbmV0d29ya3M6IHJkaWZmbmV0IgphdXRob3I6ICJUaG9tYXMgVy4gVmFsZW50ZSBhbmQgR2VvcmdlIEcuIFZlZ2EgWW9uIgotLS0KCmBgYHtyIHNldHVwLCBlY2hvPUZBTFNFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQpsaWJyYXJ5KG5ldGRpZmZ1c2VSKQprbml0cjo6b3B0c19jaHVuayRzZXQoY29tbWVudCA9ICIjIikKCmBgYAoKIyBJbnRyb2R1Y3Rpb24KCkJlZm9yZSBzdGFydCwgYSByZWNhcHQgb2YgY29uY2VwdHMgdGhhdCB3ZSB3aWxsIGJlIHVzaW5nIGhlcmUKCjEuIEV4cG9zdXJlOiBXaGF0IHByb3BvcnRpb24vbnVtYmVyIG9mIHlvdXIgbmVpZ2hib3JzIGhhcyBhZG9wdGVkIGFuIGlubm92YXRpb24uCjIuIFRocmVzaG9sZDogV2hhdCB3YXMgdGhlIHByb3BvcnRpb24vbnVtYmVyIG9mIHlvdXIgbmVpZ2hib3JzIGhhZCBhZG9wdGVkIGJ5IHRoZSB0aW1lIHlvdSBhZG9wdGVkLgozLiBJbmZlY3Rpb3VzbmVzczogSG93IG11Y2ggJGkkJ3MgYWRvcHRpb24gYWZmZWN0cyBoZXIgYWx0ZXJzCjQuIFN1c2NlcHRpYmlsaXR5OiBIb3cgbXVjaCAkaSQncyBhbHRlcnMnIGFkb3B0aW9uIGFmZmVjdHMgaGVyLgo1LiBTdHJ1Y3R1cmFsIGVxdWl2YWxlbmNlOiBIb3cgc2ltaWxhciBhcmUgJGkkIGFuZCAkaiQgaW4gdGVybXMgb2YgcG9zaXRpb24gb24gdGhlIG5ldHdvcmsuCgojIFNpbXVsYXRpbmcgZGlmZnVzaW9uIG5ldHdvcmtzCgpXZSB3aWxsIHNpbXVsYXRlIGEgZGlmZnVzaW9uIG5ldHdvcmsgd2l0aCB0aGUgZm9sbG93aW5nIHBhcmFtZXRlcnM6CgoxLiAgV2lsbCBoYXZlIDEsMDAwIHZlcnRpY2VzLAoyLiAgV2lsbCBzcGFuIDIwIHRpbWUgcGVyaW9kcywKMy4gIFRoZSBzZXQgb2YgZWFybHkgYWRvcHRlcnMgd2lsbCBiZSByYW5kb20sCjQuICBFYXJseSBhZG9wdGVycyB3aWxsIGJlIGEgMTBcJSBvZiB0aGUgbmV0d29yaywKNS4gIFRoZSBncmFwaCB3aWxsIGJlIHNtYWxsLXdvcmxkLAo2LiAgV2lsbCB1c2UgdGhlIFdTIGFsZ29yaXRobXdpdGggJHA9LjIkIChwcm9iYWJpbGl0eSBvZiByZXdpcmUpLgo3LiAgVGhyZXNob2xkIGxldmVscyB3aWxsIGJlIHVuaWZvcm1seSBkaXN0cmlidXRlZCBiZXR3ZWVuIFswLjMsIDAuN1xdCgpUbyBnZW5lcmF0ZSBzdWNoIGRpZmZ1c2lvbiBuZXR3b3JrIHdlIGNhbiB1c2UgdGhlIGByZGlmZm5ldGAgZnVuY3Rpb24gaW5jbHVkZWQgaW4gdGhlIHBhY2thZ2U6CgoKYGBge3IgR2VuZXJhdGluZyB0aGUgcmFuZG9tIGdyYXBofQojIFNldHRpbmcgdGhlIHNlZWQgZm9yIHRoZSBSTkcKc2V0LnNlZWQoMTIxMykKCiMgR2VuZXJhdGluZyBhIHJhbmRvbSBkaWZmdXNpb24gbmV0d29yawpuZXQgPC0gcmRpZmZuZXQoCiAgbiAgICAgICAgICAgICAgPSAxZTMsICAgICAgICAgICAgICAgICAgICAgICAgICMgMS4KICB0ICAgICAgICAgICAgICA9IDIwLCAgICAgICAgICAgICAgICAgICAgICAgICAgIyAyLgogIHNlZWQubm9kZXMgICAgID0gInJhbmRvbSIsICAgICAgICAgICAgICAgICAgICAjIDMuCiAgc2VlZC5wLmFkb3B0ICAgPSAuMSwgICAgICAgICAgICAgICAgICAgICAgICAgICMgNC4KICBzZWVkLmdyYXBoICAgICA9ICJzbWFsbC13b3JsZCIsICAgICAgICAgICAgICAgIyA1LgogIHJncmFwaC5hcmdzICAgID0gbGlzdChwPS4yKSwgICAgICAgICAgICAgICAgICAjIDYuCiAgdGhyZXNob2xkLmRpc3QgPSBmdW5jdGlvbih4KSBydW5pZigxLCAuMywgLjcpICMgNy4KICApCmBgYAoKCiogICBUaGUgZnVuY3Rpb24gYHJkaWZmbmV0YCBnZW5lcmF0ZXMgcmFuZG9tIGRpZmZ1c2lvbiBuZXR3b3Jrcy4gTWFpbiBmZWF0dXJlczoKICAgIAogICAgMS4gIFNpbXVsYXRpbmcgcmFuZG9tIGdyYXBoIG9yIHVzaW5nIHlvdXIgb3duLAogICAgCiAgICAyLiAgU2V0dGluZyB0aHJlc2hvbGQgbGV2ZWxzIHBlciBub2RlLAogICAgCiAgICAzLiAgTmV0d29yayByZXdpcmluZyB0aHJvdWdob3V0IHRoZSBzaW11bGF0aW9uLCBhbmQKICAgIAogICAgNC4gIFNldHRpbmcgdGhlIHNlZWQgbm9kZXMuCiAgICAKICAgIAoqICAgVGhlIHNpbXVsYXRpb24gYWxnb3JpdGhtIGlzIGFzIGZvbGxvd3M6CiAgICAKICAgIDEuICBJZiByZXF1aXJlZCwgYSBiYXNlbGluZSBncmFwaCBpcyBjcmVhdGVkLAogICAgCiAgICAyLiAgU2V0IG9mIGluaXRpYWwgYWRvcHRlcnMgYW5kIHRocmVzaG9sZCBpcyBlc3RhYmxpc2hlZCwKICAgIAogICAgMy4gIFNlIHNldCBvZiB0IG5ldHdvcmtzIGlzIGNyZWF0ZWQgKGlmIHJlcXVpcmVkKSwgYW5kCiAgICAKICAgIDQuICBTaW11bGF0aW9uIHN0YXJ0cyBhdCB0PTIsIGFzc2lnbmluZyBhZG9wdGVycyBiYXNlZCBvbiBleHBvc3VyZXMgYW5kIHRocmVzaG9sZHM6CiAgICAKICAgICAgICBhLiAgRm9yIGVhY2ggJGkgXGluIE4kLCBpZiBpdHMgZXhwb3N1cmUgYXQgJHQtMSQgaXMgZ3JlYXRlciB0aGFuIGl0cyB0aHJlc2hvbGQsIHRoZW4gCiAgICAgICAgICAgIGFkb3B0cywgb3RoZXJ3aXNlIGNvbnRpbnVlIHdpdGhvdXQgY2hhbmdlLgogICAgICAgICAgICAKICAgICAgICBiLiAgbmV4dCAkaSQKICAgIAojIERpc2Vhc2Ugc3ByZWFkaW5nCgpgYGB7ciBzaW0tZGlzZWFzZX0KbGlicmFyeShuZXRkaWZmdXNlUikKCnNldC5zZWVkKDA5KQpkaWZmbmV0X2Rpc2Vhc2UgPC0gcmRpZmZuZXQoCiAgbiA9IDVlMiwKICB0ID0gNSwgCiAgc2VlZC5ncmFwaCA9ICJzbWFsbC13b3JsZCIsCiAgcmdyYXBoLmFyZ3MgPSBsaXN0KGsgPSA0LCBwID0gLjMpLAogIHNlZWQubm9kZXMgPSAicmFuZG9tIiwKICBzZWVkLnAuYWRvcHQgPSAuMDUsCiAgcmV3aXJlID0gVFJVRSwKICB0aHJlc2hvbGQuZGlzdCA9IGZ1bmN0aW9uKGkpIDFMLAogIGV4cG9zdXJlLmFyZ3MgPSBsaXN0KG5vcm1hbGl6ZWQgPSBGQUxTRSkKICApCmBgYAoKYGBge3Igc3VtbWFyeS1kaXNlYXNlfQpzdW1tYXJ5KGRpZmZuZXRfZGlzZWFzZSkKYGBgCgoKYGBge3IgcGxvdC1kaXNlYXNlLCBmaWcuYWxpZ249J2NlbnRlcicsIGNhY2hlPVRSVUV9CnBsb3RfZGlmZm5ldChkaWZmbmV0X2Rpc2Vhc2UsIHNsaWNlcyA9IGMoMSwgMywgNSkpCgojIFdlIHdhbnQgdG8gdXNlIGlncmFwaCB0byBjb21wdXRlIGxheW91dAppZ2RmIDwtIGRpZmZuZXRfdG9faWdyYXBoKGRpZmZuZXRfZGlzZWFzZSwgc2xpY2VzPWMoMSwyKSlbWzFdXQpwb3MgPC0gaWdyYXBoOjpsYXlvdXRfd2l0aF9kcmwoaWdkZikKCnBsb3RfZGlmZm5ldDIoZGlmZm5ldF9kaXNlYXNlLCB2ZXJ0ZXguc2l6ZSA9IGRncihkaWZmbmV0X2Rpc2Vhc2UpWywxXSwgbGF5b3V0PXBvcykKYGBgCgoKIyBDb21wbGV4IGNvbnRhZ2lvbgoKYGBge3Igc2ltLWNvbXBsZXh9CnNldC5zZWVkKDA5KQpkaWZmbmV0X2NvbXBsZXggPC0gcmRpZmZuZXQoCiAgc2VlZC5ncmFwaCA9IGRpZmZuZXRfZGlzZWFzZSRncmFwaCwKICBzZWVkLm5vZGVzID0gd2hpY2goZGlmZm5ldF9kaXNlYXNlJHRvYSA9PSAxKSwKICByZXdpcmUgPSBGQUxTRSwKICB0aHJlc2hvbGQuZGlzdCA9IGZ1bmN0aW9uKGkpIHJiZXRhKDEsIDMsIDEwKSwKICBuYW1lID0gIkNvbXBsZXggU2ltIiwKICBiZWhhdmlvciA9ICJNb3JlIGNvbXBsZXggdGhhbiBjb250YWN0IgopCgpgYGAKCmBgYHtyIHBsb3QtY29tcGxleC1hbmQtZGlzZWFzZX0KcGxvdF9hZG9wdGVycyhkaWZmbmV0X2Rpc2Vhc2UsIHdoYXQgPSAiY3VtYWRvcHQiLCBpbmNsdWRlLmxlZ2VuZCA9IEZBTFNFKQpwbG90X2Fkb3B0ZXJzKGRpZmZuZXRfY29tcGxleCwgYmc9InRvbWF0byIsIGFkZD1UUlVFLCB3aGF0ID0gImN1bWFkb3B0IikKbGVnZW5kKCJ0b3BsZWZ0IiwgbGVnZW5kID0gYygiRGlzZWFzZSIsICJDb21wbGV4IiksIGNvbCA9IGMoImxpZ2h0Ymx1ZSIsICJ0b21hdG8iKSwKICAgICAgIGJ0eSA9ICJuIiwgcGNoPTE5KQpgYGAKCgojIE1lbnRvciBNYXRjaGluZwoKYGBge3IgbWVudG9yLW1hdGNoLCBjYWNoZSA9IFRSVUV9CgojIEZpbmRpbmcgbWVudG9ycwptZW50b3JzIDwtIG1lbnRvcl9tYXRjaGluZyhkaWZmbmV0X2Rpc2Vhc2UsIDI1LCBsZWFkLnRpZXMubWV0aG9kID0gInJhbmRvbSIpCgojIFNpbXVsYXRpbmcgZGlmZnVzaW9uIHdpdGggdGhlc2UgbWVudG9ycwpzZXQuc2VlZCgwOSkKZGlmZm5ldF9tZW50b3JlZCA8LSByZGlmZm5ldCgKICBzZWVkLmdyYXBoID0gZGlmZm5ldF9jb21wbGV4LAogIHNlZWQubm9kZXMgPSB3aGljaChtZW50b3JzJGAxYCRpc2xlYWRlciksCiAgcmV3aXJlID0gRkFMU0UsCiAgdGhyZXNob2xkLmRpc3QgPSBkaWZmbmV0X2NvbXBsZXhbWyJyZWFsX3RocmVzaG9sZCJdXSwKICBuYW1lID0gIkRpZmZ1c2lvbiB1c2luZyBNZW50b3JzIgopCgpzdW1tYXJ5KGRpZmZuZXRfbWVudG9yZWQpCmBgYAoKYGBge3IgdG9hX21hdC1tZW50b3JzfQpjdW11bGF0aXZlX2Fkb3B0X2NvdW50KGRpZmZuZXRfY29tcGxleCkKY3VtdWxhdGl2ZV9hZG9wdF9jb3VudChkaWZmbmV0X21lbnRvcmVkKQpgYGAKCgojIEV4YW1wbGUgYnkgY2hhbmdpbmcgdGhyZXNob2xkCgpgYGB7ciBzaW0tc2ltLCBjYWNoZSA9IFRSVUUsIGNvbGxhcHNlID0gVFJVRX0KCiMgU2ltdWxhdGluZyBhIHNjYWxlLWZyZWUgaG9tb3BoaWxpYyBuZXR3b3JrCnNldC5zZWVkKDEyMzEpClggPC0gcmVwKGMoMSwxLDEsMSwxLDAsMCwwLDAsMCksIDUwKQpuZXQgPC0gcmdyYXBoX2JhKHQgPSA0OTksIG09NCwgZXRhID0gWCkKCiMgVGFraW5nIGEgbG9vayBpbiBpZ3JhcGgKaWcgIDwtIGlncmFwaDo6Z3JhcGhfZnJvbV9hZGphY2VuY3lfbWF0cml4KG5ldCkKcGxvdChpZywgdmVydGV4LmNvbG9yID0gYygiYXp1cmUiLCAidG9tYXRvIilbWCsxXSwgdmVydGV4LmxhYmVsID0gTkEsCiAgICAgdmVydGV4LnNpemUgPSBzcXJ0KGRncihuZXQpKSkKCiMgTm93LCBzaW11bGF0aW5nIGEgYnVuY2ggb2YgZGlmZnVzaW9uIHByb2Nlc3Nlcwpuc2ltIDwtIDUwMEwKYW5zXzFhbmQyIDwtIHZlY3RvcigibGlzdCIsIG5zaW0pCnNldC5zZWVkKDIyMykKZm9yIChpIGluIDE6bnNpbSkgewogICMgV2UganVzdCB3YW50IHRoZSBjdW0gYWRvcHQgY291bnQKICBhbnNfMWFuZDJbW2ldXSA8LSAKICAgIGN1bXVsYXRpdmVfYWRvcHRfY291bnQoCiAgICAgIHJkaWZmbmV0KAogICAgICAgIHNlZWQuZ3JhcGggPSBuZXQsCiAgICAgICAgdCA9IDEwLAogICAgICAgIHRocmVzaG9sZC5kaXN0ID0gc2FtcGxlKDE6MiwgNTAwTCwgVFJVRSksCiAgICAgICAgc2VlZC5ub2RlcyA9ICJyYW5kb20iLAogICAgICAgIHNlZWQucC5hZG9wdCA9IC4xMCwKICAgICAgICBleHBvc3VyZS5hcmdzID0gbGlzdChvdXRnb2luZyA9IEZBTFNFLCBub3JtYWxpemVkID0gRkFMU0UpLAogICAgICAgIHJld2lyZSA9IEZBTFNFCiAgICAgICAgKQogICAgICApCiAgCiAgIyBBcmUgd2UgdGhlcmUgeWV0PwogIGlmICghKGkgJSUgNTApKQogICAgbWVzc2FnZSgiU2ltdWxhdGlvbiAiLCBpLCIgb2YgIiwgbnNpbSwgIiBkb25lLiIpCn0KCiMgRXh0cmFjdGluZyBwcm9wCmFuc18xYW5kMiA8LSBkby5jYWxsKHJiaW5kLCBsYXBwbHkoYW5zXzFhbmQyLCAiWyIsIGk9InByb3AiLCBqPSkpCgphbnNfMmFuZDMgPC0gdmVjdG9yKCJsaXN0IiwgbnNpbSkKc2V0LnNlZWQoMjIzKQpmb3IgKGkgaW4gMTpuc2ltKSB7CiAgIyBXZSBqdXN0IHdhbnQgdGhlIGN1bSBhZG9wdCBjb3VudAogIGFuc18yYW5kM1tbaV1dIDwtIAogICAgY3VtdWxhdGl2ZV9hZG9wdF9jb3VudCgKICAgICAgcmRpZmZuZXQoCiAgICAgICAgc2VlZC5ncmFwaCA9IG5ldCwKICAgICAgICB0ID0gMTAsCiAgICAgICAgdGhyZXNob2xkLmRpc3QgPSBzYW1wbGUoMjozLCA1MDBMLCBUUlVFKSwKICAgICAgICBzZWVkLm5vZGVzID0gInJhbmRvbSIsCiAgICAgICAgc2VlZC5wLmFkb3B0ID0gLjEwLAogICAgICAgIGV4cG9zdXJlLmFyZ3MgPSBsaXN0KG91dGdvaW5nID0gRkFMU0UsIG5vcm1hbGl6ZWQgPSBGQUxTRSksCiAgICAgICAgcmV3aXJlID0gRkFMU0UKICAgICAgICApCiAgICAgICkKICAKICAjIEFyZSB3ZSB0aGVyZSB5ZXQ/CiAgaWYgKCEoaSAlJSA1MCkpCiAgICBtZXNzYWdlKCJTaW11bGF0aW9uICIsIGksIiBvZiAiLCBuc2ltLCAiIGRvbmUuIikKfQoKYW5zXzJhbmQzIDwtIGRvLmNhbGwocmJpbmQsIGxhcHBseShhbnNfMmFuZDMsICJbIiwgaT0icHJvcCIsIGo9KSkKYGBgCgpgYGB7ciBzaW0tc2ltLXJlc3VsdHN9CmJveHBsb3QoYW5zXzFhbmQyLCBjb2w9Iml2b3J5IikKYm94cGxvdChhbnNfMmFuZDMsIGNvbD0idG9tYXRvIiwgYWRkPVRSVUUpCgpgYGAKCgoqICAgRXhhbXBsZSBzaW11bGF0aW5nIGEgdGhvdXNhbmQgbmV0d29ya3MgYnkgY2hhbmdpbmcgdGhyZXNob2xkIGxldmVscy4KICAgIFRoZSBmaW5hbCBwcmV2YWxlbmNlLCBvciBoYXphcmQgYXMgYSBmdW5jdGlvbiBvZiB0aHJlc2hvbGQgbGV2ZWxzLgoKIyBQcm9ibGVtcwoKMS4gIEdpdmVuIHRoZSBmb2xsb3dpbmcgdHlwZXMgb2YgbmV0d29ya3M6IFNtYWxsLXdvcmxkLCBTY2FsZS1mcmVlLCBCZXJub3VsbGksCiAgICB3aGF0IHNldCBvZiAkbiQgaW5pdGlhdG9ycyBtYXhpbWl6ZXMgZGlmZnVzaW9uPwo=</div>
+<p>
+  <center><a href="http://cana.usc.edu" target="_new">University of Southern California<br>Center for Applied Network Analysis (<b>CANA</b>)</a>
+  </center>
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

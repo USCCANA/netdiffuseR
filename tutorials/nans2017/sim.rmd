@@ -1,0 +1,243 @@
+---
+title: "Simulation of diffusion networks: rdiffnet"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+# Introduction
+
+Before start, a recapt of concepts that we will be using here
+
+1. Exposure: What proportion/number of your neighbors has adopted an innovation.
+2. Threshold: What was the proportion/number of your neighbors had adopted by the time you adopted.
+3. Infectiousness: How much $i$'s adoption affects her alters
+4. Susceptibility: How much $i$'s alters' adoption affects her.
+5. Structural equivalence: How similar are $i$ and $j$ in terms of position on the network.
+
+# Simulating diffusion networks
+
+We will simulate a diffusion network with the following parameters:
+
+1.  Will have 1,000 vertices,
+2.  Will span 20 time periods,
+3.  The set of early adopters will be random,
+4.  Early adopters will be a 10\% of the network,
+5.  The graph will be small-world,
+6.  Will use the WS algorithmwith $p=.2$ (probability of rewire).
+7.  Threshold levels will be uniformly distributed between [0.3, 0.7\]
+
+To generate such diffusion network we can use the `rdiffnet` function included in the package:
+
+
+```{r Generating the random graph}
+# Setting the seed for the RNG
+set.seed(1213)
+
+# Generating a random diffusion network
+net <- rdiffnet(
+  n              = 1e3,                         # 1.
+  t              = 20,                          # 2.
+  seed.nodes     = "random",                    # 3.
+  seed.p.adopt   = .1,                          # 4.
+  seed.graph     = "small-world",               # 5.
+  rgraph.args    = list(p=.2),                  # 6.
+  threshold.dist = function(x) runif(1, .3, .7) # 7.
+  )
+```
+
+
+*   The function `rdiffnet` generates random diffusion networks. Main features:
+    
+    1.  Simulating random graph or using your own,
+    
+    2.  Setting threshold levels per node,
+    
+    3.  Network rewiring throughout the simulation, and
+    
+    4.  Setting the seed nodes.
+    
+    
+*   The simulation algorithm is as follows:
+    
+    1.  If required, a baseline graph is created,
+    
+    2.  Set of initial adopters and threshold is established,
+    
+    3.  Se set of t networks is created (if required), and
+    
+    4.  Simulation starts at t=2, assigning adopters based on exposures and thresholds:
+    
+        a.  For each $i \in N$, if its exposure at $t-1$ is greater than its threshold, then 
+            adopts, otherwise continue without change.
+            
+        b.  next $i$
+    
+# Disease spreading
+
+```{r sim-disease}
+library(netdiffuseR)
+
+set.seed(09)
+diffnet_disease <- rdiffnet(
+  n = 5e2,
+  t = 5, 
+  seed.graph = "small-world",
+  rgraph.args = list(k = 4, p = .3),
+  seed.nodes = "random",
+  seed.p.adopt = .05,
+  rewire = TRUE,
+  threshold.dist = function(i) 1L,
+  exposure.args = list(normalized = FALSE)
+  )
+```
+
+```{r summary-disease}
+summary(diffnet_disease)
+```
+
+
+```{r plot-disease, fig.align='center', cache=TRUE}
+plot_diffnet(diffnet_disease, slices = c(1, 3, 5))
+
+# We want to use igraph to compute layout
+igdf <- diffnet_to_igraph(diffnet_disease, slices=c(1,2))[[1]]
+pos <- igraph::layout_with_drl(igdf)
+
+plot_diffnet2(diffnet_disease, vertex.size = dgr(diffnet_disease)[,1], layout=pos)
+```
+
+
+# Complex contagion
+
+```{r sim-complex}
+set.seed(09)
+diffnet_complex <- rdiffnet(
+  seed.graph = diffnet_disease$graph,
+  seed.nodes = which(diffnet_disease$toa == 1),
+  rewire = FALSE,
+  threshold.dist = function(i) rbeta(1, 3, 10),
+  name = "Complex Sim",
+  behavior = "More complex than contact"
+)
+
+```
+
+```{r plot-complex-and-disease}
+plot_adopters(diffnet_disease, what = "cumadopt", include.legend = FALSE)
+plot_adopters(diffnet_complex, bg="tomato", add=TRUE, what = "cumadopt")
+legend("topleft", legend = c("Disease", "Complex"), col = c("lightblue", "tomato"),
+       bty = "n", pch=19)
+```
+
+
+# Mentor Matching
+
+```{r mentor-match, cache = TRUE}
+
+# Finding mentors
+mentors <- mentor_matching(diffnet_disease, 25, lead.ties.method = "random")
+
+# Simulating diffusion with these mentors
+set.seed(09)
+diffnet_mentored <- rdiffnet(
+  seed.graph = diffnet_complex,
+  seed.nodes = which(mentors$`1`$isleader),
+  rewire = FALSE,
+  threshold.dist = diffnet_complex[["real_threshold"]],
+  name = "Diffusion using Mentors"
+)
+
+summary(diffnet_mentored)
+```
+
+```{r toa_mat-mentors}
+cumulative_adopt_count(diffnet_complex)
+cumulative_adopt_count(diffnet_mentored)
+```
+
+
+# Example by changing threshold
+
+```{r sim-sim, cache = TRUE, collapse = TRUE}
+
+# Simulating a scale-free homophilic network
+set.seed(1231)
+X <- rep(c(1,1,1,1,1,0,0,0,0,0), 50)
+net <- rgraph_ba(t = 499, m=4, eta = X)
+
+# Taking a look in igraph
+ig  <- igraph::graph_from_adjacency_matrix(net)
+plot(ig, vertex.color = c("azure", "tomato")[X+1], vertex.label = NA,
+     vertex.size = sqrt(dgr(net)))
+
+# Now, simulating a bunch of diffusion processes
+nsim <- 500L
+ans_1and2 <- vector("list", nsim)
+set.seed(223)
+for (i in 1:nsim) {
+  # We just want the cum adopt count
+  ans_1and2[[i]] <- 
+    cumulative_adopt_count(
+      rdiffnet(
+        seed.graph = net,
+        t = 10,
+        threshold.dist = sample(1:2, 500L, TRUE),
+        seed.nodes = "random",
+        seed.p.adopt = .10,
+        exposure.args = list(outgoing = FALSE, normalized = FALSE),
+        rewire = FALSE
+        )
+      )
+  
+  # Are we there yet?
+  if (!(i %% 50))
+    message("Simulation ", i," of ", nsim, " done.")
+}
+
+# Extracting prop
+ans_1and2 <- do.call(rbind, lapply(ans_1and2, "[", i="prop", j=))
+
+ans_2and3 <- vector("list", nsim)
+set.seed(223)
+for (i in 1:nsim) {
+  # We just want the cum adopt count
+  ans_2and3[[i]] <- 
+    cumulative_adopt_count(
+      rdiffnet(
+        seed.graph = net,
+        t = 10,
+        threshold.dist = sample(2:3, 500L, TRUE),
+        seed.nodes = "random",
+        seed.p.adopt = .10,
+        exposure.args = list(outgoing = FALSE, normalized = FALSE),
+        rewire = FALSE
+        )
+      )
+  
+  # Are we there yet?
+  if (!(i %% 50))
+    message("Simulation ", i," of ", nsim, " done.")
+}
+
+ans_2and3 <- do.call(rbind, lapply(ans_2and3, "[", i="prop", j=))
+```
+
+```{r sim-sim-results}
+boxplot(ans_1and2, col="ivory")
+boxplot(ans_2and3, col="tomato", add=TRUE)
+
+```
+
+
+*   Example simulating a thousand networks by changing threshold levels.
+    The final prevalence, or hazard as a function of threshold levels.
+
+# Problems
+
+1.  Given the following types of networks: Small-world, Scale-free, Bernoulli,
+    what set of $n$ initiators maximizes diffusion?

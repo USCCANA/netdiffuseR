@@ -1,0 +1,136 @@
+---
+title: "Introduction"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+
+# Network Diffusion of Innovations
+
+## Diffusion networks
+
+```{r valente1995, echo=FALSE, fig.align='center'}
+knitr::include_graphics("valente_1995.jpg")
+```
+
+
+*   Tries to explain how new ideas and practices (innovations) spread within and between
+  communities.
+
+*   While a lot of factors have been shown to influence diffusion (Spatial,
+    Economic, Cultural, Biological, etc.), Social Networks is a prominent one.
+
+*   More complex than __contagion__ $\implies$ a single tie is no longer enough
+    for an innovation to spread across a social system.
+
+*   We think of this in terms of adoption thresholds and social exposure.
+
+
+## Thresholds
+
+*   Network thresholds (Valente, 1995), $\tau$, are defined as the required proportion or number of neighbors that leads you to adopt a particular        behavior (innovation), $a=1$. In (very) general terms\pause
+    
+    $$
+    a_i = \left\{\begin{array}{ll}
+    1 &\mbox{if } \tau_i\leq E_i \\
+    0 & \mbox{Otherwise}
+    \end{array}\right. \qquad
+    E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+    $$
+    
+    Where $E_i$ is i's exposure to the innovation and $\mathbf{X}$ is the adjacency matrix (the network).
+
+*   This can be generalized and extended to include covariates and other weighting schemes (that's what __netdiffuseR__ is all about).
+
+
+# netdiffuseR
+
+## Overview
+
+__netdiffuseR__ is an R package that:
+
+*   Is designed for Visualizing, Analyzing and Simulating network diffusion data (in general).
+
+*   Depends on some pretty popular packages:
+
+    *   _RcppArmadillo_: So it's fast,
+    *   _Matrix_: So it's big,
+    *   _statnet_ and _igraph_: So it's not from scratch
+
+*   Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)
+
+*   Already on CRAN with ~4,000 downloads since its first version, Feb 2016,
+
+*   A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.
+
+
+## Datasets
+
+-   Among __netdiffuseR__ features, we find three classical Diffusion Network Datasets:
+    
+    - `brfarmersDiffNet` Brazilian farmers and the innovation of Hybrid Corn Seed (1966).
+    - `medInnovationsDiffNet` Doctors and the innovation of Tetracycline (1955).
+    - `kfamilyDiffNet` Korean women and Family Planning methods (1973).
+    
+    ```{r printing}
+    brfarmersDiffNet
+    medInnovationsDiffNet
+    kfamilyDiffNet
+    ```
+
+## Visualization methods
+
+```{r viz, cache=TRUE}
+set.seed(12315)
+x <- rdiffnet(
+  300, t = 4, rgraph.args = list(k=8, p=.3),
+  seed.graph = "small-world",
+  seed.nodes = "central"
+  )
+
+plot(x)
+plot_diffnet(x)
+plot_diffnet2(x)
+plot_diffnet2(x, add.map = "last", diffmap.alpha = .75, include.white = NULL)
+plot_adopters(x)
+plot_threshold(x)
+plot_infectsuscep(x, K=2, logscale = FALSE)
+plot_hazard(x)
+```
+
+
+# Problems
+
+1.  Using the diffnet object in `data_intro.rmd`, use the function `plot_threshold` specifying
+    shapes and colors according to the variables ItrustMyFriends and Age. Do you see any pattern?
+
+```{r datasim, echo=FALSE, eval=TRUE}
+set.seed(1252)
+dat <- data.frame(
+  ItrustMyFriends = sample(c(0,1), 200, TRUE),
+  Age = 10 + rpois(200, 4)
+  )
+net <- rgraph_er(100, p = .05)
+net <- diag_expand(list(net, net))
+net[cbind(1:10, 101:110)] <- 1 
+
+# Generating the process
+diffnet <- rdiffnet(
+  threshold.dist = 2 + dat$ItrustMyFriends*2,
+  seed.graph = net, t=4,
+  seed.nodes = c(9:20),
+  exposure.args = list(normalized=FALSE))
+
+diffnet[["ItrustMyFriends"]] <- dat$ItrustMyFriends
+diffnet[["Age"]] <- dat$Age
+
+# What they should see
+# plot_threshold(diffnet, vertex.col = dat+1)
+save(diffnet, file = "problems_intro.rda")
+```
+

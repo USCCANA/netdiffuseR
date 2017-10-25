@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Thomas W. Valente and George G. Vega Yon" />
+
+
+<title>netdiffuseR at NASN 2017</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/FileSaver.min.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("contents.rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">netdiffuseR at NANS 2017</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="intro.html">Introduction</a>
+</li>
+<li>
+  <a href="sim.html">Simulations</a>
+</li>
+<li>
+  <a href="read.html">Reading data</a>
+</li>
+<li>
+  <a href="stats.html">Statistical inference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">netdiffuseR at NASN 2017</h1>
+<h4 class="author"><em>Thomas W. Valente and George G. Vega Yon</em></h4>
+<h4 class="date"><em>7/15/2017</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<div id="todays-objectives" class="section level2">
+<h2>Today’s objectives:</h2>
+<ol style="list-style-type: decimal">
+<li><p>Read data into netdiffuseR</p></li>
+<li><p>Simulate diffusion networks</p></li>
+<li><p>Use the visualization tools</p></li>
+<li><p>Use statistical inference tools</p></li>
+</ol>
+</div>
+<div id="dynamic-of-work" class="section level2">
+<h2>Dynamic of work</h2>
+<ol style="list-style-type: decimal">
+<li><p>We will introduce a concept/function</p></li>
+<li><p>We will provide examples</p></li>
+<li><p>Attendees will be asked to answer a couple of questions using netdiffuseR</p></li>
+</ol>
+</div>
+</div>
+<div id="simulation-of-diffusion-networks-rdiffnet" class="section level1">
+<h1>Simulation of diffusion networks: rdiffnet</h1>
+<ul>
+<li><p>Disease spreading</p></li>
+<li><p>Complex contagion</p></li>
+<li><p>Network interventions: Mentor matching</p></li>
+<li><p>Example simulating a thousand networks by changing threshold levels. The final prevalence, or hazard as a function of threshold levels.</p></li>
+</ul>
+<div id="problems" class="section level2">
+<h2>Problems</h2>
+<ol style="list-style-type: decimal">
+<li>Given the following types of networks: Small-world, Scale-free, Bernoulli, what set of <span class="math inline">\(n\)</span> initiators maximizes diffusion?</li>
+</ol>
+</div>
+</div>
+<div id="reading-networks-survey_to_diffnet" class="section level1">
+<h1>Reading networks: survey_to_diffnet</h1>
+<ul>
+<li><p>Survey data</p></li>
+<li><p>Static networks</p></li>
+<li><p>From other formats</p></li>
+</ul>
+<div id="problems-1" class="section level2">
+<h2>Problems</h2>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Read in all the 3 different networks objects in … and create diffnet objects. A fake dynamic survey, an sns network and an igraph network. (hint: All 3 networks should result in the same diffnet object)</p></li>
+<li><p>With the new diffnet object, apply the same analysis as before. Which strategy maximizes adoption?</p></li>
+</ol>
+</div>
+</div>
+<div id="computation-of-exposure-terms" class="section level1">
+<h1>Computation of exposure terms</h1>
+<ul>
+<li><p>Cohesive exposure</p></li>
+<li><p>Structural Equivalence Exposure</p></li>
+<li><p>Attribute weighted exposure</p></li>
+<li><p>Attribute similarity weighted exposure</p></li>
+</ul>
+<div id="problems-2" class="section level2">
+<h2>Problems</h2>
+<ol start="4" style="list-style-type: decimal">
+<li><p>Using the network from problem 3, compute the following exposures:</p>
+<ol style="list-style-type: lower-alpha">
+<li>Cohesive, and SE exposure</li>
+<li>ABC attribute weighted</li>
+<li>Similarity weighted exposure in gender and age.</li>
+</ol></li>
+</ol>
+</div>
+</div>
+<div id="statistical-inference-i" class="section level1">
+<h1>Statistical inference I</h1>
+<ul>
+<li><p>Moran’s I</p></li>
+<li><p>Permutation tests: Structural test</p>
+<ul>
+<li><p>Simple isomorphic</p></li>
+<li><p>When degree is endogenous</p></li>
+</ul></li>
+</ul>
+<div id="problems-3" class="section level2">
+<h2>Problems</h2>
+<ol start="5" style="list-style-type: decimal">
+<li><p>Using the function <code>moran</code>, replicate the moran’s I statistics that the <code>summary</code> method reports when applied to the diffnet object from problem 3.</p></li>
+<li></li>
+</ol>
+<pre class="r"><code>library(netdiffuseR)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;netdiffuseR&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     %*%</code></pre>
+<pre class="r"><code>set.seed(1231)
+net &lt;- rgraph_ba(m=4L, t=199)
+X   &lt;- dgr(net)
+
+altnet &lt;- vertex_covariate_compare(net, X, &quot;distance&quot;)
+altnet@x &lt;- 1/altnet@x
+g &lt;- rdiffnet(seed.graph = net, t=10, threshold.dist = function(x) rbeta(1, 2, 10),
+              exposure.args = list(alt.graph = altnet, valued= TRUE))</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+<pre><code>## Warning in (function (graph, cumadopt, attrs = NULL, alt.graph = NULL,
+## outgoing = getOption(&quot;diffnet.outgoing&quot;, : When -alt.graph- is static, will
+## be repeated &quot;t&quot; times to fit the data.</code></pre>
+</div>
+</div>
+<div id="statistical-inference-ii" class="section level1">
+<h1>Statistical inference II</h1>
+<ul>
+<li><p>Lagged Exposure Models: OLS and others</p></li>
+<li><p>Contemporaneous Exposure Models: Spatial Autoregressive Models</p></li>
+</ul>
+</div>
+<div id="visualization-of-diffusion-processes" class="section level1">
+<h1>Visualization of diffusion processes</h1>
+<ul>
+<li></li>
+</ul>
+</div>
+<div id="other-applications" class="section level1">
+<h1>Other applications</h1>
+<ul>
+<li><p>Bass diffusion models</p></li>
+<li><p>Network bootstrapping</p></li>
+</ul>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAibmV0ZGlmZnVzZVIgYXQgTkFTTiAyMDE3IgphdXRob3I6ICJUaG9tYXMgVy4gVmFsZW50ZSBhbmQgR2VvcmdlIEcuIFZlZ2EgWW9uIgpkYXRlOiAiNy8xNS8yMDE3IgpvdXRwdXQ6IGh0bWxfZG9jdW1lbnQKLS0tCgojIEludHJvZHVjdGlvbgoKIyMgVG9kYXkncyBvYmplY3RpdmVzOgoKMS4gIFJlYWQgZGF0YSBpbnRvIG5ldGRpZmZ1c2VSCgoyLiAgU2ltdWxhdGUgZGlmZnVzaW9uIG5ldHdvcmtzCgozLiAgVXNlIHRoZSB2aXN1YWxpemF0aW9uIHRvb2xzCgo0LiAgVXNlIHN0YXRpc3RpY2FsIGluZmVyZW5jZSB0b29scwoKCiMjIER5bmFtaWMgb2Ygd29yawoKMS4gIFdlIHdpbGwgaW50cm9kdWNlIGEgY29uY2VwdC9mdW5jdGlvbgoKMi4gIFdlIHdpbGwgcHJvdmlkZSBleGFtcGxlcwoKMy4gIEF0dGVuZGVlcyB3aWxsIGJlIGFza2VkIHRvIGFuc3dlciBhIGNvdXBsZSBvZiBxdWVzdGlvbnMgdXNpbmcgbmV0ZGlmZnVzZVIKCgojIFNpbXVsYXRpb24gb2YgZGlmZnVzaW9uIG5ldHdvcmtzOiByZGlmZm5ldAoKKiAgIERpc2Vhc2Ugc3ByZWFkaW5nCgoqICAgQ29tcGxleCBjb250YWdpb24KCiogICBOZXR3b3JrIGludGVydmVudGlvbnM6IE1lbnRvciBtYXRjaGluZwoKKiAgIEV4YW1wbGUgc2ltdWxhdGluZyBhIHRob3VzYW5kIG5ldHdvcmtzIGJ5IGNoYW5naW5nIHRocmVzaG9sZCBsZXZlbHMuCiAgICBUaGUgZmluYWwgcHJldmFsZW5jZSwgb3IgaGF6YXJkIGFzIGEgZnVuY3Rpb24gb2YgdGhyZXNob2xkIGxldmVscy4KCiMjIFByb2JsZW1zCgoxLiAgR2l2ZW4gdGhlIGZvbGxvd2luZyB0eXBlcyBvZiBuZXR3b3JrczogU21hbGwtd29ybGQsIFNjYWxlLWZyZWUsIEJlcm5vdWxsaSwKICAgIHdoYXQgc2V0IG9mICRuJCBpbml0aWF0b3JzIG1heGltaXplcyBkaWZmdXNpb24/CgoKIyBSZWFkaW5nIG5ldHdvcmtzOiBzdXJ2ZXlfdG9fZGlmZm5ldAoKKiAgIFN1cnZleSBkYXRhCgoqICAgU3RhdGljIG5ldHdvcmtzCgoqICAgRnJvbSBvdGhlciBmb3JtYXRzCgojIyBQcm9ibGVtcwoKMi4gIFJlYWQgaW4gYWxsIHRoZSAzIGRpZmZlcmVudCBuZXR3b3JrcyBvYmplY3RzIGluIC4uLiBhbmQgY3JlYXRlIGRpZmZuZXQKICAgIG9iamVjdHMuIEEgZmFrZSBkeW5hbWljIHN1cnZleSwgYW4gc25zIG5ldHdvcmsgYW5kIGFuIGlncmFwaCBuZXR3b3JrLgogICAgKGhpbnQ6IEFsbCAzIG5ldHdvcmtzIHNob3VsZCByZXN1bHQgaW4gdGhlIHNhbWUgZGlmZm5ldCBvYmplY3QpCgozLiAgV2l0aCB0aGUgbmV3IGRpZmZuZXQgb2JqZWN0LCBhcHBseSB0aGUgc2FtZSBhbmFseXNpcyBhcyBiZWZvcmUuCiAgICBXaGljaCBzdHJhdGVneSBtYXhpbWl6ZXMgYWRvcHRpb24/CgojIENvbXB1dGF0aW9uIG9mIGV4cG9zdXJlIHRlcm1zCgoqICAgQ29oZXNpdmUgZXhwb3N1cmUKCiogICBTdHJ1Y3R1cmFsIEVxdWl2YWxlbmNlIEV4cG9zdXJlCgoqICAgQXR0cmlidXRlIHdlaWdodGVkIGV4cG9zdXJlCgoqICAgQXR0cmlidXRlIHNpbWlsYXJpdHkgd2VpZ2h0ZWQgZXhwb3N1cmUKCiMjIFByb2JsZW1zCgo0LiAgVXNpbmcgdGhlIG5ldHdvcmsgZnJvbSBwcm9ibGVtIDMsIGNvbXB1dGUgdGhlIGZvbGxvd2luZyBleHBvc3VyZXM6CiAgICAKICAgIGEuICBDb2hlc2l2ZSwgYW5kIFNFIGV4cG9zdXJlCiAgICBiLiAgQUJDIGF0dHJpYnV0ZSB3ZWlnaHRlZAogICAgYy4gIFNpbWlsYXJpdHkgd2VpZ2h0ZWQgZXhwb3N1cmUgaW4gZ2VuZGVyIGFuZCBhZ2UuCiAgICAKCiMgU3RhdGlzdGljYWwgaW5mZXJlbmNlIEkKCiogICBNb3JhbidzIEkKCiogICBQZXJtdXRhdGlvbiB0ZXN0czogU3RydWN0dXJhbCB0ZXN0CiAgICAKICAgICogICBTaW1wbGUgaXNvbW9ycGhpYwogICAgICAgIAogICAgKiAgIFdoZW4gZGVncmVlIGlzIGVuZG9nZW5vdXMKCiMjIFByb2JsZW1zCgo1LiAgVXNpbmcgdGhlIGZ1bmN0aW9uIGBtb3JhbmAsIHJlcGxpY2F0ZSB0aGUgbW9yYW4ncyBJIHN0YXRpc3RpY3MKICAgIHRoYXQgdGhlIGBzdW1tYXJ5YCBtZXRob2QgcmVwb3J0cyB3aGVuIGFwcGxpZWQgdG8gdGhlIGRpZmZuZXQgb2JqZWN0CiAgICBmcm9tIHByb2JsZW0gMy4KICAgIAo2LiAgCgpgYGB7cn0KbGlicmFyeShuZXRkaWZmdXNlUikKc2V0LnNlZWQoMTIzMSkKbmV0IDwtIHJncmFwaF9iYShtPTRMLCB0PTE5OSkKWCAgIDwtIGRncihuZXQpCgphbHRuZXQgPC0gdmVydGV4X2NvdmFyaWF0ZV9jb21wYXJlKG5ldCwgWCwgImRpc3RhbmNlIikKYWx0bmV0QHggPC0gMS9hbHRuZXRAeApnIDwtIHJkaWZmbmV0KHNlZWQuZ3JhcGggPSBuZXQsIHQ9MTAsIHRocmVzaG9sZC5kaXN0ID0gZnVuY3Rpb24oeCkgcmJldGEoMSwgMiwgMTApLAogICAgICAgICAgICAgIGV4cG9zdXJlLmFyZ3MgPSBsaXN0KGFsdC5ncmFwaCA9IGFsdG5ldCwgdmFsdWVkPSBUUlVFKSkKCmBgYAoKCgojIFN0YXRpc3RpY2FsIGluZmVyZW5jZSBJSQoKKiAgIExhZ2dlZCBFeHBvc3VyZSBNb2RlbHM6IE9MUyBhbmQgb3RoZXJzCgoqICAgQ29udGVtcG9yYW5lb3VzIEV4cG9zdXJlIE1vZGVsczogU3BhdGlhbCBBdXRvcmVncmVzc2l2ZSBNb2RlbHMKCgojIFZpc3VhbGl6YXRpb24gb2YgZGlmZnVzaW9uIHByb2Nlc3NlcwoKKiAgIAoKCiMgT3RoZXIgYXBwbGljYXRpb25zCgoKCiogICBCYXNzIGRpZmZ1c2lvbiBtb2RlbHMKCiogICBOZXR3b3JrIGJvb3RzdHJhcHBpbmcKCg==</div>
+<p>
+  <center><a href="http://cana.usc.edu" target="_new">University of Southern California<br>Center for Applied Network Analysis (<b>CANA</b>)</a>
+  </center>
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
