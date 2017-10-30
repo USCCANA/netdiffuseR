@@ -190,9 +190,8 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
 // [[Rcpp::export]]
 List struct_equiv_cpp(
     const arma::sp_mat & graph, // Must be a geodesic distances graph
-    double v = 1.0,
-    bool unscaled = false,
-    bool inv = false, double invrep = 0.0) {
+    double v = 1.0
+) {
 
   int n = graph.n_cols;
   if (graph.n_cols != graph.n_rows) stop("-graph- is not square.");
@@ -217,15 +216,9 @@ List struct_equiv_cpp(
       // Adding up the results
       d.at(i,j) = pow(pow(graph.at(i,j) - graph.at(j,i), 2.0) + sumik + sumki, 0.5 );
 
-      // // If only inverse required
-      // if (inv && unscaled) d.at(i,j) = 1.0/(d.at(i,j) + 1e-15);
-
       d.at(j,i) = d.at(i,j);
     }
   }
-
-  // // If only distance must be computed
-  // if (unscaled) return List::create(_["SE"]=d, _["d"]=d, _["gdist"]=graph);
 
   // Computing distances
   NumericMatrix SE(n,n);
@@ -251,12 +244,6 @@ List struct_equiv_cpp(
       SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-15);
     }
 
-    // // If inverse required
-    // if (inv) {
-    //   for(int j=0;j<n;j++) {
-    //     SE.at(i,j) = 1/(SE.at(i,j) + 1e-10);
-    //   }
-    // }
   }
 
   return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);

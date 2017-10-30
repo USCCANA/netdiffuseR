@@ -1,8 +1,8 @@
 ## Test environments
 
-* Ubuntu 14.04 LTS (on travis-ci), R-rel 3.4.1 (2017-01-27), and R-rel 3.3.3 (2017-01-27).
-* Windows Server 2012 R2 x64 (on AppVeyor), R version 3.4.2 (2017-09-28), R version 3.4.2 (2017-09-28).
-* OS X El Capitan 10.11.6 (on travis-ci), R version 3.4.1 (2017-06-30).
+* Ubuntu 14.04.5 LTS 64-bit (on travis-ci), R 3.4.2, and R 3.3.3.
+* Windows Server 2012 R2 (on AppVeyor), R version 3.4.2 (64-bit), R version 3.3.3 (32-bit).
+* OS X El Capitan 10.11.6 (on travis-ci), R version 3.4.2, and R 3.3.3.
 
 ## R CMD check results
 

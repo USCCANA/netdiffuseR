@@ -300,8 +300,8 @@ moran_cpp <- function(x, w) {
     .Call(`_netdiffuseR_moran_cpp`, x, w)
 }
 
-struct_equiv_cpp <- function(graph, v = 1.0, unscaled = FALSE, inv = FALSE, invrep = 0.0) {
-    .Call(`_netdiffuseR_struct_equiv_cpp`, graph, v, unscaled, inv, invrep)
+struct_equiv_cpp <- function(graph, v = 1.0) {
+    .Call(`_netdiffuseR_struct_equiv_cpp`, graph, v)
 }
 
 matrix_compareCpp <- function(A, B, fun) {

@@ -452,17 +452,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // struct_equiv_cpp
-List struct_equiv_cpp(const arma::sp_mat& graph, double v, bool unscaled, bool inv, double invrep);
-RcppExport SEXP _netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP, SEXP unscaledSEXP, SEXP invSEXP, SEXP invrepSEXP) {
+List struct_equiv_cpp(const arma::sp_mat& graph, double v);
+RcppExport SEXP _netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< double >::type v(vSEXP);
-    Rcpp::traits::input_parameter< bool >::type unscaled(unscaledSEXP);
-    Rcpp::traits::input_parameter< bool >::type inv(invSEXP);
-    Rcpp::traits::input_parameter< double >::type invrep(invrepSEXP);
-    rcpp_result_gen = Rcpp::wrap(struct_equiv_cpp(graph, v, unscaled, inv, invrep));
+    rcpp_result_gen = Rcpp::wrap(struct_equiv_cpp(graph, v));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -552,7 +549,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdiffuseR_vertex_mahalanobis_dist_cpp", (DL_FUNC) &_netdiffuseR_vertex_mahalanobis_dist_cpp, 3},
     {"_netdiffuseR_vertex_covariate_compare", (DL_FUNC) &_netdiffuseR_vertex_covariate_compare, 3},
     {"_netdiffuseR_moran_cpp", (DL_FUNC) &_netdiffuseR_moran_cpp, 2},
-    {"_netdiffuseR_struct_equiv_cpp", (DL_FUNC) &_netdiffuseR_struct_equiv_cpp, 5},
+    {"_netdiffuseR_struct_equiv_cpp", (DL_FUNC) &_netdiffuseR_struct_equiv_cpp, 2},
     {"_netdiffuseR_matrix_compareCpp", (DL_FUNC) &_netdiffuseR_matrix_compareCpp, 3},
     {"_netdiffuseR_struct_test_mean", (DL_FUNC) &_netdiffuseR_struct_test_mean, 3},
     {"_netdiffuseR_struct_test_var", (DL_FUNC) &_netdiffuseR_struct_test_var, 3},
