@@ -1,0 +1,9 @@
+base
+deSolve
+network
+networkDynamic
+statnet.common
+ergm
+tergm
+EpiModel
+sna
