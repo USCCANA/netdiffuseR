@@ -268,3 +268,142 @@ cor(
   ) # This should be one!
 ```
 
+## 5.3. Example 2: SEIR epidemic model
+
+In this example the authors describe the a small set of modifications that can be done to the function `infection.net` so that there's an intermediate step in the process, exposed, the initial stage of the infection.
+
+The code of `infection.net` follows:
+
+```{r}
+infection.net <- function (dat, at) 
+{
+    # Vector of attributes
+    active <- dat$attr$active
+    status <- dat$attr$status
+    
+    # Parameters of the network
+    modes <- dat$param$modes
+    mode <- idmode(dat$nw)
+    
+    inf.prob <- dat$param$inf.prob
+    inf.prob.m2 <- dat$param$inf.prob.m2
+    act.rate <- dat$param$act.rate
+    
+    # The actual network
+    nw <- dat$nw
+    tea.status <- dat$control$tea.status
+    
+    # Which ids are susceptible and infected?
+    idsSus <- which(active == 1 & status == "s")
+    idsInf <- which(active == 1 & status == "i")
+    
+    # How many are active?
+    nActive <- sum(active == 1)
+    nElig <- length(idsInf)
+    nInf <- nInfM2 <- totInf <- 0
+    
+    # If there are elegible, then...
+    if (nElig > 0 && nElig < nActive) {
+      
+        # Finding edges in which there are inf and suscept
+        # this returns a data frame with ids of infect and suscept.
+        del <- discord_edgelist(dat, idsInf, idsSus, at)
+        
+        # If there are any
+        if (!(is.null(del))) {
+          
+            # How long have the infected been infected
+            # This is relevant as the probability of infecting is a function
+            # of this time
+            del$infDur <- at - dat$attr$infTime[del$inf]
+            del$infDur[del$infDur == 0] <- 1
+            linf.prob <- length(inf.prob)
+            
+            # Specifying infection probabilities from mode 1 to 2 (if not specified)
+            if (is.null(inf.prob.m2)) {
+              
+                del$transProb <- ifelse(del$infDur <= linf.prob, 
+                  inf.prob[del$infDur], inf.prob[linf.prob])
+                
+            } # Otherwise, specify these according to the type of edge
+            else {
+              
+                del$transProb <- ifelse(del$sus <= nw %n% "bipartite", 
+                  ifelse(del$infDur <= linf.prob, inf.prob[del$infDur], 
+                    inf.prob[linf.prob]), ifelse(del$infDur <= 
+                    linf.prob, inf.prob.m2[del$infDur], inf.prob.m2[linf.prob]))
+                
+            }
+            if (!is.null(dat$param$inter.eff) && at >= dat$param$inter.start) {
+              
+                del$transProb <- del$transProb * (1 - dat$param$inter.eff)
+                
+            }
+            
+            lact.rate <- length(act.rate)
+            del$actRate <- ifelse(del$infDur <= lact.rate, act.rate[del$infDur], 
+                act.rate[lact.rate])
+            del$finalProb <- 1 - (1 - del$transProb)^del$actRate
+            transmit <- rbinom(nrow(del), 1, del$finalProb)
+            del <- del[which(transmit == 1), ]
+            idsNewInf <- unique(del$sus)
+            nInf <- sum(mode[idsNewInf] == 1)
+            nInfM2 <- sum(mode[idsNewInf] == 2)
+            totInf <- nInf + nInfM2
+            if (totInf > 0) {
+                if (tea.status == TRUE) {
+                  nw <- activate.vertex.attribute(nw, prefix = "testatus", 
+                    value = "i", onset = at, terminus = Inf, 
+                    v = idsNewInf)
+                }
+                dat$attr$status[idsNewInf] <- "i"
+                dat$attr$infTime[idsNewInf] <- at
+                form <- get_nwparam(dat)$formation
+                fterms <- get_formula_terms(form)
+                if ("status" %in% fterms) {
+                  nw <- set.vertex.attribute(nw, "status", dat$attr$status)
+                }
+            }
+            if (any(names(nw$gal) %in% "vertex.pid")) {
+                del$sus <- get.vertex.pid(nw, del$sus)
+                del$inf <- get.vertex.pid(nw, del$inf)
+            }
+        }
+    }
+    if (totInf > 0) {
+        del <- del[!duplicated(del$sus), ]
+        if (at == 2) {
+            dat$stats$transmat <- del
+        }
+        else {
+            dat$stats$transmat <- rbind(dat$stats$transmat, del)
+        }
+    }
+    if (at == 2) {
+        dat$epi$si.flow <- c(0, nInf)
+        if (modes == 2) {
+            dat$epi$si.flow.m2 <- c(0, nInfM2)
+        }
+    }
+    else {
+        dat$epi$si.flow[at] <- nInf
+        if (modes == 2) {
+            dat$epi$si.flow.m2[at] <- nInfM2
+        }
+    }
+    dat$nw <- nw
+    return(dat)
+}
+```
+
+
+# Own example
+
+```{r}
+contagion <- function(dat, at) {
+  
+  
+  
+}
+```
+
