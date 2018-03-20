@@ -13,7 +13,7 @@ diffreg <- function(model) {
   # Get the terms and checking whether exposure is present
   terms <- terms.formula(model)
   labs  <- attr(terms, "term.labels")
-  test  <- which(grepl("^exposure(\\(|\\+|\\s)", labs))
+  test  <- which(grepl("^exposure(\\(|$)", labs))
 
   if (!length(test))
     stop("No `exposure` term in the formula. The `diffreg` should include `exposure` on the RHS of the formula.", call. = FALSE)
@@ -31,7 +31,11 @@ diffreg <- function(model) {
   # Updating the formula -------------------------------------------------------
   # Now the model will be Adopt ~ Exposure + ...
   model_call <- update.formula(model, paste("~", exposure_term, "+."))
-  model <- update.formula(model, paste("Adopt ~ exposure + . -", exposure_term))
+  model <- update.formula(
+    update.formula(model, paste("Adopt ~ + . -", exposure_term)),
+    ~ exposure + .
+    )
+
 
   # Computing exposure ---------------------------------------------------------
   exposure_term <- attr(terms, "variables")[[test + 2L]]
