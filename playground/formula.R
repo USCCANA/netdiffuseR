@@ -2,13 +2,13 @@ library(netdiffuseR)
 
 data("medInnovationsDiffNet")
 
-diffnet_formula <- function(model) {
+diffreg <- function(model) {
 
   # Checks ---------------------------------------------------------------------
 
   # It must be a formula
   if (!inherits(model, "formula"))
-    stop("Not a formula", call. = FALSE)
+    stop("Not a formula. `model` should be a formula in the form of <diffnet object> ~ exposure + ...", call. = FALSE)
 
   # Get the terms and checking whether exposure is present
   terms <- terms.formula(model)
@@ -16,7 +16,7 @@ diffnet_formula <- function(model) {
   test  <- which(grepl("^exposure(\\(|\\+|\\s)", labs))
 
   if (!length(test))
-    stop("No `exposure` term in the formula", call. = FALSE)
+    stop("No `exposure` term in the formula. The `diffreg` should include `exposure` on the RHS of the formula.", call. = FALSE)
 
   exposure_term <- labs[test]
 
@@ -25,10 +25,8 @@ diffnet_formula <- function(model) {
   LHS <- attr(terms, "variables")[[2]]
 
   if (!inherits(eval(LHS), "diffnet"))
-    stop("The Left Hand Side of the formula is not a `diffnet` object.",
+    stop("The LHS of the formula is not a `diffnet` object. `diffreg` is only for `diffnet` objects.",
          call. = FALSE)
-
-  diffnet_term <- labs[1L]
 
   # Updating the formula -------------------------------------------------------
   # Now the model will be Adopt ~ Exposure + ...
@@ -51,10 +49,36 @@ diffnet_formula <- function(model) {
   dat[["Adopt"]]    <- dat$cumadopt
   dat <- as.data.frame(dat)
 
-  # Filtering the data ---------------------------------------------------------
+  # Some warnings
+  if (!any(grepl("^(factor\\()?per", labs)))
+    warning(
+      "The variable `per` is not included in the model. ",
+      "This can bias the `exposure` as adoption naturally increases over time.",
+      call. = FALSE
+      )
 
-  glm(model, data=dat, family = gaussian(link = "logit"))
+  # Making the call ------------------------------------------------------------
+
+  eval(
+    call(
+      "glm", noquote(model), data=quote(dat),
+      family = quote(binomial(link = "logit")),
+      subset = quote(ifelse(is.na(toa), TRUE, toa >= per))
+      )
+    )
 
 }
 
-ans <- diffnet_formula(medInnovationsDiffNet ~ factor(city) + proage + exposure(valued = TRUE))
+ans <- diffreg(
+  medInnovationsDiffNet ~ factor(city) + proage + exposure(lags = 1L) + per)
+summary(ans)
+
+ans <- diffreg(
+  kfamilyDiffNet ~ pregs + exposure(lags = 1L) + per)
+summary(ans)
+
+
+ans <- diffreg(
+  brfarmersDiffNet ~ age + I(age^2) + exposure(lags = 1L) + factor(per) + income)
+summary(ans)
+
