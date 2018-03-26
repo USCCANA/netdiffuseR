@@ -38,3 +38,4 @@ Read UCINET files (binary)
 Other Foreign: \code{\link{igraph}}, \code{\link{network}},
   \code{\link{read_pajek}}
 }
+\concept{Foreign}

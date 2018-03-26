@@ -78,9 +78,7 @@ Other simulation functions: \code{\link{permute_graph}},
 \author{
 George G. Vega Yon
 }
-\concept{
-Bernoulli Random graph
-
-Erdos-Renyi random graph
-}
+\concept{Bernoulli Random graph}
+\concept{Erdos-Renyi random graph}
+\concept{simulation functions}
 \keyword{distribution}

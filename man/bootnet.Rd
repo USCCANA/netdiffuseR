@@ -3,7 +3,6 @@
 \name{bootnet}
 \alias{bootnet}
 \alias{resample_graph}
-\alias{bootnet}
 \alias{c.diffnet_bootnet}
 \alias{print.diffnet_bootnet}
 \alias{hist.diffnet_bootnet}
@@ -117,3 +116,4 @@ Retrieved from \url{https://insna.org/PDF/Connections/v22/1999_I-2_61-70.pdf}
 Other Functions for inference: \code{\link{moran}},
   \code{\link{struct_test}}
 }
+\concept{Functions for inference}

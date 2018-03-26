@@ -2,7 +2,6 @@
 % Please edit documentation in R/stats.R
 \name{exposure}
 \alias{exposure}
-\alias{exposure}
 \title{Ego exposure}
 \usage{
 exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
@@ -239,4 +238,5 @@ Other statistics: \code{\link{bass}},
 \author{
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
+\concept{statistics}
 \keyword{univar}

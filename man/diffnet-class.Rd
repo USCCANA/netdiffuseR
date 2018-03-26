@@ -295,3 +295,5 @@ Other data management functions: \code{\link{edgelist_to_adjmat}},
 \author{
 George G. Vega Yon
 }
+\concept{data management functions}
+\concept{diffnet methods}

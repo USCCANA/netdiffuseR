@@ -44,7 +44,7 @@ Suggests:
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
@@ -62,6 +62,7 @@ Collate:
     'diffnet-indexing.r'
     'diffnet-methods.r'
     'egonets.R'
+    'formula.R'
     'igraph.r'
     'infect_suscept.r'
     'mentor.r'

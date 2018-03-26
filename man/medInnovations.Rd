@@ -100,3 +100,4 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{kfamily}},
   \code{\link{medInnovationsDiffNet}}
 }
+\concept{diffusion datasets}

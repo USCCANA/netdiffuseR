@@ -16,3 +16,4 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
   \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
   \code{\link{kfamily}}, \code{\link{medInnovations}}
 }
+\concept{diffusion datasets}

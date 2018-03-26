@@ -135,3 +135,4 @@ Other statistics: \code{\link{classify_adopters}},
 \author{
 George G. Vega Yon
 }
+\concept{statistics}
