@@ -1,3 +1,9 @@
+2018-03-26  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/formulas.r: Adding diffreg (including tests).
+	* vignettes/*: idem
+	* tests/*: idem
+
+
 2017-10-23  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/igraph.r: Uncesary permutation + adding undirected.
 	* R/mentor.r: Fixing bug in plotting method. Sorting was wrong.

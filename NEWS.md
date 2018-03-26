@@ -1,3 +1,10 @@
+# Changes in netdiffuseR version 1.19.999 (2018-03-26)
+
+## New functions and features
+
+* `diffreg` provides a wrapper of `glm` to run lagged regression models.
+
+
 # Changes in netdiffuseR version 1.19.0 (2017-10-16)
 
 ## New functions and features

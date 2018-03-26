@@ -52,20 +52,22 @@
 #' exposure is computed lagged.
 #' }
 #'
-#' If neither of these two assumptions is met, then the model becomes endogenous,
+#' If either of these two assumptions is not met, then the model becomes endogenous,
 #' ans so inference becomes invalid.
 #'
 #' In the case of the first assumption, the user can overcome the non-exogeneity
 #' problem by providing an alternative network. This can be done by especifying
-#' \code{alt.graph} in the \code{exposure} function.
+#' \code{alt.graph} in the \code{exposure} function so that the network becomes
+#' exogenous to the adoption.
 #'
 #' @return
 #' An object of class \code{\link[stats:glm]{glm}}.
 #' @examples
 #' data("medInnovationsDiffNet")
 #'
+#' # Default model
 #' ans <- diffreg(
-#'   medInnovationsDiffNet ~ factor(city) + proage + exposure(lags = 1L) + per)
+#'   medInnovationsDiffNet ~ exposure + factor(city) + proage + per)
 #' summary(ans)
 #' @export
 diffreg <- function(model, type=c("logit", "probit")) {

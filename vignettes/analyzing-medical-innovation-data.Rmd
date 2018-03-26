@@ -205,7 +205,13 @@ summary(
 )
 ```
 
-As shown, we find no lagged exposure effects and the adoption was mainly drive by belief in science and age of the MD.
+As shown, we find no lagged exposure effects and the adoption was mainly drive by belief in science and age of the MD. Notice that instead of calling `glm` directly, we could have also used the `diffreg` function (a wrapper of `glm` that does all the filtering and exposure computing for us) as follows:
 
+```{r Diffreg}
+summary(
+  diffreg(diffnet ~ exposure + factor(per) + factor(city) + belief + 
+            proage + I(proage^2))
+  )
+```
 
 
