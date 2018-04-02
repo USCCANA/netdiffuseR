@@ -1,0 +1,19 @@
+---
+title: "netdiffuseR at Sunbelt 2018"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+netdiffuseR at Sunbelt 2018
+
+
+From the description:
+
+> Empirical statistical analysis, visualization and simulation of diffusion and contagion processes on networks. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) DOI:10.1016/j.socscimed.2015.10.001; Valente (1995) ISBN:9781881303213, Myers (2000) DOI:10.1086/303110, Iyengar and others (2011) DOI:10.1287/mksc.1100.0566, Burt (1987) DOI:10.1086/228667; among others.
+
+__Acknowledgements__: netdiffuseR was created with the support of grant R01
+CA157577 from the National Cancer Institute/National Institutes of Health.

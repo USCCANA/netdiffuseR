@@ -33,7 +33,7 @@ test_that("methods of diffMap", {
   expect_equal(ans_dn, ans_gp)
 
   set.seed(123);ans0 <- plot_diffnet2(dn, add.map = "last", layout = ans_gp$coords)
-  set.seed(123);ans1 <- diffmap(dn, layout=ans_gp$coords)
+  set.seed(123);ans1 <- diffmap(dn, layout=igraph::norm_coords(ans_gp$coords))
 
   # Should be the same as adding the map after
   expect_equal(ans0$diffmap, ans1)

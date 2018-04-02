@@ -1,0 +1,296 @@
+---
+title: "Statistical inference"
+author: "Thomas W. Valente and George G. Vega Yon"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = "#")
+
+```
+
+# Moran's I
+
+*   Moran's I tests for spatial autocorrelation.
+    
+*   __netdiffuseR__ implements the test in `moran`, which is suited for sparse matrices.
+
+*   We can use Moran's I as a first look to whether there is something happening:
+    let that be influence or homophily.
+
+## Using geodesics
+
+*   One approach is to use the geodesic (shortes path length) matrix to account for indirect
+    influence.
+    
+*   In the case of sparse matrices, and furthermore, in the presence of structural holes
+    it is more convenient to calculate the distance matrix taking this into account.
+    
+*   __netdiffuseR__ has a function to do so, the `approx_geodesic` function which,
+    using graph powers, computes the shortest path up to `n` steps. This could be
+    faster (if you only care up to `n` steps) than `igraph` or `sns`:
+
+    ```{r geodesic_speed, cache=TRUE}
+    # Extracting the large adjacency matrix (stacked)
+    dgc <- diag_expand(medInnovationsDiffNet$graph)
+    ig  <- igraph::graph_from_adjacency_matrix(dgc)
+    mat <- network::as.network(as.matrix(dgc))
+    
+    # Measuring times
+    times <- microbenchmark::microbenchmark(
+      netdiffuseR = netdiffuseR::approx_geodesic(dgc),
+      igraph = igraph::distances(ig),
+      sna = sna::geodist(mat),
+      times = 50, unit="relative"
+    )
+    ```
+    
+    ```{r geodesic_speed-box, autodep=TRUE, echo=FALSE}
+    microbenchmark:::boxplot.microbenchmark(times)
+    ```
+
+*   The `summary.diffnet` method already runs Moran's for you. What happens under the hood is:
+    
+    ```{r}
+    # For each time point we compute the geodesic distances matrix
+    W <- approx_geodesic(medInnovationsDiffNet$graph[[1]])
+    
+    # We get the element-wise inverse
+    W@x <- 1/W@x
+    
+    # And then compute moran
+    moran(medInnovationsDiffNet$cumadopt[,1], W)
+    ```
+
+
+
+# Structural dependence and permutation tests
+
+
+- A novel statistical method (work-in-progress) that allows conducting inference.
+- Included in the package, tests whether a particular network statistic actually depends on network structure
+- Suitable to be applied to network thresholds (you can't use thresholds in regression-like models!)
+
+## Idea
+
+-   Let $\mathcal{G} = (V,E)$ be a graph, $\gamma$ a vertex attribute, and $\beta = f(\gamma,\mathcal{G})$, then
+
+    $$\gamma \perp \mathcal{G} \implies \mathbb{E}\left[\beta(\gamma,\mathcal{G})|\mathcal{G}\right] = \mathbb{E}\left[\beta(\gamma,\mathcal{G})\right]$$
+
+- This is, if for example time of adoption is independent on the structure of the network, then the average threshold level will be independent from the network structure as well.
+
+- Another way of looking at this is that the test will allow us to see how probable is to have this combination of network structure and network threshold (if it is uncommon then we say that the diffusion model is highly likely)
+
+
+## Example Not random TOA
+
+-     To use this test, __netdiffuseR__ has the `struct_test` function.
+-     Basically it simulates networks with the same density and computes a particular statistic every time, generating an EDF (Empirical Distribution Function) under the Null hyphothesis (p-values).
+    
+    ```{r Struct non-random-toa, cache=TRUE}
+    # Simulating network
+    set.seed(1123)
+    net <- rdiffnet(n=500, t=10, seed.graph = "small-world")
+    
+    # Running the test
+    test <- struct_test(
+      graph     = net, 
+      statistic = function(x) mean(threshold(x), na.rm = TRUE),
+      R         = 1e3,
+      ncpus=4, parallel="multicore"
+      )
+    
+    # See the output
+    test
+    ```
+
+```{r, echo=FALSE}
+hist(test)
+```
+
+-   Now we shuffle toas, so that is random
+    
+    ```{r random-toa, cache=TRUE}
+    # Resetting TOAs (now will be completely random)
+    diffnet.toa(net) <- sample(diffnet.toa(net), nnodes(net), TRUE)
+    
+    # Running the test
+    test <- struct_test(
+      graph     = net, 
+      statistic = function(x) mean(threshold(x), na.rm = TRUE),
+      R         = 1e3,
+      ncpus=4, parallel="multicore"
+      )
+    
+    # See the output
+    test
+    ```
+    
+    ```{r, echo=FALSE}
+    hist(test)
+    ```
+
+# Regression analysis
+
+*   In regression analysis we want to see if exposure, once we control for other
+    covariates, had any effect on the adoption of a behavior.
+
+*   In general, the big problem here is when we have a latent variable that 
+    co-determines both network and behavior.
+    
+*   Unless we can control for such variable, regression analysis will be
+    generically biased.
+    
+*   On the other hand, if you can claim that either such variable doesn't exists
+    or you actually can control for it, then we have two options: lagged exposure
+    models, or contemporaneous exposure models. We will focus on the former.
+
+
+## Lagged exposure models
+
+*   In this type of models we usually have the following
+
+    $$
+    y_t = f(W_{t-1}, y_{t-1}, X_i) + \varepsilon
+    $$
+    
+    Furthermore, in the case of adoption we have
+    
+    $$
+    y_{it} = \left\{
+    \begin{array}{ll}
+    1 & \mbox{if}\quad \rho\sum_{j\neq i}\frac{W_{ijt-1}y_{it-1}}{\sum_{j\neq i}W_{ijt-1}} + X_{it}\beta > 0\\
+    0 & \mbox{otherwise}
+    \end{array}
+    \right.
+    $$
+    
+*   In netdiffuseR is as easy as doing the following:
+    
+    ```{r dataforreg}
+    # fakedata
+    set.seed(121)
+    
+    W   <- rgraph_ws(1e3, 8, .2)
+    X   <- cbind(var1 = rnorm(1e3))
+    toa <- sample(c(NA,1:5), 1e3, TRUE)
+    
+    dn  <- new_diffnet(W, toa=toa, vertex.static.attrs = X)
+    
+    # Computing exposure and adoption for regression
+    dn[["cohesive_expo"]] <- cbind(NA, exposure(dn)[,-nslices(dn)])
+    dn[["adopt"]]         <- dn$cumadopt
+
+    
+    # Generating the data and running the model
+    dat <- as.data.frame(dn)
+    ans <- glm(adopt ~ cohesive_expo + var1 + factor(per),
+               data = dat,
+               family = binomial(link="probit"),
+               subset = is.na(toa) | (per <= toa))
+    summary(ans)
+    ```
+
+## Contemporaneous exposure models
+
+*   Similar to he lagged exposure models, we usually have the following
+
+    $$
+    y_t = f(W_t, y_t, X_t) + \varepsilon
+    $$
+    
+    Furthermore, in the case of adoption we have
+    
+    $$
+    y_{it} = \left\{
+    \begin{array}{ll}
+    1 & \mbox{if}\quad \rho\sum_{j\neq i}\frac{W_{ijt}y_{it}}{\sum_{j\neq i}W_{ijt}} + X_{it}\beta > 0\\
+    0 & \mbox{otherwise}
+    \end{array}
+    \right.
+    $$
+    
+*   Unfortunately, since $y_t$ is in both sides of the equation, this models cannot
+    be fitted using a standard probit or logit regression.
+    
+*   Two alternatives to solve this:
+    
+    a.  Using Instrumental Variables Probit (ivprobit in both R and Stata)
+    
+    b.  Use a Spatial Autoregressive (SAR) Probit (SpatialProbit and ProbitSpatial in R).
+    
+*   We won't cover these here.
+
+# Problems
+
+Using the dataset `problems_stats1.rda`
+
+1.  Compute a lagged version of Moran's I and compare it with the one from `summary`.
+
+2.  Fit the following probit model $adopt = Exposure*\gamma + Measure*\beta + \varepsilon$.
+    What happens if you exclude the time fixed effects?
+
+
+```{r datagen, echo=FALSE, cache=TRUE}
+set.seed(1)
+
+n <- 500
+nper <- 5
+X <- cbind(Measure=rnorm(n))
+y <- cbind(sample(c(0, 1), n, TRUE, prob = c(.9, .1)))
+
+
+# Baseline network
+W <- (rgraph_ws(n, k=8, p = .2))
+
+sim_space <- function(W, y, X, pers = 4, lag = FALSE, rho = .2, beta=.5) {
+  W <- as.matrix(W)
+  W <- W/(rowSums(W) + 1e-20)
+  n <- nrow(W)
+  for (i in 1:pers) {
+    if (!lag)
+      ynew <- (solve(diag(n) - rho*W) %*% (X*beta) + rnorm(n)) > 0
+    else
+      ynew <- (rho * (W %*% y[,i - as.integer(i != 1),drop=FALSE]) + beta*X + rnorm(n)) > 0
+    
+    y <- cbind(y, ifelse(
+      y[,i - as.integer(i != 1),drop=FALSE] == 1,
+      y[,i - as.integer(i != 1),drop=FALSE], 
+      ynew)
+      )
+  }
+  
+  y
+}
+
+ans <- sim_space(W, y, X, pers = nper, lag=TRUE)
+toa <- ncol(ans) - apply(ans, 1, sum)
+X <- cbind(X, toa=ifelse(toa == 0, NA, toa))
+
+save(X, W, file="problems_stats1.rda")
+```
+
+```{r sol, eval=FALSE, echo=FALSE}
+# out <- struct_test(
+#   new_diffnet(W, X[,"toa"]),
+#   function(g) mean(threshold(g, lags = 1L), na.rm=TRUE),
+#   R=500,
+#   rewire.args = list(algorithm="qap"),
+#   parallel="multicore",ncpus=5);out
+
+load("problems_stats1.rda")
+dn <- new_diffnet(W, toa=X[,2], vertex.static.attrs = X[,1,drop=FALSE])
+
+dn[["cohesive_exposure"]] <- cbind(NA, exposure(dn)[,-nslices(dn)])
+dn[["adopted"]]           <- dn$cumadopt
+
+dat <- as.data.frame(dn)
+ans <- glm(adopted ~ cohesive_exposure + Measure + factor(per),
+           family = binomial(link="probit"),
+           data = dat,
+           subset = is.na(toa) | (per <= toa)
+           )
+
+summary(ans)
+```
+

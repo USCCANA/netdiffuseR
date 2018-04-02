@@ -168,6 +168,9 @@ plot_diffnet2.default <- function(
   else if (inherits(layout, "function")) layout(g)
   else layout
 
+  # Adjusting layout
+  igraph.args$layout <- igraph::norm_coords(igraph.args$layout)
+
   # Keywidth
   key.width <- max(0, key.width)
 

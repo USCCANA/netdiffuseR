@@ -1,0 +1,11 @@
+html_document:
+  self_contained: true
+  theme: united
+  highlight: textmate
+  toc: true
+  toc_float: true
+  code_folding: show
+  code_download: true
+  include:
+    after_body: footer.html
+      

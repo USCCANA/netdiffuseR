@@ -1,0 +1,14 @@
+name: "netdiffuseR at Sunbelt 2018"
+navbar:
+  title: "netdiffuseR at Sunbelt 2018"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Introduction"
+      href: intro.html
+    - text: "Simulations"
+      href: sim.html
+    - text: "Reading data"
+      href: read.html
+    - text: "Statistical inference"
+      href: stats.html

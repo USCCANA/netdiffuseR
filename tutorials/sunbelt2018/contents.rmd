@@ -1,0 +1,135 @@
+---
+title: "netdiffuseR at Sunbelt 2018"
+author: "Thomas W. Valente and George G. Vega Yon"
+date: "June 27, 2018"
+output: html_document
+---
+
+# Introduction
+
+## Today's objectives:
+
+1.  Read data into netdiffuseR
+
+2.  Simulate diffusion networks
+
+3.  Use the visualization tools
+
+4.  Use statistical inference tools
+
+
+## Dynamic of work
+
+1.  We will introduce a concept/function
+
+2.  We will provide examples
+
+3.  Attendees will be asked to answer a couple of questions using netdiffuseR
+
+
+# Simulation of diffusion networks: rdiffnet
+
+*   Disease spreading
+
+*   Complex contagion
+
+*   Network interventions: Mentor matching
+
+*   Example simulating a thousand networks by changing threshold levels.
+    The final prevalence, or hazard as a function of threshold levels.
+
+## Problems
+
+1.  Given the following types of networks: Small-world, Scale-free, Bernoulli,
+    what set of $n$ initiators maximizes diffusion?
+
+
+# Reading networks: survey_to_diffnet
+
+*   Survey data
+
+*   Static networks
+
+*   From other formats
+
+## Problems
+
+2.  Read in all the 3 different networks objects in ... and create diffnet
+    objects. A fake dynamic survey, an sns network and an igraph network.
+    (hint: All 3 networks should result in the same diffnet object)
+
+3.  With the new diffnet object, apply the same analysis as before.
+    Which strategy maximizes adoption?
+
+# Computation of exposure terms
+
+*   Cohesive exposure
+
+*   Structural Equivalence Exposure
+
+*   Attribute weighted exposure
+
+*   Attribute similarity weighted exposure
+
+## Problems
+
+4.  Using the network from problem 3, compute the following exposures:
+    
+    a.  Cohesive, and SE exposure
+    b.  ABC attribute weighted
+    c.  Similarity weighted exposure in gender and age.
+    
+
+# Statistical inference I
+
+*   Moran's I
+
+*   Permutation tests: Structural test
+    
+    *   Simple isomorphic
+        
+    *   When degree is endogenous
+
+## Problems
+
+5.  Using the function `moran`, replicate the moran's I statistics
+    that the `summary` method reports when applied to the diffnet object
+    from problem 3.
+    
+6.  
+
+```{r}
+library(netdiffuseR)
+set.seed(1231)
+net <- rgraph_ba(m=4L, t=199)
+X   <- dgr(net)
+
+altnet <- vertex_covariate_compare(net, X, "distance")
+altnet@x <- 1/altnet@x
+g <- rdiffnet(seed.graph = net, t=10, threshold.dist = function(x) rbeta(1, 2, 10),
+              exposure.args = list(alt.graph = altnet, valued= TRUE))
+
+```
+
+
+
+# Statistical inference II
+
+*   Lagged Exposure Models: OLS and others
+
+*   Contemporaneous Exposure Models: Spatial Autoregressive Models
+
+
+# Visualization of diffusion processes
+
+*   
+
+
+# Other applications
+
+
+
+*   Bass diffusion models
+
+*   Network bootstrapping
+

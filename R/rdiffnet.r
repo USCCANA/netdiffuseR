@@ -286,6 +286,9 @@ rdiffnet_multiple <- function(
     if (!length(cl)) {
       cl <- parallel::makeCluster(ncpus)
       on.exit(parallel::stopCluster(cl))
+
+      # Loading R packages
+      parallel::clusterEvalQ(cl, library(netdiffuseR))
     }
 
     # Calling the function

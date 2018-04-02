@@ -1,3 +1,8 @@
+2018-04-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.r: Fixing bug in diffMap on plot_diffnet2.
+	* R/rdiffnet.r: Loading netdiffuseR when using ncpus.
+
+
 2018-03-26  George G. Vega Yon <g.vegayon@gmail.com>
 	* R/formulas.r: Adding diffreg (including tests).
 	* vignettes/*: idem
