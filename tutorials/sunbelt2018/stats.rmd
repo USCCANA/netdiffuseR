@@ -190,6 +190,14 @@ hist(test)
                subset = is.na(toa) | (per <= toa))
     summary(ans)
     ```
+    
+    Alternatively, we could have used the new function `diffreg`
+    
+    ```{r}
+    ans <- diffreg(dn ~ exposure + var1 + factor(per), type = "probit")
+    summary(ans)
+    ```
+    
 
 ## Contemporaneous exposure models
 

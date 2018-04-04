@@ -607,12 +607,14 @@ plot_diffnet.default <- function(
 #' rotation in radians of each vertex (see details).
 #' @param edge.width Numeric. Width of the edges.
 #' @param edge.color Character. Color of the edges.
+#' @param arrow.width Numeric value to be passed to \code{\link{arrows}}.
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
 #' @param bty See \code{\link{par}}.
 #' @param xlim Passed to \code{\link{plot}}.
 #' @param ylim Passed to \code{\link{plot}}.
 #' @param ... Additional arguments passed to \code{\link{plot}}.
+#' @param curved Logical scalar. When curved, generates curved edges.
 #' @family visualizations
 #' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
 #' obtained returned by \code{\link{exposure}}.
@@ -703,6 +705,7 @@ plot_threshold.default <- function(
   vertex.rot       = 0,
   edge.width       = 2,
   edge.color       = NULL,
+  arrow.width      = nslices(graph)/80,
   arrow.length     = nslices(graph)/80,
   include.grid     = TRUE,
   vertex.frame.color = NULL,
@@ -711,6 +714,7 @@ plot_threshold.default <- function(
   jitter.amount    = c(.25,0),
   xlim             = NULL,
   ylim             = NULL,
+  curved           = TRUE,
   ...
   ) {
 
@@ -802,14 +806,39 @@ plot_threshold.default <- function(
   ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
 
   # Plotting the edges
-  mapply(function(x0, y0, x1, y1, col) {
-    y <- edges_arrow(x0, y0, x1, y1, width=arrow.length, height=arrow.length,
+  mapply(function(x0, y0, x1, y1, col, curved) {
+    y <- edges_arrow(x0, y0, x1, y1, width=arrow.width, height=arrow.length,
                      beta=pi*(2/3), dev=par("pin"), ran=ran)
 
-    graphics::polygon(y[,1], y[,2], col = col, border = col)
+    # Drawing arrow
+    if (curved) {
+      # Modifying edge
+      r <- runif(1, .20, .80)
+      y$edge <- rbind(
+        y$edge[1,],
+        y$edge[1,]*c(r, 1-r) + y$edge[2,]*c(1-r, r),
+        y$edge[2,]
+      )
+
+      # Edge
+      graphics::xspline(
+        y$edge[,1],y$edge[,2],
+        shape = c(0, 1, 0),
+        open=TRUE, border = col, lwd=edge.width)
+
+      # Arrow
+      graphics::polygon(y$arrow[,1], y$arrow[,2], col = col, border = col)
+    } else {
+      # Edge
+      graphics::polygon(y$edge[,1],y$edge[,2], col = col, border = col, lwd=edge.width)
+
+      # Arrow
+      graphics::polygon(y$arrow[,1], y$arrow[,2], col = col, border = col)
+    }
+
 
   }, x0 = edges[,"x0"], y0 = edges[,"y0"], x1 = edges[,"x1"], y1 = edges[,"y1"],
-  col = edge.color)
+  col = edge.color, curved = curved)
 
   # Drawing the vertices and its labels
   # Computing the coordinates

@@ -217,7 +217,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // edges_arrow
-arma::mat edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran);
+List edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran);
 RcppExport SEXP _netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

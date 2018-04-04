@@ -321,7 +321,7 @@ a <- atan((-3.4510269 - -0.8881612)/(0.8045981-0.3114116))
 
 
 // [[Rcpp::export]]
-arma::mat edges_arrow(
+List edges_arrow(
     const double & x0,
     const double & y0,
     const double & x1,
@@ -333,7 +333,7 @@ arma::mat edges_arrow(
     NumericVector ran = NumericVector::create()
 ) {
   // Creating output
-  arma::mat coords(6,2);
+  arma::mat coords(4,2);
 
   // If yexpand is too small, just throw an error ------------------------------
   if (ran.length() == 0) {
@@ -367,19 +367,29 @@ arma::mat edges_arrow(
   coords.at(2,0) = x1 - cos(alpha)*height;
   coords.at(2,1) = y1 - sin(alpha)*height*yexpand;
 
-  // Bottom
-  coords.at(3,0) = x0;
-  coords.at(3,1) = y0;
-
-  // Back to the center
-  coords.at(4,0) = coords.at(2,0);
-  coords.at(4,1) = coords.at(2,1);
+  // // Bottom
+  // coords.at(3,0) = x0;
+  // coords.at(3,1) = y0;
+  //
+  // // Back to the center
+  // coords.at(4,0) = coords.at(2,0);
+  // coords.at(4,1) = coords.at(2,1);
 
   // Right
-  coords.at(5,0) = x1 - cos(alpha)*height + cos(-beta+alpha)*width;
-  coords.at(5,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
+  coords.at(3,0) = x1 - cos(alpha)*height + cos(-beta+alpha)*width;
+  coords.at(3,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
 
-  return coords;
+  // Actual line coords
+  arma::mat coords_edge(2u, 2u);
+  coords_edge.at(0,0) = x0;
+  coords_edge.at(0,1) = y0;
+  coords_edge.at(1,0) = coords.at(2,0);
+  coords_edge.at(1,1) = coords.at(2,1);
+
+  return List::create(
+    _["arrow"] = coords,
+    _["edge"]  = coords_edge
+  );
 }
 
 /** *R

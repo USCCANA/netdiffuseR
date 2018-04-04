@@ -165,7 +165,7 @@ summary(diffnet)
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/plot_infectsuscept-1.png)
+![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
 
 ``` r
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
@@ -176,7 +176,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
     ## When applying logscale some observations are missing.
 
-![](README_files/figure-markdown_github-ascii_identifiers/plot_infectsuscept-2.png)
+![](README_files/figure-markdown_github/plot_infectsuscept-2.png)
 
 ### Threshold
 
@@ -205,7 +205,7 @@ diffnet
 plot_threshold(diffnet, vertex.size = .4)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/BoringThreshold,%20plot_threshold-1.png)
+![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)
 
 Using more features
 
@@ -224,7 +224,7 @@ plot_threshold(
     ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 =
     ## min(toa, : -vertex.sides- will be coerced to integer.
 
-![](README_files/figure-markdown_github-ascii_identifiers/NiceThreshold-1.png)
+![](README_files/figure-markdown_github/NiceThreshold-1.png)
 
 ### Adoption rate
 
@@ -232,7 +232,7 @@ plot_threshold(
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/Adopters-1.png)
+![](README_files/figure-markdown_github/Adopters-1.png)
 
 ### Hazard rate
 
@@ -240,7 +240,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/Hazard-1.png)
+![](README_files/figure-markdown_github/Hazard-1.png)
 
 ### Diffusion process
 
@@ -248,17 +248,14 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet-1.png)
+![](README_files/figure-markdown_github/plot_diffnet-1.png)
 
 ``` r
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
 plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
-    ## Warning in as_generic_graph.igraph(graph): The -igraph- object has multiple
-    ## edges. Only one of each will be retrieved.
-
-![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet2-1.png)
+![](README_files/figure-markdown_github/plot_diffnet2-1.png)
 
 ``` r
 set.seed(1231)
@@ -288,7 +285,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/plot_diffnet2%20with%20map-1.png)
+![](README_files/figure-markdown_github/plot_diffnet2%20with%20map-1.png)
 
 ``` r
 par(oldpar)
@@ -321,7 +318,7 @@ legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
        cex=.6, bty="n", inset=c(0,-.1))
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/mosaic-1.png)
+![](README_files/figure-markdown_github/mosaic-1.png)
 
 ``` r
 par(oldpar)
@@ -333,7 +330,7 @@ par(oldpar)
 sessionInfo()
 ```
 
-    ## R version 3.4.2 (2017-09-28)
+    ## R version 3.4.4 (2018-03-15)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
     ## Running under: Ubuntu 14.04.5 LTS
     ## 
@@ -353,17 +350,17 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.19.0
+    ## [1] netdiffuseR_1.19.999
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.1.2         Rcpp_0.12.13         knitr_1.17          
+    ##  [1] igraph_1.2.1         Rcpp_0.12.16         knitr_1.20          
     ##  [4] magrittr_1.5         network_1.13.0       networkDynamic_0.9.0
-    ##  [7] MASS_7.3-47          lattice_0.20-35      stringr_1.2.0       
-    ## [10] tools_3.4.2          MatchIt_3.0.1        grid_3.4.2          
-    ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.14         
-    ## [16] rprojroot_1.2        digest_0.6.12        Matrix_1.2-11       
-    ## [19] evaluate_0.10.1      rmarkdown_1.6        statnet.common_4.0.0
-    ## [22] stringi_1.1.5        compiler_3.4.2       backports_1.1.1     
+    ##  [7] MASS_7.3-49          lattice_0.20-35      stringr_1.3.0       
+    ## [10] tools_3.4.4          MatchIt_3.0.2        grid_3.4.4          
+    ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.18         
+    ## [16] rprojroot_1.3-2      digest_0.6.15        Matrix_1.2-11       
+    ## [19] evaluate_0.10.1      rmarkdown_1.9        statnet.common_4.0.0
+    ## [22] stringi_1.1.7        compiler_3.4.4       backports_1.1.2     
     ## [25] boot_1.3-20          SparseM_1.77         pkgconfig_2.0.1
 
 To-do list

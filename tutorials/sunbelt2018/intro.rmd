@@ -130,17 +130,17 @@ diffnet <- rdiffnet(
 diffnet[["ItrustMyFriends"]] <- dat$ItrustMyFriends
 diffnet[["Age"]] <- dat$Age
 
-# What they should see
-plot_threshold(
-  diffnet,
-  vertex.col = adjustcolor(dat$ItrustMyFriends+1, .7),
-  edge.col = adjustcolor("gray", .3))
-legend(
-  "bottomright",
-  legend = c(0, 1),
-  fill = c(1, 2),
-  title = "ItrustMyFriends"
-)
+# # What they should see
+# plot_threshold(
+#   diffnet,
+#   vertex.col = adjustcolor(dat$ItrustMyFriends+1, .7),
+#   edge.col = adjustcolor("gray", .3))
+# legend(
+#   "bottomright",
+#   legend = c(0, 1),
+#   fill = c(1, 2),
+#   title = "ItrustMyFriends"
+# )
 save(diffnet, file = "problems_intro.rda")
 ```
 

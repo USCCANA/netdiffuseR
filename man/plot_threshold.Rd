@@ -22,9 +22,10 @@ plot_threshold(graph, expo, ...)
   vertex.label = "", vertex.label.pos = NULL, vertex.label.cex = 1,
   vertex.label.adj = c(0.5, 0.5), vertex.label.color = NULL,
   vertex.sides = 40L, vertex.rot = 0, edge.width = 2, edge.color = NULL,
-  arrow.length = nslices(graph)/80, include.grid = TRUE,
-  vertex.frame.color = NULL, bty = "n", jitter.factor = c(1, 0),
-  jitter.amount = c(0.25, 0), xlim = NULL, ylim = NULL, ...)
+  arrow.width = nslices(graph)/80, arrow.length = nslices(graph)/80,
+  include.grid = TRUE, vertex.frame.color = NULL, bty = "n",
+  jitter.factor = c(1, 0), jitter.amount = c(0.25, 0), xlim = NULL,
+  ylim = NULL, curved = TRUE, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -76,6 +77,8 @@ rotation in radians of each vertex (see details).}
 
 \item{edge.color}{Character. Color of the edges.}
 
+\item{arrow.width}{Numeric value to be passed to \code{\link{arrows}}.}
+
 \item{arrow.length}{Numeric value to be passed to \code{\link{arrows}}.}
 
 \item{include.grid}{Logical. When TRUE, the grid of the graph is drawn.}
@@ -91,6 +94,8 @@ rotation in radians of each vertex (see details).}
 \item{xlim}{Passed to \code{\link{plot}}.}
 
 \item{ylim}{Passed to \code{\link{plot}}.}
+
+\item{curved}{Logical scalar. When curved, generates curved edges.}
 }
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,
