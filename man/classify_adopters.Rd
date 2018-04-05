@@ -140,4 +140,3 @@ Other statistics: \code{\link{bass}},
 \author{
 George G. Vega Yon
 }
-\concept{statistics}

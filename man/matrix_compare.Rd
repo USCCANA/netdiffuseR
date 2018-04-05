@@ -100,4 +100,3 @@ microbenchmark::microbenchmark(
 Other dyadic-level comparison functions: \code{\link{vertex_covariate_compare}},
   \code{\link{vertex_covariate_dist}}
 }
-\concept{dyadic-level comparison functions}

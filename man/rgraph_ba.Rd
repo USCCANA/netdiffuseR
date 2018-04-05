@@ -3,6 +3,7 @@
 \name{rgraph_ba}
 \alias{rgraph_ba}
 \alias{scale-free}
+\alias{rgraph_ba}
 \title{Scale-free and Homophilic Random Networks}
 \usage{
 rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE,
@@ -112,10 +113,15 @@ Other simulation functions: \code{\link{permute_graph}},
 \author{
 George G. Vega Yon
 }
-\concept{Barabasi-Albert model}
-\concept{Bollabas}
-\concept{Homophilic random graph}
-\concept{Random graph}
-\concept{Scale-free random graph}
-\concept{simulation functions}
+\concept{
+Scale-free random graph
+
+Barabasi-Albert model
+
+Bollabas
+
+Homophilic random graph
+
+Random graph
+}
 \keyword{distribution}

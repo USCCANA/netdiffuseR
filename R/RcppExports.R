@@ -184,8 +184,8 @@ edges_coords <- function(graph, toa, x, y, vertex_cex, undirected = TRUE, no_con
     .Call(`_netdiffuseR_edges_coords`, graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran)
 }
 
-edges_arrow <- function(x0, y0, x1, y1, height, width, beta = 1.5707963267949, dev = as.numeric( c()), ran = as.numeric( c())) {
-    .Call(`_netdiffuseR_edges_arrow`, x0, y0, x1, y1, height, width, beta, dev, ran)
+edges_arrow <- function(x0, y0, x1, y1, height, width, beta = 1.5707963267949, dev = as.numeric( c()), ran = as.numeric( c()), curved = FALSE) {
+    .Call(`_netdiffuseR_edges_arrow`, x0, y0, x1, y1, height, width, beta, dev, ran, curved)
 }
 
 vertices_coords <- function(x, y, size, nsides, rot, dev = as.numeric( c()), ran = as.numeric( c())) {

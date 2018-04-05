@@ -108,4 +108,3 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
-\concept{visualizations}

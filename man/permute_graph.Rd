@@ -65,4 +65,3 @@ Other simulation functions: \code{\link{rdiffnet}},
 \author{
 George G. Vega Yon
 }
-\concept{simulation functions}

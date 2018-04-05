@@ -16,7 +16,7 @@ plot_diffnet(...)
   mfrow.par = NULL, main = c("Network in period \%s", "Diffusion Network"),
   legend.args = list(),
   minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), background = grDevices::gray(0.9), ...)
+  0.04)), background = NULL, ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -115,5 +115,4 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
-\concept{visualizations}
 \keyword{hplot}

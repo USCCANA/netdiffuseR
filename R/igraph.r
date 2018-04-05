@@ -194,8 +194,9 @@ igraph_to_diffnet <- function(
 
 # The default themes
 igraph_plotting_defaults <- list(
-  vertex.frame.color  = "black",
-  edge.color          = grDevices::adjustcolor("gray", .8),
+  vertex.frame.color  = "#31688EFF",
+  vertex.color        = "#21908CFF",
+  edge.color          = grDevices::gray(4/7, .5),
   edge.arrow.size     = .25,
   vertex.label        = NA,
   vertex.label.color  = "black",
@@ -211,7 +212,9 @@ plotting_defaults <- c(
   family = "sans",
   lwd    = 2,
   border = igraph_plotting_defaults$edge.color,
-  igraph_plotting_defaults
+  igraph_plotting_defaults,
+  arrow.color = grDevices::gray(3/7, .75),
+  background = grDevices::gray(.9)
 )
 
 # This function changes defaults accordignly

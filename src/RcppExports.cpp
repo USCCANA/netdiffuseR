@@ -217,8 +217,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // edges_arrow
-List edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran);
-RcppExport SEXP _netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP) {
+List edges_arrow(const double& x0, const double& y0, const double& x1, const double& y1, const double& height, const double& width, const double beta, NumericVector dev, NumericVector ran, bool curved);
+RcppExport SEXP _netdiffuseR_edges_arrow(SEXP x0SEXP, SEXP y0SEXP, SEXP x1SEXP, SEXP y1SEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP betaSEXP, SEXP devSEXP, SEXP ranSEXP, SEXP curvedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -231,7 +231,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
-    rcpp_result_gen = Rcpp::wrap(edges_arrow(x0, y0, x1, y1, height, width, beta, dev, ran));
+    Rcpp::traits::input_parameter< bool >::type curved(curvedSEXP);
+    rcpp_result_gen = Rcpp::wrap(edges_arrow(x0, y0, x1, y1, height, width, beta, dev, ran, curved));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -533,7 +534,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdiffuseR_bootnet_fillself", (DL_FUNC) &_netdiffuseR_bootnet_fillself, 3},
     {"_netdiffuseR_grid_distribution", (DL_FUNC) &_netdiffuseR_grid_distribution, 3},
     {"_netdiffuseR_edges_coords", (DL_FUNC) &_netdiffuseR_edges_coords, 9},
-    {"_netdiffuseR_edges_arrow", (DL_FUNC) &_netdiffuseR_edges_arrow, 9},
+    {"_netdiffuseR_edges_arrow", (DL_FUNC) &_netdiffuseR_edges_arrow, 10},
     {"_netdiffuseR_vertices_coords", (DL_FUNC) &_netdiffuseR_vertices_coords, 7},
     {"_netdiffuseR_rgraph_er_cpp", (DL_FUNC) &_netdiffuseR_rgraph_er_cpp, 5},
     {"_netdiffuseR_ring_lattice", (DL_FUNC) &_netdiffuseR_ring_lattice, 3},

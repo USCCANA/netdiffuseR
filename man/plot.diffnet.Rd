@@ -63,4 +63,3 @@ Other diffnet methods: \code{\link{\%*\%}},
 \author{
 George G. Vega Yon
 }
-\concept{diffnet methods}

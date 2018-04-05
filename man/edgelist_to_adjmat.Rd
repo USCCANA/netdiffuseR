@@ -164,5 +164,4 @@ Other data management functions: \code{\link{diffnet-class}},
 \author{
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
-\concept{data management functions}
 \keyword{manip}

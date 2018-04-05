@@ -2,6 +2,7 @@
 % Please edit documentation in R/RcppExports.R, R/stats.R
 \name{vertex_covariate_dist}
 \alias{vertex_covariate_dist}
+\alias{vertex_covariate_dist}
 \alias{p-norm}
 \alias{mahalanobis}
 \alias{minkowski}
@@ -98,5 +99,3 @@ Other dyadic-level comparison functions: \code{\link{matrix_compare}},
 \author{
 George G. Vega Yon
 }
-\concept{dyadic-level comparison functions}
-\concept{statistics}

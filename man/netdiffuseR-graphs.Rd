@@ -48,4 +48,3 @@ when no names are provided, these will be created from scratch.
 \author{
 George G. Vega Yon
 }
-\concept{graph formats}

@@ -330,7 +330,8 @@ List edges_arrow(
     const double & width,
     const double beta = 1.5707963267949, // PI/2
     NumericVector dev = NumericVector::create(),
-    NumericVector ran = NumericVector::create()
+    NumericVector ran = NumericVector::create(),
+    bool curved = false
 ) {
   // Creating output
   arma::mat coords(4,2);
@@ -380,11 +381,27 @@ List edges_arrow(
   coords.at(3,1) = y1 - (sin(alpha)*height - sin(-beta+alpha)*width)*yexpand;
 
   // Actual line coords
-  arma::mat coords_edge(2u, 2u);
+  arma::mat coords_edge(3u, 3u);
   coords_edge.at(0,0) = x0;
   coords_edge.at(0,1) = y0;
-  coords_edge.at(1,0) = coords.at(2,0);
-  coords_edge.at(1,1) = coords.at(2,1);
+
+  if (curved) {
+
+    coords_edge.at(2,0) = coords.at(2,0);
+    coords_edge.at(2,1) = coords.at(2,1);
+
+    // Computing distance
+    double d = pow(
+      pow(x0 - coords.at(2, 0), 2.0) + pow(y0 - coords.at(2, 1), 2.0),
+                     .5)/4.0;
+    coords_edge.at(1, 0) = (coords_edge.at(0, 0) + coords_edge.at(2, 0))/2.0 + cos(alpha+PI/2.0)*d;
+    coords_edge.at(1, 1) = (coords_edge.at(0, 1) + coords_edge.at(2, 1))/2.0 + sin(alpha+PI/2.0)*d*yexpand;
+
+  } else {
+    coords_edge.at(1,0) = coords.at(2,0);
+    coords_edge.at(1,1) = coords.at(2,1);
+  }
+
 
   return List::create(
     _["arrow"] = coords,

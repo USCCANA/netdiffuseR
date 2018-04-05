@@ -68,5 +68,4 @@ Other statistics: \code{\link{bass}},
 \author{
 George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
 }
-\concept{statistics}
 \keyword{univar}

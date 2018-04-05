@@ -387,8 +387,10 @@ plot_diffnet.default <- function(
   main         = c("Network in period %s", "Diffusion Network"),
   legend.args  = list(),
   minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
-  background   = grDevices::gray(.9),
+  background   = NULL,
   ...) {
+
+  set_plotting_defaults("background")
 
   # Setting parameters
   oldpar <- graphics::par(no.readonly = TRUE)
@@ -609,12 +611,14 @@ plot_diffnet.default <- function(
 #' @param edge.color Character. Color of the edges.
 #' @param arrow.width Numeric value to be passed to \code{\link{arrows}}.
 #' @param arrow.length Numeric value to be passed to \code{\link{arrows}}.
+#' @param arrow.color Color.
 #' @param include.grid Logical. When TRUE, the grid of the graph is drawn.
 #' @param bty See \code{\link{par}}.
 #' @param xlim Passed to \code{\link{plot}}.
 #' @param ylim Passed to \code{\link{plot}}.
 #' @param ... Additional arguments passed to \code{\link{plot}}.
-#' @param curved Logical scalar. When curved, generates curved edges.
+#' @param edge.curved Logical scalar. When curved, generates curved edges.
+#' @param background TBD
 #' @family visualizations
 #' @seealso Use \code{\link{threshold}} to retrieve the corresponding threshold
 #' obtained returned by \code{\link{exposure}}.
@@ -695,7 +699,7 @@ plot_threshold.default <- function(
   xlab             = "Time",
   ylab             = "Threshold",
   vertex.size      = "degree",
-  vertex.color     = grDevices::adjustcolor("steelblue", .8),
+  vertex.color     = NULL,
   vertex.label     = "",
   vertex.label.pos = NULL,
   vertex.label.cex = 1,
@@ -705,21 +709,23 @@ plot_threshold.default <- function(
   vertex.rot       = 0,
   edge.width       = 2,
   edge.color       = NULL,
-  arrow.width      = nslices(graph)/80,
-  arrow.length     = nslices(graph)/80,
-  include.grid     = TRUE,
+  arrow.width      = NULL,
+  arrow.length     = NULL,
+  arrow.color      = NULL,
+  include.grid     = FALSE,
   vertex.frame.color = NULL,
   bty              = "n",
-  jitter.factor    = c(1,0),
-  jitter.amount    = c(.25,0),
+  jitter.factor    = c(1,1),
+  jitter.amount    = c(.25,.025),
   xlim             = NULL,
   ylim             = NULL,
-  curved           = TRUE,
+  edge.curved      = NULL,
+  background       = NULL,
   ...
   ) {
 
   # Setting default parameters
-  set_plotting_defaults(c("edge.color", "vertex.frame.color", "vertex.label.color"))
+  set_plotting_defaults(c("edge.color", "vertex.frame.color", "vertex.label.color", "edge.curved", "vertex.color", "background", "arrow.color"))
 
   # # Checking out defaults
   # if (!length(edge.color)) edge.color <- igraph_plotting_defaults$edge.color
@@ -744,8 +750,8 @@ plot_threshold.default <- function(
   }
 
   # Creating the pos vector
-  y <- threshold(expo, toa, t0, attrs=attrs, include_censored=include_censored)
-  y <- jitter(y, factor=jitter.factor[2], amount = jitter.amount[2])
+  y0 <- threshold(expo, toa, t0, attrs=attrs, include_censored=include_censored)
+  y <- jitter(y0, factor=jitter.factor[2], amount = jitter.amount[2])
 
   # Jitter to the xaxis and limits
   jit <- jitter(toa, factor=jitter.factor[1], amount = jitter.amount[1])
@@ -789,8 +795,21 @@ plot_threshold.default <- function(
   graphics::plot(NULL, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, main=main,
        xaxs="i", yaxs="i",...)
 
+  # Should we paint or do something else?
+  if (is.function(background)) background()
+  else if (length(background))
+    graphics::rect(xlim[1], ylim[1], xlim[2], ylim[2], col=background, border=background)
+
+  # Checking
+  if (!length(arrow.width))
+    arrow.width <- with(graphics::par(), (usr[2] - usr[1])/75)
+
+  if (!length(arrow.length))
+    arrow.length <- with(graphics::par(), (usr[2] - usr[1])/75)
+
   # Should there be a grid??
-  if (include.grid) grid()
+  if (include.grid)
+    grid()
 
   # Now, for y (it should be different)
   xran <- range(xlim, na.rm = TRUE)
@@ -806,19 +825,12 @@ plot_threshold.default <- function(
   ran  <- c(xlim[2]-xlim[1], ylim[2]-ylim[1])
 
   # Plotting the edges
-  mapply(function(x0, y0, x1, y1, col, curved) {
+  mapply(function(x0, y0, x1, y1, col, edge.curved, arrow.color) {
     y <- edges_arrow(x0, y0, x1, y1, width=arrow.width, height=arrow.length,
-                     beta=pi*(2/3), dev=par("pin"), ran=ran)
+                     beta=pi*(2/3), dev=par("pin"), ran=ran, curved = edge.curved)
 
     # Drawing arrow
-    if (curved) {
-      # Modifying edge
-      r <- runif(1, .20, .80)
-      y$edge <- rbind(
-        y$edge[1,],
-        y$edge[1,]*c(r, 1-r) + y$edge[2,]*c(1-r, r),
-        y$edge[2,]
-      )
+    if (edge.curved) {
 
       # Edge
       graphics::xspline(
@@ -827,18 +839,18 @@ plot_threshold.default <- function(
         open=TRUE, border = col, lwd=edge.width)
 
       # Arrow
-      graphics::polygon(y$arrow[,1], y$arrow[,2], col = col, border = col)
+      graphics::polygon(y$arrow[,1], y$arrow[,2], col = arrow.color, border = arrow.color)
     } else {
       # Edge
       graphics::polygon(y$edge[,1],y$edge[,2], col = col, border = col, lwd=edge.width)
 
       # Arrow
-      graphics::polygon(y$arrow[,1], y$arrow[,2], col = col, border = col)
+      graphics::polygon(y$arrow[,1], y$arrow[,2], col = arrow.color, border = arrow.color)
     }
 
 
   }, x0 = edges[,"x0"], y0 = edges[,"y0"], x1 = edges[,"x1"], y1 = edges[,"y1"],
-  col = edge.color, curved = curved)
+  col = edge.color, edge.curved = edge.curved, arrow.color=arrow.color)
 
   # Drawing the vertices and its labels
   # Computing the coordinates
@@ -860,7 +872,7 @@ plot_threshold.default <- function(
 
   # par(oldpar)
 
-  invisible(data.frame(toa=toa,threshold=y, jit=jit))
+  invisible(data.frame(toa=toa,threshold=y0, jit=jit))
 
 }
 
