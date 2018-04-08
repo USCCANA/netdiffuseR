@@ -33,7 +33,7 @@ NumericVector infection_cpp(
   }
 
   // // Checking classes
-  // for (int i = 0; i< graph.length();i++)
+  // for (int i = 0; i< graph.length();++i)
   //   if ()
 
   // The discount can be either exponential (1 + r)^(k-1), or
@@ -41,15 +41,15 @@ NumericVector infection_cpp(
   // double * discount = new double[K]
   std::vector< double > discount(K);
   if (!expdiscount) {
-    for(int k=1;k<=K;k++)
+    for(int k=1;k<=K;++k)
       discount[k-1] = k;
   }
   else {
-    for(int k=1;k<=K;k++)
+    for(int k=1;k<=K;++k)
       discount[k-1] = pow((1.0 + r), k-1.0);
   }
 
-  for(int i=0;i<n;i++) {
+  for(int i=0;i<n;++i) {
     // Checling user interrup
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
@@ -70,7 +70,7 @@ NumericVector infection_cpp(
     // For the adjusted verion, see the mathematical supplement on Valente et al. (2015)
     double nadopt_t = 0;
 
-    for(int k=1;k<=K;k++) {
+    for(int k=1;k<=K;++k) {
 
       // Current time period from 1 to T
       int t = ti + k - 1;
@@ -84,7 +84,7 @@ NumericVector infection_cpp(
       if (!valued)   graph_cube = arma::spones(graph_cube);
       if (!outgoing) graph_cube = graph_cube.t();
 
-      for(int j=0;j<n;j++) {
+      for(int j=0;j<n;++j) {
         if (i==j) continue;
 
         tj = times(j);
@@ -145,15 +145,15 @@ NumericVector susceptibility_cpp(
   // double * discount = new double[K];
   std::vector< double > discount(K);
   if (!expdiscount) {
-    for(int k=1;k<=K;k++)
+    for(int k=1;k<=K;++k)
       discount[k-1] = k;
   }
   else {
-    for(int k=1;k<=K;k++)
+    for(int k=1;k<=K;++k)
       discount[k-1] = pow((1.0 + r), k-1.0);
   }
 
-  for(int i=0;i<n;i++) {
+  for(int i=0;i<n;++i) {
     // Checling user interrup
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
@@ -174,13 +174,13 @@ NumericVector susceptibility_cpp(
     // For the adjusted verion, see the mathematical supplement on Valente et al. (2015)
     double nadopt_t = 0;
 
-    for(int k=1;k<=K;k++) {
+    for(int k=1;k<=K;++k) {
 
       // Current time period from 1 to T
       int t = ti - k + 1;
 
       // If the required time period does not exists, then continue, recall that
-      // vectors can be reached starting 0. If t=1, then in C++ it is equivalent
+      // vectors can be reached starting 0. If t=1, then in ++C it is equivalent
       // to 0, so we need to reach time of adoption at -1 (which does not
       // exists, or we don't know if it exists).
       if (t <= 1) continue;
@@ -190,13 +190,13 @@ NumericVector susceptibility_cpp(
       if (!valued)   graph_cube = arma::spones(graph_cube);
       if (!outgoing) graph_cube = graph_cube.t();
 
-      for(int j=0;j<n;j++) {
+      for(int j=0;j<n;++j) {
         if (i==j) continue;
 
         tj = times(j);
         // Adding up for t+k iff a link between j and i exists. Notice that the
         // t - 1 is because t is in [1;T], and we actually want t-1. If t=1, then
-        // in C++ it is 0.
+        // in ++C it is 0.
         // if (graph_cube(i,j,t - 1) != 0) {
         if (graph_cube(i,j) != 0) {
           if (tj == (ti - k)) {
@@ -253,8 +253,8 @@ DataFrame select_egoalter_cpp(
   //  0: Stable
   //  1: Added
   // -1: Dropped
-  for(int i=0;i<n;i++)
-    for(int j=0;j<n;j++) {
+  for(int i=0;i<n;++i)
+    for(int j=0;j<n;++j) {
       double chg = adjmat_t1(i,j) - adjmat_t0(i,j);
       if      (chg > 0) change_mat(i,j) = 1;
       else if (chg < 0) change_mat(i,j) = -1;
@@ -274,8 +274,8 @@ DataFrame select_egoalter_cpp(
 
   int cat = 1;
 
-  for(int i=0;i<n;i++)
-    for(int j=0;j<n;j++) {
+  for(int i=0;i<n;++i)
+    for(int j=0;j<n;++j) {
       if (i==j) continue;
       // Fitting the category
       cat =

@@ -17,7 +17,7 @@ arma::sp_mat rgraph_er_cpp(
   std::vector< unsigned int > target;
   std::vector< double > vals;
 
-  for(int i=0;i<n;i++) {
+  for(int i=0;i<n;++i) {
     // Checling user interrup
     if (i % 200 == 0)
       Rcpp::checkUserInterrupt();
@@ -25,7 +25,7 @@ arma::sp_mat rgraph_er_cpp(
     /* Setting the length of the subloop acordingly to type of graph */
     int m = n;
     if (undirected) m=i;
-    for(int j=0;j<m;j++) {
+    for(int j=0;j<m;++j) {
 
       /* Assessing if include self */
       if (!self && (i==j)) continue;
@@ -99,8 +99,8 @@ arma::sp_mat ring_lattice(int n, int k, bool undirected=false) {
     if (k>1) k = (int) floor((double) k/2.0);
 
     // Connecting to k/2 next & previous neighbour
-    for (int i=0;i<n;i++) {
-      for (int j=1;j<=k;j++) {
+    for (int i=0;i<n;++i) {
+      for (int j=1;j<=k;++j) {
         // Next neighbor
         int l = i+j;
         if (l >= n) l = l - n;
@@ -141,9 +141,9 @@ arma::sp_mat rewire_endpoints(
 
   // Getting the indexes
 
-// for (unsigned i= 0;i<indexes.n_rows; i++) {
+// for (unsigned i= 0;i<indexes.n_rows; ++i) {
   unsigned int i = 0;
-  for (arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); it++) {
+  for (arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); ++it) {
 
     // Checking user interrupt
     if (++i % 1000 == 0)
@@ -202,7 +202,7 @@ arma::sp_mat rewire_swap(
   // Getting the indexes
   arma::umat indexes(graph.n_nonzero, 2);
   unsigned int m = 0;
-  for (arma::sp_mat::const_iterator it = newgraph.begin(); it != newgraph.end(); it++) {
+  for (arma::sp_mat::const_iterator it = newgraph.begin(); it != newgraph.end(); ++it) {
 
     // Checking cases
     if      (!self      && (it.row() == it.col())) continue;
@@ -376,8 +376,8 @@ arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p=0.0,
   int n = G.n_rows;
 
   // First half
-  for(int k=1;k<=K;k++) {
-    for(int i=0;i<n;i++) {
+  for(int k=1;k<=K;++k) {
+    for(int i=0;i<n;++i) {
       // Clock wise choose
       int j;
       if (k <= K/2) j = ((i + k) < n)? i + k: k - (n - i);
@@ -426,8 +426,8 @@ arma::sp_mat rewire_ws(arma::sp_mat G, int K, double p=0.0,
     }
   }
   // // Second half
-  // for(int k=1;k<=K/2;k++) {
-  //   for(int i=0;i<G.n_cols;i++) {
+  // for(int k=1;k<=K/2;++k) {
+  //   for(int i=0;i<G.n_cols;++i) {
   //     // Clockwise choose
   //     int j = ((i - k) < 0)? G.n_cols - k + i: i - k;
   //     // // Rprintf("(%d, %d)\n", i, j);
@@ -464,7 +464,7 @@ arma::sp_mat permute_graph_cpp(const arma::sp_mat & x,
   arma::sp_mat ans(x.n_rows, x.n_cols);
   bool keeplooking;
   int niter = 0;
-  for(spiter iter=beg;iter!=end;iter++) {
+  for(spiter iter=beg;iter!=end;++iter) {
 
     // Checking user interrupt
     if (++niter % 1000 == 0)
@@ -523,7 +523,7 @@ arma::sp_mat rgraph_ba_cpp(
   // Setting the initial values
   int nlocations = graph.n_nonzero;
   arma::sp_mat::const_iterator iter;
-  for (iter = graph.begin(); iter != graph.end(); iter++) {
+  for (iter = graph.begin(); iter != graph.end(); ++iter) {
     source[iter.row()].push_back(iter.col());
   }
 
@@ -536,7 +536,7 @@ arma::sp_mat rgraph_ba_cpp(
 
   // If self=true, then the prob are computed over m0+1, otherwise only over m0
   int extra = self? 1 : 0;
-  for(int i=0;i<t;i++) {
+  for(int i=0;i<t;++i) {
     // Checling user interrup
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
@@ -547,7 +547,7 @@ arma::sp_mat rgraph_ba_cpp(
     m_trunc = (m > m0)? m0 : m;
     // if (m > m0) m0_trunc = m0;
 
-    for (int j=0;j<m_trunc;j++) {
+    for (int j=0;j<m_trunc;++j) {
       // Incrementing the degree of the one that is been added
       // one by one until having degree m0.
       // Notice that m0 is updated each time, hence is equiv
@@ -561,7 +561,7 @@ arma::sp_mat rgraph_ba_cpp(
       // Calculating probabilities of been drawn. -cump- is the cumsum of the
       // probabilities
       cump = 0.0;
-      for (int k=0; k<m0+extra; k++) {
+      for (int k=0; k<m0+extra; ++k) {
 
         // In the case that in iter i the total degree is zero (no links)
         // then all individuals are equally likely to receive a new link.
@@ -594,8 +594,8 @@ arma::sp_mat rgraph_ba_cpp(
   arma::colvec values(nlocations, arma::fill::ones);
 
   int curloc = 0;
-  for (int i = 0; i<n; i++) {
-    for (unsigned int j = 0; j < source[i].size(); j++) {
+  for (int i = 0; i<n; ++i) {
+    for (unsigned int j = 0; j < source[i].size(); ++j) {
       locations.at(0, curloc) = i;
       locations.at(1, curloc++) = source[i][j];
     }
@@ -669,7 +669,7 @@ arma::sp_mat rgraph_sf_homo(
 
   // If self=true, then the prob are computed over m0+1, otherwise only over m0
   int extra = self? 1 : 0;
-  for(int i=0;i<t;i++) {
+  for(int i=0;i<t;++i) {
     // Checling user interrup
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
@@ -681,7 +681,7 @@ arma::sp_mat rgraph_sf_homo(
     // if (m > m0) m0_trunc = m0;
 
     // Calculating similitude as A(i) = |eta - eta_i|
-    for (int j=0;j<(m0 + extra);j++)
+    for (int j=0;j<(m0 + extra);++j)
       Ai.at(j) = fabs(etanorm.at(j) - etanorm.at(i));
 
     // If there are no links in the graph then all individuals are likeli
@@ -689,17 +689,17 @@ arma::sp_mat rgraph_sf_homo(
     double dgrsum=0.0;
     if (i==0) dgrsum = sum(dgr_new);
     if (i==0 && (dgrsum == 0.0))  {
-      for (int j=0; j<m0+extra;j++)
+      for (int j=0; j<m0+extra;++j)
         K1Ai.at(j) = (1-Ai.at(j));
     } else {
-      for (int j=0; j<m0+extra;j++)
+      for (int j=0; j<m0+extra;++j)
         K1Ai.at(j) = (1-Ai.at(j)) * dgr_new.at(j);
     }
 
     // Denominator sum_j A(ij)*K(j)
     if (self) K1Ai.at(m0) = 1.0;
 
-    for (int j=0;j<m_trunc;j++) {
+    for (int j=0;j<m_trunc;++j) {
 
       // Incrementing the degree of the one that is been added
       // one by one until having degree m0_trunk.
@@ -713,7 +713,7 @@ arma::sp_mat rgraph_sf_homo(
       // probabilities
       cump = 0.0;
       sum_1AK = sum(K1Ai.subvec(0,m0+extra-1));
-      for (int k=0; k<m0+extra; k++) {
+      for (int k=0; k<m0+extra; ++k) {
 
         // Accumulating probability
         cump += K1Ai.at(k)/(sum_1AK);

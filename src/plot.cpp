@@ -6,7 +6,7 @@ using namespace Rcpp;
 arma::vec seq_cpp(double from, double to, int lengthout) {
   arma::vec out(lengthout);
   double step = (to - from)/(lengthout - 1);
-  for(int i=0;i<lengthout;i++)
+  for(int i=0;i<lengthout;++i)
     out(i) = from + i*step;
 
   return out;
@@ -62,10 +62,10 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100
   arma::vec xseq = seq_cpp(xlim[0], xlim[1], nlevels + 1);
   arma::vec yseq = seq_cpp(ylim[0], ylim[1], nlevels + 1);
 
-  for(int k=0;k<m;k++)
-    for(int i=0;i<nlevels;i++) {
+  for(int k=0;k<m;++k)
+    for(int i=0;i<nlevels;++i) {
       bool cnt = false;
-      for(int j=0;j<nlevels;j++)
+      for(int j=0;j<nlevels;++j)
         // Testing if x and y are in the range
         if ( ((x(k) <= xseq(i+1)) & (x(k) > xseq(i))) & ((y(k) <= yseq(j+1)) & (y(k) > yseq(j)))) {
           distmat(i,j) += 1;
@@ -79,7 +79,7 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100
   NumericVector xmark(nlevels);
   NumericVector ymark(nlevels);
 
-  for(int i=0;i<nlevels;i++)
+  for(int i=0;i<nlevels;++i)
     xmark[i] = (xseq(i) + yseq(i+1))/2,
       ymark[i] = (yseq(i) + yseq(i+1))/2;
 
@@ -124,6 +124,7 @@ with(z, rgl::persp3d(as.vector(x),as.vector(y),z/sum(z), col="lightblue"))
 //' coordiantes for vertices with the same time of adoption (see details).
 //' @param dev Numeric vector of size 2. Height and width of the device (see details).
 //' @param ran Numeric vector of size 2. Range of the x and y axis (see details).
+//' @param curved Logical vector.
 //' @return A numeric matrix of size \eqn{m\times 5}{m * 5} with the following
 //' columns:
 //' \item{x0, y0}{Edge origin}
@@ -212,7 +213,8 @@ NumericMatrix edges_coords(
     bool undirected=true,
     bool no_contemporary=true,
     NumericVector dev = NumericVector::create(),
-    NumericVector ran = NumericVector::create()
+    NumericVector ran = NumericVector::create(),
+    LogicalVector curved = LogicalVector::create()
 ) {
 
   // The output matrix has the following
@@ -243,9 +245,13 @@ NumericMatrix edges_coords(
   if (dev.length() == 0)
     dev = NumericVector::create(2,1.0);
 
+  // Curved?
+  if (curved.length() == 0)
+    curved = LogicalVector::create(graph.n_nonzero, true);
+
   yexpand = yexpand * (dev[0]/dev[1]);
 
-  for(arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); it++) {
+  for(arma::sp_mat::const_iterator it = graph.begin(); it != graph.end(); ++it) {
 
     int i = it.row();
     int j = it.col();
@@ -270,7 +276,7 @@ NumericMatrix edges_coords(
   // Building up the output
   int e = x0.size();
   NumericMatrix out(e,5);
-  for(int i=0; i<e; i++) {
+  for(int i=0; i<e; ++i) {
     out(i,0) = x0[i];
     out(i,1) = y0[i];
     out(i,2) = x1[i];
@@ -470,7 +476,7 @@ List vertices_coords(
 
   yexpand = yexpand * (dev[0]/dev[1]);
 
-  for (unsigned i=0;i<x.n_rows;i++) {
+  for (unsigned i=0;i<x.n_rows;++i) {
     // Getting inner degrees
     double alpha = PI - ((nsides(i) - 2.0)*PI)/nsides(i);
     double beta  = (PI - 2.0*PI/nsides(i))/2.0;
@@ -484,7 +490,7 @@ List vertices_coords(
     coords(0,1) = y(i) + size(i)*sin(beta + PI + rot(i))*yexpand;
 
     double ALPHA = rot(i);
-    for (int j=1; j<nsides(i); j++) {
+    for (int j=1; j<nsides(i); ++j) {
       coords(j,0) = coords(j-1,0) + size_adj*cos(ALPHA);
       coords(j,1) = coords(j-1,1) + size_adj*sin(ALPHA)*yexpand;
       ALPHA += alpha;

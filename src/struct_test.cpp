@@ -15,8 +15,8 @@ double struct_test_mean(NumericVector & y,
   funcPtr fun;
   st_getfun(funname, fun);
 
-  for (int i=0;i<n;i++)
-    for (int j=0;j<n;j++) {
+  for (int i=0;i<n;++i)
+    for (int j=0;j<n;++j) {
       if (self) ans+= fun(y[i], y[j])/m;
       else if (i!=j) ans+= fun(y[i], y[j])/m;
     }
@@ -36,9 +36,9 @@ double struct_test_var(NumericVector & y, std::string funname, bool self=false) 
   funcPtr fun;
   st_getfun(funname, fun);
 
-  for (int i=0;i<n;i++)
-    for (int j=0;j<n;j++)
-      for (int k=0;k<n;k++) {
+  for (int i=0;i<n;++i)
+    for (int j=0;j<n;++j)
+      for (int k=0;k<n;++k) {
         if (self) ans+=fun(y[i],y[j])*fun(y[i],y[k])/m;
         else if (i!=j && i!=k) ans+=fun(y[i],y[j])*fun(y[i],y[k])/m;
       }
@@ -98,13 +98,13 @@ NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
 
   // Which value to use as mean
   if (!all) {
-    for (spiter i=begin; i!=end;i++)
+    for (spiter i=begin; i!=end;++i)
       fhat[i.row()] += graph.at(i.row(),i.col())*fun(Y[i.row()], Y[i.col()])/
       (degree[i.row()] + 1e-15);
   } else {
     double val = 0.0;
-    for (int i=0;i<n;i++)
-      for (int j=0;j<n;j++)
+    for (int i=0;i<n;++i)
+      for (int j=0;j<n;++j)
         val += fun(Y[i],Y[j])/n/n;
 
     fhat.fill(val);
@@ -115,7 +115,7 @@ NumericVector ego_variance(const arma::sp_mat & graph, const NumericVector & Y,
   end   = graph.end();
 
   // Iterating
-  for (spiter i = begin; i!=end; i++) {
+  for (spiter i = begin; i!=end; ++i) {
     if (NumericVector::is_na(fhat[i.row()])) {
       ans[i.row()] = NA_REAL;
       continue;

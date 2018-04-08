@@ -5,7 +5,8 @@
 \title{Compute ego/alter edge coordinates considering alter's size and aspect ratio}
 \usage{
 edges_coords(graph, toa, x, y, vertex_cex, undirected = TRUE,
-  no_contemporary = TRUE, dev = as.numeric(c()), ran = as.numeric(c()))
+  no_contemporary = TRUE, dev = as.numeric(c()), ran = as.numeric(c()),
+  curved = as.logical(c()))
 }
 \arguments{
 \item{graph}{A square matrix of size \eqn{n}. Adjacency matrix.}
@@ -27,6 +28,8 @@ coordiantes for vertices with the same time of adoption (see details).}
 \item{dev}{Numeric vector of size 2. Height and width of the device (see details).}
 
 \item{ran}{Numeric vector of size 2. Range of the x and y axis (see details).}
+
+\item{curved}{Logical vector.}
 }
 \value{
 A numeric matrix of size \eqn{m\times 5}{m * 5} with the following

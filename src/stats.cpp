@@ -35,7 +35,7 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
   arma::sp_mat ans(graph.n_rows,graph.n_cols);
 
   // Iterating over elements of graph
-  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++) {
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); ++iter) {
 
     ans.at(iter.row(),iter.col()) = pow(
       arma::accu(pow(arma::abs(X.row(iter.row()) - X.row(iter.col())), p)),
@@ -59,7 +59,7 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(
   arma::mat Sinv = S.i();
 
   // Iterating over elements of graph
-  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++) {
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); ++iter) {
 
     ans.at(iter.row(),iter.col()) = pow(
       arma::as_scalar(
@@ -122,7 +122,7 @@ arma::sp_mat vertex_covariate_compare(
   st_getfun(funname, fun);
 
   // Iterating over elements of graph
-  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); iter++)
+  for (arma::sp_mat::const_iterator iter = graph.begin(); iter != graph.end(); ++iter)
     ans.at(iter.row(),iter.col()) = fun(X[iter.row()], X[iter.col()]);
 
   return ans;
@@ -151,7 +151,7 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
 
   // S1
   arma::sp_mat wtw = w + w.t();
-  for (b = wtw.begin(); b!= wtw.end(); b++)
+  for (b = wtw.begin(); b!= wtw.end(); ++b)
     s1 += pow((*b), 2.0);
 
   s1/= 2.0;
@@ -162,7 +162,7 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
   arma::sp_colvec w_rowsums = sum(w, 1);
   arma::sp_rowvec w_colsums = sum(w, 0);
 
-  for (unsigned int i = 0; i < N; i++)
+  for (unsigned int i = 0; i < N; ++i)
     s2 += pow(w_rowsums.at(i) + w_colsums.at(i), 2.0);
 
   // S3
@@ -200,13 +200,13 @@ List struct_equiv_cpp(
 
   // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}
   NumericVector dmax(n, -1e100);
-  for(int i=0;i<n;i++) {
-    for(int j=0;j<i;j++) {
+  for(int i=0;i<n;++i) {
+    for(int j=0;j<i;++j) {
 
       // Computing sum(z_ik - z_jk)
       double sumik = 0.0;
       double sumki = 0.0;
-      for(int k=0;k<n;k++) {
+      for(int k=0;k<n;++k) {
         // Summation accross all but i and j
         if (k == i || k == j) continue;
         sumik += pow(graph.at(i,k)-graph.at(j,k), 2.0);
@@ -223,23 +223,23 @@ List struct_equiv_cpp(
   // Computing distances
   NumericMatrix SE(n,n);
 
-  for(int i=0;i<n;i++) {
+  for(int i=0;i<n;++i) {
 
     // Getting the max of the line
-    for(int j=0;j<n;j++) {
+    for(int j=0;j<n;++j) {
       if (i==j) continue;
       if (dmax[i] < d.at(i,j)) dmax[i] = d.at(i,j);
     }
 
     // Computing sum(dmax - dkj)
     double sumdmaxd = 0.0;
-    for(int k=0;k<n;k++) {
+    for(int k=0;k<n;++k) {
       if (k==i) continue;
       sumdmaxd += pow(dmax[i] - d.at(k,i), v);
     }
 
     // Computing (dmax - d)/sum(dmax - d)
-    for(int j=0;j<n;j++) {
+    for(int j=0;j<n;++j) {
       if (i==j) continue;
       SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-15);
     }
@@ -271,7 +271,7 @@ arma::sp_mat matrix_compareCpp(
 
   // Iterating through matrix A
   unsigned int i = 0u;
-  for (spiter iter=A.begin(); iter!= A.end(); iter++) {
+  for (spiter iter=A.begin(); iter!= A.end(); ++iter) {
 
     row[i] = iter.row();
     col[i] = iter.col();
@@ -284,7 +284,7 @@ arma::sp_mat matrix_compareCpp(
   }
 
   // Iterating throught matrix B
-  for (spiter iter=Bcpy.begin(); iter!= Bcpy.end(); iter++) {
+  for (spiter iter=Bcpy.begin(); iter!= Bcpy.end(); ++iter) {
 
     row[i] = iter.row();
     col[i] = iter.col();

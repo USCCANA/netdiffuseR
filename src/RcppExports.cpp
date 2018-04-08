@@ -198,8 +198,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // edges_coords
-NumericMatrix edges_coords(const arma::sp_mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary, NumericVector dev, NumericVector ran);
-RcppExport SEXP _netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP, SEXP devSEXP, SEXP ranSEXP) {
+NumericMatrix edges_coords(const arma::sp_mat& graph, const arma::colvec& toa, const arma::colvec& x, const arma::colvec& y, const arma::colvec& vertex_cex, bool undirected, bool no_contemporary, NumericVector dev, NumericVector ran, LogicalVector curved);
+RcppExport SEXP _netdiffuseR_edges_coords(SEXP graphSEXP, SEXP toaSEXP, SEXP xSEXP, SEXP ySEXP, SEXP vertex_cexSEXP, SEXP undirectedSEXP, SEXP no_contemporarySEXP, SEXP devSEXP, SEXP ranSEXP, SEXP curvedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -212,7 +212,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type no_contemporary(no_contemporarySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dev(devSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type ran(ranSEXP);
-    rcpp_result_gen = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran));
+    Rcpp::traits::input_parameter< LogicalVector >::type curved(curvedSEXP);
+    rcpp_result_gen = Rcpp::wrap(edges_coords(graph, toa, x, y, vertex_cex, undirected, no_contemporary, dev, ran, curved));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -533,7 +534,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_netdiffuseR_sp_as_undirected", (DL_FUNC) &_netdiffuseR_sp_as_undirected, 1},
     {"_netdiffuseR_bootnet_fillself", (DL_FUNC) &_netdiffuseR_bootnet_fillself, 3},
     {"_netdiffuseR_grid_distribution", (DL_FUNC) &_netdiffuseR_grid_distribution, 3},
-    {"_netdiffuseR_edges_coords", (DL_FUNC) &_netdiffuseR_edges_coords, 9},
+    {"_netdiffuseR_edges_coords", (DL_FUNC) &_netdiffuseR_edges_coords, 10},
     {"_netdiffuseR_edges_arrow", (DL_FUNC) &_netdiffuseR_edges_arrow, 10},
     {"_netdiffuseR_vertices_coords", (DL_FUNC) &_netdiffuseR_vertices_coords, 7},
     {"_netdiffuseR_rgraph_er_cpp", (DL_FUNC) &_netdiffuseR_rgraph_er_cpp, 5},

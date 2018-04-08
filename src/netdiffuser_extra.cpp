@@ -109,20 +109,20 @@ arma::sp_mat bootnet_fillself(
 
   // Finding repeated values
   std::vector< std::vector<int> > reps(n);
-  for (int i=0; i<n; i++) {
+  for (int i=0; i<n; ++i) {
     reps.at(index.at(i)-1).push_back(i);
   }
 
   // Sampling E
   NumericVector rand(2);
-  for (int i=0; i<n; i++) {
+  for (int i=0; i<n; ++i) {
     // If has no elements
     if (reps.at(i).size() < 2) continue;
 
     std::vector<int> r(reps.at(i));
 
-    for (unsigned int j=0; j< r.size(); j++)
-      for (unsigned int k=j; k<r.size(); k++) {
+    for (unsigned int j=0; j< r.size(); ++j)
+      for (unsigned int k=j; k<r.size(); ++k) {
 
         if (j==k) continue;
 

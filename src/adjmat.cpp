@@ -44,7 +44,7 @@ arma::sp_mat edgelist_to_adjmat_cpp(
   // the precision)
   arma::sp_mat adjmat(n,n);
 
-  for(int i=0;i<m;i++) {
+  for(int i=0;i<m;++i) {
     // Ids of the vertices
     unsigned int ego   = ((unsigned int) edgelist(i,0)) - 1u;
     unsigned int alter = ((unsigned int) edgelist(i,1)) - 1u;
@@ -80,7 +80,7 @@ arma::mat adjmat_to_edgelist_cpp(
   unsigned int m = adjmat.n_nonzero, i = 0u;
   arma::mat edgelist(m, 3);
 
-  for (arma::sp_mat::const_iterator it = adjmat.begin(); it != adjmat.end(); it++) {
+  for (arma::sp_mat::const_iterator it = adjmat.begin(); it != adjmat.end(); ++it) {
     edgelist.at(i,0) = it.row() + 1;
     edgelist.at(i,1) = it.col() + 1;
     edgelist.at(i++,2) = (*it);
@@ -96,18 +96,18 @@ IntegerMatrix toa_diff_cpp(const IntegerVector & year) {
   IntegerMatrix diff(n,n);
   LogicalVector isna = is_na(year);
 
-  for(int i=0;i<n;i++) {
+  for(int i=0;i<n;++i) {
     // Checling user interrup
     if (i % 1000 == 0)
       Rcpp::checkUserInterrupt();
 
     // If na, then fill the diff with NA
     if (isna[i]) {
-      for(int j=0;j<n;j++)
+      for(int j=0;j<n;++j)
         diff(i,j) = NA_INTEGER, diff(j,i) = NA_INTEGER;
       continue;
     }
-    for(int j=0;j<i;j++) {
+    for(int j=0;j<i;++j) {
       if (isna[j]) continue;
       diff(i,j) = year[j]-year[i], diff(j,i)=year[i]-year[j];
     }
@@ -138,12 +138,12 @@ List egonet_attrs_cpp(
 
   // We will fill it with zeros
   arma::uvec useit(graph.n_rows, arma::fill::zeros);
-  for (unsigned int i = 0u; i < V.size(); i++)
+  for (unsigned int i = 0u; i < V.size(); ++i)
     useit.at(V.at(i)) = 1u;
 
   // Finding values
   unsigned int i, j;
-  for (spiter it = graph.begin(); it != graph.end(); it ++) {
+  for (spiter it = graph.begin(); it != graph.end(); ++it) {
 
     // Depending on outer or not
     if (outer) i = it.row(), j = it.col();
@@ -160,7 +160,7 @@ List egonet_attrs_cpp(
   // Coercing output
   List data(V.size());
 
-  for (i = 0u; i < V.size(); i++) {
+  for (i = 0u; i < V.size(); ++i) {
 
     // If self
     if (self)
@@ -237,9 +237,9 @@ arma::sp_mat approx_geodesicCpp(
   arma::sp_mat pG = G;
   arma::sp_mat G0 = G;
   int change_count = 0;
-  n++;
+  ++n;
   unsigned int nsteps;
-  for (unsigned int i=1u; i<n; i++) {
+  for (unsigned int i=1u; i<n; ++i) {
 
     nsteps = 0u;
 
@@ -249,7 +249,7 @@ arma::sp_mat approx_geodesicCpp(
     std::vector< unsigned int > ival;
 
     // Iterating throught the power graph's elements
-    for (spiter it = pG.begin(); it != pG.end(); it ++) {
+    for (spiter it = pG.begin(); it != pG.end(); ++it) {
 
       if (it.row() == it.col())
         continue;
