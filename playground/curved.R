@@ -1,39 +1,39 @@
 #' Edges coordinates
 #' @export
-edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = .25, s = .30, curved = TRUE) {
+edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = .25, s = .25, curved = TRUE) {
 
-  # Find points
+  d <- sqrt(sum((c(x0, y0) - c(x1, y1))^2.0)) - s0 - s1
+
+  p0 <- c(x0 + s0, y0)
+  p1 <- p0 + c(d, 0)
+
+  pmid <- (p1 + p0)/2.0 - c(0, d*s)
+
+  # Updating points
+  beta <- atan2(pmid[2] - p0[2], pmid[1] - p0[1])
+  p0   <- c(x0, y0) + c(cos(beta), sin(beta))*s0
+  beta <- atan2(p1[2] - pmid[2], p1[1] - pmid[1])
+  p1   <- p1 + c(s1, 0) - c(cos(beta), sin(beta))*s1
+
+  p0mid <- (p0 + pmid)/2
+  p1mid <- (p1 + pmid)/2
+
+  # # Find points
   alpha <- atan2(y1-y0, x1-x0)
 
-  p0 <- c(x0 + s0*cos(alpha), y0 + s0*sin(alpha))
-  p1 <- c(x1 - s1*cos(alpha), y1 - s1*sin(alpha))
 
-  d <- sqrt(sum((p0 - p1)^2.0))
-  beta <- alpha - pi/2.0
-  pmid <- (p1 + p0)/2.0 + s*d*c(cos(beta), sin(beta))
+  # Rotating
+  ans <- rbind(p0, p0mid, pmid, p1mid, p1)
 
-  # Updating the points
-  alpha0m <- atan2(pmid[2] - p0[2], pmid[1] - p0[1])
-  p0 <- c(x0 + s0*cos(alpha0m), y0 + s0*sin(alpha0m))
-  alpha1m <- atan2(p1[2] - pmid[2], p1[1] - pmid[1])
-  p1 <- c(x1 - s1*cos(alpha1m), y1 - s1*sin(alpha1m))
+  R  <- matrix(c(cos(alpha), -sin(alpha), sin(alpha), cos(alpha)), nrow = 2, byrow = TRUE)
+  p0 <- matrix(c(x0, y0), ncol=2, nrow = nrow(ans), byrow = TRUE)
+  ans <- t(R %*% t(ans - p0)) + p0
 
-  # Adding midpoints
-  # alpha0p0 <- atan2(p0[2] - y0, p0[1] - x0)
-  # dp0m     <- sqrt(sum(p0 - pmid)^2)/1000.0
-  # p0mid    <- c(p0[1] + cos(alpha0p0)*dp0m, p0[2] + sin(alpha0p0)*dp0m)
-  p0mid <- p0
-  p1mid <- p1
-
-  # Update midpoint
-  d <- sqrt(sum((p0mid - p1mid)^2.0))
-  beta <- alpha - pi/2.0
-  pmid <- (p1mid + p0mid)/2.0 + s*d*c(cos(beta), sin(beta))
+  beta <- atan2(ans["p1mid", 2] - ans["pmid", 2], ans["p1mid", 1] - ans["pmid", 1])
 
   structure(
-    rbind(p0, p0mid, pmid, p1mid, p1),
-    class = "matrix",
-    alpha = atan2(y1 - p1[2], x1 - p1[1])
+    ans[-3,],
+    alpha = beta
   )
 
 }
@@ -64,7 +64,7 @@ arrow_fancy <- function(x0, y0, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
 E <- matrix(
   c(1,1,2,2,2,1,3,0,1,3,0,2, 1, 1, 1, 1), byrow = TRUE, ncol=4
 )
-E<- matrix(runif(4*20, 0, 10), ncol=4)
+E<- matrix(runif(4*10, 0, 5), ncol=4)
 # set.seed(7)
 E <- cbind(E, matrix(rbeta(nrow(E)*2, 2, 15), ncol=2))
 # E[4,5:6] <- E[1, 5]
@@ -72,17 +72,28 @@ E <- cbind(E, matrix(rbeta(nrow(E)*2, 2, 15), ncol=2))
 
 N <- rbind(E[,c(1:2, 5)], E[,c(3:4, 6)])
 
-# set.seed(1)
-# x <- igraph::barabasi.game(20)
-# igraph::V(x)$deg <- igraph::degree(x)
-# N <- igraph::layout.auto(x)
-# E <- igraph::as_long_data_frame(x)
+set.seed(1)
+x <- igraph::barabasi.game(1e3, m = 2, power = 1.25)
+# data(brfarmersDiffNet, package="netdiffuseR")
+# x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
+N <- cbind(igraph::layout_with_fr(x), (igraph::degree(x)+1)^(1/4)/20)
+E <- igraph::as_edgelist(x, names = FALSE)
+E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
 
 library(polygons)
 ans <- vector("list", nrow(E))
-for (i in 1:nrow(E)) {
+for (e in 1:nrow(E)) {
 
-  ans[[i]] <- edge(E[i, 1], E[i, 2], E[i, 3], E[i, 4], s0 = E[i, 5], s1 = E[i, 6])
+  i <- E[e,1]
+  j <- E[e,2]
+
+  x0 <- N[i, 1]
+  y0 <- N[i, 2]
+  x1 <- N[j, 1]
+  y1 <- N[j, 2]
+  s0 <- N[i, 3]
+  s1 <- N[j, 3]
+  ans[[e]] <- edge(x0, y0, x1, y1, s0 = s0, s1 = s1, s=.5)
 
 }
 
@@ -90,21 +101,39 @@ for (i in 1:nrow(E)) {
 # symbols(N[,1], N[,2], circles = N[,3], inches = FALSE)
 # plot(USArrests)
 # par(new=TRUE, xpd=NA)
-plot(N[,1:2], type = "n", bty="n", asp=1, xaxt="n", yaxt="n")
+par(mai=rep(.25, 4))
+plot(N[,1:2], type = "n", bty="n", asp=1, xaxt="n", yaxt="n", ylab="", xlab="")
 
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "white")
 
 # done <- vector(length = nrow(N))
-for (i in ans) {
 
+cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
+# clus <- igraph::membership(igraph::cluster_walktrap(x))
+# cols <- viridis::cividis(max(clus))[clus]
+# cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-  xspline(i, shape = c(0,1,1,1,0), lwd=2, border = "steelblue")
+l <- (max(N[,1]) - min(N[,1]))/160
+D <- igraph::degree(x)
+for (i in seq_along(ans)) {
 
-  arr <- arrow_fancy(i["p1",1], i["p1",2], a0 = attr(i, "alpha"))
-  polygon(arr, col = "steelblue", border="steelblue")
+  col <- rgb(colorRamp(cols[E[i,1:2]], alpha = .15)(.5), maxColorValue = 255)
+
+  xspline(ans[[i]], shape = c(0,1,1,0), lwd=E[i,3],
+          border = col)
+
+  arr <- arrow_fancy(ans[[i]]["p1",1], ans[[i]]["p1",2], a0 = attr(ans[[i]], "alpha"), l = l)
+  # col <- adjustcolor("darkgray", 1)
+  polygon(arr, col = col, border=col)
 
 
 }
 
-
 for (i in 1:nrow(N))
-  polygon(circle(N[i,1], N[i,2], N[i, 3], FALSE), col = "tomato")
+  polygon(npolygon(N[i,1], N[i,2], n=100,r=N[i, 3], FALSE),
+          col = cols[i], border = adjustcolor(cols[i], red.f = .8, blue.f = .8, green.f = .8),
+          lwd=1.5)
+
+# plot(x, vertex.size=sqrt(igraph::degree(x)), vertex.label=NA, edge.curved=TRUE, edge.arrow.size=.25, layout = N[,1:2])
+
+
