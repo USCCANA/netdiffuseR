@@ -1,6 +1,6 @@
 #' Edges coordinates
 #' @export
-edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = .25, s = .25, curved = TRUE) {
+edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = 0.25, s = 0.25, curved = TRUE) {
 
   d <- sqrt(sum((c(x0, y0) - c(x1, y1))^2.0)) - s0 - s1
 
@@ -73,12 +73,15 @@ E <- cbind(E, matrix(rbeta(nrow(E)*2, 2, 15), ncol=2))
 N <- rbind(E[,c(1:2, 5)], E[,c(3:4, 6)])
 
 set.seed(1)
-x <- igraph::barabasi.game(1e3, m = 2, power = 1.25)
+# x <- igraph::barabasi.game(20, m = 2, power = 1.25)
 # data(brfarmersDiffNet, package="netdiffuseR")
 # x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
-N <- cbind(igraph::layout_with_fr(x), (igraph::degree(x)+1)^(1/4)/20)
-E <- igraph::as_edgelist(x, names = FALSE)
-E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
+# x <- netdiffuseR::diffnet_to_igraph(netdiffuseR::rdiffnet(n = 200, t=10, seed.graph = "small-world", seed.nodes = "central"))[[1]]
+x <- readr::read_csv("~/Downloads/edges_2008.csv")
+x <- igraph::graph_from_data_frame(x)
+N <- cbind(igraph::layout_with_fr(x), (igraph::degree(x)+1)^(1/4)/10)
+E <- cbind(igraph::as_edgelist(x, names = FALSE), igraph::E(x)$weight)
+# E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
 
 library(polygons)
 ans <- vector("list", nrow(E))
@@ -93,7 +96,7 @@ for (e in 1:nrow(E)) {
   y1 <- N[j, 2]
   s0 <- N[i, 3]
   s1 <- N[j, 3]
-  ans[[e]] <- edge(x0, y0, x1, y1, s0 = s0, s1 = s1, s=.5)
+  ans[[e]] <- edge(x0, y0, x1, y1, s0 = s0, s1 = s1)
 
 }
 
@@ -104,25 +107,44 @@ for (e in 1:nrow(E)) {
 par(mai=rep(.25, 4))
 plot(N[,1:2], type = "n", bty="n", asp=1, xaxt="n", yaxt="n", ylab="", xlab="")
 
-rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "white")
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
 
 # done <- vector(length = nrow(N))
 
 cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
+# cols <- igraph::V(x)$toa
+# cols <- cols - min(cols, na.rm = TRUE) + 1
+# cols[is.na(cols)] <- max(cols, na.rm = TRUE) + 1
+# cols <- viridis::cividis(max(cols))[cols]
 # clus <- igraph::membership(igraph::cluster_walktrap(x))
 # cols <- viridis::cividis(max(clus))[clus]
 # cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-l <- (max(N[,1]) - min(N[,1]))/160
+l <- .05 # (max(N[,1]) - min(N[,1]))/160
 D <- igraph::degree(x)
+
+#' A wrapper of `rgb(colorRamp)`
+#' @param i,j Integer scalar. Indices of ego and alter from 1 through n.
+#' @param p Numeric scalar from 0 to 1. Proportion of mixing.
+#' @param alpha Numeric scalar from 0 to 1. Passed to [grDevices:colorRamp]
+#' @return A color.
+edge_color_mixer <- function(i, j, vcols, p = .5, alpha = .15) {
+
+  grDevices::rgb(
+    grDevices::colorRamp(vcols[i], alpha = alpha)(p),
+    maxColorValue = 255
+  )
+
+}
+
 for (i in seq_along(ans)) {
 
-  col <- rgb(colorRamp(cols[E[i,1:2]], alpha = .15)(.5), maxColorValue = 255)
+  col <- edge_color_mixer(E[i,1], E[i, 2], cols,alpha = E[i,3]/max(E[,3]))
 
-  xspline(ans[[i]], shape = c(0,1,1,0), lwd=E[i,3],
+  xspline(ans[[i]], shape = c(0,1,1,0), lwd=E[i,3]/max(E[,3]),
           border = col)
 
-  arr <- arrow_fancy(ans[[i]]["p1",1], ans[[i]]["p1",2], a0 = attr(ans[[i]], "alpha"), l = l)
+  arr <- arrow_fancy(ans[[i]]["p1",1], ans[[i]]["p1",2], a0 = attr(ans[[i]], "alpha"), l = l, b = 2)
   # col <- adjustcolor("darkgray", 1)
   polygon(arr, col = col, border=col)
 
@@ -134,6 +156,6 @@ for (i in 1:nrow(N))
           col = cols[i], border = adjustcolor(cols[i], red.f = .8, blue.f = .8, green.f = .8),
           lwd=1.5)
 
-# plot(x, vertex.size=sqrt(igraph::degree(x)), vertex.label=NA, edge.curved=TRUE, edge.arrow.size=.25, layout = N[,1:2])
+# plot(x, vertex.size=sqrt(igraph::degree(x))*4, vertex.label=NA, edge.curved=TRUE, edge.arrow.size=.5, layout = N[,1:2])
 
 
