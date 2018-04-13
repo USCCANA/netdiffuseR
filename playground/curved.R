@@ -1,38 +1,66 @@
+rotate <- function(mat, p0, alpha) {
+  R <- matrix(
+    c(cos(alpha), -sin(alpha), sin(alpha), cos(alpha)),
+    nrow = 2, byrow = TRUE)
+
+  p0 <- matrix(c(p0[1], p0[2]), ncol=2, nrow = nrow(mat), byrow = TRUE)
+  t(R %*% t(mat - p0)) + p0
+}
+
+curves <- function(p0, p1, alpha = pi/2, n=4, sizes = c(0, 0)) {
+
+  # If no curve, nothing to do (old fashioned straight line)
+  if (alpha == 0)
+    return(rbind(p0, p1))
+
+  alpha0 <- atan2(p1[2]-p0[2], p1[1] - p0[1])
+
+  # Constants
+  d <- stats::dist(rbind(p0, p1))
+  r <- d/2/sin(alpha/2)
+
+  # Center
+  M <- cbind(
+    p0[1] + d/2,
+    p0[2] - cos(alpha/2)*r
+  )
+
+  # Angle seq
+  alpha_i <- seq(
+    alpha - sizes[1]/r,
+    sizes[2]/r,
+    length.out = n
+  ) + (pi - alpha)/2
+  # beta <- (pi - alpha)/2.0
+
+  ans <- cbind(
+    M[1] + cos(alpha_i)*r,
+    M[2] + sin(alpha_i)*r
+  )
+
+  # Rotation
+  rotate(ans, p0, alpha0)
+
+}
+
 #' Edges coordinates
 #' @export
-edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = 0.25, s = 0.25, curved = TRUE) {
+edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = 0.25, alpha = pi/4, n = 20) {
 
-  d <- sqrt(sum((c(x0, y0) - c(x1, y1))^2.0)) - s0 - s1
+  # Creating curve
+  ans <- curves(
+    p0    = c(x0, y0),
+    p1    = c(x1, y1),
+    alpha = alpha,
+    n     = n,
+    sizes = c(s0, s1)
+    )
 
-  p0 <- c(x0 + s0, y0)
-  p1 <- p0 + c(d, 0)
-
-  pmid <- (p1 + p0)/2.0 - c(0, d*s)
-
-  # Updating points
-  beta <- atan2(pmid[2] - p0[2], pmid[1] - p0[1])
-  p0   <- c(x0, y0) + c(cos(beta), sin(beta))*s0
-  beta <- atan2(p1[2] - pmid[2], p1[1] - pmid[1])
-  p1   <- p1 + c(s1, 0) - c(cos(beta), sin(beta))*s1
-
-  p0mid <- (p0 + pmid)/2
-  p1mid <- (p1 + pmid)/2
-
-  # # Find points
-  alpha <- atan2(y1-y0, x1-x0)
-
-
-  # Rotating
-  ans <- rbind(p0, p0mid, pmid, p1mid, p1)
-
-  R  <- matrix(c(cos(alpha), -sin(alpha), sin(alpha), cos(alpha)), nrow = 2, byrow = TRUE)
-  p0 <- matrix(c(x0, y0), ncol=2, nrow = nrow(ans), byrow = TRUE)
-  ans <- t(R %*% t(ans - p0)) + p0
-
-  beta <- atan2(ans["p1mid", 2] - ans["pmid", 2], ans["p1mid", 1] - ans["pmid", 1])
+  # Computing the last angle
+  beta <- atan2(y1 - ans[n,2], x1 - ans[n,1])
 
   structure(
-    ans[-3,],
+    ans,
     alpha = beta
   )
 
@@ -61,29 +89,78 @@ arrow_fancy <- function(x0, y0, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
 
 }
 
-E <- matrix(
-  c(1,1,2,2,2,1,3,0,1,3,0,2, 1, 1, 1, 1), byrow = TRUE, ncol=4
-)
-E<- matrix(runif(4*10, 0, 5), ncol=4)
-# set.seed(7)
-E <- cbind(E, matrix(rbeta(nrow(E)*2, 2, 15), ncol=2))
-# E[4,5:6] <- E[1, 5]
-# E <- E[-4,]
+#' Rescale the size of a node to make it relative to the aspect ratio of the device
+#' @param size Numeric vector. Size of the node (radious).
+#' @param rel Numeric vector of length 2. Relative size for the minimum and maximum
+#' of the plot.
+#'
+#' @details
+#' This function is to be called after [plot.new], as it takes the parameter `usr`
+#' from the
+rescale_node <- function(size, rel=c(.05, .05)) {
 
-N <- rbind(E[,c(1:2, 5)], E[,c(3:4, 6)])
+  # Rescaling to be between range[1], range[2]
+  sran <- range(size, na.rm=TRUE)
+
+  if ((sran[2] - sran[1]) > 1e-10)
+    size <- (size - sran[1])/(sran[2] - sran[1]) # 0-1
+  else
+    size <- size/sran[1]
+
+  size <- size * (rel[2] - rel[1]) + rel[1]
+
+  # Getting coords
+  usr <- graphics::par()$usr[1:2]
+  size * (usr[2] - usr[1])/2
+
+}
 
 set.seed(1)
 # x <- igraph::barabasi.game(20, m = 2, power = 1.25)
 # data(brfarmersDiffNet, package="netdiffuseR")
 # x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
-# x <- netdiffuseR::diffnet_to_igraph(netdiffuseR::rdiffnet(n = 200, t=10, seed.graph = "small-world", seed.nodes = "central"))[[1]]
-x <- readr::read_csv("~/Downloads/edges_2008.csv")
-x <- igraph::graph_from_data_frame(x)
-N <- cbind(igraph::layout_with_fr(x), (igraph::degree(x)+1)^(1/4)/10)
+# x <- igraph::erdos.renyi.game(200, .1)
+x <- igraph::sample_smallworld(1, 4, 3, 0.025)
+# x <- readr::read_csv("~/Downloads/edges_2008.csv")
+# x <- igraph::graph_from_data_frame(x)
+N <- cbind(igraph::layout_with_fr(x), igraph::degree(x))
 E <- cbind(igraph::as_edgelist(x, names = FALSE), igraph::E(x)$weight)
-# E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
+E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
 
 library(polygons)
+
+#' Adjust coordinates to fit aspect ratio of the device
+#' @param coords Two column numeric matrix. Vertices coordinates.
+#' @details
+#' It first adjusts `coords` to range between `-1,1`, and then, using
+#' `graphics::par("pin")`, it rescales the second column of it (`y`) to adjust
+#' for the device's aspec ratio.
+fit_coords_to_dev <- function(coords, adj = graphics::par("pin")[1:2]) {
+
+  # Making it -1 to 1
+  yran <- range(coords[,2], na.rm = TRUE)
+  xran <- range(coords[,1], na.rm = TRUE)
+
+  coords[,1] <- (coords[,1] - xran[1])/(xran[2] - xran[1])*2 - 1
+  coords[,2] <- (coords[,2] - yran[1])/(yran[2] - yran[1])*2 - 1
+
+  # Adjusting aspect ratio according to the ploting area
+  coords[,2] <- coords[,2]*adj[2]/adj[1]
+
+  # Returning new coordinates
+  coords
+
+}
+
+par(mai=rep(.25, 4))
+
+N[,1:2] <- fit_coords_to_dev(N[,1:2])
+
+plot(N[,1:2], type = "n", bty="n", xaxt="n", yaxt="n", ylab="", xlab="", asp=1)
+
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
+N[,3] <- rescale_node(N[,3])
+
 ans <- vector("list", nrow(E))
 for (e in 1:nrow(E)) {
 
@@ -101,16 +178,6 @@ for (e in 1:nrow(E)) {
 }
 
 
-# symbols(N[,1], N[,2], circles = N[,3], inches = FALSE)
-# plot(USArrests)
-# par(new=TRUE, xpd=NA)
-par(mai=rep(.25, 4))
-plot(N[,1:2], type = "n", bty="n", asp=1, xaxt="n", yaxt="n", ylab="", xlab="")
-
-rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
-
-# done <- vector(length = nrow(N))
-
 cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- igraph::V(x)$toa
 # cols <- cols - min(cols, na.rm = TRUE) + 1
@@ -120,7 +187,7 @@ cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- viridis::cividis(max(clus))[clus]
 # cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-l <- .05 # (max(N[,1]) - min(N[,1]))/160
+l <- (max(N[,1]) - min(N[,1]))/20
 D <- igraph::degree(x)
 
 #' A wrapper of `rgb(colorRamp)`
@@ -137,22 +204,25 @@ edge_color_mixer <- function(i, j, vcols, p = .5, alpha = .15) {
 
 }
 
+
+
 for (i in seq_along(ans)) {
 
   col <- edge_color_mixer(E[i,1], E[i, 2], cols,alpha = E[i,3]/max(E[,3]))
 
-  xspline(ans[[i]], shape = c(0,1,1,0), lwd=E[i,3]/max(E[,3]),
-          border = col)
+  lines(ans[[i]], lwd=1, col = col)
 
-  arr <- arrow_fancy(ans[[i]]["p1",1], ans[[i]]["p1",2], a0 = attr(ans[[i]], "alpha"), l = l, b = 2)
+  arr <- arrow_fancy(ans[[i]][1,1], ans[[i]][1,2], a0 = attr(ans[[i]], "alpha"), l = l, b = 2)
   # col <- adjustcolor("darkgray", 1)
   polygon(arr, col = col, border=col)
 
 
 }
 
+shapes <- sample(c(100,100), nrow(N), TRUE)
+
 for (i in 1:nrow(N))
-  polygon(npolygon(N[i,1], N[i,2], n=100,r=N[i, 3], FALSE),
+  polygon(npolygon(N[i,1], N[i,2], n=shapes[i],r= N[i, 3], FALSE),
           col = cols[i], border = adjustcolor(cols[i], red.f = .8, blue.f = .8, green.f = .8),
           lwd=1.5)
 
