@@ -7,7 +7,7 @@ rotate <- function(mat, p0, alpha) {
   t(R %*% t(mat - p0)) + p0
 }
 
-curves <- function(p0, p1, alpha = pi/2, n=4, sizes = c(0, 0)) {
+curves <- function(p0, p1, alpha = -pi/2, n=4, sizes = c(0, 0)) {
 
   # If no curve, nothing to do (old fashioned straight line)
   if (alpha == 0)
@@ -25,10 +25,13 @@ curves <- function(p0, p1, alpha = pi/2, n=4, sizes = c(0, 0)) {
     p0[2] - cos(alpha/2)*r
   )
 
-  # Angle seq
+  # Angle range
+  alpha_start <- 2*asin(sizes[1]/2/r)
+  alpha_end   <- 2*asin(sizes[2]/2/r)
+
   alpha_i <- seq(
-    alpha - sizes[1]/r,
-    sizes[2]/r,
+    alpha - alpha_start ,
+    alpha_end,
     length.out = n
   ) + (pi - alpha)/2
   # beta <- (pi - alpha)/2.0
@@ -38,8 +41,14 @@ curves <- function(p0, p1, alpha = pi/2, n=4, sizes = c(0, 0)) {
     M[2] + sin(alpha_i)*r
   )
 
-  # Rotation
-  rotate(ans, p0, alpha0)
+
+  # Rotation and return
+  ans <- rotate(ans, p0, alpha0)
+  structure(
+    ans,
+    alpha0 = atan2(ans[1,2] - p0[2], ans[1,1] - p0[1]),
+    alpha1 = atan2(p1[2] - ans[n,2], p1[1] - ans[n,1])
+  )
 
 }
 
@@ -48,21 +57,13 @@ curves <- function(p0, p1, alpha = pi/2, n=4, sizes = c(0, 0)) {
 edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = 0.25, alpha = pi/4, n = 20) {
 
   # Creating curve
-  ans <- curves(
+  curves(
     p0    = c(x0, y0),
     p1    = c(x1, y1),
     alpha = alpha,
     n     = n,
     sizes = c(s0, s1)
     )
-
-  # Computing the last angle
-  beta <- atan2(y1 - ans[n,2], x1 - ans[n,1])
-
-  structure(
-    ans,
-    alpha = beta
-  )
 
 }
 
@@ -97,7 +98,7 @@ arrow_fancy <- function(x0, y0, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
 #' @details
 #' This function is to be called after [plot.new], as it takes the parameter `usr`
 #' from the
-rescale_node <- function(size, rel=c(.05, .05)) {
+rescale_node <- function(size, rel=c(.01, .05)) {
 
   # Rescaling to be between range[1], range[2]
   sran <- range(size, na.rm=TRUE)
@@ -116,11 +117,11 @@ rescale_node <- function(size, rel=c(.05, .05)) {
 }
 
 set.seed(1)
-# x <- igraph::barabasi.game(20, m = 2, power = 1.25)
+x <- igraph::barabasi.game(250, m = 1, power = .25)
 # data(brfarmersDiffNet, package="netdiffuseR")
 # x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
 # x <- igraph::erdos.renyi.game(200, .1)
-x <- igraph::sample_smallworld(1, 4, 3, 0.025)
+# x <- igraph::sample_smallworld(1, 40, 4, 0.025)
 # x <- readr::read_csv("~/Downloads/edges_2008.csv")
 # x <- igraph::graph_from_data_frame(x)
 N <- cbind(igraph::layout_with_fr(x), igraph::degree(x))
@@ -158,7 +159,7 @@ N[,1:2] <- fit_coords_to_dev(N[,1:2])
 
 plot(N[,1:2], type = "n", bty="n", xaxt="n", yaxt="n", ylab="", xlab="", asp=1)
 
-rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "lightgray")
 N[,3] <- rescale_node(N[,3])
 
 ans <- vector("list", nrow(E))
@@ -187,7 +188,7 @@ cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- viridis::cividis(max(clus))[clus]
 # cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-l <- (max(N[,1]) - min(N[,1]))/20
+l <- 0*(max(N[,1]) - min(N[,1]))/150
 D <- igraph::degree(x)
 
 #' A wrapper of `rgb(colorRamp)`
@@ -210,16 +211,16 @@ for (i in seq_along(ans)) {
 
   col <- edge_color_mixer(E[i,1], E[i, 2], cols,alpha = E[i,3]/max(E[,3]))
 
-  lines(ans[[i]], lwd=1, col = col)
+  lines(ans[[i]], lwd=1.5, col = col)
 
-  arr <- arrow_fancy(ans[[i]][1,1], ans[[i]][1,2], a0 = attr(ans[[i]], "alpha"), l = l, b = 2)
+  arr <- arrow_fancy(ans[[i]][20,1], ans[[i]][20,2], a0 = attr(ans[[i]], "alpha1"), l = l, b = 2)
   # col <- adjustcolor("darkgray", 1)
   polygon(arr, col = col, border=col)
 
 
 }
 
-shapes <- sample(c(100,100), nrow(N), TRUE)
+shapes <- rep(100, nrow(N))
 
 for (i in 1:nrow(N))
   polygon(npolygon(N[i,1], N[i,2], n=shapes[i],r= N[i, 3], FALSE),
