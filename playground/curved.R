@@ -7,7 +7,13 @@ rotate <- function(mat, p0, alpha) {
   t(R %*% t(mat - p0)) + p0
 }
 
-curves <- function(p0, p1, alpha = -pi/2, n=4, sizes = c(0, 0)) {
+#' @param p0,p1 Numeric vector of length 2. Center coordinates
+#' @param alpha Numeric scalar. Arc angle in radians.
+#' @param n Integer scalar. Number of segments to approximate the arc.
+#' @param radii Numeric vector of length 2. Radious
+#' @export
+#'
+arc <- function(p0, p1, alpha = pi/2, n=20, radii = c(0, 0)) {
 
   # If no curve, nothing to do (old fashioned straight line)
   if (alpha == 0)
@@ -17,24 +23,31 @@ curves <- function(p0, p1, alpha = -pi/2, n=4, sizes = c(0, 0)) {
 
   # Constants
   d <- stats::dist(rbind(p0, p1))
-  r <- d/2/sin(alpha/2)
+
+  # if ((d - sum(radii)) < 0) {
+  #   alpha <- 2*pi #2*pi - alpha
+  # }
+
+  # if (d > 0)
+    r <- d/2/sin(alpha/2)
+  # else
+  #   r <- max(radii)*1.2
 
   # Center
   M <- cbind(
-    p0[1] + d/2,
-    p0[2] - cos(alpha/2)*r
-  )
+      p0[1] + d/2,
+      p0[2] - cos(alpha/2)*r
+    )
 
   # Angle range
-  alpha_start <- 2*asin(sizes[1]/2/r)
-  alpha_end   <- 2*asin(sizes[2]/2/r)
+  alpha_start <- 2*asin(radii[1]/2/r)
+  alpha_end   <- 2*asin(radii[2]/2/r)
 
   alpha_i <- seq(
     alpha - alpha_start ,
     alpha_end,
     length.out = n
   ) + (pi - alpha)/2
-  # beta <- (pi - alpha)/2.0
 
   ans <- cbind(
     M[1] + cos(alpha_i)*r,
@@ -54,24 +67,26 @@ curves <- function(p0, p1, alpha = -pi/2, n=4, sizes = c(0, 0)) {
 
 #' Edges coordinates
 #' @export
-edge <- function(x0, y0, x1, y1, s0 = 0.25, s1 = 0.25, alpha = pi/4, n = 20) {
+edge <- function(p0, p1, radii =c(0.25, 0.25), alpha = pi/4, n = 20) {
 
   # Creating curve
-  curves(
-    p0    = c(x0, y0),
-    p1    = c(x1, y1),
+  arc(
+    p0    = p0,
+    p1    = p1,
     alpha = alpha,
     n     = n,
-    sizes = c(s0, s1)
+    radii = radii
     )
 
 }
 
 
-arrow_fancy <- function(x0, y0, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
+#' @param x Numeric vector of length 2. Coordinates of the tip
+#'
+arrow_fancy <- function(x, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
 
 
-  p_top   <- c(x0, y0)
+  p_top   <- c(x[1], x[2])
   p_left  <- p_top + c(-cos(a), sin(a))*l
 
   base <- l*sin(a)
@@ -116,18 +131,20 @@ rescale_node <- function(size, rel=c(.01, .05)) {
 
 }
 
-set.seed(1)
-x <- igraph::barabasi.game(200, m = 1, power = .95)
-x <- igraph::rewire(x, igraph::each_edge(.075))
-# data(brfarmersDiffNet, package="netdiffuseR")
-# x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
-# x <- igraph::erdos.renyi.game(200, .1)
-# x <- igraph::sample_smallworld(1, 40, 4, 0.025)
-# x <- readr::read_csv("~/Downloads/edges_2008.csv")
-# x <- igraph::graph_from_data_frame(x)
-N <- cbind(igraph::layout_with_fr(x), igraph::degree(x))
-E <- cbind(igraph::as_edgelist(x, names = FALSE), igraph::E(x)$weight)
-E <- cbind(E,sample(c(.75, 1, 2), size = nrow(E), replace = TRUE, prob = c(.75,.1,.05)))
+#' @param width Numeric vector. width of the edges
+rescale_edge <- function(width, rel=c(1, 3)) {
+
+  ran   <- range(width, na.rm = TRUE)
+  if (ran[1] != ran[2])
+    width <- (width - ran[1])/(ran[2] - ran[1])
+  else
+    width <- width/ran[1]
+
+  width*(rel[2] - rel[1]) + rel[1]
+
+}
+
+
 
 library(polygons)
 
@@ -154,34 +171,9 @@ fit_coords_to_dev <- function(coords, adj = graphics::par("pin")[1:2]) {
 
 }
 
-par(mai=rep(.25, 4))
-
-N[,1:2] <- fit_coords_to_dev(N[,1:2])
-
-plot(N[,1:2], type = "n", bty="n", xaxt="n", yaxt="n", ylab="", xlab="", asp=1)
-
-rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
-N[,3] <- rescale_node(N[,3])
-
-ans <- vector("list", nrow(E))
-for (e in 1:nrow(E)) {
-
-  i <- E[e,1]
-  j <- E[e,2]
-
-  x0 <- N[i, 1]
-  y0 <- N[i, 2]
-  x1 <- N[j, 1]
-  y1 <- N[j, 2]
-  s0 <- N[i, 3]
-  s1 <- N[j, 3]
-  ans[[e]] <- edge(x0, y0, x1, y1, s0 = s0, s1 = s1)
-
-}
-
 
 # cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
-cols <- heat.colors(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
+# cols <- heat.colors(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- igraph::V(x)$toa
 # cols <- cols - min(cols, na.rm = TRUE) + 1
 # cols[is.na(cols)] <- max(cols, na.rm = TRUE) + 1
@@ -190,8 +182,7 @@ cols <- heat.colors(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- viridis::cividis(max(clus))[clus]
 # cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-l <- (max(N[,1]) - min(N[,1]))/150
-D <- igraph::degree(x)
+
 
 #' A wrapper of `rgb(colorRamp)`
 #' @param i,j Integer scalar. Indices of ego and alter from 1 through n.
@@ -207,29 +198,118 @@ edge_color_mixer <- function(i, j, vcols, p = .5, alpha = .15) {
 
 }
 
+nplot <- function(
+  x,
+  layout       = igraph::layout_with_fr(x),
+  vertex.size  = igraph::degree(x),
+  bg.col       = "black",
+  vertex.shape = rep(100, igraph::vcount(x)),
+  vertex.color = NULL
+  ) {
+
+  if (!length(vertex.color)) {
+    vertex.color <- length(table(igraph::degree(x)))
+    vertex.color <- topo.colors(vertex.color)
+    vertex.color <- vertex.color[
+      as.factor(igraph::degree(x))
+      ]
+  }
 
 
-for (i in seq_along(ans)) {
+  # Creating the window
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
 
-  col <- edge_color_mixer(E[i,1], E[i, 2], cols,alpha = E[i,3]/max(E[,3]))
+  # Setting margin
+  par(mai=rep(.25, 4))
 
-  lines(ans[[i]], lwd=1.5, col = col)
+  # Adjusting layout to fit the device
+  layout <- fit_coords_to_dev(layout)
 
-  arr <- arrow_fancy(ans[[i]][20,1], ans[[i]][20,2], a0 = attr(ans[[i]], "alpha1"), l = l, b = 2)
-  # col <- adjustcolor("darkgray", 1)
-  polygon(arr, col = col, border=col)
+  # Plotting
+  plot(layout, type = "n", bty="n", xaxt="n", yaxt="n", ylab="", xlab="", asp=1)
 
+  # Adding rectangle
+  usr <- graphics::par("usr")
+  rect(usr[1], usr[3], usr[2], usr[4], col = bg.col)
+
+  # Rescaling size
+  vertex.size <- rescale_node(vertex.size)
+
+  # Arrow size
+  l <- (max(layout[,1]) - min(layout[,1]))/150
+
+  # Weights
+  W <- igraph::E(x)$weight
+  if (!length(W))
+    W <- rep(1.0, length(igraph::E(x)))
+
+  W <- rescale_edge(W/max(W, na.rm=TRUE))
+
+  # Computing shapes -----------------------------------------------------------
+  E <- igraph::as_edgelist(x, names = FALSE)
+
+  ans <- vector("list", nrow(E))
+  for (e in 1:nrow(E)) {
+
+    i <- E[e,1]
+    j <- E[e,2]
+
+    ans[[e]] <- arc(layout[i,], layout[j,], radii = vertex.size[c(i,j)])
+
+  }
+
+  # Edges
+  for (i in seq_along(ans)) {
+
+    # Not plotting self (for now)
+    if (E[i,1] == E[i, 2])
+      next
+
+    # Computing edge color
+    col <- edge_color_mixer(
+      E[i, 1], E[i, 2],
+      vertex.color, alpha = W[i])
+
+    # Drawing lines
+    lines(ans[[i]], lwd= W[i], col = col)
+
+    # Computing arrow
+    arr <- arrow_fancy(
+      ans[[i]][nrow(ans[[i]]),1:2],
+      a0 = attr(ans[[i]], "alpha1"),
+      l = l,
+      b = 2
+      )
+
+    # Drawing arrows
+    polygon(arr, col = col, border=col)
+
+
+  }
+
+  # Nodes
+  for (i in 1:nrow(layout))
+    polygon(
+      npolygon(
+        layout[i,1], layout[i,2],
+        n = vertex.shape[i],
+        r = vertex.size[i],
+        FALSE
+        ),
+      col    = vertex.color[i],
+      border = adjustcolor(vertex.color[i], red.f = .5, blue.f = .5, green.f = .5),
+      lwd=4
+      )
 
 }
 
-shapes <- rep(100, nrow(N))
+library(netdiffuseR)
+nplot(netdiffuseR::diffnet_to_igraph(medInnovationsDiffNet)[[1]])
+# nplot(netdiffuseR::diffnet_to_igraph(kfamilyDiffNet)[[1]])
 
-for (i in 1:nrow(N))
-  polygon(npolygon(N[i,1], N[i,2], n=shapes[i],r= N[i, 3], FALSE),
-          col = cols[i],
-          border = adjustcolor(cols[i], red.f = .5, blue.f = .5, green.f = .5),
-          lwd=4)
-
-# plot(x, vertex.size=sqrt(igraph::degree(x))*4, vertex.label=NA, edge.curved=TRUE, edge.arrow.size=.5, layout = N[,1:2])
-
-
+set.seed(1)
+x <- igraph::barabasi.game(120, m = 1, power = .95)
+x <- igraph::rewire(x, igraph::each_edge(.075))
+igraph::E(x)$weight <- runif(igraph::ecount(x))
+nplot(x)
