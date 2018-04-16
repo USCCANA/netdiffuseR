@@ -117,7 +117,8 @@ rescale_node <- function(size, rel=c(.01, .05)) {
 }
 
 set.seed(1)
-x <- igraph::barabasi.game(250, m = 1, power = .25)
+x <- igraph::barabasi.game(200, m = 1, power = .95)
+x <- igraph::rewire(x, igraph::each_edge(.075))
 # data(brfarmersDiffNet, package="netdiffuseR")
 # x <- netdiffuseR::diffnet_to_igraph(brfarmersDiffNet)[[1]]
 # x <- igraph::erdos.renyi.game(200, .1)
@@ -159,7 +160,7 @@ N[,1:2] <- fit_coords_to_dev(N[,1:2])
 
 plot(N[,1:2], type = "n", bty="n", xaxt="n", yaxt="n", ylab="", xlab="", asp=1)
 
-rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "lightgray")
+rect(par()$usr[1], par()$usr[3], par()$usr[2], par()$usr[4], col = "black")
 N[,3] <- rescale_node(N[,3])
 
 ans <- vector("list", nrow(E))
@@ -179,7 +180,8 @@ for (e in 1:nrow(E)) {
 }
 
 
-cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
+# cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
+cols <- heat.colors(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- igraph::V(x)$toa
 # cols <- cols - min(cols, na.rm = TRUE) + 1
 # cols[is.na(cols)] <- max(cols, na.rm = TRUE) + 1
@@ -188,7 +190,7 @@ cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
 # cols <- viridis::cividis(max(clus))[clus]
 # cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
 
-l <- 0*(max(N[,1]) - min(N[,1]))/150
+l <- (max(N[,1]) - min(N[,1]))/150
 D <- igraph::degree(x)
 
 #' A wrapper of `rgb(colorRamp)`
@@ -224,8 +226,9 @@ shapes <- rep(100, nrow(N))
 
 for (i in 1:nrow(N))
   polygon(npolygon(N[i,1], N[i,2], n=shapes[i],r= N[i, 3], FALSE),
-          col = cols[i], border = adjustcolor(cols[i], red.f = .8, blue.f = .8, green.f = .8),
-          lwd=1.5)
+          col = cols[i],
+          border = adjustcolor(cols[i], red.f = .5, blue.f = .5, green.f = .5),
+          lwd=4)
 
 # plot(x, vertex.size=sqrt(igraph::degree(x))*4, vertex.label=NA, edge.curved=TRUE, edge.arrow.size=.5, layout = N[,1:2])
 
