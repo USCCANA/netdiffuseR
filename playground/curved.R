@@ -34,12 +34,13 @@ arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
   if ((d - sum(radii)) < 0) {
     alpha <- 2*pi #2*pi - alpha
     d     <- 0
+    # return(NULL)
   }
 
   if (d > 0)
-    r <- d/2/sin(alpha/2)
+    r <- d/2/(sin(alpha/2))
   else
-    r <- max(radii)/2
+    r <- min(radii)
 
   # Center
   M <- cbind(
@@ -47,9 +48,21 @@ arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
       p0[2] - cos(alpha/2)*r
     )
 
+
+  if (d <= 0)
+    wrong <<- list(
+      coords = NULL,
+      p0 = p0,
+      p1 = p1,
+      alpha = alpha,
+      M = M,
+      radii = radii,
+      r = r
+    )
+
   # Angle range
   alpha_start <- 2*asin(radii[1]/2/r)
-  alpha_end   <- 2*asin(radii[2]/2/r)
+  alpha_end   <- 2*asin(min(radii[2]/2/r,1))
 
   alpha_i <- seq(
     alpha - alpha_start ,
@@ -66,15 +79,7 @@ arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
   # Rotation and return
   ans <- rotate(ans, p0, alpha0)
 
-  if (any(ans > 100))
-    wrong <<- list(
-      coords = ans,
-      p0 = p0,
-      p1 = p1,
-      alpha = alpha,
-      M = M,
-      radii = radii
-      )
+
 
   structure(
     ans,
@@ -262,7 +267,7 @@ nplot <- function(
     edge.arrow.size <- vertex.size[E[,1]]/1.25
 
   # Calculating arrow adjustment
-  arrow.size.adj <- vertex.size[E[,2]]*cos(pi/6)/(
+  arrow.size.adj <- vertex.size[E[,2]]/1.25*cos(pi/6)/(
     cos(pi/6) + cos(pi - pi/6 - pi/1.5)
   )/cos(pi/6)
 
@@ -300,8 +305,8 @@ nplot <- function(
       ans[[i]][nrow(ans[[i]]),1:2] +
         arrow.size.adj[i]*c(cos(alpha1), sin(alpha1)),
       alpha = alpha1,
-      l = edge.arrow.size[i],
-      b = 2
+      l = edge.arrow.size[i] #,
+      # b = 2
       )
 
     # Drawing arrows
