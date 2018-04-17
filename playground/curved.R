@@ -1,3 +1,8 @@
+#' Rotation of polygon
+#' @param mat Two-column numeric matrix. Coordinates of the polygon.
+#' @param p0 Numeric vector of length two. Origin.
+#' @param alpha Numeric scalar. Rotation degree in radians.
+#' @export
 rotate <- function(mat, p0, alpha) {
   R <- matrix(
     c(cos(alpha), -sin(alpha), sin(alpha), cos(alpha)),
@@ -7,13 +12,15 @@ rotate <- function(mat, p0, alpha) {
   t(R %*% t(mat - p0)) + p0
 }
 
+#' Arc between two nodes
+#'
 #' @param p0,p1 Numeric vector of length 2. Center coordinates
 #' @param alpha Numeric scalar. Arc angle in radians.
 #' @param n Integer scalar. Number of segments to approximate the arc.
 #' @param radii Numeric vector of length 2. Radious
 #' @export
 #'
-arc <- function(p0, p1, alpha = pi/2, n=20, radii = c(0, 0)) {
+arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
 
   # If no curve, nothing to do (old fashioned straight line)
   if (alpha == 0)
@@ -24,14 +31,15 @@ arc <- function(p0, p1, alpha = pi/2, n=20, radii = c(0, 0)) {
   # Constants
   d <- stats::dist(rbind(p0, p1))
 
-  # if ((d - sum(radii)) < 0) {
-  #   alpha <- 2*pi #2*pi - alpha
-  # }
+  if ((d - sum(radii)) < 0) {
+    alpha <- 2*pi #2*pi - alpha
+    d     <- 0
+  }
 
-  # if (d > 0)
+  if (d > 0)
     r <- d/2/sin(alpha/2)
-  # else
-  #   r <- max(radii)*1.2
+  else
+    r <- max(radii)/2
 
   # Center
   M <- cbind(
@@ -57,6 +65,17 @@ arc <- function(p0, p1, alpha = pi/2, n=20, radii = c(0, 0)) {
 
   # Rotation and return
   ans <- rotate(ans, p0, alpha0)
+
+  if (any(ans > 100))
+    wrong <<- list(
+      coords = ans,
+      p0 = p0,
+      p1 = p1,
+      alpha = alpha,
+      M = M,
+      radii = radii
+      )
+
   structure(
     ans,
     alpha0 = atan2(ans[1,2] - p0[2], ans[1,1] - p0[1]),
@@ -65,25 +84,13 @@ arc <- function(p0, p1, alpha = pi/2, n=20, radii = c(0, 0)) {
 
 }
 
-#' Edges coordinates
-#' @export
-edge <- function(p0, p1, radii =c(0.25, 0.25), alpha = pi/4, n = 20) {
 
-  # Creating curve
-  arc(
-    p0    = p0,
-    p1    = p1,
-    alpha = alpha,
-    n     = n,
-    radii = radii
-    )
-
-}
-
-
-#' @param x Numeric vector of length 2. Coordinates of the tip
+#' Arrow polygon.
 #'
-arrow_fancy <- function(x, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
+#' @param x Numeric vector of length 2. Coordinates of the tip
+#' @param a0
+#' @export
+arrow_fancy <- function(x, alpha = 0, l=.25, a=pi/6, b = pi/1.5) {
 
 
   p_top   <- c(x[1], x[2])
@@ -98,9 +105,10 @@ arrow_fancy <- function(x, a0 = 0, l=.25, a=pi/6, b = pi/1.5) {
   ans <- rbind(p_top, p_left, p_mid, p_right)
 
   # Rotation
-  p0 <- matrix(p_top, nrow = nrow(ans), ncol=2, byrow = TRUE)
-  R  <- matrix(c(cos(a0), -sin(a0), sin(a0), cos(a0)), nrow = 2, byrow = TRUE)
-  t(R %*% t(ans - p0)) + p0
+  # p0 <- matrix(p_top, nrow = nrow(ans), ncol=2, byrow = TRUE)
+  # R  <- matrix(c(cos(a0), -sin(a0), sin(a0), cos(a0)), nrow = 2, byrow = TRUE)
+  # t(R %*% t(ans - p0)) + p0
+  rotate(ans, p_top, alpha = alpha)
 
 
 }
@@ -143,7 +151,6 @@ rescale_edge <- function(width, rel=c(1, 3)) {
   width*(rel[2] - rel[1]) + rel[1]
 
 }
-
 
 
 library(polygons)
@@ -191,10 +198,10 @@ fit_coords_to_dev <- function(coords, adj = graphics::par("pin")[1:2]) {
 #' @return A color.
 edge_color_mixer <- function(i, j, vcols, p = .5, alpha = .15) {
 
-  grDevices::rgb(
-    grDevices::colorRamp(vcols[i], alpha = alpha)(p),
+  grDevices::adjustcolor(grDevices::rgb(
+    grDevices::colorRamp(vcols[i], alpha = FALSE)(p),
     maxColorValue = 255
-  )
+  ), alpha = alpha)
 
 }
 
@@ -202,19 +209,22 @@ nplot <- function(
   x,
   layout       = igraph::layout_with_fr(x),
   vertex.size  = igraph::degree(x),
-  bg.col       = "black",
+  bg.col       = "lightgray",
   vertex.shape = rep(100, igraph::vcount(x)),
-  vertex.color = NULL
+  vertex.color = NULL,
+  vertex.size.range = c(.02, .075),
+  edge.width.range = c(1, 2),
+  edge.arrow.size = NULL
   ) {
 
+  # Computing colors
   if (!length(vertex.color)) {
     vertex.color <- length(table(igraph::degree(x)))
-    vertex.color <- topo.colors(vertex.color)
+    vertex.color <- viridis::viridis(vertex.color)
     vertex.color <- vertex.color[
       as.factor(igraph::degree(x))
       ]
   }
-
 
   # Creating the window
   oldpar <- graphics::par(no.readonly = TRUE)
@@ -234,20 +244,27 @@ nplot <- function(
   rect(usr[1], usr[3], usr[2], usr[4], col = bg.col)
 
   # Rescaling size
-  vertex.size <- rescale_node(vertex.size)
+  vertex.size <- rescale_node(vertex.size, rel = vertex.size.range)
 
-  # Arrow size
-  l <- (max(layout[,1]) - min(layout[,1]))/150
 
   # Weights
   W <- igraph::E(x)$weight
   if (!length(W))
     W <- rep(1.0, length(igraph::E(x)))
 
-  W <- rescale_edge(W/max(W, na.rm=TRUE))
+  # Rescaling edges
+  W <- rescale_edge(W/max(W, na.rm=TRUE), rel = edge.width.range)
 
   # Computing shapes -----------------------------------------------------------
   E <- igraph::as_edgelist(x, names = FALSE)
+
+  if (!length(edge.arrow.size))
+    edge.arrow.size <- vertex.size[E[,1]]/1.25
+
+  # Calculating arrow adjustment
+  arrow.size.adj <- vertex.size[E[,2]]*cos(pi/6)/(
+    cos(pi/6) + cos(pi - pi/6 - pi/1.5)
+  )/cos(pi/6)
 
   ans <- vector("list", nrow(E))
   for (e in 1:nrow(E)) {
@@ -255,7 +272,10 @@ nplot <- function(
     i <- E[e,1]
     j <- E[e,2]
 
-    ans[[e]] <- arc(layout[i,], layout[j,], radii = vertex.size[c(i,j)])
+    ans[[e]] <- arc(
+      layout[i,], layout[j,],
+      radii = vertex.size[c(i,j)] + c(0, arrow.size.adj[e])
+      )
 
   }
 
@@ -269,47 +289,81 @@ nplot <- function(
     # Computing edge color
     col <- edge_color_mixer(
       E[i, 1], E[i, 2],
-      vertex.color, alpha = W[i])
+      vertex.color, alpha = .5)
 
     # Drawing lines
     lines(ans[[i]], lwd= W[i], col = col)
 
     # Computing arrow
+    alpha1 <- attr(ans[[i]], "alpha1")
     arr <- arrow_fancy(
-      ans[[i]][nrow(ans[[i]]),1:2],
-      a0 = attr(ans[[i]], "alpha1"),
-      l = l,
+      ans[[i]][nrow(ans[[i]]),1:2] +
+        arrow.size.adj[i]*c(cos(alpha1), sin(alpha1)),
+      alpha = alpha1,
+      l = edge.arrow.size[i],
       b = 2
       )
 
     # Drawing arrows
-    polygon(arr, col = col, border=col)
+    polygon(arr, col = col, border=col, lwd=W[i])
 
 
   }
 
   # Nodes
-  for (i in 1:nrow(layout))
+  for (i in 1:nrow(layout)) {
+
+    # Circle
     polygon(
       npolygon(
         layout[i,1], layout[i,2],
         n = vertex.shape[i],
-        r = vertex.size[i],
+        r = vertex.size[i]*.9,
         FALSE
         ),
       col    = vertex.color[i],
-      border = adjustcolor(vertex.color[i], red.f = .5, blue.f = .5, green.f = .5),
-      lwd=4
+      border = vertex.color[i],
+      lwd=1
       )
+
+    # Border
+    col <- adjustcolor(vertex.color[i], red.f = .75, blue.f = .75, green.f = .75)
+    polygon(
+      polygons::piechart(
+        1,
+        origin = layout[i,],
+        edges  = vertex.shape[i],
+        radius = vertex.size[i],
+        doughnut = vertex.size[i]*.9,
+        rescale = FALSE,
+        add     = TRUE,
+        skip.plot.slices = TRUE
+      )$slices[[1]],
+      col    = col,
+      border = col,
+      lwd=1
+    )
+
+
+  }
 
 }
 
 library(netdiffuseR)
-nplot(netdiffuseR::diffnet_to_igraph(medInnovationsDiffNet)[[1]])
-# nplot(netdiffuseR::diffnet_to_igraph(kfamilyDiffNet)[[1]])
 
-set.seed(1)
-x <- igraph::barabasi.game(120, m = 1, power = .95)
-x <- igraph::rewire(x, igraph::each_edge(.075))
-igraph::E(x)$weight <- runif(igraph::ecount(x))
-nplot(x)
+x <- igraph::graph_from_edgelist(
+  matrix(
+    c(1,2,2,1,3,4,4,3,4,4), ncol=2, byrow = TRUE
+  )
+)
+
+layout <- matrix(c(
+  1,1,2,2,3,3,4,4
+), byrow = TRUE, ncol=2)
+
+vertex.size <- c(.25, .25, .5, .5)
+nplot(x, layout = layout, vertex.size = vertex.size, vertex.size.range = c(.1,.3))
+
+nplot(netdiffuseR::diffnet_to_igraph(medInnovationsDiffNet)[[1]])
+
+nplot(igraph::rewire(igraph::barabasi.game(200, m=2, power = .95), igraph::each_edge(.1)))
