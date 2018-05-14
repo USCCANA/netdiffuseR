@@ -24,10 +24,7 @@ knitr::include_graphics("valente_1995.jpg")
 
 *   While a lot of factors have been shown to influence diffusion (Spatial,
     Economic, Cultural, Biological, etc.), Social Networks is a prominent one.
-
-*   More complex than __contagion__ $\implies$ a single tie is no longer enough
-    for an innovation to spread across a social system.
-
+    
 *   We think of this in terms of adoption thresholds and social exposure.
 
 
@@ -64,7 +61,7 @@ __netdiffuseR__ is an R package that:
 
 *   Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)
 
-*   Already on CRAN with ~4,000 downloads since its first version, Feb 2016,
+*   Already on CRAN with ~6,500 downloads since its first version, May 2018,
 
 *   A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.
 

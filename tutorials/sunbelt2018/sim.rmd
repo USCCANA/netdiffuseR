@@ -112,7 +112,7 @@ plot_diffnet2(diffnet_disease, vertex.size = dgr(diffnet_disease)[,1], layout=po
 ```
 
 
-# Complex contagion
+# Difussion
 
 ```{r sim-complex}
 set.seed(09)
@@ -121,8 +121,8 @@ diffnet_complex <- rdiffnet(
   seed.nodes = which(diffnet_disease$toa == 1),
   rewire = FALSE,
   threshold.dist = function(i) rbeta(1, 3, 10),
-  name = "Complex Sim",
-  behavior = "More complex than contact"
+  name = "Diffusion",
+  behavior = "Some social behavior"
 )
 
 ```

@@ -20,55 +20,48 @@ rotate <- function(mat, p0, alpha) {
 #' @param radii Numeric vector of length 2. Radious
 #' @export
 #'
-arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
+arc <- function(
+  p0,
+  p1,
+  alpha = pi/3,
+  n=40L,
+  radii = c(0, 0)
+  ) {
 
   # If no curve, nothing to do (old fashioned straight line)
   if (alpha == 0)
     return(rbind(p0, p1))
 
-  alpha0 <- atan2(p1[2]-p0[2], p1[1] - p0[1])
+  elevation <- atan2(p1[2]-p0[2], p1[1] - p0[1])
 
   # Constants
   d <- stats::dist(rbind(p0, p1))
 
+  # If overlapping, then fix the radius to be the average
   if ((d - sum(radii)) < 0) {
-    alpha <- 2*pi #2*pi - alpha
-    d     <- 0
-    # return(NULL)
+    r <- mean(radii)
+    alpha <- 2*pi - asin(d/2/r)*2
+  } else {
+    r <- d/2/(sin(alpha/2))
   }
 
-  if (d > 0)
-    r <- d/2/(sin(alpha/2))
-  else
-    r <- min(radii)
 
-  # Center
-  M <- cbind(
-      p0[1] + d/2,
-      p0[2] - cos(alpha/2)*r
-    )
-
-
-  if (d <= 0)
-    wrong <<- list(
-      coords = NULL,
-      p0 = p0,
-      p1 = p1,
-      alpha = alpha,
-      M = M,
-      radii = radii,
-      r = r
-    )
+  # Angles
+  alpha0 <- asin(radii[1]/2/r)*2
+  alpha1 <- asin(radii[2]/2/r)*2
 
   # Angle range
-  alpha_start <- 2*asin(radii[1]/2/r)
-  alpha_end   <- 2*asin(min(radii[2]/2/r,1))
-
   alpha_i <- seq(
-    alpha - alpha_start ,
-    alpha_end,
+    pi/2 + (alpha/2 - alpha0) ,
+    pi/2 - (alpha/2 - alpha1),
     length.out = n
-  ) + (pi - alpha)/2
+  )
+
+  # Middle point
+  M <- c(
+    p0[1] + d/2,
+    p0[2] - cos(alpha/2)*r
+    )
 
   ans <- cbind(
     M[1] + cos(alpha_i)*r,
@@ -77,14 +70,13 @@ arc <- function(p0, p1, alpha = pi/6, n=40L, radii = c(0, 0)) {
 
 
   # Rotation and return
-  ans <- rotate(ans, p0, alpha0)
-
-
+  ans <- rotate(ans, p0, elevation)
 
   structure(
     ans,
     alpha0 = atan2(ans[1,2] - p0[2], ans[1,1] - p0[1]),
-    alpha1 = atan2(p1[2] - ans[n,2], p1[1] - ans[n,1])
+    alpha1 = atan2(p1[2] - ans[n,2], p1[1] - ans[n,1]),
+    midpoint = ans[ceiling(n/2),]
   )
 
 }
@@ -110,9 +102,7 @@ arrow_fancy <- function(x, alpha = 0, l=.25, a=pi/6, b = pi/1.5) {
   ans <- rbind(p_top, p_left, p_mid, p_right)
 
   # Rotation
-  # p0 <- matrix(p_top, nrow = nrow(ans), ncol=2, byrow = TRUE)
-  # R  <- matrix(c(cos(a0), -sin(a0), sin(a0), cos(a0)), nrow = 2, byrow = TRUE)
-  # t(R %*% t(ans - p0)) + p0
+
   rotate(ans, p_top, alpha = alpha)
 
 
@@ -120,13 +110,26 @@ arrow_fancy <- function(x, alpha = 0, l=.25, a=pi/6, b = pi/1.5) {
 
 #' Rescale the size of a node to make it relative to the aspect ratio of the device
 #' @param size Numeric vector. Size of the node (radious).
-#' @param rel Numeric vector of length 2. Relative size for the minimum and maximum
-#' of the plot.
+#' @param rel Numeric vector of length 3. Relative size for the minimum and maximum
+#' of the plot, and curvature of the scale. The third number is used as `size^rel[3]`.
 #'
 #' @details
 #' This function is to be called after [plot.new], as it takes the parameter `usr`
 #' from the
-rescale_node <- function(size, rel=c(.01, .05)) {
+rescale_node <- function(size, rel=c(.01, .05, 3)) {
+
+  # Checking the rel size
+  if (length(rel) == 2)
+    rel <- c(rel, 3)
+  else if (length(rel) > 3) {
+    warning("`rel` has more than 3 elements. Only the first 3 will be used.")
+  } else if (length(rel) < 2) {
+    stop("`rel` must be at least of length 2 and at most of length 3.")
+  }
+
+
+  # Creating curvature
+  size <- size^rel[3]
 
   # Rescaling to be between range[1], range[2]
   sran <- range(size, na.rm=TRUE)
@@ -184,18 +187,6 @@ fit_coords_to_dev <- function(coords, adj = graphics::par("pin")[1:2]) {
 }
 
 
-# cols <- viridis::cividis(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
-# cols <- heat.colors(max(igraph::degree(x) + 1))[igraph::degree(x) + 1]
-# cols <- igraph::V(x)$toa
-# cols <- cols - min(cols, na.rm = TRUE) + 1
-# cols[is.na(cols)] <- max(cols, na.rm = TRUE) + 1
-# cols <- viridis::cividis(max(cols))[cols]
-# clus <- igraph::membership(igraph::cluster_walktrap(x))
-# cols <- viridis::cividis(max(clus))[clus]
-# cols <- colorRampPalette(c("steelblue", "white"), alpha=1)(max(igraph::degree(x)))
-
-
-
 #' A wrapper of `rgb(colorRamp)`
 #' @param i,j Integer scalar. Indices of ego and alter from 1 through n.
 #' @param p Numeric scalar from 0 to 1. Proportion of mixing.
@@ -210,16 +201,32 @@ edge_color_mixer <- function(i, j, vcols, p = .5, alpha = .15) {
 
 }
 
+#' Plot a network
+#'
+#' @param x
+#' @param layout
+#' @param vertex.size Numeric vector of length `vcount(x)`. Absolute size of the vertex.
+#' @param vertex.shape Numeric vector of length `vcount(x)`. Number of sizes of
+#' the vertex. E.g. three is a triangle, and 100 approximates a circle.
+#' @param vertex.color Vector of length `vcount(x)`. Vertex colors.
+#' @param vertex.size.range
+#' @param vertex.frame.color
+#' @param edge.width
+#' @param edge.width.range
+#' @param edge.arrow.size
+#'
 nplot <- function(
   x,
-  layout       = igraph::layout_with_fr(x),
-  vertex.size  = igraph::degree(x),
-  bg.col       = "lightgray",
-  vertex.shape = rep(100, igraph::vcount(x)),
-  vertex.color = NULL,
-  vertex.size.range = c(.02, .075),
-  edge.width.range = c(1, 2),
-  edge.arrow.size = NULL
+  layout             = igraph::layout_with_fr(x),
+  vertex.size        = igraph::degree(x),
+  bg.col             = "black",
+  vertex.shape       = rep(100, igraph::vcount(x)),
+  vertex.color       = NULL,
+  vertex.size.range  = c(.01, .03),
+  vertex.frame.color = NULL,
+  edge.width         = NULL,
+  edge.width.range   = c(1, 2),
+  edge.arrow.size    = NULL
   ) {
 
   # Computing colors
@@ -253,21 +260,20 @@ nplot <- function(
 
 
   # Weights
-  W <- igraph::E(x)$weight
-  if (!length(W))
-    W <- rep(1.0, length(igraph::E(x)))
+  if (!length(edge.width))
+    edge.width <- rep(1.0, length(igraph::E(x)))
 
   # Rescaling edges
-  W <- rescale_edge(W/max(W, na.rm=TRUE), rel = edge.width.range)
+  edge.width <- rescale_edge(edge.width/max(edge.width, na.rm=TRUE), rel = edge.width.range)
 
   # Computing shapes -----------------------------------------------------------
   E <- igraph::as_edgelist(x, names = FALSE)
 
   if (!length(edge.arrow.size))
-    edge.arrow.size <- vertex.size[E[,1]]/1.25
+    edge.arrow.size <- vertex.size[E[,1]]/2
 
   # Calculating arrow adjustment
-  arrow.size.adj <- vertex.size[E[,2]]/1.25*cos(pi/6)/(
+  arrow.size.adj <- edge.arrow.size*cos(pi/6)/(
     cos(pi/6) + cos(pi - pi/6 - pi/1.5)
   )/cos(pi/6)
 
@@ -287,6 +293,9 @@ nplot <- function(
   # Edges
   for (i in seq_along(ans)) {
 
+    if (!length(ans[[i]]))
+      next
+
     # Not plotting self (for now)
     if (E[i,1] == E[i, 2])
       next
@@ -297,23 +306,29 @@ nplot <- function(
       vertex.color, alpha = .5)
 
     # Drawing lines
-    lines(ans[[i]], lwd= W[i], col = col)
+    lines(ans[[i]], lwd= edge.width[i], col = col)
 
     # Computing arrow
     alpha1 <- attr(ans[[i]], "alpha1")
     arr <- arrow_fancy(
-      ans[[i]][nrow(ans[[i]]),1:2] +
+      x = ans[[i]][nrow(ans[[i]]),1:2] +
         arrow.size.adj[i]*c(cos(alpha1), sin(alpha1)),
       alpha = alpha1,
-      l = edge.arrow.size[i] #,
-      # b = 2
+      l     = edge.arrow.size[i]
       )
 
     # Drawing arrows
-    polygon(arr, col = col, border=col, lwd=W[i])
-
+    polygon(
+      arr,
+      col    = col,
+      border = col,
+      lwd    = edge.width[i]
+      )
 
   }
+
+  if (!length(vertex.frame.color))
+    vertex.frame.color <- adjustcolor(vertex.color, red.f = .75, blue.f = .75, green.f = .75)
 
   # Nodes
   for (i in 1:nrow(layout)) {
@@ -332,7 +347,6 @@ nplot <- function(
       )
 
     # Border
-    col <- adjustcolor(vertex.color[i], red.f = .75, blue.f = .75, green.f = .75)
     polygon(
       polygons::piechart(
         1,
@@ -344,8 +358,8 @@ nplot <- function(
         add     = TRUE,
         skip.plot.slices = TRUE
       )$slices[[1]],
-      col    = col,
-      border = col,
+      col    = vertex.frame.color[i],
+      border = vertex.frame.color[i],
       lwd=1
     )
 
