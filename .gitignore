@@ -3,6 +3,7 @@
 .RData
 inst/doc
 
+
 # Binary files
 *.so
 *.o
