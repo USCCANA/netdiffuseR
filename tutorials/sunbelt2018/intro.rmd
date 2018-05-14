@@ -64,7 +64,7 @@ __netdiffuseR__ is an R package that:
 
 *   Can handle big graphs, more than 4 billion elements adjacency matrix (PR for RcppArmadillo)
 
-*   Already on CRAN with ~4,000 downloads since its first version, Feb 2016,
+*   Already on CRAN  with ~4,000 downloads since its first version, Feb 2016,
 
 *   A lot of features to make it easy to read network (dynamic) data, making it a nice companion of other net packages.
 
