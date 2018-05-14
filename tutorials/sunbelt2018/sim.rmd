@@ -269,3 +269,8 @@ legend(
 
 1.  Given the following types of networks: Small-world, Scale-free, Bernoulli,
     what set of $n$ initiators maximizes diffusion?
+    
+```{r solution, echo=FALSE, eval=FALSE}
+
+```
+
