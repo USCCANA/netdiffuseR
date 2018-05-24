@@ -132,7 +132,7 @@
 #' @keywords manip
 #' @family data management functions
 #' @include graph_data.r
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 edgelist_to_adjmat <- function(
   edgelist, w=NULL,
   t0=NULL, t1=NULL, t=NULL, simplify=TRUE,
@@ -457,7 +457,7 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
 #' @keywords manip
 #' @include graph_data.r
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
   if (!inherits(obj, "diffnet")) {
@@ -561,7 +561,7 @@ toa_mat.integer <- function(times, labels=NULL,
 #' toa_diff(times)
 #' @keywords manip
 #' @include graph_data.r
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)

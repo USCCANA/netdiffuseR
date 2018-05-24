@@ -452,7 +452,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @keywords univar
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 #' @name exposure
 NULL
 
@@ -664,7 +664,7 @@ exposure_for <- function(
 #' @family statistics
 #' @keywords univar
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 cumulative_adopt_count <- function(obj) {
 
   if (inherits(obj, "diffnet")) x <- obj$cumadopt
@@ -773,7 +773,7 @@ cumulative_adopt_count <- function(obj) {
 #' Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
 #' (2nd ed.). Cambridge: MIT Press.
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
   if (inherits(obj, "diffnet")) {
     dn  <- with(obj$meta, list(ids, pers))
@@ -865,7 +865,7 @@ plot.diffnet_hr <- function(x,y=NULL, main="Hazard Rate", xlab="Time",
 #' diffnet <- as_diffnet(graph, toa)
 #' threshold(diffnet, alt.graph=se)
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALSE,
                        lags=0L, ...) {
 

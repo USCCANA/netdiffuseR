@@ -134,6 +134,8 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{rescale_vertex_igraph}}
 }
 \author{
-George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+George G. Vega Yon & Thomas W. Valente
 }
+\concept{statistics}
+\concept{visualizations}
 \keyword{univar}

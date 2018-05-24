@@ -49,7 +49,7 @@
 #' Pages 89-97, ISSN 0277-9536
 #' (\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001})
 #' @export
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 #' @examples
 #' # Simple example ------------------------------------------------------------
 #' set.seed(1312)

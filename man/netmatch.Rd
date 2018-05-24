@@ -3,7 +3,6 @@
 \name{netmatch}
 \alias{netmatch}
 \alias{netmatch_prepare}
-\alias{netmatch}
 \title{Matching Estimators with Network Data}
 \usage{
 netmatch_prepare(dat, graph, timevar, depvar, covariates, treat_thr = rep(1L,

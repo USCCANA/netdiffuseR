@@ -24,5 +24,5 @@ netdiffuseR was created with the support of grant R01 CA157577 from the National
 }
 
 \author{
-Vega Yon, Dyal, Hayes & Valente
+George G. Vega Yon & Thomas W. Valente
 }

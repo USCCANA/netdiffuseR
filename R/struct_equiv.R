@@ -91,7 +91,7 @@
 #'
 #'
 #'
-#' @author George G. Vega Yon, Stephanie R. Dyal, Timothy B, Hayes, Thomas W. Valente
+#' @author George G. Vega Yon & Thomas W. Valente
 struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL,  ...) {
 
   # Checking groupvar

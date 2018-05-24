@@ -30,3 +30,4 @@ README[.]md
 ^src/rgraph_scale_free.+$
 makefile
 ^src/Makevars$
+^docs$

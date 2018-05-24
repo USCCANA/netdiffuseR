@@ -92,3 +92,4 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
 \author{
 Thomas W. Valente
 }
+\concept{diffusion datasets}

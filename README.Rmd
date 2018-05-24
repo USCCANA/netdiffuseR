@@ -95,6 +95,20 @@ For the case of windows and mac users, they can find binary versions of the pack
     > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
     ```
 
+## Tutorials
+
+Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Here are the repositories:
+
+* Sunbelt 2018: https://USCCANA.github.io/netdiffuser-sunbelt2018 ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
+* NASN 2017: https://USCCANA.github.io/netdiffuser-nasn2017 ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
+* Sunbelt 2016: https://github.com/USCCANA/netdiffuser-sunbelt2016
+
+## Presentations
+
+* ic2s2 2016 Evanston, IL: https://github.com/USCCANA/netdiffuser-ic2s22016 (poster)
+* useR! 2016 Stanford, CA: https://github.com/USCCANA/netdiffuser-user2016 (slides)
+* useR! 2016: https://github.com/USCCANA/netdiffuser-user2016
+
 ## Examples
 
 This example has been taken from the package's vignettes:

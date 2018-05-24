@@ -4,10 +4,9 @@ note <- sprintf("R package version %s", meta$Version)
 bibentry(bibtype = "Manual",
          title = "{netdiffuseR}: Analysis of Diffusion and Contagion Processes on Networks",
          author = c(
-          person("George", "Vega Yon"),
-          person("Stephanie", "Dyal"),
-          person("Timothy", "Hayes"),
-          person("Thomas", "Valente")),
+          person("George", "Vega Yon", comment = c(ORCID = "0000-0002-3171-0844")),
+          person("Thomas", "Valente")
+          ),
          year = year,
          note = note,
          url = "https://github.com/USCCANA/netdiffuseR")

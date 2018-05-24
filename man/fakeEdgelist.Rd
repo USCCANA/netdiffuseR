@@ -28,3 +28,4 @@ Other diffusion datasets: \code{\link{brfarmersDiffNet}},
 \author{
 George G. Vega Yon
 }
+\concept{diffusion datasets}

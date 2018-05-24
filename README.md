@@ -76,6 +76,22 @@ For the case of windows and mac users, they can find binary versions of the pack
     > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
     ```
 
+Tutorials
+---------
+
+Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Here are the repositories:
+
+-   Sunbelt 2018: <https://USCCANA.github.io/netdiffuser-sunbelt2018> ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
+-   NASN 2017: <https://USCCANA.github.io/netdiffuser-nasn2017> ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
+-   Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
+
+Presentations
+-------------
+
+-   ic2s2 2016 Evanston, IL: <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
+-   useR! 2016 Stanford, CA: <https://github.com/USCCANA/netdiffuser-user2016> (slides)
+-   useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
+
 Examples
 --------
 
@@ -332,11 +348,11 @@ sessionInfo()
 
     ## R version 3.4.4 (2018-03-15)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.4 LTS
+    ## Running under: Ubuntu 14.04.5 LTS
     ## 
     ## Matrix products: default
-    ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
-    ## LAPACK: /usr/lib/lapack/liblapack.so.3.6.0
+    ## BLAS: /usr/lib/libblas/libblas.so.3.0
+    ## LAPACK: /usr/lib/lapack/liblapack.so.3.0
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -353,14 +369,14 @@ sessionInfo()
     ## [1] netdiffuseR_1.19.999
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.1.2         Rcpp_0.12.15         knitr_1.20          
+    ##  [1] igraph_1.2.1         Rcpp_0.12.16         knitr_1.20          
     ##  [4] magrittr_1.5         network_1.13.0       networkDynamic_0.9.0
     ##  [7] MASS_7.3-49          lattice_0.20-35      stringr_1.3.0       
     ## [10] tools_3.4.4          MatchIt_3.0.2        grid_3.4.4          
-    ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.17         
-    ## [16] rprojroot_1.3-2      digest_0.6.15        Matrix_1.2-11       
+    ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.18         
+    ## [16] rprojroot_1.3-2      digest_0.6.15        Matrix_1.2-14       
     ## [19] evaluate_0.10.1      rmarkdown_1.9        statnet.common_4.0.0
-    ## [22] stringi_1.1.6        compiler_3.4.4       backports_1.1.2     
+    ## [22] stringi_1.1.7        compiler_3.4.4       backports_1.1.2     
     ## [25] boot_1.3-20          SparseM_1.77         pkgconfig_2.0.1
 
 To-do list

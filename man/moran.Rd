@@ -38,26 +38,27 @@ variable), the statistic becomes irrelevant, and furthermore, the standard error
 tends to be undefined (\code{NaN}).
 }
 \examples{
+
 \dontrun{
-# Generating a small random graph
-set.seed(123)
-graph <- rgraph_ba(t = 4)
-w <- approx_geodesic(graph)
-x <- rnorm(5)
 
-# Computing Moran's I
-moran(x, w)
+  # Generating a small random graph
+  set.seed(123)
+  graph <- rgraph_ba(t = 4)
+  w <- approx_geodesic(graph)
+  x <- rnorm(5)
 
-# Comparing with the ape's package version
-ape::Moran.I(x, as.matrix(w))
+  # Computing Moran's I
+  moran(x, w)
+
+  # Comparing with the ape's package version
+  ape::Moran.I(x, as.matrix(w))
+
 }
+
 }
 \references{
 Moran's I. (2015, September 3). In Wikipedia, The Free Encyclopedia.
-Retrieved 06:23, December 22, 2015, from
-\url{
-https://en.wikipedia.org/w/index.php?title=Moran%27s_I&oldid=679297766
-}
+Retrieved 06:23, December 22, 2015, from \url{https://en.wikipedia.org/w/index.php?title=Moran\%27s_I&oldid=679297766}
 }
 \seealso{
 Other statistics: \code{\link{bass}},
@@ -74,3 +75,5 @@ Other Functions for inference: \code{\link{bootnet}},
 \author{
 George G. Vega Yon
 }
+\concept{Functions for inference}
+\concept{statistics}

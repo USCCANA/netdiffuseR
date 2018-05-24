@@ -102,3 +102,4 @@ networkDynamic_to_diffnet(ans, toavar = "toa")
 Other Foreign: \code{\link{igraph}},
   \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
 }
+\concept{Foreign}

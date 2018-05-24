@@ -37,6 +37,7 @@ Other statistics: \code{\link{bass}},
   \code{\link{vertex_covariate_dist}}
 }
 \author{
-George G. Vega Yon, Stephanie R. Dyal, Timothy B. Hayes & Thomas W. Valente
+George G. Vega Yon & Thomas W. Valente
 }
+\concept{statistics}
 \keyword{univar}
