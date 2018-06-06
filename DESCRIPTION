@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Analysis of Diffusion and Contagion Processes on Networks
-Version: 1.19.999
-Date: 2018-03-26
+Version: 1.20.0
+Date: 2018-06-06
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
     comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")
@@ -36,7 +36,8 @@ Imports:
     stats,
     utils,
     boot,
-    igraph
+    igraph,
+    viridis
 Suggests:
     covr,
     testthat,

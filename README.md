@@ -185,8 +185,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 
 ``` r
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
-                         exclude.zeros = TRUE, h=1,
-                         color.palette = colorRampPalette(c("lightblue", "yellow", "red")))
+                         exclude.zeros = TRUE, h=1)
 ```
 
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
@@ -230,7 +229,7 @@ data("medInnovationsDiffNet")
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.color     = c("tomato", "steelblue", "black", "gray")[medInnovationsDiffNet[["city"]]],
+  vertex.color     = viridis::inferno(4)[medInnovationsDiffNet[["city"]]],
   vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
@@ -292,7 +291,7 @@ diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- colorRampPalette(c("white", "tomato"))(100)
+col <- viridis::plasma(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0), cex=.8)
 image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")
@@ -326,11 +325,11 @@ ftable(out)
 # Plotting 
 oldpar <- par(no.readonly = TRUE)
 par(xpd=TRUE)
-plot(out, color=blues9[2:6], las = 2, xlab="Time of Adoption",
+plot(out, color=viridis::inferno(5), las = 2, xlab="Time of Adoption",
      ylab="Threshold", main="")
 
 # Adding key
-legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
+legend("bottom", legend = levels(out$thr), fill=viridis::inferno(5), horiz = TRUE,
        cex=.6, bty="n", inset=c(0,-.1))
 ```
 
@@ -348,11 +347,11 @@ sessionInfo()
 
     ## R version 3.4.4 (2018-03-15)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 14.04.5 LTS
+    ## Running under: Ubuntu 16.04.4 LTS
     ## 
     ## Matrix products: default
-    ## BLAS: /usr/lib/libblas/libblas.so.3.0
-    ## LAPACK: /usr/lib/lapack/liblapack.so.3.0
+    ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
+    ## LAPACK: /usr/lib/lapack/liblapack.so.3.6.0
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -369,15 +368,20 @@ sessionInfo()
     ## [1] netdiffuseR_1.19.999
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.1         Rcpp_0.12.16         knitr_1.20          
-    ##  [4] magrittr_1.5         network_1.13.0       networkDynamic_0.9.0
-    ##  [7] MASS_7.3-49          lattice_0.20-35      stringr_1.3.0       
-    ## [10] tools_3.4.4          MatchIt_3.0.2        grid_3.4.4          
-    ## [13] sna_2.4              htmltools_0.3.6      yaml_2.1.18         
-    ## [16] rprojroot_1.3-2      digest_0.6.15        Matrix_1.2-14       
-    ## [19] evaluate_0.10.1      rmarkdown_1.9        statnet.common_4.0.0
-    ## [22] stringi_1.1.7        compiler_3.4.4       backports_1.1.2     
-    ## [25] boot_1.3-20          SparseM_1.77         pkgconfig_2.0.1
+    ##  [1] igraph_1.2.1         Rcpp_0.12.17         knitr_1.20          
+    ##  [4] magrittr_1.5         network_1.13.0.1     networkDynamic_0.9.0
+    ##  [7] MASS_7.3-50          munsell_0.4.3        viridisLite_0.3.0   
+    ## [10] colorspace_1.3-2     lattice_0.20-35      rlang_0.2.1         
+    ## [13] plyr_1.8.4           stringr_1.3.1        tools_3.4.4         
+    ## [16] MatchIt_3.0.2        grid_3.4.4           gtable_0.2.0        
+    ## [19] sna_2.4              coda_0.19-1          htmltools_0.3.6     
+    ## [22] lazyeval_0.2.1       yaml_2.1.19          rprojroot_1.3-2     
+    ## [25] digest_0.6.15        tibble_1.4.2         Matrix_1.2-14       
+    ## [28] gridExtra_2.3        ggplot2_2.2.1        viridis_0.5.1       
+    ## [31] evaluate_0.10.1      rmarkdown_1.9        statnet.common_4.1.2
+    ## [34] stringi_1.2.2        pillar_1.2.3         compiler_3.4.4      
+    ## [37] scales_0.5.0         backports_1.1.2      boot_1.3-20         
+    ## [40] SparseM_1.77         pkgconfig_2.0.1
 
 To-do list
 ----------

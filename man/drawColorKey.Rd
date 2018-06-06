@@ -6,10 +6,9 @@
 \usage{
 drawColorKey(x, tick.marks = pretty_within(x), labels = tick.marks,
   main = NULL, key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
-  nlevels = length(tick.marks),
-  color.palette = (grDevices::colorRampPalette(c("steelblue", "gray",
-  "tomato")))(nlevels), tick.width = c(0.01, 0.0075), add.box = TRUE,
-  na.col = NULL, na.height = 0.1, na.lab = "n/a", ...)
+  nlevels = length(tick.marks), color.palette = viridis::viridis(nlevels),
+  tick.width = c(0.01, 0.0075), add.box = TRUE, na.col = NULL,
+  na.height = 0.1, na.lab = "n/a", ...)
 }
 \arguments{
 \item{x}{A numeric vector with the data (it is used to extract the range).}

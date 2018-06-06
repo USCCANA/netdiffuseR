@@ -23,6 +23,18 @@ Analysis of Diffusion and Contagion Processes on Networks
 netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
 }
 
+\section{Workshops and Tutorials}{
+
+
+Online you can find several learning resources:
+
+\itemize{
+\item Sunbelt 2016 \url{https://github.com/USCCANA/netdiffuser-sunbelt2016}
+\item NASN 2017 \url{https://github.com/USCCANA/netdiffuser-nasn2017}
+\item Sunbelt 2018 \url{https://github.com/USCCANA/netdiffuser-sunbelt2018}
+}
+}
+
 \author{
 George G. Vega Yon & Thomas W. Valente
 }

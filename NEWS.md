@@ -1,8 +1,31 @@
-# Changes in netdiffuseR version 1.19.999 (2018-03-26)
+# Changes in netdiffuseR version 1.20.0 (2018-06-06)
 
 ## New functions and features
 
 * `diffreg` provides a wrapper of `glm` to run lagged regression models.
+
+* Default colors for `plot_diffnet2`, `plot_infectsucept`, and others are now
+  selected from the `viridis` R package, which provides perceptually uniform
+  and colorblind proof colors.
+
+
+## Bug fixes
+
+* `plot_diffnet2` now has the correct scaling in nodes positions.
+
+* `rdiffnet_multiple` calls `library(netdiffuseR)` when using multicore.
+
+
+## Other changes
+
+* `arrow.width` in `plot_threshold.default` now set to be equal to
+  `nslices(graph)/80`.
+
+* `curved` option passed to `plot_._threshold.default`.
+
+* The c++ function `edges_arrow` now returns two different elements (the edge,
+  and the arrow).
+
 
 
 # Changes in netdiffuseR version 1.19.0 (2017-10-16)

@@ -137,8 +137,7 @@ summary(diffnet)
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
-                         exclude.zeros = TRUE, h=1,
-                         color.palette = colorRampPalette(c("lightblue", "yellow", "red")))
+                         exclude.zeros = TRUE, h=1)
 ```
 
 ### Threshold
@@ -163,7 +162,7 @@ data("medInnovationsDiffNet")
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.color     = c("tomato", "steelblue", "black", "gray")[medInnovationsDiffNet[["city"]]],
+  vertex.color     = viridis::inferno(4)[medInnovationsDiffNet[["city"]]],
   vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
@@ -215,7 +214,7 @@ diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- colorRampPalette(c("white", "tomato"))(100)
+col <- viridis::plasma(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0), cex=.8)
 image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")
@@ -234,11 +233,11 @@ ftable(out)
 # Plotting 
 oldpar <- par(no.readonly = TRUE)
 par(xpd=TRUE)
-plot(out, color=blues9[2:6], las = 2, xlab="Time of Adoption",
+plot(out, color=viridis::inferno(5), las = 2, xlab="Time of Adoption",
      ylab="Threshold", main="")
 
 # Adding key
-legend("bottom", legend = levels(out$thr), fill=blues9[2:6], horiz = TRUE,
+legend("bottom", legend = levels(out$thr), fill=viridis::inferno(5), horiz = TRUE,
        cex=.6, bty="n", inset=c(0,-.1))
 par(oldpar)
 ```
