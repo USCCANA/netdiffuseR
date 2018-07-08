@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -34,6 +36,7 @@
 network, it creates an nlevels by nlevels matrix indicating the
 number of individuals that lie within each cell, and draws a heatmap." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -60,7 +63,7 @@ number of individuals that lie within each cell, and draws a heatmap." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">netdiffuseR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.19.999</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.20.0</span>
       </span>
     </div>
 
@@ -139,9 +142,8 @@ number of individuals that lie within each cell, and draws a heatmap.</p>
   <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Distribution of Infectiousness and\nSusceptibility"</span>,
   <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"Infectiousness of ego"</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"Susceptibility of ego"</span>,
   <span class='kw'>sub</span> <span class='kw'>=</span> <span class='fu'>ifelse</span>(<span class='no'>logscale</span>, <span class='st'>"(in log-scale)"</span>, <span class='fl'>NA</span>),
-  <span class='kw'>color.palette</span> <span class='kw'>=</span> <span class='kw pkg'>grDevices</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/grDevices/topics/colorRamp'>colorRampPalette</a></span>(<span class='fu'>c</span>(<span class='st'>"skyblue"</span>, <span class='st'>"tomato"</span>)),
-  <span class='kw'>include.grid</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>exclude.zeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>valued</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"diffnet.valued"</span>, <span class='fl'>FALSE</span>), <span class='no'>...</span>)</pre>
+  <span class='kw'>color.palette</span> <span class='kw'>=</span> <span class='kw pkg'>viridis</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/viridis/topics/viridis_pal'>viridis_pal</a></span>(), <span class='kw'>include.grid</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>exclude.zeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>valued</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"diffnet.valued"</span>, <span class='fl'>FALSE</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -257,7 +259,7 @@ of Social Networks". Science, 337(6092), 337–341.
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Infectiousness and susceptibility are computed via <code><a href='infection.html'>infection</a></code> and
-<code><a href='infection.html'>susceptibility</a></code>.</p>
+<code>susceptibility</code>.</p>
 <p>Other visualizations: <code><a href='dgr.html'>dgr</a></code>,
   <code><a href='diffusionMap.html'>diffusionMap</a></code>, <code><a href='drawColorKey.html'>drawColorKey</a></code>,
   <code><a href='grid_distribution.html'>grid_distribution</a></code>,

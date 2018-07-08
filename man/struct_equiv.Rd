@@ -118,5 +118,4 @@ Other statistics: \code{\link{bass}},
 \author{
 George G. Vega Yon & Thomas W. Valente
 }
-\concept{statistics}
 \keyword{univar}

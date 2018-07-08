@@ -31,3 +31,5 @@ README[.]md
 makefile
 ^src/Makevars$
 ^docs$
+^LICENSE\.md$
+^_pkgdown\.yml$

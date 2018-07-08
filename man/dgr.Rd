@@ -108,6 +108,4 @@ Other visualizations: \code{\link{diffusionMap}},
 \author{
 George G. Vega Yon
 }
-\concept{statistics}
-\concept{visualizations}
 \keyword{univar}

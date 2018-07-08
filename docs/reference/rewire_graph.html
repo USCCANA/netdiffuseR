@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -32,6 +34,7 @@
 
 <meta property="og:description" content="Changes the structure of a graph by altering ties." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -58,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">netdiffuseR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.19.999</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.20.0</span>
       </span>
     </div>
 
@@ -197,7 +200,7 @@ or self edges using the resulting graph at step \(m-1\).</p>
 preserves the degree sequence of the graph and <code>"endpoints"</code> does not.
 The <code>"swap"</code> algorithm is specially useful to asses the non-randomness of
 a graph's structural properties, furthermore it is this algorithm the one used
-in the <code><a href='struct_test.html'>struct_test</a></code> routine implemented in <span class="pkg">netdiffuseR</span>.</p>
+in the <code>struct_test</code> routine implemented in <span class="pkg">netdiffuseR</span>.</p>
 <p>Rewiring assumes a weighted network, hence \(G(i,j) = k = G(i',j')\),
 where \(i',j'\) are the new end points of the edge and \(k\) may not be equal
 to one.</p>
@@ -276,8 +279,8 @@ implemented as follows:</p>
        same to the diagonally opposed coordinates in the case of undirected graphs).</p></li>
 <li><p>Next \(l\).</p></li>
 </ol>
-    <p>The endpoints algorithm is used by default in <code><a href='rdiffnet.html'>rdiffnet</a></code> and used
-to be the default in <code><a href='struct_test.html'>struct_test</a></code> (now <code>swap</code> is the default).</p>
+    <p>The endpoints algorithm is used by default in <code>rdiffnet</code> and used
+to be the default in <code>struct_test</code> (now <code>swap</code> is the default).</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -305,7 +308,7 @@ prescribed joint degree distribution. Journal of Experimental Algorithmics,
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other simulation functions: <code><a href='permute_graph.html'>permute_graph</a></code>,
-  <code><a href='rdiffnet.html'>rdiffnet</a></code>, <code><a href='rgraph_ba.html'>rgraph_ba</a></code>,
+  <code>rdiffnet</code>, <code>rgraph_ba</code>,
   <code><a href='rgraph_er.html'>rgraph_er</a></code>, <code><a href='rgraph_ws.html'>rgraph_ws</a></code>,
   <code><a href='ring_lattice.html'>ring_lattice</a></code></p></div>
     

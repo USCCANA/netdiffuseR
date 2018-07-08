@@ -3,6 +3,7 @@
 \name{rdiffnet}
 \alias{rdiffnet}
 \alias{rdiffnet_multiple}
+\alias{rdiffnet}
 \title{Random diffnet network}
 \usage{
 rdiffnet_multiple(R, statistic, ..., ncpus = 1L, cl = NULL)
@@ -184,4 +185,3 @@ Other simulation functions: \code{\link{permute_graph}},
 \author{
 George G. Vega Yon
 }
-\concept{simulation functions}

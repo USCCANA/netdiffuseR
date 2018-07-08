@@ -136,6 +136,4 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon & Thomas W. Valente
 }
-\concept{statistics}
-\concept{visualizations}
 \keyword{univar}

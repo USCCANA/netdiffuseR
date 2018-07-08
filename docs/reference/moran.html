@@ -190,12 +190,12 @@ Retrieved 06:23, December 22, 2015, from <a href='https://en.wikipedia.org/w/ind
     <div class='dont-index'><p>Other statistics: <code><a href='bass.html'>bass</a></code>,
   <code><a href='classify_adopters.html'>classify_adopters</a></code>,
   <code><a href='cumulative_adopt_count.html'>cumulative_adopt_count</a></code>, <code><a href='dgr.html'>dgr</a></code>,
-  <code><a href='ego_variance.html'>ego_variance</a></code>, <code><a href='exposure.html'>exposure</a></code>,
+  <code><a href='ego_variance.html'>ego_variance</a></code>, <code>exposure</code>,
   <code><a href='hazard_rate.html'>hazard_rate</a></code>, <code><a href='infection.html'>infection</a></code>,
   <code><a href='struct_equiv.html'>struct_equiv</a></code>, <code><a href='threshold.html'>threshold</a></code>,
-  <code><a href='vertex_covariate_dist.html'>vertex_covariate_dist</a></code></p>
-<p>Other Functions for inference: <code><a href='bootnet.html'>bootnet</a></code>,
-  <code><a href='struct_test.html'>struct_test</a></code></p></div>
+  <code>vertex_covariate_dist</code></p>
+<p>Other Functions for inference: <code>bootnet</code>,
+  <code>struct_test</code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -203,7 +203,7 @@ Retrieved 06:23, December 22, 2015, from <a href='https://en.wikipedia.org/w/ind
 </div><span class='co'># NOT RUN {</span>
   <span class='co'># Generating a small random graph</span>
   <span class='fu'>set.seed</span>(<span class='fl'>123</span>)
-  <span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rgraph_ba.html'>rgraph_ba</a></span>(<span class='kw'>t</span> <span class='kw'>=</span> <span class='fl'>4</span>)
+  <span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>rgraph_ba</span>(<span class='kw'>t</span> <span class='kw'>=</span> <span class='fl'>4</span>)
   <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='approx_geodesic.html'>approx_geodesic</a></span>(<span class='no'>graph</span>)
   <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>rnorm</span>(<span class='fl'>5</span>)
 

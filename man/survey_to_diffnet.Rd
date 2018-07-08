@@ -178,4 +178,3 @@ Other data management functions: \code{\link{diffnet-class}},
 \author{
 Vega Yon
 }
-\concept{data management functions}

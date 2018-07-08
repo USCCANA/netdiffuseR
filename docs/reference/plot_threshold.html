@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -33,6 +35,7 @@
 <meta property="og:description" content="Draws a graph where the coordinates are given by time of adoption, x-axis,
 and threshold level, y-axis." />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -59,7 +62,7 @@ and threshold level, y-axis." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">netdiffuseR</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.19.999</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.20.0</span>
       </span>
     </div>
 
@@ -162,7 +165,7 @@ and threshold level, y-axis.</p>
     </tr>
     <tr>
       <th>expo</th>
-      <td><p>\(n\times T\) matrix. Esposure to the innovation obtained from <code><a href='exposure.html'>exposure</a></code></p></td>
+      <td><p>\(n\times T\) matrix. Esposure to the innovation obtained from <code>exposure</code></p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -182,7 +185,7 @@ and threshold level, y-axis.</p>
     </tr>
     <tr>
       <th>attrs</th>
-      <td><p>Passed to <code><a href='exposure.html'>exposure</a></code> (via threshold).</p></td>
+      <td><p>Passed to <code>exposure</code> (via threshold).</p></td>
     </tr>
     <tr>
       <th>undirected</th>
@@ -313,7 +316,7 @@ is set via <code>vertex.sides</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Use <code><a href='threshold.html'>threshold</a></code> to retrieve the corresponding threshold
-obtained returned by <code><a href='exposure.html'>exposure</a></code>.</p>
+obtained returned by <code>exposure</code>.</p>
 <p>Other visualizations: <code><a href='dgr.html'>dgr</a></code>,
   <code><a href='diffusionMap.html'>diffusionMap</a></code>, <code><a href='drawColorKey.html'>drawColorKey</a></code>,
   <code><a href='grid_distribution.html'>grid_distribution</a></code>,
@@ -334,7 +337,7 @@ obtained returned by <code><a href='exposure.html'>exposure</a></code>.</p>
 <span class='no'>adopt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='toa_mat.html'>toa_mat</a></span>(<span class='no'>toa</span>)
 
 <span class='co'># Computing exposure</span>
-<span class='no'>expos</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='exposure.html'>exposure</a></span>(<span class='no'>graph</span>, <span class='no'>adopt</span>$<span class='no'>cumadopt</span>)
+<span class='no'>expos</span> <span class='kw'>&lt;-</span> <span class='fu'>exposure</span>(<span class='no'>graph</span>, <span class='no'>adopt</span>$<span class='no'>cumadopt</span>)
 
 <span class='fu'>plot_threshold</span>(<span class='no'>graph</span>, <span class='no'>expos</span>, <span class='no'>toa</span>)</div><div class='img'><img src='plot_threshold-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Calculating degree (for sizing the vertices)</span>

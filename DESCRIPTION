@@ -6,9 +6,10 @@ Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
     comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")
     ),
+  person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"), comment="R original code"),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("ctb"), comment="Package's first version"),
-  person("Timothy", "Hayes", email="timothybhayes@gmail.com", role=c("ctb"), comment="Package's first version"),
-  person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"), comment="R original code"))
+  person("Timothy", "Hayes", email="timothybhayes@gmail.com", role=c("ctb"), comment="Package's first version")
+  )
 Description: Empirical statistical analysis, visualization and simulation of
     diffusion and contagion processes on networks. The package implements algorithms
     for calculating network diffusion statistics such as transmission rate, hazard
@@ -47,9 +48,10 @@ Suggests:
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.0.1
 Encoding: UTF-8
-URL: https://github.com/USCCANA/netdiffuseR
+URL: https://github.com/USCCANA/netdiffuseR,
+ https://USCCANA.github.io/netdiffuseR
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
 Classification/MSC: 90C35, 90B18, 91D30
 Collate: 

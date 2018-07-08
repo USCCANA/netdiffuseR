@@ -53,4 +53,3 @@ Other statistics: \code{\link{bass}},
   \code{\link{struct_equiv}}, \code{\link{threshold}},
   \code{\link{vertex_covariate_dist}}
 }
-\concept{statistics}

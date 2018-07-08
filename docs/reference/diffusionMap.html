@@ -264,7 +264,7 @@ Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working 
 <span class='fu'>set.seed</span>(<span class='fl'>1231</span>)
 
 <span class='co'># Random scale-free diffusion network</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>1000</span>, <span class='fl'>4</span>, <span class='kw'>seed.graph</span><span class='kw'>=</span><span class='st'>"scale-free"</span>, <span class='kw'>seed.p.adopt</span> <span class='kw'>=</span> <span class='fl'>.025</span>,
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>rdiffnet</span>(<span class='fl'>1000</span>, <span class='fl'>4</span>, <span class='kw'>seed.graph</span><span class='kw'>=</span><span class='st'>"scale-free"</span>, <span class='kw'>seed.p.adopt</span> <span class='kw'>=</span> <span class='fl'>.025</span>,
                            <span class='kw'>rewire</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>seed.nodes</span> <span class='kw'>=</span> <span class='st'>"central"</span>,
                            <span class='kw'>rgraph.arg</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>self</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fl'>4</span>),
                            <span class='kw'>threshold.dist</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>id</span>) <span class='fu'>runif</span>(<span class='fl'>1</span>,<span class='fl'>.2</span>,<span class='fl'>.4</span>))

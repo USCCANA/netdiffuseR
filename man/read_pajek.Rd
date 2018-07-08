@@ -30,6 +30,9 @@ For \code{read_ml}, a list with two elements:
 \description{
 Reading pajek and Ucinet files, this function returns weighted edgelists in the form of
 data frames including a data frame of the vertices. (function on development)
+
+Read UCINET graph files
+Other datasets http://moreno.ss.uci.edu/data.html
 }
 \details{
 Since .net files allow working with multi-relational networks (more than one
@@ -67,4 +70,3 @@ Other Foreign: \code{\link{igraph}}, \code{\link{network}},
 \author{
 George G. Vega Yon
 }
-\concept{Foreign}

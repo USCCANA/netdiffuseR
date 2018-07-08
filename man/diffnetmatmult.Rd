@@ -59,4 +59,3 @@ Other diffnet methods: \code{\link{as.array.diffnet}},
   \code{\link{diffnet-class}}, \code{\link{diffnet_index}},
   \code{\link{plot.diffnet}}, \code{\link{summary.diffnet}}
 }
-\concept{diffnet methods}

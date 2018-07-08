@@ -49,6 +49,5 @@ Other visualizations: \code{\link{dgr}},
   \code{\link{plot_threshold}},
   \code{\link{rescale_vertex_igraph}}
 }
-\concept{visualizations}
 \keyword{dplot}
 \keyword{misc}

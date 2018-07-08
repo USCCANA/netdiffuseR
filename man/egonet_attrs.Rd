@@ -137,4 +137,3 @@ Other data management functions: \code{\link{diffnet-class}},
 \author{
 George G. Vega Yon
 }
-\concept{data management functions}

@@ -218,11 +218,11 @@ point to plot.</p></td>
     <div class='dont-index'><p>Other statistics: <code><a href='bass.html'>bass</a></code>,
   <code><a href='classify_adopters.html'>classify_adopters</a></code>,
   <code><a href='cumulative_adopt_count.html'>cumulative_adopt_count</a></code>,
-  <code><a href='ego_variance.html'>ego_variance</a></code>, <code><a href='exposure.html'>exposure</a></code>,
+  <code><a href='ego_variance.html'>ego_variance</a></code>, <code>exposure</code>,
   <code><a href='hazard_rate.html'>hazard_rate</a></code>, <code><a href='infection.html'>infection</a></code>,
   <code><a href='moran.html'>moran</a></code>, <code><a href='struct_equiv.html'>struct_equiv</a></code>,
   <code><a href='threshold.html'>threshold</a></code>,
-  <code><a href='vertex_covariate_dist.html'>vertex_covariate_dist</a></code></p>
+  <code>vertex_covariate_dist</code></p>
 <p>Other visualizations: <code><a href='diffusionMap.html'>diffusionMap</a></code>,
   <code><a href='drawColorKey.html'>drawColorKey</a></code>,
   <code><a href='grid_distribution.html'>grid_distribution</a></code>,
@@ -237,7 +237,7 @@ point to plot.</p></td>
     <pre class="examples"><div class='input'>
 <span class='co'># Comparing degree measurements ---------------------------------------------</span>
 <span class='co'># Creating an undirected graph</span>
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rgraph_ba.html'>rgraph_ba</a></span>()
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>rgraph_ba</span>()
 <span class='no'>graph</span></div><div class='output co'>#&gt; 11 x 11 sparse Matrix of class "dgCMatrix"</div><div class='output co'>#&gt; <span class='message'>   [[ suppressing 11 column names ‘1’, ‘2’, ‘3’ ... ]]</span></div><div class='output co'>#&gt;                         
 #&gt; 1  1 . . . . . . . . . .
 #&gt; 2  . 1 . . . . . . . . .
@@ -274,7 +274,7 @@ point to plot.</p></td>
 <span class='fu'>any</span>(<span class='no'>d_valued</span><span class='kw'>!=</span><span class='no'>d_unvalued</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'># Classic Scale-free plot ---------------------------------------------------</span>
 <span class='fu'>set.seed</span>(<span class='fl'>1122</span>)
-<span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rgraph_ba.html'>rgraph_ba</a></span>(<span class='kw'>t</span><span class='kw'>=</span><span class='fl'>1e3</span>-<span class='fl'>1</span>)
+<span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='fu'>rgraph_ba</span>(<span class='kw'>t</span><span class='kw'>=</span><span class='fl'>1e3</span>-<span class='fl'>1</span>)
 <span class='fu'>hist</span>(<span class='fu'>dgr</span>(<span class='no'>g</span>))</div><div class='img'><img src='dgr-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Since by default uses logscale, here we suppress the warnings</span>
 <span class='co'># on points been discarded for &lt;=0.</span>

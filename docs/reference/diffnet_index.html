@@ -248,7 +248,7 @@ gaps, and it should be within the graph time period range.</p>
     <pre class="examples"><div class='input'>
 <span class='co'># Creating a random diffusion network ---------------------------------------</span>
 <span class='fu'>set.seed</span>(<span class='fl'>111</span>)
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>100</span>,<span class='fl'>5</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>rdiffnet</span>(<span class='fl'>100</span>,<span class='fl'>5</span>)
 
 <span class='co'># Accessing to a static attribute</span>
 <span class='no'>graph</span><span class='kw'>[[</span><span class='st'>"real_threshold"</span>]]</div><div class='output co'>#&gt;   [1] 0.62034522 0.54853665 0.84659582 0.03114472 0.07245070 0.41045318
@@ -721,10 +721,10 @@ gaps, and it should be within the graph time period range.</p>
 <span class='co'># Adding attributes (dynamic) -----------------------------------------------</span>
 <span class='co'># Preparing the data</span>
 <span class='fu'>set.seed</span>(<span class='fl'>1122</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>30</span>, <span class='fl'>5</span>, <span class='kw'>seed.p.adopt</span><span class='kw'>=</span><span class='fl'>.15</span>)
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>rdiffnet</span>(<span class='fl'>30</span>, <span class='fl'>5</span>, <span class='kw'>seed.p.adopt</span><span class='kw'>=</span><span class='fl'>.15</span>)
 
 <span class='co'># Calculating exposure, and storing it diffe</span>
-<span class='no'>expoM</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='exposure.html'>exposure</a></span>(<span class='no'>x</span>)
+<span class='no'>expoM</span> <span class='kw'>&lt;-</span> <span class='fu'>exposure</span>(<span class='no'>x</span>)
 <span class='no'>expoL</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='fu'>seq_len</span>(<span class='no'>x</span>$<span class='no'>meta</span>$<span class='no'>nper</span>), <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>expoM</span>[,<span class='no'>x</span>,<span class='kw'>drop</span><span class='kw'>=</span><span class='fl'>FALSE</span>])
 <span class='no'>expoD</span> <span class='kw'>&lt;-</span> <span class='fu'>do.call</span>(<span class='no'>rbind</span>, <span class='no'>expoL</span>)
 

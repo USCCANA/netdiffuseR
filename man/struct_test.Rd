@@ -3,6 +3,7 @@
 \name{struct_test}
 \alias{struct_test}
 \alias{n_rewires}
+\alias{struct_test}
 \alias{c.diffnet_struct_test}
 \alias{print.diffnet_struct_test}
 \alias{hist.diffnet_struct_test}
@@ -177,4 +178,3 @@ Other Functions for inference: \code{\link{bootnet}},
 \author{
 George G. Vega Yon
 }
-\concept{Functions for inference}
