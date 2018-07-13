@@ -6,17 +6,17 @@
 \alias{plot.diffnet_mentor}
 \title{Optimal Leader/Mentor Matching}
 \usage{
-mentor_matching(graph, n, cmode = "indegree", lead.ties.method = "average",
-  geodist.args = list())
+mentor_matching(graph, n, cmode = "indegree",
+  lead.ties.method = "average", geodist.args = list())
 
-leader_matching(graph, n, cmode = "indegree", lead.ties.method = "average",
-  geodist.args = list())
+leader_matching(graph, n, cmode = "indegree",
+  lead.ties.method = "average", geodist.args = list())
 
 \method{plot}{diffnet_mentor}(x, y = NULL, vertex.size = "degree",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), lead.cols = grDevices::topo.colors(attr(x, "nleaders")),
-  vshapes = c(Leader = "square", Follower = "circle"), add.legend = TRUE,
-  main = "Mentoring Network", ...)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size",
+  c(0.01, 0.04)), lead.cols = grDevices::topo.colors(attr(x,
+  "nleaders")), vshapes = c(Leader = "square", Follower = "circle"),
+  add.legend = TRUE, main = "Mentoring Network", ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}

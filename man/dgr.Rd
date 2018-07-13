@@ -8,8 +8,9 @@
 \alias{plot.diffnet_degSeq}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
-dgr(graph, cmode = "degree", undirected = getOption("diffnet.undirected",
-  FALSE), self = getOption("diffnet.self", FALSE),
+dgr(graph, cmode = "degree",
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE),
   valued = getOption("diffnet.valued", FALSE))
 
 \method{plot}{diffnet_degSeq}(x, breaks = min(100L, nrow(x)/5),
@@ -108,4 +109,6 @@ Other visualizations: \code{\link{diffusionMap}},
 \author{
 George G. Vega Yon
 }
+\concept{statistics}
+\concept{visualizations}
 \keyword{univar}

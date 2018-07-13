@@ -45,3 +45,4 @@ igraph::vertex_attr(x[[1]], "toa")
 Other Foreign: \code{\link{network}},
   \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
 }
+\concept{Foreign}

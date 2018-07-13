@@ -3,16 +3,15 @@
 \name{rdiffnet}
 \alias{rdiffnet}
 \alias{rdiffnet_multiple}
-\alias{rdiffnet}
 \title{Random diffnet network}
 \usage{
 rdiffnet_multiple(R, statistic, ..., ncpus = 1L, cl = NULL)
 
 rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
   seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(), threshold.dist = runif(n), exposure.args = list(),
-  name = "A diffusion network", behavior = "Random contagion",
-  stop.no.diff = TRUE)
+  rewire.args = list(), threshold.dist = runif(n),
+  exposure.args = list(), name = "A diffusion network",
+  behavior = "Random contagion", stop.no.diff = TRUE)
 }
 \arguments{
 \item{R}{Integer scalar. Number of simulations to be done.}
@@ -185,3 +184,4 @@ Other simulation functions: \code{\link{permute_graph}},
 \author{
 George G. Vega Yon
 }
+\concept{simulation functions}

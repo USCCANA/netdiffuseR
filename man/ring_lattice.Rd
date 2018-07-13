@@ -35,3 +35,4 @@ Other simulation functions: \code{\link{permute_graph}},
   \code{\link{rgraph_ba}}, \code{\link{rgraph_er}},
   \code{\link{rgraph_ws}}
 }
+\concept{simulation functions}

@@ -5,8 +5,8 @@
 \title{Compute ego/alter edge coordinates considering alter's size and aspect ratio}
 \usage{
 edges_coords(graph, toa, x, y, vertex_cex, undirected = TRUE,
-  no_contemporary = TRUE, dev = as.numeric(c()), ran = as.numeric(c()),
-  curved = as.logical(c()))
+  no_contemporary = TRUE, dev = as.numeric(c()),
+  ran = as.numeric(c()), curved = as.logical(c()))
 }
 \arguments{
 \item{graph}{A square matrix of size \eqn{n}. Adjacency matrix.}

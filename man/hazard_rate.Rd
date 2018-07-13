@@ -12,8 +12,9 @@ hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 plot_hazard(x, ...)
 
 \method{plot}{diffnet_hr}(x, y = NULL, main = "Hazard Rate",
-  xlab = "Time", ylab = "Hazard Rate", type = "b", include.grid = TRUE,
-  bg = "lightblue", pch = 21, add = FALSE, ylim = c(0, 1), ...)
+  xlab = "Time", ylab = "Hazard Rate", type = "b",
+  include.grid = TRUE, bg = "lightblue", pch = 21, add = FALSE,
+  ylim = c(0, 1), ...)
 }
 \arguments{
 \item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
@@ -136,4 +137,6 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon & Thomas W. Valente
 }
+\concept{statistics}
+\concept{visualizations}
 \keyword{univar}

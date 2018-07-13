@@ -20,8 +20,8 @@ fitbass(dat, ...)
 \method{plot}{diffnet_bass}(x, y = 1:length(x$m$lhs()), add = FALSE,
   pch = c(21, 24), main = "Bass Diffusion Model",
   ylab = "Proportion of adopters", xlab = "Time", type = c("b", "b"),
-  lty = c(2, 1), col = c("black", "black"), bg = c("lightblue", "gray"),
-  include.legend = TRUE, ...)
+  lty = c(2, 1), col = c("black", "black"), bg = c("lightblue",
+  "gray"), include.legend = TRUE, ...)
 
 bass_F(Time, p, q)
 
@@ -135,3 +135,4 @@ Other statistics: \code{\link{classify_adopters}},
 \author{
 George G. Vega Yon
 }
+\concept{statistics}

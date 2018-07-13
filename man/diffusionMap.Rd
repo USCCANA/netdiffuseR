@@ -16,8 +16,8 @@ diffmap(graph, ...)
 
 \method{diffusionMap}{default}(graph, x, x.adj = round_to_seq,
   layout = NULL, jitter.args = list(), kde2d.args = list(n = 100),
-  sharp.criter = function(x, w) {     wvar(x, w) > (max(x, na.rm = TRUE) -
-  min(x, na.rm = TRUE))^2/12 }, ...)
+  sharp.criter = function(x, w) {     wvar(x, w) > (max(x, na.rm = TRUE)
+  - min(x, na.rm = TRUE))^2/12 }, ...)
 
 \method{diffusionMap}{diffnet}(graph, slice = nslices(graph), ...)
 
@@ -163,3 +163,4 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
+\concept{visualizations}

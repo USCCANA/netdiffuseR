@@ -75,3 +75,5 @@ Other Functions for inference: \code{\link{bootnet}},
 \author{
 George G. Vega Yon
 }
+\concept{Functions for inference}
+\concept{statistics}

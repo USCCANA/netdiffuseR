@@ -112,19 +112,19 @@
 ##     %*%</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s &lt;-<span class="st"> </span><span class="dv">11532</span>
 <span class="kw">set.seed</span>(s)
-diffnet_ran &lt;-<span class="st"> </span><span class="kw">rdiffnet</span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"random"</span>, <span class="dt">seed.p.adopt =</span> <span class="fl">.1</span>,
+diffnet_ran &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"random"</span>, <span class="dt">seed.p.adopt =</span> .<span class="dv">1</span>,
                         <span class="dt">seed.graph =</span> <span class="st">"small-world"</span>,
                         <span class="dt">rgraph.args =</span> <span class="kw">list</span>(<span class="dt">undirected=</span><span class="ot">FALSE</span>, <span class="dt">k=</span><span class="dv">4</span>, <span class="dt">p=</span>.<span class="dv">5</span>),
                         <span class="dt">threshold.dist =</span> <span class="cf">function</span>(x) <span class="fl">0.3</span>)
 
 <span class="kw">set.seed</span>(s)
-diffnet_cen &lt;-<span class="st"> </span><span class="kw">rdiffnet</span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"central"</span>, <span class="dt">seed.p.adopt =</span> <span class="fl">.1</span>,
+diffnet_cen &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"central"</span>, <span class="dt">seed.p.adopt =</span> .<span class="dv">1</span>,
                         <span class="dt">seed.graph =</span> <span class="st">"small-world"</span>,
                         <span class="dt">rgraph.args =</span> <span class="kw">list</span>(<span class="dt">undirected=</span><span class="ot">FALSE</span>, <span class="dt">k=</span><span class="dv">4</span>, <span class="dt">p=</span>.<span class="dv">5</span>),
                         <span class="dt">threshold.dist =</span> <span class="cf">function</span>(x) <span class="fl">0.3</span>)
 
 <span class="kw">set.seed</span>(s)
-diffnet_mar &lt;-<span class="st"> </span><span class="kw">rdiffnet</span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"marginal"</span>, <span class="dt">seed.p.adopt =</span> <span class="fl">.1</span>,
+diffnet_mar &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">200</span>, <span class="dv">20</span>, <span class="st">"marginal"</span>, <span class="dt">seed.p.adopt =</span> .<span class="dv">1</span>,
                         <span class="dt">seed.graph =</span> <span class="st">"small-world"</span>,
                         <span class="dt">rgraph.args =</span> <span class="kw">list</span>(<span class="dt">undirected=</span><span class="ot">FALSE</span>, <span class="dt">k=</span><span class="dv">4</span>, <span class="dt">p=</span>.<span class="dv">5</span>),
                         <span class="dt">threshold.dist =</span> <span class="cf">function</span>(x) <span class="fl">0.3</span>)</code></pre></div>

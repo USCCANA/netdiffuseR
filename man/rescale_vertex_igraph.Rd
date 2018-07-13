@@ -7,16 +7,16 @@
 \title{Rescale vertex size to be used in \code{\link[igraph:plot.igraph]{plot.igraph}}.}
 \usage{
 rescale_vertex_igraph(vertex.size, par.usr = par("usr"),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), adjust = 200)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size",
+  c(0.01, 0.04)), adjust = 200)
 
 igraph_vertex_rescale(vertex.size, par.usr = par("usr"),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), adjust = 200)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size",
+  c(0.01, 0.04)), adjust = 200)
 
 vertex_rescale_igraph(vertex.size, par.usr = par("usr"),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), adjust = 200)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size",
+  c(0.01, 0.04)), adjust = 200)
 }
 \arguments{
 \item{vertex.size}{Numeric vector of unscaled vertices' sizes. This is unit-free.}
@@ -116,3 +116,4 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
+\concept{visualizations}

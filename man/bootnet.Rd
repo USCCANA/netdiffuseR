@@ -3,7 +3,6 @@
 \name{bootnet}
 \alias{bootnet}
 \alias{resample_graph}
-\alias{bootnet}
 \alias{c.diffnet_bootnet}
 \alias{print.diffnet_bootnet}
 \alias{hist.diffnet_bootnet}
@@ -18,10 +17,11 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
 \method{print}{diffnet_bootnet}(x, ...)
 
 \method{hist}{diffnet_bootnet}(x,
-  main = "Empirical Distribution of Statistic", xlab = expression(Values ~
-  of ~ t), breaks = 20, annotated = TRUE, b0 = expression(atop(plain("")
-  \%up\% plain("")), t[0]), b = expression(atop(plain("") \%up\% plain("")),
-  t[]), ask = TRUE, ...)
+  main = "Empirical Distribution of Statistic",
+  xlab = expression(Values ~ of ~ t), breaks = 20, annotated = TRUE,
+  b0 = expression(atop(plain("") \%up\% plain("")), t[0]),
+  b = expression(atop(plain("") \%up\% plain("")), t[]), ask = TRUE,
+  ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -117,3 +117,4 @@ Retrieved from \url{https://insna.org/PDF/Connections/v22/1999_I-2_61-70.pdf}
 Other Functions for inference: \code{\link{moran}},
   \code{\link{struct_test}}
 }
+\concept{Functions for inference}

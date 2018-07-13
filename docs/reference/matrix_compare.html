@@ -241,7 +241,7 @@ for e_B in E_B:
 <span class='no'>compfun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>a</span>,<span class='no'>b</span>)
   <span class='fu'>ifelse</span>(<span class='no'>a</span> <span class='kw'>&gt;</span> <span class='no'>b</span>, <span class='no'>a</span>, <span class='no'>b</span>)
 
-<span class='kw pkg'>microbenchmark</span><span class='kw ns'>::</span><span class='fu'>microbenchmark</span>(
+<span class='kw pkg'>microbenchmark</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/microbenchmark/topics/microbenchmark'>microbenchmark</a></span>(
   <span class='kw'>diffnet</span> <span class='kw'>=</span> <span class='fu'>matrix_compare</span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>compfun</span>),
   <span class='kw'>R</span>       <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fu'>ifelse</span>(<span class='no'>Am</span> <span class='kw'>&gt;</span> <span class='no'>Bm</span>, <span class='no'>Am</span>, <span class='no'>Bm</span>), <span class='kw'>ncol</span><span class='kw'>=</span><span class='fu'>ncol</span>(<span class='no'>Am</span>)),
   <span class='kw'>times</span>   <span class='kw'>=</span> <span class='fl'>10</span>

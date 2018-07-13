@@ -3,16 +3,15 @@
 \name{infection}
 \alias{infection}
 \alias{susceptibility}
-\alias{susceptibility}
 \title{Susceptibility and Infection}
 \usage{
 infection(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
   expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE),
   outgoing = getOption("diffnet.outgoing", TRUE))
 
-susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE),
-  outgoing = getOption("diffnet.outgoing", TRUE))
+susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
+  r = 0.5, expdiscount = FALSE, valued = getOption("diffnet.valued",
+  FALSE), outgoing = getOption("diffnet.outgoing", TRUE))
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -141,4 +140,5 @@ Other statistics: \code{\link{bass}},
 \author{
 George G. Vega Yon
 }
+\concept{statistics}
 \keyword{univar}

@@ -1,6 +1,6 @@
-pandoc: 1.19.2.4
+pandoc: 1.19.2.1
 pkgdown: 1.1.0.9000
-pkgdown_sha: 98bfe0fdfd59b33ef1a88ef6896cd60f805f0e81
+pkgdown_sha: 09dacd8454ddb1e0b30e1def39b27e95a0953c53
 articles:
   analyzing-medical-innovation-data: analyzing-medical-innovation-data.html
   introduction-to-netdiffuser: introduction-to-netdiffuser.html

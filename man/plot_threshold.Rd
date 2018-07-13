@@ -13,18 +13,20 @@ plot_threshold(graph, expo, ...)
 
 \method{plot_threshold}{array}(graph, expo, ...)
 
-\method{plot_threshold}{default}(graph, expo, toa, include_censored = FALSE,
-  t0 = min(toa, na.rm = TRUE), attrs = NULL,
-  undirected = getOption("diffnet.undirected"), no.contemporary = TRUE,
+\method{plot_threshold}{default}(graph, expo, toa,
+  include_censored = FALSE, t0 = min(toa, na.rm = TRUE),
+  attrs = NULL, undirected = getOption("diffnet.undirected"),
+  no.contemporary = TRUE,
   main = "Time of Adoption by\\nNetwork Threshold", xlab = "Time",
   ylab = "Threshold", vertex.size = "degree", vertex.color = NULL,
   vertex.label = "", vertex.label.pos = NULL, vertex.label.cex = 1,
   vertex.label.adj = c(0.5, 0.5), vertex.label.color = NULL,
-  vertex.sides = 40L, vertex.rot = 0, edge.width = 2, edge.color = NULL,
-  arrow.width = NULL, arrow.length = NULL, arrow.color = NULL,
-  include.grid = FALSE, vertex.frame.color = NULL, bty = "n",
-  jitter.factor = c(1, 1), jitter.amount = c(0.25, 0.025), xlim = NULL,
-  ylim = NULL, edge.curved = NULL, background = NULL, ...)
+  vertex.sides = 40L, vertex.rot = 0, edge.width = 2,
+  edge.color = NULL, arrow.width = NULL, arrow.length = NULL,
+  arrow.color = NULL, include.grid = FALSE,
+  vertex.frame.color = NULL, bty = "n", jitter.factor = c(1, 1),
+  jitter.amount = c(0.25, 0.025), xlim = NULL, ylim = NULL,
+  edge.curved = NULL, background = NULL, ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -147,4 +149,5 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
+\concept{visualizations}
 \keyword{hplot}

@@ -240,13 +240,13 @@ diffnet_city4 &lt;-<span class="st"> </span>diffnet[<span class="kw">which</span
 avgthr &lt;-<span class="st"> </span><span class="cf">function</span>(x) <span class="kw">mean</span>(<span class="kw"><a href="../reference/threshold.html">threshold</a></span>(x), <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
 
 <span class="co"># Running the test by city</span>
-test1   &lt;-<span class="st"> </span><span class="kw">struct_test</span>(diffnet_city1, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
-test2   &lt;-<span class="st"> </span><span class="kw">struct_test</span>(diffnet_city2, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
-test3   &lt;-<span class="st"> </span><span class="kw">struct_test</span>(diffnet_city3, avgthr, <span class="dv">500</span>)
-test4   &lt;-<span class="st"> </span><span class="kw">struct_test</span>(diffnet_city4, avgthr, <span class="dv">500</span>)
+test1   &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/struct_test">struct_test</a></span>(diffnet_city1, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
+test2   &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/struct_test">struct_test</a></span>(diffnet_city2, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
+test3   &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/struct_test">struct_test</a></span>(diffnet_city3, avgthr, <span class="dv">500</span>)
+test4   &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/struct_test">struct_test</a></span>(diffnet_city4, avgthr, <span class="dv">500</span>)
 
 <span class="co"># Running the test aggregated</span>
-testall &lt;-<span class="st"> </span><span class="kw">struct_test</span>(diffnet, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
+testall &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/struct_test">struct_test</a></span>(diffnet, avgthr, <span class="dv">500</span>, <span class="dt">ncpus=</span><span class="dv">2</span>, <span class="dt">parallel=</span><span class="st">"multicore"</span>)
 
 <span class="co"># Printing the outcomes</span>
 test1</code></pre></div>
@@ -258,7 +258,7 @@ test1</code></pre></div>
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.6304      0.6240      0.8000</code></pre>
+##       0.6304      0.6277      0.9040</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test2</code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -268,7 +268,7 @@ test1</code></pre></div>
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.4931      0.5031      0.8040</code></pre>
+##       0.4931      0.5026      0.8400</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test3</code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -278,7 +278,7 @@ test1</code></pre></div>
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.4365      0.4233      0.6640</code></pre>
+##       0.4365      0.4230      0.6600</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test4</code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -288,7 +288,7 @@ test1</code></pre></div>
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.5926      0.6036      0.7960</code></pre>
+##       0.5926      0.6033      0.7600</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">testall</code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -298,7 +298,7 @@ test1</code></pre></div>
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.5660      0.5554      0.5840</code></pre>
+##       0.5660      0.5563      0.6200</code></pre>
 <p>This shows in no City threshold seems to be struture dependent, as after simulating 1,000 networks by rewiring each one of these preserving the degree sequence (using <code>algorithm = "swap"</code> by default in the <code>rewire.args</code>) the null can’t be rejected. Now we can make an histogram of the outcomes by city:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># To make it nicer, we change the parameters in using par</span>
 <span class="co"># (see ?par)</span>
@@ -319,7 +319,7 @@ oldpar &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt
 <a href="#retrieving-the-data-to-create-a-panelenvent-historylongitudinal-data" class="anchor"></a>Retrieving the data to create a panel/envent history/longitudinal data</h1>
 <p>To use the data for statistical models we can retrieve the data stored in the <code>diffnet</code> object and coerce it as a <code>data.frame</code>. First, we will compute <strong>lagged</strong> exposure at each time period and add it as a dynamic vertex attribute, including a dummy variable called <code>adopted</code> equal to 1 if the individual adopted at that time point.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculating lagged exposure</span>
-expo &lt;-<span class="st"> </span><span class="kw">exposure</span>(diffnet, <span class="dt">lags =</span> 1L)
+expo &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/exposure">exposure</a></span>(diffnet, <span class="dt">lags =</span> 1L)
 <span class="kw">head</span>(expo)</code></pre></div>
 <pre><code>##       1 2         3         4         5         6         7         8
 ## 1001 NA 0 0.0000000 0.5000000 1.0000000 1.0000000 1.0000000 1.0000000

@@ -195,8 +195,8 @@
 <span class="kw">set.seed</span>(<span class="dv">1234</span>)
 n &lt;-<span class="st"> </span><span class="dv">100</span>
 nper &lt;-<span class="st"> </span><span class="dv">20</span>
-graph &lt;-<span class="st"> </span><span class="kw"><a href="reference/rgraph_er.html">rgraph_er</a></span>(n, nper, <span class="fl">.5</span>)
-toa &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="dv">1</span><span class="op">+</span>nper<span class="dv">-1</span>), <span class="ot">NA</span>), n, <span class="ot">TRUE</span>)
+graph &lt;-<span class="st"> </span><span class="kw"><a href="reference/rgraph_er.html">rgraph_er</a></span>(n, nper, .<span class="dv">5</span>)
+toa &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="dv">1</span><span class="op">+</span>nper<span class="op">-</span><span class="dv">1</span>), <span class="ot">NA</span>), n, <span class="ot">TRUE</span>)
 <span class="kw">head</span>(toa)</code></pre></div>
 <pre><code>## [1] 20  7  9  1 17 14</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Creating a diffnet object</span>
@@ -262,7 +262,7 @@ out &lt;-<span class="st"> </span><span class="kw"><a href="reference/plot_infec
 diffnet &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">500</span>, <span class="dv">20</span>,
                     <span class="dt">seed.nodes =</span> <span class="st">"random"</span>,
                     <span class="dt">rgraph.args =</span> <span class="kw">list</span>(<span class="dt">m=</span><span class="dv">3</span>),
-                    <span class="dt">threshold.dist =</span> <span class="cf">function</span>(x) <span class="kw">runif</span>(<span class="dv">1</span>, <span class="fl">.3</span>, <span class="fl">.7</span>))
+                    <span class="dt">threshold.dist =</span> <span class="cf">function</span>(x) <span class="kw">runif</span>(<span class="dv">1</span>, .<span class="dv">3</span>, .<span class="dv">7</span>))
 diffnet</code></pre></div>
 <pre><code>## Dynamic network of class -diffnet-
 ##  Name               : A diffusion network
@@ -313,7 +313,7 @@ diffnet</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1231</span>)
 
 <span class="co"># Random scale-free diffusion network</span>
-x &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">1000</span>, <span class="dv">4</span>, <span class="dt">seed.graph=</span><span class="st">"scale-free"</span>, <span class="dt">seed.p.adopt =</span> <span class="fl">.025</span>,
+x &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/netdiffuseR/topics/rdiffnet">rdiffnet</a></span>(<span class="dv">1000</span>, <span class="dv">4</span>, <span class="dt">seed.graph=</span><span class="st">"scale-free"</span>, <span class="dt">seed.p.adopt =</span> .<span class="dv">025</span>,
                            <span class="dt">rewire =</span> <span class="ot">FALSE</span>, <span class="dt">seed.nodes =</span> <span class="st">"central"</span>,
                            <span class="dt">rgraph.arg=</span><span class="kw">list</span>(<span class="dt">self=</span><span class="ot">FALSE</span>, <span class="dt">m=</span><span class="dv">4</span>),
                            <span class="dt">threshold.dist =</span> <span class="cf">function</span>(id) <span class="kw">runif</span>(<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">4</span>))
@@ -366,13 +366,13 @@ oldpar &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt
 <h3 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
-<pre><code>## R version 3.5.1 (2018-07-02)
+<pre><code>## R version 3.4.4 (2018-03-15)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 18.04 LTS
+## Running under: Ubuntu 14.04.5 LTS
 ## 
 ## Matrix products: default
-## BLAS: /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
-## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+## BLAS: /usr/lib/libblas/libblas.so.3.0
+## LAPACK: /usr/lib/lapack/liblapack.so.3.0
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -389,23 +389,23 @@ oldpar &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt
 ## [1] netdiffuseR_1.20.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.17         sna_2.4              pillar_1.2.3        
-##  [4] plyr_1.8.4           compiler_3.5.1       viridis_0.5.1       
-##  [7] tools_3.5.1          boot_1.3-20          digest_0.6.15       
-## [10] MatchIt_3.0.2        viridisLite_0.3.0    tibble_1.4.2        
-## [13] evaluate_0.10.1      memoise_1.1.0        gtable_0.2.0        
-## [16] lattice_0.20-35      pkgconfig_2.0.1      rlang_0.2.1         
-## [19] Matrix_1.2-14        igraph_1.2.1         rstudioapi_0.7      
-## [22] commonmark_1.5       yaml_2.1.19          SparseM_1.77        
-## [25] pkgdown_1.1.0.9000   gridExtra_2.3        coda_0.19-1         
-## [28] stringr_1.3.1        roxygen2_6.0.1       xml2_1.2.0          
-## [31] knitr_1.20           desc_1.2.0           fs_1.2.3            
-## [34] networkDynamic_0.9.0 rprojroot_1.3-2      grid_3.5.1          
-## [37] R6_2.2.2             rmarkdown_1.10       ggplot2_3.0.0       
-## [40] magrittr_1.5         backports_1.1.2      scales_0.5.0        
-## [43] htmltools_0.3.6      MASS_7.3-50          assertthat_0.1      
-## [46] colorspace_1.3-2     stringi_1.2.3        network_1.13.0.1    
-## [49] lazyeval_0.2.1       munsell_0.5.0        statnet.common_4.1.4
+##  [1] Rcpp_0.12.17          sna_2.4               pillar_1.2.3         
+##  [4] plyr_1.8.4            compiler_3.4.4        viridis_0.5.1        
+##  [7] tools_3.4.4           boot_1.3-20           digest_0.6.15        
+## [10] MatchIt_3.0.2         viridisLite_0.3.0     tibble_1.4.2         
+## [13] evaluate_0.10.1       memoise_1.1.0         gtable_0.2.0         
+## [16] lattice_0.20-35       pkgconfig_2.0.1       rlang_0.2.1          
+## [19] Matrix_1.2-14         igraph_1.2.1          rstudioapi_0.7.0-9001
+## [22] commonmark_1.5        yaml_2.1.19           SparseM_1.77         
+## [25] pkgdown_1.1.0.9000    gridExtra_2.3         coda_0.19-1          
+## [28] stringr_1.3.1         roxygen2_6.0.1.9000   xml2_1.2.0           
+## [31] knitr_1.20            desc_1.2.0            fs_1.2.3             
+## [34] networkDynamic_0.9.0  rprojroot_1.3-2       grid_3.4.4           
+## [37] R6_2.2.2              rmarkdown_1.10        ggplot2_2.2.1        
+## [40] magrittr_1.5          backports_1.1.2       scales_0.5.0         
+## [43] htmltools_0.3.6       MASS_7.3-50           assertthat_0.2.0     
+## [46] colorspace_1.3-2      stringi_1.2.3         network_1.13.0.1     
+## [49] lazyeval_0.2.1        munsell_0.5.0         statnet.common_4.1.2 
 ## [52] crayon_1.3.4</code></pre>
 </div>
 </div>
@@ -462,7 +462,7 @@ oldpar &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt
 <ul class="list-unstyled">
 <li>George Vega Yon <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-3171-0844" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" height="16"></a> <br><small>(Rewrite functions with Rcpp, plus new features)</small>
 </li>
-<li>Thomas Valente <br><small class="roles"> Author, copyright holder </small>  <br><small>(R original code)</small>
+<li>Thomas Valente <br><small class="roles"> Author, copyright holder </small> <a href="https://orcid.org/0000-0002-8824-5816" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" height="16"></a> <br><small>(R original code)</small>
 </li>
 <li><a href="authors.html">All authors...</a></li>
 </ul>

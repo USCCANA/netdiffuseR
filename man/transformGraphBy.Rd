@@ -8,11 +8,11 @@
 \usage{
 transformGraphBy(graph, INDICES, fun = function(g, ...) g, ...)
 
-\method{transformGraphBy}{diffnet}(graph, INDICES, fun = function(g, ...) g,
-  ...)
+\method{transformGraphBy}{diffnet}(graph, INDICES, fun = function(g, ...)
+  g, ...)
 
-\method{transformGraphBy}{dgCMatrix}(graph, INDICES, fun = function(g, ...) g,
-  ...)
+\method{transformGraphBy}{dgCMatrix}(graph, INDICES, fun = function(g,
+  ...) g, ...)
 }
 \arguments{
 \item{graph}{A graph}

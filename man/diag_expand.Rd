@@ -17,13 +17,15 @@ diag_expand(...)
 \method{diag_expand}{diffnet}(graph, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{matrix}(graph, nper, self = getOption("diffnet.self"),
+\method{diag_expand}{matrix}(graph, nper,
+  self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
 \method{diag_expand}{array}(graph, self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 
-\method{diag_expand}{dgCMatrix}(graph, nper, self = getOption("diffnet.self"),
+\method{diag_expand}{dgCMatrix}(graph, nper,
+  self = getOption("diffnet.self"),
   valued = getOption("diffnet.valued"), ...)
 }
 \arguments{

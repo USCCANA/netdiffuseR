@@ -6,8 +6,9 @@
 \usage{
 rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
   self = FALSE, multiple = FALSE,
-  undirected = getOption("diffnet.undirected"), pr.change = ifelse(self,
-  0.5, 1), copy.first = TRUE, althexagons = FALSE)
+  undirected = getOption("diffnet.undirected"),
+  pr.change = ifelse(self, 0.5, 1), copy.first = TRUE,
+  althexagons = FALSE)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -223,3 +224,4 @@ Other simulation functions: \code{\link{permute_graph}},
 \author{
 George G. Vega Yon
 }
+\concept{simulation functions}

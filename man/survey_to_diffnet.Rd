@@ -9,12 +9,13 @@ survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
   no.unsurveyed = TRUE, timevar = NULL, t = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
-  multiple = getOption("diffnet.multiple", FALSE), keep.isolates = TRUE,
-  recode.ids = TRUE, warn.coercion = TRUE, ...)
+  multiple = getOption("diffnet.multiple", FALSE),
+  keep.isolates = TRUE, recode.ids = TRUE, warn.coercion = TRUE, ...)
 
-edgelist_to_diffnet(edgelist, w = NULL, t0 = NULL, t1 = NULL, dat, idvar,
-  toavar, timevar = NULL, undirected = getOption("diffnet.undirected",
-  FALSE), self = getOption("diffnet.self", FALSE),
+edgelist_to_diffnet(edgelist, w = NULL, t0 = NULL, t1 = NULL, dat,
+  idvar, toavar, timevar = NULL,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE),
   multiple = getOption("diffnet.multiple", FALSE), fill.missing = NULL,
   keep.isolates = TRUE, recode.ids = TRUE, warn.coercion = TRUE)
 }
@@ -178,3 +179,4 @@ Other data management functions: \code{\link{diffnet-class}},
 \author{
 Vega Yon
 }
+\concept{data management functions}

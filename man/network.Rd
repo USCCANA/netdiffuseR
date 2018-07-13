@@ -16,8 +16,8 @@ diffnet_to_networkDynamic(graph, slices = 1:nslices(graph),
 
 networkDynamic_to_diffnet(graph, toavar)
 
-network_to_diffnet(graph = NULL, graph.list = NULL, toavar, t0 = NULL,
-  t1 = NULL)
+network_to_diffnet(graph = NULL, graph.list = NULL, toavar,
+  t0 = NULL, t1 = NULL)
 }
 \arguments{
 \item{graph}{An object of class \code{\link{diffnet}}}
@@ -102,3 +102,4 @@ networkDynamic_to_diffnet(ans, toavar = "toa")
 Other Foreign: \code{\link{igraph}},
   \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
 }
+\concept{Foreign}

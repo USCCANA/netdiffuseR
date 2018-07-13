@@ -15,9 +15,10 @@ plot_diffnet2(graph, ...)
   color.ramp = grDevices::colorRamp(viridis::magma(20)), layout = NULL,
   key.width = 0.1, key.args = list(), main = "Diffusion dynamics",
   add.map = NULL, diffmap.args = list(kde2d.args = list(n = 100)),
-  diffmap.alpha = 0.5, include.white = "first", vertex.size = "degree",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01,
-  0.04)), no.graph = FALSE, ...)
+  diffmap.alpha = 0.5, include.white = "first",
+  vertex.size = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size",
+  c(0.01, 0.04)), no.graph = FALSE, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -107,3 +108,4 @@ Other visualizations: \code{\link{dgr}},
 \author{
 George G. Vega Yon
 }
+\concept{visualizations}
