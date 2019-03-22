@@ -1,5 +1,6 @@
 context("Bass Diffusion model")
 
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1122333)
 dat <- rdiffnet(200, 20)
 

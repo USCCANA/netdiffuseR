@@ -957,7 +957,7 @@ plot_infectsuscep <- function(
   xlab          = "Infectiousness of ego",
   ylab          = "Susceptibility of ego",
   sub           = ifelse(logscale, "(in log-scale)", NA),
-  color.palette = viridis::viridis_pal(),
+  color.palette = function(n) viridisLite::viridis(n),
   include.grid  = TRUE,
   exclude.zeros = FALSE,
   valued        = getOption("diffnet.valued",FALSE),

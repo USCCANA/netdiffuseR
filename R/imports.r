@@ -8,7 +8,7 @@ NULL
 #' @importFrom network as.edgelist is.multiplex is.directed has.loops as.network
 #'  get.network.attribute list.vertex.attributes
 #' @importFrom networkDynamic networkDynamic network.extract network.collapse
-#' @importFrom viridis viridis_pal
+#' @importFrom viridisLite viridis inferno magma
 NULL
 
 #' @useDynLib netdiffuseR, .registration = TRUE

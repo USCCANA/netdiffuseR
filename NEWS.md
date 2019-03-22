@@ -1,3 +1,17 @@
+# Changes in netdiffuseR version 1.20.1 (2019-03-22)
+
+* This version has no user level visible changes.
+
+## Other changes
+
+* Changing `PI` macros in C++ code as requested by RcppCore.
+
+* Setting 3.5 seed version for tests so that test won't break following message
+  from CRAN.
+  
+
+
+
 # Changes in netdiffuseR version 1.20.0 (2018-06-06)
 
 ## New functions and features

@@ -232,7 +232,7 @@ nplot <- function(
   # Computing colors
   if (!length(vertex.color)) {
     vertex.color <- length(table(igraph::degree(x)))
-    vertex.color <- viridis::viridis(vertex.color)
+    vertex.color <- viridisLite::viridis(vertex.color)
     vertex.color <- vertex.color[
       as.factor(igraph::degree(x))
       ]

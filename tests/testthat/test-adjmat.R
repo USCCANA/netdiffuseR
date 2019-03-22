@@ -9,6 +9,7 @@ edgelist <- cbind(
   1:4
 )
 w <- rowMeans(edgelist)
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
 tim <- sample(1:4, 4, TRUE)
 
@@ -154,6 +155,7 @@ edgelist <- cbind(
   c(2:4,1),
   1:4
 )
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
 tim <- sample(1:4, 4, TRUE)
 adjmat <- edgelist_to_adjmat(edgelist)

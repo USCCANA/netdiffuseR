@@ -3,6 +3,7 @@ context("Diffnet class and methods")
 # Checking attributes ----------------------------------------------------------
 test_that("Checking attributes in new_diffnet", {
   # Generating data
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(3312)
   graph <- lapply(1990:2001, function(x) rgraph_ba(t = 9))
   attrs <- matrix(runif(10*3), ncol=3)
@@ -59,6 +60,7 @@ test_that("Checking attributes in new_diffnet", {
 
 # Summary ----------------------------------------------------------------------
 test_that("Summary and subsetting slices", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(13131)
   diffnet <- rdiffnet(100, 20)
 
@@ -71,6 +73,7 @@ test_that("Summary and subsetting slices", {
 
 # diffnet.attrs errors ---------------------------------------------------------
 test_that("Error messages", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(009)
   diffnet <- rdiffnet(80, 20, seed.nodes = "random", seed.p.adopt = .1)
 
@@ -128,6 +131,7 @@ test_that("Passing id.and.per.vars gives the right sorting", {
 # })
 
 test_that("Changing toa", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(182321)
   diffnet <- rdiffnet(100, 10)
 
@@ -143,6 +147,7 @@ test_that("Changing toa", {
 # Checking different input classes ---------------------------------------------
 test_that("new_diffnet with different graph classes", {
   # Random diffnet
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(881)
   graph0 <- rdiffnet(100, 10)
 
@@ -172,6 +177,7 @@ test_that("new_diffnet with different graph classes", {
 
 # ------------------------------------------------------------------------------
 test_that("Warnings and errors", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(11222344)
   g <- rdiffnet(100,5)
   g[["dynamic"]] <- lapply(1:5, function(x) runif(100))
@@ -214,6 +220,7 @@ test_that("Warnings and errors", {
 
 # ------------------------------------------------------------------------------
 test_that("graph attributes", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(131)
   g <- lapply(1:4, function(x) rgraph_ba(t=9))
   toa <- sample(c(NA, 1:4), 10, TRUE)

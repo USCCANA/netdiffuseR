@@ -1,31 +1,64 @@
 netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks
 ================
 
-[![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR) [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser) [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) [![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR) [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
+[![Build
+Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR)
+[![Build
+status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
+[![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master)
+[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 
-This package contains functions useful for analyzing network data for diffusion of innovations applications.
+This package contains functions useful for analyzing network data for
+diffusion of innovations applications.
 
-The package was developed as part of the paper Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*, Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536 (available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
+The package was developed as part of the paper Thomas W. Valente,
+Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto,
+*Diffusion of innovations theory applied to global tobacco control
+treaty ratification*, Social Science & Medicine, Volume 145, November
+2015, Pages 89-97, ISSN 0277-9536 (available
+[here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
 From the description:
 
-> Empirical statistical analysis, visualization and simulation of diffusion and contagion processes on networks. The package implements algorithms for calculating network diffusion statistics such as transmission rate, hazard rates, exposure models, network threshold levels, infectiousness (contagion), and susceptibility. The package is inspired by work published in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995) <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among others.
+> Empirical statistical analysis, visualization and simulation of
+> diffusion and contagion processes on networks. The package implements
+> algorithms for calculating network diffusion statistics such as
+> transmission rate, hazard rates, exposure models, network threshold
+> levels, infectiousness (contagion), and susceptibility. The package is
+> inspired by work published in Valente, et al., (2015)
+> <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995)
+> <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and
+> others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987)
+> <DOI:10.1086/228667>; among others.
 
-**Acknowledgements**: netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health.
+**Acknowledgements**: netdiffuseR was created with the support of grant
+R01 CA157577 from the National Cancer Institute/National Institutes of
+Health.
 
-News
-----
+## News
 
 Changelog can be view [here](NEWS.md).
 
--   \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
--   \[2016-04-11\] **netdiffuseR** will be on [useR! 2016](http://user2016.org) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
--   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016 (after the workshop).
--   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
--   \[2016-02-18\] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/program/)).
+  - \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT
+    2016 is now online on
+    [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
+    and the workshop materials can be found
+    [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
+  - \[2016-04-11\] **netdiffuseR** will be on
+    [useR\! 2016](http://user2016.org) on as a presentation and on
+    [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
+    in the posters session.
+  - \[2016-03-16\] Next CRAN release scheduled for April 11th 2016
+    (after the workshop).
+  - \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN\!
+  - \[2016-02-18\] We will be offering a workshop at the 2016 SUNBELT
+    Conference (checkout the full list of workshops
+    [here](http://insna.org/sunbelt2016/program/)).
 
-Installation
-------------
+## Installation
 
 ### CRAN version
 
@@ -37,15 +70,20 @@ install.packages("netdiffuseR")
 
 ### Bleeding edge version
 
-If you want the latest (unstable) version of **netdiffuseR**, using the `devtools` package, you can install `netdiffuseR` dev version as follows
+If you want the latest (unstable) version of **netdiffuseR**, using the
+`devtools` package, you can install `netdiffuseR` dev version as follows
 
 ``` r
 devtools::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
 ```
 
-You can skip building vignettes by setting `build_vignettes = FALSE` (so it is not required).
+You can skip building vignettes by setting `build_vignettes = FALSE` (so
+it is not required).
 
-For the case of OSX users, there seems to be a problem when installing packages depending on `Rcpp`. This issue, developed [here](https://github.com/USCCANA/netdiffuseR/issues/3), can be solved by open the terminal and typing the following
+For the case of OSX users, there seems to be a problem when installing
+packages depending on `Rcpp`. This issue, developed
+[here](https://github.com/USCCANA/netdiffuseR/issues/3), can be solved
+by open the terminal and typing the following
 
 ``` sh
 curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
@@ -56,46 +94,52 @@ before installing the package through `devtools`.
 
 ### Binary versions
 
-For the case of windows and mac users, they can find binary versions of the package [here](https://github.com/USCCANA/netdiffuseR/releases), netdiffuseR\_1...zip, and netdiffuseR\_1...tgz respectively. They can install this directly as follows (using the 1.16.3.29 version):
+For the case of windows and mac users, they can find binary versions of
+the package [here](https://github.com/USCCANA/netdiffuseR/releases),
+netdiffuseR\_1…zip, and netdiffuseR\_1…tgz respectively. They can
+install this directly as follows (using the 1.16.3.29 version):
 
-1.  Install dependencies from CRAN
-
+1.  Install dependencies from
+    CRAN
+    
     ``` r
     > install.packages(c("igraph", "Matrix", "SparseM", "RcppArmadillo", "sna"), dependencies=TRUE)
     ```
 
 2.  Download the binary version and install it as follows:
-
+    
     ``` r
     > install.packages("netdiffuseR_1.16.3.29.zip", repos=NULL)
     ```
-
+    
     For windows users, and for Mac users:
-
+    
     ``` r
     > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
     ```
 
-Tutorials
----------
+## Tutorials
 
-Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Here are the repositories:
+Since starting netdiffuseR, we have done a couple of workshops at
+Sunbelt and NASN. Here are the repositories:
 
--   Sunbelt 2018: <https://USCCANA.github.io/netdiffuser-sunbelt2018> ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
--   NASN 2017: <https://USCCANA.github.io/netdiffuser-nasn2017> ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
--   Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
+  - Sunbelt 2018: <https://USCCANA.github.io/netdiffuser-sunbelt2018>
+    ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
+  - NASN 2017: <https://USCCANA.github.io/netdiffuser-nasn2017> ([source
+    code](https://github.com/USCCANA/netdiffuser-nasn2017))
+  - Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
 
-Presentations
--------------
+## Presentations
 
--   ic2s2 2016 Evanston, IL: <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
--   useR! 2016 Stanford, CA: <https://github.com/USCCANA/netdiffuser-user2016> (slides)
--   useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
+  - ic2s2 2016 Evanston, IL:
+    <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
+  - useR\! 2016 Stanford, CA:
+    <https://github.com/USCCANA/netdiffuser-user2016> (slides)
+  - useR\! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
 
-Examples
---------
+## Examples
 
-This example has been taken from the package's vignettes:
+This example has been taken from the package’s vignettes:
 
 ``` r
 library(netdiffuseR)
@@ -181,7 +225,7 @@ summary(diffnet)
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 ```
 
-![](README_files/figure-markdown_github/plot_infectsuscept-1.png)
+![](README_files/figure-gfm/plot_infectsuscept-1.png)<!-- -->
 
 ``` r
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
@@ -191,7 +235,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
     ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
     ## When applying logscale some observations are missing.
 
-![](README_files/figure-markdown_github/plot_infectsuscept-2.png)
+![](README_files/figure-gfm/plot_infectsuscept-2.png)<!-- -->
 
 ### Threshold
 
@@ -220,7 +264,7 @@ diffnet
 plot_threshold(diffnet)
 ```
 
-![](README_files/figure-markdown_github/BoringThreshold,%20plot_threshold-1.png)
+![](README_files/figure-gfm/BoringThreshold,%20plot_threshold-1.png)<!-- -->
 
 Using more features
 
@@ -229,7 +273,7 @@ data("medInnovationsDiffNet")
 set.seed(131)
 plot_threshold(
   medInnovationsDiffNet,
-  vertex.color     = viridis::inferno(4)[medInnovationsDiffNet[["city"]]],
+  vertex.color     = viridisLite::inferno(4)[medInnovationsDiffNet[["city"]]],
   vertex.sides     = medInnovationsDiffNet[["city"]] + 2,
   sub = "Note: Vertices' sizes and shapes given by degree and city respectively",
   jitter.factor = c(1,1), jitter.amount = c(.25,.025)
@@ -239,7 +283,7 @@ plot_threshold(
     ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 =
     ## min(toa, : -vertex.sides- will be coerced to integer.
 
-![](README_files/figure-markdown_github/NiceThreshold-1.png)
+![](README_files/figure-gfm/NiceThreshold-1.png)<!-- -->
 
 ### Adoption rate
 
@@ -247,7 +291,7 @@ plot_threshold(
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Adopters-1.png)
+![](README_files/figure-gfm/Adopters-1.png)<!-- -->
 
 ### Hazard rate
 
@@ -255,7 +299,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-markdown_github/Hazard-1.png)
+![](README_files/figure-gfm/Hazard-1.png)<!-- -->
 
 ### Diffusion process
 
@@ -263,14 +307,14 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet-1.png)
+![](README_files/figure-gfm/plot_diffnet-1.png)<!-- -->
 
 ``` r
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
 plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet2-1.png)
+![](README_files/figure-gfm/plot_diffnet2-1.png)<!-- -->
 
 ``` r
 set.seed(1231)
@@ -291,7 +335,7 @@ diffnet.toa(x) <- sample(x$toa, size = nnodes(x))
 dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 
 oldpar <- par(no.readonly = TRUE)
-col <- viridis::plasma(100)
+col <- viridisLite::plasma(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0), cex=.8)
 image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")
@@ -300,7 +344,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plot_diffnet2%20with%20map-1.png)
+![](README_files/figure-gfm/plot_diffnet2%20with%20map-1.png)<!-- -->
 
 ``` r
 par(oldpar)
@@ -325,15 +369,15 @@ ftable(out)
 # Plotting 
 oldpar <- par(no.readonly = TRUE)
 par(xpd=TRUE)
-plot(out, color=viridis::inferno(5), las = 2, xlab="Time of Adoption",
+plot(out, color=viridisLite::inferno(5), las = 2, xlab="Time of Adoption",
      ylab="Threshold", main="")
 
 # Adding key
-legend("bottom", legend = levels(out$thr), fill=viridis::inferno(5), horiz = TRUE,
+legend("bottom", legend = levels(out$thr), fill=viridisLite::inferno(5), horiz = TRUE,
        cex=.6, bty="n", inset=c(0,-.1))
 ```
 
-![](README_files/figure-markdown_github/mosaic-1.png)
+![](README_files/figure-gfm/mosaic-1.png)<!-- -->
 
 ``` r
 par(oldpar)
@@ -345,9 +389,9 @@ par(oldpar)
 sessionInfo()
 ```
 
-    ## R version 3.4.4 (2018-03-15)
+    ## R version 3.5.3 (2019-03-11)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.4 LTS
+    ## Running under: Ubuntu 16.04.6 LTS
     ## 
     ## Matrix products: default
     ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
@@ -365,39 +409,45 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.19.999
+    ## [1] netdiffuseR_1.20.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.1         Rcpp_0.12.17         knitr_1.20          
+    ##  [1] igraph_1.2.2         Rcpp_1.0.0           knitr_1.21          
     ##  [4] magrittr_1.5         network_1.13.0.1     networkDynamic_0.9.0
-    ##  [7] MASS_7.3-50          munsell_0.4.3        viridisLite_0.3.0   
-    ## [10] colorspace_1.3-2     lattice_0.20-35      rlang_0.2.1         
-    ## [13] plyr_1.8.4           stringr_1.3.1        tools_3.4.4         
-    ## [16] MatchIt_3.0.2        grid_3.4.4           gtable_0.2.0        
-    ## [19] sna_2.4              coda_0.19-1          htmltools_0.3.6     
-    ## [22] lazyeval_0.2.1       yaml_2.1.19          rprojroot_1.3-2     
-    ## [25] digest_0.6.15        tibble_1.4.2         Matrix_1.2-14       
-    ## [28] gridExtra_2.3        ggplot2_2.2.1        viridis_0.5.1       
-    ## [31] evaluate_0.10.1      rmarkdown_1.9        statnet.common_4.1.2
-    ## [34] stringi_1.2.2        pillar_1.2.3         compiler_3.4.4      
-    ## [37] scales_0.5.0         backports_1.1.2      boot_1.3-20         
-    ## [40] SparseM_1.77         pkgconfig_2.0.1
+    ##  [7] MASS_7.3-51.1        viridisLite_0.3.0    lattice_0.20-38     
+    ## [10] stringr_1.3.1        tools_3.5.3          MatchIt_3.0.2       
+    ## [13] grid_3.5.3           xfun_0.4             sna_2.4             
+    ## [16] coda_0.19-2          htmltools_0.3.6      yaml_2.2.0          
+    ## [19] digest_0.6.18        Matrix_1.2-16        evaluate_0.12       
+    ## [22] rmarkdown_1.11       statnet.common_4.1.4 stringi_1.2.4       
+    ## [25] compiler_3.5.3       boot_1.3-20          SparseM_1.77        
+    ## [28] pkgconfig_2.0.2
 
-To-do list
-----------
+## To-do list
 
--   Import/Export functions for interfacing other package's clases, in particular: `statnet` set (specially the packages `networkDynamic` and `ndtv`), ~~`igraph`~~ and `Rsiena`.
--   Populate the tests folder.
--   ~~Use spells? (`select_egoalter` would use this)~~
--   ~~Classify individuals by adoption category using early adopters, adopters, and laggards, and by threshold using very low, low, high and very high threshold (Valente 95' p. 94).~~
--   ~~Double check all functions using adjacency matrix values.~~
--   ~~Remove dimnames from matrices and vectors. It is more efficient to use the ones stored in meta instead.~~
--   Implement the Bass model
--   ~~Include function to import survey data (as shown on the vignettes)~~
--   Exposure based on Mahalanobis distances and also Roger Leenders on weighting exposure (internal note).
--   (2016-03-30): use `xspline` for drawing polygons & edges.
--   ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so removes diagonal or not!).~~
--   (2016-04-19): animal behaviorists.
--   (2016-10-18): Review language throughout the manual (more than innovation).
--   (2016-10-18): Evaluate and eventually use a standard graph format (`network` for instance?).
--   (2016-10-18): Standarize graph plot methods (choose either statnet/igraph/own)
+  - Import/Export functions for interfacing other package’s clases, in
+    particular: `statnet` set (specially the packages `networkDynamic`
+    and `ndtv`), ~~`igraph`~~ and `Rsiena`.
+  - Populate the tests folder.
+  - ~~Use spells? (`select_egoalter` would use this)~~
+  - ~~Classify individuals by adoption category using early adopters,
+    adopters, and laggards, and by threshold using very low, low, high
+    and very high threshold (Valente 95’ p. 94).~~
+  - ~~Double check all functions using adjacency matrix values.~~
+  - ~~Remove dimnames from matrices and vectors. It is more efficient to
+    use the ones stored in meta instead.~~
+  - Implement the Bass model
+  - ~~Include function to import survey data (as shown on the
+    vignettes)~~
+  - Exposure based on Mahalanobis distances and also Roger Leenders on
+    weighting exposure (internal note).
+  - (2016-03-30): use `xspline` for drawing polygons & edges.
+  - ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so
+    removes diagonal or not\!).~~
+  - (2016-04-19): animal behaviorists.
+  - (2016-10-18): Review language throughout the manual (more than
+    innovation).
+  - (2016-10-18): Evaluate and eventually use a standard graph format
+    (`network` for instance?).
+  - (2016-10-18): Standarize graph plot methods (choose either
+    statnet/igraph/own)

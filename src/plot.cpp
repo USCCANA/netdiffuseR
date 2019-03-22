@@ -334,7 +334,7 @@ List edges_arrow(
     const double & y1,
     const double & height,
     const double & width,
-    const double beta = 1.5707963267949, // PI/2
+    const double beta = 1.5707963267949, // M_PI/2
     NumericVector dev = NumericVector::create(),
     NumericVector ran = NumericVector::create(),
     bool curved = false
@@ -400,8 +400,8 @@ List edges_arrow(
     double d = pow(
       pow(x0 - coords.at(2, 0), 2.0) + pow(y0 - coords.at(2, 1), 2.0),
                      .5)/4.0;
-    coords_edge.at(1, 0) = (coords_edge.at(0, 0) + coords_edge.at(2, 0))/2.0 + cos(alpha+PI/2.0)*d;
-    coords_edge.at(1, 1) = (coords_edge.at(0, 1) + coords_edge.at(2, 1))/2.0 + sin(alpha+PI/2.0)*d*yexpand;
+    coords_edge.at(1, 0) = (coords_edge.at(0, 0) + coords_edge.at(2, 0))/2.0 + cos(alpha+M_PI/2.0)*d;
+    coords_edge.at(1, 1) = (coords_edge.at(0, 1) + coords_edge.at(2, 1))/2.0 + sin(alpha+M_PI/2.0)*d*yexpand;
 
   } else {
     coords_edge.at(1,0) = coords.at(2,0);
@@ -478,16 +478,16 @@ List vertices_coords(
 
   for (unsigned i=0;i<x.n_rows;++i) {
     // Getting inner degrees
-    double alpha = PI - ((nsides(i) - 2.0)*PI)/nsides(i);
-    double beta  = (PI - 2.0*PI/nsides(i))/2.0;
+    double alpha = M_PI - ((nsides(i) - 2.0)*M_PI)/nsides(i);
+    double beta  = (M_PI - 2.0*M_PI/nsides(i))/2.0;
 
     // Getting step size
     double size_adj = 2.0*cos(beta)*size(i);
 
     // Suboutput and first coordinate
     arma::mat coords(nsides(i),2);
-    coords(0,0) = x(i) + size(i)*cos(beta + PI + rot(i));
-    coords(0,1) = y(i) + size(i)*sin(beta + PI + rot(i))*yexpand;
+    coords(0,0) = x(i) + size(i)*cos(beta + M_PI + rot(i));
+    coords(0,1) = y(i) + size(i)*sin(beta + M_PI + rot(i))*yexpand;
 
     double ALPHA = rot(i);
     for (int j=1; j<nsides(i); ++j) {

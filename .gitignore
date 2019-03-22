@@ -1,8 +1,9 @@
+Meta
+doc
 .Rproj.user
 .Rhistory
 .RData
 inst/doc
-
 
 # Binary files
 *.so
@@ -10,19 +11,14 @@ inst/doc
 *.xls*
 *.doc*
 *.ppt*
-
 *.ods
-
 *.zip
 *.gz
 *.tar
-
 # Tempfiles
 *.dta
-*.ods
 *.log
 *.out
 *.tex
-
 playground/
 doc/

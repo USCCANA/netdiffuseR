@@ -1,5 +1,20 @@
 
 
+CHANGES IN NETDIFFUSER VERSION 1.20.1 (2019-03-22)
+
+
+-   This version has no user level visible changes.
+
+
+Other changes
+
+-   Changing PI macros in C++ code as requested by RcppCore.
+
+-   Setting 3.5 seed version for tests so that test won’t break
+    following message from CRAN.
+
+
+
 CHANGES IN NETDIFFUSER VERSION 1.20.0 (2018-06-06)
 
 
@@ -41,9 +56,9 @@ New functions and features
     diffusion instead of returning with error.
 
 -   plot.diffnet, plot_diffnet, plot.diffnet_mentor, and plot_diffnet2
-    use igraph for plotting. Also, users can now pass "degree" for
+    use igraph for plotting. Also, users can now pass “degree” for
     -vertex.size- (vertex.cex not used anymore), allowing to
-    "automatically" scale vertices by (in/out/.)degree. Also, plotting
+    “automatically” scale vertices by (in/out/.)degree. Also, plotting
     arguments like vertex.* or edge.* are standarized so these match
     igraph.
 
@@ -83,9 +98,9 @@ Other changes
 -   plot_diffnet function now has smaller margins, so looks more
     appealing.
 
--   New examples in vignettes "netdiffuseR showcase: Medical
-    Innovations", and "Simulating diffusion networks: Using the rdiffnet
-    function".
+-   New examples in vignettes “netdiffuseR showcase: Medical
+    Innovations”, and “Simulating diffusion networks: Using the rdiffnet
+    function”.
 
 
 
@@ -156,7 +171,7 @@ Bugs Fixes
     instead of the attributes. Fixed.
 
 -   transformGraphBy was returning with error when the time periods
-    ranged other than 1, 2, ...
+    ranged other than 1, 2, …
 
 
 New Features
@@ -185,7 +200,7 @@ New features and changes
     only supported diffnet objects.
 
 -   The function rewire_graph gains a new argument for the algorithm
-    "swap". Now to ensure aperiodicity in MCMC a chance of skiping a
+    “swap”. Now to ensure aperiodicity in MCMC a chance of skiping a
     rewire has been included.
 
 -   The function n_rewires now has a default of 20 (before it was 100).
@@ -195,8 +210,8 @@ New features and changes
     behaves as before following Bollobas, but now can deviate to
     generate graphs with no autolinks.
 
--   In rgraph_ba, the argument eta allows implementing De Almeida et al.
-    (2013) Scale-free homophilic networks.
+-   In rgraph_ba, the argument eta allows implementing De Almeida et
+    al. (2013) Scale-free homophilic networks.
 
 -   The functions exposure and dgr are now pure R code (C++ functions
     were replace since there were no significant speed gains).
@@ -242,12 +257,12 @@ New functions
 -   permute_graph permutes the values of an adjacency matrix
     (Conditional Uniform Graph).
 
--   rewire_qap generates isomorphic graphs by "changing the labels".
+-   rewire_qap generates isomorphic graphs by “changing the labels”.
 
 
 Bug fixes
 
--   ^.diffnet method was rasing to +1 power, e.g. diffnet^2 was actually
+-   ^.diffnet method was rasing to +1 power, e.g. diffnet^2 was actually
     diffnet^3.
 
 -   /.diffnet was not working.
@@ -268,7 +283,7 @@ Bug fixes
 -   The function select_egoalter returned error when graph was an array.
 
 -   The method [[<-.diffnet failed when replacing a dynamic attribute
-    with a NULL value (e.g. dn[["my_dyn_att"]] <- NULL).
+    with a NULL value (e.g. dn[["my_dyn_att"]] <- NULL).
 
 
 
@@ -300,7 +315,7 @@ New features and changes
     non-adopters or excluded variables.
 
 -   egonets_attrs now has new argument: self.attrs allows including
-    ego's attributes as part of the outcome so it can be used by the
+    ego’s attributes as part of the outcome so it can be used by the
     user.
 
 -   plot_diffnet now uses igraph::plot.igraph for plotting instead
@@ -372,7 +387,7 @@ New features and changes
 -   In edgelist_to_adjmat use.incomplete has been replaced by
     keep.isolated which makes more sense for naming. Incomplete cases on
     times or weights are still ignored (as these cannot be processed by
-    the c++ 'engine'). (Reported by Tom)
+    the c++ ‘engine’). (Reported by Tom)
 
 -   In edgelist_to_adjmat times has been replaced by t0 and t1. So now
     the user can import graphs with spells.
@@ -397,7 +412,7 @@ New features and changes
 
 -   New features for the exposure function. When graph is of class
     diffnet, the function accepts attrs equal to the name of some the
-    graph's attributes. Also, alt.graph can be specified as se, which
+    graph’s attributes. Also, alt.graph can be specified as se, which
     will be replaced by the inverse of the structural equivalence. When
     valued=FALSE the function will switch it to TRUE and warn the user.
 
@@ -410,7 +425,7 @@ New features and changes
 -   as_diffnet now has an internal function, check_as_diffnet_attrs, to
     check input attributes dimensions and coerce them into proper
     class/structure. Valid attributes are now documented in the
-    function's manual.
+    function’s manual.
 
 -   New arguments for edges_coords: dev and ran allow including device +
     margins aspec ratio and plotting area y/x limits for improved aspect
@@ -470,7 +485,7 @@ New functions
     instead.
 
 -   New concatenating method c.diffnet for diffnet objects. This method
-    allows 'adding up' diffnet objects.
+    allows ‘adding up’ diffnet objects.
 
 -   New print method for diffnet_se, objects returned by struct_equiv.
 
@@ -485,4 +500,3 @@ CHANGES IN NETDIFFUSER VERSION 1.16.2 (2016-02-18)
 
 
 -   First CRAN version.
-

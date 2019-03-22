@@ -4,6 +4,7 @@ context("Checking diffnet-indexing")
 
 test_that("Dynamic attributes assignment work", {
   # Preparing the data
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(13213)
   x <- rdiffnet(20, 5)
 
@@ -43,6 +44,7 @@ test_that("Dynamic attributes assignment work", {
 # Slices of a diffnet object ---------------------------------------------------
 
 test_that("Getting slices", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(5554)
   x <- rdiffnet(50,5)
 
@@ -62,6 +64,7 @@ test_that("Getting slices", {
 # Subsetting a diffnet object --------------------------------------------------
 test_that("Subsetting diffnet objects", {
   # Generating the data
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(101)
   graph <- rdiffnet(100, 10, seed.nodes = "central")
 
@@ -80,6 +83,7 @@ test_that("Subsetting diffnet objects", {
 
 # Replacing values -------------------------------------------------------------
 test_that("[<-.diffnet method", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1231)
   g <- rdiffnet(20, 3)
 

@@ -95,7 +95,7 @@ plot_diffnet2.default <- function(
   graph,
   toa,
   pers          = min(toa, na.rm = TRUE):max(toa, na.rm = TRUE),
-  color.ramp    = grDevices::colorRamp(viridis::magma(20)),
+  color.ramp    = grDevices::colorRamp(viridisLite::magma(20)),
   layout        = NULL,
   key.width     = 0.1,
   key.args      = list(),

@@ -10,9 +10,9 @@ plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
   main = "Distribution of Infectiousness and\\nSusceptibility",
   xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
   sub = ifelse(logscale, "(in log-scale)", NA),
-  color.palette = viridis::viridis_pal(), include.grid = TRUE,
-  exclude.zeros = FALSE, valued = getOption("diffnet.valued", FALSE),
-  ...)
+  color.palette = function(n) viridisLite::viridis(n),
+  include.grid = TRUE, exclude.zeros = FALSE,
+  valued = getOption("diffnet.valued", FALSE), ...)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
