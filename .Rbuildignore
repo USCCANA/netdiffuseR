@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^Meta$
 ^.*\.Rproj$
 ^\.Rproj\.user$
@@ -25,7 +26,6 @@ README[.]md
 ^vignettes/simulating.+\.Rmd$
 ^vignettes/structural.+\.Rmd$
 # CRAN
-^NEWS\.md$
 ^cran-comments\.md$
 ^next_release\.md$
 ^src/rgraph_scale_free.+$

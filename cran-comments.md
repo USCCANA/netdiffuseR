@@ -1,18 +1,21 @@
-## Test environments
-
-* Ubuntu 14.04.5 LTS 64-bit (on travis-ci), R 3.4.2, and R 3.3.3.
-* Windows Server 2012 R2 (on AppVeyor), R version 3.4.2 (64-bit), R version 3.3.3 (32-bit).
-* OS X El Capitan 10.11.6 (on travis-ci), R version 3.4.2, and R 3.3.3.
+* This is a resubmission: Fixing broken link in manual.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
 * Checked with options --use-valgrind and --as-cran.
+
 * Possible invalid URLs in man/rgraph_ws.Rd is false positive.
+
 * Install size > 1Mb in libs. Using Rcpp increases the size. Still, working on
   reducing it.
+
 * Also, possible mis-spelled words in DESCRIPTION have the correct spelling.
+
+* Error in R Old Rel (3.4.4) has to do with dependency change in statnet.common
+  # which I cannot control.
+  
+* One known error while installing in OldRel because of a change in the system
+  requirements of the package statnet.common (on which netdiffuseR depends).
 
 ## Reverse dependencies
 

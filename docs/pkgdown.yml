@@ -1,9 +1,10 @@
-pandoc: 1.19.2.1
-pkgdown: 1.1.0.9000
-pkgdown_sha: 09dacd8454ddb1e0b30e1def39b27e95a0953c53
+pandoc: '2.4'
+pkgdown: 1.3.0
+pkgdown_sha: ~
 articles:
   analyzing-medical-innovation-data: analyzing-medical-innovation-data.html
   introduction-to-netdiffuser: introduction-to-netdiffuser.html
   not-lost-in-translation-importing-and-exporting-graphs: not-lost-in-translation-importing-and-exporting-graphs.html
+  rdiffnets: rdiffnets.html
   time_discount_suscep_infect: time_discount_suscep_infect.html
 

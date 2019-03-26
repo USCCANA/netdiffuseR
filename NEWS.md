@@ -1,3 +1,8 @@
+# Changes in netdiffuseR version 1.20.2 (2019-03-25)
+
+* Repaired broken link in bootnet.
+
+
 # Changes in netdiffuseR version 1.20.1 (2019-03-22)
 
 * This version has no user level visible changes.

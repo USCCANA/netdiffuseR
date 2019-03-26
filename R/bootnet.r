@@ -47,7 +47,7 @@
 #' @family Functions for inference
 #' @references Snijders, T. A. B., & Borgatti, S. P. (1999). Non-Parametric
 #' Standard Errors and Tests for Network Statistics. Connections, 22(2), 1–10.
-#' Retrieved from \url{https://insna.org/PDF/Connections/v22/1999_I-2_61-70.pdf}
+#' Retrieved from \url{https://www.stats.ox.ac.uk/~snijders/Snijders_Borgatti.pdf}
 #' @return A list of class \code{diffnet_bootnet} containing the following:
 #' \item{graph}{The graph passed to \code{bootnet}.}
 #' \item{p.value}{The resulting p-value of the test (see details).}
