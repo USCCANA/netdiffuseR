@@ -1,0 +1,9 @@
+pandoc: '2.2'
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  analyzing-medical-innovation-data: analyzing-medical-innovation-data.html
+  introduction-to-netdiffuser: introduction-to-netdiffuser.html
+  not-lost-in-translation-importing-and-exporting-graphs: not-lost-in-translation-importing-and-exporting-graphs.html
+  time_discount_suscep_infect: time_discount_suscep_infect.html
+
