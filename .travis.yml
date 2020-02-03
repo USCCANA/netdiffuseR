@@ -3,18 +3,18 @@ language: r
 sudo: false
 
 matrix:
-include:
-  - os: linux
-    r: oldrel
-  - os: linux
-    r: release
-    env:
-      - R_CODECOV=true
-      - BUILD_WWW_HERE=true
-  - os: linux
-    r: devel
-  - os: osx
-    osx_image: xcode10.2
+  include:
+    - os: linux
+      r: oldrel
+    - os: linux
+      r: release
+      env:
+        - R_CODECOV=true
+        - BUILD_WWW_HERE=true
+    - os: linux
+      r: devel
+    - os: osx
+      osx_image: xcode10.2
 
 env:
  global:
