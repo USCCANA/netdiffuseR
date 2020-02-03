@@ -92,7 +92,12 @@
 #' diffnet <- rdiffnet(100, 5, seed.graph="small-world")
 #'
 #' # Testing structure-dependency of threshold
-#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100)
+#' res <- struct_test(
+#'   diffnet,
+#'   function(g) mean(threshold(g), na.rm=TRUE),
+#'   R=100
+#' )
+#'
 #' res
 #' hist(res)
 #'
@@ -108,12 +113,14 @@
 #' c(res, res)
 #'
 #' # Running in parallel fashion
-#' \dontrun{
-#' res <- struct_test(diffnet, function(g) mean(threshold(g), na.rm=TRUE), R=100,
-#' ncpus=4, parallel="multicore")
+#' res <- struct_test(
+#'   diffnet, function(g) mean(threshold(g), na.rm=TRUE),
+#'   R=100, ncpus=2, parallel="multicore"
+#' )
+#'
 #' res
+#'
 #' hist(res)
-#' }
 #' @author George G. Vega Yon
 #' @name struct_test
 NULL

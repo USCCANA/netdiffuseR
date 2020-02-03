@@ -98,18 +98,19 @@ arma::sp_mat ring_lattice(int n, int k, bool undirected=false) {
   if (undirected)
     if (k>1) k = (int) floor((double) k/2.0);
 
-    // Connecting to k/2 next & previous neighbour
-    for (int i=0;i<n;++i) {
-      for (int j=1;j<=k;++j) {
-        // Next neighbor
-        int l = i+j;
-        if (l >= n) l = l - n;
+  // Connecting to k/2 next & previous neighbour
+  for (int i=0;i<n;++i) {
+    for (int j=1;j<=k;++j) {
+      // Next neighbor
+      int l = i+j;
+      if (l >= n) l = l - n;
 
-        graph.at(i,l) += 1.0;
-        if (undirected) graph.at(l,i) += 1.0;
-      }
+      graph.at(i,l) += 1.0;
+      if (undirected) graph.at(l,i) += 1.0;
     }
-    return graph;
+  }
+
+  return graph;
 }
 
 /** *R

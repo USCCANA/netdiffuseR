@@ -119,10 +119,11 @@ with(out, ftable(toa, thr, dnn=c("Time of Adoption", "Threshold")))/
 ftable(out)
 
 # Can be coerced into a data.frame, e.g. ------------------------------------
-\dontrun{
- View(classify(brfarmersDiffNet))
- cbind(as.data.frame(classify(brfarmersDiffNet)), brfarmersDiffNet$toa)
-}
+ str(classify(brfarmersDiffNet))
+ ans <- cbind(
+ as.data.frame(classify(brfarmersDiffNet)), brfarmersDiffNet$toa
+ )
+ head(ans)
 
 # Creating a mosaic plot with the medical innovations -----------------------
 x <- classify(medInnovationsDiffNet)

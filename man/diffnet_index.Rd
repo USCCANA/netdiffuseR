@@ -34,8 +34,6 @@ a list of length \eqn{T}.}
 
 \item{drop}{Logical scalar. When \code{TRUE} returns an adjacency matrix, otherwise
 a filtered diffnet object.}
-
-\item{...}{Further argumnets to be passed to the method (on development)}
 }
 \value{
 In the case of the assigning methods, a diffnet object. Otherwise,

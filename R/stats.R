@@ -958,10 +958,11 @@ threshold <- function(obj, toa, t0=min(toa, na.rm = TRUE), include_censored=FALS
 #' ftable(out)
 #'
 #' # Can be coerced into a data.frame, e.g. ------------------------------------
-#' \dontrun{
-#'  View(classify(brfarmersDiffNet))
-#'  cbind(as.data.frame(classify(brfarmersDiffNet)), brfarmersDiffNet$toa)
-#' }
+#'  str(classify(brfarmersDiffNet))
+#'  ans <- cbind(
+#'  as.data.frame(classify(brfarmersDiffNet)), brfarmersDiffNet$toa
+#'  )
+#'  head(ans)
 #'
 #' # Creating a mosaic plot with the medical innovations -----------------------
 #' x <- classify(medInnovationsDiffNet)
@@ -1098,7 +1099,7 @@ plot.diffnet_adopters <- function(x, y = NULL,
 #' G <- rgraph_ws(20, 4, .1)
 #' X <- matrix(runif(40), ncol=2)
 #'
-#' vertex_covariate_dist(G, X)
+#' vertex_covariate_dist(G, X)[1:5, 1:5]
 #'
 #' # Mahalanobis distance ------------------------------------------------------
 #' S <- var(X)
@@ -1213,7 +1214,6 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 #' all(ans0[] == ans1[]) # Should yield TRUE
 #'
 #' # More elaborated example (speed) -------------------------------------------
-#' \dontrun{
 #'
 #' set.seed(123123123)
 #' A <- rgraph_ba(t = 5e3, m = 2)
@@ -1225,16 +1225,19 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 #' compfun <- function(a,b)
 #'   ifelse(a > b, a, b)
 #'
-#' microbenchmark::microbenchmark(
-#'   diffnet = matrix_compare(A, B, compfun),
-#'   R       = matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)),
-#'   times   = 10
-#' )
-#' # Unit: milliseconds
-#' #    expr       min        lq      mean    median        uq      max neval
-#' # diffnet  352.7989  355.0193  583.5366  357.7138  364.7604 2493.914    10
-#' #       R 1648.9607 1744.6762 2491.2435 1947.4344 2729.1274 6260.011    10
+#' \donttest{
+#'  if (require("microbenchmark")) {
+#'  microbenchmark(
+#'    diffnet = matrix_compare(A, B, compfun),
+#'    R       = matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)),
+#'    times   = 5
+#'  )
+#'  # Unit: milliseconds
+#'  #    expr       min        lq      mean    median        uq      max neval
+#'  # diffnet  352.7989  355.0193  583.5366  357.7138  364.7604 2493.914    10
+#'  #       R 1648.9607 1744.6762 2491.2435 1947.4344 2729.1274 6260.011    10
 #'
+#'  }
 #' }
 #' @aliases binary-functions
 #' @family dyadic-level comparison functions

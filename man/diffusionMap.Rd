@@ -101,11 +101,10 @@ which basically maps \code{x} to a fix length sequence of numbers such that
 
 # Example with a random graph --------------------------------------------------
 
-\dontrun{
 set.seed(1231)
 
 # Random scale-free diffusion network
-x <- rdiffnet(1000, 4, seed.graph="scale-free", seed.p.adopt = .025,
+x <- rdiffnet(500, 4, seed.graph="scale-free", seed.p.adopt = .025,
                            rewire = FALSE, seed.nodes = "central",
                            rgraph.arg=list(self=FALSE, m=4),
                            threshold.dist = function(id) runif(1,.2,.4))
@@ -128,10 +127,8 @@ par(mfrow=c(1,1))
 mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 par(oldpar)
-}
 
 # Example with Brazilian Farmers --------------------------------------------
-\dontrun{
 dn <- brfarmersDiffNet
 
 # Setting last TOA as NA
@@ -150,7 +147,6 @@ plot_diffnet2(dn, layout=coords, vertex.size = 300)
 out <- diffusionMap(dn, layout=coords, kde2d.args=list(n=100, h=50))
 col <- adjustcolor(colorRampPalette(c("white","lightblue", "yellow", "red"))(100),.5)
 with(out$map, .filled.contour(x,y,z,pretty(range(z), 100),col))
-}
 
 }
 \references{

@@ -511,6 +511,10 @@ as_dgCMatrix.diffnet <- function(x, make.dimnames = TRUE, ...) {
 #' @rdname as_dgCMatrix
 as_dgCMatrix.array <- function(x, make.dimnames = TRUE, ...) {
 
+  # Matrices need a special treatment
+  if (inherits(x, "matrix"))
+    return(as_dgCMatrix.default(x))
+
   ans <- apply(x, 3, methods::as, Class="dgCMatrix")
 
   # Updating row and colnames if necesary

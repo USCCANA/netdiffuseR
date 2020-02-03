@@ -57,7 +57,7 @@ set.seed(123)
 G <- rgraph_ws(20, 4, .1)
 X <- matrix(runif(40), ncol=2)
 
-vertex_covariate_dist(G, X)
+vertex_covariate_dist(G, X)[1:5, 1:5]
 
 # Mahalanobis distance ------------------------------------------------------
 S <- var(X)

@@ -253,29 +253,31 @@ DataFrame select_egoalter_cpp(
   //  0: Stable
   //  1: Added
   // -1: Dropped
-  for(int i=0;i<n;++i)
-    for(int j=0;j<n;++j) {
-      double chg = adjmat_t1(i,j) - adjmat_t0(i,j);
-      if      (chg > 0) change_mat(i,j) = 1;
-      else if (chg < 0) change_mat(i,j) = -1;
+  for(int i = 0; i < n; ++i)
+    for(int j = 0; j < n; ++j) {
+      double chg = adjmat_t1(i, j) - adjmat_t0(i, j);
+      if      (chg > 0) change_mat(i, j) = 1;
+      else if (chg < 0) change_mat(i, j) = -1;
     }
 
-    // Classifies dinamics between 1 and 16 depending on whether alter and ego
-    // changed behavior between t and t-1. Follows classification on Valente
-    //    n     y
-    //    n  y  n  y
-    //n n 1  2  9 10
-    //  y 3  4 11 12
-    //y n 5  6 13 14
-    //  y 7  8 15 16
-    IntegerMatrix select_mat_a(n,16); // Added
+  // Classifies dinamics between 1 and 16 depending on whether alter and ego
+  // changed behavior between t and t-1. Follows classification on Valente
+  //    n     y
+  //    n  y  n  y
+  //n n 1  2  9 10
+  //  y 3  4 11 12
+  //y n 5  6 13 14
+  //  y 7  8 15 16
+  IntegerMatrix select_mat_a(n,16); // Added
   IntegerMatrix select_mat_d(n,16); // Dropped
   IntegerMatrix select_mat_s(n,16); // Stable
 
   int cat = 1;
 
-  for(int i=0;i<n;++i)
-    for(int j=0;j<n;++j) {
+  for(int i = 0; i < n; ++i) {
+
+    for(int j = 0; j < n; ++j) {
+
       if (i==j) continue;
       // Fitting the category
       cat =
@@ -287,12 +289,15 @@ DataFrame select_egoalter_cpp(
       if      (change_mat(i,j) > 0) select_mat_a(i, cat - 1) += 1;
       else if (change_mat(i,j) < 0) select_mat_d(i, cat - 1) += 1;
       else if (adjmat_t1(i,j) != 0) select_mat_s(i, cat - 1) += 1;
+
     }
 
-    return DataFrame::create(
-      _["select_a"] = select_mat_a,
-      _["select_d"] = select_mat_d,
-      _["select_s"] = select_mat_s);
+  }
+
+  return DataFrame::create(
+    _["select_a"] = select_mat_a,
+    _["select_d"] = select_mat_d,
+    _["select_s"] = select_mat_s);
 }
 
 

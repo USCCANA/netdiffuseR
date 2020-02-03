@@ -13,7 +13,6 @@
 #' a filtered diffnet object.
 #' @param as.df Logical scalar. When \code{TRUE} returns a data frame, otherwise
 #' a list of length \eqn{T}.
-#' @param ... Further argumnets to be passed to the method (on development)
 #' @details
 #' The \code{[[.diffnet} methods provides access to the diffnet attributes
 #' data frames, static and dynamic. By providing the \code{name} of the corresponding

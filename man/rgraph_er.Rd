@@ -56,12 +56,11 @@ sparse matrix, hence the user should be careful when choosing the size of
 the network.
 }
 \examples{
-\dontrun{
 # Setting the seed
-set.seed(123)
+set.seed(13)
 
 # Generating an directed graph
-rgraph_er(undirected=FALSE)
+rgraph_er(undirected=FALSE, p = 0.1)
 
 # Comparing P(tie)
 x <- rgraph_er(1000, p=.1)
@@ -69,7 +68,6 @@ sum(x)/length(x)
 
 # Several period random gram
 rgraph_er(t=5)
-}
 }
 \references{
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)

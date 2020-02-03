@@ -33,7 +33,7 @@
 #'
 #' @examples
 #'
-#' \dontrun{
+#' if (require("ape")) {
 #'
 #'   # Generating a small random graph
 #'   set.seed(123)

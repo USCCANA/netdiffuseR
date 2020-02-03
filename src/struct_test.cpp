@@ -15,13 +15,15 @@ double struct_test_mean(NumericVector & y,
   funcPtr fun;
   st_getfun(funname, fun);
 
-  for (int i=0;i<n;++i)
+  for (int i=0;i<n;++i) {
+
     for (int j=0;j<n;++j) {
       if (self) ans+= fun(y[i], y[j])/m;
       else if (i!=j) ans+= fun(y[i], y[j])/m;
     }
+  }
 
-    return ans;
+  return ans;
 }
 
 
@@ -36,14 +38,16 @@ double struct_test_var(NumericVector & y, std::string funname, bool self=false) 
   funcPtr fun;
   st_getfun(funname, fun);
 
-  for (int i=0;i<n;++i)
-    for (int j=0;j<n;++j)
+  for (int i=0;i<n;++i) {
+    for (int j=0;j<n;++j) {
       for (int k=0;k<n;++k) {
         if (self) ans+=fun(y[i],y[j])*fun(y[i],y[k])/m;
         else if (i!=j && i!=k) ans+=fun(y[i],y[j])*fun(y[i],y[k])/m;
       }
+    }
+  }
 
-      return ans - pow(struct_test_mean(y, funname, self),2.0);
+  return ans - pow(struct_test_mean(y, funname, self),2.0);
 }
 
 typedef arma::sp_mat::const_iterator spiter;
