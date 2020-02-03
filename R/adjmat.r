@@ -465,12 +465,16 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
     if (!length(t1)) t1 <- max(obj, na.rm = TRUE)
   }
 
-  ans <- switch(class(obj),
-    numeric = toa_mat.numeric(obj, labels, t0, t1),
-    integer = toa_mat.integer(obj, labels, t0, t1),
-    diffnet = with(obj, list(adopt=adopt,cumadopt=cumadopt)),
-    stopifnot_graph(obj)
-  )
+  cls <- class(obj)
+  ans <- if ("numeric" %in% cls) {
+    toa_mat.numeric(obj, labels, t0, t1)
+    } else if ("integer" %in% cls) {
+    toa_mat.integer(obj, labels, t0, t1)
+    } else if  ("diffnet" %in% cls) {
+    with(obj, list(adopt=adopt,cumadopt=cumadopt))
+    } else
+      stopifnot_graph(obj)
+
 
   if (inherits(obj, "diffnet")) {
     dimnames(ans$adopt) <- with(obj$meta, list(ids,pers))

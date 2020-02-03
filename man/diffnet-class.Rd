@@ -27,22 +27,38 @@ as_diffnet(graph, ...)
 
 \method{as_diffnet}{networkDynamic}(graph, toavar, ...)
 
-new_diffnet(graph, toa, t0 = min(toa, na.rm = TRUE), t1 = max(toa,
-  na.rm = TRUE), vertex.dyn.attrs = NULL, vertex.static.attrs = NULL,
-  id.and.per.vars = NULL, graph.attrs = NULL,
+new_diffnet(
+  graph,
+  toa,
+  t0 = min(toa, na.rm = TRUE),
+  t1 = max(toa, na.rm = TRUE),
+  vertex.dyn.attrs = NULL,
+  vertex.static.attrs = NULL,
+  id.and.per.vars = NULL,
+  graph.attrs = NULL,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
-  multiple = getOption("diffnet.multiple"), name = "Diffusion Network",
-  behavior = "Unspecified")
+  multiple = getOption("diffnet.multiple"),
+  name = "Diffusion Network",
+  behavior = "Unspecified"
+)
 
-\method{as.data.frame}{diffnet}(x, row.names = NULL, optional = FALSE,
-  attr.class = c("dyn", "static"), ...)
+\method{as.data.frame}{diffnet}(
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  attr.class = c("dyn", "static"),
+  ...
+)
 
-diffnet.attrs(graph, element = c("vertex", "graph"),
-  attr.class = c("dyn", "static"), as.df = FALSE)
+diffnet.attrs(
+  graph,
+  element = c("vertex", "graph"),
+  attr.class = c("dyn", "static"),
+  as.df = FALSE
+)
 
-diffnet.attrs(graph, element = "vertex",
-  attr.class = "static") <- value
+diffnet.attrs(graph, element = "vertex", attr.class = "static") <- value
 
 diffnet.toa(graph)
 
@@ -283,15 +299,20 @@ diffnetLapply(medInnovationsDiffNet, function(x, cumadopt, ...) {sum(cumadopt)})
 \seealso{
 Default options are listed at \code{\link{netdiffuseR-options}}
 
-Other diffnet methods: \code{\link{\%*\%}},
-  \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},
-  \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet_index}}, \code{\link{plot.diffnet}},
-  \code{\link{summary.diffnet}}
+Other diffnet methods: 
+\code{\link{\%*\%}()},
+\code{\link{as.array.diffnet}()},
+\code{\link{c.diffnet}()},
+\code{\link{diffnet-arithmetic}},
+\code{\link{diffnet_index}},
+\code{\link{plot.diffnet}()},
+\code{\link{summary.diffnet}()}
 
-Other data management functions: \code{\link{edgelist_to_adjmat}},
-  \code{\link{egonet_attrs}}, \code{\link{isolated}},
-  \code{\link{survey_to_diffnet}}
+Other data management functions: 
+\code{\link{edgelist_to_adjmat}()},
+\code{\link{egonet_attrs}()},
+\code{\link{isolated}()},
+\code{\link{survey_to_diffnet}()}
 }
 \author{
 George G. Vega Yon

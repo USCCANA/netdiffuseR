@@ -4,10 +4,19 @@
 \alias{exposure}
 \title{Ego exposure}
 \usage{
-exposure(graph, cumadopt, attrs = NULL, alt.graph = NULL,
+exposure(
+  graph,
+  cumadopt,
+  attrs = NULL,
+  alt.graph = NULL,
   outgoing = getOption("diffnet.outgoing", TRUE),
-  valued = getOption("diffnet.valued", FALSE), normalized = TRUE,
-  groupvar = NULL, self = getOption("diffnet.self"), lags = 0L, ...)
+  valued = getOption("diffnet.valued", FALSE),
+  normalized = TRUE,
+  groupvar = NULL,
+  self = getOption("diffnet.self"),
+  lags = 0L,
+  ...
+)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -227,13 +236,18 @@ Valente, T. W. (1995). "Network models of the diffusion of innovations"
  (2nd ed.). Cresskill N.J.: Hampton Press.
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{hazard_rate}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon & Thomas W. Valente

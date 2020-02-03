@@ -14,10 +14,17 @@ diffusionMap(graph, ...)
 
 diffmap(graph, ...)
 
-\method{diffusionMap}{default}(graph, x, x.adj = round_to_seq,
-  layout = NULL, jitter.args = list(), kde2d.args = list(n = 100),
-  sharp.criter = function(x, w) {     wvar(x, w) > (max(x, na.rm = TRUE)
-  - min(x, na.rm = TRUE))^2/12 }, ...)
+\method{diffusionMap}{default}(
+  graph,
+  x,
+  x.adj = round_to_seq,
+  layout = NULL,
+  jitter.args = list(),
+  kde2d.args = list(n = 100),
+  sharp.criter = function(x, w) {     wvar(x, w) > (max(x, na.rm = TRUE) - min(x, na.rm
+    = TRUE))^2/12 },
+  ...
+)
 
 \method{diffusionMap}{diffnet}(graph, slice = nslices(graph), ...)
 
@@ -115,7 +122,7 @@ dm1 <- diffusionMap(x, layout = dm0$coords, kde2d.args=list(n=150, h=.5))
 oldpar <- par(no.readonly = TRUE)
 col <- colorRampPalette(blues9)(100)
 par(mfrow=c(1,2), oma=c(1,0,0,0))
-image(dm0, col=col, main="Non-random Times of Adoption\\nAdoption from the core.")
+image(dm0, col=col, main="Non-random Times of Adoption\nAdoption from the core.")
 image(dm1, col=col, main="Random Times of Adoption")
 par(mfrow=c(1,1))
 mtext("Both networks have the same distribution on times of adoption", 1,
@@ -151,14 +158,17 @@ Vega Yon, George G., and Valente, Thomas W., Visualizing Large Annotated
 Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working paper).
 }
 \seealso{
-Other visualizations: \code{\link{dgr}},
-  \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

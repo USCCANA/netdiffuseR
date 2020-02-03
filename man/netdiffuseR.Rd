@@ -3,7 +3,6 @@
 \docType{package}
 \name{netdiffuseR}
 \alias{netdiffuseR}
-\alias{netdiffuseR-package}
 \title{netdiffuseR}
 \description{
 Statistical analysis, visualization and simulation of diffusion and contagion

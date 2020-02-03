@@ -61,16 +61,22 @@ Moran's I. (2015, September 3). In Wikipedia, The Free Encyclopedia.
 Retrieved 06:23, December 22, 2015, from \url{https://en.wikipedia.org/w/index.php?title=Moran\%27s_I&oldid=679297766}
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 
-Other Functions for inference: \code{\link{bootnet}},
-  \code{\link{struct_test}}
+Other Functions for inference: 
+\code{\link{bootnet}()},
+\code{\link{struct_test}()}
 }
 \author{
 George G. Vega Yon

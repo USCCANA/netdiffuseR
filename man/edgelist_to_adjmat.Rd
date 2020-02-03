@@ -5,15 +5,25 @@
 \alias{adjmat_to_edgelist}
 \title{Conversion between adjacency matrix and edgelist}
 \usage{
-edgelist_to_adjmat(edgelist, w = NULL, t0 = NULL, t1 = NULL,
-  t = NULL, simplify = TRUE,
+edgelist_to_adjmat(
+  edgelist,
+  w = NULL,
+  t0 = NULL,
+  t1 = NULL,
+  t = NULL,
+  simplify = TRUE,
   undirected = getOption("diffnet.undirected"),
   self = getOption("diffnet.self"),
-  multiple = getOption("diffnet.multiple"), keep.isolates = TRUE,
-  recode.ids = TRUE)
+  multiple = getOption("diffnet.multiple"),
+  keep.isolates = TRUE,
+  recode.ids = TRUE
+)
 
-adjmat_to_edgelist(graph, undirected = getOption("diffnet.undirected",
-  FALSE), keep.isolates = getOption("diffnet.keep.isolates", TRUE))
+adjmat_to_edgelist(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  keep.isolates = getOption("diffnet.keep.isolates", TRUE)
+)
 }
 \arguments{
 \item{edgelist}{Two column matrix/data.frame in the form of ego -source- and
@@ -158,9 +168,11 @@ edgelist
 
 }
 \seealso{
-Other data management functions: \code{\link{diffnet-class}},
-  \code{\link{egonet_attrs}}, \code{\link{isolated}},
-  \code{\link{survey_to_diffnet}}
+Other data management functions: 
+\code{\link{diffnet-class}},
+\code{\link{egonet_attrs}()},
+\code{\link{isolated}()},
+\code{\link{survey_to_diffnet}()}
 }
 \author{
 George G. Vega Yon & Thomas W. Valente

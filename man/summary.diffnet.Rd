@@ -4,8 +4,14 @@
 \alias{summary.diffnet}
 \title{Summary of diffnet objects}
 \usage{
-\method{summary}{diffnet}(object, slices = NULL, no.print = FALSE,
-  skip.moran = FALSE, valued = getOption("diffnet.valued", FALSE), ...)
+\method{summary}{diffnet}(
+  object,
+  slices = NULL,
+  no.print = FALSE,
+  skip.moran = FALSE,
+  valued = getOption("diffnet.valued", FALSE),
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class \code{\link[=as_diffnet]{diffnet}}.}
@@ -64,11 +70,14 @@ summary(medInnovationsDiffNet)
 
 }
 \seealso{
-Other diffnet methods: \code{\link{\%*\%}},
-  \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},
-  \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet-class}}, \code{\link{diffnet_index}},
-  \code{\link{plot.diffnet}}
+Other diffnet methods: 
+\code{\link{\%*\%}()},
+\code{\link{as.array.diffnet}()},
+\code{\link{c.diffnet}()},
+\code{\link{diffnet-arithmetic}},
+\code{\link{diffnet-class}},
+\code{\link{diffnet_index}},
+\code{\link{plot.diffnet}()}
 }
 \author{
 George G. Vega Yon

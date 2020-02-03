@@ -5,9 +5,15 @@
 \alias{bernoulli}
 \title{Erdos-Renyi model}
 \usage{
-rgraph_er(n = 10, t = 1, p = 0.01,
-  undirected = getOption("diffnet.undirected"), weighted = FALSE,
-  self = getOption("diffnet.self"), as.edgelist = FALSE)
+rgraph_er(
+  n = 10,
+  t = 1,
+  p = 0.01,
+  undirected = getOption("diffnet.undirected"),
+  weighted = FALSE,
+  self = getOption("diffnet.self"),
+  as.edgelist = FALSE
+)
 }
 \arguments{
 \item{n}{Integer. Number of vertices}
@@ -70,10 +76,13 @@ Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
 \url{http://barabasi.com/book/network-science}.
 }
 \seealso{
-Other simulation functions: \code{\link{permute_graph}},
-  \code{\link{rdiffnet}}, \code{\link{rewire_graph}},
-  \code{\link{rgraph_ba}}, \code{\link{rgraph_ws}},
-  \code{\link{ring_lattice}}
+Other simulation functions: 
+\code{\link{permute_graph}()},
+\code{\link{rdiffnet}()},
+\code{\link{rewire_graph}()},
+\code{\link{rgraph_ba}()},
+\code{\link{rgraph_ws}()},
+\code{\link{ring_lattice}()}
 }
 \author{
 George G. Vega Yon

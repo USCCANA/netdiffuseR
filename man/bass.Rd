@@ -17,11 +17,21 @@ fitbass(dat, ...)
 
 \method{fitbass}{default}(dat, ...)
 
-\method{plot}{diffnet_bass}(x, y = 1:length(x$m$lhs()), add = FALSE,
-  pch = c(21, 24), main = "Bass Diffusion Model",
-  ylab = "Proportion of adopters", xlab = "Time", type = c("b", "b"),
-  lty = c(2, 1), col = c("black", "black"), bg = c("lightblue",
-  "gray"), include.legend = TRUE, ...)
+\method{plot}{diffnet_bass}(
+  x,
+  y = 1:length(x$m$lhs()),
+  add = FALSE,
+  pch = c(21, 24),
+  main = "Bass Diffusion Model",
+  ylab = "Proportion of adopters",
+  xlab = "Time",
+  type = c("b", "b"),
+  lty = c(2, 1),
+  col = c("black", "black"),
+  bg = c("lightblue", "gray"),
+  include.legend = TRUE,
+  ...
+)
 
 bass_F(Time, p, q)
 
@@ -124,13 +134,18 @@ Bass's Basement Institute Institute. The Bass Model. (2010).
 Available at: \url{http://www.bassbasement.org/BassModel/Default.aspx}. (Accessed: 29th March 2017)
 }
 \seealso{
-Other statistics: \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon

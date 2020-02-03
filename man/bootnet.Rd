@@ -16,12 +16,17 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
 
 \method{print}{diffnet_bootnet}(x, ...)
 
-\method{hist}{diffnet_bootnet}(x,
+\method{hist}{diffnet_bootnet}(
+  x,
   main = "Empirical Distribution of Statistic",
-  xlab = expression(Values ~ of ~ t), breaks = 20, annotated = TRUE,
+  xlab = expression(Values ~ of ~ t),
+  breaks = 20,
+  annotated = TRUE,
   b0 = expression(atop(plain("") \%up\% plain("")), t[0]),
-  b = expression(atop(plain("") \%up\% plain("")), t[]), ask = TRUE,
-  ...)
+  b = expression(atop(plain("") \%up\% plain("")), t[]),
+  ask = TRUE,
+  ...
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -114,7 +119,8 @@ Standard Errors and Tests for Network Statistics. Connections, 22(2), 1–10.
 Retrieved from \url{https://www.stats.ox.ac.uk/~snijders/Snijders_Borgatti.pdf}
 }
 \seealso{
-Other Functions for inference: \code{\link{moran}},
-  \code{\link{struct_test}}
+Other Functions for inference: 
+\code{\link{moran}()},
+\code{\link{struct_test}()}
 }
 \concept{Functions for inference}

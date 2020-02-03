@@ -4,11 +4,18 @@
 \alias{rewire_graph}
 \title{Graph rewiring algorithms}
 \usage{
-rewire_graph(graph, p, algorithm = "endpoints", both.ends = FALSE,
-  self = FALSE, multiple = FALSE,
+rewire_graph(
+  graph,
+  p,
+  algorithm = "endpoints",
+  both.ends = FALSE,
+  self = FALSE,
+  multiple = FALSE,
   undirected = getOption("diffnet.undirected"),
-  pr.change = ifelse(self, 0.5, 1), copy.first = TRUE,
-  althexagons = FALSE)
+  pr.change = ifelse(self, 0.5, 1),
+  copy.first = TRUE,
+  althexagons = FALSE
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -216,10 +223,13 @@ prescribed joint degree distribution. Journal of Experimental Algorithmics,
 17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
 }
 \seealso{
-Other simulation functions: \code{\link{permute_graph}},
-  \code{\link{rdiffnet}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
-  \code{\link{ring_lattice}}
+Other simulation functions: 
+\code{\link{permute_graph}()},
+\code{\link{rdiffnet}()},
+\code{\link{rgraph_ba}()},
+\code{\link{rgraph_er}()},
+\code{\link{rgraph_ws}()},
+\code{\link{ring_lattice}()}
 }
 \author{
 George G. Vega Yon

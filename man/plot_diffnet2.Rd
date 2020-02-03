@@ -10,15 +10,24 @@ plot_diffnet2(graph, ...)
 
 \method{plot_diffnet2}{diffnet}(graph, toa, slice = nslices(graph), ...)
 
-\method{plot_diffnet2}{default}(graph, toa, pers = min(toa, na.rm =
-  TRUE):max(toa, na.rm = TRUE),
+\method{plot_diffnet2}{default}(
+  graph,
+  toa,
+  pers = min(toa, na.rm = TRUE):max(toa, na.rm = TRUE),
   color.ramp = grDevices::colorRamp(viridisLite::magma(20)),
-  layout = NULL, key.width = 0.1, key.args = list(),
-  main = "Diffusion dynamics", add.map = NULL,
-  diffmap.args = list(kde2d.args = list(n = 100)), diffmap.alpha = 0.5,
-  include.white = "first", vertex.size = "degree",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size",
-  c(0.01, 0.04)), no.graph = FALSE, ...)
+  layout = NULL,
+  key.width = 0.1,
+  key.args = list(),
+  main = "Diffusion dynamics",
+  add.map = NULL,
+  diffmap.args = list(kde2d.args = list(n = 100)),
+  diffmap.alpha = 0.5,
+  include.white = "first",
+  vertex.size = "degree",
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
+  no.graph = FALSE,
+  ...
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -96,14 +105,17 @@ By defult, the function passes the following values to \code{plot.igraph}:
 }
 }
 \seealso{
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

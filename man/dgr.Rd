@@ -8,14 +8,26 @@
 \alias{plot.diffnet_degSeq}
 \title{Indegree, outdegree and degree of the vertices}
 \usage{
-dgr(graph, cmode = "degree",
+dgr(
+  graph,
+  cmode = "degree",
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
-  valued = getOption("diffnet.valued", FALSE))
+  valued = getOption("diffnet.valued", FALSE)
+)
 
-\method{plot}{diffnet_degSeq}(x, breaks = min(100L, nrow(x)/5),
-  freq = FALSE, y = NULL, log = "xy", hist.args = list(),
-  slice = ncol(x), xlab = "Degree", ylab = "Freq", ...)
+\method{plot}{diffnet_degSeq}(
+  x,
+  breaks = min(100L, nrow(x)/5),
+  freq = FALSE,
+  y = NULL,
+  log = "xy",
+  hist.args = list(),
+  slice = ncol(x),
+  xlab = "Degree",
+  ylab = "Freq",
+  ...
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -88,23 +100,30 @@ suppressWarnings(plot(dgr(g)))
 
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 
-Other visualizations: \code{\link{diffusionMap}},
-  \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

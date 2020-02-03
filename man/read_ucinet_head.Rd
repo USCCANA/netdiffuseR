@@ -35,7 +35,9 @@ Reads UCINET files
 Read UCINET files (binary)
 }
 \seealso{
-Other Foreign: \code{\link{igraph}}, \code{\link{network}},
-  \code{\link{read_pajek}}
+Other Foreign: 
+\code{\link{igraph}},
+\code{\link{network}},
+\code{\link{read_pajek}()}
 }
 \concept{Foreign}

@@ -28,13 +28,18 @@ where \eqn{q_i}{q(i)} is the number of adopters in time \eqn{t}. Note that
 it is only calculated fot \eqn{t>1}.
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon & Thomas W. Valente

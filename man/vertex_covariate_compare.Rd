@@ -46,7 +46,8 @@ vertex_covariate_compare(G, x, ">=")
 vertex_covariate_compare(G, x, "<=")
 }
 \seealso{
-Other dyadic-level comparison functions: \code{\link{matrix_compare}},
-  \code{\link{vertex_covariate_dist}}
+Other dyadic-level comparison functions: 
+\code{\link{matrix_compare}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \concept{dyadic-level comparison functions}

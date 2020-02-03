@@ -4,12 +4,24 @@
 \alias{plot_adopters}
 \title{Visualize adopters and cumulative adopters}
 \usage{
-plot_adopters(obj, freq = FALSE, what = c("adopt", "cumadopt"),
-  add = FALSE, include.legend = TRUE, include.grid = TRUE,
-  pch = c(21, 24), type = c("b", "b"), ylim = if (!freq) c(0, 1) else
-  NULL, lty = c(1, 1), col = c("black", "black"), bg = c("tomato",
-  "gray"), xlab = "Time", ylab = ifelse(freq, "Frequency",
-  "Proportion"), main = "Adopters and Cumulative Adopters", ...)
+plot_adopters(
+  obj,
+  freq = FALSE,
+  what = c("adopt", "cumadopt"),
+  add = FALSE,
+  include.legend = TRUE,
+  include.grid = TRUE,
+  pch = c(21, 24),
+  type = c("b", "b"),
+  ylim = if (!freq) c(0, 1) else NULL,
+  lty = c(1, 1),
+  col = c("black", "black"),
+  bg = c("tomato", "gray"),
+  xlab = "Time",
+  ylab = ifelse(freq, "Frequency", "Proportion"),
+  main = "Adopters and Cumulative Adopters",
+  ...
+)
 }
 \arguments{
 \item{obj}{Either a diffnet object or a cumulative a doption matrix.}
@@ -63,14 +75,17 @@ mat <- toa_mat(toa)
 plot_adopters(mat$cumadopt)
 }
 \seealso{
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_diffnet2}},
-  \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

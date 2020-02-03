@@ -8,8 +8,14 @@
 \usage{
 diffnet_to_igraph(graph, slices = 1:nslices(graph))
 
-igraph_to_diffnet(graph = NULL, graph.list = NULL, toavar, t0 = NULL,
-  t1 = NULL, ...)
+igraph_to_diffnet(
+  graph = NULL,
+  graph.list = NULL,
+  toavar,
+  t0 = NULL,
+  t1 = NULL,
+  ...
+)
 }
 \arguments{
 \item{graph}{Either a \code{\link{diffnet}} or \code{\link[igraph:igraph]{igraph}} graph object.}
@@ -42,7 +48,9 @@ x <- diffnet_to_igraph(medInnovationsDiffNet)
 igraph::vertex_attr(x[[1]], "toa")
 }
 \seealso{
-Other Foreign: \code{\link{network}},
-  \code{\link{read_pajek}}, \code{\link{read_ucinet_head}}
+Other Foreign: 
+\code{\link{network}},
+\code{\link{read_pajek}()},
+\code{\link{read_ucinet_head}()}
 }
 \concept{Foreign}

@@ -4,8 +4,14 @@
 \alias{threshold}
 \title{Retrive threshold levels from the exposure matrix}
 \usage{
-threshold(obj, toa, t0 = min(toa, na.rm = TRUE),
-  include_censored = FALSE, lags = 0L, ...)
+threshold(
+  obj,
+  toa,
+  t0 = min(toa, na.rm = TRUE),
+  include_censored = FALSE,
+  lags = 0L,
+  ...
+)
 }
 \arguments{
 \item{obj}{Either a \eqn{n\times T}{n * T} matrix (eposure to the innovation obtained from
@@ -57,13 +63,18 @@ threshold(diffnet, alt.graph=se)
 \seealso{
 Threshold can be visualized using \code{\link{plot_threshold}}
 
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon & Thomas W. Valente

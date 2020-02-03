@@ -34,3 +34,4 @@ makefile
 ^docs$
 ^LICENSE\.md$
 ^_pkgdown\.yml$
+^netdiffuseR\.tar\.gz$

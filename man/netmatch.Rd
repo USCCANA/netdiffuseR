@@ -5,13 +5,30 @@
 \alias{netmatch_prepare}
 \title{Matching Estimators with Network Data}
 \usage{
-netmatch_prepare(dat, graph, timevar, depvar, covariates,
-  treat_thr = rep(1L, length(graph)), adopt_thr = rep(1L,
-  length(graph)), expo_pcent = FALSE, expo_lag = 0L)
+netmatch_prepare(
+  dat,
+  graph,
+  timevar,
+  depvar,
+  covariates,
+  treat_thr = rep(1L, length(graph)),
+  adopt_thr = rep(1L, length(graph)),
+  expo_pcent = FALSE,
+  expo_lag = 0L
+)
 
-netmatch(dat, graph, timevar, depvar, covariates, treat_thr = rep(1L,
-  length(graph)), adopt_thr = rep(1L, length(graph)),
-  expo_pcent = FALSE, expo_lag = 0L, ...)
+netmatch(
+  dat,
+  graph,
+  timevar,
+  depvar,
+  covariates,
+  treat_thr = rep(1L, length(graph)),
+  adopt_thr = rep(1L, length(graph)),
+  expo_pcent = FALSE,
+  expo_lag = 0L,
+  ...
+)
 }
 \arguments{
 \item{dat}{\code{data.frame} with dynamic data. Must be of

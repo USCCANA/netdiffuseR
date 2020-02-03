@@ -5,13 +5,29 @@
 \alias{susceptibility}
 \title{Susceptibility and Infection}
 \usage{
-infection(graph, toa, t0 = NULL, normalize = TRUE, K = 1L, r = 0.5,
-  expdiscount = FALSE, valued = getOption("diffnet.valued", FALSE),
-  outgoing = getOption("diffnet.outgoing", TRUE))
+infection(
+  graph,
+  toa,
+  t0 = NULL,
+  normalize = TRUE,
+  K = 1L,
+  r = 0.5,
+  expdiscount = FALSE,
+  valued = getOption("diffnet.valued", FALSE),
+  outgoing = getOption("diffnet.outgoing", TRUE)
+)
 
-susceptibility(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, valued = getOption("diffnet.valued",
-  FALSE), outgoing = getOption("diffnet.outgoing", TRUE))
+susceptibility(
+  graph,
+  toa,
+  t0 = NULL,
+  normalize = TRUE,
+  K = 1L,
+  r = 0.5,
+  expdiscount = FALSE,
+  valued = getOption("diffnet.valued", FALSE),
+  outgoing = getOption("diffnet.outgoing", TRUE)
+)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -129,13 +145,18 @@ Susceptibility, and Mass Media Networks. American Journal of Sociology, 106(1),
 The user can visualize the distribution of both statistics
 by using the function \code{\link{plot_infectsuscep}}
 
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon

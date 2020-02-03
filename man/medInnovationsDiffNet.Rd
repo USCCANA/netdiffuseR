@@ -9,11 +9,16 @@ A directed dynamic graph with 125 vertices and 18 time periods. The attributes
 in the graph are static and described in \code{\link{medInnovations}}.
 }
 \seealso{
-Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{diffusion-data}},
-  \code{\link{fakeDynEdgelist}},
-  \code{\link{fakeEdgelist}}, \code{\link{fakesurveyDyn}},
-  \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
-  \code{\link{kfamily}}, \code{\link{medInnovations}}
+Other diffusion datasets: 
+\code{\link{brfarmersDiffNet}},
+\code{\link{brfarmers}},
+\code{\link{diffusion-data}},
+\code{\link{fakeDynEdgelist}},
+\code{\link{fakeEdgelist}},
+\code{\link{fakesurveyDyn}},
+\code{\link{fakesurvey}},
+\code{\link{kfamilyDiffNet}},
+\code{\link{kfamily}},
+\code{\link{medInnovations}}
 }
 \concept{diffusion datasets}

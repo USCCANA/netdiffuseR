@@ -25,13 +25,17 @@ in particular, the \code{\link{survey_to_diffnet}} function. This dataset
 can be merged with the \code{\link{fakeDynEdgelist}}.
 }
 \seealso{
-Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{diffusion-data}},
-  \code{\link{fakeDynEdgelist}},
-  \code{\link{fakeEdgelist}}, \code{\link{fakesurvey}},
-  \code{\link{kfamilyDiffNet}}, \code{\link{kfamily}},
-  \code{\link{medInnovationsDiffNet}},
-  \code{\link{medInnovations}}
+Other diffusion datasets: 
+\code{\link{brfarmersDiffNet}},
+\code{\link{brfarmers}},
+\code{\link{diffusion-data}},
+\code{\link{fakeDynEdgelist}},
+\code{\link{fakeEdgelist}},
+\code{\link{fakesurvey}},
+\code{\link{kfamilyDiffNet}},
+\code{\link{kfamily}},
+\code{\link{medInnovationsDiffNet}},
+\code{\link{medInnovations}}
 }
 \author{
 George G. Vega Yon

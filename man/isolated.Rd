@@ -5,11 +5,17 @@
 \alias{drop_isolated}
 \title{Find and remove isolated vertices}
 \usage{
-isolated(graph, undirected = getOption("diffnet.undirected", FALSE),
-  self = getOption("diffnet.self", FALSE))
+isolated(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+)
 
-drop_isolated(graph, undirected = getOption("diffnet.undirected", FALSE),
-  self = getOption("diffnet.self", FALSE))
+drop_isolated(
+  graph,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self = getOption("diffnet.self", FALSE)
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -60,10 +66,11 @@ isolated(graph)
 drop_isolated(graph)
 }
 \seealso{
-Other data management functions: \code{\link{diffnet-class}},
-  \code{\link{edgelist_to_adjmat}},
-  \code{\link{egonet_attrs}},
-  \code{\link{survey_to_diffnet}}
+Other data management functions: 
+\code{\link{diffnet-class}},
+\code{\link{edgelist_to_adjmat}()},
+\code{\link{egonet_attrs}()},
+\code{\link{survey_to_diffnet}()}
 }
 \author{
 George G. Vega Yon

@@ -5,8 +5,7 @@
 \alias{scale-free}
 \title{Scale-free and Homophilic Random Networks}
 \usage{
-rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE,
-  eta = NULL)
+rgraph_ba(m0 = 1L, m = 1L, t = 10L, graph = NULL, self = TRUE, eta = NULL)
 }
 \arguments{
 \item{m0}{Integer scalar. Number of initial vertices in the graph.}
@@ -104,10 +103,13 @@ Scale-free homophilic network. European Physical Journal B, 86(2).
 \url{http://doi.org/10.1140/epjb/e2012-30802-x}
 }
 \seealso{
-Other simulation functions: \code{\link{permute_graph}},
-  \code{\link{rdiffnet}}, \code{\link{rewire_graph}},
-  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
-  \code{\link{ring_lattice}}
+Other simulation functions: 
+\code{\link{permute_graph}()},
+\code{\link{rdiffnet}()},
+\code{\link{rewire_graph}()},
+\code{\link{rgraph_er}()},
+\code{\link{rgraph_ws}()},
+\code{\link{ring_lattice}()}
 }
 \author{
 George G. Vega Yon

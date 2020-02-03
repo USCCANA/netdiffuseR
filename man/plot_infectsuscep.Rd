@@ -4,15 +4,28 @@
 \alias{plot_infectsuscep}
 \title{Plot distribution of infect/suscep}
 \usage{
-plot_infectsuscep(graph, toa, t0 = NULL, normalize = TRUE, K = 1L,
-  r = 0.5, expdiscount = FALSE, bins = 20, nlevels = round(bins/2),
-  h = NULL, logscale = TRUE,
+plot_infectsuscep(
+  graph,
+  toa,
+  t0 = NULL,
+  normalize = TRUE,
+  K = 1L,
+  r = 0.5,
+  expdiscount = FALSE,
+  bins = 20,
+  nlevels = round(bins/2),
+  h = NULL,
+  logscale = TRUE,
   main = "Distribution of Infectiousness and\\nSusceptibility",
-  xlab = "Infectiousness of ego", ylab = "Susceptibility of ego",
+  xlab = "Infectiousness of ego",
+  ylab = "Susceptibility of ego",
   sub = ifelse(logscale, "(in log-scale)", NA),
   color.palette = function(n) viridisLite::viridis(n),
-  include.grid = TRUE, exclude.zeros = FALSE,
-  valued = getOption("diffnet.valued", FALSE), ...)
+  include.grid = TRUE,
+  exclude.zeros = FALSE,
+  valued = getOption("diffnet.valued", FALSE),
+  ...
+)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -99,13 +112,17 @@ of Social Networks". Science, 337(6092), 337–341.
 Infectiousness and susceptibility are computed via \code{\link{infection}} and
 \code{\link{susceptibility}}.
 
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

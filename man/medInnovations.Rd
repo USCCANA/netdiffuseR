@@ -92,12 +92,16 @@ Valente, T. W. (1995). Network models of the diffusion of innovations (2nd ed.).
 Cresskill N.J.: Hampton Press.
 }
 \seealso{
-Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{diffusion-data}},
-  \code{\link{fakeDynEdgelist}},
-  \code{\link{fakeEdgelist}}, \code{\link{fakesurveyDyn}},
-  \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
-  \code{\link{kfamily}},
-  \code{\link{medInnovationsDiffNet}}
+Other diffusion datasets: 
+\code{\link{brfarmersDiffNet}},
+\code{\link{brfarmers}},
+\code{\link{diffusion-data}},
+\code{\link{fakeDynEdgelist}},
+\code{\link{fakeEdgelist}},
+\code{\link{fakesurveyDyn}},
+\code{\link{fakesurvey}},
+\code{\link{kfamilyDiffNet}},
+\code{\link{kfamily}},
+\code{\link{medInnovationsDiffNet}}
 }
 \concept{diffusion datasets}

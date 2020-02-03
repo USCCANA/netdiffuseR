@@ -167,9 +167,10 @@ egonet_attrs <- function(
            1, " and ", nnodes(graph), ".")
   }
 
-  switch(
-    class(graph),
-    diffnet  = egonet_attrs.list(
+  cls <- class(graph)
+
+  if ("diffnet" %in% cls) {
+    egonet_attrs.list(
       graph  = graph$graph,
       attrs  = attrs,
       V      = V,
@@ -179,8 +180,9 @@ egonet_attrs <- function(
       self   = self,
       valued = valued,
       ...
-      ),
-    list     = egonet_attrs.list(
+    )
+  } else if ("list" %in% cls) {
+    egonet_attrs.list(
       graph  = graph,
       attrs  = attrs,
       V      = V,
@@ -190,8 +192,9 @@ egonet_attrs <- function(
       self   = self,
       valued = valued,
       ...
-      ),
-    matrix    = egonet_attrs.matrix(
+    )
+  } else if ("matrix" %in% cls) {
+    egonet_attrs.matrix(
       graph  = as_spmat(graph),
       attrs  = attrs,
       V      = V,
@@ -201,8 +204,9 @@ egonet_attrs <- function(
       self   = self,
       valued = valued,
       ...
-      ),
-    dgCMatrix = egonet_attrs.matrix(
+    )
+  } else if ("dgCMatrix" %in% cls) {
+    egonet_attrs.matrix(
       graph  = graph,
       attrs  = attrs,
       V      = V,
@@ -212,8 +216,9 @@ egonet_attrs <- function(
       self   = self,
       valued = valued,
       ...
-      ),
-    array     = egonet_attrs.array(
+    )
+  } else if ("array" %in% cls) {
+    egonet_attrs.array(
       graph  = graph,
       attrs  = attrs,
       V      = V,
@@ -223,9 +228,10 @@ egonet_attrs <- function(
       self   = self,
       valued = valued,
       ...
-      ),
+    )
+  } else
     stopifnot_graph(graph)
-  )
+
 }
 
 egonet_attrs.matrix <- function(graph, attrs, V, outer, fun, as.df, self, valued, ...) {

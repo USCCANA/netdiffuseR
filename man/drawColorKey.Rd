@@ -4,12 +4,22 @@
 \alias{drawColorKey}
 \title{Draw a color key in the current device}
 \usage{
-drawColorKey(x, tick.marks = pretty_within(x), labels = tick.marks,
-  main = NULL, key.pos = c(0.925, 0.975, 0.05, 0.95), pos = 2,
+drawColorKey(
+  x,
+  tick.marks = pretty_within(x),
+  labels = tick.marks,
+  main = NULL,
+  key.pos = c(0.925, 0.975, 0.05, 0.95),
+  pos = 2,
   nlevels = length(tick.marks),
-  color.palette = viridisLite::viridis(nlevels), tick.width = c(0.01,
-  0.0075), add.box = TRUE, na.col = NULL, na.height = 0.1,
-  na.lab = "n/a", ...)
+  color.palette = viridisLite::viridis(nlevels),
+  tick.width = c(0.01, 0.0075),
+  add.box = TRUE,
+  na.col = NULL,
+  na.height = 0.1,
+  na.lab = "n/a",
+  ...
+)
 }
 \arguments{
 \item{x}{A numeric vector with the data (it is used to extract the range).}
@@ -58,17 +68,20 @@ col <- colorRamp(c("lightblue", "yellow", "red"))((x - min(x))/(max(x) - min(x))
 col <- rgb(col, maxColorValue = 255)
 plot(x, col=col, pch=19)
 drawColorKey(x, nlevels = 100, border="transparent",
- main="Key\\nLike A\\nBoss")
+ main="Key\nLike A\nBoss")
 }
 \seealso{
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

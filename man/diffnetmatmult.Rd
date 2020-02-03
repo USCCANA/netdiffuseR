@@ -53,10 +53,13 @@ mapply(`-`, nlinks(net), nlinks(netsim))
 
 }
 \seealso{
-Other diffnet methods: \code{\link{as.array.diffnet}},
-  \code{\link{c.diffnet}},
-  \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet-class}}, \code{\link{diffnet_index}},
-  \code{\link{plot.diffnet}}, \code{\link{summary.diffnet}}
+Other diffnet methods: 
+\code{\link{as.array.diffnet}()},
+\code{\link{c.diffnet}()},
+\code{\link{diffnet-arithmetic}},
+\code{\link{diffnet-class}},
+\code{\link{diffnet_index}},
+\code{\link{plot.diffnet}()},
+\code{\link{summary.diffnet}()}
 }
 \concept{diffnet methods}

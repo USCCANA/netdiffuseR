@@ -5,19 +5,41 @@
 \alias{edgelist_to_diffnet}
 \title{Convert survey-like data and edgelists to a \code{diffnet} object}
 \usage{
-survey_to_diffnet(dat, idvar, netvars, toavar, groupvar = NULL,
-  no.unsurveyed = TRUE, timevar = NULL, t = NULL,
+survey_to_diffnet(
+  dat,
+  idvar,
+  netvars,
+  toavar,
+  groupvar = NULL,
+  no.unsurveyed = TRUE,
+  timevar = NULL,
+  t = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
   multiple = getOption("diffnet.multiple", FALSE),
-  keep.isolates = TRUE, recode.ids = TRUE, warn.coercion = TRUE, ...)
+  keep.isolates = TRUE,
+  recode.ids = TRUE,
+  warn.coercion = TRUE,
+  ...
+)
 
-edgelist_to_diffnet(edgelist, w = NULL, t0 = NULL, t1 = NULL, dat,
-  idvar, toavar, timevar = NULL,
+edgelist_to_diffnet(
+  edgelist,
+  w = NULL,
+  t0 = NULL,
+  t1 = NULL,
+  dat,
+  idvar,
+  toavar,
+  timevar = NULL,
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE),
-  multiple = getOption("diffnet.multiple", FALSE), fill.missing = NULL,
-  keep.isolates = TRUE, recode.ids = TRUE, warn.coercion = TRUE)
+  multiple = getOption("diffnet.multiple", FALSE),
+  fill.missing = NULL,
+  keep.isolates = TRUE,
+  recode.ids = TRUE,
+  warn.coercion = TRUE
+)
 }
 \arguments{
 \item{dat}{A data frame.}
@@ -172,9 +194,11 @@ all(
 \seealso{
 \code{\link{fakesurvey}}, \code{\link{fakesurveyDyn}}
 
-Other data management functions: \code{\link{diffnet-class}},
-  \code{\link{edgelist_to_adjmat}},
-  \code{\link{egonet_attrs}}, \code{\link{isolated}}
+Other data management functions: 
+\code{\link{diffnet-class}},
+\code{\link{edgelist_to_adjmat}()},
+\code{\link{egonet_attrs}()},
+\code{\link{isolated}()}
 }
 \author{
 Vega Yon

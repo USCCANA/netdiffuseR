@@ -57,10 +57,13 @@ regression approach. Cancer Research, 27(2), 209–20.
 \seealso{
 This function can be used as null distribution in \code{struct_test}
 
-Other simulation functions: \code{\link{rdiffnet}},
-  \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
-  \code{\link{ring_lattice}}
+Other simulation functions: 
+\code{\link{rdiffnet}()},
+\code{\link{rewire_graph}()},
+\code{\link{rgraph_ba}()},
+\code{\link{rgraph_er}()},
+\code{\link{rgraph_ws}()},
+\code{\link{ring_lattice}()}
 }
 \author{
 George G. Vega Yon

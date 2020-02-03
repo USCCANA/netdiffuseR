@@ -41,13 +41,17 @@ grid_distribution(x,y,20)
 \seealso{
 Used by \code{\link{plot_infectsuscep}}
 
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}}, \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \concept{visualizations}
 \keyword{dplot}

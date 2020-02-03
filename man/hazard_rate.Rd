@@ -11,10 +11,20 @@ hazard_rate(obj, no.plot = FALSE, include.grid = TRUE, ...)
 
 plot_hazard(x, ...)
 
-\method{plot}{diffnet_hr}(x, y = NULL, main = "Hazard Rate",
-  xlab = "Time", ylab = "Hazard Rate", type = "b",
-  include.grid = TRUE, bg = "lightblue", pch = 21, add = FALSE,
-  ylim = c(0, 1), ...)
+\method{plot}{diffnet_hr}(
+  x,
+  y = NULL,
+  main = "Hazard Rate",
+  xlab = "Time",
+  ylab = "Hazard Rate",
+  type = "b",
+  include.grid = TRUE,
+  bg = "lightblue",
+  pch = 21,
+  add = FALSE,
+  ylim = c(0, 1),
+  ...
+)
 }
 \arguments{
 \item{obj}{A \eqn{n\times T}{n * T} matrix (Cumulative adoption matrix obtained from
@@ -117,22 +127,30 @@ Wooldridge, J. M. (2010). Econometric Analysis of Cross Section and Panel Data
 (2nd ed.). Cambridge: MIT Press.
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{classify_adopters}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{infection}}, \code{\link{moran}},
-  \code{\link{struct_equiv}}, \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{classify_adopters}()},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{plot_adopters}}, \code{\link{plot_diffnet2}},
-  \code{\link{plot_diffnet}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_diffnet}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon & Thomas W. Valente

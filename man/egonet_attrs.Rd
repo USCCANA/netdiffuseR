@@ -4,10 +4,17 @@
 \alias{egonet_attrs}
 \title{Retrieve alter's attributes (network effects)}
 \usage{
-egonet_attrs(graph, attrs, V = NULL, direction = "outgoing",
-  fun = function(x) x, as.df = FALSE,
+egonet_attrs(
+  graph,
+  attrs,
+  V = NULL,
+  direction = "outgoing",
+  fun = function(x) x,
+  as.df = FALSE,
   self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"), ...)
+  valued = getOption("diffnet.valued"),
+  ...
+)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -131,9 +138,11 @@ max(someattr[which(net[3,] == 1),"a"]) == ans[3] # TRUE
 
 }
 \seealso{
-Other data management functions: \code{\link{diffnet-class}},
-  \code{\link{edgelist_to_adjmat}}, \code{\link{isolated}},
-  \code{\link{survey_to_diffnet}}
+Other data management functions: 
+\code{\link{diffnet-class}},
+\code{\link{edgelist_to_adjmat}()},
+\code{\link{isolated}()},
+\code{\link{survey_to_diffnet}()}
 }
 \author{
 George G. Vega Yon

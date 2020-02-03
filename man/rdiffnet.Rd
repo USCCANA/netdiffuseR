@@ -7,11 +7,21 @@
 \usage{
 rdiffnet_multiple(R, statistic, ..., ncpus = 1L, cl = NULL)
 
-rdiffnet(n, t, seed.nodes = "random", seed.p.adopt = 0.05,
-  seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE,
-  rewire.args = list(), threshold.dist = runif(n),
-  exposure.args = list(), name = "A diffusion network",
-  behavior = "Random contagion", stop.no.diff = TRUE)
+rdiffnet(
+  n,
+  t,
+  seed.nodes = "random",
+  seed.p.adopt = 0.05,
+  seed.graph = "scale-free",
+  rgraph.args = list(),
+  rewire = TRUE,
+  rewire.args = list(),
+  threshold.dist = runif(n),
+  exposure.args = list(),
+  name = "A diffusion network",
+  behavior = "Random contagion",
+  stop.no.diff = TRUE
+)
 }
 \arguments{
 \item{R}{Integer scalar. Number of simulations to be done.}
@@ -176,10 +186,13 @@ ans1 <- rdiffnet_multiple(R=50, statistic=function(x) sum(!is.na(x$toa)),
 boxplot(cbind(Random = ans0, Central = ans1), main="Number of adopters")
 }
 \seealso{
-Other simulation functions: \code{\link{permute_graph}},
-  \code{\link{rewire_graph}}, \code{\link{rgraph_ba}},
-  \code{\link{rgraph_er}}, \code{\link{rgraph_ws}},
-  \code{\link{ring_lattice}}
+Other simulation functions: 
+\code{\link{permute_graph}()},
+\code{\link{rewire_graph}()},
+\code{\link{rgraph_ba}()},
+\code{\link{rgraph_er}()},
+\code{\link{rgraph_ws}()},
+\code{\link{ring_lattice}()}
 }
 \author{
 George G. Vega Yon

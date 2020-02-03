@@ -4,11 +4,16 @@
 \alias{plot.diffnet}
 \title{S3 plotting method for diffnet objects.}
 \usage{
-\method{plot}{diffnet}(x, y = NULL, t = 1, vertex.color = c(adopt =
-  "steelblue", noadopt = "white"), vertex.size = "degree",
+\method{plot}{diffnet}(
+  x,
+  y = NULL,
+  t = 1,
+  vertex.color = c(adopt = "steelblue", noadopt = "white"),
+  vertex.size = "degree",
   main = "Diffusion network in time \%d",
-  minmax.relative.size = getOption("diffnet.minmax.relative.size",
-  c(0.01, 0.04)), ...)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{\link[=diffnet-class]{diffnet}}}
@@ -54,11 +59,14 @@ plot(medInnovationsDiffNet)
 
 }
 \seealso{
-Other diffnet methods: \code{\link{\%*\%}},
-  \code{\link{as.array.diffnet}}, \code{\link{c.diffnet}},
-  \code{\link{diffnet-arithmetic}},
-  \code{\link{diffnet-class}}, \code{\link{diffnet_index}},
-  \code{\link{summary.diffnet}}
+Other diffnet methods: 
+\code{\link{\%*\%}()},
+\code{\link{as.array.diffnet}()},
+\code{\link{c.diffnet}()},
+\code{\link{diffnet-arithmetic}},
+\code{\link{diffnet-class}},
+\code{\link{diffnet_index}},
+\code{\link{summary.diffnet}()}
 }
 \author{
 George G. Vega Yon

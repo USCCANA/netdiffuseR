@@ -10,14 +10,20 @@ plot_diffnet(...)
 
 \method{plot_diffnet}{diffnet}(graph, ...)
 
-\method{plot_diffnet}{default}(graph, cumadopt, slices = NULL,
+\method{plot_diffnet}{default}(
+  graph,
+  cumadopt,
+  slices = NULL,
   vertex.color = c("white", "tomato", "steelblue"),
   vertex.shape = c("square", "circle", "circle"),
-  vertex.size = "degree", mfrow.par = NULL,
+  vertex.size = "degree",
+  mfrow.par = NULL,
   main = c("Network in period \%s", "Diffusion Network"),
   legend.args = list(),
-  minmax.relative.size = getOption("diffnet.minmax.relative.size",
-  c(0.01, 0.04)), background = NULL, ...)
+  minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
+  background = NULL,
+  ...
+)
 }
 \arguments{
 \item{...}{Further arguments to be passed to \code{\link[igraph:plot.igraph]{plot.igraph}}.}
@@ -104,14 +110,17 @@ adopt <- toa_mat(toa)
 plot_diffnet(graph, adopt$cumadopt)
 }
 \seealso{
-Other visualizations: \code{\link{dgr}},
-  \code{\link{diffusionMap}}, \code{\link{drawColorKey}},
-  \code{\link{grid_distribution}},
-  \code{\link{hazard_rate}}, \code{\link{plot_adopters}},
-  \code{\link{plot_diffnet2}},
-  \code{\link{plot_infectsuscep}},
-  \code{\link{plot_threshold}},
-  \code{\link{rescale_vertex_igraph}}
+Other visualizations: 
+\code{\link{dgr}()},
+\code{\link{diffusionMap}()},
+\code{\link{drawColorKey}()},
+\code{\link{grid_distribution}()},
+\code{\link{hazard_rate}()},
+\code{\link{plot_adopters}()},
+\code{\link{plot_diffnet2}()},
+\code{\link{plot_infectsuscep}()},
+\code{\link{plot_threshold}()},
+\code{\link{rescale_vertex_igraph}()}
 }
 \author{
 George G. Vega Yon

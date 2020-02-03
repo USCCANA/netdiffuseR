@@ -61,8 +61,10 @@ SAMPSONL <- read_ml(path)
 
 }
 \seealso{
-Other Foreign: \code{\link{igraph}}, \code{\link{network}},
-  \code{\link{read_ucinet_head}}
+Other Foreign: 
+\code{\link{igraph}},
+\code{\link{network}},
+\code{\link{read_ucinet_head}()}
 }
 \author{
 George G. Vega Yon

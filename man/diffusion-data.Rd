@@ -81,13 +81,17 @@ In Models and Methods in Social Network Analysis, Volume 28 of Structural
 Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University Press.
 }
 \seealso{
-Other diffusion datasets: \code{\link{brfarmersDiffNet}},
-  \code{\link{brfarmers}}, \code{\link{fakeDynEdgelist}},
-  \code{\link{fakeEdgelist}}, \code{\link{fakesurveyDyn}},
-  \code{\link{fakesurvey}}, \code{\link{kfamilyDiffNet}},
-  \code{\link{kfamily}},
-  \code{\link{medInnovationsDiffNet}},
-  \code{\link{medInnovations}}
+Other diffusion datasets: 
+\code{\link{brfarmersDiffNet}},
+\code{\link{brfarmers}},
+\code{\link{fakeDynEdgelist}},
+\code{\link{fakeEdgelist}},
+\code{\link{fakesurveyDyn}},
+\code{\link{fakesurvey}},
+\code{\link{kfamilyDiffNet}},
+\code{\link{kfamily}},
+\code{\link{medInnovationsDiffNet}},
+\code{\link{medInnovations}}
 }
 \author{
 Thomas W. Valente

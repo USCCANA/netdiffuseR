@@ -16,16 +16,21 @@ classify(...)
 
 \method{classify_adopters}{diffnet}(graph, include_censored = FALSE, ...)
 
-\method{classify_adopters}{default}(graph, toa, t0 = NULL, t1 = NULL,
-  expo = NULL, include_censored = FALSE, ...)
+\method{classify_adopters}{default}(
+  graph,
+  toa,
+  t0 = NULL,
+  t1 = NULL,
+  expo = NULL,
+  include_censored = FALSE,
+  ...
+)
 
 \method{ftable}{diffnet_adopters}(x, as.pcent = TRUE, digits = 2, ...)
 
-\method{as.data.frame}{diffnet_adopters}(x, row.names = NULL,
-  optional = FALSE, ...)
+\method{as.data.frame}{diffnet_adopters}(x, row.names = NULL, optional = FALSE, ...)
 
-\method{plot}{diffnet_adopters}(x, y = NULL, ftable.args = list(),
-  table.args = list(), ...)
+\method{plot}{diffnet_adopters}(x, y = NULL, ftable.args = list(), table.args = list(), ...)
 }
 \arguments{
 \item{...}{Further arguments passed to the method.}
@@ -129,13 +134,18 @@ Valente, T. W. (1995). "Network models of the diffusion of innovations"
  (2nd ed.). Cresskill N.J.: Hampton Press.
 }
 \seealso{
-Other statistics: \code{\link{bass}},
-  \code{\link{cumulative_adopt_count}}, \code{\link{dgr}},
-  \code{\link{ego_variance}}, \code{\link{exposure}},
-  \code{\link{hazard_rate}}, \code{\link{infection}},
-  \code{\link{moran}}, \code{\link{struct_equiv}},
-  \code{\link{threshold}},
-  \code{\link{vertex_covariate_dist}}
+Other statistics: 
+\code{\link{bass}},
+\code{\link{cumulative_adopt_count}()},
+\code{\link{dgr}()},
+\code{\link{ego_variance}()},
+\code{\link{exposure}()},
+\code{\link{hazard_rate}()},
+\code{\link{infection}()},
+\code{\link{moran}()},
+\code{\link{struct_equiv}()},
+\code{\link{threshold}()},
+\code{\link{vertex_covariate_dist}()}
 }
 \author{
 George G. Vega Yon
