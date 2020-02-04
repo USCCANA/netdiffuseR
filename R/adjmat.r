@@ -300,13 +300,17 @@ adjmat_to_edgelist <- function(
   keep.isolates = getOption("diffnet.keep.isolates", TRUE)
   ) {
 
-  out <- switch (class(graph),
-          list      = adjmat_to_edgelist.list(graph, undirected, keep.isolates),
-          array     = adjmat_to_edgelist.array(graph, undirected, keep.isolates),
-          dgCMatrix = cbind(adjmat_to_edgelist.dgCMatrix(graph, undirected, keep.isolates), 1),
-          matrix    = cbind(adjmat_to_edgelist.matrix(graph, undirected, keep.isolates),1),
-          stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+  out <- if ("list" %in% cls) {
+      adjmat_to_edgelist.list(graph, undirected, keep.isolates)
+    } else if ("matrix" %in% cls) {
+      cbind(adjmat_to_edgelist.matrix(graph, undirected, keep.isolates),1)
+    } else if ("array" %in% cls) {
+      adjmat_to_edgelist.array(graph, undirected, keep.isolates)
+    } else if ("dgCMatrix" %in% cls) {
+      cbind(adjmat_to_edgelist.dgCMatrix(graph, undirected, keep.isolates), 1)
+    } else
+      stopifnot_graph(graph)
 
   colnames(out) <- c("ego", "alter", "value", "time")
   out
@@ -662,15 +666,20 @@ isolated <- function(
   undirected = getOption("diffnet.undirected", FALSE),
   self = getOption("diffnet.self", FALSE)
 ) {
-  ans <- switch (class(graph),
-    matrix    = isolated.default(methods::as(graph, "dgCMatrix"), undirected, self),
-    dgCMatrix = isolated.default(graph, undirected, self),
-    array     = lapply(apply(graph, 3, methods::as, Class="dgCMatrix"), isolated.default,
-                       undirected=undirected, self=self),
-    list      = lapply(graph, isolated.default, undirected=undirected, self=self),
-    diffnet   = lapply(graph$graph, isolated.default, undirected=undirected, self=self),
-    stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+  ans <- if ("matrix" %in% cls) {
+      isolated.default(methods::as(graph, "dgCMatrix"), undirected, self)
+    } else if ("dgCMatrix" %in% cls) {
+      isolated.default(graph, undirected, self)
+    } else if ("array" %in% cls) {
+      lapply(apply(graph, 3, methods::as, Class="dgCMatrix"), isolated.default,
+                       undirected=undirected, self=self)
+    } else if ("list" %in% cls) {
+      lapply(graph, isolated.default, undirected=undirected, self=self)
+    } else if ("diffnet" %in% cls) {
+      lapply(graph$graph, isolated.default, undirected=undirected, self=self)
+    } else
+      stopifnot_graph(graph)
 
   if (any(class(graph) %in% c("list", "diffnet", "array")))
     apply(do.call(cbind, ans), 1, all)

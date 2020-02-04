@@ -409,9 +409,10 @@ rewire_qap <- function(graph) {
   else if ("diffnet" %in% cls) graph$graph
   else if ("array" %in% cls) apply(graph, 3, methods::as, Class="dgCMatrix")
   else if ("dgCMatrix" %in% cls) graph
-  else stopifnot_graph(graph)
+  else
+    stopifnot_graph(graph)
 
-  if (any(c("diffnet", "list", "array") %in% cls)) {
+  if (any(c("diffnet", "list") %in% cls) | (("array" %in% cls) & length(dim(graph)) == 3L )) {
 
     ans <- lapply(x, rewirefun)
 

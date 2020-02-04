@@ -98,14 +98,21 @@ struct_equiv <- function(graph, v=1, inf.replace = 0, groupvar=NULL,  ...) {
   if ((length(groupvar)==1) && inherits(graph, "diffnet"))
     groupvar <- graph[[groupvar]]
 
-  output <- switch (class(graph),
-    matrix    = struct_equiv.dgCMatrix(methods::as(graph, "dgCMatrix"), v, inf.replace, groupvar,  ...),
-    dgCMatrix = struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, ...),
-    array     = struct_equiv.list(apply(graph, 3, methods::as, Class="dgCMatrix"), v, inf.replace, groupvar, ...),
-    list      = struct_equiv.list(graph, v, inf.replace, groupvar, ...),
-    diffnet   = struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...),
-    stopifnot_graph(graph)
-  )
+  cls <- class(graph)
+
+  output <- if ("matrix" %in% cls) {
+      struct_equiv.dgCMatrix(methods::as(graph, "dgCMatrix"), v, inf.replace, groupvar,  ...)
+    } else if ("dgCMatrix" %in% cls) {
+      struct_equiv.dgCMatrix(graph, v, inf.replace, groupvar, ...)
+    } else if ("array" %in% cls) {
+      struct_equiv.list(apply(graph, 3, methods::as, Class="dgCMatrix"), v, inf.replace, groupvar, ...)
+    } else if ("list" %in% cls) {
+      struct_equiv.list(graph, v, inf.replace, groupvar, ...)
+    } else if ("diffnet" %in% cls) {
+      struct_equiv.list(graph$graph, v, inf.replace, groupvar, ...)
+    } else
+      stopifnot_graph(graph)
+
 
   structure(output, class="diffnet_se", n = nnodes(graph), nper=nslices(graph),
             dyn = ifelse(class(graph) %in% c("diffnet", "list", "array"), TRUE, FALSE),

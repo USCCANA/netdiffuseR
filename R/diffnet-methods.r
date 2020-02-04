@@ -975,18 +975,23 @@ plot_infectsuscep <- function(
 
   if (!length(t0)) t0 <- min(toa, na.rm = TRUE)
 
-  switch (class(graph),
-    array = plot_infectsuscep.array(
+  cls <- class(graph)
+
+  if ("array" %in% cls) {
+    plot_infectsuscep.array(
       graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued, ...),
-    list = plot_infectsuscep.list(
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued, ...)
+  } else if ("list" %in% cls) {
+    plot_infectsuscep.list(
       graph, toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
-    diffnet = plot_infectsuscep.list(
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...)
+  } else if ("diffnet" %in% cls) {
+    plot_infectsuscep.list(
       graph$graph, graph$toa, t0, normalize, K, r, expdiscount, bins, nlevels, h, logscale, main,
-      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...),
+      xlab, ylab, sub, color.palette, include.grid, exclude.zeros, valued,...)
+  } else
     stopifnot_graph(graph)
-  )
+
 }
 
 # @export

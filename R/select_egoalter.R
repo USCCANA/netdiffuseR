@@ -64,12 +64,17 @@ select_egoalter <- function(graph, adopt, period=NULL) {
     if (!inherits(graph, "diffnet"))
       stop("-adopt- should be provided when -graph- is not of class 'diffnet'")
 
-  switch (class(graph),
-    array = select_egoalter.array(graph, adopt, period),
-    list = select_egoalter.list(graph, adopt, period),
-    diffnet = select_egoalter.list(graph$graph, graph$adopt, period),
+  cls <- class(graph)
+
+  if ("array" %in% cls) {
+    select_egoalter.array(graph, adopt, period)
+  } else if ("list" %in% cls) {
+    select_egoalter.list(graph, adopt, period)
+  } else if ("diffnet" %in% cls) {
+    select_egoalter.list(graph$graph, graph$adopt, period)
+  } else
     stopifnot_graph(graph)
-  )
+
 }
 
 #' @rdname select_egoalter

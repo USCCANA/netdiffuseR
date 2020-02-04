@@ -182,12 +182,17 @@ susceptibility <- function(graph, toa, t0=NULL, normalize=TRUE, K=1L, r=0.5,
   # Checking baseline time
   if (!length(t0)) t0 <- min(toa, na.rm=TRUE)
 
-  switch (class(graph),
-    array = susceptibility.array(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
-    list = susceptibility.list(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
-    diffnet = susceptibility.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing),
+  cls <- class(graph)
+
+  if ("array" %in% cls) {
+    susceptibility.array(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing)
+  } else if ("list" %in% cls) {
+    susceptibility.list(graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing)
+  } else if ("diffnet" %in% cls) {
+    susceptibility.list(graph$graph, toa, t0, normalize, K, r, expdiscount, valued, outgoing)
+  } else
     stopifnot_graph(graph)
-  )
+
 }
 
 # @rdname infection
