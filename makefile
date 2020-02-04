@@ -10,6 +10,5 @@ check: netdiffuseR.tar.gz
 	R CMD check --as-cran netdiffuseR.tar.gz
 
 checkv: netdiffuseR.tar.gz
-	cd ..&&R CMD build netdiffuseR/ && \
-		R CMD check --as-cran --use-valgrind netdiffuseR*.tar.gz
+	R CMD check --as-cran --use-valgrind netdiffuseR.tar.gz
 
