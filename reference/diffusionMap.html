@@ -283,11 +283,10 @@ Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working 
     <pre class="examples"><div class='input'>
 <span class='co'># Example with a random graph --------------------------------------------------</span>
 
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1231</span>)
 
 <span class='co'># Random scale-free diffusion network</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>1000</span>, <span class='fl'>4</span>, <span class='kw'>seed.graph</span><span class='kw'>=</span><span class='st'>"scale-free"</span>, <span class='kw'>seed.p.adopt</span> <span class='kw'>=</span> <span class='fl'>.025</span>,
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>500</span>, <span class='fl'>4</span>, <span class='kw'>seed.graph</span><span class='kw'>=</span><span class='st'>"scale-free"</span>, <span class='kw'>seed.p.adopt</span> <span class='kw'>=</span> <span class='fl'>.025</span>,
                            <span class='kw'>rewire</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>seed.nodes</span> <span class='kw'>=</span> <span class='st'>"central"</span>,
                            <span class='kw'>rgraph.arg</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>self</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fl'>4</span>),
                            <span class='kw'>threshold.dist</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>id</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1</span>,<span class='fl'>.2</span>,<span class='fl'>.4</span>))
@@ -305,15 +304,11 @@ Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working 
 <span class='no'>col</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span>(<span class='no'>blues9</span>)(<span class='fl'>100</span>)
 <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>oma</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>))
 <span class='fu'><a href='https://rdrr.io/r/graphics/image.html'>image</a></span>(<span class='no'>dm0</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='no'>col</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Non-random Times of Adoption\nAdoption from the core."</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/image.html'>image</a></span>(<span class='no'>dm1</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='no'>col</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Random Times of Adoption"</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/image.html'>image</a></span>(<span class='no'>dm1</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='no'>col</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Random Times of Adoption"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>))
 <span class='fu'><a href='https://rdrr.io/r/graphics/mtext.html'>mtext</a></span>(<span class='st'>"Both networks have the same distribution on times of adoption"</span>, <span class='fl'>1</span>,
-      <span class='kw'>outer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='no'>oldpar</span>)
-}
+      <span class='kw'>outer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='diffusionMap-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='no'>oldpar</span>)
 
 <span class='co'># Example with Brazilian Farmers --------------------------------------------</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>dn</span> <span class='kw'>&lt;-</span> <span class='no'>brfarmersDiffNet</span>
 
 <span class='co'># Setting last TOA as NA</span>
@@ -326,13 +321,12 @@ Networks as Heatmaps using Weighted Averages based on Kernel Smoothers (Working 
 )
 
 <span class='co'># Plotting diffusion</span>
-<span class='fu'><a href='plot_diffnet2.html'>plot_diffnet2</a></span>(<span class='no'>dn</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='no'>coords</span>, <span class='kw'>vertex.size</span> <span class='kw'>=</span> <span class='fl'>300</span>)
-
+<span class='fu'><a href='plot_diffnet2.html'>plot_diffnet2</a></span>(<span class='no'>dn</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='no'>coords</span>, <span class='kw'>vertex.size</span> <span class='kw'>=</span> <span class='fl'>300</span>)</div><div class='input'>
 <span class='co'># Adding diffusion map</span>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>diffusionMap</span>(<span class='no'>dn</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='no'>coords</span>, <span class='kw'>kde2d.args</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>100</span>, <span class='kw'>h</span><span class='kw'>=</span><span class='fl'>50</span>))
 <span class='no'>col</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/adjustcolor.html'>adjustcolor</a></span>(<span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"white"</span>,<span class='st'>"lightblue"</span>, <span class='st'>"yellow"</span>, <span class='st'>"red"</span>))(<span class='fl'>100</span>),<span class='fl'>.5</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='no'>out</span>$<span class='no'>map</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/filled.contour.html'>.filled.contour</a></span>(<span class='no'>x</span>,<span class='no'>y</span>,<span class='no'>z</span>,<span class='fu'><a href='https://rdrr.io/r/base/pretty.html'>pretty</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='no'>z</span>), <span class='fl'>100</span>),<span class='no'>col</span>))
-}</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/with.html'>with</a></span>(<span class='no'>out</span>$<span class='no'>map</span>, <span class='fu'><a href='https://rdrr.io/r/graphics/filled.contour.html'>.filled.contour</a></span>(<span class='no'>x</span>,<span class='no'>y</span>,<span class='no'>z</span>,<span class='fu'><a href='https://rdrr.io/r/base/pretty.html'>pretty</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='no'>z</span>), <span class='fl'>100</span>),<span class='no'>col</span>))</div><div class='img'><img src='diffusionMap-2.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -325,7 +325,12 @@ Oxford University Press.</p>
 <span class='no'>diffnet</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>100</span>, <span class='fl'>5</span>, <span class='kw'>seed.graph</span><span class='kw'>=</span><span class='st'>"small-world"</span>)
 
 <span class='co'># Testing structure-dependency of threshold</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>struct_test</span>(<span class='no'>diffnet</span>, <span class='kw'>function</span>(<span class='no'>g</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='threshold.html'>threshold</a></span>(<span class='no'>g</span>), <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>), <span class='kw'>R</span><span class='kw'>=</span><span class='fl'>100</span>)
+<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>struct_test</span>(
+  <span class='no'>diffnet</span>,
+  <span class='kw'>function</span>(<span class='no'>g</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='threshold.html'>threshold</a></span>(<span class='no'>g</span>), <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
+  <span class='kw'>R</span><span class='kw'>=</span><span class='fl'>100</span>
+)
+
 <span class='no'>res</span></div><div class='output co'>#&gt; 
 #&gt; Structure dependence test
 #&gt; # Simulations     : 100
@@ -353,12 +358,21 @@ Oxford University Press.</p>
 #&gt;     observed    expected       p.val
 #&gt;       0.3947      0.1261      0.0000</div><div class='input'>
 <span class='co'># Running in parallel fashion</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>struct_test</span>(<span class='no'>diffnet</span>, <span class='kw'>function</span>(<span class='no'>g</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='threshold.html'>threshold</a></span>(<span class='no'>g</span>), <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>), <span class='kw'>R</span><span class='kw'>=</span><span class='fl'>100</span>,
-<span class='kw'>ncpus</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>parallel</span><span class='kw'>=</span><span class='st'>"multicore"</span>)
-<span class='no'>res</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>res</span>)
-}</div></pre>
+<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>struct_test</span>(
+  <span class='no'>diffnet</span>, <span class='kw'>function</span>(<span class='no'>g</span>) <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='fu'><a href='threshold.html'>threshold</a></span>(<span class='no'>g</span>), <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
+  <span class='kw'>R</span><span class='kw'>=</span><span class='fl'>100</span>, <span class='kw'>ncpus</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>parallel</span><span class='kw'>=</span><span class='st'>"multicore"</span>
+)
+
+<span class='no'>res</span></div><div class='output co'>#&gt; 
+#&gt; Structure dependence test
+#&gt; # Simulations     : 100
+#&gt; # nodes           : 100
+#&gt; # of time periods : 5
+#&gt; --------------------------------------------------------------------------------
+#&gt;  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
+#&gt;     observed    expected       p.val
+#&gt;       0.3947      0.1200      0.0000</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>res</span>)</div><div class='img'><img src='struct_test-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

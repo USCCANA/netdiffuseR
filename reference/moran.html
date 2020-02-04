@@ -218,7 +218,7 @@ Retrieved 06:23, December 22, 2015, from <a href='https://en.wikipedia.org/w/ind
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'>"ape"</span>)) {
 
   <span class='co'># Generating a small random graph</span>
   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
@@ -232,7 +232,22 @@ Retrieved 06:23, December 22, 2015, from <a href='https://en.wikipedia.org/w/ind
   <span class='co'># Comparing with the ape's package version</span>
   <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/MoranI.html'>Moran.I</a></span>(<span class='no'>x</span>, <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>w</span>))
 
-}</div></pre>
+}</div><div class='output co'>#&gt; <span class='message'>Loading required package: ape</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘ape’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:sna’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    consensus</span></div><div class='output co'>#&gt; $observed
+#&gt; [1] -0.1427118
+#&gt; 
+#&gt; $expected
+#&gt; [1] -0.25
+#&gt; 
+#&gt; $sd
+#&gt; [1] 0.1768444
+#&gt; 
+#&gt; $p.value
+#&gt; [1] 0.5440623
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
