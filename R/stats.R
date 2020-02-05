@@ -359,8 +359,6 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'    x
 #' })
 #'
-#' # Recall setting valued equal to TRUE!
-#' expo_se <- exposure(graph, alt.graph=SE , valued=TRUE)
 #'
 #' # These three lines are equivalent to:
 #' expo_se2 <- exposure(graph, alt.graph="se", valued=TRUE)
@@ -595,7 +593,7 @@ exposure <- function(
   # Checking lags
   lags <- check_lags(nslices(graph), lags)
 
-  if (is.array(graph) | is.list(graph)) {
+  if ((is.array(graph) & !inherits(graph, "matrix")) | is.list(graph)) {
     exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized,
                   self, lags)
   } else stopifnot_graph(graph)
@@ -626,8 +624,15 @@ exposure.list <- function(
 }
 
 exposure_for <- function(
-  graph, cumadopt, attrs, outgoing, valued, normalized,
-  self, lags) {
+  graph,
+  cumadopt,
+  attrs,
+  outgoing,
+  valued,
+  normalized,
+  self,
+  lags
+  ) {
 
   out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
 

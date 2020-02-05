@@ -137,8 +137,6 @@ SE <- lapply(SE, function(x) {
    x
 })
 
-# Recall setting valued equal to TRUE!
-expo_se <- exposure(graph, alt.graph=SE , valued=TRUE)
 
 # These three lines are equivalent to:
 expo_se2 <- exposure(graph, alt.graph="se", valued=TRUE)
