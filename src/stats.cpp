@@ -265,20 +265,22 @@ arma::sp_mat matrix_compareCpp(
 
   arma::sp_mat Bcpy(B);
 
-  std::vector< double > val(A.n_nonzero + B.n_nonzero);
-  std::vector< unsigned int > row(A.n_nonzero + B.n_nonzero),
-    col(A.n_nonzero + B.n_nonzero);
+  std::vector< double > val(0);
+  val.reserve(A.n_nonzero + B.n_nonzero);
+  std::vector< unsigned int > row(0), col(0);
+  row.reserve(A.n_nonzero + B.n_nonzero), col.reserve(A.n_nonzero + B.n_nonzero);
 
   // Iterating through matrix A
-  unsigned int i = 0u;
   for (spiter iter=A.begin(); iter!= A.end(); ++iter) {
 
-    row[i] = iter.row();
-    col[i] = iter.col();
+    row.push_back(iter.row());
+    col.push_back(iter.col());
 
     // Filling the value
     // ans.at(iter.row(), iter.col()) =
-    val[i++] = as< double >(fun(*iter, B.at(iter.row(), iter.col()) ));
+    val.push_back(
+      as< double >(fun(*iter, B.at(iter.row(), iter.col()) ))
+      );
     Bcpy.at(iter.row(), iter.col()) = 0;
 
   }
@@ -286,19 +288,13 @@ arma::sp_mat matrix_compareCpp(
   // Iterating throught matrix B
   for (spiter iter=Bcpy.begin(); iter!= Bcpy.end(); ++iter) {
 
-    row[i] = iter.row();
-    col[i] = iter.col();
+    row.push_back(iter.row());
+    col.push_back(iter.col());
 
     // Filling the value
     // ans.at(iter.row(), iter.col()) =
-    val[i++] = as< double >(fun(A.at(iter.row(), iter.col()), *iter));
+    val.push_back(as< double >(fun(A.at(iter.row(), iter.col()), *iter)));
   }
-
-  --i;
-
-  row.erase(row.begin() + i, row.end());
-  col.erase(col.begin() + i, col.end());
-  val.erase(val.begin() + i, val.end());
 
   // Batch constructor
   arma::sp_mat ans(
