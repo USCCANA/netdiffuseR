@@ -154,24 +154,24 @@ rdiffnet_make_threshold <- function(x, n) {
 
 rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
   test <- class(seed.graph)
+
   if ("function" %in% test) {
+
     # Does it returns a graph
     test <- seed.graph()
     # Coercing into appropiate type
     if (inherits(test, "dgCMatrix")) {
       sgraph <- test
-    }
-    else if (inherits(test, "matrix")) {
+    } else if (inherits(test, "matrix")) {
       sgraph <- methods::as(test, "dgCMatrix")
-    }
-    else if (inherits(test, "array")) {
+    } else if (inherits(test, "array")) {
       sgraph <- apply(test, 3, function(x) methods::as(x, "dgCMatrix"))
-    }
-    else if (inherits(test, "diffnet")) {
+    } else if (inherits(test, "diffnet")) {
       sgraph <- test$graph
-    }
-    else if (inherits(test, "list")) {
+    } else if (inherits(test, "list")) {
+
       sgraph <- test
+
     }
 
     # In the case of calling a function
@@ -211,7 +211,7 @@ rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
   } else if (any(c("matrix", "dgCMatrix", "array") %in% test)) {
 
     # If not dgCMatrix
-    if ("array" %in% test)
+    if (("array" %in% test) & !("matrix" %in% test))
       sgraph <- apply(seed.graph, 3, function(x) methods::as(x, "dgCMatrix"))
     else
       sgraph <- methods::as(seed.graph, "dgCMatrix")

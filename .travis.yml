@@ -1,6 +1,6 @@
 dist: trusty
 language: r
-sudo: false
+cache: packages
 
 matrix:
   include:
@@ -14,6 +14,9 @@ matrix:
     - os: linux
       r: devel
     - os: osx
+      osx_image: xcode10.2
+    - os: osx
+      r: devel
       osx_image: xcode10.2
 
 env:

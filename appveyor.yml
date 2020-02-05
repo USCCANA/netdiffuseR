@@ -23,6 +23,8 @@ environment:
 
   - R_VERSION: oldrel
 
+  - R_VERSION: devel
+
 
 build_script:
   - travis-tool.sh r_install RSiena survival
