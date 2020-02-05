@@ -306,7 +306,7 @@ arma::sp_mat matrix_compareCpp(
         arma::conv_to< arma::urowvec >::from(row),
         arma::conv_to< arma::urowvec >::from(col)
       ),
-      arma::conv_to< arma::colvec >::from(val), A.n_rows, A.n_cols,
+      arma::conv_to< arma::colvec >::from(val), A.n_cols, A.n_rows,
       true, false
   );
 
