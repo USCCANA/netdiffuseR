@@ -1,7 +1,5 @@
 context("Random diffusion graphs")
 
-
-
 # Checking input
 test_that("Input", {
   # Simple matrix --------------------------------------------------------------
@@ -16,7 +14,11 @@ test_that("Input", {
 
   # Using matrix
   set.seed(131)
-  x_matrix <- rdiffnet(seed.graph=as.array(x_dgCMatrix)[,,1], t=10, rewire.args = list(p=c(0, rep(.1,9))))
+  x_matrix <- rdiffnet(
+    seed.graph=as.array(x_dgCMatrix)[,,1],
+    t=10,
+    rewire.args = list(p=c(0, rep(.1,9)))
+    )
 
   # Using a function
   set.seed(12312)

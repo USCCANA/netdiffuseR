@@ -1222,8 +1222,9 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 #' Am <- as.matrix(A)
 #' Bm <- as.matrix(B)
 #'
-#' compfun <- function(a,b)
+#' compfun <- function(a,b) {
 #'   ifelse(a > b, a, b)
+#' }
 #'
 #' t0 <- system.time(matrix_compare(A, B, compfun))
 #' t1 <- system.time(matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)))

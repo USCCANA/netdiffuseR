@@ -407,7 +407,6 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat& graph, const arma::mat& X
 RcppExport SEXP _netdiffuseR_vertex_covariate_dist(SEXP graphSEXP, SEXP XSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
     Rcpp::traits::input_parameter< double >::type p(pSEXP);
@@ -420,7 +419,6 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(const arma::sp_mat& graph, const arma::
 RcppExport SEXP _netdiffuseR_vertex_mahalanobis_dist_cpp(SEXP graphSEXP, SEXP XSEXP, SEXP SSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
@@ -433,7 +431,6 @@ arma::sp_mat vertex_covariate_compare(const arma::sp_mat& graph, const NumericVe
 RcppExport SEXP _netdiffuseR_vertex_covariate_compare(SEXP graphSEXP, SEXP XSEXP, SEXP funnameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type X(XSEXP);
     Rcpp::traits::input_parameter< std::string >::type funname(funnameSEXP);
@@ -446,7 +443,6 @@ List moran_cpp(const arma::colvec& x, const arma::sp_mat& w);
 RcppExport SEXP _netdiffuseR_moran_cpp(SEXP xSEXP, SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type w(wSEXP);
     rcpp_result_gen = Rcpp::wrap(moran_cpp(x, w));
@@ -458,7 +454,6 @@ List struct_equiv_cpp(const arma::sp_mat& graph, double v);
 RcppExport SEXP _netdiffuseR_struct_equiv_cpp(SEXP graphSEXP, SEXP vSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< double >::type v(vSEXP);
     rcpp_result_gen = Rcpp::wrap(struct_equiv_cpp(graph, v));
@@ -470,7 +465,6 @@ arma::sp_mat matrix_compareCpp(const arma::sp_mat& A, const arma::sp_mat& B, Fun
 RcppExport SEXP _netdiffuseR_matrix_compareCpp(SEXP ASEXP, SEXP BSEXP, SEXP funSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type A(ASEXP);
     Rcpp::traits::input_parameter< const arma::sp_mat& >::type B(BSEXP);
     Rcpp::traits::input_parameter< Function >::type fun(funSEXP);

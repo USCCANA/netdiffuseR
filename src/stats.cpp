@@ -26,7 +26,7 @@ using namespace Rcpp;
 
 //' @export
 //' @rdname vertex_covariate_dist
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
                                    const arma::mat & X,
                                    double p = 2.0) {
@@ -46,7 +46,7 @@ arma::sp_mat vertex_covariate_dist(const arma::sp_mat & graph,
   return ans;
 }
 
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 arma::sp_mat vertex_mahalanobis_dist_cpp(
     const arma::sp_mat & graph,
     const arma::mat & X,
@@ -107,7 +107,7 @@ arma::sp_mat vertex_mahalanobis_dist_cpp(
 //' vertex_covariate_compare(G, x, ">=")
 //' vertex_covariate_compare(G, x, "<=")
 //' @export
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 arma::sp_mat vertex_covariate_compare(
     const arma::sp_mat & graph,
     const NumericVector & X,
@@ -128,7 +128,7 @@ arma::sp_mat vertex_covariate_compare(
   return ans;
 }
 
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
   double xmean = mean(x);
 
@@ -187,7 +187,7 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
 }
 
 
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 List struct_equiv_cpp(
     const arma::sp_mat & graph, // Must be a geodesic distances graph
     double v = 1.0
@@ -249,7 +249,7 @@ List struct_equiv_cpp(
   return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
 }
 
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 arma::sp_mat matrix_compareCpp(
     const arma::sp_mat & A,
     const arma::sp_mat & B,
@@ -257,8 +257,8 @@ arma::sp_mat matrix_compareCpp(
 ) {
 
   // Checking dimmensions
-  int n = A.n_cols;
-  int m = A.n_rows;
+  if ((A.n_cols != B.n_cols) | (A.n_rows != B.n_rows))
+    stop("A and B should be of the same size.");
 
   // Comparing
   typedef arma::sp_mat::const_iterator spiter;
@@ -294,6 +294,8 @@ arma::sp_mat matrix_compareCpp(
     val[i++] = as< double >(fun(A.at(iter.row(), iter.col()), *iter));
   }
 
+  --i;
+
   row.erase(row.begin() + i, row.end());
   col.erase(col.begin() + i, col.end());
   val.erase(val.begin() + i, val.end());
@@ -304,7 +306,7 @@ arma::sp_mat matrix_compareCpp(
         arma::conv_to< arma::urowvec >::from(row),
         arma::conv_to< arma::urowvec >::from(col)
       ),
-      arma::conv_to< arma::colvec >::from(val), n, m,
+      arma::conv_to< arma::colvec >::from(val), A.n_rows, A.n_cols,
       true, false
   );
 

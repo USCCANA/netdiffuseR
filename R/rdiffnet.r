@@ -208,7 +208,7 @@ rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
     # Creating t duplicates
     graph <- rep(list(sgraph), t)
 
-  } else if (test %in% c("matrix", "dgCMatrix", "array")) {
+  } else if (any(c("matrix", "dgCMatrix", "array") %in% test)) {
 
     # If not dgCMatrix
     if ("array" %in% test)
