@@ -15,9 +15,6 @@ matrix:
       r: devel
     - os: osx
       osx_image: xcode10.2
-    - os: osx
-      r: devel
-      osx_image: xcode10.2
 
 env:
  global:
