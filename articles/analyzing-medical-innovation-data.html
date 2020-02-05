@@ -267,7 +267,7 @@
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.6304      0.6268      0.8920</code></pre>
+##       0.6304      0.6247      0.8440</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">test2</a></code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -277,7 +277,7 @@
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.4931      0.5058      0.7400</code></pre>
+##       0.4931      0.5024      0.8320</code></pre>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">test3</a></code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -287,7 +287,7 @@
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.4365      0.4236      0.7240</code></pre>
+##       0.4365      0.4236      0.6800</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">test4</a></code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -297,7 +297,7 @@
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.5926      0.6097      0.6720</code></pre>
+##       0.5926      0.6041      0.7440</code></pre>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">testall</a></code></pre></div>
 <pre><code>## 
 ## Structure dependence test
@@ -307,7 +307,7 @@
 ## --------------------------------------------------------------------------------
 ##  H0: E[beta(Y,G)|G] - E[beta(Y,G)] = 0 (no structure dependency)
 ##     observed    expected       p.val
-##       0.5660      0.5552      0.5320</code></pre>
+##       0.5660      0.5550      0.5680</code></pre>
 <p>This shows in no City threshold seems to be struture dependent, as after simulating 1,000 networks by rewiring each one of these preserving the degree sequence (using <code>algorithm = "swap"</code> by default in the <code>rewire.args</code>) the null can’t be rejected. Now we can make an histogram of the outcomes by city:</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co"># To make it nicer, we change the parameters in using par</span></a>
 <a class="sourceLine" id="cb33-2" data-line-number="2"><span class="co"># (see ?par)</span></a>
