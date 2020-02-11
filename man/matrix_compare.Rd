@@ -71,22 +71,6 @@ for (i in 1:10)
 # Are these equal?
 all(ans0[] == ans1[]) # Should yield TRUE
 
-# More elaborated example (speed) -------------------------------------------
-
-set.seed(123123123)
-A <- rgraph_ba(t = 5e3, m = 2)
-B <- rgraph_ba(t = 5e3, m = 2)
-
-Am <- as.matrix(A)
-Bm <- as.matrix(B)
-
-compfun <- function(a,b) {
-  ifelse(a > b, a, b)
-}
-
-t0 <- system.time(matrix_compare(A, B, compfun))
-t1 <- system.time(matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)))
-t1/t0
 }
 \seealso{
 Other dyadic-level comparison functions: 

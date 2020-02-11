@@ -1218,22 +1218,22 @@ vertex_mahalanobis_dist <- function(graph, X, S) {
 #' # Are these equal?
 #' all(ans0[] == ans1[]) # Should yield TRUE
 #'
-#' # More elaborated example (speed) -------------------------------------------
-#'
-#' set.seed(123123123)
-#' A <- rgraph_ba(t = 5e3, m = 2)
-#' B <- rgraph_ba(t = 5e3, m = 2)
-#'
-#' Am <- as.matrix(A)
-#' Bm <- as.matrix(B)
-#'
-#' compfun <- function(a,b) {
-#'   ifelse(a > b, a, b)
-#' }
-#'
-#' t0 <- system.time(matrix_compare(A, B, compfun))
-#' t1 <- system.time(matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)))
-#' t1/t0
+# # More elaborated example (speed) -------------------------------------------
+#
+# set.seed(123123123)
+# A <- rgraph_ba(t = 5e3, m = 2)
+# B <- rgraph_ba(t = 5e3, m = 2)
+#
+# Am <- as.matrix(A)
+# Bm <- as.matrix(B)
+#
+# compfun <- function(a,b) {
+#   ifelse(a > b, a, b)
+# }
+#
+# t0 <- system.time(matrix_compare(A, B, compfun))
+# t1 <- system.time(matrix(ifelse(Am > Bm, Am, Bm), ncol=ncol(Am)))
+# t1/t0
 #' @aliases binary-functions
 #' @family dyadic-level comparison functions
 matrix_compare <- function(A, B, fun) {
