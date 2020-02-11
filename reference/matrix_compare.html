@@ -247,23 +247,7 @@ for e_B in E_B:
 
 <span class='co'># Are these equal?</span>
 <span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='no'>ans0</span>[] <span class='kw'>==</span> <span class='no'>ans1</span>[]) <span class='co'># Should yield TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='co'># More elaborated example (speed) -------------------------------------------</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123123123</span>)
-<span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rgraph_ba.html'>rgraph_ba</a></span>(<span class='kw'>t</span> <span class='kw'>=</span> <span class='fl'>5e3</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rgraph_ba.html'>rgraph_ba</a></span>(<span class='kw'>t</span> <span class='kw'>=</span> <span class='fl'>5e3</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-
-<span class='no'>Am</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>A</span>)
-<span class='no'>Bm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>B</span>)
-
-<span class='no'>compfun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>a</span>,<span class='no'>b</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>a</span> <span class='kw'>&gt;</span> <span class='no'>b</span>, <span class='no'>a</span>, <span class='no'>b</span>)
-}
-
-<span class='no'>t0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='fu'>matrix_compare</span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>compfun</span>))
-<span class='no'>t1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span>(<span class='no'>Am</span> <span class='kw'>&gt;</span> <span class='no'>Bm</span>, <span class='no'>Am</span>, <span class='no'>Bm</span>), <span class='kw'>ncol</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>Am</span>)))
-<span class='no'>t1</span>/<span class='no'>t0</span></div><div class='output co'>#&gt;     user   system  elapsed 
-#&gt; 4.164179      Inf 5.339483 </div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
