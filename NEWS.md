@@ -1,3 +1,10 @@
+# Changes in netdiffuseR version 1.21.0 (2020-02-10)
+
+* Getting netdiffuseR back to CRAN. We have fixed issues that arise from the
+  next big CRAN release, in particular, matrices are now arrays. That was
+  creating issues throughout the package (now fixed).
+
+
 # Changes in netdiffuseR version 1.20.2 (2019-03-25)
 
 * Repaired broken link in bootnet.
