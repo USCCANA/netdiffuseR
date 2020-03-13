@@ -1,3 +1,57 @@
+euclidean_distance <- function(d) {
+
+  ans <- (d - t(d)) ^ 2
+
+  # Computing sum(z[ij] - z[ik])^2
+  ids  <- t(combn(1:nrow(d), 2)) # as.matrix(expand.grid(1:nrow(d), 1:nrow(d)))
+  z_ik <- (d[ids[, 1], ] - d[ids[, 2], ])^2
+
+  # Removing i,j
+  z_ik[cbind(1:nrow(z_ik), ids[, 1])] <- 0
+  z_ik[cbind(1:nrow(z_ik), ids[, 2])] <- 0
+  ids <- cbind(ids, rowSums(z_ik))
+  z_ik <- ans * 0
+  z_ik[ids[,1:2]] <- ids[, 3]
+  z_ik[ids[,2:1]] <- ids[, 3]
+
+  # Computing sum(z[kj] - z[ki])^2
+  z_ki <- (d[, ids[, 1]] - d[, ids[, 2]])^2
+
+  # Removing i,j
+  z_ki[cbind(ids[, 1], 1:ncol(z_ki))] <- 0
+  z_ki[cbind(ids[, 2], 1:ncol(z_ki))] <- 0
+  ids[, 3] <- colSums(z_ki)
+
+  z_ki <- ans * 0
+  z_ki[ids[,1:2]] <- ids[, 3]
+  z_ki[ids[,2:1]] <- ids[, 3]
+
+  # Final calculation
+  sqrt(ans + z_ik + z_ki)
+
+}
+
+struct_equiv_new <- function(gdist, v = 1) {
+
+  # Euclidean
+  euclidean <- euclidean_distance(gdist)
+
+  # Dmax
+  n <- nrow(euclidean)
+  d <- euclidean[cbind(1:n, max.col(euclidean))] #), nrow = n, ncol = n)
+
+  # dmax(i) - d(ij)
+  dmaxi_dij <- (d - euclidean) ^ v
+  diag(dmaxi_dij) <- 0
+
+  list(
+    SE    = dmaxi_dij/(rowSums(dmaxi_dij) + 1e-15),
+    d     = euclidean,
+    gdist = gdist
+  )
+
+}
+
 #' Structural Equivalence
 #'
 #' Computes structural equivalence between ego and alter in a network
@@ -181,7 +235,7 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
     index <- (N + 1L):(N + ng)
     SE[index,index]   <- out$SE
     d[index,index]    <- out$d
-    gdist[index,index] <- out$SE
+    gdist[index,index] <- out$gdist
     N <- N + ng
   }
 
@@ -324,7 +378,7 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
     geod   <- do.call(approx_geodist, c(list(graph=graph), ...))
     geod@x <- geod@x/max(geod@x, na.rm = TRUE)
 
-    output <- struct_equiv_cpp(geod, v)
+    output <- struct_equiv_new(geod, v)
 
     # Names
     rn <- rownames(graph)
