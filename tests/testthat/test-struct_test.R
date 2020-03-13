@@ -4,13 +4,13 @@ test_that("struct_test should be reproducible (serial version)", {
 
   # Generating data
   set.seed(1231)
-  graph <- rdiffnet(100, 10)
+  graph <- rdiffnet(50, 4)
 
   set.seed(1313)
 
-  b1 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=100)
+  b1 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=50)
   set.seed(1313)
-  b2 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=100)
+  b2 <- struct_test(graph, function(x) mean(threshold(x), na.rm = TRUE), R=50)
 
   expect_equal(b1, b2)
 
@@ -25,7 +25,7 @@ test_that("struct_test should be reproducible (parallel version)", {
 
   # Generating data
   set.seed(1231)
-  graph <- rdiffnet(150, 5, seed.graph = "small-world")
+  graph <- rdiffnet(50, 4, seed.graph = "small-world")
 
   # In order to make the parallel version reproducible, we need to set the
   # RNG algorithm to be L'Ecuyer so the sequences can be reproduced

@@ -1,7 +1,7 @@
 # Changes in netdiffuseR version 1.21.0999 (2020-03-13)
 
 * Fixing a new issue regarding structural equivalence calculation. In the
-  new version the functions has been fully ported to R, which should avoid
+  new version, the function has been fully ported to R, which should avoid
   problems related to the C++ code.
 
 * As documented, struct_equiv now returns he euclidean distance matrix (it was

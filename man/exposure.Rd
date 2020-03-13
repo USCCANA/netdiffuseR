@@ -128,7 +128,7 @@ stopifnot(all(expo0[, -4] == expo1[, -1])) # No stop!
 
 # Calculating the exposure based on Structural Equivalence ------------------
 set.seed(113132)
-graph <- rdiffnet(100, 10)
+graph <- rdiffnet(100, 4)
 
 SE <- lapply(struct_equiv(graph), "[[", "SE")
 SE <- lapply(SE, function(x) {
@@ -155,6 +155,9 @@ eIN <- exposure(graph, outgoing=FALSE)
 
 # Structral equivalence for different communities ---------------------------
 data(medInnovationsDiffNet)
+
+# Only using 4 time slides, this is for convenience
+medInnovationsDiffNet <- medInnovationsDiffNet[, , 1:4]
 
 # METHOD 1: Using the c.diffnet method:
 
