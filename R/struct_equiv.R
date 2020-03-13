@@ -3,7 +3,7 @@ euclidean_distance <- function(d) {
   ans <- (d - t(d)) ^ 2
 
   # Computing sum(z[ij] - z[ik])^2
-  ids  <- t(combn(1:nrow(d), 2)) # as.matrix(expand.grid(1:nrow(d), 1:nrow(d)))
+  ids  <- t(utils::combn(1:nrow(d), 2)) # as.matrix(expand.grid(1:nrow(d), 1:nrow(d)))
   z_ik <- (d[ids[, 1], ] - d[ids[, 2], ])^2
 
   # Removing i,j
@@ -388,6 +388,12 @@ struct_equiv.dgCMatrix <- function(graph, v, inf.replace, groupvar, ...) {
   return(output)
 }
 
+compare_matrix_and_vector <- function(m0, m1, v0, v1) {
+
+  all((as.matrix(m0) - as.matrix(m1)) == 0) &
+    all(v0 == v1)
+
+}
 
 # @rdname struct_equiv
 # @export
@@ -398,10 +404,12 @@ struct_equiv.list <- function(graph, v, inf.replace, groupvar, ...) {
 
   # If groupvar is dynamic as well
   if (!is.list(groupvar)) {
+
     for(i in 1:t)
       output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
                                             v, inf.replace, groupvar, ...)
   } else {
+
     for(i in 1:t)
       output[[i]] <- struct_equiv.dgCMatrix(methods::as(graph[[i]], "dgCMatrix"),
                                             v, inf.replace, groupvar[[i]], ...)

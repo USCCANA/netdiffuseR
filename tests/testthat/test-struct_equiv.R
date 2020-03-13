@@ -46,11 +46,11 @@ test_that("Computation", {
   # Comparing
   for (i in names(x)) {
     if (grepl("static", i)) {
-      expect_equal(d, x[[i]]$d, tolerance=getOption("diffnet.tol"), scale=1)
-      expect_equal(se, x[[i]]$SE, tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(d), as.matrix(x[[i]]$d), tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(se), as.matrix(x[[i]]$SE), tolerance=getOption("diffnet.tol"), scale=1)
     } else {
-      expect_equal(d, x[[i]][[1]]$d, tolerance=getOption("diffnet.tol"), scale=1)
-      expect_equal(se, x[[i]][[1]]$SE, tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(d), as.matrix(x[[i]][[1]]$d), tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(se), as.matrix(x[[i]][[1]]$SE), tolerance=getOption("diffnet.tol"), scale=1)
     }
   }
 })

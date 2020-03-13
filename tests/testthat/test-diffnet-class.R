@@ -171,7 +171,7 @@ test_that("new_diffnet with different graph classes", {
   expect_equal(dn_arr, dn_dgc)
 
   # Defunct
-  expect_error(diffnet.attrs(dn_arr, "hola") <- NULL, "defunct")
+  expect_error(diffnet.attrs(dn_arr, "hola") <- NULL, class = "defunctError")
 
 })
 
