@@ -41,8 +41,8 @@ objects.
 Coercion between graph classes
 }
 \examples{
-# Reading the meddical innovation data into igraph --------------------------
-x <- diffnet_to_igraph(medInnovationsDiffNet)
+# Reading the medical innovation data into igraph --------------------------
+x <- diffnet_to_igraph(medInnovationsDiffNet[,,1:4])
 
 # Fetching the times of adoption
 igraph::vertex_attr(x[[1]], "toa")
