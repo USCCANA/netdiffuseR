@@ -46,11 +46,11 @@ test_that("Computation", {
   # Comparing
   for (i in names(x)) {
     if (grepl("static", i)) {
-      expect_equal(d, x[[i]]$d, tolerance=getOption("diffnet.tol"), scale=1)
-      expect_equal(se, x[[i]]$SE, tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(d), as.matrix(x[[i]]$d), tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(se), as.matrix(x[[i]]$SE), tolerance=getOption("diffnet.tol"), scale=1)
     } else {
-      expect_equal(d, x[[i]][[1]]$d, tolerance=getOption("diffnet.tol"), scale=1)
-      expect_equal(se, x[[i]][[1]]$SE, tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(d), as.matrix(x[[i]][[1]]$d), tolerance=getOption("diffnet.tol"), scale=1)
+      expect_equal(as.matrix(se), as.matrix(x[[i]][[1]]$SE), tolerance=getOption("diffnet.tol"), scale=1)
     }
   }
 })
@@ -58,12 +58,12 @@ test_that("Computation", {
 # ------------------------------------------------------------------------------
 test_that("Printing", {
   set.seed(1122)
-  dn <- rdiffnet(100,5)
+  dn <- rdiffnet(50, 2)
 
   ans <- struct_equiv(dn)
 
-  expect_output(print(ans), "nodes : 100")
-  expect_output(print(ans), "slices: 5")
+  expect_output(print(ans), "nodes : 50")
+  expect_output(print(ans), "slices: 2")
 })
 
 # ------------------------------------------------------------------------------
@@ -72,6 +72,7 @@ test_that("By group", {
 
   # Creating subsets by city
   cities <- unique(medInnovationsDiffNet[["city"]])
+  medInnovationsDiffNet <- medInnovationsDiffNet[,,1:4]
 
   diffnet <- medInnovationsDiffNet[medInnovationsDiffNet[["city"]] == cities[1]]
   diffnet[["expo_se"]] <- exposure(diffnet, alt.graph="se", valued=TRUE)
@@ -146,7 +147,7 @@ test_that("By group", {
 # ------------------------------------------------------------------------------
 test_that("transformGraphBy", {
   set.seed(123)
-  x <- rdiffnet(50, 5)
+  x <- rdiffnet(50, 2)
   x[["group"]] <- sample(1:3, nnodes(x), TRUE)
 
   # Baseline computation

@@ -350,7 +350,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' # Calculating the exposure based on Structural Equivalence ------------------
 #' set.seed(113132)
-#' graph <- rdiffnet(100, 10)
+#' graph <- rdiffnet(100, 4)
 #'
 #' SE <- lapply(struct_equiv(graph), "[[", "SE")
 #' SE <- lapply(SE, function(x) {
@@ -377,6 +377,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' # Structral equivalence for different communities ---------------------------
 #' data(medInnovationsDiffNet)
+#'
+#' # Only using 4 time slides, this is for convenience
+#' medInnovationsDiffNet <- medInnovationsDiffNet[, , 1:4]
 #'
 #' # METHOD 1: Using the c.diffnet method:
 #'

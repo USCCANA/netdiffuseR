@@ -90,7 +90,7 @@ gaps, and it should be within the graph time period range.
 
 # Creating a random diffusion network ---------------------------------------
 set.seed(111)
-graph <- rdiffnet(100,5)
+graph <- rdiffnet(50,4)
 
 # Accessing to a static attribute
 graph[["real_threshold"]]
@@ -111,7 +111,7 @@ graph[1, , , drop=TRUE]
 # Adding attributes (dynamic) -----------------------------------------------
 # Preparing the data
 set.seed(1122)
-x <- rdiffnet(30, 5, seed.p.adopt=.15)
+x <- rdiffnet(30, 4, seed.p.adopt=.15)
 
 # Calculating exposure, and storing it diffe
 expoM <- exposure(x)

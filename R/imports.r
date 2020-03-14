@@ -33,7 +33,7 @@ NULL
 #'  box rect
 #' @importFrom stats complete.cases runif reshape setNames ftable sd pnorm var
 #' as.formula optim nls coef
-#' @importFrom utils getFromNamespace head str
+#' @importFrom utils getFromNamespace head str combn
 #' @importFrom boot boot
 #' @importFrom MASS bandwidth.nrd kde2d
 #' @importFrom MatchIt matchit

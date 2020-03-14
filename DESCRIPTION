@@ -1,7 +1,7 @@
 Package: netdiffuseR
 Title: Analysis of Diffusion and Contagion Processes on Networks
-Version: 1.21.0
-Date: 2020-02-10
+Version: 1.21.0999
+Date: 2020-03-13
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
     comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")

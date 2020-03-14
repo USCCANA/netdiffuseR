@@ -187,67 +187,72 @@ List moran_cpp(const arma::colvec & x, const arma::sp_mat & w) {
 }
 
 
-// [[Rcpp::export(rng = false)]]
-List struct_equiv_cpp(
-    const arma::sp_mat & graph, // Must be a geodesic distances graph
-    double v = 1.0
-) {
-
-  int n = graph.n_cols;
-  if (graph.n_cols != graph.n_rows) stop("-graph- is not square.");
-
-  NumericMatrix d(n,n);
-
-  // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}
-  NumericVector dmax(n, -1e100);
-  for(int i=0;i<n;++i) {
-    for(int j=0;j<i;++j) {
-
-      // Computing sum(z_ik - z_jk)
-      double sumik = 0.0;
-      double sumki = 0.0;
-      for(int k=0;k<n;++k) {
-        // Summation accross all but i and j
-        if (k == i || k == j) continue;
-        sumik += pow(graph.at(i,k)-graph.at(j,k), 2.0);
-        sumki += pow(graph.at(k,i)-graph.at(k,j), 2.0);
-      }
-
-      // Adding up the results
-      d.at(i,j) = pow(pow(graph.at(i,j) - graph.at(j,i), 2.0) + sumik + sumki, 0.5 );
-
-      d.at(j,i) = d.at(i,j);
-    }
-  }
-
-  // Computing distances
-  NumericMatrix SE(n,n);
-
-  for(int i=0;i<n;++i) {
-
-    // Getting the max of the line
-    for(int j=0;j<n;++j) {
-      if (i==j) continue;
-      if (dmax[i] < d.at(i,j)) dmax[i] = d.at(i,j);
-    }
-
-    // Computing sum(dmax - dkj)
-    double sumdmaxd = 0.0;
-    for(int k=0;k<n;++k) {
-      if (k==i) continue;
-      sumdmaxd += pow(dmax[i] - d.at(k,i), v);
-    }
-
-    // Computing (dmax - d)/sum(dmax - d)
-    for(int j=0;j<n;++j) {
-      if (i==j) continue;
-      SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-15);
-    }
-
-  }
-
-  return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
-}
+// On March 13, 2020 this function was replaced by `struct_equiv_new` which is
+// fully implemented with R.
+// // [[Rcpp::export(rng = false)]]
+// List struct_equiv_cpp(
+//     const arma::sp_mat & graph, // Must be a geodesic distances graph
+//     double v = 1.0
+// ) {
+//
+//   int n = graph.n_cols;
+//   if (graph.n_cols != graph.n_rows) stop("-graph- is not square.");
+//
+//   NumericMatrix d(n,n);
+//
+//   // Calculating Z vector as Z_i - Z_j = {z_ik - z_jk}
+//   NumericVector dmax(n, -1e100);
+//   for(int i = 0; i < n; ++i) {
+//     for(int j = 0; j < i; ++j) {
+//
+//       // Computing sum(z_ik - z_jk)
+//       double sumik = 0.0;
+//       double sumki = 0.0;
+//
+//       for(int k = 0; k < n; ++k) {
+//
+//         // Summation accross all but i and j
+//         if (k == i || k == j) continue;
+//         sumik += pow(graph.at(i,k) - graph.at(j,k), 2.0);
+//         sumki += pow(graph.at(k,i) - graph.at(k,j), 2.0);
+//
+//       }
+//
+//       // Adding up the results
+//       d.at(i,j) = pow(pow(graph.at(i,j) - graph.at(j,i), 2.0) + sumik + sumki, 0.5 );
+//
+//       d.at(j,i) = d.at(i,j);
+//     }
+//   }
+//
+//   // Computing distances
+//   NumericMatrix SE(n,n);
+//
+//   for(int i=0;i<n;++i) {
+//
+//     // Getting the max of the line
+//     for(int j=0;j<n;++j) {
+//       if (i==j) continue;
+//       if (dmax[i] < d.at(i,j)) dmax[i] = d.at(i,j);
+//     }
+//
+//     // Computing sum(dmax - dkj)
+//     double sumdmaxd = 0.0;
+//     for(int k=0;k<n;++k) {
+//       if (k==i) continue;
+//       sumdmaxd += pow(dmax[i] - d.at(k,i), v);
+//     }
+//
+//     // Computing (dmax - d)/sum(dmax - d)
+//     for(int j=0;j<n;++j) {
+//       if (i==j) continue;
+//       SE.at(i,j) = pow(dmax[i] - d.at(j,i), v)/(sumdmaxd + 1e-15);
+//     }
+//
+//   }
+//
+//   return List::create(_["SE"]=SE, _["d"]=d, _["gdist"]=graph);
+// }
 
 // [[Rcpp::export(rng = false)]]
 arma::sp_mat matrix_compareCpp(
