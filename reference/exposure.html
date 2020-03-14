@@ -84,7 +84,7 @@ influence), and attribute-weighted (e.g., based on homophily or tie strength)." 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">netdiffuseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.21.999</span>
       </span>
     </div>
 
@@ -312,7 +312,7 @@ Equivalence". American Journal of Sociology, 92(6), 1287.
 
 <span class='co'># Calculating the exposure based on Structural Equivalence ------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>113132</span>)
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>100</span>, <span class='fl'>10</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='rdiffnet.html'>rdiffnet</a></span>(<span class='fl'>100</span>, <span class='fl'>4</span>)
 
 <span class='no'>SE</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='struct_equiv.html'>struct_equiv</a></span>(<span class='no'>graph</span>), <span class='st'>"[["</span>, <span class='st'>"SE"</span>)
 <span class='no'>SE</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>SE</span>, <span class='kw'>function</span>(<span class='no'>x</span>) {
@@ -340,6 +340,9 @@ Equivalence". American Journal of Sociology, 92(6), 1287.
 <span class='co'># Structral equivalence for different communities ---------------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>medInnovationsDiffNet</span>)
 
+<span class='co'># Only using 4 time slides, this is for convenience</span>
+<span class='no'>medInnovationsDiffNet</span> <span class='kw'>&lt;-</span> <span class='no'>medInnovationsDiffNet</span>[, , <span class='fl'>1</span>:<span class='fl'>4</span>]
+
 <span class='co'># METHOD 1: Using the c.diffnet method:</span>
 
 <span class='co'># Creating subsets by city</span>
@@ -360,7 +363,7 @@ Equivalence". American Journal of Sociology, 92(6), 1287.
 #&gt;  Name               : Medical Innovation
 #&gt;  Behavior           : Adoption of Tetracycline
 #&gt;  # of nodes         : 125 (1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, ...)
-#&gt;  # of time periods  : 18 (1 - 18)
+#&gt;  # of time periods  : 4 (1 - 4)
 #&gt;  Type               : directed
 #&gt;  Final prevalence   : 1.00
 #&gt;  Static attributes  : city, detail, meet, coll, attend, proage, length, ... (58)
