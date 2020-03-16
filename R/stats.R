@@ -336,6 +336,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'  (2nd ed.). Cresskill N.J.: Hampton Press.
 #'
 #' @examples
+#' \donttest{
 #' # Calculating lagged exposure -----------------------------------------------
 #'
 #' set.seed(8)
@@ -447,7 +448,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se4", as.df=TRUE]]
 #' stopifnot(all(test[!is.na(test)]))
 #'
-#'
+#' }
 #'
 #' @family statistics
 #' @keywords univar

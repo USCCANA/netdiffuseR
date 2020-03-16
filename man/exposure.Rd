@@ -114,6 +114,7 @@ computed as a count instead of a proportion. A good example of this can be
 found at the examples section of the function \code{\link{rdiffnet}}.
 }
 \examples{
+\donttest{
 # Calculating lagged exposure -----------------------------------------------
 
 set.seed(8)
@@ -225,7 +226,7 @@ diffnet[["expo_se4"]] <- exposure(diffnet, alt.graph=se, valued=TRUE)
 test <- diffnet[["expo_se", as.df=TRUE]] == diffnet[["expo_se4", as.df=TRUE]]
 stopifnot(all(test[!is.na(test)]))
 
-
+}
 
 }
 \references{
