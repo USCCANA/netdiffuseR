@@ -1,6 +1,6 @@
 
 
-CHANGES IN NETDIFFUSER VERSION 1.21.0999 (2020-03-13)
+CHANGES IN NETDIFFUSER VERSION 1.22.0 (2020-05-06)
 
 
 -   Fixing a new issue regarding structural equivalence calculation. In
