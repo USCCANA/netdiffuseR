@@ -40,7 +40,7 @@
 #' Valente, T. W., & Davis, R. L. (1999). Accelerating the Diffusion of
 #' Innovations Using Opinion Leaders. The ANNALS of the American Academy of
 #' Political and Social Science, 566(1), 55–67.
-#' \url{http://journals.sagepub.com/doi/abs/10.1177/000271629956600105}
+#' \doi{10.1177/000271629956600105}
 #' @examples
 #' # A simple example ----------------------------------------------------------
 #' set.seed(1231)

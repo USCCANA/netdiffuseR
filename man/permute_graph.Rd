@@ -48,7 +48,7 @@ rewire_qap(g)
 \references{
 Anderson, B. S., Butts, C., & Carley, K. (1999). The interaction of size and
 density with graph-level indices. Social Networks, 21(3), 239–267.
-\url{http://dx.doi.org/10.1016/S0378-8733(99)00011-8}
+\doi{10.1016/S0378-8733(99)00011-8}
 
 Mantel, N. (1967). The detection of disease clustering and a generalized
 regression approach. Cancer Research, 27(2), 209–20.

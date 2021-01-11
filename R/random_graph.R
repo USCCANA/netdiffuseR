@@ -158,17 +158,17 @@ rgraph_er <- function(n=10, t=1, p=0.01, undirected=getOption("diffnet.undirecte
 #' @references
 #' Bollobás, B´., Riordan, O., Spencer, J., & Tusnády, G. (2001). The degree
 #' sequence of a scale-free random graph process. Random Structures & Algorithms,
-#' 18(3), 279–290. \url{http://doi.org/10.1002/rsa.1009}
+#' 18(3), 279–290. \doi{10.1002/rsa.1009}
 #'
 #' Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
-#' Networks. Science, 286(5439), 509–512. \url{http://doi.org/10.1126/science.286.5439.509}
+#' Networks. Science, 286(5439), 509–512. \doi{10.1126/science.286.5439.509}
 #'
 #' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
 #' Retrieved from \url{http://barabasi.com/book/network-science}
 #'
 #' De Almeida, M. L., Mendes, G. A., Madras Viswanathan, G., & Da Silva, L. R. (2013).
 #' Scale-free homophilic network. European Physical Journal B, 86(2).
-#' \url{http://doi.org/10.1140/epjb/e2012-30802-x}
+#' \doi{10.1140/epjb/e2012-30802-x}
 #'
 #' @author George G. Vega Yon
 #' @name rgraph_ba
@@ -373,10 +373,10 @@ rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE, eta=NULL) {
 #'
 #' @references
 #' Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of "small-world"
-#' networks. Nature, 393(6684), 440–2. \url{http://dx.doi.org/10.1038/30918}
+#' networks. Nature, 393(6684), 440–2. \doi{10.1038/30918}
 #'
 #' Newman, M. E. J. (2003). The Structure and Function of Complex Networks.
-#' SIAM Review, 45(2), 167–256. \url{http://doi.org/10.1137/S003614450342480}
+#' SIAM Review, 45(2), 167–256. \doi{10.1137/S003614450342480}
 #' @author George G. Vega Yon
 #' @examples
 #'

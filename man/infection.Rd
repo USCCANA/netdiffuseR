@@ -135,11 +135,11 @@ Thomas W. Valente, Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo
 Fujimoto Diffusion of innovations theory applied to global tobacco control
 treaty ratification, Social Science & Medicine, Volume 145, November 2015,
 Pages 89-97, ISSN 0277-9536
-\url{http://dx.doi.org/10.1016/j.socscimed.2015.10.001}
+\doi{10.1016/j.socscimed.2015.10.001}
 
 Myers, D. J. (2000). The Diffusion of Collective Violence: Infectiousness,
 Susceptibility, and Mass Media Networks. American Journal of Sociology, 106(1),
-173–208. \url{https://doi.org/10.1086/303110}
+173–208. \doi{10.1086/303110}
 }
 \seealso{
 The user can visualize the distribution of both statistics

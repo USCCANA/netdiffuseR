@@ -928,7 +928,7 @@ plot_threshold.default <- function(
 #' @references
 #' Aral, S., & Walker, D. (2012). "Identifying Influential and Susceptible Members
 #' of Social Networks". Science, 337(6092), 337–341.
-#' \url{http://doi.org/10.1126/science.1215842}
+#' \doi{10.1126/science.1215842}
 #' @export
 #' @examples
 #' # Generating a random graph -------------------------------------------------

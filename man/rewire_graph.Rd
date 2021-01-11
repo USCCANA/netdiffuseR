@@ -197,7 +197,7 @@ points(x=7,y=table(as.factor(w))[baseline]/nsim*100, pch=3, col="red")
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collectivedynamics of "small-world" networks.
-Nature, 393(6684), 440–442. \url{http://doi.org/10.1038/30918}
+Nature, 393(6684), 440–442. \doi{10.1038/30918}
 
 Milo, R., Kashtan, N., Itzkovitz, S., Newman, M. E. J., & Alon, U.
 (2004). On the uniform generation of random graphs with prescribed degree sequences.
@@ -212,7 +212,7 @@ Ray, J., Pinar, A., & Seshadhri, C. (2012). Are We There Yet? When to Stop a
 Markov Chain while Generating Random Graphs. In A. Bonato & J. Janssen (Eds.),
 Algorithms and Models for the Web Graph (Vol. 7323, pp. 153–164).
 Berlin, Heidelberg: Springer Berlin Heidelberg.
-\url{http://doi.org/10.1007/978-3-642-30541-2}
+\doi{10.1007/978-3-642-30541-2}
 
 A . Ramachandra Rao, R. J. and S. B. (1996). A Markov Chain Monte Carlo Method
 for Generating Random ( 0 , 1 ) -Matrices with Given Marginals. The Indian
@@ -220,7 +220,7 @@ Journal of Statistics, 58, 225–242.
 
 Stanton, I., & Pinar, A. (2012). Constructing and sampling graphs with a
 prescribed joint degree distribution. Journal of Experimental Algorithmics,
-17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
+17(1), 3.1. \doi{10.1145/2133803.2330086}
 }
 \seealso{
 Other simulation functions: 

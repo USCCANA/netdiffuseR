@@ -330,7 +330,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
 #' Equivalence". American Journal of Sociology, 92(6), 1287.
-#' \url{http://doi.org/10.1086/228667}
+#' \doi{10.1086/228667}
 #'
 #' Valente, T. W. (1995). "Network models of the diffusion of innovations"
 #'  (2nd ed.). Cresskill N.J.: Hampton Press.

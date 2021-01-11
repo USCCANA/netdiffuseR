@@ -807,14 +807,14 @@ NULL # "medInnovationsDiffNet"
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus
 #' Structural Equivalence". American Journal of Sociology, 92(6), 1287–1335.
-#' \url{http://doi.org/10.1086/228667}
+#' \doi{10.1086/228667}
 #'
 #' Coleman, J., Katz, E., & Menzel, H. (1966). Medical innovation: A diffusion
 #' study (2nd ed.). New York: Bobbs-Merrill
 #'
 #' Granovetter, M., & Soong, R. (1983). Threshold models of diffusion and
 #' collective behavior. The Journal of Mathematical Sociology, 9(October 2013),
-#' 165–179. \url{http://doi.org/10.1080/0022250X.1983.9989941}
+#' 165–179. \doi{10.1080/0022250X.1983.9989941}
 #'
 #' Rogers, E. M., Ascroft, J. R., & Röling, N. (1970). Diffusion of Innovation
 #' in Brazil, Nigeria, and India. Unpublished Report. Michigan State University,
@@ -828,11 +828,11 @@ NULL # "medInnovationsDiffNet"
 #'
 #' Marsden, P. V., & Friedkin, N. E. (1993). Network Studies of Social Influence.
 #' Sociological Methods & Research, 22(1), 127–151.
-#' \url{http://doi.org/10.1177/0049124193022001006}
+#' \doi{10.1177/0049124193022001006}
 #'
 #' Van den Bulte, C., & Iyengar, R. (2011). Tricked by Truncation: Spurious
 #' Duration Dependence and Social Contagion in Hazard Models. Marketing Science,
-#' 30(2), 233–248. \url{http://doi.org/10.1287/mksc.1100.0615}
+#' 30(2), 233–248. \doi{10.1287/mksc.1100.0615}
 #'
 #' Valente, T. W. (1991). Thresholds and the critical mass: Mathematical models
 #' of the diffusion of innovations. University of Southern California.

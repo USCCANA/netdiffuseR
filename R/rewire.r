@@ -129,7 +129,7 @@
 #'
 #' @references
 #' Watts, D. J., & Strogatz, S. H. (1998). Collectivedynamics of "small-world" networks.
-#' Nature, 393(6684), 440–442. \url{http://doi.org/10.1038/30918}
+#' Nature, 393(6684), 440–442. \doi{10.1038/30918}
 #'
 #' Milo, R., Kashtan, N., Itzkovitz, S., Newman, M. E. J., & Alon, U.
 #' (2004). On the uniform generation of random graphs with prescribed degree sequences.
@@ -144,7 +144,7 @@
 #' Markov Chain while Generating Random Graphs. In A. Bonato & J. Janssen (Eds.),
 #' Algorithms and Models for the Web Graph (Vol. 7323, pp. 153–164).
 #' Berlin, Heidelberg: Springer Berlin Heidelberg.
-#' \url{http://doi.org/10.1007/978-3-642-30541-2}
+#' \doi{10.1007/978-3-642-30541-2}
 #'
 #' A . Ramachandra Rao, R. J. and S. B. (1996). A Markov Chain Monte Carlo Method
 #' for Generating Random ( 0 , 1 ) -Matrices with Given Marginals. The Indian
@@ -152,7 +152,7 @@
 #'
 #' Stanton, I., & Pinar, A. (2012). Constructing and sampling graphs with a
 #' prescribed joint degree distribution. Journal of Experimental Algorithmics,
-#' 17(1), 3.1. \url{http://doi.org/10.1145/2133803.2330086}
+#' 17(1), 3.1. \doi{10.1145/2133803.2330086}
 #'
 #' @family simulation functions
 #' @export
@@ -354,7 +354,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 #'
 #' Anderson, B. S., Butts, C., & Carley, K. (1999). The interaction of size and
 #' density with graph-level indices. Social Networks, 21(3), 239–267.
-#' \url{http://dx.doi.org/10.1016/S0378-8733(99)00011-8}
+#' \doi{10.1016/S0378-8733(99)00011-8}
 #'
 #' Mantel, N. (1967). The detection of disease clustering and a generalized
 #' regression approach. Cancer Research, 27(2), 209–20.

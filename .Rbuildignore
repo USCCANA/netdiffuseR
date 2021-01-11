@@ -25,6 +25,7 @@ README[.]md
 # Not-ready vignettes
 ^vignettes/simulating.+\.Rmd$
 ^vignettes/structural.+\.Rmd$
+^vignettes/rdiffnets\.Rmd$
 # CRAN
 ^cran-comments\.md$
 ^next_release\.md$
