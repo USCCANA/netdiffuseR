@@ -1,5 +1,3 @@
-netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks
-================
 
 [![Build
 Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR)
@@ -11,6 +9,15 @@ status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](
 [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.com/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![USC’s Department of Preventive
+Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://preventivemedicine.usc.edu)
+
+<h1>
+
+netdiffuseR: Analysis of Diffusion and Contagion Processes on
+Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right">
+
+</h1>
 
 This package contains functions useful for analyzing network data for
 diffusion of innovations applications.
@@ -100,8 +107,7 @@ the package [here](https://github.com/USCCANA/netdiffuseR/releases),
 netdiffuseR\_1…zip, and netdiffuseR\_1…tgz respectively. They can
 install this directly as follows (using the 1.16.3.29 version):
 
-1.  Install dependencies from
-    CRAN
+1.  Install dependencies from CRAN
     
     ``` r
     > install.packages(c("igraph", "Matrix", "SparseM", "RcppArmadillo", "sna"), dependencies=TRUE)
@@ -165,7 +171,7 @@ toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 ```
 
-    ## [1] 20  7  9  1 17 14
+    ## [1] 16  3 14  3 13  5
 
 ``` r
 # Creating a diffnet object
@@ -193,28 +199,28 @@ summary(diffnet)
     ## -----------------------------------------------------------------------------
     ##  Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran's I (sd)  
     ## -------- ---------- ---------------- ------------- --------- ---------------- 
-    ##        1          3         3 (0.03)             -      0.50 -0.01 (0.00)     
-    ##        2          8        11 (0.11)          0.08      0.50 -0.01 (0.00)     
-    ##        3          4        15 (0.15)          0.04      0.51 -0.00 (0.00) *   
-    ##        4          1        16 (0.16)          0.01      0.49 -0.01 (0.00)     
-    ##        5          2        18 (0.18)          0.02      0.50 -0.01 (0.00)     
-    ##        6          5        23 (0.23)          0.06      0.50 -0.01 (0.00)     
-    ##        7          6        29 (0.29)          0.08      0.51 -0.01 (0.00)     
-    ##        8          1        30 (0.30)          0.01      0.50 -0.01 (0.00)     
-    ##        9          6        36 (0.36)          0.09      0.50 -0.01 (0.00)     
-    ##       10          5        41 (0.41)          0.08      0.49 -0.01 (0.00)     
-    ##       11          2        43 (0.43)          0.03      0.50 -0.02 (0.00) **  
-    ##       12          6        49 (0.49)          0.11      0.50 -0.01 (0.00)     
-    ##       13          4        53 (0.53)          0.08      0.50 -0.01 (0.00)     
-    ##       14          7        60 (0.60)          0.15      0.50 -0.01 (0.00)     
-    ##       15          7        67 (0.67)          0.17      0.50 -0.01 (0.00)     
-    ##       16          3        70 (0.70)          0.09      0.50 -0.01 (0.00)     
-    ##       17         10        80 (0.80)          0.33      0.49 -0.01 (0.00)     
-    ##       18          4        84 (0.84)          0.20      0.50 -0.01 (0.00)     
-    ##       19          2        86 (0.86)          0.12      0.50 -0.01 (0.00)     
-    ##       20          9        95 (0.95)          0.64      0.50 -0.01 (0.00)     
+    ##        1          8         8 (0.08)             -      0.50 -0.01 (0.00)     
+    ##        2          3        11 (0.11)          0.03      0.50 -0.01 (0.00)     
+    ##        3          6        17 (0.17)          0.07      0.51 -0.01 (0.00)     
+    ##        4          3        20 (0.20)          0.04      0.49 -0.01 (0.00)     
+    ##        5          9        29 (0.29)          0.11      0.50 -0.01 (0.00)     
+    ##        6          5        34 (0.34)          0.07      0.50 -0.01 (0.00)     
+    ##        7          2        36 (0.36)          0.03      0.51 -0.01 (0.00)     
+    ##        8          3        39 (0.39)          0.05      0.50 -0.01 (0.00)     
+    ##        9          5        44 (0.44)          0.08      0.50 -0.01 (0.00)     
+    ##       10          1        45 (0.45)          0.02      0.49 -0.01 (0.00)     
+    ##       11          3        48 (0.48)          0.05      0.50 -0.01 (0.00)     
+    ##       12          6        54 (0.54)          0.12      0.50 -0.01 (0.00)     
+    ##       13          8        62 (0.62)          0.17      0.50 -0.01 (0.00)     
+    ##       14          9        71 (0.71)          0.24      0.50 -0.01 (0.00)     
+    ##       15          5        76 (0.76)          0.17      0.50 -0.00 (0.00) **  
+    ##       16          7        83 (0.83)          0.29      0.50 -0.01 (0.00)     
+    ##       17          5        88 (0.88)          0.29      0.49 -0.00 (0.00) *** 
+    ##       18          4        92 (0.92)          0.33      0.50 -0.01 (0.00)     
+    ##       19          1        93 (0.93)          0.12      0.50 -0.01 (0.00)     
+    ##       20          2        95 (0.95)          0.29      0.50 -0.01 (0.00)     
     ## -----------------------------------------------------------------------------
-    ##  Left censoring  : 0.03 (3)
+    ##  Left censoring  : 0.08 (8)
     ##  Right centoring : 0.05 (5)
     ##  # of nodes      : 100
     ## 
@@ -233,8 +239,8 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
                          exclude.zeros = TRUE, h=1)
 ```
 
-    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, :
-    ## When applying logscale some observations are missing.
+    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, : When
+    ## applying logscale some observations are missing.
 
 ![](README_files/figure-gfm/plot_infectsuscept-2.png)<!-- -->
 
@@ -256,7 +262,7 @@ diffnet
     ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
     ##  # of time periods  : 20 (1 - 20)
     ##  Type               : directed
-    ##  Final prevalence   : 0.60
+    ##  Final prevalence   : 1.00
     ##  Static attributes  : real_threshold (1)
     ##  Dynamic attributes : -
 
@@ -390,13 +396,13 @@ par(oldpar)
 sessionInfo()
 ```
 
-    ## R version 3.5.3 (2019-03-11)
+    ## R version 4.0.5 (2021-03-31)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 16.04.6 LTS
+    ## Running under: Ubuntu 18.04.5 LTS
     ## 
     ## Matrix products: default
-    ## BLAS: /usr/lib/libblas/libblas.so.3.6.0
-    ## LAPACK: /usr/lib/lapack/liblapack.so.3.6.0
+    ## BLAS:   /usr/lib/x86_64-linux-gnu/atlas/libblas.so.3.10.3
+    ## LAPACK: /usr/lib/x86_64-linux-gnu/atlas/liblapack.so.3.10.3
     ## 
     ## locale:
     ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -410,19 +416,22 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.20.0
+    ## [1] netdiffuseR_1.22.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.2         Rcpp_1.0.0           knitr_1.21          
-    ##  [4] magrittr_1.5         network_1.13.0.1     networkDynamic_0.9.0
-    ##  [7] MASS_7.3-51.1        viridisLite_0.3.0    lattice_0.20-38     
-    ## [10] stringr_1.3.1        tools_3.5.3          MatchIt_3.0.2       
-    ## [13] grid_3.5.3           xfun_0.4             sna_2.4             
-    ## [16] coda_0.19-2          htmltools_0.3.6      yaml_2.2.0          
-    ## [19] digest_0.6.18        Matrix_1.2-16        evaluate_0.12       
-    ## [22] rmarkdown_1.11       statnet.common_4.1.4 stringi_1.2.4       
-    ## [25] compiler_3.5.3       boot_1.3-20          SparseM_1.77        
-    ## [28] pkgconfig_2.0.2
+    ##  [1] igraph_1.2.6          Rcpp_1.0.6            knitr_1.30           
+    ##  [4] magrittr_2.0.1        networkDynamic_0.10.1 network_1.16.1       
+    ##  [7] MASS_7.3-53.1         viridisLite_0.3.0     lattice_0.20-41      
+    ## [10] rlang_0.4.10          stringr_1.4.0         tools_4.0.5          
+    ## [13] MatchIt_4.1.0         grid_4.0.5            rle_0.9.2            
+    ## [16] xfun_0.20             sna_2.6               coda_0.19-4          
+    ## [19] htmltools_0.5.0       ellipsis_0.3.1        yaml_2.2.1           
+    ## [22] digest_0.6.27         tibble_3.0.4          lifecycle_0.2.0      
+    ## [25] crayon_1.3.4          Matrix_1.3-2          vctrs_0.3.6          
+    ## [28] evaluate_0.14         statnet.common_4.4.1  rmarkdown_2.6        
+    ## [31] stringi_1.5.3         compiler_4.0.5        pillar_1.4.7         
+    ## [34] backports_1.2.1       boot_1.3-27           SparseM_1.78         
+    ## [37] pkgconfig_2.0.3
 
 ## To-do list
 

@@ -12,3 +12,6 @@ check: netdiffuseR.tar.gz
 checkv: netdiffuseR.tar.gz
 	R CMD check --as-cran --use-valgrind netdiffuseR.tar.gz
 
+README.md: README.Rmd
+	Rscript -e 'rmarkdown::render("README.Rmd")'
+

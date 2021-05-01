@@ -1,6 +1,7 @@
 ---
-title: "netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks"
-output: github_document
+output:
+  github_document:
+    html_preview: false
 ---
 
 [![Build Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR)
@@ -11,7 +12,9 @@ output: github_document
 [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.com/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![USC's Department of Preventive Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://preventivemedicine.usc.edu)
 
+<h1>netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right"></h1>
 
 This package contains functions useful for analyzing network data for diffusion of innovations applications.
 
