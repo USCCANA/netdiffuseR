@@ -19,7 +19,7 @@ jobs:
     runs-on: Ubuntu-latest
     strategy:
       matrix:
-        r-version: [3.5, 3.6, 4.0.4]
+        r-version: [3.6, release, devel]
 
     steps:
       - uses: actions/checkout@v2
