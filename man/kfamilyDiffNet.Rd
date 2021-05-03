@@ -3,7 +3,9 @@
 \name{kfamilyDiffNet}
 \alias{kfamilyDiffNet}
 \title{\code{diffnet} version of the Korean Family Planning data}
-\format{A \code{\link{diffnet}} class object.}
+\format{
+A \code{\link{diffnet}} class object.
+}
 \description{
 A directed dynamic graph with 1,047 vertices and 11 time periods. The attributes
 in the graph are static and described in \code{\link{kfamily}}.

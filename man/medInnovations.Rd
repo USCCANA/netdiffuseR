@@ -3,7 +3,8 @@
 \name{medInnovations}
 \alias{medInnovations}
 \title{Medical Innovation}
-\format{A data frame with 125 rows and 59 columns:
+\format{
+A data frame with 125 rows and 59 columns:
 \describe{
    \item{city}{city id}
    \item{id}{sequential respondent id}
@@ -65,7 +66,8 @@
    \item{commun}{Number of community}
    \item{toa}{Time of Adoption}
    \item{study}{Number of study in Valente (1995)}
-}}
+}
+}
 \source{
 The Medical Innovation data were stored in file cabinets in a basement
 building at Columbia University. Ron Burt (1987) acquired an NSF grant to

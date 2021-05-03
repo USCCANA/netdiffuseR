@@ -3,7 +3,9 @@
 \name{medInnovationsDiffNet}
 \alias{medInnovationsDiffNet}
 \title{\code{diffnet} version of the Medical Innovation data}
-\format{A \code{\link{diffnet}} class object.}
+\format{
+A \code{\link{diffnet}} class object.
+}
 \description{
 A directed dynamic graph with 125 vertices and 18 time periods. The attributes
 in the graph are static and described in \code{\link{medInnovations}}.

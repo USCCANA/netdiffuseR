@@ -3,7 +3,8 @@
 \name{fakesurveyDyn}
 \alias{fakesurveyDyn}
 \title{Fake longitudinal survey data}
-\format{A data frame with 18 rows and 10 variables
+\format{
+A data frame with 18 rows and 10 variables
 \describe{
  \item{id}{Unique id at group level}
  \item{toa}{Time of adoption}
@@ -15,7 +16,8 @@
  \item{gender}{Gende of the respondent}
  \item{note}{Descroption of the respondent}
  \item{time}{Timing of the wave}
-}}
+}
+}
 \source{
 Generated for the package.
 }

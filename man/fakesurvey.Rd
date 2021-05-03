@@ -3,7 +3,8 @@
 \name{fakesurvey}
 \alias{fakesurvey}
 \title{Fake survey data}
-\format{A data frame with 9 rows and 9 variables
+\format{
+A data frame with 9 rows and 9 variables
 \describe{
  \item{id}{Unique id at group level}
  \item{toa}{Time of adoption}
@@ -14,7 +15,8 @@
  \item{age}{Age of the respondent}
  \item{gender}{Gende of the respondent}
  \item{note}{Descroption of the respondent}
-}}
+}
+}
 \source{
 Generated for the package.
 }

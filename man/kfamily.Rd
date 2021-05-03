@@ -3,7 +3,8 @@
 \name{kfamily}
 \alias{kfamily}
 \title{Korean Family Planning}
-\format{A data frame with 1,047 rows and 432 columns:
+\format{
+A data frame with 1,047 rows and 432 columns:
 \describe{
    \item{village}{Village of residence}
    \item{id}{Respondent ID number}
@@ -437,7 +438,8 @@
    \item{commun}{Village number}
    \item{toa}{Time of Adoption}
    \item{study}{Study (for when multiple diff studies used)}
-}}
+}
+}
 \source{
 The Korean Family Planning data were
 stored on a Vax tape that Rogers had given to Marc Granovetter who then gave

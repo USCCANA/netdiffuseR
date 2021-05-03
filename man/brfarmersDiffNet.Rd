@@ -3,7 +3,9 @@
 \name{brfarmersDiffNet}
 \alias{brfarmersDiffNet}
 \title{\code{diffnet} version of the Brazilian Farmers data}
-\format{A \code{\link{diffnet}} class object.}
+\format{
+A \code{\link{diffnet}} class object.
+}
 \description{
 A directed dynamic graph with 692 vertices and 21 time periods. The attributes
 in the graph are static and described in \code{\link{brfarmers}}.

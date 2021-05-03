@@ -3,13 +3,15 @@
 \name{fakeDynEdgelist}
 \alias{fakeDynEdgelist}
 \title{Fake dynamic edgelist}
-\format{A data frame with 22 rows and 4 variables
+\format{
+A data frame with 22 rows and 4 variables
 \describe{
  \item{ego}{Nominating individual}
  \item{alter}{Nominated individual}
  \item{value}{Strength of the tie}
  \item{time}{Integer with the time of the spell}
-}}
+}
+}
 \source{
 Generated for the package
 }

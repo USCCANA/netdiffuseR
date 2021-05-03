@@ -3,12 +3,14 @@
 \name{fakeEdgelist}
 \alias{fakeEdgelist}
 \title{Fake static edgelist}
-\format{A data frame with 11 rows and 3 variables
+\format{
+A data frame with 11 rows and 3 variables
 \describe{
  \item{ego}{Nominating individual}
  \item{alter}{Nominated individual}
  \item{value}{Strength of the tie}
-}}
+}
+}
 \source{
 Generated for the package
 }

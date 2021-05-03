@@ -43,12 +43,13 @@ Suggests:
     covr,
     testthat,
     knitr,
+    rmarkdown,
     ape,
     RSiena,
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR,
  https://USCCANA.github.io/netdiffuseR

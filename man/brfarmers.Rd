@@ -4,7 +4,8 @@
 \name{brfarmers}
 \alias{brfarmers}
 \title{Brazilian Farmers}
-\format{A data frame with 692 rows and 148 columns:
+\format{
+A data frame with 692 rows and 148 columns:
 \describe{
    \item{village}{village number}
    \item{idold}{respondent id}
@@ -154,7 +155,8 @@
    \item{toa}{Time of Adoption}
    \item{test}{ --- MISSING INFO --- }
    \item{study}{Number of study in Valente (1995)}
- }}
+ }
+}
 \source{
 The Brazilian Farmers data were collected as part of a USAID-funded study of farming
 practicing in the three countries, India, Nigeria, and Brazil.
