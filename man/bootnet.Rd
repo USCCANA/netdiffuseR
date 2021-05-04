@@ -6,6 +6,7 @@
 \alias{c.diffnet_bootnet}
 \alias{print.diffnet_bootnet}
 \alias{hist.diffnet_bootnet}
+\alias{plot.diffnet_bootnet}
 \title{Network Bootstrapping}
 \usage{
 resample_graph(graph, self = NULL, useR = FALSE, ...)
@@ -27,6 +28,8 @@ bootnet(graph, statistic, R, resample.args = list(self = FALSE), ...)
   ask = TRUE,
   ...
 )
+
+\method{plot}{diffnet_bootnet}(x, y, ...)
 }
 \arguments{
 \item{graph}{Any class of accepted graph format (see \code{\link{netdiffuseR-graphs}}).}
@@ -65,6 +68,8 @@ The first argument must be the graph, and the second argument a vector of indice
 
 \item{ask}{Logical scalar. When \code{TRUE}, asks the user to type \code{<Enter>} to
 see each plot (as many as statistics where computed).}
+
+\item{y}{Ignored.}
 }
 \value{
 A list of class \code{diffnet_bootnet} containing the following:
@@ -104,14 +109,19 @@ The vector of indices that is passed to \code{statistic}, an integer vector with
 1 to \eqn{n}, corresponds to the drawn sample of nodes, so the user can, for
 example, use it to get a subset of a \code{data.frame} that will be used with
 the \code{graph}.
+
+The `plot.diffnet_bootnet` method is a wrapper for the
+`hist` method.
 }
 \examples{
-#
+# Computing edgecount -------------------------------------------------------
 set.seed(13)
 g <- rgraph_ba(t=99)
 
 ans <- bootnet(g, function(w, ...) length(w@x), R=100)
 ans
+
+# Generating
 }
 \references{
 Snijders, T. A. B., & Borgatti, S. P. (1999). Non-Parametric

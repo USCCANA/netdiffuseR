@@ -28,7 +28,7 @@
 #' This is a wrapper of \code{\link[stats:glm]{glm}}. The function does the
 #' following steps:
 #' \enumerate{
-#'  \item Compute exposure by calling \code{exposure} on the LHS.
+#'  \item Compute exposure by calling \code{exposure} on the LHS (dependent variable).
 #'  \item Modify the formula so that the model is on adoption as a function of
 #'  exposure and whatever covariates the user specifies.
 #'  \item Selects either \code{"probit"} or \code{"logit"} and prepares the call
@@ -93,7 +93,7 @@ diffreg <- function(model, type=c("logit", "probit")) {
   LHS <- attr(terms, "variables")[[2]]
 
   if (!inherits(eval(LHS), "diffnet"))
-    stop("The LHS of the formula is not a `diffnet` object. `diffreg` is only for `diffnet` objects.",
+    stop("The LHS of the formula (dependent variable) is not a `diffnet` object. `diffreg` is only for `diffnet` objects.",
          call. = FALSE)
 
   # Updating the formula -------------------------------------------------------

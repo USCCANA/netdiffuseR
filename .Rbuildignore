@@ -18,7 +18,6 @@
 .*\.pdf
 # Misc
 README[.]Rmd
-README[.]md
 ^README\_files$
 [.]travis[.]yml
 ^appveyor\.yml$

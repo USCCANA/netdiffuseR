@@ -1,6 +1,5 @@
 
-[![Build
-Status](https://travis-ci.org/USCCANA/netdiffuseR.svg?branch=master)](https://travis-ci.org/USCCANA/netdiffuseR)
+[![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![Build
 status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master)
@@ -13,10 +12,8 @@ status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](
 Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://preventivemedicine.usc.edu)
 
 <h1>
-
 netdiffuseR: Analysis of Diffusion and Contagion Processes on
-Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right">
-
+Networks<img src="man/figures/netdiffuser-logo.png" style="max-width:200px;width:50%;" align="right">
 </h1>
 
 This package contains functions useful for analyzing network data for
@@ -50,19 +47,19 @@ Health.
 
 Changelog can be view [here](NEWS.md).
 
-  - \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT
+-   \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT
     2016 is now online on
     [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
     and the workshop materials can be found
     [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
-  - \[2016-04-11\] **netdiffuseR** will be on
-    [useR\! 2016](http://user2016.org) on as a presentation and on
-    [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
+-   \[2016-04-11\] **netdiffuseR** will be on [useR!
+    2016](http://user2016.org) on as a presentation and on [IC2S2
+    2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
     in the posters session.
-  - \[2016-03-16\] Next CRAN release scheduled for April 11th 2016
+-   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016
     (after the workshop).
-  - \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN\!
-  - \[2016-02-18\] We will be offering a workshop at the 2016 SUNBELT
+-   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
+-   \[2016-02-18\] We will be offering a workshop at the 2016 SUNBELT
     Conference (checkout the full list of workshops
     [here](http://insna.org/sunbelt2016/program/)).
 
@@ -108,19 +105,16 @@ netdiffuseR\_1…zip, and netdiffuseR\_1…tgz respectively. They can
 install this directly as follows (using the 1.16.3.29 version):
 
 1.  Install dependencies from CRAN
-    
-    ``` r
-    > install.packages(c("igraph", "Matrix", "SparseM", "RcppArmadillo", "sna"), dependencies=TRUE)
-    ```
+    `r     > install.packages(c("igraph", "Matrix", "SparseM", "RcppArmadillo", "sna"), dependencies=TRUE)`
 
 2.  Download the binary version and install it as follows:
-    
+
     ``` r
     > install.packages("netdiffuseR_1.16.3.29.zip", repos=NULL)
     ```
-    
+
     For windows users, and for Mac users:
-    
+
     ``` r
     > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
     ```
@@ -130,19 +124,19 @@ install this directly as follows (using the 1.16.3.29 version):
 Since starting netdiffuseR, we have done a couple of workshops at
 Sunbelt and NASN. Here are the repositories:
 
-  - Sunbelt 2018: <https://USCCANA.github.io/netdiffuser-sunbelt2018>
+-   Sunbelt 2018: <https://USCCANA.github.io/netdiffuser-sunbelt2018>
     ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
-  - NASN 2017: <https://USCCANA.github.io/netdiffuser-nasn2017> ([source
+-   NASN 2017: <https://USCCANA.github.io/netdiffuser-nasn2017> ([source
     code](https://github.com/USCCANA/netdiffuser-nasn2017))
-  - Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
+-   Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
 
 ## Presentations
 
-  - ic2s2 2016 Evanston, IL:
+-   ic2s2 2016 Evanston, IL:
     <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
-  - useR\! 2016 Stanford, CA:
+-   useR! 2016 Stanford, CA:
     <https://github.com/USCCANA/netdiffuser-user2016> (slides)
-  - useR\! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
+-   useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
 
 ## Examples
 
@@ -421,7 +415,7 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] igraph_1.2.6          Rcpp_1.0.6            knitr_1.30           
     ##  [4] magrittr_2.0.1        networkDynamic_0.10.1 network_1.16.1       
-    ##  [7] MASS_7.3-53.1         viridisLite_0.3.0     lattice_0.20-41      
+    ##  [7] MASS_7.3-53.1         viridisLite_0.3.0     lattice_0.20-44      
     ## [10] rlang_0.4.10          stringr_1.4.0         tools_4.0.5          
     ## [13] MatchIt_4.1.0         grid_4.0.5            rle_0.9.2            
     ## [16] xfun_0.20             sna_2.6               coda_0.19-4          
@@ -435,29 +429,29 @@ sessionInfo()
 
 ## To-do list
 
-  - Import/Export functions for interfacing other package’s clases, in
+-   Import/Export functions for interfacing other package’s clases, in
     particular: `statnet` set (specially the packages `networkDynamic`
     and `ndtv`), ~~`igraph`~~ and `Rsiena`.
-  - Populate the tests folder.
-  - ~~Use spells? (`select_egoalter` would use this)~~
-  - ~~Classify individuals by adoption category using early adopters,
+-   Populate the tests folder.
+-   ~~Use spells? (`select_egoalter` would use this)~~
+-   ~~Classify individuals by adoption category using early adopters,
     adopters, and laggards, and by threshold using very low, low, high
     and very high threshold (Valente 95’ p. 94).~~
-  - ~~Double check all functions using adjacency matrix values.~~
-  - ~~Remove dimnames from matrices and vectors. It is more efficient to
+-   ~~Double check all functions using adjacency matrix values.~~
+-   ~~Remove dimnames from matrices and vectors. It is more efficient to
     use the ones stored in meta instead.~~
-  - Implement the Bass model
-  - ~~Include function to import survey data (as shown on the
+-   Implement the Bass model
+-   ~~Include function to import survey data (as shown on the
     vignettes)~~
-  - Exposure based on Mahalanobis distances and also Roger Leenders on
+-   Exposure based on Mahalanobis distances and also Roger Leenders on
     weighting exposure (internal note).
-  - (2016-03-30): use `xspline` for drawing polygons & edges.
-  - ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so
-    removes diagonal or not\!).~~
-  - (2016-04-19): animal behaviorists.
-  - (2016-10-18): Review language throughout the manual (more than
+-   (2016-03-30): use `xspline` for drawing polygons & edges.
+-   ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so
+    removes diagonal or not!).~~
+-   (2016-04-19): animal behaviorists.
+-   (2016-10-18): Review language throughout the manual (more than
     innovation).
-  - (2016-10-18): Evaluate and eventually use a standard graph format
+-   (2016-10-18): Evaluate and eventually use a standard graph format
     (`network` for instance?).
-  - (2016-10-18): Standarize graph plot methods (choose either
+-   (2016-10-18): Standarize graph plot methods (choose either
     statnet/igraph/own)

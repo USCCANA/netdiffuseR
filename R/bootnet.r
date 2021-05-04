@@ -60,12 +60,14 @@
 #' \item{resample.args}{The list \code{resample.args} passed to \code{bootnet}.}
 #' @name bootnet
 #' @examples
-#' #
+#' # Computing edgecount -------------------------------------------------------
 #' set.seed(13)
 #' g <- rgraph_ba(t=99)
 #'
 #' ans <- bootnet(g, function(w, ...) length(w@x), R=100)
 #' ans
+#'
+#' # Generating
 NULL
 
 bootnet_fillselfR <- function(graph, index, E) {
@@ -367,4 +369,13 @@ hist.diffnet_bootnet <- function(
   }
 
   invisible(out)
+}
+
+#' @export
+#' @param y Ignored.
+#' @rdname bootnet
+#' @details The `plot.diffnet_bootnet` method is a wrapper for the
+#' `hist` method.
+plot.diffnet_bootnet <- function(x, y, ...) {
+  hist.diffnet_bootnet(x = x, ...)
 }
