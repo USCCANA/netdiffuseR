@@ -7,7 +7,7 @@ output:
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) 
-[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
+[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
@@ -30,9 +30,8 @@ From the description:
     algorithms for calculating network diffusion statistics such as transmission
     rate, hazard rates, exposure models, network threshold levels, infectiousness
     (contagion), and susceptibility. The package is inspired by work published in
-    Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995)
-    <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others
-    (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among
+    Valente, et al., (2015); Valente (1995), Myers (2000), Iyengar and others
+    (2011), Burt (1987); among
     others.
   
 __Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health. 
@@ -41,8 +40,8 @@ __Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA1
 
 Changelog can be view [here](NEWS.md).
 
-* [2016-06-02] A video of the __netdiffuseR__ workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
-* [2016-04-11] __netdiffuseR__ will be on [useR! 2016](http://user2016.org) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
+* [2016-06-02] A video of the __netdiffuseR__ workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
+* [2016-04-11] __netdiffuseR__ will be on [useR! 2016](https://user2016.r-project.org/) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 * [2016-03-16] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 * [2016-02-18] __netdiffuseR__ vers 1.16.2 is now on CRAN!
 * [2016-02-18] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/program/)).

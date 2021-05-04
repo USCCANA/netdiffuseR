@@ -3,7 +3,7 @@
 [![Build
 status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master)
-[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
+[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
@@ -13,7 +13,7 @@ Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscp
 
 <h1>
 netdiffuseR: Analysis of Diffusion and Contagion Processes on
-Networks<img src="man/figures/netdiffuser-logo.png" style="max-width:200px;width:50%;" align="right">
+Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right">
 </h1>
 
 This package contains functions useful for analyzing network data for
@@ -33,11 +33,8 @@ From the description:
 > algorithms for calculating network diffusion statistics such as
 > transmission rate, hazard rates, exposure models, network threshold
 > levels, infectiousness (contagion), and susceptibility. The package is
-> inspired by work published in Valente, et al., (2015)
-> <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995)
-> <ISBN:9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and
-> others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987)
-> <DOI:10.1086/228667>; among others.
+> inspired by work published in Valente, et al., (2015); Valente (1995),
+> Myers (2000), Iyengar and others (2011), Burt (1987); among others.
 
 **Acknowledgements**: netdiffuseR was created with the support of grant
 R01 CA157577 from the National Cancer Institute/National Institutes of
@@ -51,9 +48,10 @@ Changelog can be view [here](NEWS.md).
     2016 is now online on
     [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
     and the workshop materials can be found
-    [here](https://github.com/USCCANA/netdiffuseR/tree/master/doc/conferences/20160400_sunbelt2016/)
+    [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
 -   \[2016-04-11\] **netdiffuseR** will be on [useR!
-    2016](http://user2016.org) on as a presentation and on [IC2S2
+    2016](https://user2016.r-project.org/) on as a presentation and on
+    [IC2S2
     2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
     in the posters session.
 -   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016
@@ -413,19 +411,20 @@ sessionInfo()
     ## [1] netdiffuseR_1.22.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.6          Rcpp_1.0.6            knitr_1.30           
+    ##  [1] igraph_1.2.6          Rcpp_1.0.6            knitr_1.33           
     ##  [4] magrittr_2.0.1        networkDynamic_0.10.1 network_1.16.1       
-    ##  [7] MASS_7.3-53.1         viridisLite_0.3.0     lattice_0.20-44      
-    ## [10] rlang_0.4.10          stringr_1.4.0         tools_4.0.5          
-    ## [13] MatchIt_4.1.0         grid_4.0.5            rle_0.9.2            
-    ## [16] xfun_0.20             sna_2.6               coda_0.19-4          
-    ## [19] htmltools_0.5.0       ellipsis_0.3.1        yaml_2.2.1           
-    ## [22] digest_0.6.27         tibble_3.0.4          lifecycle_0.2.0      
-    ## [25] crayon_1.3.4          Matrix_1.3-2          vctrs_0.3.6          
-    ## [28] evaluate_0.14         statnet.common_4.4.1  rmarkdown_2.6        
-    ## [31] stringi_1.5.3         compiler_4.0.5        pillar_1.4.7         
-    ## [34] backports_1.2.1       boot_1.3-27           SparseM_1.78         
-    ## [37] pkgconfig_2.0.3
+    ##  [7] MASS_7.3-54           viridisLite_0.4.0     lattice_0.20-44      
+    ## [10] rlang_0.4.11          fansi_0.4.2           highr_0.9            
+    ## [13] stringr_1.4.0         tools_4.0.5           MatchIt_4.1.0        
+    ## [16] grid_4.0.5            rle_0.9.2             xfun_0.22            
+    ## [19] utf8_1.2.1            sna_2.6               coda_0.19-4          
+    ## [22] htmltools_0.5.1.1     ellipsis_0.3.2        yaml_2.2.1           
+    ## [25] digest_0.6.27         tibble_3.1.1          lifecycle_1.0.0      
+    ## [28] crayon_1.4.1          Matrix_1.3-3          vctrs_0.3.8          
+    ## [31] evaluate_0.14         statnet.common_4.4.1  rmarkdown_2.7        
+    ## [34] stringi_1.5.3         compiler_4.0.5        pillar_1.6.0         
+    ## [37] backports_1.2.1       boot_1.3-28           SparseM_1.81         
+    ## [40] pkgconfig_2.0.3
 
 ## To-do list
 
