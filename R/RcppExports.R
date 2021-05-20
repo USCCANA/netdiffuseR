@@ -209,7 +209,7 @@ rgraph_er_cpp <- function(n = 10L, p = 0.3, undirected = TRUE, weighted = FALSE,
 #' @return A sparse matrix of class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} of size
 #' \eqn{n\times n}{n * n}.
 #' @references Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
-#' “small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
+#' “small-world” networks. Nature, 393(6684), 440–2. \doi{10.1038/30918}
 #' @export
 #' @family simulation functions
 ring_lattice <- function(n, k, undirected = FALSE) {

@@ -134,7 +134,7 @@
 #' Milo, R., Kashtan, N., Itzkovitz, S., Newman, M. E. J., & Alon, U.
 #' (2004). On the uniform generation of random graphs with prescribed degree sequences.
 #' Arxiv Preprint condmat0312028, cond-mat/0, 1–4. Retrieved from
-#' \url{http://arxiv.org/abs/cond-mat/0312028}
+#' \url{https://arxiv.org/abs/cond-mat/0312028}
 #'
 #' Ray, J., Pinar, A., and Seshadhri, C. (2012).
 #' Are we there yet? When to stop a Markov chain while generating random graphs.
@@ -358,7 +358,7 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 #'
 #' Mantel, N. (1967). The detection of disease clustering and a generalized
 #' regression approach. Cancer Research, 27(2), 209–20.
-#' \url{http://cancerres.aacrjournals.org/content/27/2_Part_1/209}
+#' \url{https://cancerres.aacrjournals.org/content/27/2_Part_1/209}
 #'
 #' @seealso This function can be used as null distribution in \code{struct_test}
 #' @family simulation functions

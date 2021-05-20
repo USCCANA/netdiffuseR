@@ -52,7 +52,7 @@ LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR,
- https://USCCANA.github.io/netdiffuseR
+ https://USCCANA.github.io/netdiffuseR/
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
 Classification/MSC: 90C35, 90B18, 91D30
 Collate: 

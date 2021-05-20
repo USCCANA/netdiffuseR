@@ -202,7 +202,7 @@ Nature, 393(6684), 440–442. \doi{10.1038/30918}
 Milo, R., Kashtan, N., Itzkovitz, S., Newman, M. E. J., & Alon, U.
 (2004). On the uniform generation of random graphs with prescribed degree sequences.
 Arxiv Preprint condmat0312028, cond-mat/0, 1–4. Retrieved from
-\url{http://arxiv.org/abs/cond-mat/0312028}
+\url{https://arxiv.org/abs/cond-mat/0312028}
 
 Ray, J., Pinar, A., and Seshadhri, C. (2012).
 Are we there yet? When to stop a Markov chain while generating random graphs.

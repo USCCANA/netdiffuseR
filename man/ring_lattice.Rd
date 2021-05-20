@@ -27,7 +27,7 @@ even. So if \code{k=3}, then the degree will be \code{2}.
 }
 \references{
 Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of
-“small-world” networks. Nature, 393(6684), 440–2. \url{http://doi.org/10.1038/30918}
+“small-world” networks. Nature, 393(6684), 440–2. \doi{10.1038/30918}
 }
 \seealso{
 Other simulation functions: 

@@ -36,3 +36,4 @@ makefile
 ^_pkgdown\.yml$
 ^netdiffuseR\.tar\.gz$
 ^\.github
+netdiffuseR\.Rcheck
