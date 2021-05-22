@@ -1,7 +1,10 @@
-netdiffuseR.tar.gz: */*.R
-	$(MAKE) clean ; \
-	R CMD build . && \
-		mv netdiffuseR*.tar.gz netdiffuseR.tar.gz
+VERSION:=$(shell Rscript -e 'x<-readLines("DESCRIPTION");cat(gsub(".+[:]\\s*", "", x[grepl("^Vers", x)]))')
+
+install: netdiffuseR_$(VERSION).tar.gz
+	R CMD INSTALL netdiffuseR_$(VERSION).tar.gz
+
+netdiffuseR_$(VERSION).tar.gz: */*.R inst/NEWS README.md
+	R CMD build . 
 
 inst/NEWS: NEWS.md
 	Rscript -e "rmarkdown::pandoc_convert('NEWS.md', 'plain', output='inst/NEWS')"&& \
@@ -12,11 +15,15 @@ README.md: README.Rmd
 
 .PHONY: check checkv clean
 
-check: netdiffuseR.tar.gz
-	R CMD check --as-cran netdiffuseR.tar.gz
+check: netdiffuseR_$(VERSION).tar.gz
+	R CMD check --as-cran netdiffuseR_$(VERSION).tar.gz
 
-checkv: netdiffuseR.tar.gz
-	R CMD check --as-cran --use-valgrind netdiffuseR.tar.gz
+checkv: netdiffuseR_$(VERSION).tar.gz
+	R CMD check --as-cran --use-valgrind netdiffuseR_$(VERSION).tar.gz
 
 clean:
-	rm -rf netdiffuseR.Rcheck ; rm -f netdiffuseR.tar.gz
+	rm -rf netdiffuseR.Rcheck
+
+man/moran.Rd: R/* src/*.cpp src/*.h
+	Rscript --vanilla -e 'roxygen2::roxygenize()'
+

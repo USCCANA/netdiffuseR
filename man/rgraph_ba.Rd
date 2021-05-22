@@ -96,7 +96,7 @@ Albert-László Barabási, & Albert, R. (1999). Emergence of Scaling in Random
 Networks. Science, 286(5439), 509–512. \doi{10.1126/science.286.5439.509}
 
 Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
-Retrieved from \url{http://barabasi.com/book/network-science}
+Retrieved from \url{https://barabasi.com/book/network-science}
 
 De Almeida, M. L., Mendes, G. A., Madras Viswanathan, G., & Da Silva, L. R. (2013).
 Scale-free homophilic network. European Physical Journal B, 86(2).

@@ -6,10 +6,10 @@ output:
 
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![Build status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
-[![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master) 
-[![](http://cranlogs.r-pkg.org/badges/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/netdiffuseR)](http://cran.r-project.org/package=netdiffuseR)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](http://cran.rstudio.com/web/packages/netdiffuseR/index.html) 
+[![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master)
+[![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.com/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![USC's Department of Preventive Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://preventivemedicine.usc.edu)
@@ -21,7 +21,7 @@ This package contains functions useful for analyzing network data for diffusion 
 The package was developed as part of the paper Thomas W. Valente, Stephanie R.
 Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*,
 Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536
-(available [here](http://www.sciencedirect.com/science/article/pii/S027795361530143X))
+(available [here](https://www.sciencedirect.com/science/article/pii/S027795361530143X))
 
 From the description:
 
@@ -36,15 +36,19 @@ From the description:
   
 __Acknowledgements__:  netdiffuseR was created with the support of grant R01 CA157577 from the National Cancer Institute/National Institutes of Health. 
 
+```{r, comment = ""}
+citation(package="netdiffuseR")
+```
+
 ## News
 
 Changelog can be view [here](NEWS.md).
 
 * [2016-06-02] A video of the __netdiffuseR__ workshop at SUNBELT 2016 is now online on [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P), and the workshop materials can be found [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
-* [2016-04-11] __netdiffuseR__ will be on [useR! 2016](https://user2016.r-project.org/) on as a presentation and on [IC2S2 2016](http://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
+* [2016-04-11] __netdiffuseR__ will be on [useR! 2016](https://user2016.r-project.org/) on as a presentation and on [IC2S2 2016](https://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 * [2016-03-16] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 * [2016-02-18] __netdiffuseR__ vers 1.16.2 is now on CRAN!
-* [2016-02-18] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://insna.org/sunbelt2016/program/)).
+* [2016-02-18] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://sunbelt2016.insna.org/program/)).
 
 ## Installation
 
@@ -103,8 +107,8 @@ For the case of windows and mac users, they can find binary versions of the pack
 
 Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Here are the repositories:
 
-* Sunbelt 2018: https://USCCANA.github.io/netdiffuser-sunbelt2018 ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
-* NASN 2017: https://USCCANA.github.io/netdiffuser-nasn2017 ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
+* Sunbelt 2018: https://usccana.github.io/netdiffuser-sunbelt2018/ ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
+* NASN 2017: https://usccana.github.io/netdiffuser-nasn2017/ ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
 * Sunbelt 2016: https://github.com/USCCANA/netdiffuser-sunbelt2016
 
 ## Presentations
