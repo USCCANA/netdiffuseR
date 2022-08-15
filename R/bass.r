@@ -2,7 +2,7 @@
 #'
 #' Fits the Bass Diffusion model. In particular, fits an observed curve of
 #' proportions of adopters to \eqn{F(t)}, the proportion of adopters at time
-#' \eqn{t}, finding the corresponding coeficients \eqn{p}, Innovation rate,
+#' \eqn{t}, finding the corresponding coefficients \eqn{p}, Innovation rate,
 #' and \eqn{q}, imitation rate.
 #'
 #' @param Time Integer vector with values greater than 0. The \eqn{t} parameter.

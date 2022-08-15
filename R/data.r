@@ -846,6 +846,7 @@ NULL # "medInnovationsDiffNet"
 #' @family diffusion datasets
 #' @name diffusion-data
 #' @author Thomas W. Valente
+#' @return No return value (this manual entry only provides information).
 NULL
 
 

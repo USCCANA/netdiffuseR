@@ -3,6 +3,9 @@
 \name{diffusion-data}
 \alias{diffusion-data}
 \title{Diffusion Network Datasets}
+\value{
+No return value (this manual entry only provides information).
+}
 \description{
 Diffusion Network Datasets
 }

@@ -21,6 +21,9 @@ resulting vector as
 
 \code{tick[(tick >= xrange[1]) & (tick <= xrange[2])]}}
 }
+\value{
+A vector sequence of `n + 1` round values in the specified range.
+}
 \description{
 A wrapper for \code{\link[base:pretty]{pretty}}.
 }
@@ -31,6 +34,5 @@ x <- runif(10)
 pretty(x)
 pretty_within(x)
 range(x)
-
 }
 \keyword{misc}

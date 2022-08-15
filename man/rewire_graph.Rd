@@ -42,6 +42,9 @@ the first slice as a baseline for the rest of slices (see details).}
 \item{althexagons}{Logical scalar. When \code{TRUE} uses the compact alternating
 hexagons algorithm (currently ignored [on development]).}
 }
+\value{
+A rewired version of the graph.
+}
 \description{
 Changes the structure of a graph by altering ties.
 }

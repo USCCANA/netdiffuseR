@@ -36,6 +36,7 @@
 #' and \code{\link{names}} (in the case of dynamic graphs as lists). Otherwise,
 #' when no names are provided, these will be created from scratch.
 #' @include imports.r
+#' @return No return value (this manual entry only provides information).
 #' @author George G. Vega Yon
 #' @family graph formats
 NULL

@@ -3,6 +3,9 @@
 \name{netdiffuseR-graphs}
 \alias{netdiffuseR-graphs}
 \title{Network data formats}
+\value{
+No return value (this manual entry only provides information).
+}
 \description{
 List of accepted graph formats
 }

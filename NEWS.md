@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.22.1 (2021-05-04)
+# Changes in netdiffuseR version 1.22.1 (2021-05-27)
 
 * netdiffuseR has now a logo!
 

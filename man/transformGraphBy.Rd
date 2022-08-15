@@ -23,6 +23,10 @@ transformGraphBy(graph, INDICES, fun = function(g, ...) g, ...)
 
 \item{...}{Further arguments passed to \code{fun}}
 }
+\value{
+A transformed version of the network, with the desired function applied
+by blocks.
+}
 \description{
 When there are structural zeros given by groups, this function applies
 a particular transformation function of a graph by groups returning a

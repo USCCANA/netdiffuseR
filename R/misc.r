@@ -82,7 +82,7 @@ recode.matrix <- function(data, ...) {
 #' pretty(x)
 #' pretty_within(x)
 #' range(x)
-#'
+#' @return A vector sequence of `n + 1` round values in the specified range.
 #' @export
 #' @keywords misc
 pretty_within <- function(x, min.n=5, xrange=range(x, na.rm = TRUE), ...) {

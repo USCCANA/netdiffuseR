@@ -157,6 +157,7 @@
 #' @family simulation functions
 #' @export
 #' @author George G. Vega Yon
+#' @return A rewired version of the graph.
 #' @examples
 #' # Checking the consistency of the "swap" ------------------------------------
 #'
@@ -209,12 +210,18 @@
 # ' # Marking the original structure
 # ' baseline <- paste0(as.vector(x), collapse="")
 # ' points(x=7,y=table(as.factor(w))[baseline]/nsim*100, pch=3, col="red")
-rewire_graph <- function(graph, p,
-                         algorithm="endpoints",
-                         both.ends=FALSE, self=FALSE, multiple=FALSE,
-                         undirected=getOption("diffnet.undirected"),
-                         pr.change= ifelse(self, 0.5, 1),
-                         copy.first=TRUE, althexagons=FALSE) {
+rewire_graph <- function(
+  graph,
+  p,
+  algorithm="endpoints",
+  both.ends   = FALSE,
+  self        = FALSE,
+  multiple    = FALSE,
+  undirected  = getOption("diffnet.undirected"),
+  pr.change   = ifelse(self, 0.5, 1),
+  copy.first  = TRUE,
+  althexagons = FALSE
+  ) {
 
   # Checking undirected (if exists)
   checkingUndirected(graph)
@@ -223,6 +230,16 @@ rewire_graph <- function(graph, p,
   if (althexagons) {
     althexagons <- FALSE
     warning("The option -althexagons- is still on development. So it has been set to FALSE.")
+  }
+
+  if (copy.first) {
+
+    warning(
+      "The option -copy.first- is set to TRUE. In this case, the first graph will be ",
+      "treated as a baseline, and thus, networks after T=1 will be replaced with T-1.",
+      immediate. = TRUE
+      )
+
   }
 
   # Checking copy.first
@@ -246,19 +263,33 @@ rewire_graph <- function(graph, p,
   # If diffnet, then it must return the same object but rewired, and change
   # the attribute of directed or not
   if (inherits(graph, "diffnet")) {
+
     graph$meta$undirected <- undirected
     graph$graph <- out
     return(graph)
+
   }
 
   attr(out, "undirected") <- FALSE
 
   return(out)
+
 }
 
 # @rdname rewire_graph
-rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, undirected,
-                              pr.change, copy.first, althexagons) {
+rewire_graph.list <- function(
+  graph,
+  p,
+  algorithm,
+  both.ends,
+  self,
+  multiple,
+  undirected,
+  pr.change,
+  copy.first,
+  althexagons
+) {
+
   t   <- length(graph)
   out <- graph
 
@@ -291,10 +322,22 @@ rewire_graph.list <- function(graph, p, algorithm, both.ends, self, multiple, un
   }
 
   out
+
 }
 
 # @rdname rewire_graph
-rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multiple, undirected, pr.change, althexagons) {
+rewire_graph.dgCMatrix <- function(
+  graph,
+  p,
+  algorithm,
+  both.ends,
+  self,
+  multiple,
+  undirected,
+  pr.change,
+  althexagons
+  ) {
+
   out <- if (algorithm == "endpoints")
     rewire_endpoints(graph, p, both.ends, self, multiple, undirected)
   else if (algorithm == "swap")
@@ -307,10 +350,12 @@ rewire_graph.dgCMatrix <- function(graph, p, algorithm, both.ends, self, multipl
   if (!length(rn)) rn <- 1:nrow(out)
   dimnames(out) <- list(rn, rn)
   out
+
 }
 
 # @rdname rewire_graph
-rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, undirected,
+rewire_graph.array <-function(
+  graph, p, algorithm, both.ends, self, multiple, undirected,
                               pr.change, copy.first, althexagons) {
   n   <- dim(graph)[1]
   t   <- dim(graph)[3]
@@ -321,8 +366,12 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
   if (!length(tn)) tn <- 1:t
   names(out) <- tn
 
-  return(rewire_graph.list(out, p, algorithm, both.ends, self, multiple, undirected,
-                    pr.change, copy.first, althexagons))
+  return(
+    rewire_graph.list(
+      out, p, algorithm, both.ends, self, multiple, undirected,
+      pr.change, copy.first, althexagons
+      )
+    )
 }
 
 #' Permute the values of a matrix
@@ -364,7 +413,11 @@ rewire_graph.array <-function(graph, p, algorithm, both.ends, self, multiple, un
 #' @family simulation functions
 #' @export
 #' @aliases CUG QAP
-permute_graph <- function(graph, self=FALSE, multiple=FALSE) {
+permute_graph <- function(
+  graph,
+  self     = FALSE,
+  multiple = FALSE
+  ) {
 
   # Changing class
   cls <- class(graph)
@@ -444,10 +497,10 @@ rewire_qap <- function(graph) {
     }
 
 
-  } else {
+  } else
     ans <- rewirefun(x)
-  }
 
   return(ans)
+
 }
 

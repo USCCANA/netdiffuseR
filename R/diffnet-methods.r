@@ -20,12 +20,14 @@
 #'
 #'
 plot.diffnet <- function(
-  x,y=NULL, t=1,
-  vertex.color  = c(adopt="steelblue", noadopt="white"),
-  vertex.size = "degree",
-  main        = "Diffusion network in time %d",
+  x,y          = NULL,
+  t            = 1,
+  vertex.color = c(adopt="steelblue", noadopt="white"),
+  vertex.size  = "degree",
+  main         = "Diffusion network in time %d",
   minmax.relative.size = getOption("diffnet.minmax.relative.size", c(0.01, 0.04)),
-  ...) {
+  ...
+  ) {
 
   # Listing arguments
   igraph.args <- list(...)
@@ -651,6 +653,8 @@ plot_diffnet.default <- function(
 #' plot_threshold(graph, expos, toa, vertex.size = "indegree")
 #'
 #' @export
+#' @return Invisible. A data frame with the calculated coordinates, including:
+#' `toa`, `threshold`, and `jit` (a jittered version of `toa`).
 #' @author George G. Vega Yon
 plot_threshold <- function(graph, expo, ...) UseMethod("plot_threshold")
 
@@ -826,8 +830,16 @@ plot_threshold.default <- function(
 
   # Plotting the edges
   mapply(function(x0, y0, x1, y1, col, edge.curved, arrow.color) {
-    y <- edges_arrow(x0, y0, x1, y1, width=arrow.width, height=arrow.length,
-                     beta=pi*(2/3), dev=par("pin"), ran=ran, curved = edge.curved)
+
+    y <- edges_arrow(
+      x0, y0, x1, y1,
+      width  = arrow.width,
+      height = arrow.length,
+      beta   = pi*(2/3),
+      dev    = par("pin"),
+      ran    = ran,
+      curved = edge.curved
+      )
 
     # Drawing arrow
     if (edge.curved) {
@@ -836,7 +848,7 @@ plot_threshold.default <- function(
       graphics::xspline(
         y$edge[,1],y$edge[,2],
         shape = c(0, 1, 0),
-        open=TRUE, border = col, lwd=edge.width)
+        open  = TRUE, border = col, lwd=edge.width)
 
       # Arrow
       graphics::polygon(y$arrow[,1], y$arrow[,2], col = arrow.color, border = arrow.color)

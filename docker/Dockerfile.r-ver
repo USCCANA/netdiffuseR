@@ -1,0 +1,8 @@
+ARG Rversion
+
+FROM rocker/r-ver:${Rversion}
+
+RUN Rscript -e 'utils::install.packages(c("rmarkdown", "knitr", "coda", "mvtnorm", "tinytest", "mcmc", "covr"))'
+
+CMD ["bash"]
+

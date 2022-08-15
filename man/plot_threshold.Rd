@@ -125,6 +125,10 @@ rotation in radians of each vertex (see details).}
 
 \item{background}{TBD}
 }
+\value{
+Invisible. A data frame with the calculated coordinates, including:
+`toa`, `threshold`, and `jit` (a jittered version of `toa`).
+}
 \description{
 Draws a graph where the coordinates are given by time of adoption, x-axis,
 and threshold level, y-axis.

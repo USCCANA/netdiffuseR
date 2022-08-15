@@ -271,7 +271,8 @@ struct_equiv_by <- function(graph, v, inf.replace, groupvar, ...) {
 #' @details The transformation function \code{fun} must return a square matrix
 #' of size \eqn{m\times m}{m*m}, where \eqn{m} is the size of the subgroup
 #' given by \code{INDICES}. See examples below
-#'
+#' @return A transformed version of the network, with the desired function applied
+#' by blocks.
 #' @examples
 #' # Rewiring a graph by community --------------------------------------------
 #'
