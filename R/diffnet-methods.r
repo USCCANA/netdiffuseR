@@ -1688,7 +1688,7 @@ dimnames.diffnet <- function(x) {
 #' @rdname diffnet-class
 #' @method t diffnet
 t.diffnet <- function(x) {
-  x$graph <- lapply(x$graph, getMethod("t", "dgCMatrix"))
+  x$graph <- lapply(x$graph, t) #getMethod("t", "dgCMatrix"))
   x
 }
 

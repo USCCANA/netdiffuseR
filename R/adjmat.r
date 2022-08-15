@@ -743,8 +743,8 @@ drop_isolated <- function(
 
 
 simmelian_mat <- function(graph, ...) {
-  tmethod <- if(isS4(graph)) getMethod("t", class(graph)) else t
-  tmp <- graph & tmethod(graph)
+#  tmethod <- if(isS4(graph)) getMethod("t", class(graph)) else t
+  tmp <- graph & t(graph) #tmethod(graph)
   methods::as(tmp & (tmp %*% tmp), "dgCMatrix")
 }
 
