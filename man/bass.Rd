@@ -82,7 +82,7 @@ details, see \code{\link[stats:nls]{nls}} in the \pkg{stats} package.
 \description{
 Fits the Bass Diffusion model. In particular, fits an observed curve of
 proportions of adopters to \eqn{F(t)}, the proportion of adopters at time
-\eqn{t}, finding the corresponding coeficients \eqn{p}, Innovation rate,
+\eqn{t}, finding the corresponding coefficients \eqn{p}, Innovation rate,
 and \eqn{q}, imitation rate.
 }
 \details{

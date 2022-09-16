@@ -243,7 +243,7 @@ test_that("Arithmetic and others", {
   # Multiply and transpose
   ans0 <- g*t(g)
   ans1 <- g
-  ans1$graph <- Map(function(x) x*methods::getMethod("t","dgCMatrix")(x), x=ans1$graph)
+  ans1$graph <- Map(function(x) x * t(x), x=ans1$graph)
 
   expect_equal(ans0, ans1)
 

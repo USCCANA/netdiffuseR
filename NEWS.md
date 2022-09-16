@@ -1,3 +1,9 @@
+# Changes in netdiffuseR version 1.22.4 (2022-09-16)
+
+* Replaced `getMethod("t"...)` by `t` responding to changes in the
+  `Matrix` package.
+
+
 # Changes in netdiffuseR version 1.22.1 (2021-05-27)
 
 * netdiffuseR has now a logo!
@@ -11,7 +17,7 @@
   new version, the function has been fully ported to R, which should avoid
   problems related to the C++ code.
 
-* As documented, struct_equiv now returns he euclidean distance matrix (it was
+* As documented, `struct_equiv` now returns he euclidean distance matrix (it was
   not doing that).
 
 
