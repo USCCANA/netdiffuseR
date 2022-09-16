@@ -20,9 +20,9 @@ jobs:
       matrix:
         include:
         - name: release
-           cmd: R
+          cmd: R
         - name: dev
-           cmd: RD
+          cmd: RD
 
     steps:
       - uses: actions/checkout@v2
