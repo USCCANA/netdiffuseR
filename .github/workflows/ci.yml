@@ -20,22 +20,22 @@ jobs:
       matrix:
         include:
         - name: release
-           cmd: R
+          cmd: R
         - name: dev
-           cmd: RD
+          cmd: RD
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Container
-        run: docker pull ${{ cntr }}
+        run: docker pull uscbiostats/fmcmc:latest
 
       - name: SessionInfo
-        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt ${{ cntr }} ${{ matrix.cmd }} -q -e 'sessionInfo()'
+        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt uscbiostats/fmcmc:latest ${{ matrix.cmd }} -q -e 'sessionInfo()'
 
       - name: Build
-        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt ${{ cntr }} ${{ matrix.cmd }} CMD build --no-build-vignettes --no-manual .
+        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt uscbiostats/fmcmc:latest ${{ matrix.cmd }} CMD build --no-build-vignettes --no-manual .
 
       - name: Check
-        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt -e CI=true ${{ cntr }} ${{ matrix.cmd }} CMD check --no-vignettes --no-manual fmcmc_*.tar.gz
+        run: docker run --rm -i -v ${PWD}:/mnt -w /mnt -e CI=true uscbiostats/fmcmc:latest ${{ matrix.cmd }} CMD check --no-vignettes --no-manual fmcmc_*.tar.gz
 
