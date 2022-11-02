@@ -1,24 +1,15 @@
-
-
-CHANGES IN NETDIFFUSER VERSION 1.22.4 (2022-09-16)
-
+Changes in netdiffuseR version 1.22.4 (2022-09-16)
 
 -   Replaced getMethod("t"...) by t responding to changes in the Matrix
     package.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.22.1 (2021-05-27)
-
+Changes in netdiffuseR version 1.22.1 (2021-05-27)
 
 -   netdiffuseR has now a logo!
 
 -   Making updates after changes in knitr and Matrix.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.22.0 (2020-05-17)
-
+Changes in netdiffuseR version 1.22.0 (2020-05-17)
 
 -   Fixing a new issue regarding structural equivalence calculation. In
     the new version, the function has been fully ported to R, which
@@ -27,29 +18,19 @@ CHANGES IN NETDIFFUSER VERSION 1.22.0 (2020-05-17)
 -   As documented, struct_equiv now returns he euclidean distance matrix
     (it was not doing that).
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.21.0 (2020-02-10)
-
+Changes in netdiffuseR version 1.21.0 (2020-02-10)
 
 -   Getting netdiffuseR back to CRAN. We have fixed issues that arise
     from the next big CRAN release, in particular, matrices are now
     arrays. That was creating issues throughout the package (now fixed).
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.20.2 (2019-03-25)
-
+Changes in netdiffuseR version 1.20.2 (2019-03-25)
 
 -   Repaired broken link in bootnet.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.20.1 (2019-03-22)
-
+Changes in netdiffuseR version 1.20.1 (2019-03-22)
 
 -   This version has no user level visible changes.
-
 
 Other changes
 
@@ -58,10 +39,7 @@ Other changes
 -   Setting 3.5 seed version for tests so that test won’t break
     following message from CRAN.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.20.0 (2018-06-06)
-
+Changes in netdiffuseR version 1.20.0 (2018-06-06)
 
 New functions and features
 
@@ -71,13 +49,11 @@ New functions and features
     now selected from the viridis R package, which provides perceptually
     uniform and colorblind proof colors.
 
-
 Bug fixes
 
 -   plot_diffnet2 now has the correct scaling in nodes positions.
 
 -   rdiffnet_multiple calls library(netdiffuseR) when using multicore.
-
 
 Other changes
 
@@ -89,10 +65,7 @@ Other changes
 -   The c++ function edges_arrow now returns two different elements (the
     edge, and the arrow).
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.19.0 (2017-10-16)
-
+Changes in netdiffuseR version 1.19.0 (2017-10-16)
 
 New functions and features
 
@@ -116,7 +89,6 @@ New functions and features
 -   exposure has a new parameter: lags. By default lags = 0, returns a
     lagged exposure matrix.
 
-
 Bug fixes
 
 -   igraph_to_diffnet was failing with the graph had no weights.
@@ -134,7 +106,6 @@ Bug fixes
     corrected in diffnet_to_igraph, and other plot methods using igraph
     for plotting.
 
-
 Other changes
 
 -   Replacing some C++ functions by R functions in cases in which there
@@ -147,10 +118,7 @@ Other changes
     Innovations”, and “Simulating diffusion networks: Using the rdiffnet
     function”.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.18.1 (2017-07-22)
-
+Changes in netdiffuseR version 1.18.1 (2017-07-22)
 
 New functions
 
@@ -160,11 +128,9 @@ New functions
 -   networkDynamic_to_diffnet, diffnet_to_networkDynamc coercion between
     diffnet and networkDynamic objects.
 
-
 New features
 
 -   new_diffnet and as_diffnet now receive static networks as well.
-
 
 Bug fixes
 
@@ -175,10 +141,7 @@ Bug fixes
 
 -   In unexpected situations egonet_attrs was crashing.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.18.0 (2017-07-16)
-
+Changes in netdiffuseR version 1.18.0 (2017-07-16)
 
 New functions
 
@@ -204,7 +167,6 @@ New functions
 -   netmatch and netmatch_prepare (on development) implement matching
     estimators with network data.
 
-
 Bugs Fixes
 
 -   dgr returned with error when self == TRUE
@@ -218,7 +180,6 @@ Bugs Fixes
 -   transformGraphBy was returning with error when the time periods
     ranged other than 1, 2, …
 
-
 New Features
 
 -   rgraph_er is now significantly faster (orders of magnitude compare
@@ -231,15 +192,12 @@ New Features
 -   rewire_graph now also uses QAP. This affects directly to
     structu_test.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.17.0 (2016-11-10)
-
+Changes in netdiffuseR version 1.17.0 (2016-11-10)
 
 New features and changes
 
--   The title of the package is now _Analysis of Diffusion and Contagion
-    Processes on Networks_.
+-   The title of the package is now Analysis of Diffusion and Contagion
+    Processes on Networks.
 
 -   The function struct_test now allows other types of graphs. Before it
     only supported diffnet objects.
@@ -268,7 +226,6 @@ New features and changes
     objects have lost their dimnames (more efficient storage).
 
 -   classify_adopters now always includes Non-Adopters.
-
 
 New functions
 
@@ -304,7 +261,6 @@ New functions
 
 -   rewire_qap generates isomorphic graphs by “changing the labels”.
 
-
 Bug fixes
 
 -   ^.diffnet method was rasing to +1 power, e.g. diffnet^2 was actually
@@ -330,10 +286,7 @@ Bug fixes
 -   The method [[<-.diffnet failed when replacing a dynamic attribute
     with a NULL value (e.g. dn[["my_dyn_att"]] <- NULL).
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.16.7 (2016-07-07)
-
+Changes in netdiffuseR version 1.16.7 (2016-07-07)
 
 Bug fixes
 
@@ -351,7 +304,6 @@ Bug fixes
 -   Fixed bug on egonet_attrs: The matrix method was returning with
     error.
 
-
 New features and changes
 
 -   plot_infectsuscept includes 2D kernel smoother via MASS::kde2d.
@@ -368,7 +320,6 @@ New features and changes
 -   threshold gains a new argument: lags now users can define threshold
     as exposure lags time periods prior to the time of adoption. By
     default is 0 so its exposure at the time of adoption.
-
 
 New functions
 
@@ -397,10 +348,7 @@ New functions
     when calling plot.igraph so that the size is proportional to the
     x-axis.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.16.5 (2016-05-02)
-
+Changes in netdiffuseR version 1.16.5 (2016-05-02)
 
 Bug fixes
 
@@ -422,7 +370,6 @@ Bug fixes
 -   Fixed bugs for as_diffnet: When a dynamic graph was passed with
     slices names different from the time periods, the slices names were
     kept. Now these are replaced by meta$pers.
-
 
 New features and changes
 
@@ -500,7 +447,6 @@ New features and changes
     rewire_ws which has been implemented as it was presented in Watts
     and Strogatz (1998).
 
-
 New functions
 
 -   New function: survey_to_diffnet. This function allows importing
@@ -539,9 +485,6 @@ New functions
 -   New rewiring algorithm, rewire_swap implements the edge-switch
     algorithm in an efficient way. This preserves degree sequences.
 
-
-
-CHANGES IN NETDIFFUSER VERSION 1.16.2 (2016-02-18)
-
+Changes in netdiffuseR version 1.16.2 (2016-02-18)
 
 -   First CRAN version.

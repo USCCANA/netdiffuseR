@@ -67,7 +67,7 @@ List grid_distribution(const arma::vec & x, const arma::vec & y, int nlevels=100
       bool cnt = false;
       for(int j=0;j<nlevels;++j)
         // Testing if x and y are in the range
-        if ( ((x(k) <= xseq(i+1)) & (x(k) > xseq(i))) & ((y(k) <= yseq(j+1)) & (y(k) > yseq(j)))) {
+        if ( ((x(k) <= xseq(i+1)) && (x(k) > xseq(i))) && ((y(k) <= yseq(j+1)) && (y(k) > yseq(j)))) {
           distmat(i,j) += 1;
           cnt=true;
           break;

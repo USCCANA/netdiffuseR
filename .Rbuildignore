@@ -8,6 +8,7 @@
 ^tutorials$
 .*\.old
 ^doc$
+^docker$
 .*\.Rhistory$
 
 # Binary files
@@ -25,6 +26,7 @@ README[.]Rmd
 ^vignettes/simulating.+\.Rmd$
 ^vignettes/structural.+\.Rmd$
 ^vignettes/rdiffnets\.Rmd$
+^vignettes/large-simulation.Rmd$
 # CRAN
 ^cran-comments\.md$
 ^next_release\.md$
@@ -37,3 +39,4 @@ makefile
 ^netdiffuseR\.tar\.gz$
 ^\.github
 netdiffuseR\.Rcheck
+

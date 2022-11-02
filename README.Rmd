@@ -48,7 +48,6 @@ Changelog can be view [here](NEWS.md).
 * [2016-04-11] __netdiffuseR__ will be on [useR! 2016](https://user2016.r-project.org/) on as a presentation and on [IC2S2 2016](https://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx) in the posters session.
 * [2016-03-16] Next CRAN release scheduled for April 11th 2016 (after the workshop).
 * [2016-02-18] __netdiffuseR__ vers 1.16.2 is now on CRAN!
-* [2016-02-18] We will be offering a workshop at the 2016 SUNBELT Conference (checkout the full list of workshops [here](http://sunbelt2016.insna.org/program/)).
 
 ## Installation
 

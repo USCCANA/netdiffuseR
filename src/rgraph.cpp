@@ -254,7 +254,7 @@ arma::sp_mat rewire_swap(
     newj = indexes.at(newij, 1);
 
     bool ismultiple = !multiple &&
-      (newgraph.at(i, newj) != 0) | (newgraph.at(newi, j) != 0);
+      (newgraph.at(i, newj) != 0) || (newgraph.at(newi, j) != 0);
 
     /*// Alternating Hexagons
     // Ramachandra Rao, et al, The Indian Journal of Statistics
