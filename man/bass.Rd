@@ -131,7 +131,8 @@ plot(ans)
 }
 \references{
 Bass's Basement Institute Institute. The Bass Model. (2010).
-Available at: \url{http://www.bassbasement.org/BassModel/Default.aspx}. (Accessed: 29th March 2017)
+Available at: \url{https://web.archive.org/web/20220331222618/http://www.bassbasement.org/BassModel/}.
+(accessed live for the last time on March 29th, 2017.)
 }
 \seealso{
 Other statistics: 

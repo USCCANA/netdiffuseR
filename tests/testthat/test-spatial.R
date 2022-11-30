@@ -2,10 +2,10 @@ context("Spatial functions (beta)")
 
 test_that("diag expansion", {
   set.seed(1231)
-  dn <- rdiffnet(n=100,t=5)
+  dn <- rdiffnet(n = 100, t = 5)
 
   ans1 <- diag_expand(dn)
-  ans2 <- diag_expand(dn$graph)
+  ans2 <- diag_expand(dn$graph, self = is_self(dn))
 
   # Checking methods
   expect_equal(ans1,ans2)

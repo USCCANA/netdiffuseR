@@ -20,9 +20,12 @@
 #' @export
 diag_expand <- function(...) UseMethod("diag_expand")
 
-.diag_expand <- function(graph, nper,
-                                self=getOption("diffnet.self"),
-                                valued=getOption("diffnet.valued")) {
+.diag_expand <- function(
+  graph,
+  nper,
+  self   = getOption("diffnet.self"),
+  valued = getOption("diffnet.valued")
+  ) {
 
   # Checking class
   meta <- classify_graph(graph)
@@ -66,23 +69,35 @@ diag_expand <- function(...) UseMethod("diag_expand")
 
 #' @export
 #' @rdname diag_expand
-diag_expand.list <- function(graph, self=getOption("diffnet.self"),
-                                valued=getOption("diffnet.valued"), ...) {
+diag_expand.list <- function(
+    graph,
+    self   = is_self(graph),
+    valued = is_valued(graph),
+    ...
+    ) {
   .diag_expand(graph, length(graph), self, valued)
 }
 
 
 #' @export
 #' @rdname diag_expand
-diag_expand.diffnet <- function(graph, self=getOption("diffnet.self"),
-                                valued=getOption("diffnet.valued"), ...) {
+diag_expand.diffnet <- function(
+    graph,
+    self   = is_self(graph),
+    valued = is_valued(graph),
+    ...
+    ) {
   .diag_expand(graph$graph, graph$meta$nper, self, valued)
 }
 
 #' @export
 #' @rdname diag_expand
-diag_expand.matrix <- function(graph, nper, self=getOption("diffnet.self"),
-                            valued=getOption("diffnet.valued"), ...) {
+diag_expand.matrix <- function(
+    graph,
+    nper,
+    self   = is_self(graph),
+    valued = is_valued(graph),
+    ...) {
 
   .diag_expand(list(methods::as(graph, "dgCMatrix")), nper, self, valued)
 }
@@ -90,8 +105,12 @@ diag_expand.matrix <- function(graph, nper, self=getOption("diffnet.self"),
 
 #' @export
 #' @rdname diag_expand
-diag_expand.array <- function(graph, self=getOption("diffnet.self"),
-                              valued=getOption("diffnet.valued"), ...) {
+diag_expand.array <- function(
+    graph,
+    self   = is_self(graph),
+    valued = is_valued(graph),
+    ...
+    ) {
 
   graph <- apply(graph, 3, function(x) methods::as(x, "dgCMatrix"))
   diag_expand(graph, nslices(graph), self, valued)
@@ -100,8 +119,12 @@ diag_expand.array <- function(graph, self=getOption("diffnet.self"),
 
 #' @export
 #' @rdname diag_expand
-diag_expand.dgCMatrix <- function(graph, nper, self=getOption("diffnet.self"),
-                               valued=getOption("diffnet.valued"), ...) {
+diag_expand.dgCMatrix <- function(
+    graph,
+    nper,
+    self   = is_self(graph),
+    valued = is_valued(graph),
+    ...) {
 
   .diag_expand(list(graph), nper, self, valued)
 }

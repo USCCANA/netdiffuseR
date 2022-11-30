@@ -176,7 +176,14 @@ NULL
 
 #' @export
 #' @rdname rgraph_ba
-rgraph_ba <- function(m0=1L, m=1L, t=10L, graph=NULL, self=TRUE, eta=NULL) {
+rgraph_ba <- function(
+    m0    = 1L,
+    m     = 1L,
+    t     = 10L,
+    graph = NULL,
+    self  = TRUE,
+    eta   = NULL
+    ) {
 
   # Eta should be numeric vector
   if (length(eta)) {

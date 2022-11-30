@@ -1,8 +1,19 @@
+# Changes in netdiffuseR version 1.22.5 (2022-11-30)
+
+* Solved warning and errors reported by CRAN before the package was archived.
+
+* New S3 generic functions `is_self`, `is_multiple`, `is_valued`, and
+  `is_undirected` allow querying graph information for some methods.
+  
+* Fixed bug in `diag_expand`. Graphs with self ties were not transformed correctly
+  (diagonals were excluded.)
+
+
 # Changes in netdiffuseR version 1.22.4 (2022-09-16)
 
 * Replaced `getMethod("t"...)` by `t` responding to changes in the
   `Matrix` package.
-
+  
 
 # Changes in netdiffuseR version 1.22.1 (2021-05-27)
 

@@ -1699,3 +1699,78 @@ dim.diffnet <- function(x) {
   as.integer(with(x$meta, c(n, k, nper)))
 }
 
+#' @rdname diffnet-class
+#' @details The function `is_undirected` returns TRUE if the network is marked
+#' as undirected. In the case of `diffnet` objects, this information is stored
+#' in the `meta` element as `undirected`. The default method is to try to find
+#' an attribute called `undirected`, i.e., `attr(x, "undirected")`, if no
+#' attribute is found, then the function returns `FALSE`.
+#'
+#' The functions `is_self`, `is_valued`, and `is_multiple` work exactly the same
+#' as `is_undirected`. `diffnet` networks are not valued.
+#' @export
+is_undirected <- function(x) UseMethod("is_undirected")
+
+#' @export
+#' @rdname diffnet-class
+is_undirected.diffnet <- function(x) x$meta$undirected
+
+#' @export
+#' @rdname diffnet-class
+is_undirected.default <- function(x) {
+  und <- attr(x, "undirected", exact = TRUE)
+  if (!length(und))
+    return(FALSE)
+  und
+}
+
+#' @export
+#' @rdname diffnet-class
+is_self <- function(x) UseMethod("is_self")
+
+#' @export
+#' @rdname diffnet-class
+is_self.diffnet <- function(x) x$meta$self
+
+#' @export
+#' @rdname diffnet-class
+is_self.default <- function(x) {
+  und <- attr(x, "self", exact = TRUE)
+  if (!length(und))
+    return(FALSE)
+  und
+}
+
+#' @export
+#' @rdname diffnet-class
+is_multiple <- function(x) UseMethod("is_multiple")
+
+#' @export
+#' @rdname diffnet-class
+is_multiple.diffnet <- function(x) x$meta$multiple
+
+#' @export
+#' @rdname diffnet-class
+is_multiple.default <- function(x) {
+  und <- attr(x, "multiple", exact = TRUE)
+  if (!length(und))
+    return(FALSE)
+  und
+}
+
+#' @export
+#' @rdname diffnet-class
+is_valued <- function(x) UseMethod("is_valued")
+
+#' @export
+#' @rdname diffnet-class
+is_valued.diffnet <- function(x) return(FALSE)
+
+#' @export
+#' @rdname diffnet-class
+is_valued.default <- function(x) {
+  und <- attr(x, "valued", exact = TRUE)
+  if (!length(und))
+    return(FALSE)
+  und
+}

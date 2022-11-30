@@ -19,6 +19,18 @@
 \alias{dimnames.diffnet}
 \alias{t.diffnet}
 \alias{dim.diffnet}
+\alias{is_undirected}
+\alias{is_undirected.diffnet}
+\alias{is_undirected.default}
+\alias{is_self}
+\alias{is_self.diffnet}
+\alias{is_self.default}
+\alias{is_multiple}
+\alias{is_multiple.diffnet}
+\alias{is_multiple.default}
+\alias{is_valued}
+\alias{is_valued.diffnet}
+\alias{is_valued.default}
 \title{Creates a \code{diffnet} class object}
 \usage{
 as_diffnet(graph, ...)
@@ -77,6 +89,30 @@ diffnetLapply(graph, FUN, ...)
 \method{t}{diffnet}(x)
 
 \method{dim}{diffnet}(x)
+
+is_undirected(x)
+
+\method{is_undirected}{diffnet}(x)
+
+\method{is_undirected}{default}(x)
+
+is_self(x)
+
+\method{is_self}{diffnet}(x)
+
+\method{is_self}{default}(x)
+
+is_multiple(x)
+
+\method{is_multiple}{diffnet}(x)
+
+\method{is_multiple}{default}(x)
+
+is_valued(x)
+
+\method{is_valued}{diffnet}(x)
+
+\method{is_valued}{default}(x)
 }
 \arguments{
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
@@ -193,6 +229,15 @@ presented in the right order. See the example below. If the user does not
 provide the names of the vertex id and time period variables then the function
 does not check the way the rows are sorted, further it assumes that the data
 is in the correct order.
+
+The function `is_undirected` returns TRUE if the network is marked
+as undirected. In the case of `diffnet` objects, this information is stored
+in the `meta` element as `undirected`. The default method is to try to find
+an attribute called `undirected`, i.e., `attr(x, "undirected")`, if no
+attribute is found, then the function returns `FALSE`.
+
+The functions `is_self`, `is_valued`, and `is_multiple` work exactly the same
+as `is_undirected`. `diffnet` networks are not valued.
 }
 \section{Auxiliary functions}{
 

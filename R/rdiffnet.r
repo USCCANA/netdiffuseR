@@ -153,6 +153,7 @@ rdiffnet_make_threshold <- function(x, n) {
 }
 
 rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
+
   test <- class(seed.graph)
 
   if ("function" %in% test) {
@@ -336,7 +337,6 @@ rdiffnet <- function(
   # Step 0.0: Creating the network seed ----------------------------------------
   # Checking the class of the seed.graph
   sgraph <- rdiffnet_check_seed_graph(seed.graph, rgraph.args, t, n)
-
 
   # Checking baseline graph --------------------------------------------------
   meta <- classify_graph(sgraph)

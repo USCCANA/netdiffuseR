@@ -11,42 +11,15 @@
 \usage{
 diag_expand(...)
 
-\method{diag_expand}{list}(
-  graph,
-  self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"),
-  ...
-)
+\method{diag_expand}{list}(graph, self = is_self(graph), valued = is_valued(graph), ...)
 
-\method{diag_expand}{diffnet}(
-  graph,
-  self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"),
-  ...
-)
+\method{diag_expand}{diffnet}(graph, self = is_self(graph), valued = is_valued(graph), ...)
 
-\method{diag_expand}{matrix}(
-  graph,
-  nper,
-  self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"),
-  ...
-)
+\method{diag_expand}{matrix}(graph, nper, self = is_self(graph), valued = is_valued(graph), ...)
 
-\method{diag_expand}{array}(
-  graph,
-  self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"),
-  ...
-)
+\method{diag_expand}{array}(graph, self = is_self(graph), valued = is_valued(graph), ...)
 
-\method{diag_expand}{dgCMatrix}(
-  graph,
-  nper,
-  self = getOption("diffnet.self"),
-  valued = getOption("diffnet.valued"),
-  ...
-)
+\method{diag_expand}{dgCMatrix}(graph, nper, self = is_self(graph), valued = is_valued(graph), ...)
 }
 \arguments{
 \item{...}{Further arguments to be passed to the method.}
