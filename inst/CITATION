@@ -1,9 +1,8 @@
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 
-citHeader("To cite netdiffuseR in publications use the following paper:")
-
-citEntry(
+bibentry(
+  header = "To cite netdiffuseR in publications use the following paper:",
   entry  = "Article",
   title = "Diffusion/Contagion Processes on Social Networks",
   author = c(
@@ -20,6 +19,7 @@ citEntry(
   issn    = "1367-4803",
   pages   = "235-248",
   note    = "{PMID: 32090655}",
+  bibtype = "article",
  textVersion = "Valente TW, Vega Yon GG. Diffusion/Contagion Processes on Social Networks. Health Education & Behavior. 2020;47(2):235-248. doi:10.1177/1090198120901497"
 )
 
