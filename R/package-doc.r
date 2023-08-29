@@ -26,7 +26,7 @@
 #' \item Sunbelt 2018 \url{https://github.com/USCCANA/netdiffuser-sunbelt2018}
 #' }
 #'
-#' @docType package
+#' @aliases netdiffuseR-package
 #' @name netdiffuseR
 #'
 #' @author George G. Vega Yon & Thomas W. Valente

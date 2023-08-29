@@ -1,6 +1,6 @@
 Package: netdiffuseR
 Title: Analysis of Diffusion and Contagion Processes on Networks
-Version: 1.22.5
+Version: 1.22.6
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
     comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")
@@ -22,7 +22,7 @@ Depends:
     R (>= 3.1.1)
 License: MIT + file LICENSE
 LazyData: true
-Date: 2022-09-16
+Date: 2023-08-29
 Imports:
     Rcpp (>= 0.12.1),
     sna,
@@ -50,7 +50,7 @@ Suggests:
     survival
 VignetteBuilder: knitr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 URL: https://github.com/USCCANA/netdiffuseR,
  https://USCCANA.github.io/netdiffuseR/

@@ -1,5 +1,9 @@
 Changes in netdiffuseR version 1.22.5 (2022-11-30)
 
+-   Adressing roxygen2 issue #1491
+
+Changes in netdiffuseR version 1.22.5 (2022-11-30)
+
 -   Solved warning and errors reported by CRAN before the package was
     archived.
 
