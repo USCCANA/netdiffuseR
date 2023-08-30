@@ -2,14 +2,14 @@
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![Build
 status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
-[![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://codecov.io/github/USCCANA/netdiffuseR?branch=master)
+[![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.com/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![USC’s Department of Preventive
-Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://preventivemedicine.usc.edu)
+Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://pphs.usc.edu/center/cana/)
 
 <h1>
 netdiffuseR: Analysis of Diffusion and Contagion Processes on
