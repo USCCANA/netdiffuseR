@@ -656,7 +656,7 @@ plot_diffnet.default <- function(
 #' @return Invisible. A data frame with the calculated coordinates, including:
 #' `toa`, `threshold`, and `jit` (a jittered version of `toa`).
 #' @author George G. Vega Yon
-plot_threshold <- function(graph, expo, ...) UseMethod("plot_threshold")
+plot_threshold <- function(graph, expo, vertex.label,...) UseMethod("plot_threshold")
 
 #' @export
 #' @rdname plot_threshold
@@ -679,7 +679,9 @@ plot_threshold.diffnet <- function(graph, expo, ...) {
     args$toa <- graph$toa
   }
 
-  do.call(plot_threshold.default, c(list(graph = graph$graph, expo=expo), args))
+  args$vertex.label <- nodes(graph)
+  do.call(plot_threshold.default,
+          c(list(graph = graph$graph, expo=expo), args))
 }
 
 #' @export
