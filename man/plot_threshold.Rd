@@ -7,11 +7,11 @@
 \alias{plot_threshold.default}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, expo, ...)
+plot_threshold(graph, expo, vertex.label, ...)
 
-\method{plot_threshold}{diffnet}(graph, expo, ...)
+\method{plot_threshold}{diffnet}(graph, expo, vertex.label, ...)
 
-\method{plot_threshold}{array}(graph, expo, ...)
+\method{plot_threshold}{array}(graph, expo, vertex.label, ...)
 
 \method{plot_threshold}{default}(
   graph,
