@@ -53,8 +53,12 @@ test_that("Methods of struct test", {
   x <- rdiffnet(100, 4, "central")
   diffnet.toa(x) <- sample(x$toa, nnodes(x))
 
-  ans1 <- struct_test(x, function(g) mean(threshold(g), na.rm = TRUE), 100)
-  ans2 <- struct_test(x, function(g) mean(threshold(g), na.rm = TRUE), 100)
+  ans1 <- suppressWarnings({
+    struct_test(x, function(g) mean(threshold(g), na.rm = TRUE), 100)
+  })
+  ans2 <- suppressWarnings({
+    struct_test(x, function(g) mean(threshold(g), na.rm = TRUE), 100)
+  })
 
   # pvalues of concatenated test should be the same no matter the order
   expect_equal(c(ans1,ans2)$p.value,c(ans2,ans1)$p.value)

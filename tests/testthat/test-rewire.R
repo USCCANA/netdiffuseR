@@ -69,11 +69,14 @@ test_that("When p=1 in rewiring, Pr(j'=i) = Pr(j'=k) for all (i,k) in V", {
 
   # Simulating
   N <- 1e3
-  out <- lapply(seq_len(N), function(y) {
-    y <- rewire_graph(x, p=1.0, self = TRUE, undirected = FALSE, both.ends = FALSE,
-                      multiple = FALSE)
-    y <- as.matrix(y)
-    colSums(y)/sum(y)
+  out <- suppressWarnings({
+    lapply(seq_len(N), function(y) {
+      y <- rewire_graph(
+        x, p=1.0, self = TRUE, undirected = FALSE, both.ends = FALSE,
+        multiple = FALSE)
+      y <- as.matrix(y)
+      colSums(y)/sum(y)
+    })
   })
 
   # # Computing the probability that an j was picked.
