@@ -37,9 +37,7 @@ jobs:
             extra-packages: any::pkgdown
 
         - name: Install the package
-          run:
-            R CMD INSTALL .
-          shell: Rscript {0}
+          run: R CMD INSTALL .
   
         - name: Build site
           run: "pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)"
