@@ -1,7 +1,5 @@
 
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
-[![Build
-status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](https://ci.appveyor.com/project/gvegayon/netdiffuser)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
@@ -12,6 +10,7 @@ status](https://ci.appveyor.com/api/projects/status/6u48wgl1lqak2jum?svg=true)](
 Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://pphs.usc.edu/center/cana/)
 
 <h1>
+
 netdiffuseR: Analysis of Diffusion and Contagion Processes on
 Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right">
 </h1>
@@ -44,7 +43,6 @@ Health.
 citation(package="netdiffuseR")
 ```
 
-
     To cite netdiffuseR in publications use the following paper:
 
       Valente TW, Vega Yon GG. Diffusion/Contagion Processes on Social
@@ -53,9 +51,9 @@ citation(package="netdiffuseR")
 
     And the actual R package:
 
-      Vega Yon G, Valente T (2022). _netdiffuseR: Analysis of Diffusion and
+      Vega Yon G, Valente T (2023). _netdiffuseR: Analysis of Diffusion and
       Contagion Processes on Networks_. doi:10.5281/zenodo.1039317
-      <https://doi.org/10.5281/zenodo.1039317>, R package version 1.22.4,
+      <https://doi.org/10.5281/zenodo.1039317>, R package version 1.22.6,
       <https://github.com/USCCANA/netdiffuseR>.
 
     To see these entries in BibTeX format, use 'print(<citation>,
@@ -66,19 +64,19 @@ citation(package="netdiffuseR")
 
 Changelog can be view [here](NEWS.md).
 
--   \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT
-    2016 is now online on
-    [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
-    and the workshop materials can be found
-    [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
--   \[2016-04-11\] **netdiffuseR** will be on [useR!
-    2016](https://user2016.r-project.org/) on as a presentation and on
-    [IC2S2
-    2016](https://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
-    in the posters session.
--   \[2016-03-16\] Next CRAN release scheduled for April 11th 2016
-    (after the workshop).
--   \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
+- \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT 2016
+  is now online on
+  [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
+  and the workshop materials can be found
+  [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
+- \[2016-04-11\] **netdiffuseR** will be on [useR!
+  2016](https://user2016.r-project.org/) on as a presentation and on
+  [IC2S2
+  2016](https://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
+  in the posters session.
+- \[2016-03-16\] Next CRAN release scheduled for April 11th 2016 (after
+  the workshop).
+- \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
 
 ## Installation
 
@@ -141,19 +139,19 @@ this directly as follows (using the 1.16.3.29 version):
 Since starting netdiffuseR, we have done a couple of workshops at
 Sunbelt and NASN. Here are the repositories:
 
--   Sunbelt 2018: <https://usccana.github.io/netdiffuser-sunbelt2018/>
-    ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
--   NASN 2017: <https://usccana.github.io/netdiffuser-nasn2017/>
-    ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
--   Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
+- Sunbelt 2018: <https://usccana.github.io/netdiffuser-sunbelt2018/>
+  ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
+- NASN 2017: <https://usccana.github.io/netdiffuser-nasn2017/> ([source
+  code](https://github.com/USCCANA/netdiffuser-nasn2017))
+- Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
 
 ## Presentations
 
--   ic2s2 2016 Evanston, IL:
-    <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
--   useR! 2016 Stanford, CA:
-    <https://github.com/USCCANA/netdiffuser-user2016> (slides)
--   useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
+- ic2s2 2016 Evanston, IL:
+  <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
+- useR! 2016 Stanford, CA:
+  <https://github.com/USCCANA/netdiffuser-user2016> (slides)
+- useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
 
 ## Examples
 
@@ -305,8 +303,8 @@ plot_threshold(
 )
 ```
 
-    ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 =
-    ## min(toa, : -vertex.sides- will be coerced to integer.
+    ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 = min(toa,
+    ## : -vertex.sides- will be coerced to integer.
 
 ![](README_files/figure-gfm/NiceThreshold-1.png)<!-- -->
 
@@ -414,69 +412,67 @@ par(oldpar)
 sessionInfo()
 ```
 
-    ## R version 4.2.1 (2022-06-23)
-    ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 20.04.5 LTS
+    ## R version 4.4.1 (2024-06-14)
+    ## Platform: aarch64-apple-darwin23.4.0
+    ## Running under: macOS Sonoma 14.6.1
     ## 
     ## Matrix products: default
-    ## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
-    ## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+    ## BLAS:   /opt/homebrew/Cellar/openblas/0.3.27/lib/libopenblasp-r0.3.27.dylib 
+    ## LAPACK: /opt/homebrew/Cellar/r/4.4.1/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.0
     ## 
     ## locale:
-    ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-    ##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-    ##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-    ##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-    ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-    ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ## 
+    ## time zone: America/Denver
+    ## tzcode source: internal
     ## 
     ## attached base packages:
-    ## [1] stats     graphics  grDevices datasets  utils     methods   base     
+    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] netdiffuseR_1.22.4
+    ## [1] netdiffuseR_1.22.6
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.9            sna_2.6               highr_0.9            
-    ##  [4] compiler_4.2.1        pillar_1.8.1          tools_4.2.1          
-    ##  [7] boot_1.3-28           digest_0.6.29         MatchIt_4.4.0        
-    ## [10] evaluate_0.16         tibble_3.1.8          lifecycle_1.0.2      
-    ## [13] lattice_0.20-45       viridisLite_0.4.0     pkgconfig_2.0.3      
-    ## [16] rlang_1.0.5           Matrix_1.5-0          igraph_1.3.2         
-    ## [19] cli_3.4.0             rstudioapi_0.14       yaml_2.3.5           
-    ## [22] SparseM_1.81          xfun_0.32             fastmap_1.1.0        
-    ## [25] coda_0.19-4           stringr_1.4.1         knitr_1.40           
-    ## [28] vctrs_0.4.1           networkDynamic_0.11.1 grid_4.2.1           
-    ## [31] glue_1.6.2            fansi_1.0.3           bspm_0.3.9           
-    ## [34] rmarkdown_2.16        magrittr_2.0.3        backports_1.4.1      
-    ## [37] htmltools_0.5.3       MASS_7.3-58.1         utf8_1.2.2           
-    ## [40] stringi_1.7.8         network_1.17.2        statnet.common_4.7.0
+    ##  [1] Matrix_1.7-0          highr_0.11            dplyr_1.1.4          
+    ##  [4] compiler_4.4.1        tidyselect_1.2.1      Rcpp_1.0.12          
+    ##  [7] networkLite_1.0.5     boot_1.3-30           yaml_2.3.8           
+    ## [10] fastmap_1.2.0         lattice_0.22-6        coda_0.19-4.1        
+    ## [13] R6_2.5.1              generics_0.1.3        MatchIt_4.5.5        
+    ## [16] igraph_2.0.3          knitr_1.47            MASS_7.3-60.2        
+    ## [19] backports_1.5.0       tibble_3.2.1          statnet.common_4.9.0 
+    ## [22] pillar_1.9.0          rlang_1.1.4           utf8_1.2.4           
+    ## [25] xfun_0.45             viridisLite_0.4.2     cli_3.6.3            
+    ## [28] magrittr_2.0.3        network_1.18.2        digest_0.6.36        
+    ## [31] grid_4.4.1            lifecycle_1.0.4       vctrs_0.6.5          
+    ## [34] sna_2.7-2             evaluate_0.24.0       SparseM_1.84-2       
+    ## [37] glue_1.7.0            fansi_1.0.6           rmarkdown_2.27       
+    ## [40] tools_4.4.1           pkgconfig_2.0.3       networkDynamic_0.11.4
+    ## [43] htmltools_0.5.8.1
 
 ## To-do list
 
--   Import/Export functions for interfacing other package’s clases, in
-    particular: `statnet` set (specially the packages `networkDynamic`
-    and `ndtv`), ~~`igraph`~~ and `Rsiena`.
--   Populate the tests folder.
--   ~~Use spells? (`select_egoalter` would use this)~~
--   ~~Classify individuals by adoption category using early adopters,
-    adopters, and laggards, and by threshold using very low, low, high
-    and very high threshold (Valente 95’ p. 94).~~
--   ~~Double check all functions using adjacency matrix values.~~
--   ~~Remove dimnames from matrices and vectors. It is more efficient to
-    use the ones stored in meta instead.~~
--   Implement the Bass model
--   ~~Include function to import survey data (as shown on the
-    vignettes)~~
--   Exposure based on Mahalanobis distances and also Roger Leenders on
-    weighting exposure (internal note).
--   (2016-03-30): use `xspline` for drawing polygons & edges.
--   ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so
-    removes diagonal or not!).~~
--   (2016-04-19): animal behaviorists.
--   (2016-10-18): Review language throughout the manual (more than
-    innovation).
--   (2016-10-18): Evaluate and eventually use a standard graph format
-    (`network` for instance?).
--   (2016-10-18): Standarize graph plot methods (choose either
-    statnet/igraph/own)
+- Import/Export functions for interfacing other package’s clases, in
+  particular: `statnet` set (specially the packages `networkDynamic` and
+  `ndtv`), ~~`igraph`~~ and `Rsiena`.
+- Populate the tests folder.
+- ~~Use spells? (`select_egoalter` would use this)~~
+- ~~Classify individuals by adoption category using early adopters,
+  adopters, and laggards, and by threshold using very low, low, high and
+  very high threshold (Valente 95’ p. 94).~~
+- ~~Double check all functions using adjacency matrix values.~~
+- ~~Remove dimnames from matrices and vectors. It is more efficient to
+  use the ones stored in meta instead.~~
+- Implement the Bass model
+- ~~Include function to import survey data (as shown on the vignettes)~~
+- Exposure based on Mahalanobis distances and also Roger Leenders on
+  weighting exposure (internal note).
+- (2016-03-30): use `xspline` for drawing polygons & edges.
+- ~~(2016-04-04): Add more options to `exposure`, namely, `self` (so
+  removes diagonal or not!).~~
+- (2016-04-19): animal behaviorists.
+- (2016-10-18): Review language throughout the manual (more than
+  innovation).
+- (2016-10-18): Evaluate and eventually use a standard graph format
+  (`network` for instance?).
+- (2016-10-18): Standarize graph plot methods (choose either
+  statnet/igraph/own)
