@@ -3,32 +3,54 @@ n <- 4  # Number of nodes
 t <- 3  # Number of time steps
 q <- 2  # Number of contagions
 
-# Define graph (n x n matrix)
+
+# ORIGINAL: Graph -> n x n
+#           attrs -> n x T
+#           cumadopt-> n x T
+#           ans   -> n x T
+#
+# so (attrs * cumadopt) -> n x T
+#    (graph %*% (attrs * cumadopt)) -> n x T
+#
+# normalization: as.vector(ans/( graph %*% attrs + 1e-20 ))
+# so (graph %*% attrs) -> n x T
+
 graph <- matrix(c(0, 1, 0, 0,
                   1, 0, 1, 0,
                   0, 1, 0, 1,
                   0, 0, 1, 0), nrow = n, byrow = TRUE)
 
-# Define attrs (n x t matrix)
 attrs <- matrix(c(1, 2, 3,
                   4, 5, 6,
                   7, 8, 9,
                   10,11,12), nrow = n)
-#attrs <- array(c(1,2,3,
-#                 4,5,6,
-#                 7,8,9,
-#                 10,11,12,
-# Second contagion
-#                 2,4,6,
-#                 8,10,12,
-#                 14,16,18,
-#                 20,22,24), dim = c(n,t,q))
 
-# Define cumadopt (n x t x q array)
 cumadopt <- array(c(1,2,3,
                     4,5,6,
                     7,8,9,
                     10,11,12), dim = c(n,t))
+
+ans <- ( graph %*% (attrs * cumadopt) )
+dim(ans) # n x t
+
+ans_norm <- ans/( graph %*% attrs + 1e-20 )
+class(ans_norm) # "matrix" "array"
+dim(ans_norm) # n x t
+
+ans_norm_vec <- as.vector(ans/( graph %*% attrs + 1e-20 ))
+class(ans_norm_vec) # "numeric"
+dim(ans_norm_vec) # NULL, only a vector o length 4x3=12
+
+# NEW:      Graph -> n x n
+#           attrs -> n x T
+#           cumadopt-> n x T x q
+#           ans   -> n x T x q
+#
+# so (graph %*% (attrs * cumadopt)) -> n x T x q
+#
+# normalization
+# so (graph %*% attrs) -> n x T
+
 
 cumadopt <- array(c(1,2,3,
                     4,5,6,
@@ -39,27 +61,6 @@ cumadopt <- array(c(1,2,3,
                     8,10,12,
                     14,16,18,
                     20,22,24), dim = c(n,t,q))
-
-# ORIGINAL: Graph -> n x n
-#           attrs -> n x T
-#           cumadopt-> n x T
-#           ans   -> 1 x n
-#
-# so (attrs * cumadopt) -> n x T
-#    (graph %*% (attrs * cumadopt)) -> n x T
-#
-# normalization: as.vector(ans/( graph %*% attrs + 1e-20 ))
-# so (graph %*% attrs) -> n x T
-
-# NEW:      Graph -> n x n
-#           attrs -> n x T
-#           cumadopt-> n x T x q
-#           ans   -> q x n
-#
-# so (graph %*% (attrs * cumadopt)) -> n x T x q
-#
-# normalization
-# so (graph %*% attrs) -> n x T
 
 # ANS
 
@@ -82,7 +83,6 @@ dim(ans)
 
 # OR THIS
 
-#initializing array
 ans <- array(0, dim = c(n,t,q))
 norm <- graph %*% attrs + 1e-20
 
@@ -97,17 +97,3 @@ for (k in seq_len(q)) {
 as.vector(ans, dim = c(n,t,q))
 
 dim(ans)
-
-
-##
-
-ans <- ( graph %*% (attrs * cumadopt) )
-dim(ans) # n x t
-
-ans_norm <- ans/( graph %*% attrs + 1e-20 )
-class(ans_norm) # "matrix" "array"
-dim(ans_norm) # n x t
-
-ans_norm_vec <- as.vector(ans/( graph %*% attrs + 1e-20 ))
-class(ans_norm_vec) # "numeric"
-dim(ans_norm_vec) # NULL, only a vector o length 4x3=12
