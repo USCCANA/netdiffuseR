@@ -28,6 +28,11 @@ attrs <- matrix(c(1, 2, 3,
 cumadopt <- array(c(1,2,3,
                     4,5,6,
                     7,8,9,
+                    10,11,12), dim = c(n,t))
+
+cumadopt <- array(c(1,2,3,
+                    4,5,6,
+                    7,8,9,
                     10,11,12,
                     # Second contagion
                     2,4,6,
@@ -38,6 +43,7 @@ cumadopt <- array(c(1,2,3,
 # ORIGINAL: Graph -> n x n
 #           attrs -> n x T
 #           cumadopt-> n x T
+#           ans   -> 1 x n
 #
 # so (attrs * cumadopt) -> n x T
 #    (graph %*% (attrs * cumadopt)) -> n x T
@@ -48,6 +54,7 @@ cumadopt <- array(c(1,2,3,
 # NEW:      Graph -> n x n
 #           attrs -> n x T
 #           cumadopt-> n x T x q
+#           ans   -> q x n
 #
 # so (graph %*% (attrs * cumadopt)) -> n x T x q
 #
@@ -73,15 +80,34 @@ ans_norm <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca) / ( gr
 ans <- array(ans, dim = c(n,t,q))
 dim(ans)
 
-### Another option
+# OR THIS
 
 #initializing array
 ans <- array(0, dim = c(n,t,q))
 norm <- graph %*% attrs + 1e-20
 
+normalized <- TRUE
+
 #loop for q contagions
 for (k in seq_len(q)) {
-  ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
+  if (normalized) ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
+  else ans[,,k] <- graph %*% (attrs * cumadopt[,,k])
 }
 
+as.vector(ans, dim = c(n,t,q))
+
 dim(ans)
+
+
+##
+
+ans <- ( graph %*% (attrs * cumadopt) )
+dim(ans) # n x t
+
+ans_norm <- ans/( graph %*% attrs + 1e-20 )
+class(ans_norm) # "matrix" "array"
+dim(ans_norm) # n x t
+
+ans_norm_vec <- as.vector(ans/( graph %*% attrs + 1e-20 ))
+class(ans_norm_vec) # "numeric"
+dim(ans_norm_vec) # NULL, only a vector o length 4x3=12
