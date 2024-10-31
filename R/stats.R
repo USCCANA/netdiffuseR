@@ -250,9 +250,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' Calculates exposure to adoption over time via multiple different types of weight
 #' matrices.  The basic  model is exposure to adoption by immediate neighbors
 #' (outdegree) at the time period prior to ego’s adoption. This exposure can also be
-#' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties, (4)
-#' attribute weighted (5) network-metric weighted (e.g., central nodes have more
-#' influence), and attribute-weighted (e.g., based on homophily or tie strength).
+#' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties,
+#' (4) network-metric weighted (e.g., central nodes have more
+#' influence), and (5) attribute-weighted (e.g., based on homophily or tie strength).
 #'
 #' @templateVar valued TRUE
 #' @templateVar dynamic TRUE
