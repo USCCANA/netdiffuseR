@@ -2,9 +2,13 @@ n <- 4  # Number of nodes
 t <- 3  # Number of time steps
 q <- 2  # pathogens
 
-# static graph
-# Define a collection of graphs as a single array (n x n x nslices)
-graph_slice_test <- array(c(
+# NEW:      Graph -> n x n
+#           attrs -> n x T
+#           cumadopt-> n x T x q
+#           ans   -> n x T
+#           out   -> n x q x T
+
+graph <- array(c(
   # First time slice (graph1)
   c(0, 1, 0, 0,
     1, 0, 1, 0,
@@ -41,30 +45,32 @@ attrs <- matrix(c(10, 20, 30,
 .exposure <- function(graph_slice, cumadopt_slice, attrs_slice,
                       outgoing = TRUE, valued = TRUE, normalized = FALSE, self = FALSE) {
 
-  ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[2],dim(cumadopt)[3]))
+  #ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[2],dim(cumadopt)[3]))
+  ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
   norm <- graph_slice %*% attrs_slice + 1e-20
 
-  for (k in seq_len(q)) {
+  for (k in 1:dim(cumadopt)[3]) {
     if (normalized) {
-      ans[,,k] <- graph_slice %*% (attrs_slice * cumadopt_slice[,,k]) / norm
+      ans[,k] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]) / norm)
     } else {
-      ans[,,k] <- graph_slice %*% (attrs_slice * cumadopt_slice[,,k])
+      ans[,k] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]))
     }
   }
 
-  as.vector(ans)
+  #as.vector(ans)
+  return(ans)
 }
 
 # for static graphs it returns `1L`
 # nslices  --> from diffnet-methods
 
-out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
+out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[3], dim(cumadopt)[2]))
 
 lags <- 0
 
 if (lags >= 0L) {
   for (i in 1:(nslices(graph) - lags)) {
-    out[, i + lags] <- .exposure(graph[[i]],
+    out[, , i + lags] <- .exposure(graph[[i]],
                                  cumadopt[, i, , drop = FALSE],
                                  #cumadopt[, i, ],
                                  attrs[, i, drop = FALSE],
@@ -75,10 +81,10 @@ if (lags >= 0L) {
   }
 } else {
   for (i in (1 - lags):nslices(graph)) {
-    out[, i + lags] <- .exposure(graph[[i]],
+    out[, , i + lags] <- .exposure(graph[[i]],
                                  cumadopt[, i, , drop = FALSE],
                                  #cumadopt[, i, ],
-                                 attrs[, i],
+                                 attrs[, i, drop = FALSE],
                                  outgoing = TRUE,
                                  valued = TRUE,
                                  normalized = FALSE,
@@ -86,5 +92,5 @@ if (lags >= 0L) {
   }
 }
 
-# View the result of 'out'
-print(out)
+
+# out it's working perfectly !!
