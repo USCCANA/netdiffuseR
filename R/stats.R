@@ -479,7 +479,28 @@ NULL
   ans <- ( graph %*% (attrs * cumadopt) )
 
   if (normalized) as.vector(ans/( graph %*% attrs + 1e-20 ))
-  else as.vector(ans)
+
+  #if (normalized) {
+  #  norm <- graph %*% attrs + 1e-20
+  #  ans <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca) / norm )
+  #  as.vector(ans)
+  #} else {
+  #  ans <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca))
+  #  as.vector(ans)
+  #}
+
+  #ans <- array(0, dim = c(ncol(graph),dim(cumadopt)[2],dim(cumadopt)[3]))
+  #norm <- graph %*% attrs + 1e-20
+
+  #for (k in seq_len(dim(cumadopt)[3])) {
+  #  if (normalized) {
+  #    ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
+  #  } else {
+  #    ans[,,k] <- graph %*% (attrs * cumadopt[,,k])
+  #  }
+  #}
+
+  as.vector(ans)
 }
 
 # library(microbenchmark)
@@ -637,7 +658,7 @@ exposure_for <- function(
   lags
   ) {
 
-  out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
+  out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
 
   if (lags >= 0L) {
     for (i in 1:(nslices(graph) - lags))

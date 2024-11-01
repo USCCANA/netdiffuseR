@@ -83,17 +83,23 @@ dim(ans)
 
 # OR THIS
 
-ans <- array(0, dim = c(n,t,q))
+
+
+ans <- array(0, dim = c(ncol(graph),dim(cumadopt)[2],dim(cumadopt)[3]))
 norm <- graph %*% attrs + 1e-20
 
 normalized <- TRUE
 
-#loop for q contagions
 for (k in seq_len(q)) {
-  if (normalized) ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
-  else ans[,,k] <- graph %*% (attrs * cumadopt[,,k])
+  if (normalized) {
+    ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
+  } else {
+    ans[,,k] <- graph %*% (attrs * cumadopt[,,k])
+  }
 }
 
-as.vector(ans, dim = c(n,t,q))
+as.vector(ans)
 
+
+ans
 dim(ans)
