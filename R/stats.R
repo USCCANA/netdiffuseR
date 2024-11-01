@@ -476,10 +476,6 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  ans <- ( graph %*% (attrs * cumadopt) )
-
-  if (normalized) as.vector(ans/( graph %*% attrs + 1e-20 ))
-
   #if (normalized) {
   #  norm <- graph %*% attrs + 1e-20
   #  ans <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca) / norm )
@@ -500,7 +496,13 @@ NULL
   #  }
   #}
 
-  as.vector(ans)
+  ans <- ( graph %*% (attrs * cumadopt) )
+
+  if (normalized) {
+    as.vector(ans/( graph %*% attrs + 1e-20 ))
+  } else {
+    as.vector(ans)
+  }
 }
 
 # library(microbenchmark)
@@ -658,7 +660,7 @@ exposure_for <- function(
   lags
   ) {
 
-  out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
+  out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
 
   if (lags >= 0L) {
     for (i in 1:(nslices(graph) - lags))
