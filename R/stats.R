@@ -476,33 +476,26 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
+  #ans <- ( graph %*% (attrs * cumadopt) )
+  #
   #if (normalized) {
-  #  norm <- graph %*% attrs + 1e-20
-  #  ans <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca) / norm )
-  #  as.vector(ans)
+  #  as.vector(ans/( graph %*% attrs + 1e-20 ))
   #} else {
-  #  ans <- apply(cumadopt, MARGIN=3, function(ca) graph %*% (attrs * ca))
   #  as.vector(ans)
   #}
+  #
+  ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
+  norm <- graph_slice %*% attrs_slice + 1e-20
 
-  #ans <- array(0, dim = c(ncol(graph),dim(cumadopt)[2],dim(cumadopt)[3]))
-  #norm <- graph %*% attrs + 1e-20
-
-  #for (k in seq_len(dim(cumadopt)[3])) {
-  #  if (normalized) {
-  #    ans[,,k] <- graph %*% (attrs * cumadopt[,,k]) / norm
-  #  } else {
-  #    ans[,,k] <- graph %*% (attrs * cumadopt[,,k])
-  #  }
-  #}
-
-  ans <- ( graph %*% (attrs * cumadopt) )
-
-  if (normalized) {
-    as.vector(ans/( graph %*% attrs + 1e-20 ))
-  } else {
-    as.vector(ans)
+  for (k in 1:dim(cumadopt)[3]) {
+    if (normalized) {
+      ans[,k] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]) / norm)
+    } else {
+      ans[,k] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]))
+    }
   }
+
+  return(ans)
 }
 
 # library(microbenchmark)
@@ -660,17 +653,44 @@ exposure_for <- function(
   lags
   ) {
 
-  out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
+  #out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
+
+  #if (lags >= 0L) {
+  #  for (i in 1:(nslices(graph) - lags))
+  #    out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+  #                             outgoing, valued, normalized, self)
+  #} else {
+  #  for (i in (1-lags):nslices(graph))
+  #    out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
+  #                             outgoing, valued, normalized, self)
+  #}
+
+  out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
 
   if (lags >= 0L) {
-    for (i in 1:(nslices(graph) - lags))
-      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                               outgoing, valued, normalized, self)
+    for (i in 1:(nslices(graph) - lags)) {
+      out[, i + lags, ] <- .exposure(graph[[i]],
+                                     cumadopt[, i, , drop = FALSE],
+                                     #cumadopt[, i, ],
+                                     attrs[, i, drop = FALSE],
+                                     outgoing = TRUE,
+                                     valued = TRUE,
+                                     normalized = FALSE,
+                                     self = FALSE)
+    }
   } else {
-    for (i in (1-lags):nslices(graph))
-      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                               outgoing, valued, normalized, self)
+    for (i in (1 - lags):nslices(graph)) {
+      out[, i + lags, ] <- .exposure(graph[[i]],
+                                     cumadopt[, i, , drop = FALSE],
+                                     #cumadopt[, i, ],
+                                     attrs[, i, drop = FALSE],
+                                     outgoing = TRUE,
+                                     valued = TRUE,
+                                     normalized = FALSE,
+                                     self = FALSE)
+    }
   }
+
   return(out)
 }
 
