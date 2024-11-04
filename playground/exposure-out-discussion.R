@@ -28,23 +28,36 @@ graph_array <- array(c(
 
 graph <- as_spmat(graph_array)
 
-cumadopt <- array(c(1,2,3,
-                    4,5,6,
-                    7,8,9,
-                    10,11,12,
-                    # Second contagion
-                    2,4,6,
-                    8,10,12,
-                    14,16,18,
-                    20,22,24), dim = c(n,t,q))
+# one
+cumadopt_one <- matrix(c(
+  0, 1, 1,
+  1, 1, 1,
+  0, 0, 1,
+  0, 0, 0
+), nrow = n, byrow = TRUE)
 
-attrs <- matrix(c(10, 20, 30,
-                  40, 50, 60,
-                  70, 80, 90,
-                  100,110,120), nrow = n)
+#two
+cumadopt_two <- array(0, dim = c(n, t, q))
+
+cumadopt_two[,,1] <- matrix(c(
+  0, 1, 1,
+  1, 1, 1,
+  0, 0, 1,
+  0, 0, 0
+), nrow = n, byrow = TRUE)
+
+cumadopt_two[,,2] <- matrix(c(
+  0, 1, 1,
+  0, 1, 1,
+  0, 0, 1,
+  0, 0, 1
+), nrow = n, byrow = TRUE)
+
+# attributes between [0-1]
+attrs <- matrix(runif(n * t), nrow = n)
+
 
 # Toy model of .exposure
-
 .exposure <- function(graph_slice, cumadopt_slice, attrs_slice,
                       outgoing = TRUE, valued = TRUE, normalized = FALSE, self = FALSE) {
 
@@ -55,9 +68,9 @@ attrs <- matrix(c(10, 20, 30,
 
     for (q in 1:dim(cumadopt)[3]) {
       if (normalized) {
-        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]) / norm)
+        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,q]) / norm)
       } else {
-        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,k]))
+        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,q]))
       }
     }
   } else {
@@ -76,6 +89,8 @@ attrs <- matrix(c(10, 20, 30,
 # nslices  --> from diffnet-methods
 
 lags = 0
+
+cumadopt <- cumadopt_two
 
 if (!is.na(dim(cumadopt)[3])) {
   out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
@@ -137,16 +152,7 @@ if (!is.na(dim(cumadopt)[3])) {
 
 # 1 pathogen ONLY
 
-cumadopt <- array(c(1,2,3,
-                    4,5,6,
-                    7,8,9,
-                    10,11,12
-                    ), dim = c(n,t))
-
-attrs <- matrix(c(10, 20, 30,
-                  40, 50, 60,
-                  70, 80, 90,
-                  100,110,120), nrow = n)
+cumadopt <- cumadopt_one
 
 if (!is.na(dim(cumadopt)[3])) {
   out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
