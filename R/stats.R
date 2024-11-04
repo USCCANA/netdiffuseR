@@ -485,20 +485,20 @@ NULL
   #}
   #
 
-  norm <- graph_slice %*% attrs_slice + 1e-20
+  norm <- graph %*% attrs + 1e-20
 
   if (!is.na(dim(cumadopt)[3])) {
     ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
 
     for (q in 1:dim(cumadopt)[3]) {
       if (normalized) {
-        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,q]) / norm)
+        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
       } else {
-        ans[,q] <- as.vector(graph_slice %*% (attrs_slice * cumadopt_slice[,,q]))
+        ans[,q] <- as.vector(graph_slice %*% (attrs * cumadopt[,,q]))
       }
     }
   } else {
-    ans <- graph_slice %*% (attrs_slice * cumadopt_slice)
+    ans <- graph %*% (attrs * cumadopt)
 
     if (normalized) {
       ans <- ans/ norm
