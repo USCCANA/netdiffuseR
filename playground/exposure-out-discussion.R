@@ -6,7 +6,7 @@ q <- 2  # pathogens
 #           attrs -> n x T
 #           cumadopt-> n x T x q
 #           ans   -> n x T
-#           out   -> n x q x T
+#           out   -> n x T x q
 
 graph_array <- array(c(
   # First time slice (graph1)

@@ -3,7 +3,7 @@ context("Stats functions (including exposure)")
 test_that("exposure calculations", {
   # Generating data
   set.seed(999)
-  diffnet <- rdiffnet(40,5, seed.p.adopt = .1)
+  diffnet <- rdiffnet(40, 5, seed.p.adopt = .1)
 
   # Default
   ans0 <- exposure(diffnet)

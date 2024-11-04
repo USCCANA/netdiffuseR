@@ -684,20 +684,20 @@ exposure_for <- function(
         out[, i + lags, ] <- .exposure(graph[[i]],
                                        cumadopt[, i, , drop = FALSE],
                                        attrs[, i, drop = FALSE],
-                                       outgoing = TRUE,
-                                       valued = TRUE,
-                                       normalized = FALSE,
-                                       self = FALSE)
+                                       outgoing = outgoing,
+                                       valued = valued,
+                                       normalized = normalized,
+                                       self = self)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
         out[, i + lags, ] <- .exposure(graph[[i]],
                                        cumadopt[, i, , drop = FALSE],
                                        attrs[, i, drop = FALSE],
-                                       outgoing = TRUE,
-                                       valued = TRUE,
-                                       normalized = FALSE,
-                                       self = FALSE)
+                                       outgoing = outgoing,
+                                       valued = valued,
+                                       normalized = normalized,
+                                       self = self)
       }
     }
   } else {
@@ -708,20 +708,20 @@ exposure_for <- function(
         out[, i + lags] <- .exposure(graph[[i]],
                                      cumadopt[, i, drop = FALSE],
                                      attrs[, i, drop = FALSE],
-                                     outgoing = TRUE,
-                                     valued = TRUE,
-                                     normalized = FALSE,
-                                     self = FALSE)
+                                     outgoing = outgoing,
+                                     valued = valued,
+                                     normalized = normalized,
+                                     self = self)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
         out[, i + lags] <- .exposure(graph[[i]],
                                      cumadopt[, i, drop = FALSE],
                                      attrs[, i, drop = FALSE],
-                                     outgoing = TRUE,
-                                     valued = TRUE,
-                                     normalized = FALSE,
-                                     self = FALSE)
+                                     outgoing = outgoing,
+                                     valued = valued,
+                                     normalized = normalized,
+                                     self = self)
       }
     }
   }
