@@ -638,10 +638,19 @@ exposure.list <- function(
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
   #  by default is user equal to 1
-  da <- dim(attrs)
-  if (!length(da)) stop("-attrs- must be a matrix of size n by T.")
-  if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
-                                     "It must be of size that -cumadopt-.")
+
+  dim_attrs <- dim(attrs) # default n x T matrix of 1's
+  if (!length(dim_attrs)) stop("-attrs- must be a matrix of size n by T.")
+
+  if (!is.na(dim(cumadopt)[3])) {
+    attrs <- array(rep(attrs, q), dim = c(dim_attrs, dim(cumadopt)[3]))
+    dim_attrs <- dim(attrs) # now n x T x q array of 1's, q behaviors
+    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                              "Does not match n dim or t dim.")
+  } else {
+    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                              "It must be of size that -cumadopt-.")
+  }
 
   add_dimnames.mat(cumadopt)
 
