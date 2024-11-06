@@ -643,8 +643,8 @@ exposure.list <- function(
   if (!length(dim_attrs)) stop("-attrs- must be a matrix of size n by T.")
 
   if (!is.na(dim(cumadopt)[3])) {
-    attrs <- array(rep(attrs, q), dim = c(dim_attrs, dim(cumadopt)[3]))
-    dim_attrs <- dim(attrs) # now n x T x q array of 1's, q behaviors
+    attrs_mul <- array(rep(attrs, dim(cumadopt)[3]), dim = c(dim_attrs, dim(cumadopt)[3]))
+    dim_attrs <- dim(attrs_mul) # now n x T x q array of 1's, q behaviors
     if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
                                               "Does not match n dim or t dim.")
   } else {
