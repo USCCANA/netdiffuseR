@@ -310,19 +310,20 @@ rdiffnet_multiple <- function(
 #' @rdname rdiffnet
 #' @export
 rdiffnet <- function(
-  n,
-  t,
-  seed.nodes     = "random",
-  seed.p.adopt   = 0.05,
-  seed.graph     = "scale-free",
-  rgraph.args    = list(),
-  rewire         = TRUE,
-  rewire.args    = list(),
-  threshold.dist = runif(n),
-  exposure.args  = list(),
-  name           = "A diffusion network",
-  behavior       = "Random contagion",
-  stop.no.diff   = TRUE
+    n,
+    t,
+    seed.nodes     = "random",
+    seed.p.adopt   = 0.05,
+    seed.graph     = "scale-free",
+    rgraph.args    = list(),
+    rewire         = TRUE,
+    rewire.args    = list(),
+    threshold.dist = runif(n),
+    exposure.args  = list(),
+    name           = "A diffusion network",
+    behavior       = "Random contagion",
+    stop.no.diff   = TRUE,
+    behavior.num   = 1
   ) {
 
   # Checking options
@@ -373,20 +374,61 @@ rdiffnet <- function(
 
   sgraph <- lapply(sgraph, `attr<-`, which="undirected", value=NULL)
 
-  # Number of initial adopters
-  if ((seed.p.adopt > 1) | (seed.p.adopt < 0)) {
-    stop("The proportion of initial adopters should be a number in [0,1]")
+  # Step 1.0: Setting the seed nodes -----------------------------------------
+
+  # Step 1.1: Number of initial adopters
+
+  if (length(seed.p.adopt)>1 && length(seed.p.adopt) == behavior.num) {
+
+    n0 <- list()
+
+    for (i in seq_along(seed.p.adopt)) {
+
+      if ((seed.p.adopt[i] > 1) | (seed.p.adopt[i] < 0)) {
+        stop(paste("The proportion of initial adopters for behavior", i, "should be a number in [0,1]"))
+      }
+      if (n*seed.p.adopt[i] < 1) {
+        warning(paste("Set of initial adopters for behavior", i, "set to 1."))
+      }
+
+      n0[[i]] <- max(1, n * seed.p.adopt[i])
+    }
+
+  } else if (length(seed.p.adopt)==1 && length(seed.p.adopt) == behavior.num) {
+
+    if ((seed.p.adopt > 1) | (seed.p.adopt < 0)) {
+      stop("The proportion of initial adopters should be a number in [0,1]")
+    }
+    if (n*seed.p.adopt < 1) {
+      warning("Set of initial adopters set to 1.")
+    }
+
+    n0 <- max(1, n*seed.p.adopt)
+  } else {
+    stop("Number of initial adopters. Mismatch between length(seed.p.adopt) and behavior.num")
   }
-  if (n*seed.p.adopt < 1)
-    warning("Set of initial adopters set to 1.")
 
-  n0 <- max(1, n*seed.p.adopt)
 
-  # Step 0.1: Setting the seed nodes -------------------------------------------
-  cumadopt <- matrix(0L, ncol=t, nrow=n)
-  toa      <- matrix(NA, ncol=1, nrow= n)
+  # Step 1.2: Finding seed nodes
+  if (length(seed.nodes) > 1 && length(seed.nodes) == behavior.num) {
+    dlist <- list()
 
-  if (length(seed.nodes) == 1) {
+    if (any(seed.nodes %in% c("central", "marginal"))) {
+      d <- dgr(sgraph)[, 1, drop = FALSE]
+      central_d <- rownames(d[order(d, decreasing = TRUE), , drop = FALSE])
+      marginal_d <- rownames(d[order(d, decreasing = FALSE), , drop = FALSE])
+    }
+
+    # assign nodes characters values in seed.nodes
+    for (i in seq_along(seed.p.adopt)) {
+      dlist[[i]] <- switch(seed.nodes[i],
+                           "central" = as.numeric(central_d[1:floor(n0[[i]])]),
+                           "marginal" = as.numeric(marginal_d[1:floor(n0[[i]])]),
+                           "random" = sample.int(n, floor(n0[[i]])),
+                           stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+      )
+    }
+  } else if (length(seed.nodes) == 1 && length(seed.nodes) == behavior.num) {
 
     if (seed.nodes %in% c("central","marginal")) {
 
@@ -401,24 +443,37 @@ rdiffnet <- function(
 
       d <- sample.int(n, floor(n0))
 
-    } else
+    } else {
       stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+    }
+  } else if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
+
+    stop("Finding seed nodes. Mismatch between length(seed.nodes) and behavior.num")
 
   } else if (!inherits(seed.nodes, "character")) {
 
-    d <- seed.nodes
+    if (length(seed.nodes) >= 1 && length(seed.nodes) == behavior.num) {
+      d <- seed.nodes
+    } else if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
+      stop("Particular seed nodes provided. Mismatch between length(seed.nodes) and behavior.num")
+    } else  {
+      d <- seed.nodes
+    }
 
-  } else
-    stop("Unsupported -seed.nodes- value. See the manual for references.")
+  } else {stop("Unsupported -seed.nodes- value. See the manual for references.") }
+
+  # Step 1.3: Defining cumadopt and toa (time of adoption) --------------------
+  cumadopt <- matrix(0L, ncol=t, nrow=n)
+  toa      <- matrix(NA, ncol=1, nrow= n)
 
   # Setting seed nodes via vector
   toa[d]       <- 1L
   cumadopt[d,] <- 1L
 
-  # Step 3.0: Thresholds -------------------------------------------------------
+  # Step 2.0: Thresholds -------------------------------------------------------
   thr <- rdiffnet_make_threshold(threshold.dist, n)
 
-  # Running the simulation
+  # Step 3.0: Running the simulation -------------------------------------------
   for (i in 2:t) {
 
     # Computing exposure
@@ -439,10 +494,10 @@ rdiffnet <- function(
       warning("No diffusion in this network.")
   }
 
+  # Step 4.0: Creating diffnet object ------------------------------------------
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  # Creating diffnet object
   new_diffnet(
     graph      = sgraph,
     toa        = as.integer(toa),
