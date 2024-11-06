@@ -316,7 +316,7 @@ rdiffnet <- function(
     seed.p.adopt   = 0.05,
     seed.graph     = "scale-free",
     rgraph.args    = list(),
-    rewire         = TRUE,
+    rewire         = TRUE, #set TRUE originally
     rewire.args    = list(),
     threshold.dist = runif(n),
     exposure.args  = list(),
@@ -369,9 +369,9 @@ rdiffnet <- function(
   # Step 0.1: Rewiring or not ------------------------------------------------
 
   # Rewiring
-  if (rewire)
+  if (rewire) {
     sgraph <- do.call(rewire_graph, c(list(graph=sgraph), rewire.args))
-
+  }
   sgraph <- lapply(sgraph, `attr<-`, which="undirected", value=NULL)
 
   # Step 1.0: Setting the seed nodes -----------------------------------------
@@ -394,7 +394,7 @@ rdiffnet <- function(
       n0[[i]] <- max(1, n * seed.p.adopt[i])
     }
 
-  } else if (length(seed.p.adopt)==1 && length(seed.p.adopt) == behavior.num) {
+  } else if (length(seed.p.adopt)== 1 && behavior.num == 1) {
 
     if ((seed.p.adopt > 1) | (seed.p.adopt < 0)) {
       stop("The proportion of initial adopters should be a number in [0,1]")
@@ -405,30 +405,31 @@ rdiffnet <- function(
 
     n0 <- max(1, n*seed.p.adopt)
   } else {
-    stop("Number of initial adopters. Mismatch between length(seed.p.adopt) and behavior.num")
+    stop("Error in setting number of initial adopters. Mismatch between length(seed.p.adopt) and behavior.num")
   }
 
 
   # Step 1.2: Finding seed nodes
-  if (length(seed.nodes) > 1 && length(seed.nodes) == behavior.num) {
-    dlist <- list()
+  if (length(seed.nodes) > 1 && length(seed.nodes) == behavior.num && class(seed.nodes)!="list") {
+    # multi-diff. Something like seed.nodes <- c("marginal", "central"), and behavior.num <- 2
 
+    d <- list()
     if (any(seed.nodes %in% c("central", "marginal"))) {
-      d <- dgr(sgraph)[, 1, drop = FALSE]
-      central_d <- rownames(d[order(d, decreasing = TRUE), , drop = FALSE])
-      marginal_d <- rownames(d[order(d, decreasing = FALSE), , drop = FALSE])
+      dg <- dgr(sgraph)[, 1, drop = FALSE]
+      central_d <- rownames(dg[order(dg, decreasing = TRUE), , drop = FALSE])
+      marginal_d <- rownames(dg[order(dg, decreasing = FALSE), , drop = FALSE])
     }
 
-    # assign nodes characters values in seed.nodes
-    for (i in seq_along(seed.p.adopt)) {
-      dlist[[i]] <- switch(seed.nodes[i],
-                           "central" = as.numeric(central_d[1:floor(n0[[i]])]),
-                           "marginal" = as.numeric(marginal_d[1:floor(n0[[i]])]),
-                           "random" = sample.int(n, floor(n0[[i]])),
-                           stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+    for (i in seq_along(seed.nodes)) { # assign nodes characters values in seed.nodes
+      d[[i]] <- switch(seed.nodes[i],
+                      "central" = as.numeric(central_d[1:floor(n0[[i]])]),
+                      "marginal" = as.numeric(marginal_d[1:floor(n0[[i]])]),
+                      "random" = sample.int(n, floor(n0[[i]])),
+      stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
       )
     }
-  } else if (length(seed.nodes) == 1 && length(seed.nodes) == behavior.num) {
+  } else if (length(seed.nodes) == 1 && behavior.num == 1) {
+    # Single-diff. Something like seed.nodes <- "central"
 
     if (seed.nodes %in% c("central","marginal")) {
 
@@ -447,43 +448,86 @@ rdiffnet <- function(
       stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
     }
   } else if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
-
-    stop("Finding seed nodes. Mismatch between length(seed.nodes) and behavior.num")
+    # Something like seed.nodes <- c("marginal", "central"), BUT behavior.num <- 3
+    stop("Error in finding seed nodes. Mismatch between length(seed.nodes) and behavior.num")
 
   } else if (!inherits(seed.nodes, "character")) {
 
-    if (length(seed.nodes) >= 1 && length(seed.nodes) == behavior.num) {
-      d <- seed.nodes
-    } else if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
+    if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
+      # Something like seed.nodes <- list(c(1,4), c(3,6,8)), BUT behavior.num <- 3
       stop("Particular seed nodes provided. Mismatch between length(seed.nodes) and behavior.num")
-    } else  {
+    } else {
+      # single-diff and multi-diff. # Something like seed.nodes <- c(3,6,8)), AND behavior.num <- 1,
+      # or seed.nodes <- list(c(1,4), c(3,6,8)), AND behavior.num <- 2
       d <- seed.nodes
     }
-
   } else {stop("Unsupported -seed.nodes- value. See the manual for references.") }
 
   # Step 1.3: Defining cumadopt and toa (time of adoption) --------------------
-  cumadopt <- matrix(0L, ncol=t, nrow=n)
-  toa      <- matrix(NA, ncol=1, nrow= n)
 
-  # Setting seed nodes via vector
-  toa[d]       <- 1L
-  cumadopt[d,] <- 1L
+  if (class(d) == "list") {
+    # multi-diff
+
+    if (length(d) != behavior.num) {
+      stop("Error: length(d) must be the same as behavior.num")
+    }
+
+    cumadopt <- array(0L, dim = c(n, t, behavior.num))
+
+    # Setting seed nodes via array
+    for (i in seq_along(d)) {
+      cumadopt[d[[i]],,i] <- 1L
+    }
+  } else {
+    # single-diff
+    cumadopt <- matrix(0L, ncol=t, nrow=n)
+    toa      <- matrix(NA, ncol=1, nrow= n)
+
+    # Setting seed nodes via vector
+    toa[d]       <- 1L                # REMINDER TO DELETE THIS OBJECT !!!
+    cumadopt[d,] <- 1L
+  }
 
   # Step 2.0: Thresholds -------------------------------------------------------
-  thr <- rdiffnet_make_threshold(threshold.dist, n)
+  thr <- rdiffnet_make_threshold(threshold.dist, n) # REMINDER TO CHANGE rdiffnet_make_threshold
 
   # Step 3.0: Running the simulation -------------------------------------------
   for (i in 2:t) {
+    if (!is.na(dim(cumadopt)[3])) {
+      # multi-diff. Computing exposure
+                                                    # ONLY MEANWHILE
+      thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
 
-    # Computing exposure
-    exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i,drop=FALSE])
-    expo <- do.call(exposure, exposure.args)
+      exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i, ,drop=FALSE])
+      expo <- do.call(exposure, exposure.args)
+      #for (q in 1:dim(cumadopt)[3]) {
+      #  exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i,q,drop=FALSE])
+      #}
 
-    whoadopts <- which( (expo >= thr) & is.na(toa))
-    toa[whoadopts] <- i
-    cumadopt[whoadopts, i:t] <- 1L
+      toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
+
+      for (q in 1:dim(cumadopt)[3]) {
+        whoadopts <- which( (expo[,,q] >= thr[,q]) )# & is.na(toa))
+        cumadopt[whoadopts, i:t, q] <- 1L
+                                                      # ADD SOMETHING TO DISADOPT
+        # Initialize 'toa' with NA values
+        toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
+          first_adopt <- which(x == 1)
+          if (length(first_adopt) > 0) first_adopt[1] else NA
+        })
+      }
+
+    } else {
+      # single-diff. Computing exposure
+      exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i,drop=FALSE])
+      expo <- do.call(exposure, exposure.args)
+
+      whoadopts <- which( (expo >= thr) & is.na(toa))
+      toa[whoadopts] <- i
+      cumadopt[whoadopts, i:t] <- 1L
+    }
   }
+                                      # GENERALIZE TO MULTI-DIFF
   reachedt <- max(toa, na.rm=TRUE)
 
   # Checking the result
@@ -498,15 +542,28 @@ rdiffnet <- function(
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  new_diffnet(
-    graph      = sgraph,
-    toa        = as.integer(toa),
-    self       = isself,
-    t0         = 1,
-    t1         = t,
-    vertex.static.attrs = data.frame(real_threshold=thr),
-    name       = name,
-    behavior   = behavior
-  )
+  if (!is.na(dim(cumadopt)[3])) {
+    new_diffnet(
+      graph      = sgraph,
+      toa        = toa,
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
+  } else {
+    new_diffnet(
+      graph      = sgraph,
+      toa        = as.integer(toa),
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
+  }
 }
 
