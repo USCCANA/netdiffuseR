@@ -92,7 +92,7 @@
 #' }
 #'
 #' @examples
-#' # Asimple example -----------------------------------------------------------
+#' # A simple example -----------------------------------------------------------
 #' set.seed(123)
 #' z <- rdiffnet(100,10)
 #' z
@@ -322,8 +322,7 @@ rdiffnet <- function(
     exposure.args  = list(),
     name           = "A diffusion network",
     behavior       = "Random contagion",
-    stop.no.diff   = TRUE,
-    behavior.num   = 1
+    stop.no.diff   = TRUE
   ) {
 
   # Checking options
@@ -376,44 +375,35 @@ rdiffnet <- function(
 
   # Step 1.0: Setting the seed nodes -----------------------------------------
 
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+
+  seed.p.adopt <- rdiffnet_args$seed.p.adopt
+  seed.nodes <- rdiffnet_args$seed.nodes
+  behavior <- rdiffnet_args$behavior
+  num_of_behaviors <- rdiffnet_args$num_of_behaviors
+
   # Step 1.1: Number of initial adopters
 
-  if (length(seed.p.adopt)>1 && length(seed.p.adopt) == behavior.num) {
+  n0 <- list()
 
-    n0 <- list()
+  for (i in 1:num_of_behaviors) {
 
-    for (i in seq_along(seed.p.adopt)) {
-
-      if ((seed.p.adopt[i] > 1) | (seed.p.adopt[i] < 0)) {
-        stop(paste("The proportion of initial adopters for behavior", i, "should be a number in [0,1]"))
-      }
-      if (n*seed.p.adopt[i] < 1) {
-        warning(paste("Set of initial adopters for behavior", i, "set to 1."))
-      }
-
-      n0[[i]] <- max(1, n * seed.p.adopt[i])
+    if ((seed.p.adopt[[i]] > 1) | (seed.p.adopt[[i]] < 0)) {
+      stop(paste("The proportion of initial adopters for behavior", i, "should be a number in [0,1]"))
+    }
+    if (n*seed.p.adopt[[i]] < 1) {
+      warning(paste("Set of initial adopters for behavior", i, "set to 1."))
     }
 
-  } else if (length(seed.p.adopt)== 1 && behavior.num == 1) {
-
-    if ((seed.p.adopt > 1) | (seed.p.adopt < 0)) {
-      stop("The proportion of initial adopters should be a number in [0,1]")
-    }
-    if (n*seed.p.adopt < 1) {
-      warning("Set of initial adopters set to 1.")
-    }
-
-    n0 <- max(1, n*seed.p.adopt)
-  } else {
-    stop("Error in setting number of initial adopters. Mismatch between length(seed.p.adopt) and behavior.num")
+    n0[[i]] <- max(1, n * seed.p.adopt[[i]])
   }
 
+  # Step 1.2
 
-  # Step 1.2: Finding seed nodes
-  if (length(seed.nodes) > 1 && length(seed.nodes) == behavior.num && class(seed.nodes)!="list") {
-    # multi-diff. Something like seed.nodes <- c("marginal", "central"), and behavior.num <- 2
+  d <- list()
 
-    d <- list()
+  if (all(sapply(seed.nodes, is.character))) { # "central", "marginal", or "random"
+
     if (any(seed.nodes %in% c("central", "marginal"))) {
       dg <- dgr(sgraph)[, 1, drop = FALSE]
       central_d <- rownames(dg[order(dg, decreasing = TRUE), , drop = FALSE])
@@ -421,149 +411,221 @@ rdiffnet <- function(
     }
 
     for (i in seq_along(seed.nodes)) { # assign nodes characters values in seed.nodes
-      d[[i]] <- switch(seed.nodes[i],
-                      "central" = as.numeric(central_d[1:floor(n0[[i]])]),
-                      "marginal" = as.numeric(marginal_d[1:floor(n0[[i]])]),
-                      "random" = sample.int(n, floor(n0[[i]])),
-      stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
-      )
+      d[[i]] <- switch(seed.nodes[[i]],
+                       "central" = as.numeric(central_d[1:floor(n0[[i]])]),
+                       "marginal" = as.numeric(marginal_d[1:floor(n0[[i]])]),
+                       "random" = sample.int(n, floor(n0[[i]])),
+                       stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+                      )
     }
-  } else if (length(seed.nodes) == 1 && behavior.num == 1) {
-    # Single-diff. Something like seed.nodes <- "central"
 
-    if (seed.nodes %in% c("central","marginal")) {
+  } else if (all(sapply(seed.nodes, is.numeric))) { # specific nodes
 
-      # Creating a degree ranking
-      d <- dgr(sgraph)[,1,drop=FALSE]
-      decre <- ifelse(seed.nodes == "central", TRUE, FALSE)
-      d <- rownames(d[order(d, decreasing = decre),,drop=FALSE])
-      d <- d[1:floor(n0)]
-      d <- as.numeric(d)
-
-    } else if (seed.nodes == "random") {
-
-      d <- sample.int(n, floor(n0))
-
-    } else {
-      stop("Unsupported -seed.nodes- value. It must be either \"central\", \"marginal\", or \"random\"")
+    for (i in 1:num_of_behaviors) {
+      d[[i]] <- seed.nodes[[i]]
     }
-  } else if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
-    # Something like seed.nodes <- c("marginal", "central"), BUT behavior.num <- 3
-    stop("Error in finding seed nodes. Mismatch between length(seed.nodes) and behavior.num")
 
-  } else if (!inherits(seed.nodes, "character")) {
-
-    if (class(seed.nodes)=="list" && length(seed.nodes) != behavior.num) {
-      # Something like seed.nodes <- list(c(1,4), c(3,6,8)), BUT behavior.num <- 3
-      stop("Particular seed nodes provided. Mismatch between length(seed.nodes) and behavior.num")
-    } else {
-      # single-diff and multi-diff. # Something like seed.nodes <- c(3,6,8)), AND behavior.num <- 1,
-      # or seed.nodes <- list(c(1,4), c(3,6,8)), AND behavior.num <- 2
-      d <- seed.nodes
-    }
-  } else {stop("Unsupported -seed.nodes- value. See the manual for references.") }
+  } else {
+    stop("Unsupported -seed.nodes- value. See the manual for references.")
+  }
 
   # Step 1.3: Defining cumadopt and toa (time of adoption) --------------------
 
-  if (class(d) == "list") {
-    # multi-diff
+  cumadopt <- array(0L, dim = c(n, t, num_of_behaviors))
 
-    if (length(d) != behavior.num) {
-      stop("Error: length(d) must be the same as behavior.num")
-    }
-
-    cumadopt <- array(0L, dim = c(n, t, behavior.num))
-
-    # Setting seed nodes via array
-    for (i in seq_along(d)) {
-      cumadopt[d[[i]],,i] <- 1L
-    }
-  } else {
-    # single-diff
-    cumadopt <- matrix(0L, ncol=t, nrow=n)
-    toa      <- matrix(NA, ncol=1, nrow= n)
-
-    # Setting seed nodes via vector
-    toa[d]       <- 1L                # REMINDER TO DELETE THIS OBJECT !!!
-    cumadopt[d,] <- 1L
+  for (i in 1:num_of_behaviors) {
+    cumadopt[d[[i]],,i] <- 1L
   }
+
+  toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
 
   # Step 2.0: Thresholds -------------------------------------------------------
   thr <- rdiffnet_make_threshold(threshold.dist, n) # REMINDER TO CHANGE rdiffnet_make_threshold
 
+                                                                # ONLY MEANWHILE
+  thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
+
   # Step 3.0: Running the simulation -------------------------------------------
+
   for (i in 2:t) {
-    if (!is.na(dim(cumadopt)[3])) {
-      # multi-diff. Computing exposure
-                                                    # ONLY MEANWHILE
-      thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
 
-      exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i, ,drop=FALSE])
-      expo <- do.call(exposure, exposure.args)
-      #for (q in 1:dim(cumadopt)[3]) {
-      #  exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i,q,drop=FALSE])
-      #}
+    exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i, ,drop=FALSE])
+    expo <- do.call(exposure, exposure.args)
 
-      toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
+    for (q in 1:num_of_behaviors) {
 
-      for (q in 1:dim(cumadopt)[3]) {
-        whoadopts <- which( (expo[,,q] >= thr[,q]) )# & is.na(toa))
-        cumadopt[whoadopts, i:t, q] <- 1L
-                                                      # ADD SOMETHING TO DISADOPT
-        # Initialize 'toa' with NA values
-        toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
-          first_adopt <- which(x == 1)
-          if (length(first_adopt) > 0) first_adopt[1] else NA
-        })
-      }
+      whoadopts <- which( (expo[,,q] >= thr[,q]) )# & is.na(toa))
+      cumadopt[whoadopts, i:t, q] <- 1L
+                                                        # ADD SOMETHING TO DISADOPT
 
-    } else {
-      # single-diff. Computing exposure
-      exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i,drop=FALSE])
-      expo <- do.call(exposure, exposure.args)
+      toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
+        first_adopt <- which(x == 1)
+        if (length(first_adopt) > 0) first_adopt[1] else NA
+      })
 
-      whoadopts <- which( (expo >= thr) & is.na(toa))
-      toa[whoadopts] <- i
-      cumadopt[whoadopts, i:t] <- 1L
     }
   }
-                                      # GENERALIZE TO MULTI-DIFF
-  reachedt <- max(toa, na.rm=TRUE)
 
-  # Checking the result
-  if (reachedt == 1) {
-    if (stop.no.diff)
-      stop("No diffusion in this network (Ups!) try changing the seed or the parameters.")
-    else
-      warning("No diffusion in this network.")
+                                      # GENERALIZE TO MULTI-DIFF
+
+  for (i in 1:num_of_behaviors) {
+    reachedt <- max(toa[,i], na.rm=TRUE)
+
+    if (reachedt == 1) {
+      if (stop.no.diff)
+        stop(paste("No diffusion in this network for behavior", i, "(Ups!) try changing the seed or the parameters."))
+      else
+        warning(paste("No diffusion for behavior", i, " in this network."))
+    }
   }
 
   # Step 4.0: Creating diffnet object ------------------------------------------
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  if (!is.na(dim(cumadopt)[3])) {
-    new_diffnet(
-      graph      = sgraph,
-      toa        = toa,
-      self       = isself,
-      t0         = 1,
-      t1         = t,
-      vertex.static.attrs = data.frame(real_threshold=thr),
-      name       = name,
-      behavior   = behavior
-    )
-  } else {
-    new_diffnet(
-      graph      = sgraph,
-      toa        = as.integer(toa),
-      self       = isself,
-      t0         = 1,
-      t1         = t,
-      vertex.static.attrs = data.frame(real_threshold=thr),
-      name       = name,
-      behavior   = behavior
-    )
-  }
+  if (num_of_behaviors==1) {toa <- as.integer(toa)}
+
+  new_diffnet(
+    graph      = sgraph,
+    toa        = toa,
+    self       = isself,
+    t0         = 1,
+    t1         = t,
+    vertex.static.attrs = data.frame(real_threshold=thr),
+    name       = name,
+    behavior   = behavior
+  )
 }
 
+
+rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
+
+  # seed.p.adopt stuff
+
+  # The class of seed.p.adopt determines if is a single or multiple diff pross.
+
+  if (class(seed.p.adopt) == "list") {
+
+    message(paste("Message: Multi-diffusion behavior simulation selected.",
+                  "Number of behaviors: ", length(seed.p.adopt)))
+
+    multi <- TRUE
+
+  } else if (class(seed.p.adopt) == "numeric") {
+
+    if (length(seed.p.adopt)>1) {
+      stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
+                 ", but for multi-diffusion -seed.p.adopt- must be a -list-."))
+    }
+
+    multi <- FALSE
+
+  } else {
+
+    stop("The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
+         "or a -list- (multiple behavior diff).")
+  }
+
+  # seed.nodes stuff
+
+  if (multi) {
+
+    # For multi-diff.
+
+    if (class(seed.nodes) == "list") {
+      if (length(seed.nodes) != length(seed.p.adopt)) {
+        stop("Length of lists -seed.nodes- and -seed.p.adopt- must be the same for multi diffusion.")
+      }
+
+      if (all(sapply(seed.nodes, is.character))) {
+
+        if (any(!seed.nodes %in% c("marginal", "central", "random"))) {
+          stop("Some element in list -seed.nodes- is a -character- different from 'marginal', 'central', or 'random'.")
+        }
+
+      } else if (all(sapply(seed.nodes, is.numeric))) {
+
+        if (any(sapply(seed.nodes, is.null))) {
+          stop("There is a NULL -numeric- element")
+        }
+
+        if (any(sapply(seed.nodes, function(x) any(x != round(x))))) {
+          stop("Some value in the elements of the list -seed.nodes- is non-integer.")
+        }
+
+      } else {
+        stop("All elements of the list seed.nodes must be either -character- or -numeric-.")
+      }
+    } else if (class(seed.nodes) == "numeric") {
+
+      message("Message: Object -seed.nodes- converted to a -list-.",
+              "All behaviors will have the same seed nodes.")
+
+      seed.nodes <- replicate(length(behavior), seed.nodes, simplify = FALSE)
+    } else if (class(seed.nodes) == "character") {
+
+      stop("-character- class not supported for multi-diffusion. It must be a -list-.")
+    }
+
+    else {
+      stop("Unsupported -seed.nodes- value. See the manual for references.")
+    }
+
+    if (class(behavior) == "list") {
+      if (length(seed.p.adopt)!=length(behavior)) {
+        stop("If -behavior- is a list, it must be of the same length as -seed.p.adopt-.")
+      }
+    } else if (class(behavior) == "character" && length(behavior) > 1) {
+      if (length(behavior) != length(seed.p.adopt)) {
+        stop("Mismatch between length(behavior) and length(seed.p.adopt)")
+      } else {
+        behavior <- as.list(behavior)
+      }
+    } else if (class(behavior) == "character" && length(behavior) == 1) {
+      message(paste("Message: Name of 1 behavior provided, but", length(seed.p.adopt), "are needed. "),
+              "Names generalized to 'behavior'_1, 'behavior'_2, etc.")
+      behaviors <- list()
+
+      for (i in seq_along(seed.p.adopt)) {
+        behaviors[[i]] <- paste(behavior, i, sep = "_")
+      }
+
+      behavior <- behaviors
+    }
+
+  } else {
+
+    # For Single-diff.
+
+    if (length(seed.nodes) == 1 && class(seed.nodes)=="character") {
+
+      if (!seed.nodes %in% c("marginal", "central", "random")) {
+        stop("Object -seed.nodes- is a -character- different from 'marginal', 'central', or 'random'.")
+      }
+
+    } else if (!inherits(seed.nodes, "character")) {
+
+      if (any(sapply(seed.nodes, function(x) any(x != round(x))))) {
+        stop("Some value in the elements of the list -seed.nodes- is non-integer.")
+      }
+
+    } else {
+      stop("Unsupported -seed.nodes- value. See the manual for references.")
+    }
+
+    if (length(behavior)>1) {
+      stop("More names were provided than necessary.")
+    }
+
+    seed.p.adopt <- list(seed.p.adopt)
+    seed.nodes <- list(seed.nodes)
+    behavior <- list(behavior)
+  }
+
+  list(
+    seed.p.adopt = seed.p.adopt,
+    seed.nodes = seed.nodes,
+    behavior = behavior,
+    num_of_behaviors = length(seed.p.adopt)
+  )
+}

@@ -16,9 +16,6 @@ test_that(
   seed.nodes <- 'random'
   behavior <- "random behavior"
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  rdiffnet_args$seed.p.adopt; class(rdiffnet_args$seed.p.adopt)
-  rdiffnet_args$seed.nodes; class(rdiffnet_args$seed.nodes)
-  rdiffnet_args$behavior; class(rdiffnet_args$behavior)
 
   class(rdiffnet_args$seed.p.adopt) == "list"
   class(rdiffnet_args$seed.nodes) == "list"
@@ -100,8 +97,6 @@ test_that("Multi diff  models rdiff args work", {
   expect_error(
     rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
   )
-
-
 
   behavior <- list("random behavior_1")
   expect_error(
