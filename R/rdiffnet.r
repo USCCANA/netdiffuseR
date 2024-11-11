@@ -111,42 +111,30 @@
 #' @name rdiffnet
 NULL
 
-rdiffnet_make_threshold <- function(x, n) {
+rdiffnet_make_threshold <- function(x, n, q) {
 
-  # Using sapply to compute the threshold
   if (inherits(x, "function")) {
 
-    thr <- sapply(1:n, x)
+    thr <- matrix(sapply(1:(n*q), function(i) x()), nrow = n, ncol = q)
 
-  } else if ((length(x)==1) && is.numeric(x)) {
+  } else if (is.numeric(x) && length(x) == 1) {
 
-    thr <- rep(x, n)
+    thr <- matrix(rep(x, n * q), nrow = n, ncol = q)
 
   } else {
-    # Setting depending on class
+
     if (any(class(x) %in% c("data.frame", "matrix"))) {
-
-      thr <- as.vector(as.matrix(x))
-
-      # Must match the length of n
-      if (length(thr) != n)
-        stop("Incorrect length for -threshold.dist- (",length(x),")",
-             ". It should be a vector of length ",n,".")
-
+      thr <- as.matrix(x)
+      if (!all(dim(thr) == c(n, q))) stop("Incorrect dimensions for threshold.dist.",
+                                      "It should be a matrix of size ", n, "x", q, ".")
     } else if (is.vector(x)) {
-
-      thr <- x
-
-      # Must match the length of n
-      if (length(thr) != n)
-        stop("Incorrect length for -threshold.dist- (",length(x),")",
-             ". It should be a vector of length ",n,".")
-
-    } else {
-
-      stop("-threshold.dist- must be either a numeric vector of length -n-, a numeric scalar, or a function.")
-
-    }
+      if (length(x) == n * q && q>1) {
+        stop("Incorrect input: A vector of length ", n*q, " is not allowed.",
+             "Please provide a vector of length ", n, ".")
+      } else if (length(x) == n) {
+        thr <- matrix(rep(x, q), nrow = n, ncol = q)
+      } else stop("Incorrect length for threshold.dist.")
+    } else stop("threshold.dist must be a numeric vector or matrix of appropriate size or a function.")
   }
 
   thr
@@ -316,7 +304,7 @@ rdiffnet <- function(
     seed.p.adopt   = 0.05,
     seed.graph     = "scale-free",
     rgraph.args    = list(),
-    rewire         = TRUE, #set TRUE originally
+    rewire         = TRUE,
     rewire.args    = list(),
     threshold.dist = runif(n),
     exposure.args  = list(),
@@ -440,10 +428,10 @@ rdiffnet <- function(
   toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
 
   # Step 2.0: Thresholds -------------------------------------------------------
-  thr <- rdiffnet_make_threshold(threshold.dist, n) # REMINDER TO CHANGE rdiffnet_make_threshold
+  thr <- rdiffnet_make_threshold(threshold.dist, n, num_of_behaviors) # REMINDER TO CHANGE rdiffnet_make_threshold
 
                                                                 # ONLY MEANWHILE
-  thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
+  #thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
 
   # Step 3.0: Running the simulation -------------------------------------------
 

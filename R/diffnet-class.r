@@ -631,7 +631,7 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
                                                       as.character(name)))
   meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
                                                           as.character(behavior)))
-  meta$version    <- 5
+  meta$version    <- utils::packageVersion("netdiffuseR")
 
   # Removing dimnames
   graph                  <- Map(function(x) Matrix::unname(x), x=graph)
