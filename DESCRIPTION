@@ -7,6 +7,8 @@ Authors@R: c(
     ),
   person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"),
     comment=c(ORCID="0000-0002-8824-5816", what="R original code")),
+  person("Anibal", "Olivera Morales", role = c("aut", "ctb"), 
+    comment=c(ORCID="0009-0000-3736-7939", what="Multi-diffusion version")),
   person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("ctb"), comment="Package's first version"),
   person("Timothy", "Hayes", email="timothybhayes@gmail.com", role=c("ctb"), comment="Package's first version")
   )

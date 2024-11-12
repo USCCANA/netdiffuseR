@@ -250,9 +250,9 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' Calculates exposure to adoption over time via multiple different types of weight
 #' matrices.  The basic  model is exposure to adoption by immediate neighbors
 #' (outdegree) at the time period prior to ego’s adoption. This exposure can also be
-#' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties, (4)
-#' attribute weighted (5) network-metric weighted (e.g., central nodes have more
-#' influence), and attribute-weighted (e.g., based on homophily or tie strength).
+#' based on (1) incoming ties, (2) structural equivalence, (3) indirect ties,
+#' (4) network-metric weighted (e.g., central nodes have more
+#' influence), and (5) attribute-weighted (e.g., based on homophily or tie strength).
 #'
 #' @templateVar valued TRUE
 #' @templateVar dynamic TRUE
@@ -476,14 +476,28 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  ans <- ( graph %*% (attrs * cumadopt) )
+  norm <- graph %*% attrs + 1e-20
 
-  if (normalized) as.vector(ans/( graph %*% attrs + 1e-20 ))
-  else as.vector(ans)
+  if (!is.na(dim(cumadopt)[3])) {
+    ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
+
+    for (q in 1:dim(cumadopt)[3]) {
+      if (normalized) {
+        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
+      } else {
+        ans[,q] <- as.vector(graph_slice %*% (attrs * cumadopt[,,q]))
+      }
+    }
+  } else {
+    ans <- graph %*% (attrs * cumadopt)
+
+    if (normalized) {
+      ans <- ans/ norm
+    }
+  }
+
+  return(as.vector(ans))
 }
-
-# library(microbenchmark)
-# microbenchmark(.exposure, netdiffuseR:::exposure_cpp)
 
 check_lags <- function(npers, lags) {
 
@@ -611,10 +625,19 @@ exposure.list <- function(
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
   #  by default is user equal to 1
-  da <- dim(attrs)
-  if (!length(da)) stop("-attrs- must be a matrix of size n by T.")
-  if (any(da != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
-                                     "It must be of size that -cumadopt-.")
+
+  dim_attrs <- dim(attrs) # default n x T matrix of 1's
+  if (!length(dim_attrs)) stop("-attrs- must be a matrix of size n by T.")
+
+  if (!is.na(dim(cumadopt)[3])) {
+    attrs_mul <- array(rep(attrs, dim(cumadopt)[3]), dim = c(dim_attrs, dim(cumadopt)[3]))
+    dim_attrs <- dim(attrs_mul) # now n x T x q array of 1's, q behaviors
+    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                              "Does not match n dim or t dim.")
+  } else {
+    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+                                              "It must be of size that -cumadopt-.")
+  }
 
   add_dimnames.mat(cumadopt)
 
@@ -637,17 +660,56 @@ exposure_for <- function(
   lags
   ) {
 
-  out <- matrix(nrow = nrow(cumadopt), ncol = ncol(cumadopt))
+  if (!is.na(dim(cumadopt)[3])) {
+    out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
 
-  if (lags >= 0L) {
-    for (i in 1:(nslices(graph) - lags))
-      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                               outgoing, valued, normalized, self)
+    if (lags >= 0L) {
+      for (i in 1:(nslices(graph) - lags)) {
+        out[, i + lags, ] <- .exposure(graph[[i]],
+                                       cumadopt[, i, , drop = FALSE],
+                                       attrs[, i, drop = FALSE],
+                                       outgoing = outgoing,
+                                       valued = valued,
+                                       normalized = normalized,
+                                       self = self)
+      }
+    } else {
+      for (i in (1 - lags):nslices(graph)) {
+        out[, i + lags, ] <- .exposure(graph[[i]],
+                                       cumadopt[, i, , drop = FALSE],
+                                       attrs[, i, drop = FALSE],
+                                       outgoing = outgoing,
+                                       valued = valued,
+                                       normalized = normalized,
+                                       self = self)
+      }
+    }
   } else {
-    for (i in (1-lags):nslices(graph))
-      out[,i+lags]<- .exposure(graph[[i]], cumadopt[,i,drop=FALSE], attrs[,i,drop=FALSE],
-                               outgoing, valued, normalized, self)
+    out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2]))
+
+    if (lags >= 0L) {
+      for (i in 1:(nslices(graph) - lags)) {
+        out[, i + lags] <- .exposure(graph[[i]],
+                                     cumadopt[, i, drop = FALSE],
+                                     attrs[, i, drop = FALSE],
+                                     outgoing = outgoing,
+                                     valued = valued,
+                                     normalized = normalized,
+                                     self = self)
+      }
+    } else {
+      for (i in (1 - lags):nslices(graph)) {
+        out[, i + lags] <- .exposure(graph[[i]],
+                                     cumadopt[, i, drop = FALSE],
+                                     attrs[, i, drop = FALSE],
+                                     outgoing = outgoing,
+                                     valued = valued,
+                                     normalized = normalized,
+                                     self = self)
+      }
+    }
   }
+
   return(out)
 }
 
