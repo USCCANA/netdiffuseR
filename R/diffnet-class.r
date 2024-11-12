@@ -601,27 +601,47 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
 
-  if (meta$type != "static") {
-    tdiff <- meta$nper - ncol(mat[[1]]$adopt)
-    if (tdiff < 0)
-      stop("Range of -toa- is bigger than the number of slices in -graph- (",
-           ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
-           "There must be at least as many slices as range of toa.")
-    else if (tdiff > 0)
-      stop("Range of -toa- is smaller than the number of slices in -graph- (",
-           ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
-           "Please provide lower and upper boundaries for the values in -toa- ",
-           "using -t0- and -t- (see ?toa_mat).")
+  if (num_of_behaviors==1) {
+    if (meta$type != "static") {
+      tdiff <- meta$nper - ncol(mat$adopt)
+      if (tdiff < 0)
+        stop("Range of -toa- is bigger than the number of slices in -graph- (",
+             ncol(mat$adopt), " and ", length(graph) ," respectively). ",
+             "There must be at least as many slices as range of toa.")
+      else if (tdiff > 0)
+        stop("Range of -toa- is smaller than the number of slices in -graph- (",
+             ncol(mat$adopt), " and ", length(graph) ," respectively). ",
+             "Please provide lower and upper boundaries for the values in -toa- ",
+             "using -t0- and -t- (see ?toa_mat).")
+    } else {
+      graph <- lapply(1:ncol(mat$adopt), function(x) methods::as(graph, "dgCMatrix"))
+      meta  <- classify_graph(graph)
+    }
   } else {
+    if (meta$type != "static") {
+      tdiff <- meta$nper - ncol(mat[[1]]$adopt)
+      if (tdiff < 0)
+        stop("Range of -toa- is bigger than the number of slices in -graph- (",
+             ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
+             "There must be at least as many slices as range of toa.")
+      else if (tdiff > 0)
+        stop("Range of -toa- is smaller than the number of slices in -graph- (",
+             ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
+             "Please provide lower and upper boundaries for the values in -toa- ",
+             "using -t0- and -t- (see ?toa_mat).")
+    } else {
 
-                    # This should be reviewed !! (here the graph becomes 'dynamic')
+      # This should be reviewed !! (here the graph becomes 'dynamic')
 
-    graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
-    meta  <- classify_graph(graph)
+      graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
+      meta  <- classify_graph(graph)
+    }
   }
 
   # labels of the time periods
-  meta$pers <- as.integer(colnames(mat[[1]]$adopt))       # same all behaviors
+  if (num_of_behaviors==1) {
+    meta$pers <- as.integer(colnames(mat$adopt))
+  } else {meta$pers <- as.integer(colnames(mat[[1]]$adopt))} # same for all behaviors
 
   # Step 4.0: Checking the attributes ------------------------------------------
 
@@ -659,19 +679,24 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   # Removing dimnames
   graph                  <- Map(function(x) Matrix::unname(x), x=graph)
   dimnames(toa)          <- NULL
-  for (q in 1:num_of_behaviors) {
-    dimnames(mat[[q]]$adopt)    <- NULL
-    dimnames(mat[[q]]$cumadopt) <- NULL
-  }
 
-  adopt <- list()
-  cumadopt <- list()
-  if (num_of_behaviors>1) {for (q in 1:num_of_behaviors) {
-    adopt[[q]] <- mat[[q]]$adopt
-    cumadopt[[q]] <- mat[[q]]$cumadopt
-  }} else {
-    adopt <- mat[[1]]$adopt
-    cumadopt <- mat[[1]]$cumadopt
+  if (num_of_behaviors==1) {
+    dimnames(mat$adopt)    <- NULL
+    dimnames(mat$cumadopt) <- NULL
+
+    adopt <- mat$adopt
+    cumadopt <- mat$cumadopt
+  } else {
+    for (q in 1:num_of_behaviors) {
+      dimnames(mat[[q]]$adopt)    <- NULL
+      dimnames(mat[[q]]$cumadopt) <- NULL
+    }
+    adopt <- list()
+    cumadopt <- list()
+    for (q in 1:num_of_behaviors) {
+      adopt[[q]] <- mat[[q]]$adopt
+      cumadopt[[q]] <- mat[[q]]$cumadopt
+    }
   }
 
   return(structure(list(

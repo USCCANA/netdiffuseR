@@ -482,8 +482,6 @@ toa_mat <- function(obj, num_of_behaviors=1, labels=NULL, t0=NULL, t1=NULL) {
               stopifnot_graph(obj)
             }
   } else {
-    #ans <- list()
-
     for (q in 1:num_of_behaviors) {
       cls <- class(obj[,q])
       ans[[q]] <- if ("numeric" %in% cls) { # Why included?
@@ -498,12 +496,18 @@ toa_mat <- function(obj, num_of_behaviors=1, labels=NULL, t0=NULL, t1=NULL) {
     }
   }
 
-  if (inherits(obj, "diffnet")) {
-    dimnames(ans$adopt) <- with(obj$meta, list(ids,pers))
-    dimnames(ans$cumadopt) <- with(obj$meta, list(ids,pers))
+  for (q in 1:num_of_behaviors) {
+    if (inherits(obj, "diffnet")) {
+      dimnames(ans[[q]]$adopt) <- with(obj$meta, list(ids,pers))
+      dimnames(ans[[q]]$cumadopt) <- with(obj$meta, list(ids,pers))
+    }
   }
 
-  return(ans)
+  if (num_of_behaviors==1) {
+    return(ans[[1]])
+  } else {
+    return(ans)
+  }
 }
 
 toa_mat.default <- function(per, t0, t1) {
