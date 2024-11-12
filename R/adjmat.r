@@ -462,29 +462,46 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' @keywords manip
 #' @include graph_data.r
 #' @author George G. Vega Yon & Thomas W. Valente
-toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
+toa_mat <- function(obj, num_of_behaviors=1, labels=NULL, t0=NULL, t1=NULL) {
 
   if (!inherits(obj, "diffnet")) {
     if (!length(t0)) t0 <- min(obj, na.rm = TRUE)
     if (!length(t1)) t1 <- max(obj, na.rm = TRUE)
   }
 
-  cls <- class(obj)
-  ans <- if ("numeric" %in% cls) {
-    toa_mat.numeric(obj, labels, t0, t1)
-    } else if ("integer" %in% cls) {
-    toa_mat.integer(obj, labels, t0, t1)
-    } else if  ("diffnet" %in% cls) {
-    with(obj, list(adopt=adopt,cumadopt=cumadopt))
-    } else
-      stopifnot_graph(obj)
+  ans <- list()
+  if (num_of_behaviors == 1) {
+    cls <- class(obj)
+    ans[[1]] <- if ("numeric" %in% cls) {
+            toa_mat.numeric(obj, labels, t0, t1)
+            } else if ("integer" %in% cls) {
+            toa_mat.integer(obj, labels, t0, t1)
+            } else if  ("diffnet" %in% cls) {
+            with(obj, list(adopt=adopt,cumadopt=cumadopt))
+            } else {
+              stopifnot_graph(obj)
+            }
+  } else {
+    #ans <- list()
 
+    for (q in 1:num_of_behaviors) {
+      cls <- class(obj[,q])
+      ans[[q]] <- if ("numeric" %in% cls) { # Why included?
+              toa_mat.numeric(obj[,q], labels, t0, t1)
+            } else if ("integer" %in% cls) {
+              toa_mat.integer(obj[,q], labels, t0, t1)
+            } else if  ("diffnet" %in% cls) { # Why included?
+              with(obj[,q], list(adopt=adopt,cumadopt=cumadopt))
+            } else {
+              stopifnot_graph(obj[,q])
+            }
+    }
+  }
 
   if (inherits(obj, "diffnet")) {
     dimnames(ans$adopt) <- with(obj$meta, list(ids,pers))
     dimnames(ans$cumadopt) <- with(obj$meta, list(ids,pers))
   }
-
 
   return(ans)
 }

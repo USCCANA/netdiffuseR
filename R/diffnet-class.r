@@ -547,7 +547,8 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
                        self       = getOption("diffnet.self"),
                        multiple   = getOption("diffnet.multiple"),
                        name       = "Diffusion Network",
-                       behavior   = "Unspecified"
+                       behavior   = "Unspecified",
+                       num_of_behaviors = 1
                        ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -563,42 +564,64 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
 
   # Step 1.2: Checking that lengths fit
-  if (length(toa)!=meta$n) stop("-graph- and -toa- have different lengths (",
-                                meta$n, " and ", length(toa), " respectively). ",
-                                "-toa- should be of length n (number of vertices).")
+  if (num_of_behaviors == 1) {
+    if (length(toa)!=meta$n){ stop("-graph- and -toa- have different lengths (", meta$n, " and ", length(toa),
+         " respectively). ", "-toa- should be of length n (number of vertices).") }
+  } else {
+    if (length(toa[,1])!=meta$n) {stop("-graph- and -toa[,1]- have different lengths (", meta$n, " and ", length(toa[,1]),
+                                       " respectively). ", "-toa- should be of length n (number of vertices).") }
+  }
 
   # Step 2.1: Checking class of TOA and coercing if necesary -------------------
-  if (!inherits(toa, "integer")) {
-    warning("Coercing -toa- into integer.")
-    toa <- as.integer(toa)
+  if (num_of_behaviors==1) {
+    if (!inherits(toa, "integer")) {
+      warning("Coercing -toa- into integer.")
+      toa <- as.integer(toa)
+    }
+  } else {
+    for (q in 1:num_of_behaviors) {
+      if (!inherits(toa[,q], "integer")) {
+        warning("Coercing -toa- into integer.")
+        toa[,q] <- as.integer(toa[,q])
+      }
+    }
   }
 
   # Step 2.2: Checking names of toa
-  if (!length(names(toa)))
-    names(toa) <- meta$ids
+  if (num_of_behaviors==1) {
+    if (!length(names(toa))) {names(toa) <- meta$ids}
+  } else {
+    if (!length(rownames(toa))) { # Not necessary? toa_mat(toa, labels = meta$ids, t0=t0, t1=t1) already has labels
+      rownames(toa) <- meta$ids
+    }
+  }
 
   # Step 3.1: Creating Time of adoption matrix ---------------------------------
-  mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
+  mat <- toa_mat(toa, num_of_behaviors, labels = meta$ids, t0=t0, t1=t1)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
 
   if (meta$type != "static") {
-    tdiff <- meta$nper - ncol(mat[[1]])
+    tdiff <- meta$nper - ncol(mat[[1]]$adopt)
     if (tdiff < 0)
       stop("Range of -toa- is bigger than the number of slices in -graph- (",
-           ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
+           ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
            "There must be at least as many slices as range of toa.")
     else if (tdiff > 0)
       stop("Range of -toa- is smaller than the number of slices in -graph- (",
-           ncol(mat[[1]]), " and ", length(graph) ," respectively). ",
+           ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
            "Please provide lower and upper boundaries for the values in -toa- ",
            "using -t0- and -t- (see ?toa_mat).")
   } else {
-    graph <- lapply(1:ncol(mat[[1]]), function(x) methods::as(graph, "dgCMatrix"))
+
+                    # This should be reviewed !! (here the graph becomes 'dynamic')
+
+    graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
     meta  <- classify_graph(graph)
   }
 
-  meta$pers <- as.integer(colnames(mat$adopt))
+  # labels of the time periods
+  meta$pers <- as.integer(colnames(mat[[1]]$adopt))       # same all behaviors
 
   # Step 4.0: Checking the attributes ------------------------------------------
 
@@ -636,14 +659,26 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   # Removing dimnames
   graph                  <- Map(function(x) Matrix::unname(x), x=graph)
   dimnames(toa)          <- NULL
-  dimnames(mat$adopt)    <- NULL
-  dimnames(mat$cumadopt) <- NULL
+  for (q in 1:num_of_behaviors) {
+    dimnames(mat[[q]]$adopt)    <- NULL
+    dimnames(mat[[q]]$cumadopt) <- NULL
+  }
+
+  adopt <- list()
+  cumadopt <- list()
+  if (num_of_behaviors>1) {for (q in 1:num_of_behaviors) {
+    adopt[[q]] <- mat[[q]]$adopt
+    cumadopt[[q]] <- mat[[q]]$cumadopt
+  }} else {
+    adopt <- mat[[1]]$adopt
+    cumadopt <- mat[[1]]$cumadopt
+  }
 
   return(structure(list(
     graph = graph,
     toa   = toa,
-    adopt = mat$adopt,
-    cumadopt = mat$cumadopt,
+    adopt = adopt,
+    cumadopt = cumadopt,
     # Attributes
     vertex.static.attrs = vertex.static.attrs,
     vertex.dyn.attrs    = vertex.dyn.attrs,

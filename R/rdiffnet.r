@@ -111,33 +111,48 @@
 #' @name rdiffnet
 NULL
 
-rdiffnet_make_threshold <- function(x, n, q) {
+rdiffnet_make_threshold <- function(x, n, num_of_behaviors) {
 
-  if (inherits(x, "function")) {
-
-    thr <- matrix(sapply(1:(n*q), function(i) x()), nrow = n, ncol = q)
-
-  } else if (is.numeric(x) && length(x) == 1) {
-
-    thr <- matrix(rep(x, n * q), nrow = n, ncol = q)
-
-  } else {
-
-    if (any(class(x) %in% c("data.frame", "matrix"))) {
-      thr <- as.matrix(x)
-      if (!all(dim(thr) == c(n, q))) stop("Incorrect dimensions for threshold.dist.",
-                                      "It should be a matrix of size ", n, "x", q, ".")
-    } else if (is.vector(x)) {
-      if (length(x) == n * q && q>1) {
-        stop("Incorrect input: A vector of length ", n*q, " is not allowed.",
-             "Please provide a vector of length ", n, ".")
-      } else if (length(x) == n) {
-        thr <- matrix(rep(x, q), nrow = n, ncol = q)
-      } else stop("Incorrect length for threshold.dist.")
-    } else stop("threshold.dist must be a numeric vector or matrix of appropriate size or a function.")
+  # Check if x is a matrix or array with correct dimensions
+  if (is.matrix(x) || is.array(x)) {
+    if (!all(dim(x) == c(n, num_of_behaviors))) {
+      stop("Incorrect threshold input in function -rdiffnet_make_threshold-. The matrix/array must have dimensions ", n, "x", num_of_behaviors, ".")
+    }
+    return(as.matrix(x)) # Return the matrix as-is
+  } else if (!is.list(x) && num_of_behaviors > 1) {
+    # Ensure x is a list when num_of_behaviors > 1
+    stop("For multiple behaviors (num_of_behaviors > 1), threshold.dist must be a list.")
   }
 
-  thr
+  # Make a list, for single diffusion
+  if (!is.list(x)) {
+    x <- list(x)
+  }
+
+  if (length(x) != num_of_behaviors) {
+    stop("The length of the list must match the number of behaviors (num_of_behaviors).")
+  }
+
+  thr <- matrix(NA, nrow = n, ncol = num_of_behaviors)
+
+  for (q in seq_len(num_of_behaviors)) {
+    if (inherits(x[[q]], "function")) {
+
+      thr[, q] <- sapply(1:n, function(j) x[[q]]())
+
+    } else if (is.numeric(x[[q]]) && length(x[[q]]) == 1) {
+
+      thr[, q] <- rep(x[[q]], n)
+
+    } else if (is.vector(x[[q]]) && length(x[[q]]) == n) {
+
+      thr[, q] <- x[[q]]
+
+    } else if (is.vector(x[[q]]) && length(x[[q]]) != n) {
+      stop("Incorrect threshold input in function -rdiffnet_make_threshold-.")
+    }
+  }
+  return(thr)
 }
 
 rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
@@ -386,7 +401,7 @@ rdiffnet <- function(
     n0[[i]] <- max(1, n * seed.p.adopt[[i]])
   }
 
-  # Step 1.2
+  # Step 1.2: finding the nodes
 
   d <- list()
 
@@ -421,17 +436,15 @@ rdiffnet <- function(
 
   cumadopt <- array(0L, dim = c(n, t, num_of_behaviors))
 
+  toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
+
   for (i in 1:num_of_behaviors) {
     cumadopt[d[[i]],,i] <- 1L
   }
 
-  toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
-
   # Step 2.0: Thresholds -------------------------------------------------------
-  thr <- rdiffnet_make_threshold(threshold.dist, n, num_of_behaviors) # REMINDER TO CHANGE rdiffnet_make_threshold
 
-                                                                # ONLY MEANWHILE
-  #thr <- array(c(thr,rev(thr)), dim=c(length(thr), dim(cumadopt)[3]))
+  thr <- rdiffnet_make_threshold(threshold.dist, n, num_of_behaviors)
 
   # Step 3.0: Running the simulation -------------------------------------------
 
@@ -442,7 +455,7 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      whoadopts <- which( (expo[,,q] >= thr[,q]) )# & is.na(toa))
+      whoadopts <- which( (expo[,,q] >= thr[,q]) )
       cumadopt[whoadopts, i:t, q] <- 1L
                                                         # ADD SOMETHING TO DISADOPT
 
@@ -453,8 +466,6 @@ rdiffnet <- function(
 
     }
   }
-
-                                      # GENERALIZE TO MULTI-DIFF
 
   for (i in 1:num_of_behaviors) {
     reachedt <- max(toa[,i], na.rm=TRUE)
@@ -481,7 +492,8 @@ rdiffnet <- function(
     t1         = t,
     vertex.static.attrs = data.frame(real_threshold=thr),
     name       = name,
-    behavior   = behavior
+    behavior   = behavior,
+    num_of_behaviors = num_of_behaviors
   )
 }
 
@@ -549,7 +561,7 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
       message("Message: Object -seed.nodes- converted to a -list-.",
               "All behaviors will have the same seed nodes.")
 
-      seed.nodes <- replicate(length(behavior), seed.nodes, simplify = FALSE)
+      seed.nodes <- replicate(length(seed.p.adopt), seed.nodes, simplify = FALSE)
     } else if (class(seed.nodes) == "character") {
 
       stop("-character- class not supported for multi-diffusion. It must be a -list-.")

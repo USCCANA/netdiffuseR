@@ -54,33 +54,49 @@ test_that(
 
 test_that("Checking threshold for single diffusion", {
 
+  n <- 50
+  num_of_behaviors <- 1
+
   # Must work
 
-  thr <- rdiffnet_make_threshold(1.5, n = 50, q = 1)
-  expect_equal(dim(thr), c(50, 1))
+  x <- 0.35 # numeric scalar
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n, 1))
 
-  x <- runif(50)
-  thr <- rdiffnet_make_threshold(x, n = 50, q = 1)
-  expect_equal(dim(thr), c(50, 1))
+  x <- runif(n) # vector of length n
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n, 1))
 
-  thr <- rdiffnet_make_threshold(function() 0.5, n = 50, q = 1)
-  expect_equal(dim(thr), c(50, 1))
+  x <- function() runif(1) # function
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n, 1))
 
-  thr <- rdiffnet_make_threshold(function() rexp(1), n = 50, q = 1)
-  expect_equal(dim(thr), c(50, 1))
 
   # Must show ERROR
 
-  x <- runif(100) # Length n*q
+  x <- runif(100)# Length greater than n
   expect_error(
-    rdiffnet_make_threshold(x, n = 50, q = 1)
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "Incorrect threshold input in function -rdiffnet_make_threshold-."
+  )
+
+  x <- runif(25)# Length less than n
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "Incorrect threshold input in function -rdiffnet_make_threshold-."
+  )
+
+  x <- "invalid_input"# Non-numeric input
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "Incorrect threshold input in function -rdiffnet_make_threshold-."
   )
 
 })
 
 # Multiple --------------------------------------------------------------------
 
-test_that("Multi diff  models rdiff args work", {
+test_that("Multi diff models rdiff args work", {
 
   # Must work
 
@@ -140,44 +156,57 @@ test_that("Multi diff  models rdiff args work", {
   )
 })
 
+test_that("Checking threshold for multiple diffusion", {
 
-# NOT working now !!!
+  n <- 50
+  num_of_behaviors <- 2
 
-# test_that("Checking threshold for multiple diffusion", {
-#
-#   # Must work
-#
-# x <- matrix(runif(100), nrow = 50, ncol = 2)
-# thr <- rdiffnet_make_threshold(x, n = 50, q = 2)
-# expect_equal(dim(thr), c(50, 2))
-#
-# x <- runif(100) # Length n*q
-# expect_error(
-#   rdiffnet_make_threshold(x, n = 50, q = 2)
-# )
-#
-#   seed.p.adopt <- list(function() runif(1), function() rexp(1))
-#   thr <- rdiffnet_make_threshold(seed.p.adopt, n = 50, q = 2)
-#   expect_equal(dim(thr), c(50,1))
-#
-#
-#   seed.p.adopt <- list(0.14,0.05)
-#   thr <- rdiffnet_make_threshold(seed.p.adopt[[1]], n = 50, q = 2)
-#   expect_equal(dim(thr), c(50,2))
-#
-#
-#   seed.p.adopt <- list(runif(50), runif(50))
-#
-#   # Test first element of list
-#   thr <- rdiffnet_make_threshold(seed.p.adopt[[1]], n = 50, q =1 )
-#
-#   expect_equal(dim(thr), c(50,1))
-#
-#
-#   # Must show ERROR
-#
-#   x <- runif(100) # Length n*q
-#   expect_error(
-#     rdiffnet_make_threshold(x, n=100,q=3),
-#     "incorrect input
-# }
+  # Must work
+
+  x <- matrix(runif(100), nrow = n, ncol = num_of_behaviors) # matrix input
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n, num_of_behaviors))
+
+  x <- list(function() runif(1), function() rexp(1)) # list of functions
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n, num_of_behaviors))
+
+  x <- list(0.14,0.05) # list of scalars
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equal(dim(thr), c(n,num_of_behaviors))
+
+  x <- list(runif(n), runif(n)) # list of vectors
+  thr <- rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors)
+  expect_equal(dim(thr),c(n,num_of_behaviors))
+
+
+  # Must show ERROR
+
+  x <- list(runif(2*n),runif(n)) # incorrect vector length (too long for one behavior)
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "Incorrect threshold input in function -rdiffnet_make_threshold-."
+  )
+
+  x <- list(runif(n/2),runif(n)) # incorrect vector length (too short for one behavior)
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "Incorrect threshold input in function -rdiffnet_make_threshold-."
+  )
+
+  x <- c(runif(n),runif(n)) # the input should be a list
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors)
+  )
+
+  x <- list(0.14) # Only one behavior provided in the list
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
+    "The length of the list must match the number of behaviors"
+  )
+
+  x <- runif(n) # Only one behavior provided in the vector
+  expect_error(
+    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors)
+  )
+})

@@ -88,7 +88,7 @@ test_that("Error and warning on rdiffnet", {
 
   set.seed(111)
 
-  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,10)), "Incorrect length")
+  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,10)))
   expect_error(rdiffnet(100, 5, threshold.dist = rep(10,100)), "No diffusion")
   expect_warning(rdiffnet(100, 5, threshold.dist = rep(10,100), stop.no.diff = FALSE), "No diffusion")
 
@@ -105,4 +105,29 @@ test_that("Simulation study", {
 
   expect_equal(ans0, ans1)
 
+})
+
+# Test for multi diffusion
+
+# Seed of first adopters
+test_that("All should be equal!", {
+  set.seed(12131)
+  n            <- 50
+  t            <- 5
+  graph        <- rgraph_ws(n, 4, p=.3)
+  seed.p.adopt <- list(0.1, 0.1)
+  seed.nodes   <- c(1,5,7,10)
+  thr          <- runif(n, .2,.4)
+  thr_list     <- list(thr,thr)
+
+  # Generating identical networks
+  net1 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
+                   t = t, threshold.dist = thr_list)
+
+
+
+  net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt =  seed.p.adopt,
+                   t = 5, rewire = FALSE, threshold.dist = thr)
+
+  expect_equal(net1, net2)
 })
