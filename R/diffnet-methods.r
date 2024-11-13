@@ -75,10 +75,6 @@ plot.diffnet <- function(
 #' @export
 #' @rdname diffnet-class
 print.diffnet <- function(x, ...) {
-  #print(str(x))
-  #x$cumadopt
-  #meta
-  #class(cumadopt)
   with(x, {
     # Getting attrs
     vsa <- paste0(colnames(vertex.static.attrs), collapse=", ")
@@ -98,14 +94,8 @@ print.diffnet <- function(x, ...) {
                      paste(head(meta$ids, 8), collapse=", "),
                      ifelse(meta$n>8, ", ...", "") ,")")
 
+    # Computing prevalence for multi-diff
     single <- class(cumadopt)[1]!='list'
-    # if (!single) {
-    #   prevalence <- list()
-    #   for (q in 1:length(cumadopt)) {prevalence[[1]] <- formatC(sum(cumadopt[[q]][,meta$nper])/meta$n, digits = 2, format="f")}
-    #   prevalence <- as.character(prevalence)
-    # }
-    #
-    # Initialize an empty character vector
     if (!single) {
       prevalence_all <- character(length(cumadopt))
 
@@ -114,8 +104,6 @@ print.diffnet <- function(x, ...) {
         prevalence_all[q] <- prevalence
       }
       prevalence_all <- paste(prevalence_all, collapse = ", ")
-
-      #print(prevalence_all) # Output the combined result
     }
 
     cat(
