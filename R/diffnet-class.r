@@ -672,8 +672,6 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   meta$multiple   <- multiple
   meta$name       <- ifelse(!length(name), "", ifelse(is.na(name), "",
                                                       as.character(name)))
-  meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
-                                                          as.character(behavior)))
   meta$version    <- utils::packageVersion("netdiffuseR")
 
   # Removing dimnames
@@ -681,12 +679,16 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   dimnames(toa)          <- NULL
 
   if (num_of_behaviors==1) {
+    meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
+                                                            as.character(behavior)))
     dimnames(mat$adopt)    <- NULL
     dimnames(mat$cumadopt) <- NULL
 
     adopt <- mat$adopt
     cumadopt <- mat$cumadopt
   } else {
+    meta$behavior <- paste(unlist(behavior), collapse = ", ")
+
     for (q in 1:num_of_behaviors) {
       dimnames(mat[[q]]$adopt)    <- NULL
       dimnames(mat[[q]]$cumadopt) <- NULL

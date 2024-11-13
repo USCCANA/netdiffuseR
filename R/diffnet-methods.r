@@ -98,12 +98,16 @@ print.diffnet <- function(x, ...) {
     single <- class(cumadopt)[1]!='list'
     if (!single) {
       prevalence_all <- character(length(cumadopt))
-
       for (q in 1:length(cumadopt)) {
         prevalence <- formatC(sum(cumadopt[[q]][,meta$nper]) / meta$n, digits = 2, format="f")
         prevalence_all[q] <- prevalence
       }
       prevalence_all <- paste(prevalence_all, collapse = ", ")
+
+      num_of_behavior <- as.character(length(cumadopt))
+    } else {
+      prevalence <- formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f")
+      num_of_behavior <- "1"
     }
 
     cat(
@@ -113,9 +117,9 @@ print.diffnet <- function(x, ...) {
     paste(" # of nodes         :", nodesl ),
     paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
-    paste(" Type of diff       :", ifelse(single, "Single", "Multiple")),
+    paste(" Num of behaviors   :", num_of_behavior),
     if (single) {
-      paste(" Final prevalence   :", formatC(sum(cumadopt[,meta$nper])/meta$n, digits = 2, format="f"))
+      paste(" Final prevalence   :", prevalence)
     } else {
       paste(" Prevalence         :", prevalence_all)
     },

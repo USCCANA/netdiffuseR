@@ -113,7 +113,7 @@ test_that("Simulation study", {
 
 
 # Seed of first adopters
-# test_that("All should be equal!", {
+test_that("All should be equal!", {
   set.seed(12131)
   n            <- 50
   t            <- 5
@@ -126,22 +126,22 @@ test_that("Simulation study", {
   # Generating identical networks
   net1 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
                    t = t, threshold.dist = thr_list)
-  #
-  # rdiffnet(100,10, seed.p.adopt = list(.1, .05))
-  #
-  # rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes=c(1,2,3,4))
-  #
-  # rdiffnet(100,10, seed.p.adopt = .05, seed.nodes='random')
-  # rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes='random')
-  #
-  # rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes=c('random','central'))
+
+  rdiffnet(100,10, seed.p.adopt = list(.1, .05))
+
+  rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes=c(1,2,3,4))
+
+  rdiffnet(100,10, seed.p.adopt = .05, seed.nodes='random')
+  rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes='random')
+
+  rdiffnet(100,10, seed.p.adopt = list(.1, .05), seed.nodes=c('random','central'))
 
 
-#   net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
-#                    t = t, threshold.dist = thr_list)
-#
-#   expect_equal(net1, net2)
-#   # net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt =  seed.p.adopt,
-#   #                  t = 5, rewire = FALSE, threshold.dist = thr)
-#   #
-# })
+  net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
+                   t = t, threshold.dist = thr_list)
+
+  #expect_equal(net1, net2)
+  # net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt =  seed.p.adopt,
+  #                  t = 5, rewire = FALSE, threshold.dist = thr)
+  #
+})
