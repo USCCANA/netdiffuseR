@@ -120,24 +120,19 @@ rdiffnet_make_threshold <- function(x, n, num_of_behaviors) {
     }
     return(as.matrix(x)) # Return the matrix as-is
   } else if (!is.list(x) && num_of_behaviors > 1) {
-    # Ensure x is a list when num_of_behaviors > 1
-    stop("For multiple behaviors (num_of_behaviors > 1), threshold.dist must be a list.")
+    x <- rep(list(x), num_of_behaviors)
   }
 
   # Make a list, for single diffusion
-  if (!is.list(x)) {
+  if (!is.list(x) && num_of_behaviors==1) {
     x <- list(x)
-  }
-
-  if (length(x) != num_of_behaviors) {
-    stop("The length of the list must match the number of behaviors (num_of_behaviors).")
   }
 
   thr <- matrix(NA, nrow = n, ncol = num_of_behaviors)
 
   for (q in seq_len(num_of_behaviors)) {
     if (inherits(x[[q]], "function")) {
-
+      set.seed(123)
       thr[, q] <- sapply(1:n, function(j) x[[q]]())
 
     } else if (is.numeric(x[[q]]) && length(x[[q]]) == 1) {
@@ -557,17 +552,22 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
         stop("All elements of the list seed.nodes must be either -character- or -numeric-.")
       }
     } else if (class(seed.nodes) == "numeric") {
-
       message("Message: Object -seed.nodes- converted to a -list-.",
-              "All behaviors will have the same seed nodes.")
+              "All behaviors will have the same -", seed.nodes, "- seed nodes.")
 
       seed.nodes <- replicate(length(seed.p.adopt), seed.nodes, simplify = FALSE)
     } else if (class(seed.nodes) == "character") {
+      if (length(seed.nodes)==length(seed.p.adopt)) {
+        seed.nodes <- as.list(seed.nodes)
+        message("Message: Object -seed.nodes- converted to a -list-.",
+                "For example, the first behavior has seed -", seed.nodes[[1]], "-, the second has -", seed.nodes[[2]], "-, etc.")
+      } else {
 
-      stop("-character- class not supported for multi-diffusion. It must be a -list-.")
-    }
-
-    else {
+      message("Message: Object -seed.nodes- converted to a -list-.",
+              "All behaviors will have the same -", seed.nodes, "- seed nodes.")
+      seed.nodes <- replicate(length(seed.p.adopt), seed.nodes, simplify = FALSE)
+      }
+    } else {
       stop("Unsupported -seed.nodes- value. See the manual for references.")
     }
 

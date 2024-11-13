@@ -101,6 +101,17 @@ test_that("Multi diff models rdiff args work", {
   # Must work
 
   seed.p.adopt <- list(0.14,0.05)
+  seed.nodes <- "random"
+  behavior <- "random behavior"
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+
+  seed.nodes <- c(1,3,5)
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+
+  seed.nodes <- c('marginal',"central")
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+
+  seed.p.adopt <- list(0.14,0.05)
   seed.nodes <- list('random', "central")
   behavior <- list("random behavior_1", "random behavior_2")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
@@ -125,7 +136,6 @@ test_that("Multi diff models rdiff args work", {
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
   class(rdiffnet_args$seed.nodes) == 'list'
 
-  seed.nodes <- list('marginal',"central") ######
   behavior <- c("random behavior_1")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
 
@@ -134,12 +144,6 @@ test_that("Multi diff models rdiff args work", {
   seed.p.adopt <- c(0.14,0.05)
   seed.nodes <- list('random', "central")
   behavior <- list("random behavior_1", "random behavior_2")
-  expect_error(
-    rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  )
-
-  seed.p.adopt <- list(0.14,0.05)
-  seed.nodes <- c('marginal',"central")
   expect_error(
     rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
   )
@@ -162,6 +166,23 @@ test_that("Checking threshold for multiple diffusion", {
   num_of_behaviors <- 2
 
   # Must work
+
+  # not list entries
+
+  x <- 0.35 # numeric scalar
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equivalent(thr, matrix(x, nrow=n, ncol=num_of_behaviors))
+
+  x <- runif(n) # vector of length n
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  expect_equivalent(thr, matrix(rep(x, num_of_behaviors), nrow = n, ncol = num_of_behaviors))
+
+  x <- function() runif(1) # function
+  thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
+  set.seed(123)
+  expect_equal(thr, t(sapply(1:n, function(i) rep(x(), num_of_behaviors))))
+
+  # list entries
 
   x <- matrix(runif(100), nrow = n, ncol = num_of_behaviors) # matrix input
   thr <- rdiffnet_make_threshold(x, n = n, num_of_behaviors = num_of_behaviors)
@@ -195,17 +216,6 @@ test_that("Checking threshold for multiple diffusion", {
   )
 
   x <- c(runif(n),runif(n)) # the input should be a list
-  expect_error(
-    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors)
-  )
-
-  x <- list(0.14) # Only one behavior provided in the list
-  expect_error(
-    rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors),
-    "The length of the list must match the number of behaviors"
-  )
-
-  x <- runif(n) # Only one behavior provided in the vector
   expect_error(
     rdiffnet_make_threshold(x,n=n,num_of_behaviors=num_of_behaviors)
   )
