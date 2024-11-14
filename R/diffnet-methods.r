@@ -213,44 +213,55 @@ summary.diffnet <- function(
     # x <-nelements/(meta$n * (meta$n-1))
   }))
 
+  # identify single-diff from multi-diff
+  single <- class(object$cumadopt)[1]!='list'
+
   # Computing moran's I
-  if (!skip.moran) {
+  if (single) {
 
-    m <- matrix(NA, nrow=length(slices), ncol=4,
-                dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
+    if (!skip.moran) {
+      m <- matrix(NA, nrow=length(slices), ncol=4,
+                  dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
 
-    for (i in 1:length(slices)) {
-      # Computing distances
-      g <- approx_geodesic(object$graph[[slices[i]]], ...)
+      for (i in 1:length(slices)) {
+        # Computing distances
+        g <- approx_geodesic(object$graph[[slices[i]]], ...)
+        # Inverting it (only the diagonal may have 0)
+        g@x <- 1/g@x
 
-      # Inverting it (only the diagonal may have 0)
-      g@x <- 1/g@x
+        m[i,] <- unlist(moran(object$cumadopt[,slices[i]], g))
+      }
 
-      m[i,] <- unlist(moran(object$cumadopt[,slices[i]], g))
+    # Computing new adopters, cumadopt and hazard rate
+    ad <- colSums(object$adopt[,slices,drop=FALSE])
+    ca <- t(cumulative_adopt_count(object$cumadopt))[slices,-3, drop=FALSE]
+    hr <- t(hazard_rate(object$cumadopt, no.plot = TRUE))[slices,,drop=FALSE]
+
+    # Left censoring
+    lc <- sum(object$toa == meta$pers[1], na.rm = TRUE)
+    rc <- sum(is.na(object$toa), na.rm=TRUE)
+
+    out <- data.frame(
+      adopt = ad,
+      cum_adopt = ca[,1],
+      cum_adopt_pcent = ca[,2],
+      hazard = hr,
+      density=d
+    )
+
+    if (!skip.moran) {
+      out <- cbind(out, m)
     }
+
+    if (no.print) return(out)
+    }
+
+  } else {
+
+    message("Multiple in summary.diffnet -borrar-")
+
+
   }
-  # Computing adopters, cumadopt and hazard rate
-  ad <- colSums(object$adopt[,slices,drop=FALSE])
-  ca <- t(cumulative_adopt_count(object$cumadopt))[slices,-3, drop=FALSE]
-  hr <- t(hazard_rate(object$cumadopt, no.plot = TRUE))[slices,,drop=FALSE]
-
-  # Left censoring
-  lc <- sum(object$toa == meta$pers[1], na.rm = TRUE)
-  rc <- sum(is.na(object$toa), na.rm=TRUE)
-
-  out <- data.frame(
-    adopt = ad,
-    cum_adopt = ca[,1],
-    cum_adopt_pcent = ca[,2],
-    hazard = hr,
-    density=d
-  )
-
-  if (!skip.moran) {
-    out <- cbind(out, m)
-  }
-
-  if (no.print) return(out)
 
   # Function to print data.frames differently
   header <- c(" Period "," Adopters "," Cum Adopt. (%) ",
