@@ -218,7 +218,6 @@ summary.diffnet <- function(
 
   # Computing moran's I
   if (single) {
-
     if (!skip.moran) {
       m <- matrix(NA, nrow=length(slices), ncol=4,
                   dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
@@ -257,10 +256,49 @@ summary.diffnet <- function(
     }
 
   } else {
+    if (!skip.moran) {
+      out_list <- list()
+      data_beh_list <- list()
+      for (q in 1:length(object$cumadopt)) {
+        m <- matrix(NA, nrow=length(slices), ncol=4,
+                    dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
 
-    message("Multiple in summary.diffnet -borrar-")
+        for (i in 1:length(slices)) {
 
+          g <- approx_geodesic(object$graph[[slices[i]]], ...)
+          g@x <- 1/g@x
 
+          m[i,] <- unlist(moran(object$cumadopt[[q]][,slices[i]], g))
+        }
+
+        # Computing new adopters, cumadopt and hazard rate
+        ad <- colSums(object$adopt[[q]][,slices,drop=FALSE])
+        ca <- t(cumulative_adopt_count(object$cumadopt[[q]]))[slices,-3, drop=FALSE]
+        hr <- t(hazard_rate(object$cumadopt[[q]], no.plot = TRUE))[slices,,drop=FALSE]
+
+        # Left censoring
+        lc <- sum(object$toa[,q] == meta$pers[1], na.rm = TRUE)
+        rc <- sum(is.na(object$toa[,q]), na.rm=TRUE)
+
+        #data_beh_list[[q]] <- list(ad, ca, hr, lc, rc)
+
+        out <- data.frame(
+          adopt = ad,
+          cum_adopt = ca[,1],
+          cum_adopt_pcent = ca[,2],
+          hazard = hr,
+          density=d
+        )
+
+        if (!skip.moran) {
+          out <- cbind(out, m)
+        }
+
+        if (no.print) return(out)
+
+        out_list[[q]] <- out
+      }
+    }
   }
 
   # Function to print data.frames differently
@@ -283,31 +321,14 @@ summary.diffnet <- function(
       rule,"\n",sep="")
   cat(header,"\n")
   cat(hline, "\n")
-  for (i in 1:nrow(out)) {
-    cat(sprintf(
-      paste0("%",slen,"s", collapse=" "),
-      qf(meta$pers[slices[i]],0), qf(out[i,1],0),
-      sprintf("%s (%s)",
-        qf(out$cum_adopt[i],0),
-        qf(out$cum_adopt_pcent[i])
-        ),
-      ifelse(i==1, "-",qf(out$hazard[i])), qf(out$density[i]),
-      if (!skip.moran) {
-        if (is.nan(out$moran_sd[i]))
-          " - "
-        else
-          sprintf("%s (%s) %-3s",
-                  qf(out$moran_obs[i]),
-                  qf(out$moran_sd[i]),
-                  ifelse(out$moran_pval[i] <= .01, "***",
-                         ifelse(out$moran_pval[i] <= .05, "**",
-                                ifelse(out$moran_pval[i] <= .10, "*", ""
-                              )))
-                )
-      } else ""
-    ), "\n")
-  }
 
+  if (single) {
+    summary_diffnet_out_display(out, slen, meta, slices, qf, skip.moran)
+  } else {
+    for (q in 1:length(object$cumadopt)) {
+      summary_diffnet_out_display(out_list[[q]], slen, meta, slices, qf, skip.moran)
+    }
+  }
 
   # print(out, digits=2)
 
@@ -322,6 +343,32 @@ summary.diffnet <- function(
   )
 
   invisible(out)
+}
+
+summary_diffnet_out_display <- function(out, slen, meta, slices, qf, skip.moran) {
+  for (i in 1:nrow(out)) {
+    cat(sprintf(
+      paste0("%",slen,"s", collapse=" "),
+      qf(meta$pers[slices[i]],0), qf(out[i,1],0),
+      sprintf("%s (%s)",
+              qf(out$cum_adopt[i],0),
+              qf(out$cum_adopt_pcent[i])
+      ),
+      ifelse(i==1, "-",qf(out$hazard[i])), qf(out$density[i]),
+
+      if (!skip.moran) {
+        if (is.nan(out$moran_sd[i])) {" - "}
+        else {sprintf("%s (%s) %-3s",
+                      qf(out$moran_obs[i]),
+                      qf(out$moran_sd[i]),
+                      ifelse(out$moran_pval[i] <= .01, "***",
+                             ifelse(out$moran_pval[i] <= .05, "**",
+                                    ifelse(out$moran_pval[i] <= .10, "*", ""
+                                    )))
+        )}
+      } else {""}
+    ), "\n")
+  }
 }
 
 #' Plot the diffusion process
