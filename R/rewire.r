@@ -234,7 +234,7 @@ rewire_graph <- function(
 
   if (copy.first) {
 
-    warning(
+    message(
       "The option -copy.first- is set to TRUE. In this case, the first graph will be ",
       "treated as a baseline, and thus, networks after T=1 will be replaced with T-1.",
       immediate. = TRUE
@@ -407,7 +407,7 @@ rewire_graph.array <-function(
 #'
 #' Mantel, N. (1967). The detection of disease clustering and a generalized
 #' regression approach. Cancer Research, 27(2), 209–20.
-#' 
+#'
 #' @seealso This function can be used as null distribution in \code{struct_test}
 #' @family simulation functions
 #' @export

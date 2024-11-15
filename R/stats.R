@@ -485,7 +485,7 @@ NULL
       if (normalized) {
         ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
       } else {
-        ans[,q] <- as.vector(graph_slice %*% (attrs * cumadopt[,,q]))
+        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]))
       }
     }
   } else {
