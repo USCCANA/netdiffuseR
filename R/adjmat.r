@@ -462,7 +462,11 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' @keywords manip
 #' @include graph_data.r
 #' @author George G. Vega Yon & Thomas W. Valente
-toa_mat <- function(obj, num_of_behaviors=1, labels=NULL, t0=NULL, t1=NULL) {
+toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
+
+  if (inherits(obj, "matrix")) {
+    num_of_behaviors <- dim(obj)[2]
+  } else {num_of_behaviors <- 1}
 
   if (!inherits(obj, "diffnet")) {
     if (!length(t0)) t0 <- min(obj, na.rm = TRUE)

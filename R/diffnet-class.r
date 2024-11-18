@@ -597,7 +597,7 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   }
 
   # Step 3.1: Creating Time of adoption matrix ---------------------------------
-  mat <- toa_mat(toa, num_of_behaviors, labels = meta$ids, t0=t0, t1=t1)
+  mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
 
