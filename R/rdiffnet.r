@@ -332,6 +332,16 @@ rdiffnet <- function(
   if (!length(exposure.args[["valued"]])) exposure.args[["valued"]] <- getOption("diffnet.valued", FALSE)
   if (!length(exposure.args[["normalized"]])) exposure.args[["normalized"]] <- TRUE
 
+  if (class(exposure.args[["attrs"]])[1] == "matrix") {
+    # Checking if the attrs matrix is has dims n x t
+    if (any(dim(exposure.args[["attrs"]]) != dim(matrix(NA, nrow = n, ncol = t)))) {
+      stop("Incorrect size for -attrs- in rdiffnet. Does not match n dim or t dim.")}
+    attrs_arr <- exposure.args[["attrs"]]
+    if (class(seed.p.adopt) == 'list'){
+      attrs_arr <- array(attrs_arr, dim = c(n, t, length(seed.p.adopt)))
+    } else {attrs_arr <- array(attrs_arr, dim = c(n, t, 1))}
+  }
+
   # Step 0.0: Creating the network seed ----------------------------------------
   # Checking the class of the seed.graph
   sgraph <- rdiffnet_check_seed_graph(seed.graph, rgraph.args, t, n)
@@ -444,6 +454,9 @@ rdiffnet <- function(
   # Step 3.0: Running the simulation -------------------------------------------
 
   for (i in 2:t) {
+    if (exists("attrs_arr")){
+      exposure.args[c("attrs")] <- list(attrs_arr[,i, ,drop=FALSE])
+    }
 
     exposure.args[c("graph", "cumadopt")] <- list(sgraph[i], cumadopt[,i, ,drop=FALSE])
     expo <- do.call(exposure, exposure.args)
