@@ -500,8 +500,7 @@ rdiffnet <- function(
     t1         = t,
     vertex.static.attrs = data.frame(real_threshold=thr),
     name       = name,
-    behavior   = behavior,
-    num_of_behaviors = num_of_behaviors
+    behavior   = behavior
   )
 }
 

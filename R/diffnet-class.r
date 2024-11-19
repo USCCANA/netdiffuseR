@@ -547,8 +547,7 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
                        self       = getOption("diffnet.self"),
                        multiple   = getOption("diffnet.multiple"),
                        name       = "Diffusion Network",
-                       behavior   = "Unspecified",
-                       num_of_behaviors = 1
+                       behavior   = "Unspecified"
                        ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -556,6 +555,12 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
     message("Nothing to do, the graph is already of class \"diffnet\".")
     return(graph)
   }
+
+  # Step 0.1: Setting num_of_behavior ------------------------------------------
+
+  if (inherits(toa, "matrix")) {
+    num_of_behaviors <- dim(toa)[2]
+  } else {num_of_behaviors <- 1}
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
