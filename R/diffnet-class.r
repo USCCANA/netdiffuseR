@@ -638,6 +638,8 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
       # This should be reviewed !! (here the graph becomes 'dynamic')
 
+      warning("here the graph becomes 'dynamic' for multiple")
+
       graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
       meta  <- classify_graph(graph)
     }

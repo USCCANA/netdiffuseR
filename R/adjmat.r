@@ -491,7 +491,6 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
             }
   } else {
     for (q in 1:num_of_behaviors) {
-      #cls <- class(obj[,q])
       ans[[q]] <- if ("matrix" %in% class(obj)) {
               if ("integer" %in% class(obj[,q])){
                 toa_mat.integer(obj[,q], labels, t0, t1)

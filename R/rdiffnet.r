@@ -332,12 +332,12 @@ rdiffnet <- function(
   if (!length(exposure.args[["valued"]])) exposure.args[["valued"]] <- getOption("diffnet.valued", FALSE)
   if (!length(exposure.args[["normalized"]])) exposure.args[["normalized"]] <- TRUE
 
-  if (class(exposure.args[["attrs"]])[1] == "matrix") {
+  if (inherits(exposure.args[["attrs"]], "matrix")) {
     # Checking if the attrs matrix is has dims n x t
     if (any(dim(exposure.args[["attrs"]]) != dim(matrix(NA, nrow = n, ncol = t)))) {
       stop("Incorrect size for -attrs- in rdiffnet. Does not match n dim or t dim.")}
     attrs_arr <- exposure.args[["attrs"]]
-    if (class(seed.p.adopt) == 'list'){
+    if (inherits(seed.p.adopt, "list")){
       attrs_arr <- array(attrs_arr, dim = c(n, t, length(seed.p.adopt)))
     } else {attrs_arr <- array(attrs_arr, dim = c(n, t, 1))}
   }
@@ -511,14 +511,14 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
   # The class of seed.p.adopt determines if is a single or multiple diff pross.
 
-  if (class(seed.p.adopt) == "list") {
+  if (inherits(seed.p.adopt, "list")) {
 
     message(paste("Message: Multi-diffusion behavior simulation selected.",
                   "Number of behaviors: ", length(seed.p.adopt)))
 
     multi <- TRUE
 
-  } else if (class(seed.p.adopt) == "numeric") {
+  } else if (inherits(seed.p.adopt, "numeric")) {
 
     if (length(seed.p.adopt)>1) {
       stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
@@ -539,7 +539,7 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
     # For multi-diff.
 
-    if (class(seed.nodes) == "list") {
+    if (inherits(seed.nodes, "list")) {
       if (length(seed.nodes) != length(seed.p.adopt)) {
         stop("Length of lists -seed.nodes- and -seed.p.adopt- must be the same for multi diffusion.")
       }
@@ -563,12 +563,12 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
       } else {
         stop("All elements of the list seed.nodes must be either -character- or -numeric-.")
       }
-    } else if (class(seed.nodes) == "numeric") {
+    } else if (inherits(seed.nodes, "numeric")) {
       message("Message: Object -seed.nodes- converted to a -list-.",
               "All behaviors will have the same -", seed.nodes, "- seed nodes.")
 
       seed.nodes <- replicate(length(seed.p.adopt), seed.nodes, simplify = FALSE)
-    } else if (class(seed.nodes) == "character") {
+    } else if (inherits(seed.nodes, "character")) {
       if (length(seed.nodes)==length(seed.p.adopt)) {
         seed.nodes <- as.list(seed.nodes)
         message("Message: Object -seed.nodes- converted to a -list-.",
@@ -583,17 +583,17 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
       stop("Unsupported -seed.nodes- value. See the manual for references.")
     }
 
-    if (class(behavior) == "list") {
+    if (inherits(behavior, "list")) {
       if (length(seed.p.adopt)!=length(behavior)) {
         stop("If -behavior- is a list, it must be of the same length as -seed.p.adopt-.")
       }
-    } else if (class(behavior) == "character" && length(behavior) > 1) {
+    } else if (inherits(behavior, "character") && length(behavior) > 1) {
       if (length(behavior) != length(seed.p.adopt)) {
         stop("Mismatch between length(behavior) and length(seed.p.adopt)")
       } else {
         behavior <- as.list(behavior)
       }
-    } else if (class(behavior) == "character" && length(behavior) == 1) {
+    } else if (inherits(behavior, "character") && length(behavior) == 1) {
       message(paste("Message: Name of 1 behavior provided, but", length(seed.p.adopt), "are needed. "),
               "Names generalized to 'behavior'_1, 'behavior'_2, etc.")
       behaviors <- list()
@@ -609,7 +609,7 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
     # For Single-diff.
 
-    if (length(seed.nodes) == 1 && class(seed.nodes)=="character") {
+    if (length(seed.nodes) == 1 && inherits(seed.nodes, "character")) {
 
       if (!seed.nodes %in% c("marginal", "central", "random")) {
         stop("Object -seed.nodes- is a -character- different from 'marginal', 'central', or 'random'.")

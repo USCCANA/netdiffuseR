@@ -11,18 +11,18 @@ test_that(
   behavior <- c("random behavior")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
 
-  class(rdiffnet_args$seed.p.adopt) == "list"
-  class(rdiffnet_args$seed.nodes) == "list"
-  class(rdiffnet_args$behavior) == "list"
+  expect_type(rdiffnet_args$seed.p.adopt, "list")
+  expect_type(rdiffnet_args$seed.nodes, "list")
+  expect_type(rdiffnet_args$behavior, "list")
 
   seed.p.adopt <- 0.14
   seed.nodes <- 'random'
   behavior <- "random behavior"
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
 
-  class(rdiffnet_args$seed.p.adopt) == "list"
-  class(rdiffnet_args$seed.nodes) == "list"
-  class(rdiffnet_args$behavior) == "list"
+  expect_type(rdiffnet_args$seed.p.adopt, "list")
+  expect_type(rdiffnet_args$seed.nodes, "list")
+  expect_type(rdiffnet_args$behavior, "list")
 
   # Must show ERROR
 
@@ -104,40 +104,42 @@ test_that("Multi diff models rdiff args work", {
   seed.nodes <- "random"
   behavior <- "random behavior"
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$seed.p.adopt, "list")
+  expect_type(rdiffnet_args$seed.nodes, "list")
+  expect_type(rdiffnet_args$behavior, "list")
 
   seed.nodes <- c(1,3,5)
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$seed.nodes, "list")
 
   seed.nodes <- c('marginal',"central")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$seed.nodes, "list")
 
-  seed.p.adopt <- list(0.14,0.05)
-  seed.nodes <- list('random', "central")
   behavior <- list("random behavior_1", "random behavior_2")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  class(rdiffnet_args$seed.p.adopt) == "list"
-  class(rdiffnet_args$seed.nodes) == "list"
-  class(rdiffnet_args$behavior) == "list"
+  expect_type(rdiffnet_args$behavior, "list")
 
   behavior <- c("random behavior_1", "random behavior_2")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  class(rdiffnet_args$behavior) == "list"
+  expect_type(rdiffnet_args$behavior, "list")
 
   behavior <- "random behavior" #Default
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  class(rdiffnet_args$behavior) == "list"
+  expect_type(rdiffnet_args$behavior, "list")
+
+  behavior <- c("random behavior_1")
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$behavior, "list")
 
   seed.nodes <- c(1,3,5)
   behavior <- list("random behavior_1", "random behavior_2")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  class(rdiffnet_args$seed.nodes) == 'list'
+  expect_type(rdiffnet_args$seed.nodes, "list")
 
   seed.nodes <- list('marginal',"central")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  class(rdiffnet_args$seed.nodes) == 'list'
-
-  behavior <- c("random behavior_1")
-  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$seed.nodes, "list")
 
   # Must show ERROR
 

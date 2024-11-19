@@ -95,7 +95,7 @@ print.diffnet <- function(x, ...) {
                      ifelse(meta$n>8, ", ...", "") ,")")
 
     # Computing prevalence for multi-diff
-    single <- class(cumadopt)[1]!='list'
+    single <- !inherits(cumadopt, "list")
     if (!single) {
       prevalence_all <- character(length(cumadopt))
       for (q in 1:length(cumadopt)) {
@@ -214,7 +214,7 @@ summary.diffnet <- function(
   }))
 
   # identify single-diff from multi-diff
-  single <- class(object$cumadopt)[1]!='list'
+  single <- !inherits(object$cumadopt, "list")
 
   # Computing moran's I
   if (single) {
