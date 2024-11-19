@@ -466,6 +466,10 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
   if (inherits(obj, "matrix")) {
     num_of_behaviors <- dim(obj)[2]
+  } else if (inherits(obj, "diffnet")){
+    if (inherits(obj$toa, "matrix")) {
+      num_of_behaviors <- dim(obj$toa)[2]}
+    else {num_of_behaviors <- 1}
   } else {num_of_behaviors <- 1}
 
   if (!inherits(obj, "diffnet")) {
@@ -487,13 +491,13 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
             }
   } else {
     for (q in 1:num_of_behaviors) {
-      cls <- class(obj[,q])
-      ans[[q]] <- if ("numeric" %in% cls) { # Why included?
+      #cls <- class(obj[,q])
+      ans[[q]] <- if ("numeric" %in% class(obj[,q])) { # Why included?
               toa_mat.numeric(obj[,q], labels, t0, t1)
-            } else if ("integer" %in% cls) {
+            } else if ("integer" %in% class(obj[,q])) {
               toa_mat.integer(obj[,q], labels, t0, t1)
-            } else if  ("diffnet" %in% cls) { # Why included?
-              with(obj[,q], list(adopt=adopt,cumadopt=cumadopt))
+            } else if  ("diffnet" %in% class(obj)) { # Why included?
+              with(obj, list(adopt=adopt[[q]],cumadopt=cumadopt[[q]]))
             } else {
               stopifnot_graph(obj[,q])
             }
