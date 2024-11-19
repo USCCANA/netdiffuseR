@@ -492,10 +492,12 @@ toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
   } else {
     for (q in 1:num_of_behaviors) {
       #cls <- class(obj[,q])
-      ans[[q]] <- if ("numeric" %in% class(obj[,q])) { # Why included?
-              toa_mat.numeric(obj[,q], labels, t0, t1)
-            } else if ("integer" %in% class(obj[,q])) {
-              toa_mat.integer(obj[,q], labels, t0, t1)
+      ans[[q]] <- if ("matrix" %in% class(obj)) {
+              if ("integer" %in% class(obj[,q])){
+                toa_mat.integer(obj[,q], labels, t0, t1)
+              } else if ("numeric" %in% class(obj[,q])) { # Why included?
+                toa_mat.numeric(obj[,q], labels, t0, t1)
+              }
             } else if  ("diffnet" %in% class(obj)) { # Why included?
               with(obj, list(adopt=adopt[[q]],cumadopt=cumadopt[[q]]))
             } else {

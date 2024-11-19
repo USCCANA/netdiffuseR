@@ -146,6 +146,69 @@ test_that("Checking toa_mat output", {
 })
 
 ################################################################################
+# Time of adoption (multiple)
+################################################################################
+context("Time of Adoption -multiple- (toa_mat, toa_dif)")
+
+times_1 <- c(2001L, 2004L, 2003L, 2008L)
+times_2 <- c(2001L, 2005L, 2006L, 2008L)
+times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+graph <- lapply(2001:2008, function(x) rgraph_er(4))
+diffnet <- new_diffnet(graph, times)
+#toa_mat(diffnet)
+toa <- toa_mat(times)
+
+test_that("Should warn about -times- not been integer. -multiple-.", {
+  times_1 <- as.numeric(c(2001L, 2004L, 2003L, 2008L))
+  times_2 <- as.numeric(c(2001L, 2002L, 2003L, 2005L))
+  times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+  expect_warning(toa_mat(times), "will be coersed to integer")
+})
+
+test_that("Dimensions of TOA mat should be ok. -multiple-.", {
+  for (q in 1:length(toa)) {
+    cumadopt <- t(apply(toa[[q]]$adopt, 1, cumsum))
+    expect_equal(dim(toa[[q]]$adopt), c(4, length(min(times[,q]):max(times[,q]))))
+    expect_equal(dim(toa[[q]]$adopt), dim(toa[[q]]$cumadopt), info = "adopt and cumadopt are equal dim")
+    expect_equal(t(apply(toa[[q]]$adopt, 1, cumsum)), toa[[q]]$cumadopt, info = "cumadopt is the cumsum")
+  }
+})
+
+test_that("Passing labels should work. -multiple-.", {
+  for (q in 1:length(toa)) {
+    labs <- letters[1:length(times[,q])]
+    toa_q <- toa_mat(times[,q], labels=labs)
+    expect_equal(rownames(toa_q$adopt), labs)
+    expect_equal(rownames(toa_q$cumadopt), labs)
+  }
+})
+
+# test_that("In toa_diff, its dim should be equal to the input mat. -multiple-.", {
+#   expect_equal(dim(toa_diff(times)), c(4,4))
+#   expect_equal(dim(toa_diff(as.integer(times))), c(4,4))
+#   expect_equal(toa_diff(times), toa_diff(as.integer(times)))
+# })
+
+test_that("Checking toa_mat output. -multiple-.", {
+
+  # Manual calc
+  mat <- matrix(0, nrow=4, ncol=8)
+  mat <- array(rep(mat,2), dim = c(nrow(mat), ncol(mat), 2))
+  dimnames(mat) <- list(1:4, 2001:2008)
+  amat_tot <- list()
+  for (q in 1:dim(mat)[3]) {
+    amat <- list(adopt=mat[,,q], cumadopt=mat[,,q])
+    for (i in 1:4) {
+      amat$adopt[i,times[i,q] - 2000] <- 1
+      amat$cumadopt[i,] <- cumsum(amat$adopt[i,])
+    }
+    amat_tot[[q]] <- amat
+  }
+
+  expect_equal(amat_tot, toa_mat(diffnet))
+})
+
+################################################################################
 # Isolated
 ################################################################################
 context("Isolated vertices (isolated, drop_isolated)")
