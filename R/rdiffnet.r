@@ -490,7 +490,9 @@ rdiffnet <- function(
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  if (num_of_behaviors==1) {toa <- as.integer(toa)}
+  if (num_of_behaviors==1) {
+    toa <- as.integer(toa)
+    }
 
   new_diffnet(
     graph      = sgraph,

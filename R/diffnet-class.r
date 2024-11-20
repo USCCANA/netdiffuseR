@@ -577,7 +577,7 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
                                        " respectively). ", "-toa- should be of length n (number of vertices).") }
   }
 
-  # Step 2.1: Checking class of TOA and coercing if necesary -------------------
+  # Step 2.1: Checking class of TOA and coercing if necessary -------------------
   if (num_of_behaviors==1) {
     if (!inherits(toa, "integer")) {
       warning("Coercing -toa- into integer.")
@@ -635,11 +635,6 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
              "Please provide lower and upper boundaries for the values in -toa- ",
              "using -t0- and -t- (see ?toa_mat).")
     } else {
-
-      # This should be reviewed !! (here the graph becomes 'dynamic')
-
-      warning("here the graph becomes 'dynamic' for multiple")
-
       graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
       meta  <- classify_graph(graph)
     }
@@ -683,7 +678,7 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
   # Removing dimnames
   graph                  <- Map(function(x) Matrix::unname(x), x=graph)
-  dimnames(toa)          <- NULL
+  #dimnames(toa)          <- NULL
 
   if (num_of_behaviors==1) {
     meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
