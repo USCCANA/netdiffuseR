@@ -608,27 +608,27 @@ toa_diff <- function(obj, t0=NULL, labels=NULL) {
   } else {
     t0 <- obj$meta$pers[1]}
 
-  # setting num_of_behavior and making lists for multi-diff
-  if (inherits(obj, "matrix")) { #multiple
+  # determining num_of_behavior and prepare for multi-diffusion
+  num_of_behavior <- 1
+  multiple <- FALSE
+
+  if (inherits(obj, "matrix")) { # multiple
     num_of_behavior <- ncol(obj)
     obj <- lapply(asplit(obj, MARGIN = 2), as.integer)
     multiple <- TRUE
-  } else if (inherits(obj, "diffnet")){
-    if (inherits(obj$toa, "matrix")) {#multiple
+  } else if (inherits(obj, "diffnet")) {
+    if (inherits(obj$toa, "matrix")) { # multiple
       num_of_behavior <- ncol(obj$toa)
       obj <- split_behaviors(obj)
-      multiple <- TRUE} else {multiple <- FALSE}
-  } else {num_of_behavior <- 1; multiple <- FALSE}
+      multiple <- TRUE
+    }
+  }
 
   if (multiple) {
-    out_list <- list()
-    for (q in 1:num_of_behavior) {
-      out_list[[q]] <- toa_diff.unique(obj[[q]], t0)
-    }
+    out_list <- lapply(seq_len(num_of_behavior), function(q) toa_diff.unique(obj[[q]], t0))
     return(out_list)
   } else {
-    out <- toa_diff.unique(obj, t0)
-    return(out)
+    return(toa_diff.unique(obj, t0))
   }
 }
 
