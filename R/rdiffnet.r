@@ -510,27 +510,19 @@ rdiffnet <- function(
 rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
   # seed.p.adopt stuff
-
   # The class of seed.p.adopt determines if is a single or multiple diff pross.
 
   if (inherits(seed.p.adopt, "list")) {
-
     message(paste("Message: Multi-diffusion behavior simulation selected.",
                   "Number of behaviors: ", length(seed.p.adopt)))
-
     multi <- TRUE
-
   } else if (inherits(seed.p.adopt, "numeric")) {
-
     if (length(seed.p.adopt)>1) {
       stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
                  ", but for multi-diffusion -seed.p.adopt- must be a -list-."))
     }
-
     multi <- FALSE
-
   } else {
-
     stop("The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
          "or a -list- (multiple behavior diff).")
   }
@@ -545,23 +537,17 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
       if (length(seed.nodes) != length(seed.p.adopt)) {
         stop("Length of lists -seed.nodes- and -seed.p.adopt- must be the same for multi diffusion.")
       }
-
       if (all(sapply(seed.nodes, is.character))) {
-
         if (any(!seed.nodes %in% c("marginal", "central", "random"))) {
           stop("Some element in list -seed.nodes- is a -character- different from 'marginal', 'central', or 'random'.")
         }
-
       } else if (all(sapply(seed.nodes, is.numeric))) {
-
         if (any(sapply(seed.nodes, is.null))) {
           stop("There is a NULL -numeric- element")
         }
-
         if (any(sapply(seed.nodes, function(x) any(x != round(x))))) {
           stop("Some value in the elements of the list -seed.nodes- is non-integer.")
         }
-
       } else {
         stop("All elements of the list seed.nodes must be either -character- or -numeric-.")
       }
@@ -576,7 +562,6 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
         message("Message: Object -seed.nodes- converted to a -list-.",
                 "For example, the first behavior has seed -", seed.nodes[[1]], "-, the second has -", seed.nodes[[2]], "-, etc.")
       } else {
-
       message("Message: Object -seed.nodes- converted to a -list-.",
               "All behaviors will have the same -", seed.nodes, "- seed nodes.")
       seed.nodes <- replicate(length(seed.p.adopt), seed.nodes, simplify = FALSE)
@@ -599,11 +584,9 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
       message(paste("Message: Name of 1 behavior provided, but", length(seed.p.adopt), "are needed. "),
               "Names generalized to 'behavior'_1, 'behavior'_2, etc.")
       behaviors <- list()
-
       for (i in seq_along(seed.p.adopt)) {
         behaviors[[i]] <- paste(behavior, i, sep = "_")
       }
-
       behavior <- behaviors
     }
 
@@ -612,21 +595,16 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
     # For Single-diff.
 
     if (length(seed.nodes) == 1 && inherits(seed.nodes, "character")) {
-
       if (!seed.nodes %in% c("marginal", "central", "random")) {
         stop("Object -seed.nodes- is a -character- different from 'marginal', 'central', or 'random'.")
       }
-
     } else if (!inherits(seed.nodes, "character")) {
-
       if (any(sapply(seed.nodes, function(x) any(x != round(x))))) {
         stop("Some value in the elements of the list -seed.nodes- is non-integer.")
       }
-
     } else {
       stop("Unsupported -seed.nodes- value. See the manual for references.")
     }
-
     if (length(behavior)>1) {
       stop("More names were provided than necessary.")
     }
@@ -643,3 +621,22 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
     num_of_behaviors = length(seed.p.adopt)
   )
 }
+
+split_behaviors <- function(diffnet_obj) {
+
+  # creates a list, keeping the structure of each element
+  diffnets <- replicate(ncol(diffnet_obj$toa), diffnet_obj, simplify = FALSE)
+
+  # loop over the behaviors
+  for (q in 1:ncol(diffnet_obj$toa)) {
+    diffnets[[q]]$toa <- as.integer(diffnet_obj$toa[, q, drop = FALSE])
+    names(diffnets[[q]]$toa) <- rownames(diffnet_obj$toa)
+
+    diffnets[[q]]$adopt <- diffnet_obj$adopt[[q]]
+
+    diffnets[[q]]$cumadopt <- diffnet_obj$cumadopt[[q]]
+  }
+
+  return(diffnets)
+}
+

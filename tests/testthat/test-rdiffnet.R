@@ -156,6 +156,29 @@ test_that("All should be equal! (multiple)", {
   expect_equal(net1, net2)
 })
 
+test_that("toa, adopt, and cumadopt should be equal! (split_behaviors tests)", {
+  set.seed(12131)
+  n            <- 50
+  t            <- 5
+  graph        <- rgraph_ws(n, 4, p=.3)
+  seed.nodes   <- c(1,5,7,10)
+  thr          <- runif(n, .2,.4)
+
+  # Generating identical networks
+  net_single <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = 0.1,
+                         t = t, rewire = FALSE, threshold.dist = thr)
+
+  net_multiple <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = list(0.1, 0.1),
+                           t = t, rewire = FALSE, threshold.dist = thr)
+
+  net_single_from_multiple <- split_behaviors(net_multiple)
+  net_single_from_multiple_1 <- net_single_from_multiple[[1]]
+
+  expect_equal(net_single_from_multiple_1$toa, net_single$toa) # Error: names for current but not for target
+  expect_equal(net_single_from_multiple_1$adopt, net_single$adopt)
+  expect_equal(net_single_from_multiple_1$cumadopt, net_single$cumadopt)
+})
+
 
 #rdiffnet(100, 5, seed.p.adopt = 0.9, threshold.dist = 2, exposure.args = list(normalized=FALSE))
 

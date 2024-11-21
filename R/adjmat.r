@@ -603,11 +603,84 @@ toa_mat.integer <- function(times, labels=NULL,
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)
-  if (!inherits(obj, "diffnet") && !length(t0))
+  if (!inherits(obj, "diffnet") && !length(t0)){
     t0 <- as.integer(min(obj, na.rm = TRUE))
-  else
-    t0 <- obj$meta$pers[1]
+  } else {
+    t0 <- obj$meta$pers[1]}
 
+  # setting num_of_behavior and making lists for multi-diff
+  if (inherits(obj, "matrix")) { #multiple
+    num_of_behavior <- ncol(obj)
+    obj <- lapply(asplit(obj, MARGIN = 2), as.integer)
+    multiple <- TRUE
+  } else if (inherits(obj, "diffnet")){
+    if (inherits(obj$toa, "matrix")) {#multiple
+      num_of_behavior <- ncol(obj$toa)
+      obj <- split_behaviors(obj)
+      multiple <- TRUE} else {multiple <- FALSE}
+  } else {num_of_behavior <- 1; multiple <- FALSE}
+
+  if (multiple) {
+    out_list <- list()
+    for (q in 1:num_of_behavior) {
+      out_list[[q]] <- toa_diff.unique(obj[[q]], t0)
+    }
+    return(out_list)
+  } else {
+    out <- toa_diff.unique(obj, t0)
+    return(out)
+  }
+}
+
+#
+#
+#   if (multiple) {
+#     for (q in 1:ncol(obj$toa)) {
+#
+#
+#       # Calculating t0 (if it was not provided)
+#       if (!inherits(obj, "diffnet") && !length(t0)) {
+#         t0 <- as.integer(min(obj[,q], na.rm = TRUE))
+#       } else {
+#         t0 <- obj$meta$pers[1]}
+#
+#       # Computing the difference
+#       if (inherits(obj, "integer")) {
+#         out <- toa_diff_cpp(obj - t0 + 1L)
+#       } else if (inherits(obj, "numeric")) {
+#         warning("coercing -obj- to integer.")
+#         out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
+#       } else if (inherits(obj, "diffnet")) {
+#         out <- toa_diff_cpp(obj$toa - t0 + 1L)
+#       } else stop("No method defined for class -",class(obj),"-")
+#
+#       out
+#
+#     }
+#
+#
+#   } else {
+#     # Calculating t0 (if it was not provided)
+#     if (!inherits(obj, "diffnet") && !length(t0))
+#       t0 <- as.integer(min(obj, na.rm = TRUE))
+#     else
+#       t0 <- obj$meta$pers[1]
+#
+#     # Computing the difference
+#     if (inherits(obj, "integer")) {
+#       out <- toa_diff_cpp(obj - t0 + 1L)
+#     } else if (inherits(obj, "numeric")) {
+#       warning("coercing -obj- to integer.")
+#       out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
+#     } else if (inherits(obj, "diffnet")) {
+#       out <- toa_diff_cpp(obj$toa - t0 + 1L)
+#     } else stop("No method defined for class -",class(obj),"-")
+#
+#     return(out)
+#   }
+# }
+
+toa_diff.unique <- function(obj, t0) {
   # Computing the difference
   if (inherits(obj, "integer")) {
     out <- toa_diff_cpp(obj - t0 + 1L)
@@ -618,7 +691,7 @@ toa_diff <- function(obj, t0=NULL, labels=NULL) {
     out <- toa_diff_cpp(obj$toa - t0 + 1L)
   } else stop("No method defined for class -",class(obj),"-")
 
-  out
+  return(out)
 }
 
 # @rdname toa_diff
