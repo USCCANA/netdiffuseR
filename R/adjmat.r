@@ -464,29 +464,59 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' @author George G. Vega Yon & Thomas W. Valente
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
+  if (inherits(obj, "matrix")) {
+    num_of_behaviors <- dim(obj)[2]
+  } else if (inherits(obj, "diffnet")){
+    if (inherits(obj$toa, "matrix")) {
+      num_of_behaviors <- dim(obj$toa)[2]}
+    else {num_of_behaviors <- 1}
+  } else {num_of_behaviors <- 1}
+
   if (!inherits(obj, "diffnet")) {
     if (!length(t0)) t0 <- min(obj, na.rm = TRUE)
     if (!length(t1)) t1 <- max(obj, na.rm = TRUE)
   }
 
-  cls <- class(obj)
-  ans <- if ("numeric" %in% cls) {
-    toa_mat.numeric(obj, labels, t0, t1)
-    } else if ("integer" %in% cls) {
-    toa_mat.integer(obj, labels, t0, t1)
-    } else if  ("diffnet" %in% cls) {
-    with(obj, list(adopt=adopt,cumadopt=cumadopt))
-    } else
-      stopifnot_graph(obj)
-
-
-  if (inherits(obj, "diffnet")) {
-    dimnames(ans$adopt) <- with(obj$meta, list(ids,pers))
-    dimnames(ans$cumadopt) <- with(obj$meta, list(ids,pers))
+  ans <- list()
+  if (num_of_behaviors == 1) {
+    cls <- class(obj)
+    ans[[1]] <- if ("numeric" %in% cls) {
+            toa_mat.numeric(obj, labels, t0, t1)
+            } else if ("integer" %in% cls) {
+            toa_mat.integer(obj, labels, t0, t1)
+            } else if  ("diffnet" %in% cls) {
+            with(obj, list(adopt=adopt,cumadopt=cumadopt))
+            } else {
+              stopifnot_graph(obj)
+            }
+  } else {
+    for (q in 1:num_of_behaviors) {
+      ans[[q]] <- if ("matrix" %in% class(obj)) {
+              if ("integer" %in% class(obj[,q])){
+                toa_mat.integer(obj[,q], labels, t0, t1)
+              } else if ("numeric" %in% class(obj[,q])) { # Why included?
+                toa_mat.numeric(obj[,q], labels, t0, t1)
+              }
+            } else if  ("diffnet" %in% class(obj)) { # Why included?
+              with(obj, list(adopt=adopt[[q]],cumadopt=cumadopt[[q]]))
+            } else {
+              stopifnot_graph(obj[,q])
+            }
+    }
   }
 
+  for (q in 1:num_of_behaviors) {
+    if (inherits(obj, "diffnet")) {
+      dimnames(ans[[q]]$adopt) <- with(obj$meta, list(ids,pers))
+      dimnames(ans[[q]]$cumadopt) <- with(obj$meta, list(ids,pers))
+    }
+  }
 
-  return(ans)
+  if (num_of_behaviors==1) {
+    return(ans[[1]])
+  } else {
+    return(ans)
+  }
 }
 
 toa_mat.default <- function(per, t0, t1) {

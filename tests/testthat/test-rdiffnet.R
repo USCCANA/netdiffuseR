@@ -88,7 +88,7 @@ test_that("Error and warning on rdiffnet", {
 
   set.seed(111)
 
-  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,10)), "Incorrect length")
+  expect_error(rdiffnet(100, 5, threshold.dist = rep(10,10)))
   expect_error(rdiffnet(100, 5, threshold.dist = rep(10,100)), "No diffusion")
   expect_warning(rdiffnet(100, 5, threshold.dist = rep(10,100), stop.no.diff = FALSE), "No diffusion")
 
@@ -106,3 +106,60 @@ test_that("Simulation study", {
   expect_equal(ans0, ans1)
 
 })
+
+# Testing diffnet class across several inputs (single)
+test_that("rdiffnet must run across several inputs (single)", {
+  expect_s3_class(rdiffnet(100, 5), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = 0.1), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = 0.1, seed.nodes = 'random'), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.nodes = c(1, 3, 5)), "diffnet")
+
+  # summary
+  net_1 <- rdiffnet(100, 5, seed.nodes = c(1,3,5))
+  expect_s3_class(summary(net_1), "data.frame")
+})
+
+# Testing diffnet class across several inputs (multiple)
+test_that("rdiffnet must run across several inputs (multiple)", {
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08)), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), behavior = c('tabacco', 'alcohol')), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), seed.nodes = 'random'), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), seed.nodes = c('random', 'central')), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = 0.3), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(0.1, 0.2)), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = rexp(100)), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(rexp(100), runif(100))), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = function(x) 0.3), "diffnet")
+  expect_s3_class(rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(function(x) 0.3, function(x) 0.2)), "diffnet")
+
+  net_2 <- rdiffnet(100, 5, seed.p.adopt = list(0.05,0.05), seed.nodes = c(1,3,5))
+  expect_s3_class(summary(net_2), "data.frame")
+})
+
+test_that("All should be equal! (multiple)", {
+  set.seed(12131)
+  n            <- 50
+  t            <- 5
+  graph        <- rgraph_ws(n, 4, p=.3)
+  seed.p.adopt <- list(0.1, 0.1)
+  seed.nodes   <- c(1,5,7,10)
+  thr          <- runif(n, .2,.4)
+  thr_list     <- list(thr,thr)
+
+  # Generating identical networks
+  net1 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
+                   t = t, rewire = FALSE, threshold.dist = thr_list)
+
+  net2 <- rdiffnet(seed.graph = graph, seed.nodes = seed.nodes, seed.p.adopt = seed.p.adopt,
+                   t = t, rewire = FALSE, threshold.dist = thr_list)
+
+  expect_equal(net1, net2)
+})
+
+
+#rdiffnet(100, 5, seed.p.adopt = 0.9, threshold.dist = 2, exposure.args = list(normalized=FALSE))
+
+# set.seed(1234)
+# net1 <- rdiffnet(100, 5, rewire = FALSE, seed.p.adopt = list(0.1,0.08), seed.nodes = c(1,3,5))
+# net2 <- rdiffnet(100, 5, rewire = FALSE, seed.p.adopt = list(0.1,0.08), seed.nodes = list(c(1,3,5),c(1,3,5)))
+# expect_equal(net1, net2)

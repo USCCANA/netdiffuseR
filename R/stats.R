@@ -485,7 +485,7 @@ NULL
       if (normalized) {
         ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
       } else {
-        ans[,q] <- as.vector(graph_slice %*% (attrs * cumadopt[,,q]))
+        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]))
       }
     }
   } else {
@@ -566,7 +566,11 @@ exposure <- function(
 
   # Checking attrs
   if (!length(attrs)) {
-    attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))
+    if (!is.na(dim(cumadopt)[3])) {
+    attrs <- array(1, dim = c(nrow(cumadopt), ncol(cumadopt), 1))}
+    else {attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))}
+  } else if (!is.na(dim(cumadopt)[3])) {
+    attrs <- array(attrs, dim = c(nrow(attrs), ncol(attrs), 1))
   }
 
   # Checking alt graph
@@ -626,20 +630,18 @@ exposure.list <- function(
   #  degree, indegree, outdegree, or a user defined vector.
   #  by default is user equal to 1
 
-  dim_attrs <- dim(attrs) # default n x T matrix of 1's
-  if (!length(dim_attrs)) stop("-attrs- must be a matrix of size n by T.")
+  # dim(attrs) default n x T matrix of 1's
+  if (!length(dim(attrs))) stop("-attrs- must be a matrix of size n by T.")
 
   if (!is.na(dim(cumadopt)[3])) {
-    attrs_mul <- array(rep(attrs, dim(cumadopt)[3]), dim = c(dim_attrs, dim(cumadopt)[3]))
-    dim_attrs <- dim(attrs_mul) # now n x T x q array of 1's, q behaviors
-    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+    if (dim(cumadopt)[3]>1 && any(dim(attrs)[-3] != dim(cumadopt)[-3])) stop("Incorrect size for -attrs-. ",
                                               "Does not match n dim or t dim.")
   } else {
-    if (any(dim_attrs != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
+    if (any(dim(attrs) != dim(cumadopt))) stop("Incorrect size for -attrs-. ",
                                               "It must be of size that -cumadopt-.")
   }
-
   add_dimnames.mat(cumadopt)
+  add_dimnames.mat(attrs)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
                          self, lags)
@@ -667,7 +669,7 @@ exposure_for <- function(
       for (i in 1:(nslices(graph) - lags)) {
         out[, i + lags, ] <- .exposure(graph[[i]],
                                        cumadopt[, i, , drop = FALSE],
-                                       attrs[, i, drop = FALSE],
+                                       attrs[, i, , drop = FALSE],
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
@@ -677,7 +679,7 @@ exposure_for <- function(
       for (i in (1 - lags):nslices(graph)) {
         out[, i + lags, ] <- .exposure(graph[[i]],
                                        cumadopt[, i, , drop = FALSE],
-                                       attrs[, i, drop = FALSE],
+                                       attrs[, i, , drop = FALSE],
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
