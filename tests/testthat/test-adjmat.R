@@ -154,8 +154,8 @@ context("Time of Adoption -multiple- (toa_mat, toa_dif)")
 times_1 <- c(2001L, 2004L, 2003L, 2008L)
 times_2 <- c(2001L, 2005L, 2006L, 2008L)
 times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
-
 toa <- toa_mat(times)
+
 
 test_that("Dimensions of TOA mat should be ok. -multiple-.", {
   for (q in 1:length(toa)) {
@@ -174,7 +174,6 @@ test_that("Passing labels should work. -multiple-.", {
     expect_equal(rownames(toa_q$cumadopt), labs)
   }
 })
-
 graph <- lapply(2001:2008, function(x) rgraph_er(4))
 diffnet <- new_diffnet(graph, times)
 
@@ -185,6 +184,7 @@ test_that("In toa_diff, its dim should be equal to the input mat. -multiple-.", 
   expect_equal(dim(toa_diff(diffnet)[[1]]), c(4,4))
   expect_equal(toa_diff(times), toa_diff(diffnet))
 })
+
 
 test_that("Checking toa_mat output. -multiple-.", {
 

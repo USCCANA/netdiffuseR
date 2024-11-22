@@ -156,6 +156,7 @@ test_that("All should be equal! (multiple)", {
   expect_equal(net1, net2)
 })
 
+
 test_that("toa, adopt, and cumadopt should be equal! (split_behaviors tests)", {
   set.seed(12131)
   n            <- 50

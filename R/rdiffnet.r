@@ -384,7 +384,6 @@ rdiffnet <- function(
   # Step 1.0: Setting the seed nodes -----------------------------------------
 
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-
   seed.p.adopt <- rdiffnet_args$seed.p.adopt
   seed.nodes <- rdiffnet_args$seed.nodes
   behavior <- rdiffnet_args$behavior
@@ -407,7 +406,6 @@ rdiffnet <- function(
   }
 
   # Step 1.2: finding the nodes
-
   d <- list()
 
   if (all(sapply(seed.nodes, is.character))) { # "central", "marginal", or "random"
@@ -438,7 +436,6 @@ rdiffnet <- function(
   }
 
   # Step 1.3: Defining cumadopt and toa (time of adoption) --------------------
-
   cumadopt <- array(0L, dim = c(n, t, num_of_behaviors))
 
   toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
@@ -506,7 +503,6 @@ rdiffnet <- function(
   )
 }
 
-
 rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
   # seed.p.adopt stuff
@@ -517,12 +513,15 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
                   "Number of behaviors: ", length(seed.p.adopt)))
     multi <- TRUE
   } else if (inherits(seed.p.adopt, "numeric")) {
+
     if (length(seed.p.adopt)>1) {
       stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
                  ", but for multi-diffusion -seed.p.adopt- must be a -list-."))
     }
+
     multi <- FALSE
   } else {
+
     stop("The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
          "or a -list- (multiple behavior diff).")
   }
@@ -640,3 +639,11 @@ split_behaviors <- function(diffnet_obj) {
   return(diffnets)
 }
 
+
+  list(
+    seed.p.adopt = seed.p.adopt,
+    seed.nodes = seed.nodes,
+    behavior = behavior,
+    num_of_behaviors = length(seed.p.adopt)
+  )
+}
