@@ -320,7 +320,8 @@ rdiffnet <- function(
     exposure.args  = list(),
     name           = "A diffusion network",
     behavior       = "Random contagion",
-    stop.no.diff   = TRUE
+    stop.no.diff   = TRUE,
+    disadopt       = NULL
   ) {
 
   # Checking options
@@ -451,6 +452,8 @@ rdiffnet <- function(
   # Step 3.0: Running the simulation -------------------------------------------
 
   for (i in 2:t) {
+
+    # 3.1 Computing exposure
     if (exists("attrs_arr")){
       exposure.args[c("attrs")] <- list(attrs_arr[,i, ,drop=FALSE])
     }
@@ -460,14 +463,29 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
+      # 3.2 Identifying who adopts based on the threshold
       whoadopts <- which( (expo[,,q] >= thr[,q]) )
-      cumadopt[whoadopts, i:t, q] <- 1L
-                                                        # ADD SOMETHING TO DISADOPT
 
+      # 3.3 Updating the cumadopt
+      cumadopt[whoadopts, i:t, q] <- 1L
+
+      # 3.4` Updating the toa
+      # toa[cbind(whoadopts, q)] <- t
       toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
         first_adopt <- which(x == 1)
         if (length(first_adopt) > 0) first_adopt[1] else NA
       })
+
+    }
+
+    if (length(disadopt)) {
+
+      # Run the disadoption algorithm. This will return the following:
+      # - The updated cupadopt
+      # - A vector of who disadopted
+      # - A list of the same length of what was disadopted.
+      disadopt_res <- disadopt(expo, cupadopt, t)
+
 
     }
   }
