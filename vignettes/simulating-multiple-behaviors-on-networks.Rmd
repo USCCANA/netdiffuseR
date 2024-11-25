@@ -1,0 +1,125 @@
+---
+title: "Simulating Multiple Behaviors on Networks"
+author: "Aníbal Olivera M."
+date: "2024-11-21"
+output: html_document
+---
+
+\tableofcontents
+
+News for  __netdiffuseR__ package.
+```{r loading, message=FALSE, warning=FALSE}
+
+#devtools::install_github("USCCANA/netdiffuseR", ref = "47-split-behaviors-rdiffnet")
+library(netdiffuseR)
+```
+
+# Introduction
+
+- Social networks facilitate the spread of news, gossip, behaviors, and products.
+  Granovetter specified a simple and intuitive mechanism that underpins much of the research on social       network diffusion: individuals adopt a behavior if enough others do so. 
+- More specifically, in an interacting population of individuals where a behavior is spreading, each individual   has a particular “threshold” and adopts the behavior if the proportion of others who have already adopted the   behavior exceeds the threshold.
+- However, adoption booms are commonly followed by periods of bust—riots come to an end, new fashions
+  go out of style, and juicy gossip turns to stale news. 
+- So the adoption of a fashion is followed by the disadoption of that fashion by a new one. 
+- This dynamic requires being able to handle more than one 'propagation' at a time.
+- Until now, __netdiffuseR__ was not able to simulate more than one diffusion in the same setup.
+
+# How rdiffnet works until now
+
+Show diagram
+
+```{r, echo=FALSE, out.width="50%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-single-1.png")
+```
+
+# How rdiffnet works from now
+
+```{r, echo=FALSE, out.width="50%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-multiple-1.png")
+```
+
+# What are the inputs to rdiffnet_validate_args
+
+```{r, echo=FALSE, out.width="50%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/table_1.png")
+```
+
+# Exposure()
+
+- Exposure for multiple behaviors:
+```{r}
+set.seed(12131)
+g    <- rgraph_ws(20, 4, p=.3)
+set0 <- c(1,5,7,10)
+thr  <- runif(20, .4,.7)
+
+diffnet <- rdiffnet(seed.graph = g, seed.nodes = set0, t = 4, rewire = FALSE,
+                 threshold.dist = thr)
+
+cumadopt_2 <- diffnet$cumadopt
+cumadopt_2 <- array(c(cumadopt_2,cumadopt_2[rev(1:nrow(cumadopt_2)),]), dim=c(dim(cumadopt_2), 2))
+
+print(exposure(diffnet, cumadopt = cumadopt_2))
+```
+
+# rdiffnet_validate_arg()
+
+Maybe not necessary, as this is an internal function.
+
+# Threshold
+
+## Thresholds
+
+*   One of the cannonical concepts is the network threshold. Network thresholds (Valente, 1995; 1996), $\tau$, are defined as the required proportion or number of neighbors that leads you to adopt a particular behavior (innovation), $a=1$. In (very) general terms\pause
+    
+$$
+a_i = \left\{\begin{array}{ll}
+1 &\mbox{if } \tau_i\leq E_i \\
+0 & \mbox{Otherwise}
+\end{array}\right. \qquad
+E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+$$
+
+Where $E_i$ is i's exposure to the innovation and $\mathbf{X}$ is the adjacency matrix (the network).
+
+
+# new_diffnet()
+
+Same, is an internal function.
+
+# split_behaviors()
+
+Examples.
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Importantly, while very useful, `diffnet` objects is not the only way to use __netdiffuseR__. Most of the functions can also be used with matrices and arrays.
+
+```{r Loading netdiffuseR, echo=FALSE} 
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = '#')
+```
+
+# Raw network data
+
+- We call raw network data to datasets that have a somewhat raw form, for example, edgelists, 
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+- For this tutorial, we classify graph data as follows:
+    * Raw R network data: Datasets with edgelist, attributes, survey data, etc.
+    * Already R data: already read into R using igraph, statnet, etc.
+    * Graph files: DL, UCINET, pajek, etc.
+- The includes several options to read such data.
+

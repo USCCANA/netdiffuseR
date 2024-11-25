@@ -132,11 +132,10 @@ test_that("toa, adopt, and cumadopt should be equal! (split_behaviors)", {
 
 # Let's check the plots.
 
-plot_diffnet(net_single$graph, net_single$adopt)
-plot_diffnet(net_single_from_multiple_1$graph, net_single_from_multiple_1$adopt)
-
-plot_infectsuscep(net_single$graph, net_single$toa)
-plot_infectsuscep(net_single_from_multiple_1$graph, net_single_from_multiple_1$toa)
+plot_diffnet(net_single) # works
+plot_diffnet(net_single$graph, net_single$adopt) # doesn't work
+plot_diffnet(net_single_from_multiple_1) # works
+plot_diffnet(net_single_from_multiple_1$graph, net_single_from_multiple_1$adopt) # doesn't work
 
 set.seed(1234) # they are almost the same
 plot_threshold(net_single$graph,

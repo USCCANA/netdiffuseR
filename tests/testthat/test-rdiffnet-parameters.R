@@ -24,6 +24,11 @@ test_that(
   expect_type(rdiffnet_args$seed.nodes, "list")
   expect_type(rdiffnet_args$behavior, "list")
 
+  seed.nodes <- c(1,2,4,5)
+  expect_type(rdiffnet_args$seed.p.adopt, "list")
+  expect_type(rdiffnet_args$seed.nodes, "list")
+  expect_type(rdiffnet_args$behavior, "list")
+
   # Must show ERROR
 
   seed.p.adopt <- c(0.4,0.82)
@@ -137,9 +142,14 @@ test_that("Multi diff models rdiff args work", {
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
   expect_type(rdiffnet_args$seed.nodes, "list")
 
+  seed.nodes <- list(c(1,3,5), c(1,3,5))
+  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  expect_type(rdiffnet_args$seed.nodes, "list")
+
   seed.nodes <- list('marginal',"central")
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
   expect_type(rdiffnet_args$seed.nodes, "list")
+
 
   # Must show ERROR
 
