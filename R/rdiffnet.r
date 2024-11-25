@@ -639,11 +639,3 @@ split_behaviors <- function(diffnet_obj) {
   return(diffnets)
 }
 
-
-  list(
-    seed.p.adopt = seed.p.adopt,
-    seed.nodes = seed.nodes,
-    behavior = behavior,
-    num_of_behaviors = length(seed.p.adopt)
-  )
-}
