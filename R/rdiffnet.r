@@ -320,7 +320,8 @@ rdiffnet <- function(
     exposure.args  = list(),
     name           = "A diffusion network",
     behavior       = "Random contagion",
-    stop.no.diff   = TRUE
+    stop.no.diff   = TRUE,
+    disadopt       = NULL
   ) {
 
   # Checking options
@@ -384,7 +385,6 @@ rdiffnet <- function(
   # Step 1.0: Setting the seed nodes -----------------------------------------
 
   rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-
   seed.p.adopt <- rdiffnet_args$seed.p.adopt
   seed.nodes <- rdiffnet_args$seed.nodes
   behavior <- rdiffnet_args$behavior
@@ -407,7 +407,6 @@ rdiffnet <- function(
   }
 
   # Step 1.2: finding the nodes
-
   d <- list()
 
   if (all(sapply(seed.nodes, is.character))) { # "central", "marginal", or "random"
@@ -438,7 +437,6 @@ rdiffnet <- function(
   }
 
   # Step 1.3: Defining cumadopt and toa (time of adoption) --------------------
-
   cumadopt <- array(0L, dim = c(n, t, num_of_behaviors))
 
   toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
@@ -454,6 +452,8 @@ rdiffnet <- function(
   # Step 3.0: Running the simulation -------------------------------------------
 
   for (i in 2:t) {
+
+    # 3.1 Computing exposure
     if (exists("attrs_arr")){
       exposure.args[c("attrs")] <- list(attrs_arr[,i, ,drop=FALSE])
     }
@@ -463,14 +463,47 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
+      # 3.2 Identifying who adopts based on the threshold
       whoadopts <- which( (expo[,,q] >= thr[,q]) )
-      cumadopt[whoadopts, i:t, q] <- 1L
-                                                        # ADD SOMETHING TO DISADOPT
 
+      # 3.3 Updating the cumadopt
+      cumadopt[whoadopts, i:t, q] <- 1L
+
+      # 3.4` Updating the toa
+      # toa[cbind(whoadopts, q)] <- i
       toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
         first_adopt <- which(x == 1)
         if (length(first_adopt) > 0) first_adopt[1] else NA
       })
+
+    }
+
+    if (length(disadopt)) {
+
+      # Run the disadoption algorithm. This will return the following:
+      # - A list of length q with the nodes that disadopted
+      disadopt_res <- disadopt(expo, cumadopt, i)
+
+      for (q in seq_along(disadopt_res)) {
+
+        # So only doing this is there's disadoption
+        if (length(disadopt_res[[q]]) == 0)
+          next
+
+        # Checking this makes sense (only adopters can disadopt)
+        q_adopters <- which(!is.na(toa[, q]))
+
+        if (length(setdiff(disadopt_res[[q]], q_adopters)) > 0)
+          stop("Some nodes that disadopted were not adopters.")
+
+        # Updating the cumadopt
+        cumadopt[disadopt_res[[q]], i:t, q] <- 0L
+
+        # Updating toa
+        toa[cbind(disadopt_res[[q]], q)] <- NA
+
+      }
+
 
     }
   }
@@ -480,7 +513,12 @@ rdiffnet <- function(
 
     if (reachedt == 1) {
       if (stop.no.diff)
-        stop(paste("No diffusion in this network for behavior", i, "(Ups!) try changing the seed or the parameters."))
+        stop(
+          paste(
+            "No diffusion in this network for behavior", i,
+            "(Ups!) try changing the seed or the parameters."
+            )
+          )
       else
         warning(paste("No diffusion for behavior", i, " in this network."))
     }
@@ -506,7 +544,6 @@ rdiffnet <- function(
   )
 }
 
-
 rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
   # seed.p.adopt stuff
@@ -517,12 +554,15 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
                   "Number of behaviors: ", length(seed.p.adopt)))
     multi <- TRUE
   } else if (inherits(seed.p.adopt, "numeric")) {
+
     if (length(seed.p.adopt)>1) {
       stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
                  ", but for multi-diffusion -seed.p.adopt- must be a -list-."))
     }
+
     multi <- FALSE
   } else {
+
     stop("The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
          "or a -list- (multiple behavior diff).")
   }

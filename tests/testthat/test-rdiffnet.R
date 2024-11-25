@@ -156,6 +156,7 @@ test_that("All should be equal! (multiple)", {
   expect_equal(net1, net2)
 })
 
+
 test_that("toa, adopt, and cumadopt should be equal! (split_behaviors tests)", {
   set.seed(12131)
   n            <- 50
@@ -179,6 +180,33 @@ test_that("toa, adopt, and cumadopt should be equal! (split_behaviors tests)", {
   expect_equal(net_single_from_multiple_1$cumadopt, net_single$cumadopt)
 })
 
+test_that("Disadoption works", {
+
+
+  set.seed(1231)
+  n <- 500
+
+  d_adopt <- function(expo, cumadopt, time) {
+
+    # Id double adopters
+    ids <- which(apply(cumadopt[, 3, , drop=FALSE], 1, sum) > 1)
+
+    if (length(ids) == 0)
+      return(list(integer(), integer()))
+
+    # Otherwise, make them pick one (literally, you can only adopt
+    # A single behavior, will drop the second)
+    return(list(ids, integer()))
+
+  }
+
+  ans <- rdiffnet(n = n, t = 10, disadopt = d_adopt, seed.p.adopt = list(0.1, 0.1))
+
+  tmat <- toa_mat(ans)
+  should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]
+  expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
+
+})
 
 #rdiffnet(100, 5, seed.p.adopt = 0.9, threshold.dist = 2, exposure.args = list(normalized=FALSE))
 
