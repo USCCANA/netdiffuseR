@@ -470,7 +470,7 @@ rdiffnet <- function(
       cumadopt[whoadopts, i:t, q] <- 1L
 
       # 3.4` Updating the toa
-      # toa[cbind(whoadopts, q)] <- t
+      # toa[cbind(whoadopts, q)] <- i
       toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
         first_adopt <- which(x == 1)
         if (length(first_adopt) > 0) first_adopt[1] else NA
@@ -481,10 +481,28 @@ rdiffnet <- function(
     if (length(disadopt)) {
 
       # Run the disadoption algorithm. This will return the following:
-      # - The updated cupadopt
-      # - A vector of who disadopted
-      # - A list of the same length of what was disadopted.
-      disadopt_res <- disadopt(expo, cupadopt, t)
+      # - A list of length q with the nodes that disadopted
+      disadopt_res <- disadopt(expo, cumadopt, i)
+
+      for (q in seq_along(disadopt_res)) {
+
+        # So only doing this is there's disadoption
+        if (length(disadopt_res[[q]]) == 0)
+          next
+
+        # Checking this makes sense (only adopters can disadopt)
+        q_adopters <- which(!is.na(toa[, q]))
+
+        if (length(setdiff(disadopt_res[[q]], q_adopters)) > 0)
+          stop("Some nodes that disadopted were not adopters.")
+
+        # Updating the cumadopt
+        cumadopt[disadopt_res[[q]], i:t, q] <- 0L
+
+        # Updating toa
+        toa[cbind(disadopt_res[[q]], q)] <- NA
+
+      }
 
 
     }
@@ -495,7 +513,12 @@ rdiffnet <- function(
 
     if (reachedt == 1) {
       if (stop.no.diff)
-        stop(paste("No diffusion in this network for behavior", i, "(Ups!) try changing the seed or the parameters."))
+        stop(
+          paste(
+            "No diffusion in this network for behavior", i,
+            "(Ups!) try changing the seed or the parameters."
+            )
+          )
       else
         warning(paste("No diffusion for behavior", i, " in this network."))
     }
@@ -657,11 +680,3 @@ split_behaviors <- function(diffnet_obj) {
   return(diffnets)
 }
 
-
-  list(
-    seed.p.adopt = seed.p.adopt,
-    seed.nodes = seed.nodes,
-    behavior = behavior,
-    num_of_behaviors = length(seed.p.adopt)
-  )
-}
