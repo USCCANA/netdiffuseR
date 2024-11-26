@@ -441,8 +441,9 @@ rdiffnet <- function(
 
   toa <- matrix(NA, nrow = dim(cumadopt)[1], ncol = dim(cumadopt)[3])
 
-  for (i in 1:num_of_behaviors) {
-    cumadopt[d[[i]],,i] <- 1L
+  for (q in 1:num_of_behaviors) {
+    cumadopt[d[[q]],,q] <- 1L
+    toa[d[[q]],q] <- 1L
   }
 
   # Step 2.0: Thresholds -------------------------------------------------------
@@ -469,15 +470,15 @@ rdiffnet <- function(
       # 3.3 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L
 
-      # 3.4` Updating the toa
-      # toa[cbind(whoadopts, q)] <- i
-      toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
-        first_adopt <- which(x == 1)
-        if (length(first_adopt) > 0) first_adopt[1] else NA
-      })
-
+      # 3.4 Updating the toa
+      toa[cbind(whoadopts, q)] <- i
+      # toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
+      #   first_adopt <- which(x == 1)
+      #   if (length(first_adopt) > 0) first_adopt[1] else NA
+      # })
     }
 
+    # 3.5 identifiying the disadopters
     if (length(disadopt)) {
 
       # Run the disadoption algorithm. This will return the following:
@@ -486,7 +487,7 @@ rdiffnet <- function(
 
       for (q in seq_along(disadopt_res)) {
 
-        # So only doing this is there's disadoption
+        # So only doing this if there's disadoption
         if (length(disadopt_res[[q]]) == 0)
           next
 
@@ -503,8 +504,6 @@ rdiffnet <- function(
         toa[cbind(disadopt_res[[q]], q)] <- NA
 
       }
-
-
     }
   }
 
@@ -530,7 +529,9 @@ rdiffnet <- function(
 
   if (num_of_behaviors==1) {
     toa <- as.integer(toa)
-    }
+  } else {
+    toa <- array(as.integer(toa), dim = dim(toa))
+  }
 
   new_diffnet(
     graph      = sgraph,

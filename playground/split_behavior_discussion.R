@@ -125,7 +125,7 @@ test_that("toa, adopt, and cumadopt should be equal! (split_behaviors)", {
   net_single_from_multiple <- split_behaviors(net_multiple)
   net_single_from_multiple_1 <- net_single_from_multiple[[1]]
 
-  expect_equal(net_single_from_multiple_1$toa, net_single$toa) # Error: names for current but not for target
+  expect_equal(net_single_from_multiple_1$toa, net_single$toa)
   expect_equal(net_single_from_multiple_1$adopt, net_single$adopt)
   expect_equal(net_single_from_multiple_1$cumadopt, net_single$cumadopt)
 })

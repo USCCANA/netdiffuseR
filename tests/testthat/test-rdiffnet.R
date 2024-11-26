@@ -189,20 +189,20 @@ test_that("Disadoption works", {
   d_adopt <- function(expo, cumadopt, time) {
 
     # Id double adopters
-    ids <- which(apply(cumadopt[, 3, , drop=FALSE], 1, sum) > 1)
+    ids <- which(apply(cumadopt[, time, , drop=FALSE], 1, sum) > 1)
 
     if (length(ids) == 0)
       return(list(integer(), integer()))
 
     # Otherwise, make them pick one (literally, you can only adopt
-    # A single behavior, will drop the second)
+    # A single behavior, in this case, we prefer the second)
     return(list(ids, integer()))
 
   }
 
-  ans <- rdiffnet(n = n, t = 10, disadopt = d_adopt, seed.p.adopt = list(0.1, 0.1))
+  ans_d_adopt <- rdiffnet(n = n, t = 10, disadopt = d_adopt, seed.p.adopt = list(0.1, 0.1))
 
-  tmat <- toa_mat(ans)
+  tmat <- toa_mat(ans_d_adopt)
   should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]
   expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
 
