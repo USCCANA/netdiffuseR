@@ -465,7 +465,7 @@ rdiffnet <- function(
     for (q in 1:num_of_behaviors) {
 
       # 3.2 Identifying who adopts based on the threshold
-      whoadopts <- which( (expo[,,q] >= thr[,q]) & is.na(toa))
+      whoadopts <- which( (expo[,,q] >= thr[,q]) & is.na(toa[,q]))
 
       # 3.3 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L
