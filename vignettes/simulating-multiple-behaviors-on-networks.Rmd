@@ -65,6 +65,8 @@ All those features are shown in more detail below.
 set.seed(123)
 
 rdiffnet(100, 5)
+?rdiffnet
+
 rdiffnet(100, 5, seed.p.adopt = 0.1)
 
 rdiffnet(100, 5, seed.p.adopt = 0.1, behavior = 'tabacco')
@@ -80,7 +82,7 @@ rdiffnet(100, 5, seed.nodes = seed_nodes)
 
 ```
 
-Alternatively, we can **specify the network**:
+but also, we can **specify the network**:
 
 ```{r}
 #| warning: false
@@ -98,21 +100,25 @@ rdiffnet(seed.graph = graph, t = t , seed.p.adopt = 0.1, threshold.dist = thr)
 
 ```{r}
 
+set.seed(124)
 rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), behavior = 'tabacco')
 rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), behavior = c('tabacco', 'alcohol'))
 
-rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = 0.3)
-rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(0.3, 0.2))
-rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = function(x) 0.3)
-rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(function(x) 0.3, function(x) 0.2))
+diffnet <- rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = 0.3)
+diffnet$vertex.static.attrs
 rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = runif(100))
+diffnet <- rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = function(x) 0.3)
+diffnet$vertex.static.attrs
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(0.3, 0.2))
 rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(runif(100), runif(100)))
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(function(x) 0.3, function(x) 0.2))
 
+set.seed(123)
 rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), seed.nodes = c('random', 'central'))
 
 set.seed(123)
-seed_nodes <- list(sample(1:100, 10, replace = FALSE), sample(1:100, 10, replace = FALSE))
-a <- rdiffnet(100, 5, seed.p.adopt = list(0, 0), seed.nodes = seed_nodes)
+seed_nodes <- sample(1:100, 10, replace = FALSE)
+rdiffnet(100, 5, seed.p.adopt = list(0, 0), seed.nodes = list(seed_nodes, seed_nodes))
 
 ```
 
@@ -127,13 +133,14 @@ t          <- 10
 graph      <- rgraph_ws(n, 10, p=.3)  # watts-strogatz model
 thr        <- runif(n, .3,.5)
 
-diffnet <- rdiffnet(seed.graph = graph, t = t , seed.p.adopt = list(0.1, 0.15), threshold.dist = thr)
+diffnet <- rdiffnet(seed.graph = graph, t = t , seed.p.adopt = list(0.1, 0.15),
+                    threshold.dist = thr)
 diffnet
 ```
 
 # `split_behaviors()` and disadoption
 
-If you want to use other function to analyze the results from the simulation focusing in a single behavior, you could use the
+If you want to use other function to analyze the results from the simulation focusing in a single behavior, you could use \`split_behaviors()\`:
 
 ```{r}
 #| warning: false
@@ -150,7 +157,8 @@ If you want to use other function to analyze the results from the simulation foc
                          seed.p.adopt = 0.1, rewire = FALSE, threshold.dist = thr)
 
   net_multiple <- rdiffnet(seed.graph = graph, t = t, seed.nodes = seed.nodes, 
-                           seed.p.adopt = list(0.1, 0.1), rewire = FALSE, threshold.dist = thr)
+                           seed.p.adopt = list(0.1, 0.1), rewire = FALSE,
+                           threshold.dist = thr)
 
   net_single_from_multiple <- split_behaviors(net_multiple)
   net_single_from_multiple_1 <- net_single_from_multiple[[1]]
@@ -168,13 +176,6 @@ If you want to use other function to analyze the results from the simulation foc
 plot_diffnet(net_single)
 plot_diffnet(net_single_from_multiple_1)
 
-set.seed(1234)
-plot_threshold(net_single$graph,
-               exposure(net_single$graph, net_single$cumadopt),
-               net_single$toa)
-plot_threshold(net_single_from_multiple_1$graph,
-               exposure(net_single_from_multiple_1$graph, net_single$cumadopt),
-               net_single_from_multiple_1$toa)
 ```
 
 # Disadoption
@@ -183,7 +184,30 @@ Until now the behaviors are independent, but we can add some disadoption functio
 
 ```{r}
 
-print(333)
+set.seed(1231)
+n <- 500
+
+d_adopt <- function(expo, cumadopt, time) {
+
+  # Id double adopters
+  ids <- which(apply(cumadopt[, time, , drop=FALSE], 1, sum) > 1)
+
+  if (length(ids) == 0)
+    return(list(integer(), integer()))
+
+  # Otherwise, make them pick one (literally, you can only adopt
+  # a single behavior, in this case, we prefer the second)
+  return(list(ids, integer()))
+
+}
+
+ans_d_adopt <- rdiffnet(n = n, t = 10, disadopt = d_adopt,
+                        seed.p.adopt = list(0.1, 0.1))
+
+tmat <- toa_mat(ans_d_adopt)
+should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]
+
+expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
 
 ```
 
