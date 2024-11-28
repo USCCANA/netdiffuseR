@@ -209,15 +209,13 @@ summary.diffnet <- function(
   # Computing density
   d <- unlist(lapply(object$graph[slices], function(x) {
     nlinks(x)/nnodes(x)/(nnodes(x)-1)
-    # nelements <- length(x@x)
-    # x <-nelements/(meta$n * (meta$n-1))
   }))
 
   # identify single-diff from multi-diff
   single <- !inherits(object$cumadopt, "list")
 
-  # Computing moran's I
   if (single) {
+    # Computing moran's I
     if (!skip.moran) {
       m <- matrix(NA, nrow=length(slices), ncol=4,
                   dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
@@ -230,6 +228,7 @@ summary.diffnet <- function(
 
         m[i,] <- unlist(moran(object$cumadopt[,slices[i]], g))
       }
+    }
 
     # Computing new adopters, cumadopt and hazard rate
     ad <- colSums(object$adopt[,slices,drop=FALSE])
@@ -253,13 +252,16 @@ summary.diffnet <- function(
     }
 
     if (no.print) return(out)
-    }
 
   } else {
-    if (!skip.moran) {
-      out_list <- list()
-      data_beh_list <- list()
-      for (q in 1:length(object$cumadopt)) {
+
+    out_list <- list()
+    data_beh_list <- list()
+
+    for (q in 1:length(object$cumadopt)) {
+
+      if (!skip.moran) {
+        #for (q in 1:length(object$cumadopt)) {
         m <- matrix(NA, nrow=length(slices), ncol=4,
                     dimnames = list(NULL, c("moran_obs", "moran_exp", "moran_sd", "moran_pval")))
 
@@ -270,42 +272,42 @@ summary.diffnet <- function(
 
           m[i,] <- unlist(moran(object$cumadopt[[q]][,slices[i]], g))
         }
-
-        # Computing new adopters, cumadopt and hazard rate
-        ad <- colSums(object$adopt[[q]][,slices,drop=FALSE])
-        ca <- t(cumulative_adopt_count(object$cumadopt[[q]]))[slices,-3, drop=FALSE]
-        hr <- t(hazard_rate(object$cumadopt[[q]], no.plot = TRUE))[slices,,drop=FALSE]
-
-        # Left censoring
-        lc <- sum(object$toa[,q] == meta$pers[1], na.rm = TRUE)
-        rc <- sum(is.na(object$toa[,q]), na.rm=TRUE)
-
-        #data_beh_list[[q]] <- list(ad, ca, hr, lc, rc)
-
-        out <- data.frame(
-          adopt = ad,
-          cum_adopt = ca[,1],
-          cum_adopt_pcent = ca[,2],
-          hazard = hr,
-          density=d
-        )
-
-        if (!skip.moran) {
-          out <- cbind(out, m)
-        }
-
-        if (no.print) return(out)
-
-        out_list[[q]] <- out
+        #}
       }
+
+      # Computing new adopters, cumadopt and hazard rate
+      ad <- colSums(object$adopt[[q]][,slices,drop=FALSE])
+      ca <- t(cumulative_adopt_count(object$cumadopt[[q]]))[slices,-3, drop=FALSE]
+      hr <- t(hazard_rate(object$cumadopt[[q]], no.plot = TRUE))[slices,,drop=FALSE]
+
+      # Left censoring
+      lc <- sum(object$toa[,q] == meta$pers[1], na.rm = TRUE)
+      rc <- sum(is.na(object$toa[,q]), na.rm=TRUE)
+
+      data_beh_list[[q]] <- c(lc, rc)
+
+      out <- data.frame(
+        adopt = ad,
+        cum_adopt = ca[,1],
+        cum_adopt_pcent = ca[,2],
+        hazard = hr,
+        density=d
+      )
+
+      if (!skip.moran) {
+        out <- cbind(out, m)
+      }
+
+      out_list[[q]] <- out
     }
+
+    if (no.print) return(out_list)
   }
 
   # Function to print data.frames differently
   header <- c(" Period "," Adopters "," Cum Adopt. (%) ",
               " Hazard Rate "," Density ",
-              if (!skip.moran) c(" Moran's I (sd) ") else NULL
-              )
+              if (!skip.moran) c(" Moran's I (sd) ") else NULL)
 
   slen   <- nchar(header)
   hline  <- paste(sapply(sapply(slen, rep.int, x="-"), paste0, collapse=""),
@@ -315,27 +317,34 @@ summary.diffnet <- function(
   # Quick Formatting function
   qf <- function(x, digits=2) sprintf(paste0("%.",digits,"f"), x)
 
+  # Start printing result
   cat("Diffusion network summary statistics\n",
-      "Name     : ", meta$name, "\n",
-      "Behavior : ", meta$behavior, "\n",
-      rule,"\n",sep="")
-  cat(header,"\n")
-  cat(hline, "\n")
+      "Name     : ", meta$name, "\n")
 
   if (single) {
+    cat(" Behavior : ", meta$behavior, "\n",
+        rule,"\n",sep="")
+    cat(header,"\n")
+    cat(hline, "\n")
     summary_diffnet_out_display(out, slen, meta, slices, qf, skip.moran)
+    cat(rule, "\n",
+        paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)), "\n",
+        paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)), "\n")
   } else {
+    beh_names <- strsplit(meta$behavior, ", ")[[1]]
     for (q in 1:length(object$cumadopt)) {
+      cat("\n Behavior : ", beh_names[q], "\n",
+          rule,"\n",sep="")
+      cat(header,"\n")
+      cat(hline, "\n")
       summary_diffnet_out_display(out_list[[q]], slen, meta, slices, qf, skip.moran)
+      cat(rule, "\n",
+        paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, data_beh_list[[q]][1])), "\n",
+        paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, data_beh_list[[q]][2])), "\n")
     }
   }
 
-  # print(out, digits=2)
-
   cat(
-    rule,
-    paste(" Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)),
-    paste(" Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)),
     paste(" # of nodes      :", sprintf("%d",meta$n)),
     "\n Moran's I was computed on contemporaneous autocorrelation using 1/geodesic",
     " values. Significane levels  *** <= .01, ** <= .05, * <= .1.",

@@ -474,11 +474,6 @@ rdiffnet <- function(
       if (length(whoadopts) > 0) {
         toa[cbind(whoadopts, q)] <- i
       }
-      #toa[cbind(whoadopts, q)] <- i
-      # toa[, q] <- apply(cumadopt[,, q], 1, function(x) {
-      #   first_adopt <- which(x == 1)
-      #   if (length(first_adopt) > 0) first_adopt[1] else NA
-      # })
     }
 
     # 3.5 identifiying the disadopters
