@@ -663,9 +663,24 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
 
 #' Splitting behaviors
 #'
-#' Split each behavior within multi-diffusion diffnet object.
+#' Split each behavior within multi-diffusion diffnet object. The function gets
+#' \code{toa}, \code{adopt}, \code{cumadopt}, and the \code{behavior} name from
+#' each behavior, and returns a list where each element is a single behavior.
+#' All the rest of the structure remains the same for each element in the list.
 #'
 #' @param diffnet_obj A multi-diffusion diffnet object.
+#' @examples
+#' # Running a multi-diffusion simulation
+#' set.seed(1231)
+#' diffnet_multi <- rdiffnet(50, 5, seed.p.adopt = list(0.1,0.1))
+#'
+#' diffnet_multi_list <- split_behaviors(diffnet_multi)
+#' diffnet_single <- diffnet_multi_list[[1]]
+#'
+#' # You can now run standard functions for a single behavior
+#' # Plotting single behavior
+#' plot_diffnet(diffnet_single, slices = c(1, 3, 5))
+#'
 #' @return A list of diffnet objects. Each element represent a unique behavior.
 #' @export
 #' @author George G. Vega Yon & Aníbal Olivera M.
