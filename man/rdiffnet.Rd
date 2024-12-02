@@ -40,9 +40,10 @@ rdiffnet(
 
 \item{t}{Integer scalar. Time length.}
 
-\item{seed.nodes}{Either a character scalar or a vector. Type of seed nodes (see details).}
+\item{seed.nodes}{Either a character scalar, a vector or a list (multiple behaviors only).
+Type of seed nodes (see details).}
 
-\item{seed.p.adopt}{Numeric scalar. Proportion of early adopters.}
+\item{seed.p.adopt}{Numeric scalar or a list (multiple behaviors only). Proportion of early adopters.}
 
 \item{seed.graph}{Baseline graph used for the simulation (see details).}
 
@@ -53,15 +54,16 @@ rdiffnet(
 
 \item{rewire.args}{List. Arguments to be passed to \code{\link{rewire_graph}}.}
 
-\item{threshold.dist}{Either a function to be applied via \code{\link{sapply}},
-a numeric scalar, or a vector/matrix with \eqn{n} elements. Sets the adoption
+\item{threshold.dist}{For a single behavior diffusion, either a function to be applied via \code{\link{sapply}},
+a numeric scalar, or a vector/matrix with \eqn{n} elements. For \eqn{Q} behavior diffusion,
+it can also be an \eqn{n \times Q} matrix or a list of \eqn{Q} single behavior inputs. Sets the adoption
 threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
 
 \item{name}{Character scalar. Passed to \code{\link{as_diffnet}}.}
 
-\item{behavior}{Character scalar. Passed to \code{\link{as_diffnet}}.}
+\item{behavior}{Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.}
 
 \item{stop.no.diff}{Logical scalar. When \code{TRUE}, the function will return
 with error if there was no diffusion. Otherwise it throws a warning.}
@@ -75,7 +77,11 @@ on what \code{statistic} is (see \code{\link{sapply}} and
 }
 \description{
 Simulates a diffusion network by creating a random dynamic network and
-adoption threshold levels.
+adoption threshold levels. You can perform a simulation for a single behavior
+(using \code{seed.p.adopt} of class \code{numeric} in \code{rdiffnet}),
+conduct multiple simulations for a single behavior (with \code{rdiffnet_multiple}),
+or run a simulation with multiple behaviors simultaneously (using \code{seed.p.adopt}
+of class \code{list} in \code{rdiffnet})
 }
 \details{
 Instead of randomizing whether an individual adopts the innovation or not, this
@@ -87,7 +93,7 @@ equal to his threshold. The simulation is done in the following steps:
  \item Using \code{seed.graph}, a baseline graph is created.
  \item Given the baseline graph, the set of initial adopters is defined
  using \code{seed.nodes}.
- \item Afterwards, if \code{rewire=TRUE} \eqn{t-1} slices of the network are created
+ \item Afterwards, if \code{rewire=TRUE}, \eqn{t-1} slices of the network are created
  by iteratively rewiring the baseline graph.
  \item The \code{threshold.dist} function is applied to each node in the graph.
  \item Simulation starts at \eqn{t=2} assigning adopters in each time period
@@ -95,9 +101,12 @@ equal to his threshold. The simulation is done in the following steps:
 }
 
 When \code{seed.nodes} is a character scalar it can be \code{"marginal"}, \code{"central"} or \code{"random"},
-So each of these values sets the initial adopters using the vertices with lowest
-degree, with highest degree or completely randomly. The number of early adoptes
-is set as \code{seed.p.adopt * n}. Please note that when marginal nodes are
+so each of these values sets the initial adopters using the vertices with lowest
+degree, with highest degree or completely randomly.
+
+For a single behavior diffusion, the number of early adopters is set as \code{seed.p.adopt * n}.
+To run multiple behavior diffusion, \code{seed.p.adopt} must be a \code{list} (see examples below).
+Please note that when marginal nodes are
 set as seed it may be the case that no diffusion process is attained as the
 chosen set of first adopters can be isolated. Any other case will be considered
 as an index (via \code{\link{[<-}} methods), hence the user can manually set the set of initial adopters, for example
@@ -157,22 +166,47 @@ When \code{cl} is provided, then simulations are done via
 which is stopped (removed) once the process is complete.
 }
 \examples{
-# A simple example -----------------------------------------------------------
+# (Single behavior): A simple example ---------------------------------------
 set.seed(123)
-z <- rdiffnet(100,10)
-z
-summary(z)
+diffnet_1 <- rdiffnet(100,10)
+diffnet_1
+summary(diffnet_1)
 
-# A more complex example: Adopt if at least one neighbor has adopted --------
-y <- rdiffnet(100, 10, threshold.dist=function(x) 1,
+# Adopt if at least two neighbors have adopted ------
+n <- 40; t <- 5;
+graph <- rgraph_ws(n, t, p=.3)
+
+diffnet_2 <- rdiffnet(seed.graph = graph, t = t, threshold.dist=function(x) 2,
     exposure.args=list(valued=FALSE, normalized=FALSE))
 
-# Re thinking the Adoption of Tetracycline ----------------------------------
+# Re thinking the Adoption of Tetracycline ----------
 newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 
+# (Multiple behavior): A simple example -------------------------------------
+set.seed(123)
+diffnet_3 <- rdiffnet(100, 10, seed.p.adopt = list(0.1, 0.15))
+diffnet_3
+summary(diffnet_3)
 
-# Simulation study comparing the diffusion with diff sets of seed nodes -----
+# Fully specified multi-behavior example ------------
+
+threshold_matrix <- matrix(runif(n * 2), nrow = n, ncol = 2)
+seed_nodes <- sample(1:100, 10, replace = FALSE)
+diffnet_4 <- rdiffnet(100, 10, seed.p.adopt = list(0, 0),
+                      seed.nodes = list(seed_nodes, seed_nodes),
+                      threshold.dist = threshold_matrix,
+                      behavior = c("tobacco", "alcohol"))
+
+# Adopt if at least one (first behavior) and two neighbors have adopted
+(second behavior) -----------------------------------
+
+diffnet_5 <- rdiffnet(seed.graph = graph, t = t, seed.p.adopt = list(0.1, 0.1),
+                      threshold.dist = list(function(x) 2, function(x) 2),
+                      exposure.args=list(valued=FALSE, normalized=FALSE))
+
+# (Multiple simulations of single behavior): Simulation study comparing the
+diffusion with diff sets of seed nodes --------------------------------------
 
 # Random seed nodes
 set.seed(1)
@@ -196,6 +230,6 @@ Other simulation functions:
 \code{\link{ring_lattice}()}
 }
 \author{
-George G. Vega Yon
+George G. Vega Yon & Aníbal Olivera M.
 }
 \concept{simulation functions}
