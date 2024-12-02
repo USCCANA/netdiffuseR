@@ -661,6 +661,15 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
   )
 }
 
+#' Splittig behaviors
+#'
+#' Split each behavior in an multi-diffusion diffnet object.
+#'
+#' @param diffnet_obj A multi-diffusion diffnet object.
+#' @return A list of diffnet objects. Each element represent a unique behavior.
+#' @export
+#' @author George G. Vega Yon & Aníbal Olivera M.
+#' @name split_behaviors
 split_behaviors <- function(diffnet_obj) {
 
   # creates a list, keeping the structure of each element

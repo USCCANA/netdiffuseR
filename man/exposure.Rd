@@ -254,7 +254,15 @@ X <- array(runif(n * t * q), dim = c(n, t, q)) # array n x T x q
 ans4 <- exposure(diffnet$graph, cumadopt = cumadopt_2, attrs=X)
 
 # Exposure based on Structural Equivalence --
-#ans5 <- exposure(diffnet, cumadopt = cumadopt_2, alt.graph = se, valued=TRUE)
+
+diffnet_1 <- split_behaviors(diffnet)[[1]]
+se <- struct_equiv(diffnet)
+se <- lapply(se_1, function(x) {
+  ans <- methods::as(x$SE, "dgCMatrix")
+    ans@x <- 1/(ans@x + 1e-20)
+      ans
+      })
+ans6 <- exposure(diffnet, cumadopt = cumadopt_2, alt.graph = se, valued=TRUE)
 
 }
 \references{
