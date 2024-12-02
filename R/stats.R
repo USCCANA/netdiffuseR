@@ -259,11 +259,11 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @templateVar self TRUE
 #' @template graph_template
 #' @param cumadopt \eqn{n\times T}{n * T} matrix for single diffusion.
-#' \eqn{n\times T \times q}{n * T * Q} array for \eqn{Q}{Q} diffusion processes.
+#' \eqn{n\times T \times Q}{n * T * Q} array for \eqn{Q}{Q} diffusion processes.
 #' Cumulative adoption matrix obtained from \code{\link{toa_mat}}
 #' @param attrs Either a character scalar (if \code{graph} is diffnet),
 #' a numeric matrix of size \eqn{n\times T}{n * T}, or an array of size
-#' \eqn{n\times T \time Q}{n * T * Q} (only for multi diffusion).
+#' \eqn{n\times T \times Q}{n * T * Q} (only for multi diffusion).
 #'  Weighting for each time period (see details).
 #' @param alt.graph Either a graph that should be used instead of \code{graph},
 #' or \code{"se"} (see details).
@@ -479,7 +479,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #'
 #' diffnet_1 <- split_behaviors(diffnet)[[1]]
 #' se <- struct_equiv(diffnet)
-#' se <- lapply(se_1, function(x) {
+#' se <- lapply(se, function(x) {
 #'   ans <- methods::as(x$SE, "dgCMatrix")
 #'     ans@x <- 1/(ans@x + 1e-20)
 #'       ans

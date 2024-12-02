@@ -661,9 +661,9 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
   )
 }
 
-#' Splittig behaviors
+#' Splitting behaviors
 #'
-#' Split each behavior in an multi-diffusion diffnet object.
+#' Split each behavior within multi-diffusion diffnet object.
 #'
 #' @param diffnet_obj A multi-diffusion diffnet object.
 #' @return A list of diffnet objects. Each element represent a unique behavior.
@@ -675,6 +675,8 @@ split_behaviors <- function(diffnet_obj) {
   # creates a list, keeping the structure of each element
   diffnets <- replicate(ncol(diffnet_obj$toa), diffnet_obj, simplify = FALSE)
 
+  behaviors_names <- strsplit(diffnet_obj$meta$behavior, ", ")[[1]]
+
   # loop over the behaviors
   for (q in 1:ncol(diffnet_obj$toa)) {
     diffnets[[q]]$toa <- as.integer(diffnet_obj$toa[, q, drop = FALSE])
@@ -683,6 +685,8 @@ split_behaviors <- function(diffnet_obj) {
     diffnets[[q]]$adopt <- diffnet_obj$adopt[[q]]
 
     diffnets[[q]]$cumadopt <- diffnet_obj$cumadopt[[q]]
+
+    diffnets[[q]]$meta$behavior <- behaviors_names[q]
   }
 
   return(diffnets)

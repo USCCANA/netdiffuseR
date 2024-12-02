@@ -22,12 +22,12 @@ exposure(
 \item{graph}{A dynamic graph (see \code{\link{netdiffuseR-graphs}}).}
 
 \item{cumadopt}{\eqn{n\times T}{n * T} matrix for single diffusion.
-\eqn{n\times T \times q}{n * T * Q} array for \eqn{Q}{Q} diffusion processes.
+\eqn{n\times T \times Q}{n * T * Q} array for \eqn{Q}{Q} diffusion processes.
 Cumulative adoption matrix obtained from \code{\link{toa_mat}}}
 
 \item{attrs}{Either a character scalar (if \code{graph} is diffnet),
 a numeric matrix of size \eqn{n\times T}{n * T}, or an array of size
-\eqn{n\times T \time Q}{n * T * Q} (only for multi diffusion).
+\eqn{n\times T \times Q}{n * T * Q} (only for multi diffusion).
  Weighting for each time period (see details).}
 
 \item{alt.graph}{Either a graph that should be used instead of \code{graph},
