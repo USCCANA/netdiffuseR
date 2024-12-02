@@ -195,12 +195,12 @@ Other diffusion datasets:
 \code{\link{diffusion-data}},
 \code{\link{fakeDynEdgelist}},
 \code{\link{fakeEdgelist}},
-\code{\link{fakesurveyDyn}},
 \code{\link{fakesurvey}},
-\code{\link{kfamilyDiffNet}},
+\code{\link{fakesurveyDyn}},
 \code{\link{kfamily}},
-\code{\link{medInnovationsDiffNet}},
-\code{\link{medInnovations}}
+\code{\link{kfamilyDiffNet}},
+\code{\link{medInnovations}},
+\code{\link{medInnovationsDiffNet}}
 }
 \concept{diffusion datasets}
 \keyword{datasets}

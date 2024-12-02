@@ -9,9 +9,9 @@
 \usage{
 plot_threshold(graph, expo, vertex.label, ...)
 
-\method{plot_threshold}{diffnet}(graph, expo, vertex.label, ...)
+\method{plot_threshold}{diffnet}(graph, expo, ...)
 
-\method{plot_threshold}{array}(graph, expo, vertex.label, ...)
+\method{plot_threshold}{array}(graph, expo, ...)
 
 \method{plot_threshold}{default}(
   graph,
@@ -56,6 +56,8 @@ plot_threshold(graph, expo, vertex.label, ...)
 
 \item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
+\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
+
 \item{...}{Additional arguments passed to \code{\link{plot}}.}
 
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
@@ -80,8 +82,6 @@ plot_threshold(graph, expo, vertex.label, ...)
 \item{vertex.size}{Numeric vector of size \eqn{n}. Relative size of the vertices.}
 
 \item{vertex.color}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.}
-
-\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
 
 \item{vertex.label.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
 
@@ -172,8 +172,8 @@ Other visualizations:
 \code{\link{grid_distribution}()},
 \code{\link{hazard_rate}()},
 \code{\link{plot_adopters}()},
-\code{\link{plot_diffnet2}()},
 \code{\link{plot_diffnet}()},
+\code{\link{plot_diffnet2}()},
 \code{\link{plot_infectsuscep}()},
 \code{\link{rescale_vertex_igraph}()}
 }

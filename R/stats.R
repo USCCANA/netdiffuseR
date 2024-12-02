@@ -258,10 +258,13 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @templateVar dynamic TRUE
 #' @templateVar self TRUE
 #' @template graph_template
-#' @param cumadopt \eqn{n\times T}{n * T} matrix. Cumulative adoption matrix obtained from
-#' \code{\link{toa_mat}}
+#' @param cumadopt \eqn{n\times T}{n * T} matrix for single diffusion.
+#' \eqn{n\times T \times q}{n * T * Q} array for \eqn{Q}{Q} diffusion processes.
+#' Cumulative adoption matrix obtained from \code{\link{toa_mat}}
 #' @param attrs Either a character scalar (if \code{graph} is diffnet),
-#' or a numeric matrix of size \eqn{n\times T}{n * T}. Weighting for each time, period (see details).
+#' a numeric matrix of size \eqn{n\times T}{n * T}, or an array of size
+#' \eqn{n\times T \time Q}{n * T * Q} (only for multi diffusion).
+#'  Weighting for each time period (see details).
 #' @param alt.graph Either a graph that should be used instead of \code{graph},
 #' or \code{"se"} (see details).
 #' @param outgoing Logical scalar. When \code{TRUE}, computed using outgoing ties.
@@ -448,12 +451,39 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' stopifnot(all(test[!is.na(test)]))
 #'
 #'
+#' # Examples for multi-diffusion ---------------------------
+#'
+#' # Running a multi-diffusion simulation, with q=2 behaviors
+#' set.seed(999)
+#' n <- 40; t <- 5; q <- 2;
+#' graph <- rgraph_ws(n, t, p=.3)
+#' seed_prop_adopt <- rep(list(0.1), q)
+#'
+#' diffnet <- rdiffnet(seed.graph = graph, t = t, seed.p.adopt = seed_prop_adopt)
+#'
+#' # Getting the cumulative adoption array of dims n x T x q
+#' cumadopt_2 <- diffnet$cumadopt  # list of matrices
+#' cumadopt_2 <- array(unlist(cumadopt_2), dim = c(n, t, q))
+#'
+#' expo2 <- exposure(diffnet$graph, cumadopt = cumadopt_2)
+#'
+#' # With an attribute --
+#'
+#' X <- matrix(runif(n * t), nrow = n, ncol = t) # matrix n x T
+#' ans3 <- exposure(diffnet$graph, cumadopt = cumadopt_2, attrs=X)
+#'
+#' X <- array(runif(n * t * q), dim = c(n, t, q)) # array n x T x q
+#' ans4 <- exposure(diffnet$graph, cumadopt = cumadopt_2, attrs=X)
+#'
+#' # Exposure based on Structural Equivalence --
+#' #ans5 <- exposure(diffnet, cumadopt = cumadopt_2, alt.graph = se, valued=TRUE)
+
 #'
 #' @family statistics
 #' @keywords univar
 #' @return A matrix of size \eqn{n\times T}{n * T} with exposure for each node.
 #' @export
-#' @author George G. Vega Yon & Thomas W. Valente
+#' @author George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 #' @name exposure
 NULL
 

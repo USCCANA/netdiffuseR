@@ -182,12 +182,12 @@ print.diffnet <- function(x, ...) {
 #' @family diffnet methods
 #'
 summary.diffnet <- function(
-  object,
-  slices     = NULL,
-  no.print   = FALSE,
-  skip.moran = FALSE,
-  valued     = getOption("diffnet.valued",FALSE),
-  ...) {
+    object,
+    slices     = NULL,
+    no.print   = FALSE,
+    skip.moran = FALSE,
+    valued     = getOption("diffnet.valued",FALSE),
+    ...) {
   # Subsetting
   if (!length(slices)) slices <- 1:object$meta$nper
 
@@ -209,6 +209,8 @@ summary.diffnet <- function(
   # Computing density
   d <- unlist(lapply(object$graph[slices], function(x) {
     nlinks(x)/nnodes(x)/(nnodes(x)-1)
+    # nelements <- length(x@x)
+    # x <-nelements/(meta$n * (meta$n-1))
   }))
 
   # identify single-diff from multi-diff
@@ -301,7 +303,7 @@ summary.diffnet <- function(
       out_list[[q]] <- out
     }
 
-    if (no.print) return(out_list)
+    if (no.print) return(out)
   }
 
   # Function to print data.frames differently
@@ -339,8 +341,8 @@ summary.diffnet <- function(
       cat(hline, "\n")
       summary_diffnet_out_display(out_list[[q]], slen, meta, slices, qf, skip.moran)
       cat(rule, "\n",
-        paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, data_beh_list[[q]][1])), "\n",
-        paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, data_beh_list[[q]][2])), "\n")
+          paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, data_beh_list[[q]][1])), "\n",
+          paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, data_beh_list[[q]][2])), "\n")
     }
   }
 
@@ -353,6 +355,7 @@ summary.diffnet <- function(
 
   invisible(out)
 }
+
 
 summary_diffnet_out_display <- function(out, slen, meta, slices, qf, skip.moran) {
   for (i in 1:nrow(out)) {

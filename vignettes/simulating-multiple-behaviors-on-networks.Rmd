@@ -130,7 +130,7 @@ Alternatively, we can **specify the network**:
 set.seed(121)
 n          <- 200
 t          <- 10
-graph      <- rgraph_ws(n, 10, p=.3)  # watts-strogatz model
+graph      <- rgraph_ws(n, t, p=.3)  # watts-strogatz model
 thr        <- runif(n, .3,.5)
 
 diffnet <- rdiffnet(seed.graph = graph, t = t , seed.p.adopt = list(0.1, 0.15),

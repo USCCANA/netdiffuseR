@@ -20,16 +20,16 @@ edgelist can be merged with the dataset \code{\link{fakesurvey}}.
 }
 \seealso{
 Other diffusion datasets: 
-\code{\link{brfarmersDiffNet}},
 \code{\link{brfarmers}},
+\code{\link{brfarmersDiffNet}},
 \code{\link{diffusion-data}},
 \code{\link{fakeDynEdgelist}},
-\code{\link{fakesurveyDyn}},
 \code{\link{fakesurvey}},
-\code{\link{kfamilyDiffNet}},
+\code{\link{fakesurveyDyn}},
 \code{\link{kfamily}},
-\code{\link{medInnovationsDiffNet}},
-\code{\link{medInnovations}}
+\code{\link{kfamilyDiffNet}},
+\code{\link{medInnovations}},
+\code{\link{medInnovationsDiffNet}}
 }
 \author{
 George G. Vega Yon

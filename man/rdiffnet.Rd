@@ -20,7 +20,8 @@ rdiffnet(
   exposure.args = list(),
   name = "A diffusion network",
   behavior = "Random contagion",
-  stop.no.diff = TRUE
+  stop.no.diff = TRUE,
+  disadopt = NULL
 )
 }
 \arguments{
@@ -156,7 +157,7 @@ When \code{cl} is provided, then simulations are done via
 which is stopped (removed) once the process is complete.
 }
 \examples{
-# Asimple example -----------------------------------------------------------
+# A simple example -----------------------------------------------------------
 set.seed(123)
 z <- rdiffnet(100,10)
 z
