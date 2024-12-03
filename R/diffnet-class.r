@@ -508,7 +508,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' \item{toa}{An integer vector of length \eqn{n} with times of adoption. When \eqn{Q}{Q} multiple
 #' behavior diffusion is selected, a matrix of size \eqn{n \times Q}{n * Q}}.
 #' \item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
-#' by \code{\link{toa_mat}}. For \eqn{Q}{Q} multiple behavior diffusion, \code{adopt} and \code {cumadopt}
+#' by \code{\link{toa_mat}}. For \eqn{Q}{Q} multiple behavior diffusion, \code{adopt} and \code{cumadopt}
 #' become a list of \eqn{n\times T}{n*T} elements, with \eqn{Q}{Q} elements.}
 #' \item{vertex.static.attrs}{If not NULL, a data frame with \eqn{n} rows with vertex static
 #' attributes.}

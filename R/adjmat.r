@@ -396,35 +396,19 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
   return(cbind(edgelist, times=times))
 }
 
-# # Benchmark with the previous version
-# library(microbenchmark)
-# library(netdiffuseR)
-#
-# dat <- as.data.frame(cbind(edgelist, w))
-# colnames(dat) <- c('ego','alter','tie')
-# microbenchmark(
-#   adjmatbuild(dat,n,1:n),
-#   edgelist_to_adjmat(edgelist, w), times=100)
-#
-# old <- adjmatbuild(dat[,-3],n,1:n)
-# new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
-# arrayInd(which(old!=new), dim(old), dimnames(old))
-#
-# ## Dynamic
-# microbenchmark(
-#   adjByTime(cbind(year=times,dat),n,max(times)),
-#   edgelist_to_adjmat(edgelist, w, times), times=100)
-
 #' Time of adoption matrix
 #'
 #' Creates two matrices recording times of adoption of the innovation. One matrix
 #' records the time period of adoption for each node with zeros elsewhere. The
 #' second records the cumulative time of adoption such that there are ones for
-#' the time of adoption and every time period thereafter.
+#' the time of adoption and every time period thereafter. For multiple behavior
+#' diffusion, creates a list where each element contains those two matrices for
+#' each behavior.
 #'
-#' @param obj Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
-#' or a \code{\link{diffnet}} object.
-#' @param labels Character vector of size \eqn{n}. Labels (ids) of the vertices.
+#' @param obj Either an integer vector of length \eqn{n} containing time of adoption
+#' of the innovation, a matrix of size \eqn{n \times Q} (for multiple \eqn{Q} behaviors), or
+#' a \code{\link{diffnet}} object (both for single or multiple behaviors).
+#' @param labels Character vector of length \eqn{n}. Labels (ids) of the vertices.
 #' @param t0 Integer scalar. Sets the lower bound of the time window (e.g. 1955).
 #' @param t1 Integer scalar. Sets the upper bound of the time window (e.g. 2000).
 #' @details
@@ -446,6 +430,12 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' 2005 - 2000 + 1 = 6 columns instead of 2005 - 2001 + 1 = 5 columns, with the
 #' first column of the two matrices containing only zeros (as the first adoption
 #' happend after the year 2000).
+#'
+#' For multiple behaviors, the input can be a matrix or a \code{diffnet} object.
+#' In this case, the output will be a list, with each element replicating the output
+#' for a single diffusion: a matrix recording the time period of adoption for
+#' each node, and a second matrix with ones from the moment the node adopts the behavior.
+#'
 #' @examples
 #' # Random set of times of adoptions
 #' times <- sample(c(NA, 2001:2005), 10, TRUE)
@@ -454,6 +444,22 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #'
 #' # Now, suppose that we observe the graph from 2000 to 2006
 #' toa_mat(times, t0=2000, t1=2006)
+#'
+#' # For multiple behaviors, the input can be a matrix..
+#' times_1 <- c(2001L, 2004L, 2003L, 2008L)
+#' times_2 <- c(2001L, 2005L, 2006L, 2008L)
+#' times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+#'
+#' toa <- toa_mat(times)
+#' toa[[1]]$adopt         # time period of adoption for the first behavior
+#'
+#' #.. or a diffnet object
+#' graph <- lapply(2001:2008, function(x) rgraph_er(4))
+#' diffnet <- new_diffnet(graph, times)
+#'
+#' toa <- toa_mat(diffnet)
+#' toa[[1]]$cumadopt      # cumulative adoption matrix for the first behavior
+
 #'
 #' @export
 #' @return A list of two \eqn{n \times T}{n x T}

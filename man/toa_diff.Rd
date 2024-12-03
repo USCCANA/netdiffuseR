@@ -7,12 +7,13 @@
 toa_diff(obj, t0 = NULL, labels = NULL)
 }
 \arguments{
-\item{obj}{Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
-or a \code{\link{diffnet}} object.}
+\item{obj}{Either an integer vector of length \eqn{n} containing time of adoption
+of the innovation, a matrix of size \eqn{n \times Q} (for multiple \eqn{Q} behaviors), or
+a \code{\link{diffnet}} object (both for single or multiple behaviors).}
 
 \item{t0}{Integer scalar. Sets the lower bound of the time window (e.g. 1955).}
 
-\item{labels}{Character vector of size \eqn{n}. Labels (ids) of the vertices.}
+\item{labels}{Character vector of length \eqn{n}. Labels (ids) of the vertices.}
 }
 \value{
 An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
