@@ -235,7 +235,7 @@ random_dis <- function(expo, cumadopt, time) {
   return(list_disadopt)
 }
 
-diffnet_7 <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis, seed.p.adopt = list(0.1, 0.1))
+diffnet_6 <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis, seed.p.adopt = list(0.1, 0.1))
 
 # (Multiple simulations of single behavior): --------------------------------
 # Simulation study comparing the diffusion with diff sets of seed nodes

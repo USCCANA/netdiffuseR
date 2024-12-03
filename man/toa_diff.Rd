@@ -16,27 +16,52 @@ a \code{\link{diffnet}} object (both for single or multiple behaviors).}
 \item{labels}{Character vector of length \eqn{n}. Labels (ids) of the vertices.}
 }
 \value{
-An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
+An \eqn{n \times n}{n * n} anti-symmetric matrix (or a list of them,
+for \eqn{Q}{Q} behaviors) indicating the difference in times of
 adoption between each pair of nodes.
 }
 \description{
-Creates \eqn{n \times n}{n * n} matrix indicating the difference in times of adoption between
-each pair of nodes
+Creates an \eqn{n \times n}{n * n} matrix, or for \eqn{Q}{Q} behaviors, a list
+of length \eqn{Q}{Q} containing \eqn{n \times n}{n * n} matrices, that indicates
+the difference in adoption times between each pair of nodes.
 }
 \details{
-Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
+Each cell \eqn{ij}{ij} of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
 adopted the innovation sooner.
 }
 \examples{
+# For a single behavior -----------------------------------------------------
+
 # Generating a random vector of time
 set.seed(123)
 times <- sample(2000:2005, 10, TRUE)
 
 # Computing the TOA differences
 toa_diff(times)
+
+# For Q=2 behaviors ---------------------------------------------------------
+
+# Generating a matrix time
+
+times_1 <- c(2001L, 2004L, 2003L, 2008L)
+times_2 <- c(2001L, 2005L, 2006L, 2008L)
+times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+
+# Computing the TOA differences
+toa_diff(times)
+
+# Or, from a diffnet object
+
+graph <- lapply(2001:2008, function(x) rgraph_er(4))
+diffnet <- new_diffnet(graph, times)
+
+# Computing the TOA differences
+toa_diff(diffnet)
+
+
 }
 \author{
-George G. Vega Yon & Thomas W. Valente
+George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 }
 \keyword{manip}

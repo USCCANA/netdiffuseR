@@ -589,25 +589,51 @@ toa_mat.integer <- function(times, labels=NULL,
 
 #' Difference in Time of Adoption (TOA) between individuals
 #'
-#' Creates \eqn{n \times n}{n * n} matrix indicating the difference in times of adoption between
-#' each pair of nodes
+#' Creates an \eqn{n \times n}{n * n} matrix, or for \eqn{Q}{Q} behaviors, a list
+#' of length \eqn{Q}{Q} containing \eqn{n \times n}{n * n} matrices, that indicates
+#' the difference in adoption times between each pair of nodes.
 #' @inheritParams toa_mat
-#' @details Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
+#' @details Each cell \eqn{ij}{ij} of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 #' toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
 #' adopted the innovation sooner.
-#' @return An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
+#' @return An \eqn{n \times n}{n * n} anti-symmetric matrix (or a list of them,
+#' for \eqn{Q}{Q} behaviors) indicating the difference in times of
 #' adoption between each pair of nodes.
 #' @export
 #' @examples
+#' # For a single behavior -----------------------------------------------------
+#'
 #' # Generating a random vector of time
 #' set.seed(123)
 #' times <- sample(2000:2005, 10, TRUE)
 #'
 #' # Computing the TOA differences
 #' toa_diff(times)
+#'
+#' # For Q=2 behaviors ---------------------------------------------------------
+#'
+#' # Generating a matrix time
+#'
+#' times_1 <- c(2001L, 2004L, 2003L, 2008L)
+#' times_2 <- c(2001L, 2005L, 2006L, 2008L)
+#' times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+#'
+#' # Computing the TOA differences
+#' toa_diff(times)
+#'
+#' # Or, from a diffnet object
+#'
+#' graph <- lapply(2001:2008, function(x) rgraph_er(4))
+#' diffnet <- new_diffnet(graph, times)
+#'
+#' # Computing the TOA differences
+#' toa_diff(diffnet)
+#'
+
+#'
 #' @keywords manip
 #' @include graph_data.r
-#' @author George G. Vega Yon & Thomas W. Valente
+#' @author George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)

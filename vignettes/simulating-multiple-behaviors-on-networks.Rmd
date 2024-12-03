@@ -211,6 +211,37 @@ expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
 
 ```
 
+```{r}
+
+set.seed(1231)
+
+n <- 100; t <- 5;
+graph <- rgraph_ws(n, t, p=.3)
+
+random_dis <- function(expo, cumadopt, time) {
+  num_of_behaviors <- dim(cumadopt)[3]
+
+  list_disadopt <- list()
+
+  for (q in 1:num_of_behaviors) {
+    adopters <- which(cumadopt[, time, q, drop=FALSE] == 1)
+    if (length(adopters) == 0) {
+      # only disadopt those behaviors with adopters
+      list_disadopt[[q]] <- integer()
+    } else {
+      # selecting 10% of adopters to disadopt
+      list_disadopt[[q]] <- sample(adopters, ceiling(0.10 * length(adopters)))
+    }
+  }
+  return(list_disadopt)
+}
+
+diffnet_random_dis <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis,
+                      seed.p.adopt = list(0.1, 0.1))
+
+
+```
+
 # `exposure()` examples
 
 -   Exposure for multiple behaviors:

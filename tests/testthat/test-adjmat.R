@@ -99,7 +99,7 @@ for (g in names(EL_digraph)) {
 ################################################################################
 # Time of adoption
 ################################################################################
-context("Time of Adoption (toa_mat, toa_dif)")
+context("Time of Adoption (toa_mat, toa_diff)")
 
 times <- c(2001L, 2004L, 2003L, 2008L)
 
