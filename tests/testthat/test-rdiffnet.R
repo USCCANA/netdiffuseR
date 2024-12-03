@@ -207,10 +207,3 @@ test_that("Disadoption works", {
   expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
 
 })
-
-#rdiffnet(100, 5, seed.p.adopt = 0.9, threshold.dist = 2, exposure.args = list(normalized=FALSE))
-
-# set.seed(1234)
-# net1 <- rdiffnet(100, 5, rewire = FALSE, seed.p.adopt = list(0.1,0.08), seed.nodes = c(1,3,5))
-# net2 <- rdiffnet(100, 5, rewire = FALSE, seed.p.adopt = list(0.1,0.08), seed.nodes = list(c(1,3,5),c(1,3,5)))
-# expect_equal(net1, net2)

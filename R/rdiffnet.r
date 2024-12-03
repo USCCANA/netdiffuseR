@@ -26,6 +26,7 @@
 #' @param behavior Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
+#' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -101,7 +102,9 @@
 #' }
 #'
 #' @examples
-#' # (Single behavior): A simple example ---------------------------------------
+#' # (Single behavior): --------------------------------------------------------
+#'
+#' # A simple example
 #' set.seed(123)
 #' diffnet_1 <- rdiffnet(100,10)
 #' diffnet_1
@@ -118,7 +121,9 @@
 #' newMI <- rdiffnet(seed.graph = medInnovationsDiffNet$graph,
 #'  threshold.dist = threshold(medInnovationsDiffNet), rewire=FALSE)
 #'
-#' # (Multiple behavior): A simple example -------------------------------------
+#' # (Multiple behavior): ------------------------------------------------------
+#'
+#' # A simple example
 #' set.seed(123)
 #' diffnet_3 <- rdiffnet(100, 10, seed.p.adopt = list(0.1, 0.15))
 #' diffnet_3
@@ -134,13 +139,37 @@
 #'                       behavior = c("tobacco", "alcohol"))
 #' diffnet_4
 #'
-#' # Adopt if at least one (first behavior) and two (second behavior) neighbors
-#' # have adopted --------------------------------------
+#' # Adopt if at least one neighbor has adopted the first behavior,
+#' # and at least two neighbors have adopted the second behavior. ---
 #'
 #' diffnet_5 <- rdiffnet(seed.graph = graph, t = t, seed.p.adopt = list(0.1, 0.1),
 #'                       threshold.dist = list(function(x) 2, function(x) 2),
 #'                       exposure.args=list(valued=FALSE, normalized=FALSE))
 #' diffnet_5
+#'
+#' # With a disadoption function -----------------------
+#'
+#' set.seed(1231)
+#'
+#' random_dis <- function(expo, cumadopt, time) {
+#'   num_of_behaviors <- dim(cumadopt)[3]
+#'
+#'   list_disadopt <- list()
+#'
+#'   for (q in 1:num_of_behaviors) {
+#'     adopters <- which(cumadopt[, time, q, drop=FALSE] == 1)
+#'     if (length(adopters) == 0) {
+#'       # only disadopt those behaviors with adopters
+#'       list_disadopt[[q]] <- integer()
+#'     } else {
+#'       # selecting 10% of adopters to disadopt
+#'       list_disadopt[[q]] <- sample(adopters, ceiling(0.10 * length(adopters)))
+#'     }
+#'   }
+#'   return(list_disadopt)
+#' }
+#'
+#' diffnet_6 <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis, seed.p.adopt = list(0.1, 0.1))
 #'
 #' @author George G. Vega Yon & Aníbal Olivera M.
 #' @name rdiffnet
@@ -289,8 +318,8 @@ rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
 #' \code{\link[parallel:parSapply]{parSapply}}).
 #'
 #' @examples
-#' # (Multiple simulations of single behavior): Simulation study comparing the
-#' # diffusion with diff sets of seed nodes --------------------------------------
+#' # (Multiple simulations of single behavior): --------------------------------
+#' # Simulation study comparing the diffusion with diff sets of seed nodes
 #'
 #' # Random seed nodes
 #' set.seed(1)

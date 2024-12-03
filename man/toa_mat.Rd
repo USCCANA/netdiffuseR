@@ -18,17 +18,19 @@ a \code{\link{diffnet}} object (both for single or multiple behaviors).}
 \item{t1}{Integer scalar. Sets the upper bound of the time window (e.g. 2000).}
 }
 \value{
-A list of two \eqn{n \times T}{n x T}
- \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
- \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
+For a single behavior, a list of two \eqn{n \times T}{n x T}:
+ \item{\code{cumadopt}}{ has 1's for all years in which a node indicates having the innovation.}
+ \item{\code{adopt}}{ has 1's only for the year of adoption and 0 for the rest.}
+ For \eqn{Q} behaviors, a list of length \eqn{Q}, each element containing
+ \code{cumadopt} ans \code{adopt} matrices.
 }
 \description{
-Creates two matrices recording times of adoption of the innovation. One matrix
+For a single behavior, creates two matrices recording times of adoption of the innovation. One matrix
 records the time period of adoption for each node with zeros elsewhere. The
 second records the cumulative time of adoption such that there are ones for
-the time of adoption and every time period thereafter. For multiple behavior
-diffusion, creates a list where each element contains those two matrices for
-each behavior.
+the time of adoption and every time period thereafter. For \eqn{Q} behaviors,
+creates a list of length \eqn{Q}, where each element contains those two
+matrices for each behavior.
 }
 \details{
 In order to be able to work with time ranges other than \eqn{1,\dots, T}{1,..., T}
@@ -80,6 +82,6 @@ toa[[1]]$cumadopt      # cumulative adoption matrix for the first behavior
 
 }
 \author{
-George G. Vega Yon & Thomas W. Valente
+George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 }
 \keyword{manip}
