@@ -108,7 +108,7 @@
 #' summary(diffnet_1)
 #'
 #' # Adopt if at least two neighbors have adopted ------
-#' n <- 40; t <- 5;
+#' n <- 100; t <- 5;
 #' graph <- rgraph_ws(n, t, p=.3)
 #'
 #' diffnet_2 <- rdiffnet(seed.graph = graph, t = t, threshold.dist=function(x) 2,
@@ -132,13 +132,15 @@
 #'                       seed.nodes = list(seed_nodes, seed_nodes),
 #'                       threshold.dist = threshold_matrix,
 #'                       behavior = c("tobacco", "alcohol"))
+#' diffnet_4
 #'
-#' # Adopt if at least one (first behavior) and two neighbors have adopted
-#' (second behavior) -----------------------------------
+#' # Adopt if at least one (first behavior) and two (second behavior) neighbors
+#' # have adopted --------------------------------------
 #'
 #' diffnet_5 <- rdiffnet(seed.graph = graph, t = t, seed.p.adopt = list(0.1, 0.1),
 #'                       threshold.dist = list(function(x) 2, function(x) 2),
 #'                       exposure.args=list(valued=FALSE, normalized=FALSE))
+#' diffnet_5
 #'
 #' @author George G. Vega Yon & Aníbal Olivera M.
 #' @name rdiffnet
@@ -288,7 +290,7 @@ rdiffnet_check_seed_graph <- function(seed.graph, rgraph.args, t, n) {
 #'
 #' @examples
 #' # (Multiple simulations of single behavior): Simulation study comparing the
-#' diffusion with diff sets of seed nodes --------------------------------------
+#' # diffusion with diff sets of seed nodes --------------------------------------
 #'
 #' # Random seed nodes
 #' set.seed(1)
