@@ -99,7 +99,7 @@ for (g in names(EL_digraph)) {
 ################################################################################
 # Time of adoption
 ################################################################################
-context("Time of Adoption (toa_mat, toa_dif)")
+context("Time of Adoption (toa_mat, toa_diff)")
 
 times <- c(2001L, 2004L, 2003L, 2008L)
 
@@ -129,6 +129,7 @@ test_that("In toa_diff, its dim should be equal to the input mat", {
   expect_equal(dim(toa_diff(times)), c(4,4))
   expect_equal(dim(toa_diff(as.integer(times))), c(4,4))
   expect_equal(toa_diff(times), toa_diff(as.integer(times)))
+  expect_equal(toa_diff(diffnet), toa_diff(times))
 })
 
 test_that("Checking toa_mat output", {
@@ -153,17 +154,8 @@ context("Time of Adoption -multiple- (toa_mat, toa_dif)")
 times_1 <- c(2001L, 2004L, 2003L, 2008L)
 times_2 <- c(2001L, 2005L, 2006L, 2008L)
 times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
-graph <- lapply(2001:2008, function(x) rgraph_er(4))
-diffnet <- new_diffnet(graph, times)
-#toa_mat(diffnet)
 toa <- toa_mat(times)
 
-test_that("Should warn about -times- not been integer. -multiple-.", {
-  times_1 <- as.numeric(c(2001L, 2004L, 2003L, 2008L))
-  times_2 <- as.numeric(c(2001L, 2002L, 2003L, 2005L))
-  times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
-  expect_warning(toa_mat(times), "will be coersed to integer")
-})
 
 test_that("Dimensions of TOA mat should be ok. -multiple-.", {
   for (q in 1:length(toa)) {
@@ -182,12 +174,17 @@ test_that("Passing labels should work. -multiple-.", {
     expect_equal(rownames(toa_q$cumadopt), labs)
   }
 })
+graph <- lapply(2001:2008, function(x) rgraph_er(4))
+diffnet <- new_diffnet(graph, times)
 
-# test_that("In toa_diff, its dim should be equal to the input mat. -multiple-.", {
-#   expect_equal(dim(toa_diff(times)), c(4,4))
-#   expect_equal(dim(toa_diff(as.integer(times))), c(4,4))
-#   expect_equal(toa_diff(times), toa_diff(as.integer(times)))
-# })
+test_that("In toa_diff, its dim should be equal to the input mat. -multiple-.", {
+  expect_equal(length(toa_diff(times)), 2)
+  expect_equal(dim(toa_diff(times)[[1]]), c(4,4))
+  expect_equal(length(toa_diff(diffnet)), 2)
+  expect_equal(dim(toa_diff(diffnet)[[1]]), c(4,4))
+  expect_equal(toa_diff(times), toa_diff(diffnet))
+})
+
 
 test_that("Checking toa_mat output. -multiple-.", {
 

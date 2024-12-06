@@ -396,35 +396,19 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
   return(cbind(edgelist, times=times))
 }
 
-# # Benchmark with the previous version
-# library(microbenchmark)
-# library(netdiffuseR)
-#
-# dat <- as.data.frame(cbind(edgelist, w))
-# colnames(dat) <- c('ego','alter','tie')
-# microbenchmark(
-#   adjmatbuild(dat,n,1:n),
-#   edgelist_to_adjmat(edgelist, w), times=100)
-#
-# old <- adjmatbuild(dat[,-3],n,1:n)
-# new <- (edgelist_to_adjmat(unique(edgelist), undirected = FALSE))[,,1]
-# arrayInd(which(old!=new), dim(old), dimnames(old))
-#
-# ## Dynamic
-# microbenchmark(
-#   adjByTime(cbind(year=times,dat),n,max(times)),
-#   edgelist_to_adjmat(edgelist, w, times), times=100)
-
 #' Time of adoption matrix
 #'
-#' Creates two matrices recording times of adoption of the innovation. One matrix
+#' For a single behavior, creates two matrices recording times of adoption of the innovation. One matrix
 #' records the time period of adoption for each node with zeros elsewhere. The
 #' second records the cumulative time of adoption such that there are ones for
-#' the time of adoption and every time period thereafter.
+#' the time of adoption and every time period thereafter. For \eqn{Q} behaviors,
+#' creates a list of length \eqn{Q}, where each element contains those two
+#' matrices for each behavior.
 #'
-#' @param obj Either an integer vector of size \eqn{n} containing time of adoption of the innovation,
-#' or a \code{\link{diffnet}} object.
-#' @param labels Character vector of size \eqn{n}. Labels (ids) of the vertices.
+#' @param obj Either an integer vector of length \eqn{n} containing time of adoption
+#' of the innovation, a matrix of size \eqn{n \times Q} (for multiple \eqn{Q} behaviors), or
+#' a \code{\link{diffnet}} object (both for single or multiple behaviors).
+#' @param labels Character vector of length \eqn{n}. Labels (ids) of the vertices.
 #' @param t0 Integer scalar. Sets the lower bound of the time window (e.g. 1955).
 #' @param t1 Integer scalar. Sets the upper bound of the time window (e.g. 2000).
 #' @details
@@ -446,6 +430,12 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' 2005 - 2000 + 1 = 6 columns instead of 2005 - 2001 + 1 = 5 columns, with the
 #' first column of the two matrices containing only zeros (as the first adoption
 #' happend after the year 2000).
+#'
+#' For multiple behaviors, the input can be a matrix or a \code{diffnet} object.
+#' In this case, the output will be a list, with each element replicating the output
+#' for a single diffusion: a matrix recording the time period of adoption for
+#' each node, and a second matrix with ones from the moment the node adopts the behavior.
+#'
 #' @examples
 #' # Random set of times of adoptions
 #' times <- sample(c(NA, 2001:2005), 10, TRUE)
@@ -455,13 +445,31 @@ adjmat_to_edgelist.list <- function(graph, undirected, keep.isolates) {
 #' # Now, suppose that we observe the graph from 2000 to 2006
 #' toa_mat(times, t0=2000, t1=2006)
 #'
+#' # For multiple behaviors, the input can be a matrix..
+#' times_1 <- c(2001L, 2004L, 2003L, 2008L)
+#' times_2 <- c(2001L, 2005L, 2006L, 2008L)
+#' times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+#'
+#' toa <- toa_mat(times)
+#' toa[[1]]$adopt         # time period of adoption for the first behavior
+#'
+#' #.. or a diffnet object
+#' graph <- lapply(2001:2008, function(x) rgraph_er(4))
+#' diffnet <- new_diffnet(graph, times)
+#'
+#' toa <- toa_mat(diffnet)
+#' toa[[1]]$cumadopt      # cumulative adoption matrix for the first behavior
+
+#'
 #' @export
-#' @return A list of two \eqn{n \times T}{n x T}
-#'  \item{\code{cumadopt}}{has 1's for all years in which a node indicates having the innovation.}
-#'  \item{\code{adopt}}{has 1's only for the year of adoption and 0 for the rest.}
+#' @return For a single behavior, a list of two \eqn{n \times T}{n x T}:
+#'  \item{\code{cumadopt}}{ has 1's for all years in which a node indicates having the innovation.}
+#'  \item{\code{adopt}}{ has 1's only for the year of adoption and 0 for the rest.}
+#'  For \eqn{Q} behaviors, a list of length \eqn{Q}, each element containing
+#'  \code{cumadopt} ans \code{adopt} matrices.
 #' @keywords manip
 #' @include graph_data.r
-#' @author George G. Vega Yon & Thomas W. Valente
+#' @author George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 toa_mat <- function(obj, labels=NULL, t0=NULL, t1=NULL) {
 
   if (inherits(obj, "matrix")) {
@@ -581,33 +589,132 @@ toa_mat.integer <- function(times, labels=NULL,
 
 #' Difference in Time of Adoption (TOA) between individuals
 #'
-#' Creates \eqn{n \times n}{n * n} matrix indicating the difference in times of adoption between
-#' each pair of nodes
+#' Creates an \eqn{n \times n}{n * n} matrix, or for \eqn{Q}{Q} behaviors, a list
+#' of length \eqn{Q}{Q} containing \eqn{n \times n}{n * n} matrices, that indicates
+#' the difference in adoption times between each pair of nodes.
 #' @inheritParams toa_mat
-#' @details Each cell ij of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
+#' @details Each cell \eqn{ij}{ij} of the resulting matrix is calculated as \eqn{toa_j - toa_i}{%
 #' toa(j) - toa(i)}, so that whenever its positive it means that the j-th individual (alter)
 #' adopted the innovation sooner.
-#' @return An \eqn{n \times n}{n * n} symmetric matrix indicating the difference in times of
+#' @return An \eqn{n \times n}{n * n} anti-symmetric matrix (or a list of them,
+#' for \eqn{Q}{Q} behaviors) indicating the difference in times of
 #' adoption between each pair of nodes.
 #' @export
 #' @examples
+#' # For a single behavior -----------------------------------------------------
+#'
 #' # Generating a random vector of time
 #' set.seed(123)
 #' times <- sample(2000:2005, 10, TRUE)
 #'
 #' # Computing the TOA differences
 #' toa_diff(times)
+#'
+#' # For Q=2 behaviors ---------------------------------------------------------
+#'
+#' # Generating a matrix time
+#'
+#' times_1 <- c(2001L, 2004L, 2003L, 2008L)
+#' times_2 <- c(2001L, 2005L, 2006L, 2008L)
+#' times <- matrix(c(times_1, times_2), nrow = 4, ncol = 2)
+#'
+#' # Computing the TOA differences
+#' toa_diff(times)
+#'
+#' # Or, from a diffnet object
+#'
+#' graph <- lapply(2001:2008, function(x) rgraph_er(4))
+#' diffnet <- new_diffnet(graph, times)
+#'
+#' # Computing the TOA differences
+#' toa_diff(diffnet)
+#'
+
+#'
 #' @keywords manip
 #' @include graph_data.r
-#' @author George G. Vega Yon & Thomas W. Valente
+#' @author George G. Vega Yon, Thomas W. Valente, and Aníbal Olivera M.
 toa_diff <- function(obj, t0=NULL, labels=NULL) {
 
   # Calculating t0 (if it was not provided)
-  if (!inherits(obj, "diffnet") && !length(t0))
+  if (!inherits(obj, "diffnet") && !length(t0)){
     t0 <- as.integer(min(obj, na.rm = TRUE))
-  else
-    t0 <- obj$meta$pers[1]
+  } else {
+    t0 <- obj$meta$pers[1]}
 
+  # determining num_of_behavior and prepare for multi-diffusion
+  num_of_behavior <- 1
+  multiple <- FALSE
+
+  if (inherits(obj, "matrix")) { # multiple
+    num_of_behavior <- ncol(obj)
+    obj <- lapply(asplit(obj, MARGIN = 2), as.integer)
+    multiple <- TRUE
+  } else if (inherits(obj, "diffnet")) {
+    if (inherits(obj$toa, "matrix")) { # multiple
+      num_of_behavior <- ncol(obj$toa)
+      obj <- split_behaviors(obj)
+      multiple <- TRUE
+    }
+  }
+
+  if (multiple) {
+    out_list <- lapply(seq_len(num_of_behavior), function(q) toa_diff.unique(obj[[q]], t0))
+    return(out_list)
+  } else {
+    return(toa_diff.unique(obj, t0))
+  }
+}
+
+#
+#
+#   if (multiple) {
+#     for (q in 1:ncol(obj$toa)) {
+#
+#
+#       # Calculating t0 (if it was not provided)
+#       if (!inherits(obj, "diffnet") && !length(t0)) {
+#         t0 <- as.integer(min(obj[,q], na.rm = TRUE))
+#       } else {
+#         t0 <- obj$meta$pers[1]}
+#
+#       # Computing the difference
+#       if (inherits(obj, "integer")) {
+#         out <- toa_diff_cpp(obj - t0 + 1L)
+#       } else if (inherits(obj, "numeric")) {
+#         warning("coercing -obj- to integer.")
+#         out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
+#       } else if (inherits(obj, "diffnet")) {
+#         out <- toa_diff_cpp(obj$toa - t0 + 1L)
+#       } else stop("No method defined for class -",class(obj),"-")
+#
+#       out
+#
+#     }
+#
+#
+#   } else {
+#     # Calculating t0 (if it was not provided)
+#     if (!inherits(obj, "diffnet") && !length(t0))
+#       t0 <- as.integer(min(obj, na.rm = TRUE))
+#     else
+#       t0 <- obj$meta$pers[1]
+#
+#     # Computing the difference
+#     if (inherits(obj, "integer")) {
+#       out <- toa_diff_cpp(obj - t0 + 1L)
+#     } else if (inherits(obj, "numeric")) {
+#       warning("coercing -obj- to integer.")
+#       out <- toa_diff_cpp(as.integer(obj) - t0 + 1L)
+#     } else if (inherits(obj, "diffnet")) {
+#       out <- toa_diff_cpp(obj$toa - t0 + 1L)
+#     } else stop("No method defined for class -",class(obj),"-")
+#
+#     return(out)
+#   }
+# }
+
+toa_diff.unique <- function(obj, t0) {
   # Computing the difference
   if (inherits(obj, "integer")) {
     out <- toa_diff_cpp(obj - t0 + 1L)
@@ -618,7 +725,7 @@ toa_diff <- function(obj, t0=NULL, labels=NULL) {
     out <- toa_diff_cpp(obj$toa - t0 + 1L)
   } else stop("No method defined for class -",class(obj),"-")
 
-  out
+  return(out)
 }
 
 # @rdname toa_diff

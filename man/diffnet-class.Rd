@@ -121,7 +121,9 @@ is_valued(x)
 
 \item{toavar}{Character scalar. Name of the variable that holds the time of adoption.}
 
-\item{toa}{Numeric vector of size \eqn{n}. Times of adoption.}
+\item{toa}{Numeric vector of size \eqn{n}. Times of adoption. For \eqn{Q}{Q}
+multiple behavior diffusion, \code{toa} must be a matrix \eqn{n \times Q}{n * Q}
+(see \code{\link{rdiffnet}}, examples of multiple behavior diffusion).}
 
 \item{t0}{Integer scalar. Passed to \code{\link{toa_mat}}.}
 
@@ -171,9 +173,11 @@ or static (\code{"static"}).}
 A list of class \code{diffnet} with the following elements:
 \item{graph}{A list of length \eqn{T}. Containing sparse square matrices of size \eqn{n}
 and class \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
-\item{toa}{An integer vector of size \eqn{T} with times of adoption.}
+\item{toa}{An integer vector of length \eqn{n} with times of adoption. When \eqn{Q}{Q} multiple
+behavior diffusion is selected, a matrix of size \eqn{n \times Q}{n * Q}}.
 \item{adopt, cumadopt}{Numeric matrices of size \eqn{n\times T}{n*T} as those returned
-by \code{\link{toa_mat}}.}
+by \code{\link{toa_mat}}. For \eqn{Q}{Q} multiple behavior diffusion, \code{adopt} and \code{cumadopt}
+become a list of \eqn{n\times T}{n*T} elements, with \eqn{Q}{Q} elements.}
 \item{vertex.static.attrs}{If not NULL, a data frame with \eqn{n} rows with vertex static
 attributes.}
 \item{vertex.dyn.attrs}{A list of length \eqn{T} with data frames containing vertex attributes
@@ -196,9 +200,9 @@ throught time (dynamic).}
 }
 }
 \description{
-\code{diffnet} objects contain difussion networks. With adjacency
-matrices and time of adoption (toa) vector as its main components, most of the
-package's functions have methods for this class of objects.
+\code{diffnet} objects contain diffusion networks. With adjacency
+matrices and time of adoption (toa) vector (or matrix, for multiple behavior diffusion),
+as its main components, most of the package's functions have methods for this class of objects.
 }
 \details{
 \code{diffnet} objects hold both, static and dynamic vertex attributes. When
@@ -271,6 +275,8 @@ recalculates adoption and cumulative adoption matrices using \code{toa_mat}.
 
 \examples{
 
+# Creating a diffnet object from TOA (time of adoption) ---------------------
+
 # Creating a random graph
 set.seed(123)
 graph <- rgraph_ba(t=9)
@@ -287,6 +293,16 @@ summary(diffnet)
 
 # Plotting slice 4
 plot(diffnet, t=4)
+
+# A diffnet object from TOA of multiple behaviors ---------------------------
+
+# TOA for two behaviors
+toa_matrix <- matrix(sample(c(2001L:2005L,NA), 20, TRUE), ncol = 2)
+
+# Creating diffnet object
+diffnet_multi <- new_diffnet(graph, toa_matrix)
+diffnet_multi
+summary(diffnet_multi)
 
 # ATTRIBUTES ----------------------------------------------------------------
 
@@ -360,7 +376,7 @@ Other data management functions:
 \code{\link{survey_to_diffnet}()}
 }
 \author{
-George G. Vega Yon
+George G. Vega Yon & Aníbal Olivera M.
 }
 \concept{data management functions}
 \concept{diffnet methods}

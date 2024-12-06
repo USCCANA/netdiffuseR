@@ -469,15 +469,15 @@ Cresskill N.J.: Hampton Press.
 }
 \seealso{
 Other diffusion datasets: 
-\code{\link{brfarmersDiffNet}},
 \code{\link{brfarmers}},
+\code{\link{brfarmersDiffNet}},
 \code{\link{diffusion-data}},
 \code{\link{fakeDynEdgelist}},
 \code{\link{fakeEdgelist}},
-\code{\link{fakesurveyDyn}},
 \code{\link{fakesurvey}},
+\code{\link{fakesurveyDyn}},
 \code{\link{kfamilyDiffNet}},
-\code{\link{medInnovationsDiffNet}},
-\code{\link{medInnovations}}
+\code{\link{medInnovations}},
+\code{\link{medInnovationsDiffNet}}
 }
 \concept{diffusion datasets}

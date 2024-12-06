@@ -1,0 +1,311 @@
+---
+title: "Simulating Multiple Behaviors on Networks"
+author: "Aníbal Olivera M."
+date: "2024-11-21"
+output: html_document
+---
+
+\tableofcontents
+
+News for **netdiffuseR** package.
+
+```{r loading, message=FALSE, warning=FALSE}
+
+#devtools::install_github("USCCANA/netdiffuseR", ref = "47-split-behaviors-rdiffnet")
+library(netdiffuseR)
+```
+
+# Introduction
+
+-   Social networks facilitate the spread of news, gossip, behaviors, and products. Granovetter specified a simple and intuitive mechanism that underpins much of the research on social network diffusion: individuals adopt a behavior if enough others do so.
+-   More specifically, in an interacting population of individuals where a behavior is spreading, each individual has a particular “threshold” and adopts the behavior if the proportion of others who have already adopted the behavior exceeds the threshold.
+-   However, adoption booms are commonly followed by periods of bust—riots come to an end, new fashions go out of style, and juicy gossip turns to stale news.
+-   So the adoption of a fashion is followed by the disadoption of that fashion by a new one.
+-   This dynamic requires being able to handle more than one 'propagation' at a time.
+-   Until now, **netdiffuseR** was not able to simulate more than one diffusion in the same setup.
+
+# Allowing multi-behavior diffusion simulations
+
+## How rdiffnet works until now
+
+In a (very) simplified way, `rdiffnet` has 4 steps. Before this current version, the workflow can be diagrammed as:
+
+```{r, echo=FALSE, out.width="55%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-single-1.png")
+```
+
+## How rdiffnet works from now
+
+In the current version, we maintain the basic structure of the workflow, but adding some functions and modifying the existing for allowing multi-behavior diffusion.
+
+```{r, echo=FALSE, out.width="55%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-multiple-1.png")
+```
+
+As you can see, now in Step 1.0, before identify the seed nodes as initial condition, the inputs `seed.p.adopt` (default 0.1 for single behavior), `seed.nodes` (default 'random'), and `behavior` (default 'random behavior') are passed to an internal function that validates they as accepted inputs and homogenized the objects for the rest of the code.
+
+As before, `rdiffnet` still accepts several kinds of inputs, for different classes classes and specifications, but the input that characterized the **multi-behavior** simulation is exclusively `seed.p.adopt`. If `class(seed.p.adopt)` is a `list`, then the simulation will run a total of `length(seed.p.adopt)` behaviors in the same setup. This table summarize the possible inputs for `seed.p.adopt`, `seed.nodes`, `threshold.dist`, and `behavior`, showing some examples.
+
+```{r, echo=FALSE, out.width="60%", fig.align="center"}
+knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/table_1.png")
+```
+
+All functions in other steps were revised to allow now different object that can handle multi-behavior, while still can execute the already in-build functions for single diffusion within the package (as `plot()`, `plot_diffnet()`, and `plot_adopters()`, among many others).
+
+Additionally, now there is a new function `split_behaviors()` that returns a list where each element is a separate rdiffnet object, that correspond with each separate behavior. So in this way, you could use the same machinery constructed for single behavior, to plot or analyze now the result of the multi-behavior simulation.
+
+All those features are shown in more detail below.
+
+# `rdiffnet()` examples
+
+## For single diffusion:
+
+```{r}
+
+set.seed(123)
+
+rdiffnet(100, 5)
+?rdiffnet
+
+rdiffnet(100, 5, seed.p.adopt = 0.1)
+
+rdiffnet(100, 5, seed.p.adopt = 0.1, behavior = 'tabacco')
+
+rdiffnet(100, 5, seed.p.adopt = 0.1, threshold.dist = 0.3)
+rdiffnet(100, 5, seed.p.adopt = 0.1, threshold.dist = function(x) 0.3)
+rdiffnet(100, 5, seed.p.adopt = 0.1, threshold.dist = runif(100, .2,.7))
+
+rdiffnet(100, 5, seed.p.adopt = 0.1, seed.nodes = 'central')
+
+seed_nodes <- sample(1:100, 10, replace = FALSE)
+rdiffnet(100, 5, seed.nodes = seed_nodes)
+
+```
+
+but also, we can **specify the network**:
+
+```{r}
+#| warning: false
+
+set.seed(121)
+n          <- 200
+t          <- 10
+graph      <- rgraph_ws(n, 10, p=.3)  # watts-strogatz model
+thr        <- runif(n, .3,.5)
+
+rdiffnet(seed.graph = graph, t = t , seed.p.adopt = 0.1, threshold.dist = thr)
+```
+
+## For multi diffusion:
+
+```{r}
+
+set.seed(124)
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), behavior = 'tabacco')
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), behavior = c('tabacco', 'alcohol'))
+
+diffnet <- rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = 0.3)
+diffnet$vertex.static.attrs
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = runif(100))
+diffnet <- rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = function(x) 0.3)
+diffnet$vertex.static.attrs
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(0.3, 0.2))
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(runif(100), runif(100)))
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), threshold.dist = list(function(x) 0.3, function(x) 0.2))
+
+set.seed(123)
+rdiffnet(100, 5, seed.p.adopt = list(0.1, 0.08), seed.nodes = c('random', 'central'))
+
+set.seed(123)
+seed_nodes <- sample(1:100, 10, replace = FALSE)
+rdiffnet(100, 5, seed.p.adopt = list(0, 0), seed.nodes = list(seed_nodes, seed_nodes))
+
+```
+
+Alternatively, we can **specify the network**:
+
+```{r}
+#| warning: false
+
+set.seed(121)
+n          <- 200
+t          <- 10
+graph      <- rgraph_ws(n, t, p=.3)  # watts-strogatz model
+thr        <- runif(n, .3,.5)
+
+diffnet <- rdiffnet(seed.graph = graph, t = t , seed.p.adopt = list(0.1, 0.15),
+                    threshold.dist = thr)
+diffnet
+```
+
+# `split_behaviors()` and disadoption
+
+If you want to use other function to analyze the results from the simulation focusing in a single behavior, you could use \`split_behaviors()\`:
+
+```{r}
+#| warning: false
+ 
+  set.seed(12131)
+  n            <- 50
+  t            <- 5
+  graph        <- rgraph_ws(n, 4, p=.3)
+  seed.nodes   <- c(1,5,7,10)
+  thr          <- runif(n, .2,.4)
+
+  # Generating identical networks
+  net_single <- rdiffnet(seed.graph = graph, t = t, seed.nodes = seed.nodes, 
+                         seed.p.adopt = 0.1, rewire = FALSE, threshold.dist = thr)
+
+  net_multiple <- rdiffnet(seed.graph = graph, t = t, seed.nodes = seed.nodes, 
+                           seed.p.adopt = list(0.1, 0.1), rewire = FALSE,
+                           threshold.dist = thr)
+
+  net_single_from_multiple <- split_behaviors(net_multiple)
+  net_single_from_multiple_1 <- net_single_from_multiple[[1]]
+
+  expect_equal(net_single_from_multiple_1$toa, net_single$toa)
+  expect_equal(net_single_from_multiple_1$adopt, net_single$adopt)
+  expect_equal(net_single_from_multiple_1$cumadopt, net_single$cumadopt)
+  
+```
+
+## Plotting each behavior
+
+```{r}
+
+plot_diffnet(net_single)
+plot_diffnet(net_single_from_multiple_1)
+
+```
+
+# Disadoption
+
+Until now the behaviors are independent, but we can add some disadoption function to make them dependent each other. This is achieved by introducing the function you want as an input tho rdiffnet: `rdiffnet <- function(n, t, seed.nodes = "random", seed.p.adopt = 0.05, seed.graph = "scale-free", rgraph.args = list(), rewire = TRUE, rewire.args = list(), threshold.dist = runif(n), exposure.args = list(), name = "A diffusion network", behavior = "Random contagion", stop.no.diff = TRUE, disadopt = NULL)`
+
+```{r}
+
+set.seed(1231)
+n <- 500
+
+d_adopt <- function(expo, cumadopt, time) {
+
+  # Id double adopters
+  ids <- which(apply(cumadopt[, time, , drop=FALSE], 1, sum) > 1)
+
+  if (length(ids) == 0)
+    return(list(integer(), integer()))
+
+  # Otherwise, make them pick one (literally, you can only adopt
+  # a single behavior, in this case, we prefer the second)
+  return(list(ids, integer()))
+
+}
+
+ans_d_adopt <- rdiffnet(n = n, t = 10, disadopt = d_adopt,
+                        seed.p.adopt = list(0.1, 0.1))
+
+tmat <- toa_mat(ans_d_adopt)
+should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]
+
+expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
+
+```
+
+```{r}
+
+set.seed(1231)
+
+n <- 100; t <- 5;
+graph <- rgraph_ws(n, t, p=.3)
+
+random_dis <- function(expo, cumadopt, time) {
+  num_of_behaviors <- dim(cumadopt)[3]
+
+  list_disadopt <- list()
+
+  for (q in 1:num_of_behaviors) {
+    adopters <- which(cumadopt[, time, q, drop=FALSE] == 1)
+    if (length(adopters) == 0) {
+      # only disadopt those behaviors with adopters
+      list_disadopt[[q]] <- integer()
+    } else {
+      # selecting 10% of adopters to disadopt
+      list_disadopt[[q]] <- sample(adopters, ceiling(0.10 * length(adopters)))
+    }
+  }
+  return(list_disadopt)
+}
+
+diffnet_random_dis <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis,
+                      seed.p.adopt = list(0.1, 0.1))
+
+
+```
+
+# `exposure()` examples
+
+-   Exposure for multiple behaviors:
+
+```{r}
+#| warning: false
+
+set.seed(12131)
+g    <- rgraph_ws(20, 4, p=.3)  # watts-strogatz model
+set0 <- c(1,5,7,10)
+thr  <- runif(20, .4,.7)
+
+diffnet <- rdiffnet(seed.graph = g, seed.nodes = set0, t = 4, rewire = FALSE,
+                 threshold.dist = thr)
+
+cumadopt_2 <- diffnet$cumadopt
+cumadopt_2 <- array(c(cumadopt_2,cumadopt_2[rev(1:nrow(cumadopt_2)),]), dim=c(dim(cumadopt_2), 2))
+
+print(exposure(diffnet, cumadopt = cumadopt_2))
+```
+
+# rdiffnet_validate_arg()
+
+Maybe not necessary, as this is an internal function.
+
+# Threshold
+
+## Thresholds
+
+-   One of the cannonical concepts is the network threshold. Network thresholds (Valente, 1995; 1996), $\tau$, are defined as the required proportion or number of neighbors that leads you to adopt a particular behavior (innovation), $a=1$. In (very) general terms\pause
+
+$$
+a_i = \left\{\begin{array}{ll}
+1 &\mbox{if } \tau_i\leq E_i \\
+0 & \mbox{Otherwise}
+\end{array}\right. \qquad
+E_i \equiv \frac{\sum_{j\neq i}\mathbf{X}_{ij}a_j}{\sum_{j\neq i}\mathbf{X}_{ij}}
+$$
+
+Where $E_i$ is i's exposure to the innovation and $\mathbf{X}$ is the adjacency matrix (the network).
+
+# new_diffnet()
+
+Same, is an internal function.
+
+# split_behaviors()
+
+Examples.
+
+-   Importantly, while very useful, `diffnet` objects is not the only way to use **netdiffuseR**. Most of the functions can also be used with matrices and arrays.
+
+```{r Loading netdiffuseR, echo=FALSE}
+library(netdiffuseR)
+knitr::opts_chunk$set(comment = '#')
+```
+
+# Raw network data
+
+-   We call raw network data to datasets that have a somewhat raw form, for example, edgelists,
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+-   For this tutorial, we classify graph data as follows:
+    -   Raw R network data: Datasets with edgelist, attributes, survey data, etc.
+    -   Already R data: already read into R using igraph, statnet, etc.
+    -   Graph files: DL, UCINET, pajek, etc.
+-   The includes several options to read such data.
