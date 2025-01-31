@@ -370,6 +370,18 @@ rdiffnet_multiple <- function(
 
 }
 
+default_rewire.args <- list(
+  p          = .1,
+  undirected = getOption("diffnet.undirected", FALSE),
+  self       = getOption("diffnet.self", FALSE)
+)
+
+default_exposure.args <- list(
+  outgoing   = TRUE,
+  valued     = getOption("diffnet.valued", FALSE),
+  normalized = TRUE
+)
+
 #' @rdname rdiffnet
 #' @export
 rdiffnet <- function(
@@ -390,13 +402,13 @@ rdiffnet <- function(
   ) {
 
   # Checking options
-  if (!length(rewire.args[["p"]])) rewire.args[["p"]] <- .1
-  if (!length(rewire.args[["undirected"]])) rewire.args[["undirected"]] <- getOption("diffnet.undirected", FALSE)
-  if (!length(rewire.args[["self"]])) rewire.args[["self"]] <- getOption("diffnet.self", FALSE)
+  for (arg in names(default_rewire.args)) 
+    if (!length(rewire.args[[arg]]))
+      rewire.args[[arg]] <- default_rewire.args[[arg]]
 
-  if (!length(exposure.args[["outgoing"]])) exposure.args[["outgoing"]] <- TRUE
-  if (!length(exposure.args[["valued"]])) exposure.args[["valued"]] <- getOption("diffnet.valued", FALSE)
-  if (!length(exposure.args[["normalized"]])) exposure.args[["normalized"]] <- TRUE
+  for (arg in names(default_exposure.args))
+    if (!length(exposure.args[[arg]]))
+      exposure.args[[arg]] <- default_exposure.args[[arg]]
 
   if (inherits(exposure.args[["attrs"]], "matrix")) {
     # Checking if the attrs matrix is has dims n x t
@@ -449,10 +461,10 @@ rdiffnet <- function(
 
   # Step 1.0: Setting the seed nodes -----------------------------------------
 
-  rdiffnet_args <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
-  seed.p.adopt <- rdiffnet_args$seed.p.adopt
-  seed.nodes <- rdiffnet_args$seed.nodes
-  behavior <- rdiffnet_args$behavior
+  rdiffnet_args    <- rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)
+  seed.p.adopt     <- rdiffnet_args$seed.p.adopt
+  seed.nodes       <- rdiffnet_args$seed.nodes
+  behavior         <- rdiffnet_args$behavior
   num_of_behaviors <- rdiffnet_args$num_of_behaviors
 
   # Step 1.1: Number of initial adopters
@@ -462,13 +474,21 @@ rdiffnet <- function(
   for (i in 1:num_of_behaviors) {
 
     if ((seed.p.adopt[[i]] > 1) | (seed.p.adopt[[i]] < 0)) {
-      stop(paste("The proportion of initial adopters for behavior", i, "should be a number in [0,1]"))
+      stop(
+        paste(
+          "The proportion of initial adopters for behavior", i,
+          "should be a number in [0,1]"
+        )
+      )
     }
     if (n*seed.p.adopt[[i]] < 1) {
-      warning(paste("Set of initial adopters for behavior", i, "set to 1."))
+      warning(
+        paste("Set of initial adopters for behavior", i, "set to 1.")
+        )
     }
 
     n0[[i]] <- max(1, n * seed.p.adopt[[i]])
+
   }
 
   # Step 1.2: finding the nodes
@@ -614,21 +634,35 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
   # The class of seed.p.adopt determines if is a single or multiple diff pross.
 
   if (inherits(seed.p.adopt, "list")) {
-    message(paste("Message: Multi-diffusion behavior simulation selected.",
-                  "Number of behaviors: ", length(seed.p.adopt)))
+
+    message(
+      paste(
+        "Message: Multi-diffusion behavior simulation selected.",
+        "Number of behaviors: ", length(seed.p.adopt))
+        )
+
     multi <- TRUE
+
   } else if (inherits(seed.p.adopt, "numeric")) {
 
-    if (length(seed.p.adopt)>1) {
-      stop(paste("length(seed.p.adopt) =", length(seed.p.adopt),
-                 ", but for multi-diffusion -seed.p.adopt- must be a -list-."))
+    if (length(seed.p.adopt) > 1) {
+
+      stop(
+        paste("length(seed.p.adopt) =", length(seed.p.adopt),
+        ", but for multi-diffusion -seed.p.adopt- must be a -list-.")
+        )
+        
     }
 
     multi <- FALSE
+
   } else {
 
-    stop("The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
-         "or a -list- (multiple behavior diff).")
+    stop(
+      "The object -seed.p.adopt- must be a -numeric- (for a single behavior diff)",
+      "or a -list- (multiple behavior diff)."
+      )
+
   }
 
   # seed.nodes stuff
@@ -755,7 +789,7 @@ split_behaviors <- function(diffnet_obj) {
   # creates a list, keeping the structure of each element
   diffnets <- replicate(ncol(diffnet_obj$toa), diffnet_obj, simplify = FALSE)
 
-  behaviors_names <- strsplit(diffnet_obj$meta$behavior, ", ")[[1]]
+  behaviors_names <- diffnet_obj$meta$behavior
 
   # loop over the behaviors
   for (q in 1:ncol(diffnet_obj$toa)) {

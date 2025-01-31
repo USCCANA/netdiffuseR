@@ -6,8 +6,13 @@ make_col_names <- function(n, is.dynamic, prefix="v.") {
 }
 
 # Checks attributes to be added to a diffnet object
-check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL,
-                                   attr.class="vertex") {
+check_as_diffnet_attrs <- function(
+  attrs,
+  meta, is.dynamic,
+  id.and.per.vars=NULL,
+  attr.class="vertex"
+  ) {
+
   # Getting meta
   n    <- meta$n
   nper <- meta$nper
@@ -350,7 +355,7 @@ check_as_diffnet_attrs <- function(attrs, meta, is.dynamic, id.and.per.vars=NULL
 #' or static (\code{"static"}).
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param name Character scalar. Name of the diffusion network (descriptive).
-#' @param behavior Character scalar. Name of the behavior been analyzed (innovation).
+#' @param behavior Character vector. Name of the behavior(s) been analyzed (innovation).
 #'
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
@@ -555,16 +560,20 @@ as_diffnet.networkDynamic <- function(graph, toavar, ...) {
 
 #' @export
 #' @rdname diffnet-class
-new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm = TRUE),
-                       vertex.dyn.attrs = NULL, vertex.static.attrs= NULL,
-                       id.and.per.vars = NULL,
-                       graph.attrs = NULL,
-                       undirected = getOption("diffnet.undirected"),
-                       self       = getOption("diffnet.self"),
-                       multiple   = getOption("diffnet.multiple"),
-                       name       = "Diffusion Network",
-                       behavior   = "Unspecified"
-                       ) {
+new_diffnet <- function(
+  graph, toa,
+  t0=min(toa, na.rm   = TRUE),
+  t1=max(toa, na.rm   = TRUE),
+  vertex.dyn.attrs    = NULL,
+  vertex.static.attrs = NULL,
+  id.and.per.vars     = NULL,
+  graph.attrs         = NULL,
+  undirected          = getOption("diffnet.undirected"),
+  self                = getOption("diffnet.self"),
+  multiple            = getOption("diffnet.multiple"),
+  name                = "Diffusion Network",
+  behavior            = NA_character_
+) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
   if (inherits(graph, "diffnet")) {
@@ -574,9 +583,17 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
   # Step 0.1: Setting num_of_behavior ------------------------------------------
 
-  if (inherits(toa, "matrix")) {
+  if (inherits(toa, "matrix")) 
     num_of_behaviors <- dim(toa)[2]
-  } else {num_of_behaviors <- 1}
+  else
+    num_of_behaviors <- 1
+
+  if (is.na(behavior))
+    behavior <- rep("Unknown", num_of_behaviors)
+  else if (length(behavior) != num_of_behaviors)
+    stop(
+      "Length of -behavior- must be equal to the number of behaviors in -toa-."
+      )
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
@@ -585,27 +602,30 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
 
   # Step 1.2: Checking that lengths fit
-  if (num_of_behaviors == 1) {
-    if (length(toa)!=meta$n){ stop("-graph- and -toa- have different lengths (", meta$n, " and ", length(toa),
-         " respectively). ", "-toa- should be of length n (number of vertices).") }
-  } else {
-    if (length(toa[,1])!=meta$n) {stop("-graph- and -toa[,1]- have different lengths (", meta$n, " and ", length(toa[,1]),
-                                       " respectively). ", "-toa- should be of length n (number of vertices).") }
+  if ((num_of_behaviors == 1L) && (length(toa) != meta$n)) {
+    
+    stop(
+      "-graph- and -toa- have different lengths (", meta$n, " and ",
+      length(toa),
+      " respectively). -toa- should be of length n (number of vertices)."
+      )
+
+  } else if (length(toa[, 1L])!=meta$n) {
+
+    stop(
+      "-graph- and -toa[, 1]- have different lengths (", meta$n, " and ",
+      length(toa[, 1L]),
+      " respectively). ", "-toa- should be of length n (number of vertices)."
+      )
+
   }
 
-  # Step 2.1: Checking class of TOA and coercing if necessary -------------------
-  if (num_of_behaviors==1) {
-    if (!inherits(toa, "integer")) {
-      warning("Coercing -toa- into integer.")
-      toa <- as.integer(toa)
-    }
-  } else {
-    for (q in 1:num_of_behaviors) {
-      if (!inherits(toa[,q], "integer")) {
-        warning("Coercing -toa- into integer.")
-        toa[,q] <- as.integer(toa[,q])
-      }
-    }
+  # Step 2.1: Checking class of TOA and coercing if necessary 
+  if (!inherits(toa, "integer")) {
+
+    warning("Coercing -toa- into integer.")
+    toa[] <- as.integer(toa)
+
   }
 
   # Step 2.2: Checking names of toa
@@ -624,42 +644,66 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
 
   if (num_of_behaviors==1) {
     if (meta$type != "static") {
+
       tdiff <- meta$nper - ncol(mat$adopt)
       if (tdiff < 0)
-        stop("Range of -toa- is bigger than the number of slices in -graph- (",
-             ncol(mat$adopt), " and ", length(graph) ," respectively). ",
-             "There must be at least as many slices as range of toa.")
+        stop(
+          "Range of -toa- is bigger than the number of slices in -graph- (",
+          ncol(mat$adopt), " and ", length(graph) ," respectively). ",
+          "There must be at least as many slices as range of toa."
+          )
       else if (tdiff > 0)
-        stop("Range of -toa- is smaller than the number of slices in -graph- (",
-             ncol(mat$adopt), " and ", length(graph) ," respectively). ",
-             "Please provide lower and upper boundaries for the values in -toa- ",
-             "using -t0- and -t- (see ?toa_mat).")
+        stop(
+          "Range of -toa- is smaller than the number of slices in -graph- (",
+          ncol(mat$adopt), " and ", length(graph) ," respectively). ",
+          "Please provide lower and upper boundaries for the values in -toa- ",
+          "using -t0- and -t- (see ?toa_mat)."
+          )
+
     } else {
-      graph <- lapply(1:ncol(mat$adopt), function(x) methods::as(graph, "dgCMatrix"))
+
+      graph <- lapply(
+        1:ncol(mat$adopt), function(x) methods::as(graph, "dgCMatrix")
+        )
+
       meta  <- classify_graph(graph)
+
     }
   } else {
     if (meta$type != "static") {
+
       tdiff <- meta$nper - ncol(mat[[1]]$adopt)
       if (tdiff < 0)
-        stop("Range of -toa- is bigger than the number of slices in -graph- (",
-             ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
-             "There must be at least as many slices as range of toa.")
+        stop(
+          "Range of -toa- is bigger than the number of slices in -graph- (",
+          ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
+          "There must be at least as many slices as range of toa."
+          )
       else if (tdiff > 0)
-        stop("Range of -toa- is smaller than the number of slices in -graph- (",
-             ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
-             "Please provide lower and upper boundaries for the values in -toa- ",
-             "using -t0- and -t- (see ?toa_mat).")
+        stop(
+          "Range of -toa- is smaller than the number of slices in -graph- (",
+          ncol(mat[[1]]$adopt), " and ", length(graph) ," respectively). ",
+          "Please provide lower and upper boundaries for the values in -toa- ",
+          "using -t0- and -t- (see ?toa_mat)."
+          )
+    
     } else {
-      graph <- lapply(1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix"))
+
+      graph <- lapply(
+        1:ncol(mat[[1]]$adopt), function(x) methods::as(graph, "dgCMatrix")
+        )
+
       meta  <- classify_graph(graph)
+
     }
   }
 
   # labels of the time periods
-  if (num_of_behaviors==1) {
+  if (num_of_behaviors == 1) {
     meta$pers <- as.integer(colnames(mat$adopt))
-  } else {meta$pers <- as.integer(colnames(mat[[1]]$adopt))} # same for all behaviors
+  } else {
+    meta$pers <- as.integer(colnames(mat[[1]]$adopt))
+  } # same for all behaviors
 
   # Step 4.0: Checking the attributes ------------------------------------------
 
@@ -688,48 +732,59 @@ new_diffnet <- function(graph, toa, t0=min(toa, na.rm = TRUE), t1=max(toa, na.rm
   meta$self       <- self
   meta$undirected <- undirected
   meta$multiple   <- multiple
-  meta$name       <- ifelse(!length(name), "", ifelse(is.na(name), "",
-                                                      as.character(name)))
-  meta$version    <- utils::packageVersion("netdiffuseR")
+  meta$name       <- ifelse(
+    !length(name), "", ifelse(is.na(name), "", as.character(name))
+    )
 
-  # Removing dimnames
-  graph                  <- Map(function(x) Matrix::unname(x), x=graph)
-  #dimnames(toa)          <- NULL
+  meta$version <- utils::packageVersion("netdiffuseR")
+  graph <- Map(function(x) Matrix::unname(x), x=graph)
 
-  if (num_of_behaviors==1) {
-    meta$behavior   <- ifelse(!length(behavior), "", ifelse(is.na(behavior), "",
-                                                            as.character(behavior)))
+  if (num_of_behaviors == 1) {
+
+    meta$behavior   <- behavior
+
     dimnames(mat$adopt)    <- NULL
     dimnames(mat$cumadopt) <- NULL
 
     adopt <- mat$adopt
     cumadopt <- mat$cumadopt
+
   } else {
-    meta$behavior <- paste(unlist(behavior), collapse = ", ")
+
+    meta$behavior <- behavior
 
     for (q in 1:num_of_behaviors) {
       dimnames(mat[[q]]$adopt)    <- NULL
       dimnames(mat[[q]]$cumadopt) <- NULL
     }
+
     adopt <- list()
     cumadopt <- list()
+
     for (q in 1:num_of_behaviors) {
       adopt[[q]] <- mat[[q]]$adopt
       cumadopt[[q]] <- mat[[q]]$cumadopt
     }
+
   }
 
-  return(structure(list(
-    graph = graph,
-    toa   = toa,
-    adopt = adopt,
-    cumadopt = cumadopt,
-    # Attributes
-    vertex.static.attrs = vertex.static.attrs,
-    vertex.dyn.attrs    = vertex.dyn.attrs,
-    graph.attrs         = graph.attrs,
-    meta = meta
-  ), class="diffnet"))
+  return(
+    structure(
+      list(
+        graph = graph,
+        toa   = toa,
+        adopt = adopt,
+        cumadopt = cumadopt,
+        # Attributes
+        vertex.static.attrs = vertex.static.attrs,
+        vertex.dyn.attrs    = vertex.dyn.attrs,
+        graph.attrs         = graph.attrs,
+        meta = meta
+      ),
+      class="diffnet"
+    )
+  )
+
 }
 
 #' @export

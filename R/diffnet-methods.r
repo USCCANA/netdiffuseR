@@ -113,7 +113,7 @@ print.diffnet <- function(x, ...) {
     cat(
     "Dynamic network of class -diffnet-",
     paste(" Name               :", meta$name),
-    paste(" Behavior           :", meta$behavior),
+    paste(" Behavior           :", paste(meta$behavior, collapse=", ")),
     paste(" # of nodes         :", nodesl ),
     paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
@@ -333,7 +333,7 @@ summary.diffnet <- function(
         paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)), "\n",
         paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)), "\n")
   } else {
-    beh_names <- strsplit(meta$behavior, ", ")[[1]]
+    beh_names <- meta$behavior
     for (q in 1:length(object$cumadopt)) {
       cat("\n Behavior : ", beh_names[q], "\n",
           rule,"\n",sep="")
