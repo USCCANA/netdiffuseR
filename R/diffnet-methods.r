@@ -324,7 +324,7 @@ summary.diffnet <- function(
       "Name     : ", meta$name, "\n")
 
   if (single) {
-    cat(" Behavior : ", meta$behavior, "\n",
+    cat(" Behavior : ", meta$behavior[[1L]], "\n",
         rule,"\n",sep="")
     cat(header,"\n")
     cat(hline, "\n")
@@ -335,7 +335,7 @@ summary.diffnet <- function(
   } else {
     beh_names <- meta$behavior
     for (q in 1:length(object$cumadopt)) {
-      cat("\n Behavior : ", beh_names[q], "\n",
+      cat("\n Behavior : ", beh_names[[q]], "\n",
           rule,"\n",sep="")
       cat(header,"\n")
       cat(hline, "\n")

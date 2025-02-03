@@ -532,7 +532,7 @@ check_as_diffnet_attrs <- function(
 #'  \item \code{undirected}: Logical scalar.
 #'  \item \code{multiple}: Logical scalar.
 #'  \item \code{name}: Character scalar.
-#'  \item \code{behavior}: Character scalar.
+#'  \item \code{behavior}: A list of character scalars.
 #' }
 #' }
 #' @author George G. Vega Yon & Aníbal Olivera M.
@@ -572,7 +572,7 @@ new_diffnet <- function(
   self                = getOption("diffnet.self"),
   multiple            = getOption("diffnet.multiple"),
   name                = "Diffusion Network",
-  behavior            = NA_character_
+  behavior            = NULL
 ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -583,17 +583,19 @@ new_diffnet <- function(
 
   # Step 0.1: Setting num_of_behavior ------------------------------------------
 
-  if (inherits(toa, "matrix")) 
+  if (inherits(toa, "matrix"))
     num_of_behaviors <- dim(toa)[2]
   else
     num_of_behaviors <- 1
 
-  if (is.na(behavior))
+  if (length(behavior) == 0L)
     behavior <- rep("Unknown", num_of_behaviors)
   else if (length(behavior) != num_of_behaviors)
     stop(
       "Length of -behavior- must be equal to the number of behaviors in -toa-."
       )
+  else if (!inherits(behavior, "list"))
+    behavior <- as.list(behavior)
 
   # Step 1.1: Check graph ------------------------------------------------------
   meta <- classify_graph(graph)
@@ -603,14 +605,14 @@ new_diffnet <- function(
 
   # Step 1.2: Checking that lengths fit
   if ((num_of_behaviors == 1L) && (length(toa) != meta$n)) {
-    
+
     stop(
       "-graph- and -toa- have different lengths (", meta$n, " and ",
       length(toa),
       " respectively). -toa- should be of length n (number of vertices)."
       )
 
-  } else if (length(toa[, 1L])!=meta$n) {
+  } else if ((num_of_behaviors > 1L) && length(toa[, 1L])!=meta$n) {
 
     stop(
       "-graph- and -toa[, 1]- have different lengths (", meta$n, " and ",
@@ -620,7 +622,7 @@ new_diffnet <- function(
 
   }
 
-  # Step 2.1: Checking class of TOA and coercing if necessary 
+  # Step 2.1: Checking class of TOA and coercing if necessary
   if (!inherits(toa, "integer")) {
 
     warning("Coercing -toa- into integer.")
@@ -686,7 +688,7 @@ new_diffnet <- function(
           "Please provide lower and upper boundaries for the values in -toa- ",
           "using -t0- and -t- (see ?toa_mat)."
           )
-    
+
     } else {
 
       graph <- lapply(

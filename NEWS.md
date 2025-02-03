@@ -1,3 +1,10 @@
+# Changes in netdiffuseR version 1.23.0 (2025-01-03)
+
+* New methods for simulating multi-diffusion models, including disadoption.
+
+* 
+
+
 # Changes in netdiffuseR version 1.22.7 (2024-09-18)
 
 * Minor changes to testing (skip warnings).

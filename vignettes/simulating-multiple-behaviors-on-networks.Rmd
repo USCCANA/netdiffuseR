@@ -2,7 +2,11 @@
 title: "Simulating Multiple Behaviors on Networks"
 author: "Aníbal Olivera M."
 date: "2024-11-21"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simulating Multiple Behaviors on Networks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 \tableofcontents
