@@ -41,9 +41,6 @@
 #' @family graph formats
 NULL
 
-
-as_generic_graph <- function(graph) UseMethod("as_generic_graph")
-
 # Method for igraph objects
 as_generic_graph.igraph <- function(graph) {
 

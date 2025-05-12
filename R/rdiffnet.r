@@ -169,7 +169,10 @@
 #'   return(list_disadopt)
 #' }
 #'
-#' diffnet_6 <- rdiffnet(seed.graph = graph, t = 10, disadopt = random_dis, seed.p.adopt = list(0.1, 0.1))
+#' diffnet_6 <- rdiffnet(
+#'   seed.graph = graph, t = 10, disadopt = random_dis,
+#'   seed.p.adopt = list(0.1, 0.1)
+#' )
 #'
 #' @author George G. Vega Yon & Aníbal Olivera M.
 #' @name rdiffnet
@@ -402,7 +405,7 @@ rdiffnet <- function(
   ) {
 
   # Checking options
-  for (arg in names(default_rewire.args)) 
+  for (arg in names(default_rewire.args))
     if (!length(rewire.args[[arg]]))
       rewire.args[[arg]] <- default_rewire.args[[arg]]
 
@@ -651,7 +654,7 @@ rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
         paste("length(seed.p.adopt) =", length(seed.p.adopt),
         ", but for multi-diffusion -seed.p.adopt- must be a -list-.")
         )
-        
+
     }
 
     multi <- FALSE
