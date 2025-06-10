@@ -39,4 +39,4 @@ makefile
 ^netdiffuseR\.tar\.gz$
 ^\.github
 netdiffuseR\.Rcheck
-
+^\.devcontainer$

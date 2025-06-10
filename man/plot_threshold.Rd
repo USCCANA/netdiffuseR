@@ -7,7 +7,7 @@
 \alias{plot_threshold.default}
 \title{Threshold levels through time}
 \usage{
-plot_threshold(graph, expo, vertex.label, ...)
+plot_threshold(graph, expo, ...)
 
 \method{plot_threshold}{diffnet}(graph, expo, ...)
 
@@ -56,8 +56,6 @@ plot_threshold(graph, expo, vertex.label, ...)
 
 \item{expo}{\eqn{n\times T}{n * T} matrix. Esposure to the innovation obtained from \code{\link{exposure}}}
 
-\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
-
 \item{...}{Additional arguments passed to \code{\link{plot}}.}
 
 \item{toa}{Integer vector of length \eqn{n} with the times of adoption.}
@@ -82,6 +80,8 @@ plot_threshold(graph, expo, vertex.label, ...)
 \item{vertex.size}{Numeric vector of size \eqn{n}. Relative size of the vertices.}
 
 \item{vertex.color}{Either a vector of size \eqn{n} or a scalar indicating colors of the vertices.}
+
+\item{vertex.label}{Character vector of size \eqn{n}. Labels of the vertices.}
 
 \item{vertex.label.pos}{Integer value to be passed to \code{\link{text}} via \code{pos}.}
 
