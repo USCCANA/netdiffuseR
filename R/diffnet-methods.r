@@ -745,7 +745,7 @@ plot_diffnet.default <- function(
 #' @return Invisible. A data frame with the calculated coordinates, including:
 #' `toa`, `threshold`, and `jit` (a jittered version of `toa`).
 #' @author George G. Vega Yon
-plot_threshold <- function(graph, expo, vertex.label,...) UseMethod("plot_threshold")
+plot_threshold <- function(graph, expo,...) UseMethod("plot_threshold")
 
 #' @export
 #' @rdname plot_threshold
@@ -768,15 +768,21 @@ plot_threshold.diffnet <- function(graph, expo, ...) {
     args$toa <- graph$toa
   }
 
-  args$vertex.label <- nodes(graph)
+  if (length(args$vertex.label) == 0L)
+    args$vertex.label <- nodes(graph)
+
   do.call(plot_threshold.default,
-          c(list(graph = graph$graph, expo=expo), args))
+          c(list(graph = graph$graph, expo = expo), args))
 }
 
 #' @export
 #' @rdname plot_threshold
 plot_threshold.array <- function(graph, expo, ...) {
-  plot_threshold.default(as_dgCMatrix(graph), expo = expo, ...)
+  plot_threshold.default(
+    as_dgCMatrix(graph),
+    expo = expo,
+    ...
+    )
 }
 
 #' @export
@@ -966,12 +972,15 @@ plot_threshold.default <- function(
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
-  graphics::text(x=jit, y=y, labels = vertex.label,
-       pos = vertex.label.pos,
-       cex = vertex.label.cex,
-       col = vertex.label.color,
-       adj = vertex.label.adj
-       )
+  graphics::text(
+    x=jit,
+    y=y,
+    labels = vertex.label,
+    pos = vertex.label.pos,
+    cex = vertex.label.cex,
+    col = vertex.label.color,
+    adj = vertex.label.adj
+  )
 
   # par(oldpar)
 
