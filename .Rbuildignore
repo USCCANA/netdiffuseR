@@ -18,7 +18,7 @@
 .*\.doc
 .*\.pdf
 # Misc
-README[.]Rmd
+README[.](R|q)md
 ^README\_files$
 [.]travis[.]yml
 ^appveyor\.yml$
