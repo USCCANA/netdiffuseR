@@ -64,6 +64,7 @@ Collate:
     'adjmat.r'
     'bass.r'
     'bootnet.r'
+    'citer_environment.R'
     'data.r'
     'diffnet-c.R'
     'diffnet-class.r'
