@@ -12,12 +12,8 @@ help:
 install: netdiffuseR_$(VERSION).tar.gz
 	R CMD INSTALL netdiffuseR_$(VERSION).tar.gz
 
-netdiffuseR_$(VERSION).tar.gz: */*.R inst/NEWS README.md
+netdiffuseR_$(VERSION).tar.gz: */*.R 
 	R CMD build . 
-
-inst/NEWS: NEWS.md
-	Rscript -e "rmarkdown::pandoc_convert('NEWS.md', 'plain', output='inst/NEWS')"&& \
-	head -n 80 inst/NEWS
 
 README.md: README.Rmd
 	Rscript -e 'rmarkdown::render("README.Rmd")'
