@@ -159,6 +159,7 @@ struct_test <- function(
     rewire.args$undirected <- getOption("diffnet.undirected", FALSE)
   if (!length(rewire.args$copy.first)) rewire.args$copy.first <- TRUE
   if (!length(rewire.args$algorithm)) rewire.args$algorithm <- "swap"
+  if (!length(rewire.args$warn)) rewire.args$warn <- FALSE
 
   # Preparing the call to boot
   rewire.args$graph <- graph
@@ -167,8 +168,14 @@ struct_test <- function(
   }
 
   # Calling boot
-  boot_res <- boot::boot(1, statisticpll, R=R, fn=statistic, rewire.args=rewire.args,
-                   ...)
+  boot_res <- boot::boot(
+    1,
+    statisticpll,
+    R = R,
+    fn = statistic,
+    rewire.args = rewire.args,
+    ...
+    )
 
   # The t0 must be applied with no rewiring!
   boot_res$t0 <- statistic(graph)

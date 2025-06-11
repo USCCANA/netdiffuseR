@@ -14,7 +14,8 @@ rewire_graph(
   undirected = getOption("diffnet.undirected"),
   pr.change = ifelse(self, 0.5, 1),
   copy.first = TRUE,
-  althexagons = FALSE
+  althexagons = FALSE,
+  warn = TRUE
 )
 }
 \arguments{
@@ -39,7 +40,10 @@ or an integer vector with number of iterations (\code{algorithm="swap"}).}
 \item{copy.first}{Logical scalar. When \code{TRUE} and \code{graph} is dynamic uses
 the first slice as a baseline for the rest of slices (see details).}
 
-\item{althexagons}{Logical scalar. When \code{TRUE} uses the compact alternating
+\item{althexagons}{Logical scalar. When \code{TRUE} uses the compact alternating}
+
+\item{warn}{Logical scalar. If \code{TRUE} (default) shows warnings when
+recycling the first slice in dynamic graphs.
 hexagons algorithm (currently ignored [on development]).}
 }
 \value{

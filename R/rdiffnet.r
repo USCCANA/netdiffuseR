@@ -376,7 +376,8 @@ rdiffnet_multiple <- function(
 default_rewire.args <- list(
   p          = .1,
   undirected = getOption("diffnet.undirected", FALSE),
-  self       = getOption("diffnet.self", FALSE)
+  self       = getOption("diffnet.self", FALSE),
+  warn       = FALSE
 )
 
 default_exposure.args <- list(
@@ -431,7 +432,7 @@ rdiffnet <- function(
   meta <- classify_graph(sgraph)
 
   # Was n set?
-  if (!missing(n) && n != meta$n) {
+  if (!missing(n) && (n != meta$n)) {
     warning("While the user set n=",n,", nnodes(seed.graph)=", meta$n,". The later will be used.")
     n <- meta$n
   }
