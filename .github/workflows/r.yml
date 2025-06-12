@@ -79,6 +79,13 @@ jobs:
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
 
+      - name: Setup valgrind
+        if: ${{ matrix.config.valgrind == true }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y valgrind --no-install-recommends
+        shell: bash
+
       - name: Check with Valgrind
         if: ${{ matrix.config.valgrind == true }}
         env:
