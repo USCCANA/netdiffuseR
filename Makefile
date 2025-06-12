@@ -25,7 +25,7 @@ checkv: netdiffuseR_$(VERSION).tar.gz
 	R CMD check --as-cran --use-valgrind netdiffuseR_$(VERSION).tar.gz
 
 clean:
-	rm -rf netdiffuseR.Rcheck
+	rm -rf netdiffuseR.Rcheck src/*.so src/*.o
 
 docs:
 	Rscript --vanilla -e 'devtools::document()'

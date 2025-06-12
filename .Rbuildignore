@@ -40,3 +40,4 @@ makefile
 ^\.github
 netdiffuseR\.Rcheck
 ^\.devcontainer$
+^\.vscode$

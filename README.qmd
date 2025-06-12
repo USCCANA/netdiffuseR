@@ -9,7 +9,7 @@ format: gfm
 [![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.app/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
-[![USC's Department of Preventive Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://pphs.usc.edu/center/cana/)
+[![USC's Department of Preventive Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://keck.usc.edu/cana/)
 
 <h1>netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right"></h1>
 
@@ -18,7 +18,7 @@ This package contains functions useful for analyzing network data for diffusion 
 The package was developed as part of the paper Thomas W. Valente, Stephanie R.
 Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto, *Diffusion of innovations theory applied to global tobacco control treaty ratification*,
 Social Science & Medicine, Volume 145, November 2015, Pages 89-97, ISSN 0277-9536
-(available [here](https://www.sciencedirect.com/science/article/pii/S027795361530143X))
+(available [here](https://doi.org/10.1016/j.socscimed.2015.10.001)).
 
 From the description:
 
@@ -96,11 +96,7 @@ For the case of windows and mac users, they can find binary versions of the pack
 
 ## Tutorials
 
-Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Here are the repositories:
-
-* Sunbelt 2018: https://usccana.github.io/netdiffuser-sunbelt2018/ ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
-* NASN 2017: https://usccana.github.io/netdiffuser-nasn2017/ ([source code](https://github.com/USCCANA/netdiffuser-nasn2017))
-* Sunbelt 2016: https://github.com/USCCANA/netdiffuser-sunbelt2016
+Since starting netdiffuseR, we have done a couple of workshops at Sunbelt and NASN. Past and current workshops can be found at <https://github.com/USCCANA/netdiffuser-workshop>
 
 ## Presentations
 

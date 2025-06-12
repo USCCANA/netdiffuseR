@@ -71,7 +71,7 @@ rgraph_er(t=5)
 }
 \references{
 Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
-\url{https://barabasi.com/book/network-science}.
+\url{https://networksciencebook.com}.
 }
 \seealso{
 Other simulation functions: 

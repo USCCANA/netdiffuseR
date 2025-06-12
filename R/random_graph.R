@@ -23,7 +23,7 @@
 #' networks are uncorrelated.
 #' @references
 #' Barabasi, Albert-Laszlo. "Network science book" Retrieved November 1 (2015)
-#' \url{https://barabasi.com/book/network-science}.
+#' \url{https://networksciencebook.com}.
 #' @return A graph represented by an adjacency matrix (if \code{t=1}), or an array of
 #' adjacency matrices (if \code{t>1}).
 #' @export
@@ -164,7 +164,7 @@ rgraph_er <- function(n=10, t=1, p=0.01, undirected=getOption("diffnet.undirecte
 #' Networks. Science, 286(5439), 509–512. \doi{10.1126/science.286.5439.509}
 #'
 #' Albert-László Barabási. (2016). Network Science: (1st ed.). Cambridge University Press.
-#' Retrieved from \url{https://barabasi.com/book/network-science}
+#' Retrieved from \url{https://networksciencebook.com}
 #'
 #' De Almeida, M. L., Mendes, G. A., Madras Viswanathan, G., & Da Silva, L. R. (2013).
 #' Scale-free homophilic network. European Physical Journal B, 86(2).

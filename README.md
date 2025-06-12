@@ -2,15 +2,16 @@
 
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
-[![](https://cranlogs.r-pkg.org/badges/netdiffuseR.png)](https://cran.r-project.org/package=netdiffuseR)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/netdiffuseR.png)](https://cran.r-project.org/package=netdiffuseR)
-[![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR.png)](https://cran.r-project.org/package=netdiffuseR)
+[![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
-[![Dependencies](https://tinyverse.netlify.app/badge/netdiffuseR.png)](https://cran.r-project.org/package=netdiffuseR)
+[![Dependencies](https://tinyverse.netlify.app/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![USC’s Department of Preventive
-Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://pphs.usc.edu/center/cana/)
+Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://keck.usc.edu/cana/)
 
 <h1>
+
 netdiffuseR: Analysis of Diffusion and Contagion Processes on
 Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right">
 </h1>
@@ -23,7 +24,7 @@ Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto,
 *Diffusion of innovations theory applied to global tobacco control
 treaty ratification*, Social Science & Medicine, Volume 145, November
 2015, Pages 89-97, ISSN 0277-9536 (available
-[here](https://www.sciencedirect.com/science/article/pii/S027795361530143X))
+[here](https://doi.org/10.1016/j.socscimed.2015.10.001)).
 
 From the description:
 
@@ -123,13 +124,8 @@ this directly as follows (using the 1.16.3.29 version):
 ## Tutorials
 
 Since starting netdiffuseR, we have done a couple of workshops at
-Sunbelt and NASN. Here are the repositories:
-
-- Sunbelt 2018: https://usccana.github.io/netdiffuser-sunbelt2018/
-  ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
-- NASN 2017: https://usccana.github.io/netdiffuser-nasn2017/ ([source
-  code](https://github.com/USCCANA/netdiffuser-nasn2017))
-- Sunbelt 2016: https://github.com/USCCANA/netdiffuser-sunbelt2016
+Sunbelt and NASN. Past and current workshops can be found at
+<https://github.com/USCCANA/netdiffuser-workshop>
 
 ## Presentations
 
@@ -249,11 +245,6 @@ diffnet <- rdiffnet(500, 20,
                     seed.nodes = "random",
                     rgraph.args = list(m=3),
                     threshold.dist = function(x) runif(1, .3, .7))
-```
-
-    The option -copy.first- is set to TRUE. In this case, the first graph will be treated as a baseline, and thus, networks after T=1 will be replaced with T-1.TRUE
-
-``` r
 diffnet
 ```
 
@@ -398,24 +389,19 @@ par(oldpar)
 sessionInfo()
 ```
 
-    R version 4.4.0 (2024-04-24)
-    Platform: x86_64-pc-linux-gnu
-    Running under: Ubuntu 22.04.4 LTS
+    R version 4.5.0 (2025-04-11)
+    Platform: aarch64-apple-darwin24.2.0
+    Running under: macOS Sequoia 15.0.1
 
     Matrix products: default
-    BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-    LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+    BLAS:   /opt/homebrew/Cellar/openblas/0.3.29/lib/libopenblasp-r0.3.29.dylib 
+    LAPACK: /opt/homebrew/Cellar/r/4.5.0/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.1
 
     locale:
-     [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-     [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-     [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-     [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-     [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-    [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
-    time zone: Etc/UTC
-    tzcode source: system (glibc)
+    time zone: America/Denver
+    tzcode source: internal
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -424,21 +410,20 @@ sessionInfo()
     [1] netdiffuseR_1.23.0
 
     loaded via a namespace (and not attached):
-     [1] Matrix_1.7-0          jsonlite_1.8.8        dplyr_1.1.4          
-     [4] compiler_4.4.0        tidyselect_1.2.1      Rcpp_1.0.12          
-     [7] networkLite_1.0.5     boot_1.3-30           yaml_2.3.8           
+     [1] Matrix_1.7-3          jsonlite_2.0.0        dplyr_1.1.4          
+     [4] compiler_4.5.0        tidyselect_1.2.1      Rcpp_1.0.14          
+     [7] networkLite_1.1.0     boot_1.3-31           yaml_2.3.10          
     [10] fastmap_1.2.0         lattice_0.22-6        coda_0.19-4.1        
-    [13] R6_2.5.1              generics_0.1.3        MatchIt_4.5.5        
-    [16] igraph_2.0.3          knitr_1.47            MASS_7.3-60.2        
-    [19] backports_1.5.0       tibble_3.2.1          statnet.common_4.9.0 
-    [22] pillar_1.9.0          rlang_1.1.4           utf8_1.2.4           
-    [25] xfun_0.44             viridisLite_0.4.2     cli_3.6.2            
-    [28] magrittr_2.0.3        network_1.18.2        digest_0.6.35        
-    [31] grid_4.4.0            lifecycle_1.0.4       vctrs_0.6.5          
-    [34] SparseM_1.83          sna_2.7-2             evaluate_0.24.0      
-    [37] glue_1.7.0            fansi_1.0.6           rmarkdown_2.27       
-    [40] tools_4.4.0           pkgconfig_2.0.3       networkDynamic_0.11.4
-    [43] htmltools_0.5.8.1    
+    [13] R6_2.6.1              generics_0.1.4        MatchIt_4.7.2        
+    [16] igraph_2.1.4.9046     knitr_1.50            MASS_7.3-65          
+    [19] backports_1.5.0       tibble_3.3.0          statnet.common_4.12.0
+    [22] pillar_1.10.2         rlang_1.1.6           xfun_0.52            
+    [25] viridisLite_0.4.2     cli_3.6.5             magrittr_2.0.3       
+    [28] network_1.19.0        digest_0.6.37         grid_4.5.0           
+    [31] lifecycle_1.0.4       vctrs_0.6.5           sna_2.8              
+    [34] evaluate_1.0.3        SparseM_1.84-2        glue_1.8.0           
+    [37] rmarkdown_2.29        tools_4.5.0           pkgconfig_2.0.3      
+    [40] networkDynamic_0.11.5 htmltools_0.5.8.1    
 
 ## To-do list
 
