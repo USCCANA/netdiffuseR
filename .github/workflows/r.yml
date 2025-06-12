@@ -101,3 +101,14 @@ jobs:
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
+
+      - name: Build the package
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') && (matrix.config.valgrind != true) }}
+        run: R CMD build .
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') && (matrix.config.valgrind != true) }}
+        with:
+          name: netdiffuseR-built-package-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: netdiffuseR_*.tar.gz
+          retention-days: 7
