@@ -18,6 +18,7 @@
 #' @author George G. Vega Yon
 NULL
 .onLoad <- function(libname, pkgname) {
+  citation_on_load()
   options(
     diffnet.undirected=FALSE,
     diffnet.self=FALSE,
