@@ -200,7 +200,10 @@ test_that("Disadoption works", {
 
   }
 
-  ans_d_adopt <- rdiffnet(n = n, t = 10, disadopt = d_adopt, seed.p.adopt = list(0.1, 0.1))
+  ans_d_adopt <- rdiffnet(
+    n = n, t = 10, disadopt = d_adopt,
+    seed.p.adopt = list(0.1, 0.1)
+    )
 
   tmat <- toa_mat(ans_d_adopt)
   should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]

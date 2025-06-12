@@ -13,6 +13,8 @@
 #' @param algorithm Character scalar. Either \code{"swap"}, \code{"endpoints"}, or \code{"qap"}
 #' (see \code{\link{rewire_qap}}).
 #' @param althexagons Logical scalar. When \code{TRUE} uses the compact alternating
+#' @param warn Logical scalar. If \code{TRUE} (default) shows warnings when
+#' recycling the first slice in dynamic graphs.
 #' hexagons algorithm (currently ignored [on development]).
 #' @details
 #' The algorithm \code{"qap"} is described in \code{\link{rewire_qap}}, and only
@@ -220,7 +222,8 @@ rewire_graph <- function(
   undirected  = getOption("diffnet.undirected"),
   pr.change   = ifelse(self, 0.5, 1),
   copy.first  = TRUE,
-  althexagons = FALSE
+  althexagons = FALSE,
+  warn        = TRUE
   ) {
 
   # Checking undirected (if exists)
@@ -229,14 +232,20 @@ rewire_graph <- function(
   # althexagons is still on development
   if (althexagons) {
     althexagons <- FALSE
-    warning("The option -althexagons- is still on development. So it has been set to FALSE.")
+
+    if (warn)
+      warning(
+        "The option -althexagons- is still on development. So it has been set",
+        " to FALSE."
+      )
   }
 
-  if (copy.first) {
+  if (copy.first && warn) {
 
-    message(
-      "The option -copy.first- is set to TRUE. In this case, the first graph will be ",
-      "treated as a baseline, and thus, networks after T=1 will be replaced with T-1.",
+    warning(
+      "The option -copy.first- is set to TRUE. In this case, the first graph",
+      " will be treated as a baseline, and thus, networks after T=1 will be ",
+      "replaced with T-1.",
       immediate. = TRUE
       )
 

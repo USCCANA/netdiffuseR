@@ -52,7 +52,7 @@ new_diffnet(
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"),
   name = "Diffusion Network",
-  behavior = "Unspecified"
+  behavior = NULL
 )
 
 \method{as.data.frame}{diffnet}(
@@ -146,7 +146,7 @@ order of the rows in the attribute data.}
 
 \item{name}{Character scalar. Name of the diffusion network (descriptive).}
 
-\item{behavior}{Character scalar. Name of the behavior been analyzed (innovation).}
+\item{behavior}{Character vector. Name of the behavior(s) been analyzed (innovation).}
 
 \item{x}{A \code{diffnet} object.}
 
@@ -195,7 +195,7 @@ throught time (dynamic).}
  \item \code{undirected}: Logical scalar.
  \item \code{multiple}: Logical scalar.
  \item \code{name}: Character scalar.
- \item \code{behavior}: Character scalar.
+ \item \code{behavior}: A list of character scalars.
 }
 }
 }

@@ -113,7 +113,7 @@ print.diffnet <- function(x, ...) {
     cat(
     "Dynamic network of class -diffnet-",
     paste(" Name               :", meta$name),
-    paste(" Behavior           :", meta$behavior),
+    paste(" Behavior           :", paste(meta$behavior, collapse=", ")),
     paste(" # of nodes         :", nodesl ),
     paste(" # of time periods  :", meta$nper, sprintf("(%d - %d)", meta$pers[1], meta$pers[meta$nper])),
     paste(" Type               :", ifelse(meta$undirected, "undirected", "directed")),
@@ -324,7 +324,7 @@ summary.diffnet <- function(
       "Name     : ", meta$name, "\n")
 
   if (single) {
-    cat(" Behavior : ", meta$behavior, "\n",
+    cat(" Behavior : ", meta$behavior[[1L]], "\n",
         rule,"\n",sep="")
     cat(header,"\n")
     cat(hline, "\n")
@@ -333,9 +333,9 @@ summary.diffnet <- function(
         paste("Left censoring  :", sprintf("%3.2f (%d)", lc/meta$n, lc)), "\n",
         paste("Right centoring :", sprintf("%3.2f (%d)", rc/meta$n, rc)), "\n")
   } else {
-    beh_names <- strsplit(meta$behavior, ", ")[[1]]
+    beh_names <- meta$behavior
     for (q in 1:length(object$cumadopt)) {
-      cat("\n Behavior : ", beh_names[q], "\n",
+      cat("\n Behavior : ", beh_names[[q]], "\n",
           rule,"\n",sep="")
       cat(header,"\n")
       cat(hline, "\n")
@@ -745,7 +745,7 @@ plot_diffnet.default <- function(
 #' @return Invisible. A data frame with the calculated coordinates, including:
 #' `toa`, `threshold`, and `jit` (a jittered version of `toa`).
 #' @author George G. Vega Yon
-plot_threshold <- function(graph, expo, vertex.label,...) UseMethod("plot_threshold")
+plot_threshold <- function(graph, expo,...) UseMethod("plot_threshold")
 
 #' @export
 #' @rdname plot_threshold
@@ -768,15 +768,21 @@ plot_threshold.diffnet <- function(graph, expo, ...) {
     args$toa <- graph$toa
   }
 
-  args$vertex.label <- nodes(graph)
+  if (length(args$vertex.label) == 0L)
+    args$vertex.label <- nodes(graph)
+
   do.call(plot_threshold.default,
-          c(list(graph = graph$graph, expo=expo), args))
+          c(list(graph = graph$graph, expo = expo), args))
 }
 
 #' @export
 #' @rdname plot_threshold
 plot_threshold.array <- function(graph, expo, ...) {
-  plot_threshold.default(as_dgCMatrix(graph), expo = expo, ...)
+  plot_threshold.default(
+    as_dgCMatrix(graph),
+    expo = expo,
+    ...
+    )
 }
 
 #' @export
@@ -966,12 +972,15 @@ plot_threshold.default <- function(
 
   # Positioning labels can be harsh, so we try with this algorithm
   if (!length(vertex.label)) vertex.label <- 1:n
-  graphics::text(x=jit, y=y, labels = vertex.label,
-       pos = vertex.label.pos,
-       cex = vertex.label.cex,
-       col = vertex.label.color,
-       adj = vertex.label.adj
-       )
+  graphics::text(
+    x=jit,
+    y=y,
+    labels = vertex.label,
+    pos = vertex.label.pos,
+    cex = vertex.label.cex,
+    col = vertex.label.color,
+    adj = vertex.label.adj
+  )
 
   # par(oldpar)
 

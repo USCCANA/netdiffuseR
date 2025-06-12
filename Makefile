@@ -1,19 +1,21 @@
-VERSION:=$(shell Rscript -e 'x<-readLines("DESCRIPTION");cat(gsub(".+[:]\\s*", "", x[grepl("^Vers", x)]))')
+help:
+	@echo "Makefile for netdiffuseR package"
+	@echo "Usage:"
+	@echo "  make install     - Install the package"
+	@echo "  make build       - Build the package source tarball"
+	@echo "  make check       - Check the package with R CMD check"
+	@echo "  make checkv      - Check the package with R CMD check using Valgrind"
+	@echo "  make clean       - Clean up the build artifacts"
+	@echo "  make docs        - Generate documentation"
 
-install: netdiffuseR_$(VERSION).tar.gz
-	R CMD INSTALL netdiffuseR_$(VERSION).tar.gz
+install: 
+	R CMD INSTALL .
 
-netdiffuseR_$(VERSION).tar.gz: */*.R inst/NEWS README.md
+build:
 	R CMD build . 
-
-inst/NEWS: NEWS.md
-	Rscript -e "rmarkdown::pandoc_convert('NEWS.md', 'plain', output='inst/NEWS')"&& \
-	head -n 80 inst/NEWS
 
 README.md: README.Rmd
 	Rscript -e 'rmarkdown::render("README.Rmd")'
-
-.PHONY: check checkv clean
 
 check: netdiffuseR_$(VERSION).tar.gz
 	R CMD check --as-cran netdiffuseR_$(VERSION).tar.gz
@@ -22,8 +24,9 @@ checkv: netdiffuseR_$(VERSION).tar.gz
 	R CMD check --as-cran --use-valgrind netdiffuseR_$(VERSION).tar.gz
 
 clean:
-	rm -rf netdiffuseR.Rcheck
+	rm -rf netdiffuseR.Rcheck src/*.so src/*.o
 
-man/moran.Rd: R/* src/*.cpp src/*.h
-	Rscript --vanilla -e 'roxygen2::roxygenize()'
+docs:
+	Rscript --vanilla -e 'devtools::document()'
 
+.PHONY: check checkv clean install docs

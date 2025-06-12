@@ -1,13 +1,14 @@
 
+
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
-[![Dependencies](https://tinyverse.netlify.com/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
+[![Dependencies](https://tinyverse.netlify.app/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![USC’s Department of Preventive
-Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://pphs.usc.edu/center/cana/)
+Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://keck.usc.edu/cana/)
 
 <h1>
 
@@ -23,7 +24,7 @@ Stephanie R. Dyal, Kar-Hai Chu, Heather Wipfli, Kayo Fujimoto,
 *Diffusion of innovations theory applied to global tobacco control
 treaty ratification*, Social Science & Medicine, Volume 145, November
 2015, Pages 89-97, ISSN 0277-9536 (available
-[here](https://www.sciencedirect.com/science/article/pii/S027795361530143X))
+[here](https://doi.org/10.1016/j.socscimed.2015.10.001)).
 
 From the description:
 
@@ -51,10 +52,10 @@ citation(package="netdiffuseR")
 
     And the actual R package:
 
-      Vega Yon G, Valente T (2023). _netdiffuseR: Analysis of Diffusion and
-      Contagion Processes on Networks_. doi:10.5281/zenodo.1039317
-      <https://doi.org/10.5281/zenodo.1039317>, R package version 1.22.6,
-      <https://github.com/USCCANA/netdiffuseR>.
+      Vega Yon G, Olivera Morales A, Valente T (2025). _netdiffuseR:
+      Analysis of Diffusion and Contagion Processes on Networks_.
+      doi:10.5281/zenodo.1039317 <https://doi.org/10.5281/zenodo.1039317>,
+      R package version 1.23.0, <https://github.com/USCCANA/netdiffuseR>.
 
     To see these entries in BibTeX format, use 'print(<citation>,
     bibtex=TRUE)', 'toBibtex(.)', or set
@@ -63,20 +64,6 @@ citation(package="netdiffuseR")
 ## News
 
 Changelog can be view [here](NEWS.md).
-
-- \[2016-06-02\] A video of the **netdiffuseR** workshop at SUNBELT 2016
-  is now online on
-  [youtube](https://www.youtube.com/playlist?list=PLT-GgRN1lFI4coHDqkRJm3flDw9e1gg2P),
-  and the workshop materials can be found
-  [here](https://github.com/USCCANA/netdiffuser-sunbelt2016/)
-- \[2016-04-11\] **netdiffuseR** will be on [useR!
-  2016](https://user2016.r-project.org/) on as a presentation and on
-  [IC2S2
-  2016](https://www.kellogg.northwestern.edu/news-events/conference/ic2s2/2016.aspx)
-  in the posters session.
-- \[2016-03-16\] Next CRAN release scheduled for April 11th 2016 (after
-  the workshop).
-- \[2016-02-18\] **netdiffuseR** vers 1.16.2 is now on CRAN!
 
 ## Installation
 
@@ -91,10 +78,10 @@ install.packages("netdiffuseR")
 ### Bleeding edge version
 
 If you want the latest (unstable) version of **netdiffuseR**, using the
-`devtools` package, you can install `netdiffuseR` dev version as follows
+`remotes` package, you can install `netdiffuseR` dev version as follows
 
 ``` r
-devtools::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
+remotes::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
 ```
 
 You can skip building vignettes by setting `build_vignettes = FALSE` (so
@@ -137,21 +124,16 @@ this directly as follows (using the 1.16.3.29 version):
 ## Tutorials
 
 Since starting netdiffuseR, we have done a couple of workshops at
-Sunbelt and NASN. Here are the repositories:
-
-- Sunbelt 2018: <https://usccana.github.io/netdiffuser-sunbelt2018/>
-  ([source code](https://github.com/USCCANA/netdiffuser-sunbelt2018))
-- NASN 2017: <https://usccana.github.io/netdiffuser-nasn2017/> ([source
-  code](https://github.com/USCCANA/netdiffuser-nasn2017))
-- Sunbelt 2016: <https://github.com/USCCANA/netdiffuser-sunbelt2016>
+Sunbelt and NASN. Past and current workshops can be found at
+<https://github.com/USCCANA/netdiffuser-workshop>
 
 ## Presentations
 
 - ic2s2 2016 Evanston, IL:
-  <https://github.com/USCCANA/netdiffuser-ic2s22016> (poster)
+  https://github.com/USCCANA/netdiffuser-ic2s22016 (poster)
 - useR! 2016 Stanford, CA:
-  <https://github.com/USCCANA/netdiffuser-user2016> (slides)
-- useR! 2016: <https://github.com/USCCANA/netdiffuser-user2016>
+  https://github.com/USCCANA/netdiffuser-user2016 (slides)
+- useR! 2016: https://github.com/USCCANA/netdiffuser-user2016
 
 ## Examples
 
@@ -161,12 +143,12 @@ This example has been taken from the package’s vignettes:
 library(netdiffuseR)
 ```
 
-    ## 
-    ## Attaching package: 'netdiffuseR'
 
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     %*%
+    Attaching package: 'netdiffuseR'
+
+    The following object is masked from 'package:base':
+
+        %*%
 
 ### Infectiousness and Susceptibility
 
@@ -180,7 +162,7 @@ toa <- sample(c(1:(1+nper-1), NA), n, TRUE)
 head(toa)
 ```
 
-    ## [1] 16  3 14  3 13  5
+    [1] 16  3 14  3 13  5
 
 ``` r
 # Creating a diffnet object
@@ -188,70 +170,71 @@ diffnet <- as_diffnet(graph, toa)
 diffnet
 ```
 
-    ## Dynamic network of class -diffnet-
-    ##  Name               : Diffusion Network
-    ##  Behavior           : Unspecified
-    ##  # of nodes         : 100 (1, 2, 3, 4, 5, 6, 7, 8, ...)
-    ##  # of time periods  : 20 (1 - 20)
-    ##  Type               : directed
-    ##  Final prevalence   : 0.95
-    ##  Static attributes  : -
-    ##  Dynamic attributes : -
+    Dynamic network of class -diffnet-
+     Name               : Diffusion Network
+     Behavior           : Unknown
+     # of nodes         : 100 (1, 2, 3, 4, 5, 6, 7, 8, ...)
+     # of time periods  : 20 (1 - 20)
+     Type               : directed
+     Num of behaviors   : 1
+     Final prevalence   : 0.95
+     Static attributes  : -
+     Dynamic attributes : -
 
 ``` r
 summary(diffnet)
 ```
 
-    ## Diffusion network summary statistics
-    ## Name     : Diffusion Network
-    ## Behavior : Unspecified
-    ## -----------------------------------------------------------------------------
-    ##  Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran's I (sd)  
-    ## -------- ---------- ---------------- ------------- --------- ---------------- 
-    ##        1          8         8 (0.08)             -      0.50 -0.01 (0.00)     
-    ##        2          3        11 (0.11)          0.03      0.50 -0.01 (0.00)     
-    ##        3          6        17 (0.17)          0.07      0.51 -0.01 (0.00)     
-    ##        4          3        20 (0.20)          0.04      0.49 -0.01 (0.00)     
-    ##        5          9        29 (0.29)          0.11      0.50 -0.01 (0.00)     
-    ##        6          5        34 (0.34)          0.07      0.50 -0.01 (0.00)     
-    ##        7          2        36 (0.36)          0.03      0.51 -0.01 (0.00)     
-    ##        8          3        39 (0.39)          0.05      0.50 -0.01 (0.00)     
-    ##        9          5        44 (0.44)          0.08      0.50 -0.01 (0.00)     
-    ##       10          1        45 (0.45)          0.02      0.49 -0.01 (0.00)     
-    ##       11          3        48 (0.48)          0.05      0.50 -0.01 (0.00)     
-    ##       12          6        54 (0.54)          0.12      0.50 -0.01 (0.00)     
-    ##       13          8        62 (0.62)          0.17      0.50 -0.01 (0.00)     
-    ##       14          9        71 (0.71)          0.24      0.50 -0.01 (0.00)     
-    ##       15          5        76 (0.76)          0.17      0.50 -0.00 (0.00) **  
-    ##       16          7        83 (0.83)          0.29      0.50 -0.01 (0.00)     
-    ##       17          5        88 (0.88)          0.29      0.49 -0.00 (0.00) *** 
-    ##       18          4        92 (0.92)          0.33      0.50 -0.01 (0.00)     
-    ##       19          1        93 (0.93)          0.12      0.50 -0.01 (0.00)     
-    ##       20          2        95 (0.95)          0.29      0.50 -0.01 (0.00)     
-    ## -----------------------------------------------------------------------------
-    ##  Left censoring  : 0.08 (8)
-    ##  Right centoring : 0.05 (5)
-    ##  # of nodes      : 100
-    ## 
-    ##  Moran's I was computed on contemporaneous autocorrelation using 1/geodesic
-    ##  values. Significane levels  *** <= .01, ** <= .05, * <= .1.
+    Diffusion network summary statistics
+     Name     :  Diffusion Network 
+     Behavior : Unknown
+    -----------------------------------------------------------------------------
+     Period   Adopters   Cum Adopt. (%)   Hazard Rate   Density   Moran's I (sd)  
+    -------- ---------- ---------------- ------------- --------- ---------------- 
+           1          8         8 (0.08)             -      0.50 -0.01 (0.00)     
+           2          3        11 (0.11)          0.03      0.50 -0.01 (0.00)     
+           3          6        17 (0.17)          0.07      0.51 -0.01 (0.00)     
+           4          3        20 (0.20)          0.04      0.49 -0.01 (0.00)     
+           5          9        29 (0.29)          0.11      0.50 -0.01 (0.00)     
+           6          5        34 (0.34)          0.07      0.50 -0.01 (0.00)     
+           7          2        36 (0.36)          0.03      0.51 -0.01 (0.00)     
+           8          3        39 (0.39)          0.05      0.50 -0.01 (0.00)     
+           9          5        44 (0.44)          0.08      0.50 -0.01 (0.00)     
+          10          1        45 (0.45)          0.02      0.49 -0.01 (0.00)     
+          11          3        48 (0.48)          0.05      0.50 -0.01 (0.00)     
+          12          6        54 (0.54)          0.12      0.50 -0.01 (0.00)     
+          13          8        62 (0.62)          0.17      0.50 -0.01 (0.00)     
+          14          9        71 (0.71)          0.24      0.50 -0.01 (0.00)     
+          15          5        76 (0.76)          0.17      0.50 -0.00 (0.00) **  
+          16          7        83 (0.83)          0.29      0.50 -0.01 (0.00)     
+          17          5        88 (0.88)          0.29      0.49 -0.00 (0.00) *** 
+          18          4        92 (0.92)          0.33      0.50 -0.01 (0.00)     
+          19          1        93 (0.93)          0.12      0.50 -0.01 (0.00)     
+          20          2        95 (0.95)          0.29      0.50 -0.01 (0.00)     
+    ----------------------------------------------------------------------------- 
+     Left censoring  : 0.08 (8) 
+     Right centoring : 0.05 (5) 
+     # of nodes      : 100
+
+     Moran's I was computed on contemporaneous autocorrelation using 1/geodesic
+     values. Significane levels  *** <= .01, ** <= .05, * <= .1.
 
 ``` r
 # Visualizing distribution of suscep/infect
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = FALSE, h=.01)
 ```
 
-![](README_files/figure-gfm/plot_infectsuscept-1.png)<!-- -->
+![](README_files/figure-commonmark/plot_infectsuscept-1.png)
 
 ``` r
 out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
                          exclude.zeros = TRUE, h=1)
 ```
 
-    ## Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, : When
-    ## applying logscale some observations are missing.
+    Warning in plot_infectsuscep.list(graph$graph, graph$toa, t0, normalize, : When
+    applying logscale some observations are missing.
 
-![](README_files/figure-gfm/plot_infectsuscept-2.png)<!-- -->
+![](README_files/figure-commonmark/plot_infectsuscept-2.png)
 
 ### Threshold
 
@@ -262,32 +245,26 @@ diffnet <- rdiffnet(500, 20,
                     seed.nodes = "random",
                     rgraph.args = list(m=3),
                     threshold.dist = function(x) runif(1, .3, .7))
-```
-
-    ## Warning in (function (graph, p, algorithm = "endpoints", both.ends = FALSE, :
-    ## The option -copy.first- is set to TRUE. In this case, the first graph will be
-    ## treated as a baseline, and thus, networks after T=1 will be replaced with T-1.
-
-``` r
 diffnet
 ```
 
-    ## Dynamic network of class -diffnet-
-    ##  Name               : A diffusion network
-    ##  Behavior           : Random contagion
-    ##  # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
-    ##  # of time periods  : 20 (1 - 20)
-    ##  Type               : directed
-    ##  Final prevalence   : 1.00
-    ##  Static attributes  : real_threshold (1)
-    ##  Dynamic attributes : -
+    Dynamic network of class -diffnet-
+     Name               : A diffusion network
+     Behavior           : Random contagion
+     # of nodes         : 500 (1, 2, 3, 4, 5, 6, 7, 8, ...)
+     # of time periods  : 20 (1 - 20)
+     Type               : directed
+     Num of behaviors   : 1
+     Final prevalence   : 1.00
+     Static attributes  : real_threshold (1)
+     Dynamic attributes : -
 
 ``` r
 # Threshold with fixed vertex size
 plot_threshold(diffnet)
 ```
 
-![](README_files/figure-gfm/BoringThreshold,%20plot_threshold-1.png)<!-- -->
+![](README_files/figure-commonmark/BoringThreshold,%20plot_threshold-1.png)
 
 Using more features
 
@@ -303,10 +280,10 @@ plot_threshold(
 )
 ```
 
-    ## Warning in (function (graph, expo, toa, include_censored = FALSE, t0 = min(toa,
-    ## : -vertex.sides- will be coerced to integer.
+    Warning in (function (graph, expo, toa, include_censored = FALSE, t0 = min(toa,
+    : -vertex.sides- will be coerced to integer.
 
-![](README_files/figure-gfm/NiceThreshold-1.png)<!-- -->
+![](README_files/figure-commonmark/NiceThreshold-1.png)
 
 ### Adoption rate
 
@@ -314,7 +291,7 @@ plot_threshold(
 plot_adopters(diffnet)
 ```
 
-![](README_files/figure-gfm/Adopters-1.png)<!-- -->
+![](README_files/figure-commonmark/Adopters-1.png)
 
 ### Hazard rate
 
@@ -322,7 +299,7 @@ plot_adopters(diffnet)
 hazard_rate(diffnet)
 ```
 
-![](README_files/figure-gfm/Hazard-1.png)<!-- -->
+![](README_files/figure-commonmark/Hazard-1.png)
 
 ### Diffusion process
 
@@ -330,14 +307,14 @@ hazard_rate(diffnet)
 plot_diffnet(medInnovationsDiffNet, slices=c(1,9,8))
 ```
 
-![](README_files/figure-gfm/plot_diffnet-1.png)<!-- -->
+![](README_files/figure-commonmark/plot_diffnet-1.png)
 
 ``` r
 diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
 plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
-![](README_files/figure-gfm/plot_diffnet2-1.png)<!-- -->
+![](README_files/figure-commonmark/plot_diffnet2-1.png)
 
 ``` r
 set.seed(1231)
@@ -367,7 +344,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 ```
 
-![](README_files/figure-gfm/plot_diffnet2%20with%20map-1.png)<!-- -->
+![](README_files/figure-commonmark/plot_diffnet2%20with%20map-1.png)
 
 ``` r
 par(oldpar)
@@ -380,13 +357,13 @@ out <- classify(kfamilyDiffNet, include_censored = TRUE)
 ftable(out)
 ```
 
-    ##                thr Non-Adopters Very Low Thresh. Low Thresh. High Thresh. Very High Thresh.
-    ## toa                                                                                        
-    ## Non-Adopters               0.00             0.00        0.00         0.00              0.00
-    ## Early Adopters             0.00            14.04        8.40         0.57              0.29
-    ## Early Majority             0.00             5.64       11.65         5.54              2.58
-    ## Late Majority              0.00             1.34        5.06         6.21              2.96
-    ## Laggards                   0.00             1.53        0.00         0.00             34.19
+                   thr Non-Adopters Very Low Thresh. Low Thresh. High Thresh. Very High Thresh.
+    toa                                                                                        
+    Non-Adopters               0.00             0.00        0.00         0.00              0.00
+    Early Adopters             0.00            14.04        8.40         0.57              0.29
+    Early Majority             0.00             5.64       11.65         5.54              2.58
+    Late Majority              0.00             1.34        5.06         6.21              2.96
+    Laggards                   0.00             1.53        0.00         0.00             34.19
 
 ``` r
 # Plotting 
@@ -400,7 +377,7 @@ legend("bottom", legend = levels(out$thr), fill=viridisLite::inferno(5), horiz =
        cex=.6, bty="n", inset=c(0,-.1))
 ```
 
-![](README_files/figure-gfm/mosaic-1.png)<!-- -->
+![](README_files/figure-commonmark/mosaic-1.png)
 
 ``` r
 par(oldpar)
@@ -412,42 +389,41 @@ par(oldpar)
 sessionInfo()
 ```
 
-    ## R version 4.4.1 (2024-06-14)
-    ## Platform: aarch64-apple-darwin23.4.0
-    ## Running under: macOS Sonoma 14.6.1
-    ## 
-    ## Matrix products: default
-    ## BLAS:   /opt/homebrew/Cellar/openblas/0.3.27/lib/libopenblasp-r0.3.27.dylib 
-    ## LAPACK: /opt/homebrew/Cellar/r/4.4.1/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.0
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## time zone: America/Denver
-    ## tzcode source: internal
-    ## 
-    ## attached base packages:
-    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
-    ## 
-    ## other attached packages:
-    ## [1] netdiffuseR_1.22.6
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] Matrix_1.7-0          highr_0.11            dplyr_1.1.4          
-    ##  [4] compiler_4.4.1        tidyselect_1.2.1      Rcpp_1.0.12          
-    ##  [7] networkLite_1.0.5     boot_1.3-30           yaml_2.3.8           
-    ## [10] fastmap_1.2.0         lattice_0.22-6        coda_0.19-4.1        
-    ## [13] R6_2.5.1              generics_0.1.3        MatchIt_4.5.5        
-    ## [16] igraph_2.0.3          knitr_1.47            MASS_7.3-60.2        
-    ## [19] backports_1.5.0       tibble_3.2.1          statnet.common_4.9.0 
-    ## [22] pillar_1.9.0          rlang_1.1.4           utf8_1.2.4           
-    ## [25] xfun_0.45             viridisLite_0.4.2     cli_3.6.3            
-    ## [28] magrittr_2.0.3        network_1.18.2        digest_0.6.36        
-    ## [31] grid_4.4.1            lifecycle_1.0.4       vctrs_0.6.5          
-    ## [34] sna_2.7-2             evaluate_0.24.0       SparseM_1.84-2       
-    ## [37] glue_1.7.0            fansi_1.0.6           rmarkdown_2.27       
-    ## [40] tools_4.4.1           pkgconfig_2.0.3       networkDynamic_0.11.4
-    ## [43] htmltools_0.5.8.1
+    R version 4.5.0 (2025-04-11)
+    Platform: aarch64-apple-darwin24.2.0
+    Running under: macOS Sequoia 15.0.1
+
+    Matrix products: default
+    BLAS:   /opt/homebrew/Cellar/openblas/0.3.29/lib/libopenblasp-r0.3.29.dylib 
+    LAPACK: /opt/homebrew/Cellar/r/4.5.0/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+    locale:
+    [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+    time zone: America/Denver
+    tzcode source: internal
+
+    attached base packages:
+    [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+    other attached packages:
+    [1] netdiffuseR_1.23.0
+
+    loaded via a namespace (and not attached):
+     [1] Matrix_1.7-3          jsonlite_2.0.0        dplyr_1.1.4          
+     [4] compiler_4.5.0        tidyselect_1.2.1      Rcpp_1.0.14          
+     [7] networkLite_1.1.0     boot_1.3-31           yaml_2.3.10          
+    [10] fastmap_1.2.0         lattice_0.22-6        coda_0.19-4.1        
+    [13] R6_2.6.1              generics_0.1.4        MatchIt_4.7.2        
+    [16] igraph_2.1.4.9046     knitr_1.50            MASS_7.3-65          
+    [19] backports_1.5.0       tibble_3.3.0          statnet.common_4.12.0
+    [22] pillar_1.10.2         rlang_1.1.6           xfun_0.52            
+    [25] viridisLite_0.4.2     cli_3.6.5             magrittr_2.0.3       
+    [28] network_1.19.0        digest_0.6.37         grid_4.5.0           
+    [31] lifecycle_1.0.4       vctrs_0.6.5           sna_2.8              
+    [34] evaluate_1.0.3        SparseM_1.84-2        glue_1.8.0           
+    [37] rmarkdown_2.29        tools_4.5.0           pkgconfig_2.0.3      
+    [40] networkDynamic_0.11.5 htmltools_0.5.8.1    
 
 ## To-do list
 
