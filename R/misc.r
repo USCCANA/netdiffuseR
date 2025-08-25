@@ -39,7 +39,7 @@ recode.matrix <- function(data, ...) {
 
   # Checking the size of the matrix
   dn <- dimnames(data)
-  data <- as.factor(as.character(as.vector(data)))
+  data <- as.factor(as.vector(data)) # Petar & Kristina changed as.factor(as.character(as.vector(data)))
   n <- length(data)
   output <- cbind(data[1:(n/2)], data[(n/2+1):n])
   data <- unique(data)
