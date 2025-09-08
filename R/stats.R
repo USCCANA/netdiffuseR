@@ -1359,3 +1359,283 @@ matrix_compare <- function(A, B, fun) {
 #' @export
 compare_matrix <- matrix_compare
 
+#' Degree and Time of Adoption Diagnostic
+#'
+#' Analyzes the correlation between in-degree, out-degree, and time of adoption
+#' to identify whether opinion leaders were early adopters (supporters) or late
+#' adopters (opposers).
+#'
+#' @param graph A \code{\link{diffnet}} object or graph data structure.
+#' @param degree_strategy Character scalar. How to aggregate degree measures across
+#'   time periods: \code{"mean"} (default), \code{"first"}, or \code{"last"}.
+#' @param bootstrap Logical scalar. Whether to compute bootstrap confidence intervals.
+#' @param R Integer scalar. Number of bootstrap replicates (default 1000).
+#' @param conf.level Numeric scalar. Confidence level for bootstrap intervals (default 0.95).
+#' @param valued Logical scalar. Whether to use edge weights in degree calculations.
+#' @param ... Additional arguments (currently unused).
+#'
+#' @details
+#' This diagnostic function computes correlations between degree centrality measures
+#' (in-degree and out-degree) and time of adoption. Positive correlations suggest
+#' that central actors (opinion leaders) adopted early, while negative correlations
+#' suggest they adopted late.
+#'
+#' The degree measures can be aggregated across time periods in different ways:
+#' \itemize{
+#'   \item \code{"mean"}: Average degree across all time periods
+#'   \item \code{"first"}: Degree in the first time period
+#'   \item \code{"last"}: Degree in the last time period
+#' }
+#'
+#' When \code{bootstrap = TRUE}, the function uses the \pkg{boot} package to
+#' compute bootstrap confidence intervals for the correlations. This helps
+#' assess the statistical significance of the observed correlations.
+#'
+#' @return A list with components:
+#' \item{correlations}{Named numeric vector with correlations between in-degree/out-degree and time of adoption}
+#' \item{bootstrap}{List with bootstrap results when \code{bootstrap = TRUE}, otherwise \code{NULL}}
+#' \item{call}{The matched call}
+#' \item{degree_strategy}{The degree aggregation strategy used}
+#' \item{sample_size}{Number of nodes included in the analysis (excludes non-adopters)}
+#'
+#' @examples
+#' # Example with Korean Family Planning data
+#' data(kfamilyDiffNet)
+#' 
+#' # Basic diagnostic
+#' diag <- degree_adoption_diagnostic(kfamilyDiffNet)
+#' print(diag$correlations)
+#' 
+#' # With bootstrap confidence intervals
+#' diag_boot <- degree_adoption_diagnostic(kfamilyDiffNet, bootstrap = TRUE, R = 100)
+#' print(diag_boot$bootstrap)
+#' 
+#' # Using different degree aggregation strategies
+#' diag_first <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "first")
+#' diag_last <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
+#'
+#' @seealso \code{\link{dgr}}, \code{\link{diffreg}}, \code{\link{exposure}}
+#' @family statistics
+#' @export
+degree_adoption_diagnostic <- function(
+    graph,
+    degree_strategy = c("mean", "first", "last"),
+    bootstrap = TRUE,
+    R = 1000,
+    conf.level = 0.95,
+    valued = getOption("diffnet.valued", FALSE),
+    ...
+) {
+  
+  # Input validation
+  if (!inherits(graph, "diffnet"))
+    stop("'graph' must be a diffnet object.", call. = FALSE)
+  
+  degree_strategy <- match.arg(degree_strategy)
+  
+  if (!is.logical(bootstrap) || length(bootstrap) != 1)
+    stop("'bootstrap' must be a logical scalar.", call. = FALSE)
+  
+  if (!is.numeric(R) || length(R) != 1 || R < 1)
+    stop("'R' must be a positive integer.", call. = FALSE)
+  
+  if (!is.numeric(conf.level) || length(conf.level) != 1 || 
+      conf.level <= 0 || conf.level >= 1)
+    stop("'conf.level' must be between 0 and 1.", call. = FALSE)
+  
+  # Extract time of adoption
+  toa <- graph$toa
+  
+  # Only include adopters in the analysis
+  adopters <- !is.na(toa)
+  if (sum(adopters) < 3) {
+    stop("At least 3 adopters are required for correlation analysis.", call. = FALSE)
+  }
+  
+  toa_adopters <- toa[adopters]
+  
+  # Compute degree measures
+  indegree_full <- dgr(graph, cmode = "indegree", valued = valued)
+  outdegree_full <- dgr(graph, cmode = "outdegree", valued = valued)
+  
+  # Aggregate degree measures according to strategy
+  if (degree_strategy == "mean") {
+    indegree_agg <- rowMeans(indegree_full, na.rm = TRUE)
+    outdegree_agg <- rowMeans(outdegree_full, na.rm = TRUE)
+  } else if (degree_strategy == "first") {
+    indegree_agg <- indegree_full[, 1]
+    outdegree_agg <- outdegree_full[, 1]
+  } else { # "last"
+    indegree_agg <- indegree_full[, ncol(indegree_full)]
+    outdegree_agg <- outdegree_full[, ncol(outdegree_full)]
+  }
+  
+  # Subset to adopters only
+  indegree_adopters <- indegree_agg[adopters]
+  outdegree_adopters <- outdegree_agg[adopters]
+  
+  # Compute correlations
+  cor_indegree_toa <- stats::cor(indegree_adopters, toa_adopters, use = "complete.obs")
+  cor_outdegree_toa <- stats::cor(outdegree_adopters, toa_adopters, use = "complete.obs")
+  
+  correlations <- c(
+    indegree_toa = cor_indegree_toa,
+    outdegree_toa = cor_outdegree_toa
+  )
+  
+  # Bootstrap analysis if requested
+  bootstrap_results <- NULL
+  if (bootstrap) {
+    
+    # Bootstrap function for correlation
+    boot_cor <- function(data, indices) {
+      # data is a matrix with columns: indegree, outdegree, toa
+      d <- data[indices, ]
+      c(
+        stats::cor(d[, 1], d[, 3], use = "complete.obs"),  # indegree-toa correlation
+        stats::cor(d[, 2], d[, 3], use = "complete.obs")   # outdegree-toa correlation
+      )
+    }
+    
+    # Prepare data for bootstrap
+    boot_data <- cbind(indegree_adopters, outdegree_adopters, toa_adopters)
+    
+    # Remove any incomplete cases
+    complete_cases <- stats::complete.cases(boot_data)
+    boot_data <- boot_data[complete_cases, , drop = FALSE]
+    
+    if (nrow(boot_data) < 3) {
+      warning("Insufficient complete cases for bootstrap analysis.", call. = FALSE)
+    } else {
+      # Perform bootstrap
+      boot_result <- boot::boot(boot_data, boot_cor, R = R)
+      
+      # Compute confidence intervals
+      alpha <- 1 - conf.level
+      
+      tryCatch({
+        ci_indegree <- boot::boot.ci(boot_result, type = "perc", index = 1, conf = conf.level)
+        ci_outdegree <- boot::boot.ci(boot_result, type = "perc", index = 2, conf = conf.level)
+        
+        bootstrap_results <- list(
+          indegree = list(
+            correlation = boot_result$t0[1],
+            bias = mean(boot_result$t[, 1]) - boot_result$t0[1],
+            std_error = stats::sd(boot_result$t[, 1]),
+            conf_int = ci_indegree$percent[4:5],
+            conf_level = conf.level
+          ),
+          outdegree = list(
+            correlation = boot_result$t0[2],
+            bias = mean(boot_result$t[, 2]) - boot_result$t0[2],
+            std_error = stats::sd(boot_result$t[, 2]),
+            conf_int = ci_outdegree$percent[4:5],
+            conf_level = conf.level
+          ),
+          R = R,
+          boot_object = boot_result
+        )
+      }, error = function(e) {
+        warning("Bootstrap confidence intervals could not be computed: ", e$message, call. = FALSE)
+        bootstrap_results <<- list(
+          indegree = list(
+            correlation = boot_result$t0[1],
+            bias = mean(boot_result$t[, 1]) - boot_result$t0[1],
+            std_error = stats::sd(boot_result$t[, 1])
+          ),
+          outdegree = list(
+            correlation = boot_result$t0[2],
+            bias = mean(boot_result$t[, 2]) - boot_result$t0[2],
+            std_error = stats::sd(boot_result$t[, 2])
+          ),
+          R = R,
+          boot_object = boot_result
+        )
+      })
+    }
+  }
+  
+  # Return result
+  structure(
+    list(
+      correlations = correlations,
+      bootstrap = bootstrap_results,
+      call = match.call(),
+      degree_strategy = degree_strategy,
+      sample_size = sum(adopters)
+    ),
+    class = "degree_adoption_diagnostic"
+  )
+}
+
+#' @export
+print.degree_adoption_diagnostic <- function(x, ...) {
+  cat("Degree and Time of Adoption Diagnostic\n")
+  cat("======================================\n\n")
+  
+  cat("Degree aggregation strategy:", x$degree_strategy, "\n")
+  cat("Sample size (adopters only):", x$sample_size, "\n\n")
+  
+  cat("Correlations:\n")
+  cat(sprintf("  In-degree  - Time of Adoption: %6.3f\n", x$correlations[["indegree_toa"]]))
+  cat(sprintf("  Out-degree - Time of Adoption: %6.3f\n", x$correlations[["outdegree_toa"]]))
+  
+  if (!is.null(x$bootstrap)) {
+    cat("\nBootstrap Results:\n")
+    cat(sprintf("  Replicates: %d\n", x$bootstrap$R))
+    cat(sprintf("  Confidence level: %.1f%%\n", x$bootstrap$indegree$conf_level * 100))
+    
+    if (!is.null(x$bootstrap$indegree$conf_int)) {
+      cat("\n  In-degree correlation:\n")
+      cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$indegree$correlation))
+      cat(sprintf("    Bias: %6.3f\n", x$bootstrap$indegree$bias))
+      cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$indegree$std_error))
+      cat(sprintf("    %%.1f%% CI: [%6.3f, %6.3f]\n", 
+                  x$bootstrap$indegree$conf_level * 100,
+                  x$bootstrap$indegree$conf_int[1], 
+                  x$bootstrap$indegree$conf_int[2]))
+      
+      cat("\n  Out-degree correlation:\n")
+      cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$outdegree$correlation))
+      cat(sprintf("    Bias: %6.3f\n", x$bootstrap$outdegree$bias))
+      cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$outdegree$std_error))
+      cat(sprintf("    %%.1f%% CI: [%6.3f, %6.3f]\n", 
+                  x$bootstrap$outdegree$conf_level * 100,
+                  x$bootstrap$outdegree$conf_int[1], 
+                  x$bootstrap$outdegree$conf_int[2]))
+    } else {
+      cat("\n  Bootstrap estimates (CI unavailable):\n")
+      cat(sprintf("    In-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n", 
+                  x$bootstrap$indegree$correlation,
+                  x$bootstrap$indegree$bias,
+                  x$bootstrap$indegree$std_error))
+      cat(sprintf("    Out-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n", 
+                  x$bootstrap$outdegree$correlation,
+                  x$bootstrap$outdegree$bias,
+                  x$bootstrap$outdegree$std_error))
+    }
+  }
+  
+  cat("\nInterpretation:\n")
+  indegree_cor <- x$correlations[["indegree_toa"]]
+  outdegree_cor <- x$correlations[["outdegree_toa"]]
+  
+  if (indegree_cor > 0.1) {
+    cat("  In-degree: Central actors (high in-degree) tended to adopt early (supporters)\n")
+  } else if (indegree_cor < -0.1) {
+    cat("  In-degree: Central actors (high in-degree) tended to adopt late (opposers)\n")
+  } else {
+    cat("  In-degree: Weak relationship between centrality and adoption timing\n")
+  }
+  
+  if (outdegree_cor > 0.1) {
+    cat("  Out-degree: Influential actors (high out-degree) tended to adopt early (supporters)\n")
+  } else if (outdegree_cor < -0.1) {
+    cat("  Out-degree: Influential actors (high out-degree) tended to adopt late (opposers)\n")
+  } else {
+    cat("  Out-degree: Weak relationship between influence and adoption timing\n")
+  }
+  
+  invisible(x)
+}
+
