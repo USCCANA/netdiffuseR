@@ -1590,7 +1590,7 @@ print.degree_adoption_diagnostic <- function(x, ...) {
       cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$indegree$correlation))
       cat(sprintf("    Bias: %6.3f\n", x$bootstrap$indegree$bias))
       cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$indegree$std_error))
-      cat(sprintf("    %%.1f%% CI: [%6.3f, %6.3f]\n", 
+      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n", 
                   x$bootstrap$indegree$conf_level * 100,
                   x$bootstrap$indegree$conf_int[1], 
                   x$bootstrap$indegree$conf_int[2]))
@@ -1599,7 +1599,7 @@ print.degree_adoption_diagnostic <- function(x, ...) {
       cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$outdegree$correlation))
       cat(sprintf("    Bias: %6.3f\n", x$bootstrap$outdegree$bias))
       cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$outdegree$std_error))
-      cat(sprintf("    %%.1f%% CI: [%6.3f, %6.3f]\n", 
+      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n", 
                   x$bootstrap$outdegree$conf_level * 100,
                   x$bootstrap$outdegree$conf_int[1], 
                   x$bootstrap$outdegree$conf_int[2]))
