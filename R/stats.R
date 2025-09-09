@@ -1365,14 +1365,23 @@ compare_matrix <- matrix_compare
 #' to identify whether opinion leaders were early adopters (supporters) or late
 #' adopters (opposers).
 #'
-#' @param graph A \code{\link{diffnet}} object or graph data structure.
+#' @param graph A \code{\link{diffnet}} object or a graph data structure (classes include 
+#'   \code{array} (\eqn{n\times n \times T}{n*n*T}), \code{dgCMatrix} (sparse), 
+#'   \code{igraph}, etc.; see \link{netdiffuseR-graphs}). 
+#' @param toa Integer vector of length \eqn{n} with time of adoption.
+#'   Required when \code{graph} is not a \code{diffnet}.
+#' @param t0,t1 Optional integer scalars defining the first and last observed
+#'   periods. If missing and \code{toa} is provided, \code{t0} defaults to 1
+#'   and \code{t1} to \code{max(toa, na.rm=TRUE)}.
+#' @param name,behavior Optional character scalars used only when coercing
+#'   inputs into a \code{diffnet} object (passed to \code{new_diffnet}).
 #' @param degree_strategy Character scalar. How to aggregate degree measures across
 #'   time periods: \code{"mean"} (default), \code{"first"}, or \code{"last"}.
 #' @param bootstrap Logical scalar. Whether to compute bootstrap confidence intervals.
 #' @param R Integer scalar. Number of bootstrap replicates (default 1000).
 #' @param conf.level Numeric scalar. Confidence level for bootstrap intervals (default 0.95).
 #' @param valued Logical scalar. Whether to use edge weights in degree calculations.
-#' @param ... Additional arguments (currently unused).
+#' @param ... Additional arguments passed on when coercing to \code{diffnet}.
 #'
 #' @details
 #' This diagnostic function computes correlations between degree centrality measures
@@ -1386,6 +1395,10 @@ compare_matrix <- matrix_compare
 #'   \item \code{"first"}: Degree in the first time period
 #'   \item \code{"last"}: Degree in the last time period
 #' }
+#' 
+#' The function accepts either a ready-to-use \code{diffnet} or generic graph
+#' inputs plus a \code{toa} vector. When needed, inputs are coerced to a
+#' \code{diffnet} via an internal helper
 #'
 #' When \code{bootstrap = TRUE}, the function uses the \pkg{boot} package to
 #' compute bootstrap confidence intervals for the correlations. This helps
@@ -1399,97 +1412,105 @@ compare_matrix <- matrix_compare
 #' \item{sample_size}{Number of nodes included in the analysis (excludes non-adopters)}
 #'
 #' @examples
-#' # Example with Korean Family Planning data
+#' # Basic usage with Korean Family Planning data
 #' data(kfamilyDiffNet)
-#' 
-#' # Basic diagnostic
-#' diag <- degree_adoption_diagnostic(kfamilyDiffNet)
-#' print(diag$correlations)
+#' # Results show correlations and interpretation
+#' result_basics <- degree_adoption_diagnostic(kfamilyDiffNet, bootstrap = FALSE)
+#' print(result_basics)
+#' print(result_basics$correlations)
 #' 
 #' # With bootstrap confidence intervals
-#' diag_boot <- degree_adoption_diagnostic(kfamilyDiffNet, bootstrap = TRUE, R = 100)
-#' print(diag_boot$bootstrap)
+#' result_boot <- degree_adoption_diagnostic(kfamilyDiffNet)
+#' print(result_boot)
 #' 
-#' # Using different degree aggregation strategies
-#' diag_first <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "first")
-#' diag_last <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
+#' # Different degree aggregation strategies
+#' result_first <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "first")
+#' print(result_first)
+#' 
+#' result_last <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
+#' print(result_last)
+#'
+#' # Using a sparse static adjacency matrix + toa -----------------------------
+#' \dontrun{
+#' library(Matrix)
+#' set.seed(1)
+#' A <- rsparsematrix(50, 50, 0.05); A <- abs(A); A@x[A@x>0] <- 1
+#' toa <- sample(1:6, 50, replace = TRUE)
+#' diag2 <- degree_adoption_diagnostic(A, toa = toa, valued = FALSE)
+#' }
 #'
 #' @seealso \code{\link{dgr}}, \code{\link{diffreg}}, \code{\link{exposure}}
 #' @family statistics
 #' @export
 degree_adoption_diagnostic <- function(
-    graph,
-    degree_strategy = c("mean", "first", "last"),
-    bootstrap = TRUE,
-    R = 1000,
-    conf.level = 0.95,
-    valued = getOption("diffnet.valued", FALSE),
-    ...
+  graph,
+  degree_strategy = c("mean", "first", "last"),
+  bootstrap = TRUE,
+  R = 1000,
+  conf.level = 0.95,
+  valued = getOption("diffnet.valued", FALSE),
+  toa = NULL,
+  t0 = NULL,
+  t1 = NULL,
+  name = "A diffusion network",
+  behavior = "Innovation",
+  ...
 ) {
-  
-  # Input validation
-  if (!inherits(graph, "diffnet"))
-    stop("'graph' must be a diffnet object.", call. = FALSE)
-  
+  # Coerce to diffnet if needed ----------------------------------------------
+  if (!inherits(graph, "diffnet")) {
+    if (is.null(toa))
+      stop("When 'graph' is not a diffnet, argument 'toa' must be provided.", call. = FALSE)
+    dn <- .ndd_coerce_to_diffnet(graph, toa = toa, t0 = t0, t1 = t1,
+                                 name = name, behavior = behavior, valued = valued, ...)
+    graph <- dn
+  }
+
   degree_strategy <- match.arg(degree_strategy)
-  
+
   if (!is.logical(bootstrap) || length(bootstrap) != 1)
     stop("'bootstrap' must be a logical scalar.", call. = FALSE)
-  
   if (!is.numeric(R) || length(R) != 1 || R < 1)
     stop("'R' must be a positive integer.", call. = FALSE)
-  
-  if (!is.numeric(conf.level) || length(conf.level) != 1 || 
-      conf.level <= 0 || conf.level >= 1)
+  if (!is.numeric(conf.level) || length(conf.level) != 1 || conf.level <= 0 || conf.level >= 1)
     stop("'conf.level' must be between 0 and 1.", call. = FALSE)
-  
-  # Extract time of adoption
+
+  # Extract time of adoption and keep adopters --------------------------------
   toa <- graph$toa
-  
-  # Only include adopters in the analysis
   adopters <- !is.na(toa)
-  if (sum(adopters) < 3) {
+  if (sum(adopters) < 3)
     stop("At least 3 adopters are required for correlation analysis.", call. = FALSE)
-  }
-  
   toa_adopters <- toa[adopters]
-  
-  # Compute degree measures
-  indegree_full <- dgr(graph, cmode = "indegree", valued = valued)
+
+  # Degree measures -----------------------------------------------------------
+  indegree_full  <- dgr(graph, cmode = "indegree", valued = valued)
   outdegree_full <- dgr(graph, cmode = "outdegree", valued = valued)
-  
-  # Aggregate degree measures according to strategy
+
   if (degree_strategy == "mean") {
-    indegree_agg <- rowMeans(indegree_full, na.rm = TRUE)
+    indegree_agg  <- rowMeans(indegree_full, na.rm = TRUE)
     outdegree_agg <- rowMeans(outdegree_full, na.rm = TRUE)
   } else if (degree_strategy == "first") {
-    indegree_agg <- indegree_full[, 1]
+    indegree_agg  <- indegree_full[, 1]
     outdegree_agg <- outdegree_full[, 1]
-  } else { # "last"
-    indegree_agg <- indegree_full[, ncol(indegree_full)]
+  } else {
+    indegree_agg  <- indegree_full[, ncol(indegree_full)]
     outdegree_agg <- outdegree_full[, ncol(outdegree_full)]
   }
-  
-  # Subset to adopters only
-  indegree_adopters <- indegree_agg[adopters]
+
+  indegree_adopters  <- indegree_agg[adopters]
   outdegree_adopters <- outdegree_agg[adopters]
-  
-  # Compute correlations
-  cor_indegree_toa <- stats::cor(indegree_adopters, toa_adopters, use = "complete.obs")
+
+  cor_indegree_toa  <- stats::cor(indegree_adopters, toa_adopters, use = "complete.obs")
   cor_outdegree_toa <- stats::cor(outdegree_adopters, toa_adopters, use = "complete.obs")
-  
+
   correlations <- c(
-    indegree_toa = cor_indegree_toa,
+    indegree_toa  = cor_indegree_toa,
     outdegree_toa = cor_outdegree_toa
   )
-  
-  # Bootstrap analysis if requested
+
+  # Bootstrap analysis --------------------------------------------------------
   bootstrap_results <- NULL
   if (bootstrap) {
-    
-    # Bootstrap function for correlation
     boot_cor <- function(data, indices) {
-      # data is a matrix with columns: indegree, outdegree, toa
       d <- data[indices, ]
       c(
         stats::cor(d[, 1], d[, 3], use = "complete.obs"),  # indegree-toa correlation
@@ -1499,8 +1520,6 @@ degree_adoption_diagnostic <- function(
     
     # Prepare data for bootstrap
     boot_data <- cbind(indegree_adopters, outdegree_adopters, toa_adopters)
-    
-    # Remove any incomplete cases
     complete_cases <- stats::complete.cases(boot_data)
     boot_data <- boot_data[complete_cases, , drop = FALSE]
     
@@ -1509,28 +1528,23 @@ degree_adoption_diagnostic <- function(
     } else {
       # Perform bootstrap
       boot_result <- boot::boot(boot_data, boot_cor, R = R)
-      
-      # Compute confidence intervals
-      alpha <- 1 - conf.level
-      
       tryCatch({
         ci_indegree <- boot::boot.ci(boot_result, type = "perc", index = 1, conf = conf.level)
         ci_outdegree <- boot::boot.ci(boot_result, type = "perc", index = 2, conf = conf.level)
-        
         bootstrap_results <- list(
           indegree = list(
             correlation = boot_result$t0[1],
-            bias = mean(boot_result$t[, 1]) - boot_result$t0[1],
-            std_error = stats::sd(boot_result$t[, 1]),
-            conf_int = ci_indegree$percent[4:5],
-            conf_level = conf.level
+            bias        = mean(boot_result$t[, 1]) - boot_result$t0[1],
+            std_error   = stats::sd(boot_result$t[, 1]),
+            conf_int    = ci_indegree$percent[4:5],
+            conf_level  = conf.level
           ),
           outdegree = list(
             correlation = boot_result$t0[2],
-            bias = mean(boot_result$t[, 2]) - boot_result$t0[2],
-            std_error = stats::sd(boot_result$t[, 2]),
-            conf_int = ci_outdegree$percent[4:5],
-            conf_level = conf.level
+            bias        = mean(boot_result$t[, 2]) - boot_result$t0[2],
+            std_error   = stats::sd(boot_result$t[, 2]),
+            conf_int    = ci_outdegree$percent[4:5],
+            conf_level  = conf.level
           ),
           R = R,
           boot_object = boot_result
@@ -1540,13 +1554,13 @@ degree_adoption_diagnostic <- function(
         bootstrap_results <<- list(
           indegree = list(
             correlation = boot_result$t0[1],
-            bias = mean(boot_result$t[, 1]) - boot_result$t0[1],
-            std_error = stats::sd(boot_result$t[, 1])
+            bias        = mean(boot_result$t[, 1]) - boot_result$t0[1],
+            std_error   = stats::sd(boot_result$t[, 1])
           ),
           outdegree = list(
             correlation = boot_result$t0[2],
-            bias = mean(boot_result$t[, 2]) - boot_result$t0[2],
-            std_error = stats::sd(boot_result$t[, 2])
+            bias        = mean(boot_result$t[, 2]) - boot_result$t0[2],
+            std_error   = stats::sd(boot_result$t[, 2])
           ),
           R = R,
           boot_object = boot_result
@@ -1554,18 +1568,71 @@ degree_adoption_diagnostic <- function(
       })
     }
   }
-  
-  # Return result
-  structure(
-    list(
-      correlations = correlations,
-      bootstrap = bootstrap_results,
-      call = match.call(),
-      degree_strategy = degree_strategy,
-      sample_size = sum(adopters)
-    ),
-    class = "degree_adoption_diagnostic"
-  )
+
+  structure(list(
+    correlations   = correlations,
+    bootstrap      = bootstrap_results,
+    call           = match.call(),
+    degree_strategy = degree_strategy,
+    sample_size    = sum(adopters)
+  ), class = "degree_adoption_diagnostic")
+}
+
+# Internal: Coerce to diffnet from common graph inputs ------------------------
+.ndd_coerce_to_diffnet <- function(graph, toa, t0 = NULL, t1 = NULL,
+                                   name = "A diffusion network",
+                                   behavior = "Innovation",
+                                   valued = getOption("diffnet.valued", FALSE),
+                                   ...) {
+  # infer periods
+  if (is.null(t0)) t0 <- 1L
+  if (is.null(t1)) t1 <- max(toa, na.rm = TRUE)
+
+  # build list of adjacency matrices (length T) in dgCMatrix format
+  to_list_dgC <- function(g1) {
+    if (inherits(g1, "dgCMatrix")) {
+      G <- g1
+    } else if (inherits(g1, "matrix")) {
+      G <- methods::as(g1, "dgCMatrix")
+    } else if (inherits(g1, "igraph")) {
+      G <- methods::as(igraph::as_adjacency_matrix(g1, sparse = TRUE), "dgCMatrix")
+    } else if (inherits(g1, "network")) {
+      tmp <- as_generic_graph.network(g1)
+      G <- tmp$graph[[1]]
+    } else if (inherits(g1, "list")) {
+      return(lapply(g1, to_list_dgC))
+    } else if (inherits(g1, "array")) {
+      return(lapply(seq_len(dim(g1)[3]), function(i) methods::as(g1[, , i], "dgCMatrix")))
+    } else {
+      stop("Unsupported graph class for coercion.")
+    }
+
+    if (!valued) G@x <- rep(1, length(G@x))
+    list(G)
+  }
+
+  Glist <- if (inherits(graph, "list")) unlist(lapply(graph, to_list_dgC), recursive = FALSE)
+           else if (inherits(graph, "array")) lapply(seq_len(dim(graph)[3]), function(i) methods::as(graph[, , i], "dgCMatrix"))
+           else to_list_dgC(graph)
+
+  # If only one slice provided, repeat across [t0, t1]
+  Tlen <- length(Glist)
+  if (Tlen == 1L && (t1 - t0 + 1L) > 1L) {
+    Glist <- rep(Glist, t1 - t0 + 1L)
+    names(Glist) <- as.character(seq.int(t0, t1))
+  }
+
+  # Align vertex names (if any) with toa names
+  rn <- rownames(Glist[[1]])
+  if (!is.null(names(toa)) && length(rn) && !identical(names(toa), rn)) {
+    # try to reorder by names
+    ord <- match(rn, names(toa))
+    if (anyNA(ord)) stop("Names in 'toa' do not match graph vertex names.")
+    toa <- toa[ord]
+  }
+
+  new_diffnet(graph = Glist, toa = toa, t0 = t0, t1 = t1,
+              name = name, behavior = behavior)
 }
 
 #' @export
@@ -1583,59 +1650,129 @@ print.degree_adoption_diagnostic <- function(x, ...) {
   if (!is.null(x$bootstrap)) {
     cat("\nBootstrap Results:\n")
     cat(sprintf("  Replicates: %d\n", x$bootstrap$R))
-    cat(sprintf("  Confidence level: %.1f%%\n", x$bootstrap$indegree$conf_level * 100))
-    
+    cat(sprintf("  Confidence level: %.1f%%\n\n", x$bootstrap$indegree$conf_level * 100))
+
     if (!is.null(x$bootstrap$indegree$conf_int)) {
-      cat("\n  In-degree correlation:\n")
+      cat("  In-degree correlation:\n")
       cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$indegree$correlation))
       cat(sprintf("    Bias: %6.3f\n", x$bootstrap$indegree$bias))
       cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$indegree$std_error))
-      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n", 
+      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n\n",
                   x$bootstrap$indegree$conf_level * 100,
-                  x$bootstrap$indegree$conf_int[1], 
-                  x$bootstrap$indegree$conf_int[2]))
-      
-      cat("\n  Out-degree correlation:\n")
+                  x$bootstrap$indegree$conf_int[1], x$bootstrap$indegree$conf_int[2]))
+
+      cat("  Out-degree correlation:\n")
       cat(sprintf("    Estimate: %6.3f\n", x$bootstrap$outdegree$correlation))
       cat(sprintf("    Bias: %6.3f\n", x$bootstrap$outdegree$bias))
       cat(sprintf("    Std. Error: %6.3f\n", x$bootstrap$outdegree$std_error))
-      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n", 
+      cat(sprintf("    %.1f%% CI: [%6.3f, %6.3f]\n\n",
                   x$bootstrap$outdegree$conf_level * 100,
-                  x$bootstrap$outdegree$conf_int[1], 
-                  x$bootstrap$outdegree$conf_int[2]))
+                  x$bootstrap$outdegree$conf_int[1], x$bootstrap$outdegree$conf_int[2]))
     } else {
-      cat("\n  Bootstrap estimates (CI unavailable):\n")
-      cat(sprintf("    In-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n", 
+      cat("  Bootstrap estimates (CI unavailable):\n")
+      cat(sprintf("    In-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n",
                   x$bootstrap$indegree$correlation,
                   x$bootstrap$indegree$bias,
                   x$bootstrap$indegree$std_error))
-      cat(sprintf("    Out-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n", 
+      cat(sprintf("    Out-degree: Est=%6.3f, Bias=%6.3f, SE=%6.3f\n\n",
                   x$bootstrap$outdegree$correlation,
                   x$bootstrap$outdegree$bias,
                   x$bootstrap$outdegree$std_error))
     }
   }
-  
-  cat("\nInterpretation:\n")
-  indegree_cor <- x$correlations[["indegree_toa"]]
-  outdegree_cor <- x$correlations[["outdegree_toa"]]
-  
-  if (indegree_cor > 0.1) {
-    cat("  In-degree: Central actors (high in-degree) tended to adopt early (supporters)\n")
-  } else if (indegree_cor < -0.1) {
-    cat("  In-degree: Central actors (high in-degree) tended to adopt late (opposers)\n")
-  } else {
-    cat("  In-degree: Weak relationship between centrality and adoption timing\n")
+
+  # Concise CI-aware interpretation ------------------------------------------
+  cat("Interpretation:\n")
+  thr <- 0.10
+  indeg <- x$correlations[["indegree_toa"]]
+  outdeg <- x$correlations[["outdegree_toa"]]
+
+  has_boot <- !is.null(x$bootstrap)
+  indeg_ci <- if (has_boot && !is.null(x$bootstrap$indegree$conf_int)) x$bootstrap$indegree$conf_int else NULL
+  outdeg_ci <- if (has_boot && !is.null(x$bootstrap$outdegree$conf_int)) x$bootstrap$outdegree$conf_int else NULL
+  lvl <- if (has_boot && !is.null(x$bootstrap$indegree$conf_level)) x$bootstrap$indegree$conf_level*100 else NA_real_
+
+  # helper to print a single line following the required phrasing
+  explain <- function(label, r, ci) {
+    # Handle NA correlations gracefully
+    if (is.na(r)) {
+      if (is.null(ci)) {
+        cat(sprintf(
+          "  %s: Weak relationship between centrality and adoption timing:\n             r is NA; no CI.\n",
+          label
+        ))
+      } else {
+        # if CI exists but r is NA, we still treat as inconclusive text-wise
+        lvl_local <- if (!is.na(lvl)) lvl else 95
+        ci_includes_zero <- (length(ci) >= 2) && is.finite(ci[1]) && is.finite(ci[2]) && (ci[1] <= 0 && ci[2] >= 0)
+        cat(sprintf(
+          "  %s: Weak relationship between centrality and adoption timing; %s statistically supported:\n             r is NA; CI (%.1f%%) %s 0.\n",
+          label,
+          if (ci_includes_zero) "NOT" else "",
+          lvl_local,
+          if (ci_includes_zero) "includes" else "excludes"
+        ))
+      }
+      return(invisible())
+    }
+
+    abs_big <- abs(r) > thr
+
+    if (is.null(ci)) {
+      if (!abs_big) {
+        cat(sprintf("  %s: Weak relationship between %s and adoption timing:\n             |r| \u2264 %.1f; no CI.\n",
+                    label,
+                    if (label == "In-degree") "in-degree" else "in-degree", # text requested by user examples
+                    thr))
+      } else if (r > 0) {
+        cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters):\n             |r| > %.1f; no CI.\n",
+                    label,
+                    if (label == "In-degree") "in-degree" else "out-degree",
+                    thr))
+      } else {
+        cat(sprintf("  %s: Central actors (high %s) tended to adopt late (opposers):\n             |r| > %.1f; no CI.\n",
+                    label,
+                    if (label == "In-degree") "in-degree" else "out-degree",
+                    thr))
+      }
+      return(invisible())
+    }
+
+    # CI available
+    ci_includes_zero <- (length(ci) >= 2) && is.finite(ci[1]) && is.finite(ci[2]) && (ci[1] <= 0 && ci[2] >= 0)
+    lvl_local <- if (!is.na(lvl)) lvl else 95
+
+    if (!abs_big && !ci_includes_zero) {
+      cat(sprintf("  %s: Weak relationship between centrality and adoption timing; statistically supported:\n             |r| \u2264 %.1f; CI (%.1f%%) excludes 0.\n",
+                  label, thr, lvl_local))
+    } else if (!abs_big && ci_includes_zero) {
+      cat(sprintf("  %s: Weak relationship between centrality and adoption timing; NOT statistically supported:\n             |r| \u2264 %.1f; CI (%.1f%%) includes 0.\n",
+                  label, thr, lvl_local))
+    } else if (abs_big && !ci_includes_zero && r > 0) {
+      cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters); statistically supported:\n             |r| > %.1f; CI (%.1f%%) excludes 0.\n",
+                  label,
+                  if (label == "In-degree") "in-degree" else "out-degree",
+                  thr, lvl_local))
+    } else if (abs_big && !ci_includes_zero && r < 0) {
+      cat(sprintf("  %s: Central actors (high %s) tended to adopt late (opposers); statistically supported:\n             |r| > %.1f; CI (%.1f%%) excludes 0.\n",
+                  label,
+                  if (label == "In-degree") "in-degree" else "out-degree",
+                  thr, lvl_local))
+    } else if (abs_big && ci_includes_zero && r > 0) {
+      cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters); NOT statistically supported:\n             |r| > %.1f; CI (%.1f%%) includes 0.\n",
+                  label,
+                  if (label == "In-degree") "in-degree" else "out-degree",
+                  thr, lvl_local))
+    } else if (abs_big && ci_includes_zero && r < 0) {
+      cat(sprintf("  %s: Central actors (high %s) tended to adopt early (opposers); NOT statistically supported:\n             |r| > %.1f; CI (%.1f%%) includes 0.\n",
+                  label,
+                  if (label == "In-degree") "in-degree" else "out-degree",
+                  thr, lvl_local))
+    }
   }
-  
-  if (outdegree_cor > 0.1) {
-    cat("  Out-degree: Influential actors (high out-degree) tended to adopt early (supporters)\n")
-  } else if (outdegree_cor < -0.1) {
-    cat("  Out-degree: Influential actors (high out-degree) tended to adopt late (opposers)\n")
-  } else {
-    cat("  Out-degree: Weak relationship between influence and adoption timing\n")
-  }
-  
+
+  explain("In-degree",  indeg, indeg_ci)
+  explain("Out-degree", outdeg, outdeg_ci)
   invisible(x)
 }
 
