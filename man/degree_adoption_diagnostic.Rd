@@ -15,7 +15,9 @@ degree_adoption_diagnostic(
   t0 = NULL,
   t1 = NULL,
   name = "A diffusion network",
-  behavior = "Innovation",
+  behavior = NULL,
+  combine = c("none", "pooled", "average", "earliest"),
+  min_adopters = 3L,
   ...
 )
 }
@@ -35,25 +37,46 @@ time periods: \code{"mean"} (default), \code{"first"}, or \code{"last"}.}
 
 \item{valued}{Logical scalar. Whether to use edge weights in degree calculations.}
 
-\item{toa}{Integer vector of length \eqn{n} with time of adoption.
-Required when \code{graph} is not a \code{diffnet}.}
+\item{toa}{Integer vector of length \eqn{n} (single behavior) or an \eqn{n\times Q}{n*Q}
+matrix (multi-behavior) with times of adoption. Required when \code{graph} is not a \code{diffnet}.}
 
 \item{t0, t1}{Optional integer scalars defining the first and last observed
 periods. If missing and \code{toa} is provided, \code{t0} defaults to 1
 and \code{t1} to \code{max(toa, na.rm=TRUE)}.}
 
-\item{name, behavior}{Optional character scalars used only when coercing
+\item{name}{Optional character scalars used only when coercing
 inputs into a \code{diffnet} object (passed to \code{new_diffnet}).}
+
+\item{behavior}{Which behaviors to include when \code{toa} is a matrix (multi-diffusion).
+Can be \code{NULL} (all), a numeric index vector, or a character vector matching \code{colnames(toa)}.}
+
+\item{combine}{Character scalar. How to combine multiple behaviors when \code{toa} is a matrix:
+\code{"none"} (analyze each behavior separately), \code{"pooled"} (stack rows across behaviors),
+\code{"average"} (per-actor mean of TOA across selected behaviors), or 
+\code{"earliest"} (per-actor minimum TOA). Ignored for single-behavior.}
+
+\item{min_adopters}{Integer scalar. Minimum number of adopters required to compute correlations
+for any analysis cell (default 3).}
 
 \item{...}{Additional arguments passed on when coercing to \code{diffnet}.}
 }
 \value{
-A list with components:
+When analyzing a single behavior (or when \code{combine!="none"}), a list with:
 \item{correlations}{Named numeric vector with correlations between in-degree/out-degree and time of adoption}
 \item{bootstrap}{List with bootstrap results when \code{bootstrap = TRUE}, otherwise \code{NULL}}
 \item{call}{The matched call}
 \item{degree_strategy}{The degree aggregation strategy used}
-\item{sample_size}{Number of nodes included in the analysis (excludes non-adopters)}
+\item{sample_size}{Number of rows included in the analysis (adopter rows)}
+\item{combine}{\code{NULL} for single-behavior; otherwise the combination rule used.}
+
+When \code{combine="none"} with multiple behaviors, returns the same structure, except:
+\itemize{
+  \item \code{correlations} is a \eqn{2\times Q^*}{2 x Q*} matrix with rows \code{c("indegree_toa","outdegree_toa")}
+    and one column per analyzed behavior.
+  \item \code{bootstrap} is a named list with one entry per behavior (each like the single-behavior case), or \code{NULL} if \code{bootstrap=FALSE}.
+  \item \code{sample_size} is an integer vector named by behavior.
+  \item \code{combine} is \code{"none"}.
+}
 }
 \description{
 Analyzes the correlation between in-degree, out-degree, and time of adoption
@@ -63,7 +86,7 @@ adopters (opposers).
 \details{
 This diagnostic function computes correlations between degree centrality measures
 (in-degree and out-degree) and time of adoption. Positive correlations suggest
-that central actors (opinion leaders) adopted early, while negative correlations
+that central actors (opinion leaders) adopted early, while negative correlations 
 suggest they adopted late.
 
 The degree measures can be aggregated across time periods in different ways:
@@ -73,21 +96,23 @@ The degree measures can be aggregated across time periods in different ways:
   \item \code{"last"}: Degree in the last time period
 }
 
-The function accepts either a ready-to-use \code{diffnet} or generic graph
-inputs plus a \code{toa} vector. When needed, inputs are coerced to a
-\code{diffnet} via an internal helper
-
 When \code{bootstrap = TRUE}, the function uses the \pkg{boot} package to
-compute bootstrap confidence intervals for the correlations. This helps
-assess the statistical significance of the observed correlations.
+compute bootstrap confidence intervals for the correlations.
+
+When \code{toa} is a matrix (multi-diffusion), degree vectors are computed once and
+reused; the time of adoption is combined according to \code{combine}:
+\itemize{
+  \item \code{"none"}: computes separate results per behavior (see Value).
+  \item \code{"pooled"}: stacks (actor, behavior) rows for adopters and runs a single analysis.
+  \item \code{"average"}: one row per actor using the mean TOA of adopted behaviors.
+  \item \code{"earliest"}: one row per actor using the minimum TOA of adopted behaviors.
+}
 }
 \examples{
 # Basic usage with Korean Family Planning data
 data(kfamilyDiffNet)
-# Results show correlations and interpretation
 result_basics <- degree_adoption_diagnostic(kfamilyDiffNet, bootstrap = FALSE)
 print(result_basics)
-print(result_basics$correlations)
 
 # With bootstrap confidence intervals
 result_boot <- degree_adoption_diagnostic(kfamilyDiffNet)
@@ -95,18 +120,20 @@ print(result_boot)
 
 # Different degree aggregation strategies
 result_first <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "first")
-print(result_first)
+result_last  <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
 
-result_last <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
-print(result_last)
-
-# Using a sparse static adjacency matrix + toa -----------------------------
+# Multi-diffusion (toy) ----------------------------------------------------
 \dontrun{
-library(Matrix)
-set.seed(1)
-A <- rsparsematrix(50, 50, 0.05); A <- abs(A); A@x[A@x>0] <- 1
-toa <- sample(1:6, 50, replace = TRUE)
-diag2 <- degree_adoption_diagnostic(A, toa = toa, valued = FALSE)
+set.seed(999)
+n <- 40; t <- 5; q <- 2
+garr <- rgraph_ws(n, t, p=.3)
+diffnet_multi <- rdiffnet(seed.graph = garr, t = t, seed.p.adopt = rep(list(0.1), q))
+
+# pooled (one combined analysis)
+degree_adoption_diagnostic(diffnet_multi, combine = "pooled", bootstrap = FALSE)
+
+# per-behavior (matrix of correlations; one column per behavior)
+degree_adoption_diagnostic(diffnet_multi, combine = "none", bootstrap = FALSE)
 }
 
 }
