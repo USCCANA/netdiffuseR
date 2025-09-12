@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/cpp
 {
-	"name": "epiworldR",
+	"name": "netdiffuseR",
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
@@ -11,7 +11,8 @@
 				"reditorsupport.r",
 				"rdebugger.r-debugger",
 				"quarto.quarto",
-				"tianyishi.rmarkdown"
+				"tianyishi.rmarkdown",
+				"github.vscode-github-actions"
 			]
 		}
 	},

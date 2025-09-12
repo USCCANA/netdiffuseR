@@ -44,7 +44,7 @@ jobs:
           shell: Rscript {0}
     
         - name: Upload artifact for GH pages deployment
-          uses: actions/upload-pages-artifact@v3
+          uses: actions/upload-pages-artifact@v5
           with:
             path: "docs/"
     
