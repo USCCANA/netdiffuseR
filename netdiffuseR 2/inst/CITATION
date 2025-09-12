@@ -1,0 +1,39 @@
+year <- 2025
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(
+  header = "To cite netdiffuseR in publications use the following paper:",
+  entry  = "Article",
+  title = "Diffusion/Contagion Processes on Social Networks",
+  author = c(
+    person("Thomas", "Valente"),
+    person("George", "Vega Yon")
+    ),
+  journal = "Health Education & Behavior",
+  year    = "2020",
+  month   = "feb",
+  volume  = 42,
+  issue   = 2,
+  doi     = "10.1177/1090198120901497",
+  url     = "https://doi.org/10.1177/1090198120901497",
+  issn    = "1367-4803",
+  pages   = "235-248",
+  note    = "{PMID: 32090655}",
+  bibtype = "article",
+ textVersion = "Valente TW, Vega Yon GG. Diffusion/Contagion Processes on Social Networks. Health Education & Behavior. 2020;47(2):235-248. doi:10.1177/1090198120901497"
+)
+
+
+bibentry(bibtype = "Manual",
+         title = "{{netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks}}",
+         author = c(
+          person("George", "Vega Yon", comment = c(ORCID = "0000-0002-3171-0844")),
+          person("Anibal", "Olivera Morales", comment=c(ORCID="0009-0000-3736-7939", what="Multi-diffusion version")),
+          person("Thomas", "Valente", comment=c(ORCID="0000-0002-8824-5816"))
+          ),
+         year = year,
+         note = note,
+         url = "https://github.com/USCCANA/netdiffuseR",
+         doi = "10.5281/zenodo.1039317", 
+         header = "And the actual R package:")
+

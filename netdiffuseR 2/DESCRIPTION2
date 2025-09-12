@@ -1,0 +1,57 @@
+Package: netdiffuseR
+Title: Analysis of Diffusion and Contagion Processes on Networks
+Version: 1.23.0
+Authors@R: c(
+  person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
+    comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")
+    ),
+  person("Thomas", "Valente", email="tvalente@usc.edu", role=c("aut", "cph"),
+    comment=c(ORCID="0000-0002-8824-5816", what="R original code")),
+  person("Anibal", "Olivera Morales", role = c("aut", "ctb"), 
+    comment=c(ORCID="0009-0000-3736-7939", what="Multi-diffusion version")),
+  person("Stephanie", "Dyal", email="stepharp@usc.edu", role=c("ctb"), comment="Package's first version"),
+  person("Timothy", "Hayes", email="timothybhayes@gmail.com", role=c("ctb"), comment="Package's first version")
+  )
+Description: Empirical statistical analysis, visualization and simulation of
+    diffusion and contagion processes on networks. The package implements algorithms
+    for calculating network diffusion statistics such as transmission rate, hazard
+    rates, exposure models, network threshold levels, infectiousness (contagion),
+    and susceptibility. The package is inspired by work published in Valente,
+    et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>; Valente (1995) <ISBN:
+    9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar and others (2011)
+    <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>; among others.
+Depends: R (>= 3.1.1)
+License: MIT + file LICENSE
+LazyData: true
+Imports: Rcpp (>= 0.12.1), sna, network, networkDynamic, Matrix, MASS,
+        MatchIt, SparseM, methods, grDevices, graphics, stats, utils,
+        boot, igraph, viridisLite
+Suggests: covr, testthat, knitr, rmarkdown, ape, RSiena, survival
+VignetteBuilder: knitr
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 7.3.2
+Encoding: UTF-8
+URL: https://github.com/USCCANA/netdiffuseR,
+        https://USCCANA.github.io/netdiffuseR/
+BugReports: https://github.com/USCCANA/netdiffuseR/issues
+Classification/MSC: 90C35, 90B18, 91D30
+Collate: 'RcppExports.R' 'imports.r' 'graph_data.r' 'adjmat.r' 'bass.r'
+        'bootnet.r' 'citer_environment.R' 'data.r' 'diffnet-c.R'
+        'diffnet-class.r' 'diffnet-indexing.r' 'diffnet-methods.r'
+        'egonets.R' 'formula.r' 'igraph.r' 'infect_suscept.r'
+        'mentor.r' 'misc.r' 'moran.r' 'netmatch.r' 'network.r'
+        'options.R' 'package-doc.r' 'plot_diffnet2.r' 'rewire.r'
+        'random_graph.R' 'rdiffnet.r' 'read_write_foreign.r'
+        'select_egoalter.R' 'spatial.R' 'stats.R' 'struct_equiv.R'
+        'struct_test.R' 'survey_to_diffnet.R'
+NeedsCompilation: yes
+Packaged: 2025-06-12 08:41:18 UTC; root
+Author: George Vega Yon [aut, cre] (<https://orcid.org/0000-0002-3171-0844>,
+    Rewrite functions with Rcpp, plus new features),
+  Thomas Valente [aut, cph] (<https://orcid.org/0000-0002-8824-5816>, R
+    original code),
+  Anibal Olivera Morales [aut, ctb]
+    (<https://orcid.org/0009-0000-3736-7939>, Multi-diffusion version),
+  Stephanie Dyal [ctb] (Package's first version),
+  Timothy Hayes [ctb] (Package's first version)
+Maintainer: George Vega Yon <g.vegayon@gmail.com>

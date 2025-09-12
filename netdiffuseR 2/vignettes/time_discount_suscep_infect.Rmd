@@ -1,0 +1,72 @@
+---
+title: "Time Discounted Infection and Susceptibility"
+author: "George G. Vega Yon"
+date: "November 11, 2015"
+output: rmarkdown::html_vignette
+fontsize: 12pt
+vignette: >
+  %\VignetteIndexEntry{Time Discounted Infection and Susceptibility}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+In Myers (2000), susceptibility and infection is defined for a given time period and as a constant throughout the network--so only varies on $t$. In order to include effects from previous/coming time periods, it adds up through the \emph{severity} of the rioting, which in our case would be strength of tie, hence a dichotomous variable, whenever the event occurred a week within $t$, furthermore, he then introduces a discount factor in order to account for decay of the influence of the event. Finally, he obtains
+
+$$
+V_{(t)} = \sum_{a\in \mathbf{A}(t)} \frac{S_{(a)}m_{T(a), T\leq t-T(a)}}{t- T(a)}
+$$
+
+where $\mathbf{A}(t)$ is the set of all riots that occurred by time $t$, $S_{(a)}$ is the severity of the riot $a$, $T(a)$ is the time period by when the riot $a$ accurred and $m$ is an indicator function.
+
+In order to include this notion in our equations, I modify these by also adding whether a link existed between $i$ and $j$ at the corresponding time period. Furthermore, in a more general way, the time windown is now a function of the number of time periods to include, $K$, this way, instead of looking at time periods $t$ and $t+1$ for infection, we look at the time range between $t$ and $t + K$.
+
+# Infectiousness
+
+Following the paper's notation, a more generalized formula for infectiousness is
+
+$$\label{eq:infect-dec}
+\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ji(t+k-1)}z_{j(t+k)}}{k}
+\right)\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ji(t+k-1)}z_{j([t+k;T])}}{k}
+\right)^{-1}
+$$
+
+\noindent Where $\frac{1}{k}$ would be the equivalent of $\frac{1}{t - T(a)}$ in mayers. Alternatively, we can include a discount factor as follows
+
+$$\label{eq:infect-exp}
+\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ji(t+k-1)}z_{j(t+k)}}{(1+r)^{k-1}}
+\right)\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ji(t+k-1)}z_{j([t+k;T])}}{(1+r)^{k-1}}
+\right)^{-1}
+$$
+
+Observe that when $K=1$, this formula turns out to be the same as the paper.
+
+
+# Susceptibility
+
+Likewise, a more generalized formula of susceptibility is
+
+$$\label{eq:suscept-dec}
+\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ij(t-k+1)}z_{j(t-k)}}{k}
+\right)\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ij(t-k+1)}z_{j([1;t-k])}}{k}
+\right)^{-1}
+$$
+
+\noindent Which can also may include an alternative discount factor
+
+$$\label{eq:suscept-exp}
+\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ij(t-k+1)}z_{j(t-k)}}{(1+r)^{k-1}}
+\right)\left(
+\sum_{k=1}^K\sum_{j\neq i} \frac{x_{ij(t-k+1)}z_{j([1;t-k])}}{(1+r)^{k-1}}
+\right)^{-1}
+$$
+
+Also equal to the original equation when $K=1$. Furthermore, the resulting statistic will lie between 0 and 1, been the later whenever $i$ acquired the innovation lastly and right after $j$ acquired it, been $j$ its only alter.
+
+(PENDING: Normalization of the stats)

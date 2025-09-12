@@ -1,0 +1,393 @@
+2018-04-04  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/plot.cpp: Separating edge from arrow.
+	* R/diffnet-methods.r: Idem
+
+
+2018-04-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.r: Fixing bug in diffMap on plot_diffnet2.
+	* R/rdiffnet.r: Loading netdiffuseR when using ncpus.
+
+
+2018-03-26  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/formulas.r: Adding diffreg (including tests).
+	* vignettes/*: idem
+	* tests/*: idem
+
+
+2017-10-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/igraph.r: Uncesary permutation + adding undirected.
+	* R/mentor.r: Fixing bug in plotting method. Sorting was wrong.
+	* R/*.r: Idem.
+
+
+2017-10-16  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/stats.R: New argument for exposure.
+	* : Adding new examples in vignettes.
+	* : Getting ready for cran.
+
+
+2017-10-09  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.r: add_dimnames is now based on environments and more general.
+	* R/stats.r: Cleanning code
+
+	* *: Trying to pin down problem with Armadillo 0.8+. Solved.
+
+
+2017-10-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/igraph.r: Working on function to set default plot params.
+	* R/rdiffnet-methods.r: Cleaner code.
+
+	* R/rdiffnet.r: New function rdiffnet_multiple.
+
+
+2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet_methods.r: Keep working on consistency
+	* R/igraph.r: New function to set defaults for any plot function.
+
+
+2017-09-22  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Working on plotting methods. Adding arguments
+	  consistency across the package, and fixing some bugs in plot_diffnet
+	  regarding the colors of vertices.
+
+
+2017-09-20  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.r: Fixed bug in compute_size.
+	* R/diffnet-methods.r: Added title to plot_diffnet.
+
+
+2017-09-18  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Rewritten plot functions.
+	* R/misc.r: New function to set size according to degree.
+	* R/igraph.r: New set of functions and default (aesthetics).
+
+
+2017-09-15  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.r: Making the coding more neat.
+	* R/plot_diffnet2.r: Changing defaults
+
+	* R/rdiffnet.r: Working on way the function is written. Also now
+	  threshold.dist can be a scalar and no diffusion can be ok as well.
+
+
+2017-09-11  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.r: Change name of the file and fixed bug in setting
+	  the color of the colorKey.
+	* R/diffnet-methods.r: Simplifying functions.
+	* R/misc.r: Idem.
+
+
+2017-09-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Since atan2 checks the quadrant, 
+	  the angle() function is no longer needed.
+
+
+2017-08-24  George G. Vega Yon <g.vegayon@gmail.com>
+	* : Creating the configure.ac, src/Makevars.in, and cleanup
+	  files so that autoconf sets OpenMP.
+
+
+2017-08-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/egonets.R: Working on possible bug reported by CRAN.
+	* R/stats.R: Documentation.
+	* src/Makevars*: Adding OpenMP support via RcppArmadillo update
+	* src/stats.cpp: Fixing bug in vertex_covariate_distance
+	  plus making some speed fixes.
+	* src/rgraph.cpp: More efficient rgraph_ba_cpp.
+ 
+
+2017-07-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* : Working on making the package more light weight.
+	* : Checking included datasets duplicated columns.
+	* : Working on documentation
+
+2017-07-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/adjmat.cpp: rewriting egonet_attrs_cpp. Now more efficient
+	  should correct errors produced on windows.
+	* R/*: Fixing various bugs and spelling.
+
+
+2017-07-17  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/adjmat.cpp: Function for computing geodesics is now more
+	  efficient by using batch constructors when updating matrices.
+	* R/bootnet.r, R/struct_test.r: Fixing hist methods.
+
+
+2017-07-16  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/rewire.r: The function rewire_graph now also allows the method
+	  QAP.
+
+2017-07-14  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/stats.cpp: Moran's I now computing sd.
+	* R/moran.r: Idem.
+	* tests/testthat/test-moran.r: Idem.
+
+
+2017-04-28  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rgraph.cpp: New version of the -rgraph_er_cpp- and -rgraph_ba_cpp-
+	  function, way faster using batch insertion of arma::sp_mat.
+
+
+2017-04-07  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/bass.r: Adding the bass function w/ corresponding
+	  tests and examples.
+
+
+2017-03-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Working on doc.
+	* R/bootnet.r: Working on hist method.
+	* R/egonets.R: Fixing bug in matrix methods.
+	* R/mentor.R: Fixing bug in fetching nodes labels.
+	* R/misc.R: New function to coerce to dgCMatrix.
+	* R/struct_test.R: Working on print and hist methods.
+	* tests/testthat/*.r: Adding a bunch of new tests.
+
+
+2017-03-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struct_equiv.R: Replaced approx_geodesic
+	* R/adjmat.R: Fixing man.
+	* R/diffnet-methods.R: 'Bug' when calling igraph::graph_from...
+	  didn't preserved sorting of vertices.
+	* R/igraph.R: idem.
+	* R/mentor.r: Migrating the algorithm to its own file.
+	* R/random_graph.R: WS now returns an adjmat with dimnames.
+	* R/stats.R: Working on doc.
+	* R/struct_equiv.R: Adding examples for transformGraphBy
+
+
+2017-02-27  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Adding approx_geodesic.
+	* R/diffnet-class.R: Doc approx_geodesic in summary
+	* R/diffnet-methods.R: idem + add
+	* R/egonet.R: Adding example with static net
+	* R/stats.R: Adding matrix_compare and mentor_matching
+	* src/adjmat.cpp: approx_geodesic
+	* src/stats.cpp: matrix_compare
+
+
+2016-12-14  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.R: Adding new option to the drawColorKey
+
+
+2016-12-08  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/netmatch.r: New set of functions for matching with networks.
+	* R/bootnet.r: Documenting and fixing some bugs.
+
+
+2016-12-07  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Removed unused function.
+	* R/bootnet.r: Adding methods for other types of graphs.
+	* R/rewire.R: Recycling code in list vs array.
+	* R/diffnet-methods.R: Adding new methods for -nodes-.
+
+
+2016-12-06  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/bootnet.r: Still working on the BS.
+	* src/netdiffuser_extra.*: Adding bootnet_fillself to deal with i
+	  sampled more than once.
+	* R/struct_test.R: Fixing bug in variance calculation.
+
+
+2016-12-05  George G. Vega Yon <g.vegayon@gmail.com>
+	* bootnet.r: Implementing Snijders and Borgatti's bootstrapping
+	  on networks.
+
+
+2016-11-03  George G. Vega Yon <g.vegayon@gmail.com>
+	* README.Rmd: In mosaicplot (workhorse of plot.diffnet_adopters), the
+	  color= option wasn't coloring cell by cell. So removed example.
+
+
+2016-11-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/stats.R: Fixed bug with NA in classify_adopters.default.
+	* tests/testthat/test-stats.R: Adjusted expectation according
+	  to change in classify.
+	* .travis.ci: r-devel not working.
+	* .appveyor: r-patch not working.
+
+
+2016-11-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/*: Re-organized functions + headers, reducing lib space.
+	* R/*: Tweaked a couple of examples for reducing running time.
+	* tests/testtat/*: idem.
+
+
+2016-10-28  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rewire_swap.cpp: 'Commented' alt.hexagons since the implementation
+	  is flawed.
+	* R/rewire.R: Idem.
+	* test/testthat/*.R: More tests.
+
+
+2016-10-27  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rgraph_ba.*: Renamed files (and header def) to fix build error.
+	* R/diffnet-methods.R: Fixing small bugs in -.diffnet and data-checks
+	  in plot_threshold.
+	* test/testthat/*.R: More tests.
+	* R/stats.R: Small changes.
+
+
+2016-10-26  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/*: Working with @template of roxygen2.
+	* R/diffnet-class.R: Removing unsued code.
+	* R/diffnet-methods: Fixing bugs in %*% and * for diffnet objs.
+	* R/random_graph.R: Implementing Scale-free homophilic nets.
+	* R/stats.R: Adding titles to plot.diffnet_degSeq.
+	* R/survey_to_diffnet.R: More data pre-processing.
+	* src/rgraph_scale_free.*: Added scale-free homophilic to rgraph_ba,
+	  and changed the name.
+	* R/rewire.R: New functions permute_graph and rewire_qap.
+	* man-roxygen/: Where templates live (roxygen2).
+	* src/rgraph.cpp: permute_graph.
+
+
+2016-10-18  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-indexing.R: Fixing bug on [[<-.diffnet.
+	* R/rewire.R: althex is currently on dev (so change when TRUE).
+	* src/netdiffuser_extra.h: Removing unsued function.
+	* src/rgraph_er.cpp: Removing redundant function.
+	* R/random_graph.R: rgraph_ws uses a single cpp fun. (idem)
+	* test/testthat/*: More tests.
+
+2016-10-17  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/graph_data.R: Bug in ordering (now its preserved)
+	* test/testthat/*: New select_egoalter and graph_data tests.
+
+2016-10-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-class.R: Function -diffnet.attrs<-- Defunct-ed.
+	* R/select_egoalter.R: New summary method+fix bug with arrays.
+	* R/struct_test.R: Working on doc.
+	* src/struct_test.cpp: Removing unused function -hatf-.
+	* tests/testthat/*.R: Several new tests.
+
+2016-10-12  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-class.R: Small bug when reading dynamic attributes. and
+	  printing bug+removing dimnames.
+	* R/adjmat.R: no dimnames.
+	* R/diffnet-c.R: idem.
+	* R/diffnet-indexing.R: idem.
+	* R/igraph.R: idem.
+	* R/read_write_foreign.R: Working on bug with read_net (still on dev).
+	* R/diffnet-methods.R: Bug in ^ operator. And plot_adopters returned
+	  NULL.
+	* R/spatial.R: Fixing bugs + adding it as a function in the namespace.
+	* tests/testthat/*.R: Adding several new tests to cover code.
+	* R/stats.R: Rewriting functions in R.
+	* R/stats.cpp: idem + new function mahalanobis distance.
+	* R/rdiffnet.R: Adding default name and behavior.
+	* src/netdiffuser_extra.cpp: Fixing bug.
+	* src/rgraph_ba.cpp: Removing unused version of ba model.
+
+2016-10-07  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/adjmat.R: Changing syntax.
+	* R/graph_data.R: Working on new function to convert igraph,network,
+	  etc. to 'generic graphs' so methods in netdiffuseR work.
+	* R/stats.R: New plot method for the output of degree seq (which is
+	  now a diffnet_degSeq, matrix class object. rm -degree_cpp- and add
+	  -.dgr-. Same with -exposure_cpp- and -.exposure-.
+	* src/stats.cpp: See above.
+	* src/adjmat.cpp: Fixing bug on undirected graphs.
+	* R/diffnet-class.R: New desc meta for the class (and methods).
+	* R/diffnet-methods.R: Idem.
+	* R/igraph.R: Idem.
+
+2016-10-05  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.R: Added new options, adding sharp criter for diffmap.
+	* R/random_graph.R: New argument for -rgraph_ba-. Now allows for !self.
+	* R/read_write_foreign.R: New function for reading binary files from
+	  UCINET.
+	* R/struct_test.R: Fixing bug in c. method.
+	* src/rgraph_ba.cpp: New argument for !self.
+
+2016-09-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struct_equiv.R: New function to apply transformation to a matrix
+	considering structural zeros -transformGraphBy-.
+	* .travis.yml: Removing dev version from tests.
+
+2016-08-31  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/struct_test.cpp: New function to compare vertices at dyadic level.
+	-ego_variance-.
+	* src/stats.cpp: Changing name of function sqdistance to quaddistance.
+	* src/rewire_swap.cpp: Adding alternating hexagons algorithm (on dev).
+
+2016-08-25  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/stats.cpp: New function to compare vertices at dyadic level.
+
+2016-08-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/rewire_swap.cpp: New argument for assuring aperiodicity on MCMC.
+	* R/rewire.R: Documenting new argument.
+
+2016-08-19  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Functions for dyadic comparison.
+	* src/stats.cpp: Changing definition of vertex_compare.
+	* R/struct_test.R: Working on doc + adding some debugs.
+
+2016-08-12  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.R: Fixing bug in plot_diffnet on the range of the
+	plot.
+	* R/struct_test.R: New function for exact test (experimental).
+
+2016-08-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/struct_test.cpp: Adding new functions for computing exact text.
+	* R/struct_test.R: Adding new functions for computing exact text.
+
+2016-08-02  George G. Vega Yon <g.vegayon@gmail.com>
+	* src/netdiffuser_extra.cpp: Adding internal function to compute distances.
+	This is used in the new version of rgraph_ba.
+	* src/rgraph_ba.cpp: Working on new algorithm for scale-free + covariates.
+
+2016-08-01  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/rewire.R: Changing default number in `n_rewires` from 100 to 20 + adding
+	explaination.
+
+2016-07-23  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/moran.R: Adding variance of Moran's I (not user visible yet)
+	* R/diffnet-methods.R: idem.
+
+2016-07-07  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-indexing.R: Adding method for [[.diffnet <- NULL
+	* tests/testthat/*: Adding more tests + small changes to reduce time.
+
+2016-07-06  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struc_test.R: Changing defaults in n_rewires.
+
+2016-06-26  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/egonets.R: Fixing small bug on the matrix methods
+	* R/diffnet-methods.R: No actual significant changes
+	* R/plot_diffnet2.R: Fixing small bug and improving doc.
+
+2016-06-21  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/misc.R: Changing defaults and adding examples
+	* R/struct_test.R: Adding example with c.diffnet_struct_test
+	* DESCRIPTION: Getting ready for CRAN
+
+2016-06-20  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/struct_test.R: Changes in hist.diffnet_struc_test method.
+	* R/diffnet-methods.R: Extending the %*% method.
+	* R/stats.R: New argument for threshold.
+
+2016-06-17  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/plot_diffnet2.R: Adding new arguments to deal with new function
+	  to rescale the size of vertices.
+	* R/misc.R: Adding new function to rescale vertex size.
+	* R/diffnet-methods.R: Update to plot_diffnet.
+
+2016-06-13  George G. Vega Yon <g.vegayon@gmail.com>
+	* R/diffnet-methods.R: Fixing warnings from R CMD check.
+	* R/imports.R: idem.
+	* R/misc.R: idem.
+	* R/plot_diffnet2.R: idem
+	* R/stats.R: idem.
+	* R/struct_test.R: idem.
+
+2016-06-10  George G. Vega Yon <g.vegayon@gmail.com>
+	* ChangeLog: Sarting ChangeLog
+	* R/adjmat.R: Adding new function `simmelian_mat`
+	* R/diffnet-methods.R: New methods str, dimnames, t, &, |, dim, %*%.
+	* R/egonets.R: Adding new arg.
+	* R/misc.R: New function to create a color key.
+	* R/plot_diffnet2.R: Fixing small bugs and improving doc.
+	* R/rewire.R: Fixing bug.
+	* R/stats.R: New function to classify adopters.
+	* R/struct_test.R: New method c and helper function.
+	* man/*: Adding documentation.

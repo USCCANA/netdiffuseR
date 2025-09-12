@@ -1,0 +1,217 @@
+---
+title: "netdiffuseR showcase: Medical Innovations"
+author: "George G. Vega Yon"
+date: "February 24, 2016"
+output: rmarkdown::html_vignette
+header-includes: \usepackage{graphicx}
+vignette: >
+  %\VignetteIndexEntry{netdiffuseR showcase: Medical Innovations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r Setup, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(out.width = 600, fig.align = "center", fig.width = 7, fig.height = 7) 
+```
+
+# Data preprocessing
+
+Loading the raw dataset from the package[^diffnetdata].
+
+[^diffnetdata]: Note that there is a `diffnet` version of the same dataset in the package, `medInnovationsDiffNet`.
+
+```{r Loading pkgs and reading the data}
+library(netdiffuseR)
+data(medInnovations)
+```
+
+Now that we have the data in R, we can start working with it, in particular, we want to do the following things:
+
+- Create a unique id for each individual in the network.
+- Remove unsurveyed individuals (we don't have additional covariates for them).
+- Reshaping the data to long format (so we can use it as a panel), and furthermore, as an edgelist.
+
+```{r Preparing data for netdiffuseR}
+# Creating unique ids (including for the network data)
+othervars <- c("id", "toa", "city")
+netvars <- names(medInnovations)[grepl("^net", names(medInnovations))]
+for (i in c("id", netvars))
+  medInnovations[[i]] <- medInnovations[[i]] + medInnovations$city*1000
+
+# Leaving unsurveyed individuals with NA
+surveyed <- medInnovations$id
+for (i in netvars)
+  medInnovations[[i]][which(!(medInnovations[[i]] %in% surveyed))] <- NA
+
+# Reshaping data (so we have an edgelist)
+medInnovations.long <- reshape(
+  medInnovations[,c(othervars, netvars)], v.names= "net",
+  varying = netvars,
+  timevar = "level", idvar="id", direction="long")
+```
+
+
+Once we have the data in long format, we can coerce it into an `diffnet` object. This is done by reading the edgelist, obtaining the times of adoption vector and applying the `as_diffnet` function.
+
+```{r Importing data to netdiffuseR}
+# Coersing the edgelist to an adjacency matrix. Here we are assuming that the
+# network is constant through time.
+graph <- with(
+  medInnovations.long,
+  edgelist_to_adjmat(cbind(id, net), t=18,undirected=FALSE, keep.isolates = TRUE)
+)
+```
+
+Notice that we have included `keep.isolates=TRUE`, so, if any element of our edgelist had an `NA`, `NULL` or related value, it would still be included in the adjacency matrix. This is specially important if, for example, there are isolated nodes in the data, as if we had not set `keep.isolates=TRUE` those would had been discarded.
+
+Now we can create our `diffnet` object. Notice that `medInnovations` happens to be sorted in the same way as the elements in the adjacency matrix. You can check this by accessing the `rownames` and sorting `medInnovations` in that order.
+
+```{r}
+# Just to be sure. Sorting the data!
+orddata <- as.numeric(as.factor(rownames(graph[[1]])))
+medInnovations <- medInnovations[orddata,]
+
+# Creating a diffnet object
+diffnet <- as_diffnet(graph, medInnovations$toa, 
+                      vertex.static.attrs = subset(medInnovations, select=c(-id, -toa)))
+```
+
+# Methods
+
+Once a `diffnet` object, we can apply the usual generic R functions:
+
+```{r Checking-the-methods}
+plot(diffnet, t=diffnet$meta$nper)
+diffnet
+summary(diffnet)
+```
+
+And the ones included in the package:
+
+```{r graphs}
+plot_diffnet(diffnet, slices=c(1,4,8,12,16,18))
+plot_threshold(diffnet, undirected = FALSE, vertex.size = 1/5)
+plot_adopters(diffnet)
+plot_hazard(diffnet)
+```
+
+# Statistical test
+
+Now, we want to know if the threshold model fits here. In order to do so we will use the structure dependency test built in the package, `struct_test`. We will apply this both in a aggregated level and by city. First we need to subset the data:
+
+```{r Subsetting}
+# Get cities ids so we can subset the vertices and run the test by city.
+city <- diffnet$vertex.static.attrs[,"city"]
+
+# Subsetting diffnet, notice that we can use either indices or ids to create a
+# "subdiffnet". In this case we are using indices.
+diffnet_city1 <- diffnet[which(city==1),]
+diffnet_city2 <- diffnet[which(city==2),]
+diffnet_city3 <- diffnet[which(city==3),]
+diffnet_city4 <- diffnet[which(city==4),]
+```
+
+Notice that by subsetting the set of vertices we have created 4 new `diffnet` objects, so all the methods and functions work for each one of these, for example, threshold levels in each city
+
+```{r Multithreshold}
+oldpar <- par(no.readonly = TRUE)
+par(mfrow=c(2,2))
+plot_threshold(diffnet_city1, vertex.label = "", main="Threshold and ToA\nin City 1")
+plot_threshold(diffnet_city2, vertex.label = "", main="Threshold and ToA\nin City 2")
+plot_threshold(diffnet_city3, vertex.label = "", main="Threshold and ToA\nin City 3")
+plot_threshold(diffnet_city4, vertex.label = "", main="Threshold and ToA\nin City 4")
+par(oldpar)
+```
+
+```{r}
+plot_infectsuscep(diffnet_city1, K=5, logscale = TRUE, bins=30)
+```
+
+
+Now we run the test for each city. Observe that we can use the __parallel__ package to speedup the test as we will do in the first two cities using two cores (this is done thanks to the __boot__ package).
+
+```{r Stat-test}
+# Defining the statistic
+avgthr <- function(x) mean(threshold(x), na.rm = TRUE)
+
+# Running the test by city
+test1   <- struct_test(diffnet_city1, avgthr, 500, ncpus=2, parallel="multicore")
+test2   <- struct_test(diffnet_city2, avgthr, 500, ncpus=2, parallel="multicore")
+test3   <- struct_test(diffnet_city3, avgthr, 500)
+test4   <- struct_test(diffnet_city4, avgthr, 500)
+
+# Running the test aggregated
+testall <- struct_test(diffnet, avgthr, 500, ncpus=2, parallel="multicore")
+
+# Printing the outcomes
+test1
+test2
+test3
+test4
+testall
+```
+
+This shows in no City threshold seems to be struture dependent, as after simulating 1,000 networks by rewiring each one of these preserving the degree sequence (using `algorithm = "swap"` by default in the `rewire.args`) the null can't be rejected. Now we can make an histogram of the outcomes by city:
+
+```{r Histograms}
+# To make it nicer, we change the parameters in using par
+# (see ?par)
+oldpar <- par(no.readonly = TRUE)
+par(mfrow=c(2,2))
+
+# Now we use the hist method for the -diffnet_boot- class
+hist(test1, main="Distribution of Statistic on rewired\nnetwork (City 1)", ask = FALSE)
+hist(test2, main="Distribution of Statistic on rewired\nnetwork (City 2)", ask = FALSE)
+hist(test3, main="Distribution of Statistic on rewired\nnetwork (City 3)", ask = FALSE)
+hist(test4, main="Distribution of Statistic on rewired\nnetwork (City 4)", ask = FALSE)
+
+# Returning to the previous graphical parameters
+par(oldpar)
+```
+
+# Retrieving the data to create a panel/envent history/longitudinal data
+
+To use the data for statistical models we can retrieve the data stored in the `diffnet` object and coerce it as a `data.frame`. First, we will compute __lagged__ exposure at each time period and add it as a dynamic vertex attribute, including a dummy variable called `adopted` equal to 1 if the individual adopted at that time point.
+
+```{r Computing-exposure}
+# Calculating lagged exposure
+expo <- exposure(diffnet, lags = 1L)
+head(expo)
+
+# Netdiffuser automatically identifies whether the input is dynamic or not.
+diffnet[["lagged_expo"]] <- expo
+diffnet[["adopted"]]  <- toa_mat(diffnet)$cumadopt
+```
+
+Now we can create a data frame from our `diffnet` object
+
+```{r Creating the diffnet model}
+# Getting the data
+mydata <- as.data.frame(diffnet)
+```
+
+The following model illustrates how can we use netdiffuseR to run a lagged exposure model. In this (toy) model we are including fixed effects for time (`per`), `city`, belief in science (`belief`) and age, and only including observations prior to the adoption of the behavior, and excluding observations from the last time point.
+
+
+```{r Running the model}
+# Running a model
+summary(
+  glm(adopted ~ lagged_expo + factor(per) + factor(city) + belief + 
+        proage + I(proage^2),
+      dat    = mydata, 
+      subset = (per <= toa) & per < 18,
+      family = binomial(link="logit"))
+)
+```
+
+As shown, we find no lagged exposure effects and the adoption was mainly drive by belief in science and age of the MD. Notice that instead of calling `glm` directly, we could have also used the `diffreg` function (a wrapper of `glm` that does all the filtering and exposure computing for us) as follows:
+
+```{r Diffreg}
+summary(
+  diffreg(diffnet ~ exposure + factor(per) + factor(city) + belief + 
+            proage + I(proage^2))
+  )
+```
+
+
