@@ -66,6 +66,7 @@ Collate:
     'bootnet.r'
     'citer_environment.R'
     'data.r'
+    'degree_adoption_diagnostic.R'
     'diffnet-c.R'
     'diffnet-class.r'
     'diffnet-indexing.r'
