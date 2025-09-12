@@ -4,6 +4,8 @@
 
 * It is now possible to simulate diffusions with general disadoption functions.
 
+* New function `degree_adoption_diagnostic()` analyzes the correlation between network centrality measures (in-degree and out-degree) and time of adoption to identify whether opinion leaders were supporters or opposers in diffusion processes.
+
 
 # Changes in netdiffuseR version 1.22.7 (2024-09-18)
 
