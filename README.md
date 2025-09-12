@@ -143,6 +143,10 @@ This example has been taken from the package’s vignettes:
 library(netdiffuseR)
 ```
 
+    Thank you for using netdiffuseR! Please consider citing it in your work.
+    You can find the citation information by running
+      citation("netdiffuseR")
+
 
     Attaching package: 'netdiffuseR'
 
@@ -390,18 +394,23 @@ sessionInfo()
 ```
 
     R version 4.5.0 (2025-04-11)
-    Platform: aarch64-apple-darwin24.2.0
-    Running under: macOS Sequoia 15.0.1
+    Platform: x86_64-pc-linux-gnu
+    Running under: Ubuntu 24.04.2 LTS
 
     Matrix products: default
-    BLAS:   /opt/homebrew/Cellar/openblas/0.3.29/lib/libopenblasp-r0.3.29.dylib 
-    LAPACK: /opt/homebrew/Cellar/r/4.5.0/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.1
+    BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+    LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 
     locale:
-    [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+     [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+     [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+     [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+     [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+     [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
-    time zone: America/Denver
-    tzcode source: internal
+    time zone: Etc/UTC
+    tzcode source: system (glibc)
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -415,7 +424,7 @@ sessionInfo()
      [7] networkLite_1.1.0     boot_1.3-31           yaml_2.3.10          
     [10] fastmap_1.2.0         lattice_0.22-6        coda_0.19-4.1        
     [13] R6_2.6.1              generics_0.1.4        MatchIt_4.7.2        
-    [16] igraph_2.1.4.9046     knitr_1.50            MASS_7.3-65          
+    [16] igraph_2.1.4          knitr_1.50            MASS_7.3-65          
     [19] backports_1.5.0       tibble_3.3.0          statnet.common_4.12.0
     [22] pillar_1.10.2         rlang_1.1.6           xfun_0.52            
     [25] viridisLite_0.4.2     cli_3.6.5             magrittr_2.0.3       
