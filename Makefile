@@ -7,6 +7,7 @@ help:
 	@echo "  make checkv      - Check the package with R CMD check using Valgrind"
 	@echo "  make clean       - Clean up the build artifacts"
 	@echo "  make docs        - Generate documentation"
+	@echo "  make cleanup-branches - Remove local branches that no longer exist in remote"
 
 install: 
 	R CMD INSTALL .
@@ -29,4 +30,7 @@ clean:
 docs:
 	Rscript --vanilla -e 'devtools::document()'
 
-.PHONY: check checkv clean install docs
+cleanup-branches:
+	./cleanup-branches
+
+.PHONY: check checkv clean install docs cleanup-branches

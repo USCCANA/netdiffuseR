@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Script to trim local branches that no longer exist in the remote repository
+# This script prunes remote tracking references and removes local branches
+# whose upstream has been deleted.
+
+echo "Cleaning up local branches that no longer exist in remote..."
+
+# First, prune remote tracking references to remove stale references
+echo "Pruning remote tracking references..."
+git remote prune origin
+
+# Find and remove local branches whose upstream has been deleted
+echo "Finding local branches with deleted upstreams..."
+BRANCHES_TO_DELETE=$(git branch -vv | grep ': gone]' | awk '{print $1}')
+
+if [ -z "$BRANCHES_TO_DELETE" ]; then
+    echo "No orphaned local branches found."
+else
+    echo "Found orphaned local branches:"
+    echo "$BRANCHES_TO_DELETE"
+    echo "Removing orphaned branches..."
+    echo "$BRANCHES_TO_DELETE" | xargs git branch -d
+    echo "Cleanup complete."
+fi

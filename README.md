@@ -121,6 +121,20 @@ this directly as follows (using the 1.16.3.29 version):
     > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
     ```
 
+## Development
+
+For developers working on the netdiffuseR package, several development utilities are available via the Makefile:
+
+``` sh
+make help                # Show all available commands
+make cleanup-branches    # Remove local branches that no longer exist in remote
+make clean              # Clean up build artifacts
+make build              # Build the package
+make check              # Run R CMD check
+```
+
+The `cleanup-branches` utility helps maintain a clean local repository by removing local branches whose upstream has been deleted from the remote repository.
+
 ## Tutorials
 
 Since starting netdiffuseR, we have done a couple of workshops at
