@@ -16,7 +16,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) (valgrind: ${{ matrix.config.valgrind }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) (valgrind:${{ matrix.config.valgrind }})
 
     strategy:
       fail-fast: false
