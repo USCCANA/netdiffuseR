@@ -80,7 +80,7 @@ test_that("degree_adoption_diagnostic handles edge cases", {
 
   expect_error(
     degree_adoption_diagnostic(dn, bootstrap = FALSE),
-    "At least 3 adopters are required"
+    "Insufficient adopters for correlation analysis"
   )
 
   # Test with insufficient adopters
@@ -91,18 +91,18 @@ test_that("degree_adoption_diagnostic handles edge cases", {
 
   expect_error(
     degree_adoption_diagnostic(dn, bootstrap = FALSE),
-    "At least 3 adopters are required"
+    "Insufficient adopters for correlation analysis"
   )
 })
 
 test_that("degree_adoption_diagnostic input validation", {
   set.seed(333)
-  dn <- rdiffnet(15, 3, seed.p.adopt = 0.3)
+  dn <- rdiffnet(n = 15, t = 3, seed.p.adopt = 0.3)
 
   # Test invalid toa for non-diffnet input
   expect_error(
     degree_adoption_diagnostic("not a diffnet"),
-    "When 'graph' is not a diffnet, argument 'toa' must be provided."
+    "toa argument is required when graph is not a diffnet object"
   )
 
   # Test valid sparse matrix input
@@ -386,6 +386,6 @@ test_that("Behavior selection validates indices/names and min_adopters is enforc
   # For combined modes, too few rows should still error
   expect_error(
     degree_adoption_diagnostic(dn2, behavior = "X", combine = "pooled", min_adopters = 3),
-    "Not enough adopter rows after combining behaviors"
+    "Insufficient adopters for correlation analysis"
   )
 })

@@ -22,12 +22,12 @@ degree_adoption_diagnostic(
 )
 }
 \arguments{
-\item{graph}{A `[diffnet()]` object or a graph data structure (classes include 
-`array` (\eqn{n\times n \times T}{n*n*T}), `dgCMatrix` (sparse), 
+\item{graph}{A `[diffnet()]` object or a graph data structure (classes include
+`array` (\eqn{n\times n \times T}{n*n*T}), `dgCMatrix` (sparse),
 `igraph`, etc.; see [netdiffuseR-graphs]).}
 
 \item{degree_strategy}{Character scalar. How to aggregate degree measures across
-time periods: 
+time periods:
 - `"mean"` (default): Average degree across all time periods
 - `"first"`: Degree in the first time period
 - `"last"`: Degree in the last time period}
@@ -89,7 +89,7 @@ adopters (opposers).
 \details{
 This diagnostic function computes correlations between degree centrality measures
 (in-degree and out-degree) and time of adoption. Positive correlations suggest
-that central actors (opinion leaders) adopted early, while negative correlations 
+that central actors (opinion leaders) adopted early, while negative correlations
 suggest they adopted late.
 
 When `bootstrap = TRUE`, the function uses the `boot` package to
