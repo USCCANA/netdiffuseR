@@ -412,57 +412,82 @@ compute_correlations <- function(data) {
   )
 }
 
-compute_bootstrap_results <- function(data, R, conf.level) {
-  safe_bootstrap <- function(data, indices) {
-    d <- data[indices, ]
-    tryCatch({
-      c(
-        indegree_toa = cor_safe(d$indegree, d$toa ),
-        outdegree_toa = cor_safe(d$outdegree, d$toa )
-      )
-    }, error = function(e) c(indegree_toa = NA, outdegree_toa = NA))
+compute_bootstrap_results <- function(combined_data, R, conf.level) {
+  # Compute baseline correlations
+  base_corr   <- compute_correlations(combined_data)
+  indeg_corr  <- base_corr[["indegree_toa"]]
+  outdeg_corr <- base_corr[["outdegree_toa"]]
+
+  indeg_boot_list <- NULL
+  out_boot_list   <- NULL
+
+  # Out-degree
+  if (!is.na(outdeg_corr)) {
+    # Out-degree bootstrap
+    safe_bootstrap_out <- function(data, indices) {
+      d <- data[indices, , drop = FALSE]
+      suppressWarnings(stats::cor(d$outdegree, d$toa, use = "complete.obs"))
+    }
+    boot_obj_out <- boot::boot(combined_data, statistic = safe_bootstrap_out, R = R)
+    bias_out <- mean(boot_obj_out$t, na.rm = TRUE) - outdeg_corr
+    se_out   <- stats::sd(boot_obj_out$t, na.rm = TRUE)
+
+    ci_out <- tryCatch({
+      bci <- boot::boot.ci(boot_obj_out, conf = conf.level, type = "perc")
+      # Percentile CI vector (low, high)
+      if (!is.null(bci$percent)) bci$percent[4:5] else NULL
+    }, error = function(e) NULL)
+
+    out_boot_list <- list(
+      correlation = outdeg_corr,
+      bias        = bias_out,
+      std_error   = se_out,
+      conf_int    = ci_out,
+      conf_level  = conf.level
+    )
+  } else {
+    # Degenerate case: correlation is NA (do not include CI/SE/CL)
+    out_boot_list <- list(
+      correlation = NA_real_
+    )
+    boot_obj_out <- NULL
   }
 
-  boot_result <- boot::boot(data, safe_bootstrap, R = R)
+  # In-degree
+  if (!is.na(indeg_corr)) {
+    # In-degree bootstrap
+    safe_bootstrap_in <- function(data, indices) {
+      d <- data[indices, , drop = FALSE]
+      suppressWarnings(stats::cor(d$indegree, d$toa, use = "complete.obs"))
+    }
+    boot_obj_in <- boot::boot(combined_data, statistic = safe_bootstrap_in, R = R)
+    bias_in <- mean(boot_obj_in$t, na.rm = TRUE) - indeg_corr
+    se_in   <- stats::sd(boot_obj_in$t, na.rm = TRUE)
 
-  # Observed correlations
-  obs_indegree <- cor_safe(data$indegree, data$toa)
-  obs_outdegree <- cor_safe(data$outdegree, data$toa)
+    ci_in <- tryCatch({
+      bci <- boot::boot.ci(boot_obj_in, conf = conf.level, type = "perc")
+      if (!is.null(bci$percent)) bci$percent[4:5] else NULL
+    }, error = function(e) NULL)
 
-  # Bias and standard error
-  bias_indegree <- mean(boot_result$t[,1], na.rm = TRUE) - obs_indegree
-  std_error_indegree <- sd(boot_result$t[,1], na.rm = TRUE)
-  bias_outdegree <- mean(boot_result$t[,2], na.rm = TRUE) - obs_outdegree
-  std_error_outdegree <- sd(boot_result$t[,2], na.rm = TRUE)
-
-  # Confidence intervals
-  indegree_ci <- tryCatch({
-    ci <- boot::boot.ci(boot_result, conf = conf.level, type = "perc", index = 1)
-    ci$percent[4:5]
-  }, error = function(e) c(NA, NA))
-
-  outdegree_ci <- tryCatch({
-    ci <- boot::boot.ci(boot_result, conf = conf.level, type = "perc", index = 2)
-    ci$percent[4:5]
-  }, error = function(e) c(NA, NA))
+    indeg_boot_list <- list(
+      correlation = indeg_corr,
+      bias        = bias_in,
+      std_error   = se_in,
+      conf_int    = ci_in,
+      conf_level  = conf.level
+    )
+  } else {
+    indeg_boot_list <- list(
+      correlation = NA_real_
+    )
+    boot_obj_in <- NULL
+  }
 
   list(
-    indegree = list(
-      correlation = obs_indegree,
-      bias = bias_indegree,
-      std_error = std_error_indegree,
-      conf_int = indegree_ci,
-      conf_level = conf.level
-    ),
-    outdegree = list(
-      correlation = obs_outdegree,
-      bias = bias_outdegree,
-      std_error = std_error_outdegree,
-      conf_int = outdegree_ci,
-      conf_level = conf.level
-    ),
-    R = R,
-    boot_object = boot_result
+    indegree    = indeg_boot_list,
+    outdegree   = out_boot_list,
+    R           = R,
+    boot_object = list(indegree = boot_obj_in, outdegree = boot_obj_out)
   )
 }
 
@@ -500,6 +525,17 @@ print.degree_adoption_diagnostic <- function(x, ...) {
 
   # Basic info
   cat(sprintf("Degree aggregation strategy: %s \n", x$degree_strategy))
+  # Combination mode info (only for multi-diffusion)
+  if (!is.null(x$combine)) {
+    mode_label <- switch(x$combine,
+      "none"     = "none (per-behavior)",
+      "pooled"   = "pooled (stacked rows)",
+      "average"  = "average (mean TOA per actor)",
+      "earliest" = "earliest (min TOA per actor)",
+      x$combine
+    )
+    cat(sprintf("Behavior combination: %s \n\n", mode_label))
+  }
 
   # Sample size info
   if (is.null(names(x$sample_size))) {
@@ -510,7 +546,6 @@ print.degree_adoption_diagnostic <- function(x, ...) {
     for (j in seq_along(x$sample_size)) {
       cat(sprintf("    - %s: %d\n", if (length(beh_names)) beh_names[j] else paste0("B", j), x$sample_size[j]))
     }
-    cat("\n")
   }
 
   undirected <- isTRUE(x$undirected)
@@ -531,7 +566,7 @@ print_single_behavior_results <- function(x, undirected) {
   outdeg_r <- x$correlations[["outdegree_toa"]]
 
   # Print correlations
-  cat("\nCorrelations:\n")
+  cat("Correlations:\n")
   if (undirected) {
     deg_r <- indeg_r  # For undirected graphs, in-degree = out-degree = degree
     cat(sprintf("  Degree - Time of Adoption: %.3f\n", deg_r))
@@ -661,7 +696,7 @@ explain_degree_correlation <- function(label, r, ci, lvl_arg = NA_real_, thr = 0
 
 format_interpretation_no_ci <- function(label, r, abs_big, degree_term, thr) {
   if (!abs_big) {
-    cat(sprintf("  %s: Weak relationship between %s and adoption timing:\n             |r| \\u2264 %.1f; no CI.\n",
+    cat(sprintf("  %s: Weak relationship between %s and adoption timing:\n             |r| \u2264 %.1f; no CI.\n",
                 label, degree_term, thr))
   } else if (r > 0) {
     cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters):\n             |r| > %.1f; no CI.\n",
@@ -677,7 +712,7 @@ format_interpretation_with_ci <- function(label, r, ci, abs_big, degree_term, th
   ci_includes_zero <- (length(ci) >= 2) && is.finite(ci[1]) && is.finite(ci[2]) && (ci[1] <= 0 && ci[2] >= 0)
 
   if (!abs_big) {
-    cat(sprintf("  %s: Weak relationship between %s and adoption timing; %s statistically supported:\n             |r| \\u2264 %.1f; CI (%.1f%%) %s 0.\n",
+    cat(sprintf("  %s: Weak relationship between %s and adoption timing; %s statistically supported:\n             |r| \u2264 %.1f; CI (%.1f%%) %s 0.\n",
                 label, degree_term,
                 if (ci_includes_zero) "NOT" else "",
                 thr, lvl_local,
