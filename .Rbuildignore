@@ -41,3 +41,4 @@ makefile
 netdiffuseR\.Rcheck
 ^\.devcontainer$
 ^\.vscode$
+^scripts$
