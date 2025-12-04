@@ -23,4 +23,7 @@ inst/doc
 playground/
 doc/
 
+# Other files
+.vscode/
+config.status
 src/Makevars

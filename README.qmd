@@ -127,7 +127,7 @@ out <- plot_infectsuscep(diffnet, bins = 20,K=5, logscale = TRUE,
 
 ### Threshold
 
-```{r BoringThreshold, plot_threshold, fig.height=7}
+```{r BoringThreshold, fig.height=7}
 # Generating a random graph
 set.seed(123)
 diffnet <- rdiffnet(500, 20,
@@ -180,7 +180,7 @@ diffnet.toa(brfarmersDiffNet)[brfarmersDiffNet$toa >= 1965] <- NA
 plot_diffnet2(brfarmersDiffNet, vertex.size = "indegree")
 ```
 
-```{r plot_diffnet2 with map, }
+```{r plot_diffnet2-withmap}
 set.seed(1231)
 
 # Random scale-free diffusion network

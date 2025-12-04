@@ -228,7 +228,7 @@ diffnet
 plot_threshold(diffnet)
 ```
 
-<img src="man/figures/README-BoringThreshold,%20plot_threshold-1.png"
+<img src="man/figures/README-BoringThreshold-1.png"
 style="width:100.0%" />
 
 Using more features
@@ -310,7 +310,7 @@ mtext("Both networks have the same distribution on times of adoption", 1,
       outer = TRUE)
 ```
 
-<img src="man/figures/README-plot_diffnet2%20with%20map-1.png"
+<img src="man/figures/README-plot_diffnet2-withmap-1.png"
 style="width:100.0%" />
 
 ``` r
