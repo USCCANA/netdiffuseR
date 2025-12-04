@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include <cmath>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -55,7 +56,7 @@ NumericVector infection_cpp(
       Rcpp::checkUserInterrupt();
 
     // If NA (aka nan in Armadillo), then NA.
-    if (!arma::is_finite(times(i))) {
+    if (!std::isfinite(times(i))) {
       infect.at(i) = NA_REAL;
       continue;
     }
@@ -159,7 +160,7 @@ NumericVector susceptibility_cpp(
       Rcpp::checkUserInterrupt();
 
     // If NA (aka nan in Armadillo), then NA.
-    if (!arma::is_finite(times(i))) {
+    if (!std::isfinite(times(i))) {
       suscep.at(i) = NA_REAL;
       continue;
     }
