@@ -22,3 +22,8 @@ inst/doc
 *.tex
 playground/
 doc/
+
+# Other files
+.vscode/
+config.status
+src/Makevars

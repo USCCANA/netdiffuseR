@@ -138,6 +138,7 @@ Available at: \url{https://web.archive.org/web/20220331222618/http://www.bassbas
 Other statistics: 
 \code{\link{classify_adopters}()},
 \code{\link{cumulative_adopt_count}()},
+\code{\link{degree_adoption_diagnostic}()},
 \code{\link{dgr}()},
 \code{\link{ego_variance}()},
 \code{\link{exposure}()},

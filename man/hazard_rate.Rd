@@ -131,6 +131,7 @@ Other statistics:
 \code{\link{bass}},
 \code{\link{classify_adopters}()},
 \code{\link{cumulative_adopt_count}()},
+\code{\link{degree_adoption_diagnostic}()},
 \code{\link{dgr}()},
 \code{\link{ego_variance}()},
 \code{\link{exposure}()},

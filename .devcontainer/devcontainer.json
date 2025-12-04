@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/cpp
 {
-	"name": "epiworldR",
+	"name": "netdiffuseR",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Containerfile"
 	},
 	"customizations": {
 		"vscode": {
@@ -11,14 +11,15 @@
 				"reditorsupport.r",
 				"rdebugger.r-debugger",
 				"quarto.quarto",
-				"tianyishi.rmarkdown"
+				"tianyishi.rmarkdown",
+				"github.vscode-github-actions"
 			]
 		}
 	},
 	"mounts": [
         // Mount the .vscode configuration into the container
         "source=${localWorkspaceFolder}/.devcontainer/.vscode,target=/workspaces/${localWorkspaceFolderBasename}/.vscode,type=bind,consistency=cached"
-    ]
+    ],
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -32,5 +33,5 @@
 	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }

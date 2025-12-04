@@ -15,14 +15,16 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}) (valgrind:${{ matrix.config.valgrind }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
           - {os: macOS-latest,   r: 'release'}
+          - {os: macOS-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: windows-latest, r: 'release'}
+          # - {os: windows-latest, r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'devel', valgrind: true, http-user-agent: 'release'}
@@ -32,9 +34,12 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      # Fix suggested by
+      # https://msmith.de/2020/03/12/r-cmd-check-github-actions.html
+      - name: Configure git
+        run: git config --global core.autocrlf false
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -46,6 +51,8 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          install-quarto: true
+          install-pandoc: true
 
       - uses: r-lib/actions/check-r-package@v2
         if: ${{ matrix.config.valgrind != true }}
@@ -56,36 +63,43 @@ jobs:
           check-dir: '"check"'
           error-on: '"error"'
 
-      - name: Setup valgrind
-        if: ${{ matrix.config.valgrind == true }}
+      - name: Install valgrind
+        if: ${{ matrix.config.valgrind }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y valgrind --no-install-recommends
-        shell: bash
+          sudo apt-get install -y --no-install-recommends valgrind
 
-      - name: Check with Valgrind
-        if: ${{ matrix.config.valgrind == true }}
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--use-valgrind"), error_on = "error", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
+      - uses: r-lib/actions/check-r-package@v2
+        if: ${{ matrix.config.valgrind }}
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+          args: 'c("--as-cran", "--use-valgrind", "--no-manual")'
+          upload-results: true
 
-      - name: Build the package
-        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') && (matrix.config.valgrind != true) }}
+  build-pkg:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::devtools
+
+      - name: Build package
         run: R CMD build .
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') && (matrix.config.valgrind != true) }}
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v5
         with:
-          name: netdiffuseR-built-package-${{ matrix.config.os }}-${{ matrix.config.r }}
-          path: netdiffuseR_*.tar.gz
-          retention-days: 7
+          name: R-package
+          path: '*.tar.gz'
+
+
+
+      
+
+

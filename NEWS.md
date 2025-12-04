@@ -1,3 +1,11 @@
+# Changes in netdiffuseR version 1.24.0 (DEV)
+
+* New function `degree_adoption_diagnostic()` analyzes the correlation between network 
+  centrality measures (in-degree and out-degree) and time of adoption to identify 
+  whether opinion leaders were supporters or opposers in diffusion processes.
+  The function supports multi-diffusion objects, undirected networks, and includes
+  bootstrap confidence intervals.
+
 # Changes in netdiffuseR version 1.23.0 (2025-06-10)
 
 * New methods for simulating multi-diffusion models.
