@@ -24,7 +24,7 @@ jobs:
         id-token: write
         pages: write
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
     
         - uses: r-lib/actions/setup-pandoc@v2
           with:
@@ -35,6 +35,8 @@ jobs:
         - uses: r-lib/actions/setup-r-dependencies@v2
           with:
             extra-packages: any::pkgdown
+            install-quarto: true
+            install-pandoc: true
 
         - name: Install the package
           run: R CMD INSTALL .

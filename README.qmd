@@ -2,6 +2,18 @@
 format: gfm
 ---
 
+```{r}
+#| label: setup
+#| echo: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+```{=markdown}
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
@@ -10,6 +22,7 @@ format: gfm
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1039317.svg)](https://doi.org/10.5281/zenodo.1039317)
 [![Dependencies](https://tinyverse.netlify.app/badge/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![USC's Department of Preventive Medicine](https://raw.githubusercontent.com/USCbiostats/badges/master/tommy-uscprevmed-badge.svg)](https://keck.usc.edu/cana/)
+```
 
 <h1>netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks<img src="man/figures/netdiffuser-logo.svg" style="max-width:200px;width:50%;" align="right"></h1>
 
@@ -59,40 +72,17 @@ If you want the latest (unstable) version of __netdiffuseR__, using the `remotes
 remotes::install_github('USCCANA/netdiffuseR', build_vignettes = TRUE)
 ```
 
-You can skip building vignettes by setting `build_vignettes = FALSE` (so it is not required).
+You can skip building vignettes by setting `build_vignettes = FALSE` (so it is not required). You can also get the package (pre-built binaries) from our R-Universe repository (recommended):
 
-For the case of OSX users, there seems to be a problem when installing packages 
-depending on `Rcpp`. This issue, developed [here](https://github.com/USCCANA/netdiffuseR/issues/3),
-can be solved by open the terminal and typing the following
-
-```sh
-curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
-sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /
+```r
+install.packages(
+  'epiworldR',
+  repos = c(
+    'https://uofuepibio.r-universe.dev',
+    'https://cloud.r-project.org'
+  )
+)
 ```
-
-before installing the package through `devtools`.
-
-### Binary versions
-
-For the case of windows and mac users, they can find binary versions of the package [here](https://github.com/USCCANA/netdiffuseR/releases), netdiffuseR_1...zip, and netdiffuseR_1...tgz respectively. They can install this directly as follows (using the 1.16.3.29 version):
-
-
-1.  Install dependencies from CRAN
-    ``` r
-    > install.packages(c("igraph", "Matrix", "SparseM", "RcppArmadillo", "sna"), dependencies=TRUE)
-    ```
-    
-2.  Download the binary version and install it as follows:
-
-    ``` r
-    > install.packages("netdiffuseR_1.16.3.29.zip", repos=NULL)
-    ```
-    
-    For windows users, and for Mac users:
-    
-    ``` r
-    > install.packages("netdiffuseR_1.16.3.29.tgz", repos=NULL)
-    ```
 
 ## Tutorials
 

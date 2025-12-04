@@ -22,3 +22,5 @@ inst/doc
 *.tex
 playground/
 doc/
+
+src/Makevars

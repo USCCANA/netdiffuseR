@@ -9,16 +9,16 @@ help:
 	@echo "  make docs        - Generate documentation"
 
 install: 
-	R CMD INSTALL .
+	Rscript --vanilla -e 'devtools::install()'
 
 build:
 	R CMD build . 
 
-README.md: README.Rmd
-	Rscript -e 'rmarkdown::render("README.Rmd")'
+README.md: README.qmd
+	quarto render README.qmd
 
-check: netdiffuseR_$(VERSION).tar.gz
-	R CMD check --as-cran netdiffuseR_$(VERSION).tar.gz
+check:
+	Rscript --vanilla -e 'devtools::check()'
 
 checkv: netdiffuseR_$(VERSION).tar.gz
 	R CMD check --as-cran --use-valgrind netdiffuseR_$(VERSION).tar.gz

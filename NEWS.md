@@ -1,3 +1,8 @@
+# Changes in netdiffuseR version 1.24.0 (DEV)
+
+
+
+
 # Changes in netdiffuseR version 1.23.0 (2025-06-10)
 
 * New methods for simulating multi-diffusion models.
