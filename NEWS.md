@@ -1,4 +1,4 @@
-# Changes in netdiffuseR version 1.24.0 (DEV)
+# Changes in netdiffuseR version 1.24.0 (2025-12-09)
 
 * New function `degree_adoption_diagnostic()` analyzes the correlation between network 
   centrality measures (in-degree and out-degree) and time of adoption to identify 
