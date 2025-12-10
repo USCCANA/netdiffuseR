@@ -399,6 +399,7 @@ rdiffnet <- function(
     rewire.args    = list(),
     threshold.dist = runif(n),
     exposure.args  = list(),
+    exposure.mode  = "deterministic",
     name           = "A diffusion network",
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
@@ -413,6 +414,14 @@ rdiffnet <- function(
   for (arg in names(default_exposure.args))
     if (!length(exposure.args[[arg]]))
       exposure.args[[arg]] <- default_exposure.args[[arg]]
+
+  exposure.args$mode <- exposure.mode
+
+  # If stochastic mode is selected, ensure valued is TRUE
+  if (exposure.mode == "stochastic" && !exposure.args$valued) {
+    warning("exposure.mode='stochastic' requires valued=TRUE to use weights as probabilities. Setting exposure.args$valued=TRUE.")
+    exposure.args$valued <- TRUE
+  }
 
   if (inherits(exposure.args[["attrs"]], "matrix")) {
     # Checking if the attrs matrix is has dims n x t

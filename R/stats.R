@@ -495,7 +495,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 NULL
 
 # Workhorse of exposure plotting
-.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
+.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self, mode = "deterministic") {
 
   # Getting the parameters
   n <- nrow(graph)
@@ -513,23 +513,41 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  norm <- graph %*% attrs + 1e-20
+  # 1. Calculate Normalization (Denominator) using ORIGINAL weights
+  # This represents the potential exposure (total degree/strength)
+  norm <- as.vector(graph %*% attrs) + 1e-20
+
+  # 2. Apply Stochastic Filter (if enabled)
+  # This modifies the graph to represent only Realized Transmissions for the numerator
+  if (mode == "stochastic") {
+    # Generate random values for every edge
+    u <- stats::runif(length(graph@x))
+
+    # Keep edge (set to 1) if U < Weight, else remove (set to 0)
+    # This treats the original weights as Probabilities
+    graph@x <- as.numeric(u < graph@x)
+  }
 
   if (!is.na(dim(cumadopt)[3])) {
     ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
 
     for (q in 1:dim(cumadopt)[3]) {
+      # Calculate numerator: Realized connections * Adoption status
+      numerator <- as.vector(graph %*% (attrs * cumadopt[,,q]))
+
       if (normalized) {
-        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
+        ans[,q] <- numerator / norm
       } else {
-        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]))
+        ans[,q] <- numerator
       }
     }
   } else {
-    ans <- graph %*% (attrs * cumadopt)
+    numerator <- as.vector(graph %*% (attrs * cumadopt))
 
     if (normalized) {
-      ans <- ans/ norm
+      ans <- numerator / norm
+    } else {
+      ans <- numerator
     }
   }
 
@@ -559,6 +577,7 @@ check_lags <- function(npers, lags) {
 
 #' @export
 #' @rdname exposure
+#' @param mode Character scalar. Either "deterministic" (default) or "stochastic".
 exposure <- function(
   graph,
   cumadopt,
@@ -570,6 +589,7 @@ exposure <- function(
   groupvar   = NULL,
   self       = getOption("diffnet.self"),
   lags       = 0L,
+  mode       = "deterministic",
   ...
   ) {
 
@@ -653,7 +673,7 @@ exposure <- function(
 
   if ((is.array(graph) & !inherits(graph, "matrix")) | is.list(graph)) {
     exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized,
-                  self, lags)
+                  self, lags, mode = mode)
   } else stopifnot_graph(graph)
 }
 
@@ -661,7 +681,7 @@ exposure <- function(
 # @export
 exposure.list <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized, self, lags) {
+  outgoing, valued, normalized, self, lags, mode = "deterministic") {
 
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
@@ -681,7 +701,7 @@ exposure.list <- function(
   add_dimnames.mat(attrs)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
-                         self, lags)
+                         self, lags, mode = mode)
 
   dimnames(output) <- dimnames(cumadopt)
   output
@@ -696,7 +716,8 @@ exposure_for <- function(
   valued,
   normalized,
   self,
-  lags
+  lags,
+  mode = "deterministic"
   ) {
 
   if (!is.na(dim(cumadopt)[3])) {
@@ -710,7 +731,8 @@ exposure_for <- function(
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
-                                       self = self)
+                                       self = self,
+                                       mode = mode)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -720,7 +742,8 @@ exposure_for <- function(
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
-                                       self = self)
+                                       self = self,
+                                       mode = mode)
       }
     }
   } else {
@@ -734,7 +757,8 @@ exposure_for <- function(
                                      outgoing = outgoing,
                                      valued = valued,
                                      normalized = normalized,
-                                     self = self)
+                                     self = self,
+                                     mode = mode)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -744,7 +768,8 @@ exposure_for <- function(
                                      outgoing = outgoing,
                                      valued = valued,
                                      normalized = normalized,
-                                     self = self)
+                                     self = self,
+                                     mode = mode)
       }
     }
   }
