@@ -275,6 +275,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param groupvar Passed to \code{\link{struct_equiv}}.
 #' @param lags Integer scalar. When different from 0, the resulting exposure
 #' matrix will be the lagged exposure as specified (see examples).
+#' @param mode Character scalar. Either "deterministic" (default) or "stochastic".
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -329,6 +330,27 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' is not included. This can be useful when, for example, exposure needs to be
 #' computed as a count instead of a proportion. A good example of this can be
 #' found at the examples section of the function \code{\link{rdiffnet}}.
+#'
+#' \strong{Stochastic Exposure}
+#'
+#' When \code{mode = "stochastic"}, the exposure is calculated based on a probabilistic
+#' interpretation of the edges. In this mode, the weights of the graph \eqn{S_t} are
+#' treated as probabilities of transmission. For each edge \eqn{(i,j)}, a Bernoulli
+#' trial is performed with probability \eqn{S_{t,ij}}. If the trial is successful,
+#' the edge is "realized" and its weight is used in the numerator. If failed,
+#' the edge is treated as non-existent (weight 0) for the numerator.
+#'
+#' The denominator (normalization factor) is always calculated using the original
+#' weights of the graph (sum of probabilities), representing the expected total
+#' exposure. This ensures that the exposure value \eqn{E_t} remains bounded between
+#' 0 and 1 (if normalized), as the realized weights are a subset of the total weights.
+#'
+#' \deqn{
+#' \tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) S_{t,ij} a_{tj}}{\sum_{j \neq i} S_{t,ij}}
+#' }
+#'
+#' Where \eqn{S_{t,ij}} is the weight of the edge from \eqn{j} to \eqn{i} at time \eqn{t}
+#' (treated as probability), and \eqn{U_{ij} \sim \text{Uniform}(0,1)}.
 #'
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
@@ -513,22 +535,21 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  # 1. Calculate Normalization (Denominator) using ORIGINAL weights
-  # This represents the potential exposure (total degree/strength)
+  # Calculate normalization (or potential exposure)
   norm <- as.vector(graph %*% attrs) + 1e-20
 
-  # 2. Apply Stochastic Filter (if enabled)
-  # This modifies the graph to represent only Realized Transmissions for the numerator
+  # Apply stochastic filter (or selective exposure)
   if (mode == "stochastic") {
     # Generate random values for every edge
     u <- stats::runif(length(graph@x))
 
-    # Keep edge (set to 1) if U < Weight, else remove (set to 0)
-    # This treats the original weights as Probabilities
-    graph@x <- as.numeric(u < graph@x)
+    # Keep edge (keep original weight) if U < Weight, else remove (set to 0)
+    # This ensures the numerator (sum of realized weights) <= denominator (sum of all weights)
+    # So Exposure is always <= 1 (if normalized)
+    graph@x[u >= graph@x] <- 0
   }
 
-  if (!is.na(dim(cumadopt)[3])) {
+  if (length(dim(cumadopt)) == 3) {
     ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
 
     for (q in 1:dim(cumadopt)[3]) {
@@ -577,7 +598,6 @@ check_lags <- function(npers, lags) {
 
 #' @export
 #' @rdname exposure
-#' @param mode Character scalar. Either "deterministic" (default) or "stochastic".
 exposure <- function(
   graph,
   cumadopt,
@@ -615,18 +635,55 @@ exposure <- function(
     if (!inherits(graph, "diffnet")) {
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
     } else {
-      cumadopt <- toa_mat(graph)$cumadopt
+      cumadopt <- graph$cumadopt
+      
+      # Ensure rownames are present if graph is diffnet
+      if (is.list(cumadopt) && !is.data.frame(cumadopt)) {
+         for (i in seq_along(cumadopt)) {
+           if (is.null(rownames(cumadopt[[i]]))) {
+             rownames(cumadopt[[i]]) <- graph$meta$ids
+           }
+         }
+      } else if (is.null(rownames(cumadopt))) {
+        rownames(cumadopt) <- graph$meta$ids
+      }
     }
+
+  # Handling list of matrices (multi-behavior diffnet)
+  if (is.list(cumadopt) && !is.data.frame(cumadopt)) {
+    # Check if it is a list of matrices
+    if (all(sapply(cumadopt, function(x) length(dim(x)) == 2))) {
+      # Convert to array
+      n_c <- nrow(cumadopt[[1]])
+      t_c <- ncol(cumadopt[[1]])
+      q_c <- length(cumadopt)
+      cumadopt_arr <- array(0, dim = c(n_c, t_c, q_c))
+      
+      # Preserve dimnames
+      dimnames(cumadopt_arr) <- list(
+        rownames(cumadopt[[1]]),
+        colnames(cumadopt[[1]]),
+        names(cumadopt)
+      )
+      
+      for (i in 1:q_c) {
+        cumadopt_arr[,,i] <- as.matrix(cumadopt[[i]])
+      }
+      cumadopt <- cumadopt_arr
+    } else {
+      warning("cumadopt is a list but elements do not appear to be matrices. Exposure calculation may fail.")
+    }
+  }
 
   # Checking diffnet graph
   if (inherits(graph, "diffnet")) graph <- graph$graph
 
   # Checking attrs
   if (!length(attrs)) {
-    if (!is.na(dim(cumadopt)[3])) {
+    if (length(dim(cumadopt)) == 3) {
     attrs <- array(1, dim = c(nrow(cumadopt), ncol(cumadopt), 1))}
     else {attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))}
-  } else if (!is.na(dim(cumadopt)[3])) {
+  } else if (length(dim(cumadopt)) == 3) {
     attrs <- array(attrs, dim = c(nrow(attrs), ncol(attrs), 1))
   }
 
@@ -690,7 +747,7 @@ exposure.list <- function(
   # dim(attrs) default n x T matrix of 1's
   if (!length(dim(attrs))) stop("-attrs- must be a matrix of size n by T.")
 
-  if (!is.na(dim(cumadopt)[3])) {
+  if (length(dim(cumadopt)) == 3) {
     if (dim(cumadopt)[3]>1 && any(dim(attrs)[-3] != dim(cumadopt)[-3])) stop("Incorrect size for -attrs-. ",
                                               "Does not match n dim or t dim.")
   } else {
@@ -720,7 +777,7 @@ exposure_for <- function(
   mode = "deterministic"
   ) {
 
-  if (!is.na(dim(cumadopt)[3])) {
+  if (length(dim(cumadopt)) == 3) {
     out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
 
     if (lags >= 0L) {

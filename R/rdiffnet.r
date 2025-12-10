@@ -22,6 +22,7 @@
 #' it can also be an \eqn{n \times Q} matrix or a list of \eqn{Q} single behavior inputs. Sets the adoption
 #' threshold for each node.
 #' @param exposure.args List. Arguments to be passed to \code{\link{exposure}}.
+#' @param exposure.mode Character scalar. Either "deterministic" (default) or "stochastic".
 #' @param name Character scalar. Passed to \code{\link{as_diffnet}}.
 #' @param behavior Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
@@ -100,6 +101,10 @@
 #'   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
 #'   \code{normalized} \tab \code{TRUE}
 #' }
+#'
+#' When \code{exposure.mode = "stochastic"}, the \code{valued} argument in
+#' \code{exposure.args} is forced to \code{TRUE} (with a message) to ensure that
+#' edge weights are treated as probabilities.
 #'
 #' @examples
 #' # (Single behavior): --------------------------------------------------------
@@ -417,9 +422,9 @@ rdiffnet <- function(
 
   exposure.args$mode <- exposure.mode
 
-  # If stochastic mode is selected, ensure valued is TRUE
+  # If stochastic mode is selected, ensure valued is TRUE (enabling weights as probabilities)
   if (exposure.mode == "stochastic" && !exposure.args$valued) {
-    warning("exposure.mode='stochastic' requires valued=TRUE to use weights as probabilities. Setting exposure.args$valued=TRUE.")
+    message("exposure.mode='stochastic' requires valued=TRUE to use weights as probabilities. Setting exposure.args$valued=TRUE.")
     exposure.args$valued <- TRUE
   }
 

@@ -15,6 +15,7 @@ exposure(
   groupvar = NULL,
   self = getOption("diffnet.self"),
   lags = 0L,
+  mode = "deterministic",
   ...
 )
 }
@@ -46,6 +47,8 @@ and one (see details).}
 
 \item{lags}{Integer scalar. When different from 0, the resulting exposure
 matrix will be the lagged exposure as specified (see examples).}
+
+\item{mode}{Character scalar. Either "deterministic" (default) or "stochastic".}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}
@@ -115,6 +118,27 @@ If \code{normalize=FALSE} then denominator, \eqn{S_t \times x_t}{S(t) \%*\% x(t)
 is not included. This can be useful when, for example, exposure needs to be
 computed as a count instead of a proportion. A good example of this can be
 found at the examples section of the function \code{\link{rdiffnet}}.
+
+\strong{Stochastic Exposure}
+
+When \code{mode = "stochastic"}, the exposure is calculated based on a probabilistic
+interpretation of the edges. In this mode, the weights of the graph \eqn{S_t} are
+treated as probabilities of transmission. For each edge \eqn{(i,j)}, a Bernoulli
+trial is performed with probability \eqn{S_{t,ij}}. If the trial is successful,
+the edge is "realized" and its weight is used in the numerator. If failed,
+the edge is treated as non-existent (weight 0) for the numerator.
+
+The denominator (normalization factor) is always calculated using the original
+weights of the graph (sum of probabilities), representing the expected total
+exposure. This ensures that the exposure value \eqn{E_t} remains bounded between
+0 and 1 (if normalized), as the realized weights are a subset of the total weights.
+
+\deqn{
+\tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) S_{t,ij} a_{tj}}{\sum_{j \neq i} S_{t,ij}}
+}
+
+Where \eqn{S_{t,ij}} is the weight of the edge from \eqn{j} to \eqn{i} at time \eqn{t}
+(treated as probability), and \eqn{U_{ij} \sim \text{Uniform}(0,1)}.
 }
 \examples{
 # Calculating lagged exposure -----------------------------------------------
