@@ -1,3 +1,7 @@
+# Changes in netdiffuseR version 1.25.0 (2025-12-10)
+
+* `exposure()` and `rdiffnet()` now support `mode = "stochastic"`, allowing for probabilistic interpretation of edge weights in exposure calculations.
+
 # Changes in netdiffuseR version 1.24.0 (2025-12-09)
 
 * New function `degree_adoption_diagnostic()` analyzes the correlation between network 
