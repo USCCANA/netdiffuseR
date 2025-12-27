@@ -275,6 +275,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param groupvar Passed to \code{\link{struct_equiv}}.
 #' @param lags Integer scalar. When different from 0, the resulting exposure
 #' matrix will be the lagged exposure as specified (see examples).
+#' @param mode Character scalar. Either "deterministic" (default) or "stochastic".
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -329,6 +330,25 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' is not included. This can be useful when, for example, exposure needs to be
 #' computed as a count instead of a proportion. A good example of this can be
 #' found at the examples section of the function \code{\link{rdiffnet}}.
+#'
+#' \strong{Stochastic Exposure}
+#'
+#' When \code{mode = "stochastic"}, the exposure is calculated based on a probabilistic
+#' interpretation of the edges. In this mode, the weights of the graph \eqn{S_t} are
+#' treated as probabilities of transmission. For each edge \eqn{(i,j)}, a Bernoulli
+#' trial is performed with probability \eqn{S_{t,ij}}. If the trial is successful,
+#' the edge is "realized" as a full connection. If failed, the edge is treated
+#' as non-existent.
+#'
+#' The denominator is calculated using the degree of the node, representing the total 
+#' number of potential contacts.
+#'
+#' \deqn{
+#' \tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) a_{tj}}{\sum_{j \neq i} 1}
+#' }
+#'
+#' Where \eqn{S_{t,ij}} is the weight of the edge from \eqn{j} to \eqn{i} at time \eqn{t}
+#' (treated as probability), and \eqn{U_{ij} \sim \text{Uniform}(0,1)}.
 #'
 #' @references
 #' Burt, R. S. (1987). "Social Contagion and Innovation: Cohesion versus Structural
@@ -495,7 +515,7 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 NULL
 
 # Workhorse of exposure plotting
-.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self) {
+.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self, mode = "deterministic") {
 
   # Getting the parameters
   n <- nrow(graph)
@@ -513,23 +533,42 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  norm <- graph %*% attrs + 1e-20
+  # Calculate normalization and apply stochastic filter
+  if (mode == "stochastic") {
+    # Denominator: Based on Degree (Potential connections as binary)
+    # We treat the graph as binary (weights=1) for the normalization
+    graph_binary <- graph
+    graph_binary@x <- rep(1, length(graph@x))
+    norm <- as.vector(graph_binary %*% attrs) + 1e-20
 
-  if (!is.na(dim(cumadopt)[3])) {
+    # Numerator: Stochastic Filter (Bernoulli -> Binary)
+    u <- stats::runif(length(graph@x))
+    graph@x <- as.numeric(u < graph@x)
+  } else {
+    # Deterministic: Based on original weights
+    norm <- as.vector(graph %*% attrs) + 1e-20
+  }
+
+  if (length(dim(cumadopt)) == 3) {
     ans <- array(0, dim = c(dim(cumadopt)[1],dim(cumadopt)[3]))
 
     for (q in 1:dim(cumadopt)[3]) {
+      # Calculate numerator: Realized connections * Adoption status
+      numerator <- as.vector(graph %*% (attrs * cumadopt[,,q]))
+
       if (normalized) {
-        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]) / norm)
+        ans[,q] <- numerator / norm
       } else {
-        ans[,q] <- as.vector(graph %*% (attrs * cumadopt[,,q]))
+        ans[,q] <- numerator
       }
     }
   } else {
-    ans <- graph %*% (attrs * cumadopt)
+    numerator <- as.vector(graph %*% (attrs * cumadopt))
 
     if (normalized) {
-      ans <- ans/ norm
+      ans <- numerator / norm
+    } else {
+      ans <- numerator
     }
   }
 
@@ -570,6 +609,7 @@ exposure <- function(
   groupvar   = NULL,
   self       = getOption("diffnet.self"),
   lags       = 0L,
+  mode       = "deterministic",
   ...
   ) {
 
@@ -595,18 +635,55 @@ exposure <- function(
     if (!inherits(graph, "diffnet")) {
       stop("-cumadopt- should be provided when -graph- is not of class 'diffnet'")
     } else {
-      cumadopt <- toa_mat(graph)$cumadopt
+      cumadopt <- graph$cumadopt
+      
+      # Ensure rownames are present if graph is diffnet
+      if (is.list(cumadopt) && !is.data.frame(cumadopt)) {
+         for (i in seq_along(cumadopt)) {
+           if (is.null(rownames(cumadopt[[i]]))) {
+             rownames(cumadopt[[i]]) <- graph$meta$ids
+           }
+         }
+      } else if (is.null(rownames(cumadopt))) {
+        rownames(cumadopt) <- graph$meta$ids
+      }
     }
+
+  # Handling list of matrices (multi-behavior diffnet)
+  if (is.list(cumadopt) && !is.data.frame(cumadopt)) {
+    # Check if it is a list of matrices
+    if (all(sapply(cumadopt, function(x) length(dim(x)) == 2))) {
+      # Convert to array
+      n_c <- nrow(cumadopt[[1]])
+      t_c <- ncol(cumadopt[[1]])
+      q_c <- length(cumadopt)
+      cumadopt_arr <- array(0, dim = c(n_c, t_c, q_c))
+      
+      # Preserve dimnames
+      dimnames(cumadopt_arr) <- list(
+        rownames(cumadopt[[1]]),
+        colnames(cumadopt[[1]]),
+        names(cumadopt)
+      )
+      
+      for (i in 1:q_c) {
+        cumadopt_arr[,,i] <- as.matrix(cumadopt[[i]])
+      }
+      cumadopt <- cumadopt_arr
+    } else {
+      warning("cumadopt is a list but elements do not appear to be matrices. Exposure calculation may fail.")
+    }
+  }
 
   # Checking diffnet graph
   if (inherits(graph, "diffnet")) graph <- graph$graph
 
   # Checking attrs
   if (!length(attrs)) {
-    if (!is.na(dim(cumadopt)[3])) {
+    if (length(dim(cumadopt)) == 3) {
     attrs <- array(1, dim = c(nrow(cumadopt), ncol(cumadopt), 1))}
     else {attrs <- matrix(1, ncol=ncol(cumadopt), nrow=nrow(cumadopt))}
-  } else if (!is.na(dim(cumadopt)[3])) {
+  } else if (length(dim(cumadopt)) == 3) {
     attrs <- array(attrs, dim = c(nrow(attrs), ncol(attrs), 1))
   }
 
@@ -653,7 +730,7 @@ exposure <- function(
 
   if ((is.array(graph) & !inherits(graph, "matrix")) | is.list(graph)) {
     exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized,
-                  self, lags)
+                  self, lags, mode = mode)
   } else stopifnot_graph(graph)
 }
 
@@ -661,7 +738,7 @@ exposure <- function(
 # @export
 exposure.list <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized, self, lags) {
+  outgoing, valued, normalized, self, lags, mode = "deterministic") {
 
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
@@ -670,7 +747,7 @@ exposure.list <- function(
   # dim(attrs) default n x T matrix of 1's
   if (!length(dim(attrs))) stop("-attrs- must be a matrix of size n by T.")
 
-  if (!is.na(dim(cumadopt)[3])) {
+  if (length(dim(cumadopt)) == 3) {
     if (dim(cumadopt)[3]>1 && any(dim(attrs)[-3] != dim(cumadopt)[-3])) stop("Incorrect size for -attrs-. ",
                                               "Does not match n dim or t dim.")
   } else {
@@ -681,7 +758,7 @@ exposure.list <- function(
   add_dimnames.mat(attrs)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
-                         self, lags)
+                         self, lags, mode = mode)
 
   dimnames(output) <- dimnames(cumadopt)
   output
@@ -696,10 +773,11 @@ exposure_for <- function(
   valued,
   normalized,
   self,
-  lags
+  lags,
+  mode = "deterministic"
   ) {
 
-  if (!is.na(dim(cumadopt)[3])) {
+  if (length(dim(cumadopt)) == 3) {
     out <- array(NA, dim = c(dim(cumadopt)[1], dim(cumadopt)[2], dim(cumadopt)[3]))
 
     if (lags >= 0L) {
@@ -710,7 +788,8 @@ exposure_for <- function(
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
-                                       self = self)
+                                       self = self,
+                                       mode = mode)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -720,7 +799,8 @@ exposure_for <- function(
                                        outgoing = outgoing,
                                        valued = valued,
                                        normalized = normalized,
-                                       self = self)
+                                       self = self,
+                                       mode = mode)
       }
     }
   } else {
@@ -734,7 +814,8 @@ exposure_for <- function(
                                      outgoing = outgoing,
                                      valued = valued,
                                      normalized = normalized,
-                                     self = self)
+                                     self = self,
+                                     mode = mode)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -744,7 +825,8 @@ exposure_for <- function(
                                      outgoing = outgoing,
                                      valued = valued,
                                      normalized = normalized,
-                                     self = self)
+                                     self = self,
+                                     mode = mode)
       }
     }
   }

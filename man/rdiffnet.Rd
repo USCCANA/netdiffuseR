@@ -18,6 +18,7 @@ rdiffnet(
   rewire.args = list(),
   threshold.dist = runif(n),
   exposure.args = list(),
+  exposure.mode = "deterministic",
   name = "A diffusion network",
   behavior = "Random contagion",
   stop.no.diff = TRUE,
@@ -60,6 +61,8 @@ it can also be an \eqn{n \times Q} matrix or a list of \eqn{Q} single behavior i
 threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
+
+\item{exposure.mode}{Character scalar. Either "deterministic" (default) or "stochastic".}
 
 \item{name}{Character scalar. Passed to \code{\link{as_diffnet}}.}
 
@@ -155,6 +158,10 @@ is applied using that graph instead.
   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
   \code{normalized} \tab \code{TRUE}
 }
+
+When \code{exposure.mode = "stochastic"}, the \code{valued} argument in
+\code{exposure.args} is forced to \code{TRUE} (with a message) to ensure that
+edge weights are treated as probabilities.
 
 The function \code{rdiffnet_multiple} is a wrapper of \code{rdiffnet} wich allows
 simulating multiple diffusion networks with the same parameters and apply
