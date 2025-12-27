@@ -337,16 +337,14 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' interpretation of the edges. In this mode, the weights of the graph \eqn{S_t} are
 #' treated as probabilities of transmission. For each edge \eqn{(i,j)}, a Bernoulli
 #' trial is performed with probability \eqn{S_{t,ij}}. If the trial is successful,
-#' the edge is "realized" and its weight is used in the numerator. If failed,
-#' the edge is treated as non-existent (weight 0) for the numerator.
+#' the edge is "realized" as a full connection. If failed, the edge is treated
+#' as non-existent.
 #'
-#' The denominator (normalization factor) is always calculated using the original
-#' weights of the graph (sum of probabilities), representing the expected total
-#' exposure. This ensures that the exposure value \eqn{E_t} remains bounded between
-#' 0 and 1 (if normalized), as the realized weights are a subset of the total weights.
+#' The denominator is calculated using the degree of the node, representing the total 
+#' number of potential contacts.
 #'
 #' \deqn{
-#' \tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) S_{t,ij} a_{tj}}{\sum_{j \neq i} S_{t,ij}}
+#' \tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) a_{tj}}{\sum_{j \neq i} 1}
 #' }
 #'
 #' Where \eqn{S_{t,ij}} is the weight of the edge from \eqn{j} to \eqn{i} at time \eqn{t}
@@ -535,18 +533,20 @@ NULL
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
 
-  # Calculate normalization (or potential exposure)
-  norm <- as.vector(graph %*% attrs) + 1e-20
-
-  # Apply stochastic filter (or selective exposure)
+  # Calculate normalization and apply stochastic filter
   if (mode == "stochastic") {
-    # Generate random values for every edge
-    u <- stats::runif(length(graph@x))
+    # Denominator: Based on Degree (Potential connections as binary)
+    # We treat the graph as binary (weights=1) for the normalization
+    graph_binary <- graph
+    graph_binary@x <- rep(1, length(graph@x))
+    norm <- as.vector(graph_binary %*% attrs) + 1e-20
 
-    # Keep edge (keep original weight) if U < Weight, else remove (set to 0)
-    # This ensures the numerator (sum of realized weights) <= denominator (sum of all weights)
-    # So Exposure is always <= 1 (if normalized)
-    graph@x[u >= graph@x] <- 0
+    # Numerator: Stochastic Filter (Bernoulli -> Binary)
+    u <- stats::runif(length(graph@x))
+    graph@x <- as.numeric(u < graph@x)
+  } else {
+    # Deterministic: Based on original weights
+    norm <- as.vector(graph %*% attrs) + 1e-20
   }
 
   if (length(dim(cumadopt)) == 3) {
