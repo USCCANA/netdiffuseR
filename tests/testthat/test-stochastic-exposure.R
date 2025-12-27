@@ -32,9 +32,10 @@ test_that("Stochastic vs Deterministic Exposure", {
 
 test_that("rdiffnet wrapper with stochastic exposure", {
   # We need a dynamic graph for rdiffnet usually, or t > 1
-  set.seed(123)
+  set.seed(1231)
   diffnet <- rdiffnet(n=20, t=5, seed.graph="small-world", 
                       exposure.mode="stochastic",
+                      seed.p.adopt = 0.2,
                       stop.no.diff = FALSE) # Prevent error if no diffusion occurs
 
   expect_s3_class(diffnet, "diffnet")
@@ -42,11 +43,11 @@ test_that("rdiffnet wrapper with stochastic exposure", {
 })
 
 test_that("rdiffnet wrapper with stochastic exposure (multiple behaviors)", {
-  set.seed(123)
+  set.seed(1231)
   # 2 behaviors
   diffnet <- rdiffnet(n=20, t=5, seed.graph="small-world", 
                       exposure.mode="stochastic",
-                      seed.p.adopt = list(0.1, 0.1),
+                      seed.p.adopt = list(0.2, 0.2),
                       stop.no.diff = FALSE)
 
   expect_s3_class(diffnet, "diffnet")
