@@ -9,7 +9,7 @@
 #'
 #' x <- rnorm(100)
 #' w <- data.frame(as.integer(round_to_seq(x, as_factor = TRUE)),x)
-#' plot(w,x)
+#' plot(w)
 #'
 #' @seealso Used in \code{\link{diffmap}} and \code{\link{plot_diffnet2}}
 round_to_seq <- function(x, nlevels=20, as_factor=FALSE) {
