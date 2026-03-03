@@ -52,7 +52,7 @@ And the actual R package:
   Vega Yon G, Olivera Morales A, Valente T (2025). _netdiffuseR:
   Analysis of Diffusion and Contagion Processes on Networks_.
   doi:10.5281/zenodo.1039317 <https://doi.org/10.5281/zenodo.1039317>,
-  R package version 1.24.0, <https://github.com/USCCANA/netdiffuseR>.
+  R package version 1.24.1, <https://github.com/USCCANA/netdiffuseR>.
 
 To see these entries in BibTeX format, use 'print(<citation>,
 bibtex=TRUE)', 'toBibtex(.)', or set
@@ -374,7 +374,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] netdiffuseR_1.24.0
+#> [1] netdiffuseR_1.24.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-4          jsonlite_2.0.0        dplyr_1.1.4          

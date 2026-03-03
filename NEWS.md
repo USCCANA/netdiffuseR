@@ -1,3 +1,9 @@
+# Changes in netdiffuseR version 1.24.1 (2026-03-03)
+
+* Fixed CRAN example error in `round_to_seq()`: `plot(w, x)` replaced with
+  `plot(w)` to avoid `%||%` operator issue in R 4.4.0+'s `formula.default`
+  when called via `plot.data.frame()`.
+
 # Changes in netdiffuseR version 1.24.0 (2025-12-09)
 
 * New function `degree_adoption_diagnostic()` analyzes the correlation between network 
