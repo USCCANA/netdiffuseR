@@ -778,23 +778,23 @@ NULL # "medInnovationsDiffNet"
 #' the Brazilian Farmers collected as part of the three country study implemented
 #' by Everett Rogers (Rogers, Ascroft, & Röling, 1970), and Korean Family Planning
 #' data collected by researchers at the Seoul National University's School of
-#' Public (Rogers & Kincaid, 1981). The table below summarizes the three datasets:
+#' Public (Rogers & Kincaid, 1981). The table below summarizes the datasets:
 #'
-#' \tabular{lccc}{
-#'		\tab	\bold{Medical Innovation}	\tab	\bold{Brazilian Farmers}	\tab	\bold{Korean Family Planning}	\cr
-#'	\emph{Country}	\tab	USA	\tab	Brazil	\tab	Korean	\cr
-#'	\emph{# Respondents}	\tab	125 Doctors	\tab	692 Farmers	\tab	1,047 Women	\cr
-#'	\emph{# Communities}	\tab	4	\tab	11	\tab	25	\cr
-#'	\emph{Innovation}	\tab	Tetracycline	\tab	Hybrid Corn Seed	\tab	Family Planning	\cr
-#'	\emph{Time for Diffusion}	\tab	18 Months	\tab	20 Years	\tab	11 Years	\cr
-#'	\emph{Year Data Collected}	\tab	1955-1956	\tab	1966	\tab	1973	\cr
-#'	\emph{Ave. Time to 50\%}	\tab	6	\tab	16	\tab	7	\cr
-#'	\emph{Highest Saturation}	\tab	0.89	\tab	0.98	\tab	0.83	\cr
-#'	\emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\cr
-#'	\emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\cr
+#' \tabular{lcccc}{
+#'		\tab	\bold{Medical Innovation}	\tab	\bold{Brazilian Farmers}	\tab	\bold{Korean Family Planning}	\tab	\bold{WKU Epi Games}	\cr
+#'	\emph{Country}	\tab	USA	\tab	Brazil	\tab	Korean	\tab	USA	\cr
+#'	\emph{# Respondents}	\tab	125 Doctors	\tab	692 Farmers	\tab	1,047 Women	\tab	594 Students	\cr
+#'	\emph{# Communities}	\tab	4	\tab	11	\tab	25	\tab	Multiple groups	\cr
+#'	\emph{Innovation}	\tab	Tetracycline	\tab	Hybrid Corn Seed	\tab	Family Planning	\tab	Masks/Medicine	\cr
+#'	\emph{Time for Diffusion}	\tab	18 Months	\tab	20 Years	\tab	11 Years	\tab	15 Periods	\cr
+#'	\emph{Year Data Collected}	\tab	1955-1956	\tab	1966	\tab	1973	\tab	Recent	\cr
+#'	\emph{Ave. Time to 50\%}	\tab	6	\tab	16	\tab	7	\tab	N/A	\cr
+#'	\emph{Highest Saturation}	\tab	0.89	\tab	0.98	\tab	0.83	\tab	N/A	\cr
+#'	\emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\tab	N/A	\cr
+#'	\emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\tab	WKU	\cr
 #'	}
 #'
-#' All datasets include a column called \emph{study} which is coded as
+#' All core datasets include a column called \emph{study} which is coded as
 #' (1) Medical Innovation (2) Brazilian Farmers, (3) Korean Family Planning.
 #'
 #' @section Right censored data:
@@ -938,3 +938,54 @@ NULL
 #' @author George G. Vega Yon
 #' @name fakeEdgelist
 NULL # "fakeEdgelist"
+
+
+#' Epi Games Dataset (Raw version)
+#' 
+#' @description 
+#' The WKU Epi Games dataset represents a simulated epidemic or game environment with 
+#' dynamic encounters over 15 time periods. This raw version provides both node-level 
+#' attributes and a longitudinal edgelist.
+#' 
+#' @format A list with two data frames:
+#' 
+#' **attributes**: A data frame with 594 rows and 9 variables representing nodes:
+#' \describe{
+#'  \item{id}{Unique identifier for the participant.}
+#'  \item{toa}{Time of Adoption (1 to 15), representing when the individual was first infected. Non-infected individuals have `NA`.}
+#'  \item{qyes_total}{Cumulative count of times the player participated or scored positively in informative/educational "quarantine" questionnaires.}
+#'  \item{qno_total}{Cumulative count of times the non-quarantine questionnaire factor was registered.}
+#'  \item{mask_prop}{Proportion of time (across 15 steps) the participant used the mask intervention (0.0 to 1.0).}
+#'  \item{med_prop}{Proportion of time the individual used pharmacological interventions or treatments.}
+#'  \item{group}{Experimental group or node cohort.}
+#'  \item{final_score}{Final score obtained in the game.}
+#'  \item{status}{Final state label ("infected" or "not_infected").}
+#' }
+#' 
+#' **edgelist**: A longitudinal data frame with 23,684 rows and 4 variables representing edges/contacts:
+#' \describe{
+#'  \item{sender}{Origin node ID of the contact.}
+#'  \item{receiver}{Destination node ID of the contact.}
+#'  \item{time}{Time period of the contact (1 to 15).}
+#'  \item{weight}{Strength, duration, or density of the exposure.}
+#' }
+#' 
+#' @source WKU Epi Game simulation
+#' @family diffusion datasets
+#' @name epigames_raw
+NULL # "epigames_raw"
+
+#' Epi Games Dataset (DiffNet version)
+#' 
+#' @description 
+#' The `diffnet` version of `[epigames_raw]`. Note that following `netdiffuseR` 
+#' conventions, right-censored non-adopters (`status == "not_infected"`) have their 
+#' `toa` values set to 16 (`max(time) + 1`) within the `diffnet` object.
+#' 
+#' @format A `diffnet` object. See `[diffnet-class]` for more details.
+#' 
+#' @source WKU Epi Game simulation
+#' @family diffusion datasets
+#' @name epigamesDiffNet
+NULL # "epigamesDiffNet"
+
