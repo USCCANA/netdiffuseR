@@ -1,19 +1,17 @@
 # data-raw/epigames.R
-# Pre-processing script for the Epi Games base dataset
+# Pre-processing script for the EpiGames Raw Dataset
 
-rm(list = ls())
+rm(list=ls())
 
-# Setting it up to use data/165/ as the source of raw parsed files for this repository mapping
-attributes <- read.csv("data/165/epigames_attributes.csv", stringsAsFactors = FALSE)
-edgelist <- read.csv("data/165/epigames_edgelist.csv", stringsAsFactors = FALSE)
+# The raw data is originally packaged from hourly resolution arrays.
+# It consists of an attributes dataframe and an edgelist dataframe.
+load("data-raw/epigames_hourly.rda")
 
-# Package them into the expected raw struct
-epigames_raw <- list(
-  attributes = attributes,
-  edgelist = edgelist
-)
+# The data in the rda was saved as `epigames_hourly`. 
+# We simply rename it to the package standard `epigames_raw`
+epigames_raw <- epigames_hourly
 
-# Save as .rda compressed using xz for CRAN compliance
-save(epigames_raw, file = "data/epigames_raw.rda", compress = "xz")
+# Save compressed raw data using xz for CRAN compliance
+save(epigames_raw, file="data/epigames_raw.rda", compress = "xz")
 
 message("Data successfully compiled to data/epigames_raw.rda")
