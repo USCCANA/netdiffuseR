@@ -4,26 +4,72 @@
 rm(list = ls())
 library(netdiffuseR)
 
-# Load the base raw dataset created in data-raw/epigames.R
+# Load the base raw dataset created in data-raw/epigames.R (which is hourly)
 load("data/epigames_raw.rda")
 
 attrs <- epigames_raw$attributes
 edges <- epigames_raw$edgelist
 
-# Creating dynamic graph via edgelist_to_adjmat (edges containing sender, receiver, time, weight)
-adjmat <- edgelist_to_adjmat(
-  edges[, c("sender", "receiver")],
-  w = edges$weight,
-  t = edges$time,
-  keep.isolates = TRUE
+# We need to collapse the hourly times into daily windows
+# since diffnet objects often represent more macro periods
+source("R/collapse_timeframes.R") # load our function directly for the build
+
+daily_edgelist <- collapse_timeframes(
+  edgelist = edges,
+  ego = "sender",
+  alter = "receiver",
+  timevar = "time",
+  weightvar = "weight",
+  window_size = 24
 )
 
-# Coercing into a diffnet object
+# Creating dynamic graph via edgelist_to_adjmat
+adjmat <- edgelist_to_adjmat(
+  daily_edgelist[, c("sender", "receiver")],
+  w = daily_edgelist$weight,
+  t0 = daily_edgelist$time,
+  keep.isolates = TRUE,
+  multiple = TRUE
+)
+
+# Important node sorting or formatting might be needed. 
+# Right censoring rule: Ensure non-adopters have toa = max(time) + 1.
+# Assuming attrs$toa is appropriately set, if it has NAs we must fix it over here.
+# Let's check max time:
+max_t <- max(daily_edgelist$time, na.rm = TRUE)
+
+if (!"toa" %in% colnames(attrs)) {
+  # If there is no TOA column, all nodes are non-adopters for this dataset.
+  attrs$toa <- max_t + 1
+} else if (any(is.na(attrs$toa))) {
+  attrs$toa[is.na(attrs$toa)] <- max_t + 1
+}
+
+# Ensure attrs has matching ids with the edgelist.
+# The graph has nodes numbered 1 to 594.
+graph_nodes <- as.character(sort(as.numeric(rownames(adjmat[[1]]))))
+
+if (nrow(attrs) != length(graph_nodes)) {
+  attrs <- attrs[1:length(graph_nodes), , drop = FALSE]
+  attrs$id <- as.integer(graph_nodes)
+}
+rownames(attrs) <- as.character(attrs$id)
+
+# Create named toa vector using NA for non-adopters during diffnet creation
+toa_vec <- stats::setNames(rep(NA, nrow(adjmat[[1]])), as.character(attrs$id))
+
+# Let's verify and just format the diffnet cleanly
 epigamesDiffNet <- as_diffnet(
   adjmat,
-  toa = attrs$toa,
-  vertex.attr = attrs
+  toa = toa_vec, 
+  vertex.static.attrs = attrs,
+  t0 = 1,
+  t1 = max_t
 )
+
+# Set non-adopters back to standard right-censoring rule after creation
+epigamesDiffNet$toa[is.na(epigamesDiffNet$toa)] <- max_t + 1
+
 
 # Exporting formatted dataset for inclusion in the package
 save(epigamesDiffNet, file = "data/epigamesDiffNet.rda", compress = "xz")
