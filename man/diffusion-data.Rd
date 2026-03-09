@@ -87,8 +87,8 @@ Analysis in the Social Sciences (pp. 98–116). New York: Cambridge University P
 Other diffusion datasets: 
 \code{\link{brfarmers}},
 \code{\link{brfarmersDiffNet}},
+\code{\link{epigames}},
 \code{\link{epigamesDiffNet}},
-\code{\link{epigames_raw}},
 \code{\link{fakeDynEdgelist}},
 \code{\link{fakeEdgelist}},
 \code{\link{fakesurvey}},
@@ -96,7 +96,8 @@ Other diffusion datasets:
 \code{\link{kfamily}},
 \code{\link{kfamilyDiffNet}},
 \code{\link{medInnovations}},
-\code{\link{medInnovationsDiffNet}}
+\code{\link{medInnovationsDiffNet}},
+\code{\link{wku_diffnet}}
 }
 \author{
 Thomas W. Valente

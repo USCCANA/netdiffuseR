@@ -2,24 +2,27 @@
 % Please edit documentation in R/data.r
 \name{epigamesDiffNet}
 \alias{epigamesDiffNet}
-\title{Epi Games Dataset (DiffNet version)}
+\title{\code{diffnet} version of the Epi Games data}
 \format{
-A `diffnet` object. See `[diffnet-class]` for more details.
+A \code{\link{diffnet}} class object.
 }
 \source{
 WKU Epi Game simulation
 }
 \description{
-The `diffnet` version of `[epigames_raw]`. Note that following `netdiffuseR` 
-conventions, right-censored non-adopters (`status == "not_infected"`) have their 
-`toa` values set to 16 (`max(time) + 1`) within the `diffnet` object.
+A directed dynamic graph with 594 vertices and 15 time periods. The attributes
+in the graph are described in \code{\link{epigames}}.
+}
+\details{
+Note that following \code{netdiffuseR} conventions, right-censored non-adopters
+have their \code{toa} values set to 16 (\code{max(time) + 1}).
 }
 \seealso{
 Other diffusion datasets: 
 \code{\link{brfarmers}},
 \code{\link{brfarmersDiffNet}},
 \code{\link{diffusion-data}},
-\code{\link{epigames_raw}},
+\code{\link{epigames}},
 \code{\link{fakeDynEdgelist}},
 \code{\link{fakeEdgelist}},
 \code{\link{fakesurvey}},
@@ -27,6 +30,7 @@ Other diffusion datasets:
 \code{\link{kfamily}},
 \code{\link{kfamilyDiffNet}},
 \code{\link{medInnovations}},
-\code{\link{medInnovationsDiffNet}}
+\code{\link{medInnovationsDiffNet}},
+\code{\link{wku_diffnet}}
 }
 \concept{diffusion datasets}
