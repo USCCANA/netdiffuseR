@@ -70,6 +70,6 @@ epigamesDiffNet$toa[is.na(epigamesDiffNet$toa)] <- max_t + 1
 
 
 # Exporting formatted dataset for inclusion in the package
-usethis::use_data(epigamesDiffNet, overwrite = TRUE)
+usethis::use_data(epigamesDiffNet, overwrite = TRUE, compress = "xz")
 
 message("diffnet object successfully created and exported to data/epigamesDiffNet.rda")

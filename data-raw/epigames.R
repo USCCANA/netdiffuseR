@@ -12,6 +12,6 @@ load("data-raw/epigames_hourly.rda")
 epigames <- epigames_hourly
 
 # Save compressed raw data
-usethis::use_data(epigames, overwrite = TRUE)
+usethis::use_data(epigames, overwrite = TRUE, compress = "xz")
 
 message("Data successfully compiled to data/epigames.rda")
