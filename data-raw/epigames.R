@@ -8,10 +8,10 @@ rm(list=ls())
 load("data-raw/epigames_hourly.rda")
 
 # The data in the rda was saved as `epigames_hourly`. 
-# We simply rename it to the package standard `epigames_raw`
-epigames_raw <- epigames_hourly
+# We simply rename it to the package standard `epigames`
+epigames <- epigames_hourly
 
-# Save compressed raw data using xz for CRAN compliance
-save(epigames_raw, file="data/epigames_raw.rda", compress = "xz")
+# Save compressed raw data
+usethis::use_data(epigames, overwrite = TRUE)
 
-message("Data successfully compiled to data/epigames_raw.rda")
+message("Data successfully compiled to data/epigames.rda")

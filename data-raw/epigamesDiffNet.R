@@ -5,14 +5,14 @@ rm(list = ls())
 library(netdiffuseR)
 
 # Load the base raw dataset created in data-raw/epigames.R (which is hourly)
-load("data/epigames_raw.rda")
+load("data/epigames.rda")
 
-attrs <- epigames_raw$attributes
-edges <- epigames_raw$edgelist
+attrs <- epigames$attributes
+edges <- epigames$edgelist
 
 # We need to collapse the hourly times into daily windows
 # since diffnet objects often represent more macro periods
-source("R/collapse_timeframes.R") # load our function directly for the build
+source("R/collapse_timeframes.R") 
 
 daily_edgelist <- collapse_timeframes(
   edgelist = edges,
@@ -32,9 +32,7 @@ adjmat <- edgelist_to_adjmat(
   multiple = TRUE
 )
 
-# Important node sorting or formatting might be needed. 
-# Right censoring rule: Ensure non-adopters have toa = max(time) + 1.
-# Assuming attrs$toa is appropriately set, if it has NAs we must fix it over here.
+# Right censoring rule
 # Let's check max time:
 max_t <- max(daily_edgelist$time, na.rm = TRUE)
 
@@ -72,6 +70,6 @@ epigamesDiffNet$toa[is.na(epigamesDiffNet$toa)] <- max_t + 1
 
 
 # Exporting formatted dataset for inclusion in the package
-save(epigamesDiffNet, file = "data/epigamesDiffNet.rda", compress = "xz")
+usethis::use_data(epigamesDiffNet, overwrite = TRUE)
 
 message("diffnet object successfully created and exported to data/epigamesDiffNet.rda")
