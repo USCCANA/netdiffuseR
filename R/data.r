@@ -940,11 +940,11 @@ NULL
 NULL # "fakeEdgelist"
 
 
-#' Epi Games Dataset (Raw version)
+#' Epi Games Dataset
 #' 
 #' @description 
 #' The WKU Epi Games dataset represents a simulated epidemic or game environment with 
-#' dynamic encounters over 15 time periods. This raw version provides both node-level 
+#' dynamic encounters over 15 time periods. It provides both node-level 
 #' attributes and a longitudinal edgelist.
 #' 
 #' @format A list with two data frames:
@@ -972,20 +972,31 @@ NULL # "fakeEdgelist"
 #' 
 #' @source WKU Epi Game simulation
 #' @family diffusion datasets
-#' @name epigames_raw
-NULL # "epigames_raw"
+#' @name epigames
+NULL # "epigames"
 
-#' Epi Games Dataset (DiffNet version)
-#' 
-#' @description 
-#' The `diffnet` version of `[epigames_raw]`. Note that following `netdiffuseR` 
-#' conventions, right-censored non-adopters (`status == "not_infected"`) have their 
-#' `toa` values set to 16 (`max(time) + 1`) within the `diffnet` object.
-#' 
-#' @format A `diffnet` object. See `[diffnet-class]` for more details.
-#' 
+#' \code{diffnet} version of the Epi Games data
+#'
+#' A directed dynamic graph with 594 vertices and 15 time periods. The attributes
+#' in the graph are described in \code{\link{epigames}}.
+#'
+#' Note that following \code{netdiffuseR} conventions, right-censored non-adopters
+#' have their \code{toa} values set to 16 (\code{max(time) + 1}).
+#'
+#' @format A \code{\link{diffnet}} class object.
 #' @source WKU Epi Game simulation
 #' @family diffusion datasets
 #' @name epigamesDiffNet
-NULL # "epigamesDiffNet"
+NULL
+
+#' WKU Diffusion Network
+#'
+#' A \code{\link{diffnet}} object with 594 vertices and 15 time periods from the
+#' WKU simulation study.
+#'
+#' @format A \code{\link{diffnet}} class object.
+#' @source WKU simulation
+#' @family diffusion datasets
+#' @name wku_diffnet
+NULL
 
