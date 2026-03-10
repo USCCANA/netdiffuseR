@@ -1,3 +1,14 @@
+# Changes in netdiffuseR version 1.24.2 (2026-03-09)
+
+* New function `collapse_timeframes()`: aggregates high-resolution or
+  continuous-time longitudinal edgelists into discrete time windows, ready
+  for use with `edgelist_to_adjmat()` or `as_diffnet()`.
+
+* New dataset `epigames` and `epigamesDiffNet`: a simulated epidemic game
+  network with 594 nodes and 15 time periods from the WKU Epi Games study.
+
+* New dataset `wku_diffnet`: a `diffnet` object from the WKU simulation study.
+
 # Changes in netdiffuseR version 1.24.1 (2026-03-03)
 
 * Fixed CRAN example error in `round_to_seq()`: `plot(w, x)` replaced with

@@ -1,7 +1,3 @@
-################################################################################
-# Tests for collapse_timeframes()
-################################################################################
-
 context("collapse_timeframes: collapsing longitudinal edgelists")
 
 # Base edgelist used across most tests:
@@ -15,9 +11,7 @@ el <- data.frame(
   weight   = c(1, 1, 1, 1, 1, 1, 1, 1)
 )
 
-################################################################################
-# Block 1: Output structure
-################################################################################
+# Block 1: Output structure -----------------------------------------------
 
 test_that("collapse_timeframes returns a data.frame", {
   result <- collapse_timeframes(el, ego = "sender", alter = "receiver",
@@ -47,9 +41,7 @@ test_that("output has fewer or equal rows than input after collapsing", {
   expect_lte(nrow(result), nrow(el))
 })
 
-################################################################################
-# Block 2: Binning logic (window_size)
-################################################################################
+# Block 2: Binning logic (window_size) ------------------------------------
 
 test_that("window_size=1 does not merge periods", {
   result <- collapse_timeframes(el, ego = "sender", alter = "receiver",
@@ -86,9 +78,7 @@ test_that("aggregated weight is sum of constituent weights", {
   expect_equal(result$weight, 1.0)
 })
 
-################################################################################
-# Block 3: relative_time TRUE / FALSE
-################################################################################
+# Block 3: relative_time TRUE / FALSE -------------------------------------
 
 # Edgelist with a gap: time points 1, 2, 5, 6 (no 3 or 4)
 el_gap <- data.frame(
@@ -112,9 +102,7 @@ test_that("relative_time=FALSE preserves original bin values (may have gaps)", {
   expect_false(identical(sort(unique(result$time)), 1:4))
 })
 
-################################################################################
-# Block 4: Time column parsing (integer, POSIXct, character string)
-################################################################################
+# Block 4: Time column parsing (integer, POSIXct, character string) -------
 
 test_that("integer time column is handled", {
   el_int <- el
@@ -148,9 +136,7 @@ test_that("character time with time_format is parsed correctly", {
   expect_equal(length(unique(result$time)), 2L)
 })
 
-################################################################################
-# Block 5: weightvar = NULL (count mode) vs explicit weight column
-################################################################################
+# Block 5: weightvar = NULL (count mode) vs explicit weight column --------
 
 test_that("weightvar=NULL counts interactions as weight", {
   el_now <- data.frame(
@@ -186,9 +172,7 @@ test_that("explicit weight column is summed correctly", {
   expect_equal(result$w, 10)
 })
 
-################################################################################
-# Block 6: Edge cases and error handling
-################################################################################
+# Block 6: Edge cases and error handling ----------------------------------
 
 test_that("NAs in time column produce a warning", {
   el_na <- el
