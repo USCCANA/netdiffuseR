@@ -980,8 +980,7 @@ NULL # "epigames"
 #' A directed dynamic graph with 594 vertices and 15 time periods. The attributes
 #' in the graph are described in \code{\link{epigames}}.
 #'
-#' Note that following \code{netdiffuseR} conventions, right-censored non-adopters
-#' have their \code{toa} values set to 16 (\code{max(time) + 1}).
+#' Non-adopters have \code{toa = NA}.
 #'
 #' @format A \code{\link{diffnet}} class object.
 #' @source WKU Epi Game simulation
