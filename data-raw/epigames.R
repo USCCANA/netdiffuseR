@@ -7,7 +7,7 @@ rm(list = ls())
 # both using consistent node IDs (1-594).
 load("data-raw/epigames_hourly.rda")
 
-epigames <- epigames_hourly_fixed
+epigames <- epigames_hourly
 
 # Save compressed raw data
 usethis::use_data(epigames, overwrite = TRUE, compress = "xz")

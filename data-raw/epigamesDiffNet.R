@@ -19,7 +19,10 @@ daily_edgelist <- collapse_timeframes(
   alter      = "receiver",
   timevar    = "time",
   weightvar  = "weight",
-  window_size = 24
+  window_size = 24,
+  binarize   = TRUE,
+  cumulative = TRUE,
+  symmetric  = TRUE
 )
 
 # Build daily adjacency matrices
