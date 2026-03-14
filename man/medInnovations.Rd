@@ -106,7 +106,6 @@ Other diffusion datasets:
 \code{\link{fakesurveyDyn}},
 \code{\link{kfamily}},
 \code{\link{kfamilyDiffNet}},
-\code{\link{medInnovationsDiffNet}},
-\code{\link{wku_diffnet}}
+\code{\link{medInnovationsDiffNet}}
 }
 \concept{diffusion datasets}

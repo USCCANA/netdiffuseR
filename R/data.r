@@ -988,14 +988,5 @@ NULL # "epigames"
 #' @name epigamesDiffNet
 NULL
 
-#' WKU Diffusion Network
-#'
-#' A \code{\link{diffnet}} object with 594 vertices and 15 time periods from the
-#' WKU simulation study.
-#'
-#' @format A \code{\link{diffnet}} class object.
-#' @source WKU simulation
-#' @family diffusion datasets
-#' @name wku_diffnet
 NULL
 

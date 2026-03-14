@@ -23,7 +23,6 @@ Other diffusion datasets:
 \code{\link{fakesurveyDyn}},
 \code{\link{kfamily}},
 \code{\link{kfamilyDiffNet}},
-\code{\link{medInnovations}},
-\code{\link{wku_diffnet}}
+\code{\link{medInnovations}}
 }
 \concept{diffusion datasets}

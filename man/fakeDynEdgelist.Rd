@@ -32,8 +32,7 @@ Other diffusion datasets:
 \code{\link{kfamily}},
 \code{\link{kfamilyDiffNet}},
 \code{\link{medInnovations}},
-\code{\link{medInnovationsDiffNet}},
-\code{\link{wku_diffnet}}
+\code{\link{medInnovationsDiffNet}}
 }
 \author{
 George G. Vega Yon
