@@ -209,3 +209,38 @@ test_that("output time starts at 1", {
                                 window_size = 1)
   expect_equal(min(result$time), 1L)
 })
+
+# Block 7: Post-aggregation processing (binarize, cumulative, symmetric) --
+
+test_that("binarize=TRUE sets all weights to 1", {
+  result <- collapse_timeframes(el, ego = "sender", alter = "receiver",
+                                timevar = "time", weightvar = "weight",
+                                window_size = 2, binarize = TRUE)
+  expect_true(all(result$weight == 1))
+})
+
+test_that("symmetric=TRUE adds reverse edges", {
+  # Asymmetric input: 1->2 only
+  el_asym <- data.frame(sender = 1, receiver = 2, time = 1, weight = 1)
+  result <- collapse_timeframes(el_asym, ego = "sender", alter = "receiver",
+                                timevar = "time", weightvar = "weight",
+                                window_size = 1, symmetric = TRUE)
+  expect_equal(nrow(result), 2L)
+  # Check if reverse is present
+  expect_true(any(result$sender == 2 & result$receiver == 1))
+})
+
+test_that("cumulative=TRUE carries edges forward", {
+  el_cum <- data.frame(
+    sender   = c(1, 2),
+    receiver = c(2, 3),
+    time     = c(1, 2),
+    weight   = c(1, 1)
+  )
+  result <- collapse_timeframes(el_cum, ego = "sender", alter = "receiver",
+                                timevar = "time", weightvar = "weight",
+                                window_size = 1, cumulative = TRUE)
+  # time=1 has 1->2, time=2 should have both 1->2 and 2->3
+  expect_equal(nrow(result[result$time == 1, ]), 1L)
+  expect_equal(nrow(result[result$time == 2, ]), 2L)
+})
