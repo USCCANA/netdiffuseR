@@ -781,18 +781,18 @@ NULL # "medInnovationsDiffNet"
 #' Public (Rogers & Kincaid, 1981). The table below summarizes the datasets:
 #'
 #' \tabular{lcccc}{
-#'		\tab	\bold{Medical Innovation}	\tab	\bold{Brazilian Farmers}	\tab	\bold{Korean Family Planning}	\tab	\bold{WKU Epi Games}	\cr
-#'	\emph{Country}	\tab	USA	\tab	Brazil	\tab	Korean	\tab	USA	\cr
-#'	\emph{# Respondents}	\tab	125 Doctors	\tab	692 Farmers	\tab	1,047 Women	\tab	594 Students	\cr
-#'	\emph{# Communities}	\tab	4	\tab	11	\tab	25	\tab	Multiple groups	\cr
-#'	\emph{Innovation}	\tab	Tetracycline	\tab	Hybrid Corn Seed	\tab	Family Planning	\tab	Masks/Medicine	\cr
-#'	\emph{Time for Diffusion}	\tab	18 Months	\tab	20 Years	\tab	11 Years	\tab	15 Periods	\cr
-#'	\emph{Year Data Collected}	\tab	1955-1956	\tab	1966	\tab	1973	\tab	Recent	\cr
-#'	\emph{Ave. Time to 50\%}	\tab	6	\tab	16	\tab	7	\tab	N/A	\cr
-#'	\emph{Highest Saturation}	\tab	0.89	\tab	0.98	\tab	0.83	\tab	N/A	\cr
-#'	\emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\tab	N/A	\cr
-#'	\emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\tab	WKU	\cr
-#'	}
+#' 		\tab	\bold{Medical Innovation}	\tab	\bold{Brazilian Farmers}	\tab	\bold{Korean Family Planning}	\tab	\bold{WKU Epi Games}	\cr
+#' 	\emph{Country}	\tab	USA	\tab	Brazil	\tab	Korean	\tab	USA	\cr
+#' 	\emph{# Respondents}	\tab	125 Doctors	\tab	692 Farmers	\tab	1,047 Women	\tab	594 Students	\cr
+#' 	\emph{# Communities}	\tab	4	\tab	11	\tab	25	\tab	Multiple groups	\cr
+#' 	\emph{Innovation}	\tab	Tetracycline	\tab	Hybrid Corn Seed	\tab	Family Planning	\tab	Masks/Medicine	\cr
+#' 	\emph{Time for Diffusion}	\tab	18 Months	\tab	20 Years	\tab	11 Years	\tab	15 Periods	\cr
+#' 	\emph{Year Data Collected}	\tab	1955-1956	\tab	1966	\tab	1973	\tab	Recent	\cr
+#' 	\emph{Ave. Time to 50\%}	\tab	6	\tab	16	\tab	7	\tab	N/A	\cr
+#' 	\emph{Highest Saturation}	\tab	0.89	\tab	0.98	\tab	0.83	\tab	N/A	\cr
+#' 	\emph{Lowest Saturation}	\tab	0.81	\tab	0.29	\tab	0.44	\tab	N/A	\cr
+#' 	\emph{Citation}	\tab	Coleman et al (1966)	\tab	Rogers et al (1970)	\tab	Rogers & Kincaid (1981)	\tab	WKU	\cr
+#' 	}
 #'
 #' All core datasets include a column called \emph{study} which is coded as
 #' (1) Medical Innovation (2) Brazilian Farmers, (3) Korean Family Planning.
@@ -941,14 +941,14 @@ NULL # "fakeEdgelist"
 
 
 #' Epi Games Dataset
-#' 
-#' @description 
-#' The WKU Epi Games dataset represents a simulated epidemic or game environment with 
-#' dynamic encounters over 15 time periods. It provides both node-level 
+#'
+#' @description
+#' The WKU Epi Games dataset represents a simulated epidemic or game environment with
+#' dynamic encounters over 15 time periods. It provides both node-level
 #' attributes and a longitudinal edgelist.
-#' 
+#'
 #' @format A list with two data frames:
-#' 
+#'
 #' **attributes**: A data frame with 594 rows and 9 variables representing nodes:
 #' \describe{
 #'  \item{id}{Unique identifier for the participant.}
@@ -961,7 +961,7 @@ NULL # "fakeEdgelist"
 #'  \item{final_score}{Final score obtained in the game.}
 #'  \item{status}{Final state label ("infected" or "not_infected").}
 #' }
-#' 
+#'
 #' **edgelist**: A longitudinal data frame with 23,684 rows and 4 variables representing edges/contacts:
 #' \describe{
 #'  \item{sender}{Origin node ID of the contact.}
@@ -969,7 +969,7 @@ NULL # "fakeEdgelist"
 #'  \item{time}{Time period of the contact (1 to 15).}
 #'  \item{weight}{Strength, duration, or density of the exposure.}
 #' }
-#' 
+#'
 #' @source WKU Epi Game simulation
 #' @family diffusion datasets
 #' @name epigames
@@ -987,6 +987,3 @@ NULL # "epigames"
 #' @family diffusion datasets
 #' @name epigamesDiffNet
 NULL
-
-NULL
-
