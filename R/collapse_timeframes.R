@@ -20,6 +20,12 @@
 #' @param relative_time Logical scalar. If \code{TRUE}, normalizes the binned
 #'   times into a strict integer sequence starting at 1 (1, 2, 3...).
 #'
+#' @param binarize Logical scalar. If \code{TRUE}, sets all resulting edge weights to 1.
+#' @param cumulative Logical scalar. If \code{TRUE}, edges from previous time windows
+#'   are carried over to subsequent windows. 
+#' @param symmetric Logical scalar. If \code{TRUE}, the resulting graph will be 
+#'   symmetrized (i.e., if an edge A->B exists, an edge B->A is added).
+#'
 #' @return A \code{data.frame} with 4 columns: the ego, the alter, the new collapsed
 #'   discrete time, and the aggregated weight.
 #'
@@ -46,7 +52,10 @@ collapse_timeframes <- function(
   weightvar = NULL,
   window_size = 1,
   time_format = NULL,
-  relative_time = TRUE
+  relative_time = TRUE,
+  binarize = FALSE,
+  cumulative = FALSE,
+  symmetric = FALSE
 ) {
   
   # Step 1: Time Column Parsing
@@ -110,10 +119,50 @@ collapse_timeframes <- function(
   )
   
   # Step 5: Output with 4 clean columns
-  colnames(agg_df) <- c(ego, alter, timevar, if (is.null(weightvar)) "weight" else weightvar)
+  weight_col_name <- if (is.null(weightvar)) "weight" else weightvar
+  colnames(agg_df) <- c(ego, alter, timevar, weight_col_name)
   
-  # Reorder columns standardly: ego, alter, time, weight
-  agg_df <- agg_df[, c(ego, alter, timevar, if (is.null(weightvar)) "weight" else weightvar)]
+  # Step 6: Post-aggregation processing
+  
+  # 6.1 Binarize
+  if (binarize) {
+    agg_df[[weight_col_name]] <- 1
+  }
+  
+  # 6.2 Symmetrize
+  if (symmetric) {
+    rev_df <- agg_df
+    rev_df[[ego]] <- agg_df[[alter]]
+    rev_df[[alter]] <- agg_df[[ego]]
+    
+    # Combine and de-duplicate (in case they already existed symmetrically)
+    agg_df <- unique(rbind(agg_df, rev_df))
+  }
+  
+  # 6.3 Cumulative
+  if (cumulative) {
+    all_periods <- sort(unique(agg_df[[timevar]]))
+    if (length(all_periods) > 1) {
+      cumulative_el <- agg_df[agg_df[[timevar]] == all_periods[1], ]
+      for (t_idx in 2:length(all_periods)) {
+        t <- all_periods[t_idx]
+        current <- agg_df[agg_df[[timevar]] == t, ]
+        prev <- cumulative_el[cumulative_el[[timevar]] == all_periods[t_idx - 1], ]
+        if (nrow(prev) > 0) {
+          prev[[timevar]] <- t
+        }
+        # Combine current window with previous accumulated edges and de-duplicate
+        combined <- unique(rbind(current, prev))
+        cumulative_el <- rbind(cumulative_el, combined)
+      }
+      agg_df <- cumulative_el
+    }
+  }
+  
+  # Apply standard sort for consistent outputs: time, ego, alter
+  order_idx <- order(agg_df[[timevar]], agg_df[[ego]], agg_df[[alter]])
+  agg_df <- agg_df[order_idx, ]
+  rownames(agg_df) <- NULL
   
   return(agg_df)
 }

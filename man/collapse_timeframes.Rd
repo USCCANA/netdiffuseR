@@ -12,7 +12,10 @@ collapse_timeframes(
   weightvar = NULL,
   window_size = 1,
   time_format = NULL,
-  relative_time = TRUE
+  relative_time = TRUE,
+  binarize = FALSE,
+  cumulative = FALSE,
+  symmetric = FALSE
 )
 }
 \arguments{
@@ -36,6 +39,14 @@ For example, \code{"\%d-\%m-\%Y \%H:\%M"}.}
 
 \item{relative_time}{Logical scalar. If \code{TRUE}, normalizes the binned
 times into a strict integer sequence starting at 1 (1, 2, 3...).}
+
+\item{binarize}{Logical scalar. If \code{TRUE}, sets all resulting edge weights to 1.}
+
+\item{cumulative}{Logical scalar. If \code{TRUE}, edges from previous time windows
+are carried over to subsequent windows.}
+
+\item{symmetric}{Logical scalar. If \code{TRUE}, the resulting graph will be 
+symmetrized (i.e., if an edge A->B exists, an edge B->A is added).}
 }
 \value{
 A \code{data.frame} with 4 columns: the ego, the alter, the new collapsed
