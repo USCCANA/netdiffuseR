@@ -1,4 +1,6 @@
-# Changes in netdiffuseR version 1.25.0 (2026-03-14)
+# Changes in netdiffuseR version 1.25.0 (2026-03-27)
+
+## User-visible changes
 
 * New function `collapse_timeframes()`: aggregates high-resolution or
   continuous-time longitudinal edgelists into discrete time windows, ready
@@ -9,9 +11,14 @@
 * New dataset `epigames` and `epigamesDiffNet`: a simulated epidemic game
   network with 594 nodes and 15 time periods from the WKU Epi Games study.
 
+## Internal changes
+
 * Fixed CRAN example error in `round_to_seq()`: `plot(w, x)` replaced with
   `plot(w)` to avoid `%||%` operator issue in R 4.4.0+'s `formula.default`
   when called via `plot.data.frame()`.
+
+* Removed `configure` framework. R already provides paths and configuration for OpenMP.
+
 
 # Changes in netdiffuseR version 1.24.0 (2025-12-09)
 

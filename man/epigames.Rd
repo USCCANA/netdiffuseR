@@ -31,8 +31,8 @@ A list with two data frames:
 WKU Epi Game simulation
 }
 \description{
-The WKU Epi Games dataset represents a simulated epidemic or game environment with 
-dynamic encounters over 15 time periods. It provides both node-level 
+The WKU Epi Games dataset represents a simulated epidemic or game environment with
+dynamic encounters over 15 time periods. It provides both node-level
 attributes and a longitudinal edgelist.
 }
 \seealso{

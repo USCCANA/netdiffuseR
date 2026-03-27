@@ -12,7 +12,8 @@
 				"rdebugger.r-debugger",
 				"quarto.quarto",
 				"tianyishi.rmarkdown",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"openai.chatgpt"
 			]
 		}
 	},
