@@ -24,7 +24,7 @@ jobs:
         id-token: write
         pages: write
       steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
     
         - uses: r-lib/actions/setup-pandoc@v2
           with:
@@ -65,4 +65,4 @@ jobs:
     
       steps:
         - name: Deploy to GitHub pages
-          uses: actions/deploy-pages@v4
+          uses: actions/deploy-pages@v5

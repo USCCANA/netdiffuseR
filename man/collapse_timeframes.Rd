@@ -45,7 +45,7 @@ times into a strict integer sequence starting at 1 (1, 2, 3...).}
 \item{cumulative}{Logical scalar. If \code{TRUE}, edges from previous time windows
 are carried over to subsequent windows.}
 
-\item{symmetric}{Logical scalar. If \code{TRUE}, the resulting graph will be 
+\item{symmetric}{Logical scalar. If \code{TRUE}, the resulting graph will be
 symmetrized (i.e., if an edge A->B exists, an edge B->A is added).}
 }
 \value{

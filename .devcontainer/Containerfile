@@ -1,16 +1,20 @@
-FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
+FROM ghcr.io/rocker-org/devcontainer/r-ver:4.5
 
-# RUN \
-#   echo 'options(repos=c(CRAN="https://packagemanager.posit.co/cran/__linux__/bookworm/latest"))' >> ~/.Rprofile && \
-#   Rscript --vanilla -e 'getOption("repos")'
+# Architecture-specific variable (built in Docker BuildKit)
+ARG TARGETARCH
 
-RUN install2.r --error languageserver && installGithub.r nx10/httpgd
+# Install quarto-cli and the orange-book extension
+RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quarto-1.9.35-linux-${TARGETARCH}.deb && \
+    dpkg -i quarto-1.9.35-linux-${TARGETARCH}.deb && \
+    rm quarto-1.9.35-linux-${TARGETARCH}.deb
 
 RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb \
   libglpk-dev
 
 # Adding R packages
-RUN install2.r --error Rcpp sna network networkDynamic Matrix MASS MatchIt SparseM igraph \
-  viridisLite covr testthat knitr rmarkdown ape RSiena survival RcppArmadillo
+RUN install2.r --error -n4 Rcpp sna network networkDynamic Matrix MASS \
+  MatchIt SparseM igraph \
+  viridisLite covr testthat knitr rmarkdown ape RSiena survival \
+  RcppArmadillo
 
 CMD ["bash"]
