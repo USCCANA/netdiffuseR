@@ -14,6 +14,8 @@ in the graph are static and described in \code{\link{brfarmers}}.
 Other diffusion datasets: 
 \code{\link{brfarmers}},
 \code{\link{diffusion-data}},
+\code{\link{epigames}},
+\code{\link{epigamesDiffNet}},
 \code{\link{fakeDynEdgelist}},
 \code{\link{fakeEdgelist}},
 \code{\link{fakesurvey}},

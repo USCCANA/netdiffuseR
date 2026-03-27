@@ -24,6 +24,8 @@ Other diffusion datasets:
 \code{\link{brfarmers}},
 \code{\link{brfarmersDiffNet}},
 \code{\link{diffusion-data}},
+\code{\link{epigames}},
+\code{\link{epigamesDiffNet}},
 \code{\link{fakeEdgelist}},
 \code{\link{fakesurvey}},
 \code{\link{fakesurveyDyn}},
