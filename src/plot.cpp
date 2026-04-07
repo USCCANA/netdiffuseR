@@ -218,12 +218,17 @@ NumericMatrix edges_coords(
 ) {
 
   // Checking sizes of x, toa, y, and vertex_cex
-  int n = x.n_rows;
-  if (n != y.n_rows) stop("-x- and -y- lengths do not coincide.");
-  if (n != toa.n_rows) stop("-x- and -toa- lengths do not coincide.");
-  if (n != vertex_cex.n_rows) stop("-x- and -vertex_cex- lengths do not coincide.");
-  if (graph.n_rows != graph.n_cols) stop("-graph- is not a square matrix.");
-  if (graph.n_rows != n) stop("-graph- does not have the same number of rows as -x-, -y-, and -toa-.");
+  int n = static_cast<int>(x.n_rows);
+  if (n != static_cast<int>(y.n_rows))
+    stop("-x- and -y- lengths do not coincide.");
+  if (n != static_cast<int>(toa.n_rows))
+    stop("-x- and -toa- lengths do not coincide.");
+  if (n != static_cast<int>(vertex_cex.n_rows))
+    stop("-x- and -vertex_cex- lengths do not coincide.");
+  if (graph.n_rows != graph.n_cols)
+    stop("-graph- is not a square matrix.");
+  if (static_cast<int>(graph.n_rows) != n)
+    stop("-graph- does not have the same number of rows as -x-, -y-, and -toa-.");
 
   // The output matrix has the following
   // - x0 and y0

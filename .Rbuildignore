@@ -32,7 +32,6 @@ README[.](R|q)md
 ^next_release\.md$
 ^src/rgraph_scale_free.+$
 makefile
-^src/Makevars$
 ^docs$
 ^LICENSE\.md$
 ^_pkgdown\.yml$

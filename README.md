@@ -52,7 +52,7 @@ And the actual R package:
   Vega Yon G, Olivera Morales A, Valente T (2025). _netdiffuseR:
   Analysis of Diffusion and Contagion Processes on Networks_.
   doi:10.5281/zenodo.1039317 <https://doi.org/10.5281/zenodo.1039317>,
-  R package version 1.24.1, <https://github.com/USCCANA/netdiffuseR>.
+  R package version 1.25.0, <https://github.com/USCCANA/netdiffuseR>.
 
 To see these entries in BibTeX format, use 'print(<citation>,
 bibtex=TRUE)', 'toBibtex(.)', or set
@@ -351,13 +351,13 @@ par(oldpar)
 
 ``` r
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> R version 4.5.3 (2026-03-11)
+#> Platform: aarch64-unknown-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /usr/lib/aarch64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/aarch64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -374,23 +374,23 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] netdiffuseR_1.24.1
+#> [1] netdiffuseR_1.25.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-4          jsonlite_2.0.0        dplyr_1.1.4          
-#>  [4] compiler_4.5.2        tidyselect_1.2.1      Rcpp_1.1.0           
-#>  [7] networkLite_1.1.0     boot_1.3-32           yaml_2.3.10          
-#> [10] fastmap_1.2.0         lattice_0.22-7        coda_0.19-4.1        
+#>  [1] Matrix_1.7-5          jsonlite_2.0.0        dplyr_1.2.0          
+#>  [4] compiler_4.5.3        tidyselect_1.2.1      Rcpp_1.1.1           
+#>  [7] networkLite_1.1.0     boot_1.3-32           yaml_2.3.12          
+#> [10] fastmap_1.2.0         lattice_0.22-9        coda_0.19-4.1        
 #> [13] R6_2.6.1              generics_0.1.4        MatchIt_4.7.2        
-#> [16] igraph_2.2.1          knitr_1.50            MASS_7.3-65          
-#> [19] backports_1.5.0       tibble_3.3.0          statnet.common_4.12.0
-#> [22] pillar_1.11.1         rlang_1.1.6           xfun_0.53            
-#> [25] viridisLite_0.4.2     cli_3.6.5             magrittr_2.0.4       
-#> [28] network_1.19.0        digest_0.6.37         grid_4.5.2           
-#> [31] lifecycle_1.0.4       vctrs_0.6.5           sna_2.8              
-#> [34] evaluate_1.0.5        SparseM_1.84-2        glue_1.8.0           
-#> [37] rmarkdown_2.30        tools_4.5.2           pkgconfig_2.0.3      
-#> [40] networkDynamic_0.11.5 htmltools_0.5.8.1
+#> [16] igraph_2.2.2          knitr_1.51            MASS_7.3-65          
+#> [19] backports_1.5.0       tibble_3.3.1          statnet.common_4.13.0
+#> [22] pillar_1.11.1         rlang_1.1.7           xfun_0.56            
+#> [25] otel_0.2.0            viridisLite_0.4.3     cli_3.6.5            
+#> [28] magrittr_2.0.4        network_1.20.0        digest_0.6.39        
+#> [31] grid_4.5.3            lifecycle_1.0.5       vctrs_0.7.2          
+#> [34] SparseM_1.84-2        sna_2.8               evaluate_1.0.5       
+#> [37] glue_1.8.0            rmarkdown_2.31        tools_4.5.3          
+#> [40] pkgconfig_2.0.3       networkDynamic_0.11.5 htmltools_0.5.9
 ```
 
 ## To-do list
