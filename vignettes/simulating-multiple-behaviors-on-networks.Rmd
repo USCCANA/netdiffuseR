@@ -213,9 +213,9 @@ If you want to use other function to analyze the results from the simulation foc
   net_single_from_multiple <- split_behaviors(net_multiple)
   net_single_from_multiple_1 <- net_single_from_multiple[[1]]
 
-  expect_equal(net_single_from_multiple_1$toa, net_single$toa)
-  expect_equal(net_single_from_multiple_1$adopt, net_single$adopt)
-  expect_equal(net_single_from_multiple_1$cumadopt, net_single$cumadopt)
+  all(net_single_from_multiple_1$toa == net_single$toa)
+  all(net_single_from_multiple_1$adopt == net_single$adopt)
+  all(net_single_from_multiple_1$cumadopt == net_single$cumadopt)
   
 ```
 
@@ -257,8 +257,7 @@ ans_d_adopt <- rdiffnet(n = n, t = 10, disadopt = d_adopt,
 tmat <- toa_mat(ans_d_adopt)
 should_be_ones_or_zeros <- tmat[[1]]$cumadopt[, 10] + tmat[[2]]$cumadopt[, 10]
 
-expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
-
+all(should_be_ones_or_zeros %in% c(0,1))
 ```
 
 ```{r}
