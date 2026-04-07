@@ -34,25 +34,71 @@ library(netdiffuseR)
 
 In a (very) simplified way, `rdiffnet` has 4 steps. Before this current version, the workflow can be diagrammed as:
 
-```{r, echo=FALSE, out.width="55%", fig.align="center"}
-knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-single-1.png")
-```
+**rdiffnet**( graph, seed.p.nodes, seed.nodes, behavior, threshold.dist)
+
+**Step 0.0: setting *n* and *t* if not provided**
+* this depends on graph
+
+**Step 1.0: setting seed nodes**
+* this depends on seed.p.nodes and seed.nodes
+
+**Step 2.0: setting threshold for each node**
+* ↳ `rdiffnet_make_threshold( threshold.dist, n )`
+
+**Step 3.0: running the simulation**
+* ↳ `exposure( graph, exposure.args = list(...) )`
+    * ↳ allow us to compute time of adoption (toa)
+
+**Step 4.0: creating diffnet object**
+* ↳ `new_diffnet( graph, ..., toa, ... )`
 
 ## How rdiffnet works from now
 
 In the current version, we maintain the basic structure of the workflow, but adding some functions and modifying the existing for allowing multi-behavior diffusion.
 
-```{r, echo=FALSE, out.width="55%", fig.align="center"}
-knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/diagrams-multiple-1.png")
-```
+> **rdiffnet**( graph, seed.p.nodes, seed.nodes, behavior, threshold.dist)
+> 
+> **Step 0.0: setting *n* and *t* if not provided**
+> * this depends on graph
+> 
+> **Step 1.0: validate the arguments**
+> * ↳ `rdiffnet_validate_args(seed.p.adopt, seed.nodes, behavior)`
+>     * this allows us to set seed nodes
+> 
+> **Step 2.0: setting threshold for each node**
+> * ↳ `rdiffnet_make_threshold( threshold.dist, n, num_of_behaviors)`
+> 
+> **Step 3.0: running the simulation**
+> * ↳ `exposure( graph, exposure.args = list(...) )`
+> * ↳ `disadopt( expo, cumadopt, t)`
+>     * to compute time of adoption (toa) for each behavior
+> 
+> **Step 4.0: creating diffnet object**
+> * ↳ `new_diffnet( graph, ..., toa, ... )`
+
+**Step 5.0: splitting behaviors (optional)**
+* ↳ `split_behaviors( rdiffnet_multiple_obj )`
 
 As you can see, now in Step 1.0, before identify the seed nodes as initial condition, the inputs `seed.p.adopt` (default 0.1 for single behavior), `seed.nodes` (default 'random'), and `behavior` (default 'random behavior') are passed to an internal function that validates they as accepted inputs and homogenized the objects for the rest of the code.
 
 As before, `rdiffnet` still accepts several kinds of inputs, for different classes classes and specifications, but the input that characterized the **multi-behavior** simulation is exclusively `seed.p.adopt`. If `class(seed.p.adopt)` is a `list`, then the simulation will run a total of `length(seed.p.adopt)` behaviors in the same setup. This table summarize the possible inputs for `seed.p.adopt`, `seed.nodes`, `threshold.dist`, and `behavior`, showing some examples.
 
-```{r, echo=FALSE, out.width="60%", fig.align="center"}
-knitr::include_graphics("~/anibal/netdiffuseR-original/playground/images/table_1.png")
-```
+| Parameter | Type | single | multiple |
+| :--- | :--- | :--- | :--- |
+| **seed.p.adopt** | numeric | 0.1<br>c(0.1) | X |
+| | character | X | X |
+| | list | X | list(0.1, 0.05) |
+| **seed.nodes** | numeric | c(2,4,6) | c(2,4,6) |
+| | character | "random"<br>c("random") | "random"<br>c("random")<br>c("random", "central") |
+| | list | X | list("random", "central")<br>list( c(1,3,5), c(2,4,6) ) |
+| **behavior** | numeric | X | X |
+| | character | "tobacco"<br>c("tobacco") | "tobacco"<br>c("tobacco")<br>c("tobacco", "alcohol") |
+| | list | X | list("tobacco", "alcohol") |
+| **threshold** | numeric | 0.33<br>rep(0.33, 100) | 0.33<br>rep(0.33, 100) |
+| | function | function() runif(1) | function() runif(1) |
+| | matrix | X | matrix( runif(100),<br>n_nodes, n_behavior) |
+| | list | X | list( 0.33, 0.66)<br>list( runif(100), runif(100))<br>list( function() runif(1),<br>function() runif(1)) |
+
 
 All functions in other steps were revised to allow now different object that can handle multi-behavior, while still can execute the already in-build functions for single diffusion within the package (as `plot()`, `plot_diffnet()`, and `plot_adopters()`, among many others).
 
