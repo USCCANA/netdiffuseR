@@ -205,8 +205,8 @@ degree_adoption_diagnostic <- function(
     NULL
   }
 
-  # Determine if undirected (graph is always a diffnet here)
-  undirected <- isTRUE(is_undirected(graph))
+  # Determine if undirected by checking matrices
+  undirected <- check_undirected_graph(graph)
 
   # Return results
   structure(list(
@@ -280,31 +280,16 @@ compute_degree_measures <- function(graph, degree_strategy, valued) {
     indegree <- rowMeans(dgr(graph, cmode = "indegree", valued = valued), na.rm = TRUE)
     outdegree <- rowMeans(dgr(graph, cmode = "outdegree", valued = valued), na.rm = TRUE)
   } else {
-    deg_matrix <- dgr(graph, valued = valued)
-    if (length(dim(deg_matrix)) == 3) {
-      # Dynamic case
-      if (degree_strategy == "first") {
-        indegree <- deg_matrix[, 1, "indegree"]
-        outdegree <- deg_matrix[, 1, "outdegree"]
-      } else if (degree_strategy == "last") {
-        last_time <- dim(deg_matrix)[2]
-        indegree <- deg_matrix[, last_time, "indegree"]
-        outdegree <- deg_matrix[, last_time, "outdegree"]
-      }
-    } else if (length(dim(deg_matrix)) == 2) {
-      # Static case: check for column names, else use position
-      cn <- colnames(deg_matrix)
-      if (!is.null(cn) && all(c("indegree", "outdegree") %in% cn)) {
-        indegree <- deg_matrix[, "indegree"]
-        outdegree <- deg_matrix[, "outdegree"]
-      } else if (ncol(deg_matrix) >= 2) {
-        indegree <- deg_matrix[, 1]
-        outdegree <- deg_matrix[, 2]
-      } else {
-        stop("Degree matrix does not have expected columns for static graph.")
-      }
-    } else {
-      stop("Unexpected degree matrix dimensions in compute_degree_measures.")
+    # Request in-degree and out-degree separately and explicitly
+    indeg_mat <- dgr(graph, cmode = "indegree", valued = valued)
+    outdeg_mat <- dgr(graph, cmode = "outdegree", valued = valued)
+
+    if (degree_strategy == "first") {
+      indegree <- if (is.matrix(indeg_mat)) indeg_mat[, 1] else indeg_mat
+      outdegree <- if (is.matrix(outdeg_mat)) outdeg_mat[, 1] else outdeg_mat
+    } else { # last
+      indegree <- if (is.matrix(indeg_mat)) indeg_mat[, ncol(indeg_mat)] else indeg_mat
+      outdegree <- if (is.matrix(outdeg_mat)) outdeg_mat[, ncol(outdeg_mat)] else outdeg_mat
     }
   }
 
@@ -350,11 +335,7 @@ analyze_multi_behaviors_separately <- function(degrees, toa, min_adopters, boots
   }
 
   # Determine if undirected
-  undirected <- if (inherits(graph, "diffnet")) {
-    is_undirected(graph)
-  } else {
-    check_undirected_graph(graph)
-  }
+  undirected <- check_undirected_graph(graph)
 
   structure(list(
     correlations = correlations_matrix,
@@ -521,6 +502,10 @@ create_empty_result <- function(degree_strategy, original_call, combine, sample_
 }
 
 check_undirected_graph <- function(graph) {
+  # If the input is a diffnet, we extract its raw list of matrices
+  if (inherits(graph, "diffnet")) {
+    graph <- graph$graph
+  }
   if (is.list(graph)) {
     return(all(sapply(graph, function(g) isSymmetric(as.matrix(g)))))
   }
@@ -749,7 +734,7 @@ format_interpretation_no_ci <- function(label, r, abs_big, degree_term, thr) {
 format_interpretation_with_ci <- function(label, r, ci, abs_big, degree_term, thr, lvl_arg) {
   lvl_local <- if (!is.na(lvl_arg)) lvl_arg else 95
   ci_includes_zero <- (length(ci) >= 2) && is.finite(ci[1]) && is.finite(ci[2]) && (ci[1] <= 0 && ci[2] >= 0)
-  
+
   ci_low <- if (length(ci) >= 1) ci[1] else NA_real_
   ci_high <- if (length(ci) >= 2) ci[2] else NA_real_
 
