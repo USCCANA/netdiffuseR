@@ -25,8 +25,8 @@ daily_edgelist <- collapse_timeframes(
   timevar     = "time",
   weightvar   = "weight",
   window_size = WINDOW_SIZE,
-  binarize    = TRUE,
-  cumulative  = TRUE,
+  binarize    = FALSE,
+  cumulative  = FALSE,
   symmetric   = TRUE
 )
 
