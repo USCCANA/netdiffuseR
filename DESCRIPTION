@@ -94,3 +94,4 @@ Collate:
     'struct_equiv.R'
     'struct_test.R'
     'survey_to_diffnet.R'
+    'transmission.R'
