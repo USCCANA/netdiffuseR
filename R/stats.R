@@ -276,6 +276,21 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @param lags Integer scalar. When different from 0, the resulting exposure
 #' matrix will be the lagged exposure as specified (see examples).
 #' @param mode Character scalar. Either "deterministic" (default) or "stochastic".
+#' @param link_fun Character scalar or function. Kernel applied to the
+#' (valued) edge weights before exposure is computed. Supported names:
+#' \code{"identity"} (default, no transformation), \code{"linear"}
+#' (\eqn{\min(\beta w, 1)}), \code{"sigmoid"}
+#' (\eqn{\mathrm{plogis}((w - h)/\mathrm{scale})}), and \code{"wells-riley"}
+#' (\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied function
+#' with either signature \code{function(w)} (parameters baked into a
+#' closure) or \code{function(w, pars)} (parameters passed through
+#' \code{link_pars}); it must return a vector of the same length as
+#' \code{w}. When \code{link_fun} is not \code{"identity"},
+#' \code{valued} is forced to \code{TRUE} (with a warning if the user set
+#' it to \code{FALSE}).
+#' @param link_pars Named list with the scalar parameters required by
+#' \code{link_fun}. See the section "Link / kernel functions" for the
+#' required names per kernel.
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -514,8 +529,60 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' @name exposure
 NULL
 
+# Link / kernel function applied to edge weights before exposure is computed.
+# `link_fun` may be one of the named kernels listed below or a user-supplied
+# function. User functions may have either signature:
+#   - `function(w)`         — parameters baked into a closure,
+#   - `function(w, pars)`   — parameters passed via `link_pars`.
+# Either way, the function must return a vector of the same length as `w`,
+# where `w` is the non-zero entries of a dgCMatrix (`@x`).
+.apply_link_kernel <- function(W, link_fun, link_pars) {
+  if (is.null(link_fun) ||
+      (is.character(link_fun) && identical(link_fun, "identity")))
+    return(W)
+
+  if (is.function(link_fun)) {
+    fmls <- formals(link_fun)
+    single_arg <- !is.null(fmls) && length(fmls) == 1L &&
+      !("..." %in% names(fmls))
+    new_x <- if (single_arg) link_fun(W@x) else link_fun(W@x, link_pars)
+    if (length(new_x) != length(W@x))
+      stop("Custom -link_fun- must return a vector of the same length as ",
+           "its input (the non-zero edge weights).")
+    W@x <- as.numeric(new_x)
+    return(W)
+  }
+
+  if (!is.character(link_fun) || length(link_fun) != 1L)
+    stop("-link_fun- must be NULL, a character scalar, or a function.")
+
+  W@x <- switch(
+    link_fun,
+    "linear"      = {
+      if (is.null(link_pars$beta))
+        stop("link_fun = \"linear\" requires link_pars$beta.")
+      pmin(link_pars$beta * W@x, 1)
+    },
+    "sigmoid"     = {
+      if (is.null(link_pars$h) || is.null(link_pars$scale))
+        stop("link_fun = \"sigmoid\" requires link_pars$h and link_pars$scale.")
+      stats::plogis((W@x - link_pars$h) / link_pars$scale)
+    },
+    "wells-riley" = {
+      if (is.null(link_pars$beta))
+        stop("link_fun = \"wells-riley\" requires link_pars$beta.")
+      1 - exp(-link_pars$beta * W@x)
+    },
+    stop("Unknown link_fun: ", link_fun,
+         ". Supported: identity, linear, sigmoid, wells-riley, or a function.")
+  )
+  W
+}
+
 # Workhorse of exposure plotting
-.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self, mode = "deterministic") {
+.exposure <- function(graph, cumadopt, attrs, outgoing, valued, normalized, self,
+                      mode = "deterministic",
+                      link_fun = "identity", link_pars = list()) {
 
   # Getting the parameters
   n <- nrow(graph)
@@ -532,6 +599,9 @@ NULL
 
   # Checking self
   if (!self) graph <- sp_diag(graph, rep(0, nnodes(graph)))
+
+  # Apply link / kernel function to edge weights (pre stochastic / normalization)
+  graph <- .apply_link_kernel(graph, link_fun, link_pars)
 
   # Calculate normalization and apply stochastic filter
   if (mode == "stochastic") {
@@ -610,8 +680,20 @@ exposure <- function(
   self       = getOption("diffnet.self"),
   lags       = 0L,
   mode       = "deterministic",
+  link_fun   = "identity",
+  link_pars  = list(),
   ...
   ) {
+
+  # When a non-identity link kernel is requested, edge weights become the
+  # kernel input and must be preserved (binarizing would collapse them).
+  is_identity_link <- (is.null(link_fun)) ||
+    (is.character(link_fun) && identical(link_fun, "identity"))
+  if (!is_identity_link && !valued) {
+    warning("-link_fun- different from \"identity\" requires valued edges; ",
+            "forcing -valued- to TRUE.")
+    valued <- TRUE
+  }
 
   # Checking diffnet attributes
   if (length(attrs) == 1 && inherits(attrs, "character")) {
@@ -730,7 +812,8 @@ exposure <- function(
 
   if ((is.array(graph) & !inherits(graph, "matrix")) | is.list(graph)) {
     exposure.list(as_spmat(graph), cumadopt, attrs, outgoing, valued, normalized,
-                  self, lags, mode = mode)
+                  self, lags, mode = mode,
+                  link_fun = link_fun, link_pars = link_pars)
   } else stopifnot_graph(graph)
 }
 
@@ -738,7 +821,8 @@ exposure <- function(
 # @export
 exposure.list <- function(
   graph, cumadopt, attrs,
-  outgoing, valued, normalized, self, lags, mode = "deterministic") {
+  outgoing, valued, normalized, self, lags, mode = "deterministic",
+  link_fun = "identity", link_pars = list()) {
 
   # attrs can be either
   #  degree, indegree, outdegree, or a user defined vector.
@@ -758,7 +842,8 @@ exposure.list <- function(
   add_dimnames.mat(attrs)
 
   output <- exposure_for(graph, cumadopt, attrs, outgoing, valued, normalized,
-                         self, lags, mode = mode)
+                         self, lags, mode = mode,
+                         link_fun = link_fun, link_pars = link_pars)
 
   dimnames(output) <- dimnames(cumadopt)
   output
@@ -774,7 +859,9 @@ exposure_for <- function(
   normalized,
   self,
   lags,
-  mode = "deterministic"
+  mode = "deterministic",
+  link_fun = "identity",
+  link_pars = list()
   ) {
 
   if (length(dim(cumadopt)) == 3) {
@@ -789,7 +876,9 @@ exposure_for <- function(
                                        valued = valued,
                                        normalized = normalized,
                                        self = self,
-                                       mode = mode)
+                                       mode = mode,
+                                       link_fun = link_fun,
+                                       link_pars = link_pars)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -800,7 +889,9 @@ exposure_for <- function(
                                        valued = valued,
                                        normalized = normalized,
                                        self = self,
-                                       mode = mode)
+                                       mode = mode,
+                                       link_fun = link_fun,
+                                       link_pars = link_pars)
       }
     }
   } else {
@@ -815,7 +906,9 @@ exposure_for <- function(
                                      valued = valued,
                                      normalized = normalized,
                                      self = self,
-                                     mode = mode)
+                                     mode = mode,
+                                     link_fun = link_fun,
+                                     link_pars = link_pars)
       }
     } else {
       for (i in (1 - lags):nslices(graph)) {
@@ -826,7 +919,9 @@ exposure_for <- function(
                                      valued = valued,
                                      normalized = normalized,
                                      self = self,
-                                     mode = mode)
+                                     mode = mode,
+                                     link_fun = link_fun,
+                                     link_pars = link_pars)
       }
     }
   }

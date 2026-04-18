@@ -16,6 +16,8 @@ exposure(
   self = getOption("diffnet.self"),
   lags = 0L,
   mode = "deterministic",
+  link_fun = "identity",
+  link_pars = list(),
   ...
 )
 }
@@ -49,6 +51,23 @@ and one (see details).}
 matrix will be the lagged exposure as specified (see examples).}
 
 \item{mode}{Character scalar. Either "deterministic" (default) or "stochastic".}
+
+\item{link_fun}{Character scalar or function. Kernel applied to the
+(valued) edge weights before exposure is computed. Supported names:
+\code{"identity"} (default, no transformation), \code{"linear"}
+(\eqn{\min(\beta w, 1)}), \code{"sigmoid"}
+(\eqn{\mathrm{plogis}((w - h)/\mathrm{scale})}), and \code{"wells-riley"}
+(\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied function
+with either signature \code{function(w)} (parameters baked into a
+closure) or \code{function(w, pars)} (parameters passed through
+\code{link_pars}); it must return a vector of the same length as
+\code{w}. When \code{link_fun} is not \code{"identity"},
+\code{valued} is forced to \code{TRUE} (with a warning if the user set
+it to \code{FALSE}).}
+
+\item{link_pars}{Named list with the scalar parameters required by
+\code{link_fun}. See the section "Link / kernel functions" for the
+required names per kernel.}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}
@@ -125,12 +144,11 @@ When \code{mode = "stochastic"}, the exposure is calculated based on a probabili
 interpretation of the edges. In this mode, the weights of the graph \eqn{S_t} are
 treated as probabilities of transmission. For each edge \eqn{(i,j)}, a Bernoulli
 trial is performed with probability \eqn{S_{t,ij}}. If the trial is successful,
-the edge is "realized" as a full connection (weight 1). If failed,
-the edge is treated as non-existent (weight 0).
+the edge is "realized" as a full connection. If failed, the edge is treated
+as non-existent.
 
-The denominator (normalization factor) is calculated using the degree of the node
-(count of neighbors), regardless of the weights. This represents the total number
-of potential contacts.
+The denominator is calculated using the degree of the node, representing the total 
+number of potential contacts.
 
 \deqn{
 \tilde{E}_{ti} = \frac{\sum_{j \neq i} \mathbb{I}(U_{ij} < S_{t,ij}) a_{tj}}{\sum_{j \neq i} 1}
