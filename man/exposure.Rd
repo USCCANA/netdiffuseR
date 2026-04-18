@@ -57,17 +57,16 @@ matrix will be the lagged exposure as specified (see examples).}
 \code{"identity"} (default, no transformation), \code{"linear"}
 (\eqn{\min(\beta w, 1)}), \code{"sigmoid"}
 (\eqn{\mathrm{plogis}((w - h)/\mathrm{scale})}), and \code{"wells-riley"}
-(\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied function
-with either signature \code{function(w)} (parameters baked into a
-closure) or \code{function(w, pars)} (parameters passed through
-\code{link_pars}); it must return a vector of the same length as
-\code{w}. When \code{link_fun} is not \code{"identity"},
-\code{valued} is forced to \code{TRUE} (with a warning if the user set
-it to \code{FALSE}).}
+(\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied
+single-argument function \code{function(w)} with its parameters
+baked into the closure; it must return a vector of the same length
+as \code{w}. When \code{link_fun} is not \code{"identity"},
+\code{valued} is forced to \code{TRUE} (with a warning if the user
+set it to \code{FALSE}).}
 
 \item{link_pars}{Named list with the scalar parameters required by
-\code{link_fun}. See the section "Link / kernel functions" for the
-required names per kernel.}
+the named kernels (\code{"linear"}, \code{"sigmoid"},
+\code{"wells-riley"}). Ignored when \code{link_fun} is a function.}
 
 \item{...}{Further arguments passed to \code{\link{struct_equiv}} (only used when
 \code{alt.graph="se"}).}

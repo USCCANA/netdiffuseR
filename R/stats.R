@@ -281,16 +281,15 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 #' \code{"identity"} (default, no transformation), \code{"linear"}
 #' (\eqn{\min(\beta w, 1)}), \code{"sigmoid"}
 #' (\eqn{\mathrm{plogis}((w - h)/\mathrm{scale})}), and \code{"wells-riley"}
-#' (\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied function
-#' with either signature \code{function(w)} (parameters baked into a
-#' closure) or \code{function(w, pars)} (parameters passed through
-#' \code{link_pars}); it must return a vector of the same length as
-#' \code{w}. When \code{link_fun} is not \code{"identity"},
-#' \code{valued} is forced to \code{TRUE} (with a warning if the user set
-#' it to \code{FALSE}).
+#' (\eqn{1 - \exp(-\beta w)}). Alternatively, a user-supplied
+#' single-argument function \code{function(w)} with its parameters
+#' baked into the closure; it must return a vector of the same length
+#' as \code{w}. When \code{link_fun} is not \code{"identity"},
+#' \code{valued} is forced to \code{TRUE} (with a warning if the user
+#' set it to \code{FALSE}).
 #' @param link_pars Named list with the scalar parameters required by
-#' \code{link_fun}. See the section "Link / kernel functions" for the
-#' required names per kernel.
+#' the named kernels (\code{"linear"}, \code{"sigmoid"},
+#' \code{"wells-riley"}). Ignored when \code{link_fun} is a function.
 #' @details
 #' Exposure is calculated as follows:
 #'
@@ -530,22 +529,17 @@ dgr.array <- function(graph, cmode, undirected, self, valued) {
 NULL
 
 # Link / kernel function applied to edge weights before exposure is computed.
-# `link_fun` may be one of the named kernels listed below or a user-supplied
-# function. User functions may have either signature:
-#   - `function(w)`         — parameters baked into a closure,
-#   - `function(w, pars)`   — parameters passed via `link_pars`.
-# Either way, the function must return a vector of the same length as `w`,
-# where `w` is the non-zero entries of a dgCMatrix (`@x`).
+# `link_fun` is either one of the named kernels listed below or a
+# user-supplied single-argument function `function(w)` that returns a vector
+# of the same length as `w` (the non-zero entries of a dgCMatrix, `@x`).
+# Parameters for user functions are expected to be baked into the closure.
 .apply_link_kernel <- function(W, link_fun, link_pars) {
   if (is.null(link_fun) ||
       (is.character(link_fun) && identical(link_fun, "identity")))
     return(W)
 
   if (is.function(link_fun)) {
-    fmls <- formals(link_fun)
-    single_arg <- !is.null(fmls) && length(fmls) == 1L &&
-      !("..." %in% names(fmls))
-    new_x <- if (single_arg) link_fun(W@x) else link_fun(W@x, link_pars)
+    new_x <- link_fun(W@x)
     if (length(new_x) != length(W@x))
       stop("Custom -link_fun- must return a vector of the same length as ",
            "its input (the non-zero edge weights).")

@@ -77,50 +77,25 @@ test_that("link_fun = 'wells-riley' applies 1 - exp(-beta * w)", {
 })
 
 # ---- User-supplied function ----------------------------------------------
-test_that("link_fun can be a user-supplied function(w, pars)", {
+test_that("link_fun accepts a single-argument user function with baked pars", {
   fx <- mk_fixture()
-
-  my_kernel <- function(w, pars) 1 - exp(-pars$beta * w)
-
-  g_wr <- fx$g
-  g_wr[[1]]@x <- 1 - exp(-0.9 * g_wr[[1]]@x)
-  e_manual <- exposure(g_wr, fx$cumadopt, valued = TRUE)
-
-  e_user <- exposure(fx$g, fx$cumadopt, valued = TRUE,
-                     link_fun = my_kernel, link_pars = list(beta = 0.9))
-  expect_equal(e_user, e_manual)
-})
-
-test_that("link_fun accepts a single-argument closure with baked pars", {
-  fx <- mk_fixture()
-  beta <- 0.3
-  closure_kernel <- function(w) 1 - exp(-beta * w)
+  # A fully-specified closure -- no link_pars needed.
+  random_func <- function(x) 1 - exp(-0.3 * x)
 
   g_ref <- fx$g
-  g_ref[[1]]@x <- 1 - exp(-beta * g_ref[[1]]@x)
+  g_ref[[1]]@x <- 1 - exp(-0.3 * g_ref[[1]]@x)
   e_manual <- exposure(g_ref, fx$cumadopt, valued = TRUE)
 
-  # No link_pars supplied at all: should still work.
-  e_closure <- exposure(fx$g, fx$cumadopt, valued = TRUE,
-                        link_fun = closure_kernel)
-  expect_equal(e_closure, e_manual)
-
-  # Dot-args functions are called with both args (pars travel into ...).
-  dots_kernel <- function(...) {
-    a <- list(...)
-    1 - exp(-beta * a[[1]])
-  }
-  e_dots <- exposure(fx$g, fx$cumadopt, valued = TRUE,
-                     link_fun = dots_kernel)
-  expect_equal(e_dots, e_manual)
+  e_user <- exposure(fx$g, fx$cumadopt, valued = TRUE,
+                     link_fun = random_func)
+  expect_equal(e_user, e_manual)
 })
 
 test_that("user-supplied link_fun must return same-length output", {
   fx <- mk_fixture()
-  bad_kernel <- function(w, pars) w[-1L]
+  bad_kernel <- function(w) w[-1L]
   expect_error(
-    exposure(fx$g, fx$cumadopt, valued = TRUE,
-             link_fun = bad_kernel, link_pars = list()),
+    exposure(fx$g, fx$cumadopt, valued = TRUE, link_fun = bad_kernel),
     "same length"
   )
 })
