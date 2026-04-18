@@ -605,10 +605,28 @@ NULL
 
   # Calculate normalization and apply stochastic filter
   if (mode == "stochastic") {
-    # Denominator: Based on Degree (Potential connections as binary)
-    # We treat the graph as binary (weights=1) for the normalization
+    # Stochastic mode interprets edge weights as Bernoulli probabilities.
+    # Values outside [0, 1] saturate the sampler (>1 always fires, <0
+    # never fires), which is almost never what the user intended when
+    # weights come from raw quantities (e.g. seconds of contact). Warn
+    # and let the caller decide whether to apply a `link_fun`.
+    if (length(graph@x) &&
+        (any(graph@x < 0, na.rm = TRUE) ||
+         any(graph@x > 1, na.rm = TRUE))) {
+      warning("Stochastic exposure expects edge weights in [0, 1] ",
+              "(Bernoulli probabilities). Found values outside this ",
+              "range; the sampler will saturate. Consider applying a ",
+              "-link_fun- such as \"wells-riley\" or \"linear\" that ",
+              "maps weights into [0, 1].")
+    }
+
+    # Denominator: count non-zero-weight neighbours. Using `graph@x != 0`
+    # instead of `rep(1, ...)` keeps the denominator aligned with the
+    # kernel output -- structurally-stored zeros (e.g. from a link kernel
+    # that maps some weights to 0, or from user-supplied 0 weights) do
+    # not inflate the degree.
     graph_binary <- graph
-    graph_binary@x <- rep(1, length(graph@x))
+    graph_binary@x <- as.numeric(graph@x != 0)
     norm <- as.vector(graph_binary %*% attrs) + 1e-20
 
     # Numerator: Stochastic Filter (Bernoulli -> Binary)
