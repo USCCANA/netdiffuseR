@@ -7,9 +7,9 @@ mk_diffnet <- function() {
   new_diffnet(gr, toa, t0 = 1L, t1 = 5L)
 }
 
-test_that("get_transmissions() returns an empty data.frame when unset", {
+test_that("transmission_tree() returns an empty data.frame when unset", {
   x <- mk_diffnet()
-  tr <- get_transmissions(x)
+  tr <- transmission_tree(x)
   expect_s3_class(tr, "data.frame")
   expect_equal(nrow(tr), 0L)
   expect_setequal(
@@ -62,7 +62,7 @@ test_that("as_transmission_tree() stores a clean tree and optional pars", {
     stringsAsFactors = FALSE
   )
   y <- as_transmission_tree(x, tree, pars = list(kernel = "wells-riley"))
-  tr <- get_transmissions(y)
+  tr <- transmission_tree(y)
 
   # Ordered by (date, target) and clean rownames
   expect_equal(tr$date, c(1L, 2L, 3L))
@@ -81,13 +81,13 @@ test_that("Missing optional columns are defaulted", {
     source_exposure_date = c(NA_integer_, 1L)
   )
   y  <- as_transmission_tree(x, tree)
-  tr <- get_transmissions(y)
+  tr <- transmission_tree(y)
 
   expect_true(all(tr$virus_id == 1L))
   expect_true(all(is.na(tr$virus)))
 })
 
-test_that("get_transmissions() requires a diffnet", {
-  expect_error(get_transmissions(42), "must be a diffnet")
+test_that("transmission_tree() requires a diffnet", {
+  expect_error(transmission_tree(42), "must be a diffnet")
   expect_error(as_transmission_tree(42, data.frame()), "must be a diffnet")
 })

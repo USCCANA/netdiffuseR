@@ -128,7 +128,7 @@ as_transmission_tree <- function(x, tree, pars = list()) {
 #'   \code{target}, \code{source_exposure_date}, \code{virus_id}, \code{virus}.
 #' @export
 #' @seealso \code{\link{as_transmission_tree}}
-get_transmissions <- function(x) {
+transmission_tree <- function(x) {
   if (!inherits(x, "diffnet"))
     stop("-x- must be a diffnet object.")
 
