@@ -28,6 +28,13 @@
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
 #' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
+#' @param adoption_model Character scalar. Either \code{"threshold"} (default;
+#' adopter iff \code{exposure >= threshold}) or \code{"logit"} (adopter with
+#' probability \code{plogis(beta0 + beta_expo * exposure)}).
+#' @param adoption_pars Named list. Required when
+#' \code{adoption_model = "logit"}: must supply \code{beta0} (intercept)
+#' and \code{beta_expo} (slope on exposure). Ignored when
+#' \code{adoption_model = "threshold"}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -408,8 +415,17 @@ rdiffnet <- function(
     name           = "A diffusion network",
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
-    disadopt       = NULL
+    disadopt       = NULL,
+    adoption_model = c("threshold", "logit"),
+    adoption_pars  = NULL
   ) {
+
+  adoption_model <- match.arg(adoption_model)
+  if (adoption_model == "logit") {
+    if (is.null(adoption_pars$beta0) || is.null(adoption_pars$beta_expo))
+      stop("-adoption_pars- must supply both -beta0- and -beta_expo- ",
+           "when -adoption_model- = \"logit\".")
+  }
 
   # Checking options
   for (arg in names(default_rewire.args))
@@ -567,8 +583,15 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      # 3.2 Identifying who adopts based on the threshold
-      whoadopts <- which( (expo[,,q] >= thr[,q]) & is.na(toa[,q]))
+      # 3.2 Identifying who adopts under the configured adoption model
+      if (adoption_model == "logit") {
+        e_q <- as.vector(expo[, , q])
+        p   <- stats::plogis(adoption_pars$beta0 +
+                             adoption_pars$beta_expo * e_q)
+        whoadopts <- which((stats::runif(length(p)) < p) & is.na(toa[, q]))
+      } else {
+        whoadopts <- which((expo[, , q] >= thr[, q]) & is.na(toa[, q]))
+      }
 
       # 3.3 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L

@@ -22,7 +22,9 @@ rdiffnet(
   name = "A diffusion network",
   behavior = "Random contagion",
   stop.no.diff = TRUE,
-  disadopt = NULL
+  disadopt = NULL,
+  adoption_model = c("threshold", "logit"),
+  adoption_pars = NULL
 )
 }
 \arguments{
@@ -72,6 +74,15 @@ threshold for each node.}
 with error if there was no diffusion. Otherwise it throws a warning.}
 
 \item{disadopt}{Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.}
+
+\item{adoption_model}{Character scalar. Either \code{"threshold"} (default;
+adopter iff \code{exposure >= threshold}) or \code{"logit"} (adopter with
+probability \code{plogis(beta0 + beta_expo * exposure)}).}
+
+\item{adoption_pars}{Named list. Required when
+\code{adoption_model = "logit"}: must supply \code{beta0} (intercept)
+and \code{beta_expo} (slope on exposure). Ignored when
+\code{adoption_model = "threshold"}.}
 }
 \value{
 A random \code{\link{diffnet}} class object.
