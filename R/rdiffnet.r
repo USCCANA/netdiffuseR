@@ -28,13 +28,13 @@
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
 #' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
-#' @param adoption_model Character scalar. Either \code{"threshold"} (default;
-#' adopter iff \code{exposure >= threshold}) or \code{"logit"} (adopter with
+#' @param adoption_model Character scalar. Either \code{"deterministic"} (default;
+#' adopter iff \code{exposure >= threshold}) or \code{"stochastic"} (adopter with
 #' probability \code{plogis(beta0 + beta_expo * exposure)}).
 #' @param adoption_pars Named list. Required when
-#' \code{adoption_model = "logit"}: must supply \code{beta0} (intercept)
+#' \code{adoption_model = "stochastic"}: must supply \code{beta0} (intercept)
 #' and \code{beta_expo} (slope on exposure). Ignored when
-#' \code{adoption_model = "threshold"}.
+#' \code{adoption_model = "deterministic"}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -416,15 +416,15 @@ rdiffnet <- function(
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
     disadopt       = NULL,
-    adoption_model = c("threshold", "logit"),
+    adoption_model = c("deterministic", "stochastic"),
     adoption_pars  = NULL
   ) {
 
   adoption_model <- match.arg(adoption_model)
-  if (adoption_model == "logit") {
+  if (adoption_model == "stochastic") {
     if (is.null(adoption_pars$beta0) || is.null(adoption_pars$beta_expo))
       stop("-adoption_pars- must supply both -beta0- and -beta_expo- ",
-           "when -adoption_model- = \"logit\".")
+           "when -adoption_model- = \"stochastic\".")
   }
 
   # Checking options
@@ -584,7 +584,7 @@ rdiffnet <- function(
     for (q in 1:num_of_behaviors) {
 
       # 3.2 Identifying who adopts under the configured adoption model
-      if (adoption_model == "logit") {
+      if (adoption_model == "stochastic") {
         e_q <- as.vector(expo[, , q])
         p   <- stats::plogis(adoption_pars$beta0 +
                              adoption_pars$beta_expo * e_q)
