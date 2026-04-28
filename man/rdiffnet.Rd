@@ -23,7 +23,7 @@ rdiffnet(
   behavior = "Random contagion",
   stop.no.diff = TRUE,
   disadopt = NULL,
-  adoption_model = c("deterministic", "stochastic"),
+  adoption_mechanism = NULL,
   adoption_pars = NULL
 )
 }
@@ -75,14 +75,18 @@ with error if there was no diffusion. Otherwise it throws a warning.}
 
 \item{disadopt}{Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.}
 
-\item{adoption_model}{Character scalar. Either \code{"deterministic"} (default;
-adopter iff \code{exposure >= threshold}) or \code{"stochastic"} (adopter with
-probability \code{plogis(beta0 + beta_expo * exposure)}).}
+\item{adoption_mechanism}{Function. Per-step adoption rule. Receives
+\code{(expo, thresholds, not_adopted, time, pars)} and returns the integer
+indices that adopt at the current step. Defaults to
+\code{\link{adoptmech_threshold}} (Tom Valente's deterministic threshold
+rule). Pass \code{\link{adoptmech_logit}} or \code{\link{adoptmech_probit}}
+for stochastic adoption, or any user-defined function with the same
+signature.}
 
-\item{adoption_pars}{Named list. Required when
-\code{adoption_model = "stochastic"}: must supply \code{beta0} (intercept)
-and \code{beta_expo} (slope on exposure). Ignored when
-\code{adoption_model = "deterministic"}.}
+\item{adoption_pars}{Named list. Mechanism-specific parameters forwarded
+verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
+kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
+\code{beta0} and \code{beta_expo}.}
 }
 \value{
 A random \code{\link{diffnet}} class object.

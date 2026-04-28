@@ -28,13 +28,17 @@
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
 #' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
-#' @param adoption_model Character scalar. Either \code{"deterministic"} (default;
-#' adopter iff \code{exposure >= threshold}) or \code{"stochastic"} (adopter with
-#' probability \code{plogis(beta0 + beta_expo * exposure)}).
-#' @param adoption_pars Named list. Required when
-#' \code{adoption_model = "stochastic"}: must supply \code{beta0} (intercept)
-#' and \code{beta_expo} (slope on exposure). Ignored when
-#' \code{adoption_model = "deterministic"}.
+#' @param adoption_mechanism Function. Per-step adoption rule. Receives
+#' \code{(expo, thresholds, not_adopted, time, pars)} and returns the integer
+#' indices that adopt at the current step. Defaults to
+#' \code{\link{adoptmech_threshold}} (Tom Valente's deterministic threshold
+#' rule). Pass \code{\link{adoptmech_logit}} or \code{\link{adoptmech_probit}}
+#' for stochastic adoption, or any user-defined function with the same
+#' signature.
+#' @param adoption_pars Named list. Mechanism-specific parameters forwarded
+#' verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
+#' kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
+#' \code{beta0} and \code{beta_expo}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -415,17 +419,15 @@ rdiffnet <- function(
     name           = "A diffusion network",
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
-    disadopt       = NULL,
-    adoption_model = c("deterministic", "stochastic"),
-    adoption_pars  = NULL
+    disadopt           = NULL,
+    adoption_mechanism = NULL,
+    adoption_pars      = NULL
   ) {
 
-  adoption_model <- match.arg(adoption_model)
-  if (adoption_model == "stochastic") {
-    if (is.null(adoption_pars$beta0) || is.null(adoption_pars$beta_expo))
-      stop("-adoption_pars- must supply both -beta0- and -beta_expo- ",
-           "when -adoption_model- = \"stochastic\".")
-  }
+  if (is.null(adoption_mechanism))
+    adoption_mechanism <- adoptmech_threshold
+  if (!is.function(adoption_mechanism))
+    stop("-adoption_mechanism- must be a function (see ?adoption_mechanisms).")
 
   # Checking options
   for (arg in names(default_rewire.args))
@@ -583,15 +585,14 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      # 3.2 Identifying who adopts under the configured adoption model
-      if (adoption_model == "stochastic") {
-        e_q <- as.vector(expo[, , q])
-        p   <- stats::plogis(adoption_pars$beta0 +
-                             adoption_pars$beta_expo * e_q)
-        whoadopts <- which((stats::runif(length(p)) < p) & is.na(toa[, q]))
-      } else {
-        whoadopts <- which((expo[, , q] >= thr[, q]) & is.na(toa[, q]))
-      }
+      # 3.2 Identifying who adopts via the configured adoption_mechanism
+      whoadopts <- adoption_mechanism(
+        expo        = as.vector(expo[, , q]),
+        thresholds  = thr[, q],
+        not_adopted = is.na(toa[, q]),
+        time        = i,
+        pars        = adoption_pars
+      )
 
       # 3.3 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L
