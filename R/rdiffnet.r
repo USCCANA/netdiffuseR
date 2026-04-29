@@ -22,11 +22,23 @@
 #' it can also be an \eqn{n \times Q} matrix or a list of \eqn{Q} single behavior inputs. Sets the adoption
 #' threshold for each node.
 #' @param exposure.args List. Arguments to be passed to \code{\link{exposure}}.
+#' @param exposure.mode Character scalar. Either "deterministic" (default) or "stochastic".
 #' @param name Character scalar. Passed to \code{\link{as_diffnet}}.
 #' @param behavior Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
 #' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
+#' @param adoption_mechanism Function. Per-step adoption rule. Receives
+#' \code{(expo, thresholds, not_adopted, time, pars)} and returns the integer
+#' indices that adopt at the current step. Defaults to
+#' \code{\link{adoptmech_threshold}} (Tom Valente's deterministic threshold
+#' rule). Pass \code{\link{adoptmech_logit}} or \code{\link{adoptmech_probit}}
+#' for stochastic adoption, or any user-defined function with the same
+#' signature.
+#' @param adoption_pars Named list. Mechanism-specific parameters forwarded
+#' verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
+#' kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
+#' \code{beta0} and \code{beta_expo}.
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -100,6 +112,10 @@
 #'   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
 #'   \code{normalized} \tab \code{TRUE}
 #' }
+#'
+#' When \code{exposure.mode = "stochastic"}, the \code{valued} argument in
+#' \code{exposure.args} is forced to \code{TRUE} (with a message) to ensure that
+#' edge weights are treated as probabilities.
 #'
 #' @examples
 #' # (Single behavior): --------------------------------------------------------
@@ -399,11 +415,19 @@ rdiffnet <- function(
     rewire.args    = list(),
     threshold.dist = runif(n),
     exposure.args  = list(),
+    exposure.mode  = "deterministic",
     name           = "A diffusion network",
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
-    disadopt       = NULL
+    disadopt           = NULL,
+    adoption_mechanism = NULL,
+    adoption_pars      = NULL
   ) {
+
+  if (is.null(adoption_mechanism))
+    adoption_mechanism <- adoptmech_threshold
+  if (!is.function(adoption_mechanism))
+    stop("-adoption_mechanism- must be a function (see ?adoption_mechanisms).")
 
   # Checking options
   for (arg in names(default_rewire.args))
@@ -413,6 +437,14 @@ rdiffnet <- function(
   for (arg in names(default_exposure.args))
     if (!length(exposure.args[[arg]]))
       exposure.args[[arg]] <- default_exposure.args[[arg]]
+
+  exposure.args$mode <- exposure.mode
+
+  # If stochastic mode is selected, ensure valued is TRUE (enabling weights as probabilities)
+  if (exposure.mode == "stochastic" && !exposure.args$valued) {
+    message("exposure.mode='stochastic' requires valued=TRUE to use weights as probabilities. Setting exposure.args$valued=TRUE.")
+    exposure.args$valued <- TRUE
+  }
 
   if (inherits(exposure.args[["attrs"]], "matrix")) {
     # Checking if the attrs matrix is has dims n x t
@@ -553,8 +585,14 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      # 3.2 Identifying who adopts based on the threshold
-      whoadopts <- which( (expo[,,q] >= thr[,q]) & is.na(toa[,q]))
+      # 3.2 Identifying who adopts via the configured adoption_mechanism
+      whoadopts <- adoption_mechanism(
+        expo        = as.vector(expo[, , q]),
+        thresholds  = thr[, q],
+        not_adopted = is.na(toa[, q]),
+        time        = i,
+        pars        = adoption_pars
+      )
 
       # 3.3 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L

@@ -11,6 +11,9 @@
 * New dataset `epigames` and `epigamesDiffNet`: a simulated epidemic game
   network with 594 nodes and 15 time periods from the WKU Epi Games study.
 
+* `exposure()` and `rdiffnet()` now support `mode = "stochastic"`, allowing
+  for probabilistic interpretation of edge weights in exposure calculations.
+
 ## Internal changes
 
 * Fixed CRAN example error in `round_to_seq()`: `plot(w, x)` replaced with
@@ -18,7 +21,6 @@
   when called via `plot.data.frame()`.
 
 * Removed `configure` framework. R already provides paths and configuration for OpenMP.
-
 
 # Changes in netdiffuseR version 1.24.0 (2025-12-09)
 

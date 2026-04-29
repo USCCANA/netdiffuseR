@@ -18,10 +18,13 @@ rdiffnet(
   rewire.args = list(),
   threshold.dist = runif(n),
   exposure.args = list(),
+  exposure.mode = "deterministic",
   name = "A diffusion network",
   behavior = "Random contagion",
   stop.no.diff = TRUE,
-  disadopt = NULL
+  disadopt = NULL,
+  adoption_mechanism = NULL,
+  adoption_pars = NULL
 )
 }
 \arguments{
@@ -61,6 +64,8 @@ threshold for each node.}
 
 \item{exposure.args}{List. Arguments to be passed to \code{\link{exposure}}.}
 
+\item{exposure.mode}{Character scalar. Either "deterministic" (default) or "stochastic".}
+
 \item{name}{Character scalar. Passed to \code{\link{as_diffnet}}.}
 
 \item{behavior}{Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.}
@@ -69,6 +74,19 @@ threshold for each node.}
 with error if there was no diffusion. Otherwise it throws a warning.}
 
 \item{disadopt}{Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.}
+
+\item{adoption_mechanism}{Function. Per-step adoption rule. Receives
+\code{(expo, thresholds, not_adopted, time, pars)} and returns the integer
+indices that adopt at the current step. Defaults to
+\code{\link{adoptmech_threshold}} (Tom Valente's deterministic threshold
+rule). Pass \code{\link{adoptmech_logit}} or \code{\link{adoptmech_probit}}
+for stochastic adoption, or any user-defined function with the same
+signature.}
+
+\item{adoption_pars}{Named list. Mechanism-specific parameters forwarded
+verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
+kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
+\code{beta0} and \code{beta_expo}.}
 }
 \value{
 A random \code{\link{diffnet}} class object.
@@ -155,6 +173,10 @@ is applied using that graph instead.
   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
   \code{normalized} \tab \code{TRUE}
 }
+
+When \code{exposure.mode = "stochastic"}, the \code{valued} argument in
+\code{exposure.args} is forced to \code{TRUE} (with a message) to ensure that
+edge weights are treated as probabilities.
 
 The function \code{rdiffnet_multiple} is a wrapper of \code{rdiffnet} wich allows
 simulating multiple diffusion networks with the same parameters and apply

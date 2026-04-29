@@ -356,6 +356,13 @@ check_as_diffnet_attrs <- function(
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param name Character scalar. Name of the diffusion network (descriptive).
 #' @param behavior Character vector. Name of the behavior(s) been analyzed (innovation).
+#' @param tod Optional numeric vector of size \eqn{n}. Times of disadoption
+#' (e.g. recovery, removal). When supplied, each non-\code{NA} entry must be
+#' strictly greater than the corresponding \code{toa} and \code{NA} whenever
+#' \code{toa} is \code{NA}. Node \eqn{i} is considered adopted over the closed
+#' interval \eqn{[\mathrm{toa}_i, \mathrm{tod}_i - 1]}; \code{NA} in \code{tod}
+#' means the adoption is absorbing. Currently only single-behavior (vector)
+#' \code{tod} is supported.
 #'
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
@@ -572,7 +579,8 @@ new_diffnet <- function(
   self                = getOption("diffnet.self"),
   multiple            = getOption("diffnet.multiple"),
   name                = "Diffusion Network",
-  behavior            = NULL
+  behavior            = NULL,
+  tod                 = NULL
 ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -623,7 +631,7 @@ new_diffnet <- function(
   }
 
   # Step 2.1: Checking class of TOA and coercing if necessary
-  if (!inherits(toa, "integer")) {
+  if (!is.integer(toa)) {
 
     warning("Coercing -toa- into integer.")
     toa[] <- as.integer(toa)
@@ -639,8 +647,49 @@ new_diffnet <- function(
     }
   }
 
+  # Step 2.3: Validating -tod- (time of disadoption), if provided -------------
+  if (length(tod)) {
+
+    if (num_of_behaviors > 1L)
+      stop("Multi-behavior -tod- is not supported yet. Provide a vector -tod- ",
+           "with a single behavior, or leave -tod- as NULL.")
+
+    if (!is.null(dim(tod)))
+      stop("-tod- must be a vector of the same length as -toa-.")
+
+    if (length(tod) != length(toa))
+      stop("-tod- and -toa- have different lengths (", length(tod), " and ",
+           length(toa), " respectively).")
+
+    if (!is.integer(tod)) {
+      warning("Coercing -tod- into integer.")
+      tod_names <- names(tod)
+      tod <- as.integer(tod)
+      names(tod) <- tod_names
+    }
+
+    has_both <- !is.na(toa) & !is.na(tod)
+    if (any(tod[has_both] <= toa[has_both]))
+      stop("-tod- must be strictly greater than -toa- for every node with ",
+           "both values defined (an adopter must remain so for at least one ",
+           "period before disadopting).")
+
+    if (any(!is.na(tod) & is.na(toa)))
+      stop("-tod- is defined for some nodes that never adopted (NA in -toa-). ",
+           "-tod- entries must be NA wherever -toa- is NA.")
+
+    if (!length(names(tod))) names(tod) <- names(toa)
+  }
+
   # Step 3.1: Creating Time of adoption matrix ---------------------------------
   mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
+
+  # Step 3.1b: Rebuilding cumadopt using [toa, tod-1] intervals if -tod- set
+  if (length(tod) && num_of_behaviors == 1L) {
+    intervals <- cumadopt_from_intervals(toa, tod, t0 = t0, t1 = t1,
+                                         labels = meta$ids)
+    mat$cumadopt <- intervals$cumadopt
+  }
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
 
@@ -775,12 +824,14 @@ new_diffnet <- function(
       list(
         graph = graph,
         toa   = toa,
+        tod   = tod,
         adopt = adopt,
         cumadopt = cumadopt,
         # Attributes
         vertex.static.attrs = vertex.static.attrs,
         vertex.dyn.attrs    = vertex.dyn.attrs,
         graph.attrs         = graph.attrs,
+        transmission        = NULL,
         meta = meta
       ),
       class="diffnet"

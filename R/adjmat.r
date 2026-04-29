@@ -537,6 +537,29 @@ toa_mat.default <- function(per, t0, t1) {
   )
 }
 
+# Build (adopt, cumadopt) from (toa, tod) intervals for a single behavior.
+# Each node i is considered adopted on periods [toa[i], tod[i] - 1]; when
+# tod[i] is NA the adoption is absorbing and the interval runs through t1.
+cumadopt_from_intervals <- function(toa, tod, t0, t1, labels = NULL) {
+  n <- length(toa)
+  T <- t1 - t0 + 1L
+  adopt    <- matrix(0L, nrow = n, ncol = T)
+  cumadopt <- matrix(0L, nrow = n, ncol = T)
+  for (i in seq_len(n)) {
+    s_val <- toa[i]
+    if (is.na(s_val)) next
+    s <- as.integer(s_val) - t0 + 1L
+    e_val <- tod[i]
+    e <- if (is.na(e_val)) T else (as.integer(e_val) - 1L - t0 + 1L)
+    if (s >= 1L && s <= T) adopt[i, s] <- 1L
+    if (s <= e && s >= 1L && e <= T && e >= 1L) cumadopt[i, s:e] <- 1L
+  }
+  rn <- if (length(labels)) labels else seq_len(n)
+  dimnames(adopt)    <- list(rn, t0:t1)
+  dimnames(cumadopt) <- list(rn, t0:t1)
+  list(adopt = adopt, cumadopt = cumadopt)
+}
+
 # @rdname toa_mat
 # @export
 toa_mat.numeric <- function(times, labels=NULL,

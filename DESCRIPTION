@@ -1,6 +1,6 @@
 Package: netdiffuseR
 Title: Analysis of Diffusion and Contagion Processes on Networks
-Version: 1.25.0
+Version: 1.26.0
 Authors@R: c(
   person("George", "Vega Yon", email="g.vegayon@gmail.com", role=c("aut", "cre"),
     comment=c(ORCID = "0000-0002-3171-0844", what="Rewrite functions with Rcpp, plus new features")
@@ -57,11 +57,13 @@ URL: https://github.com/USCCANA/netdiffuseR,
  https://USCCANA.github.io/netdiffuseR/
 BugReports: https://github.com/USCCANA/netdiffuseR/issues
 Classification/MSC: 90C35, 90B18, 91D30
-Collate: 
+Collate:
     'RcppExports.R'
     'imports.r'
     'graph_data.r'
     'adjmat.r'
+    'adoption_mechanisms.R'
+    'disadoption_mechanisms.R'
     'bass.r'
     'bootnet.r'
     'citer_environment.R'
@@ -94,3 +96,4 @@ Collate:
     'struct_equiv.R'
     'struct_test.R'
     'survey_to_diffnet.R'
+    'transmission.R'
