@@ -64,7 +64,7 @@ adoptmech_threshold <- function(expo, thresholds, not_adopted, time, pars) {
 #' @export
 adoptmech_logit <- function(expo, thresholds, not_adopted, time, pars) {
   if (is.null(pars$beta0) || is.null(pars$beta_expo))
-    stop("-adoptmech_logit- requires -pars- with both -beta0- and -beta_expo-.")
+    stop("-adoptmech_logit- requires -adoption_pars- with both -beta0- and -beta_expo-.")
   p <- stats::plogis(pars$beta0 + pars$beta_expo * expo)
   which((stats::runif(length(p)) < p) & not_adopted)
 }
@@ -73,7 +73,7 @@ adoptmech_logit <- function(expo, thresholds, not_adopted, time, pars) {
 #' @export
 adoptmech_probit <- function(expo, thresholds, not_adopted, time, pars) {
   if (is.null(pars$beta0) || is.null(pars$beta_expo))
-    stop("-adoptmech_probit- requires -pars- with both -beta0- and -beta_expo-.")
+    stop("-adoptmech_probit- requires -adoption_pars- with both -beta0- and -beta_expo-.")
   p <- stats::pnorm(pars$beta0 + pars$beta_expo * expo)
   which((stats::runif(length(p)) < p) & not_adopted)
 }

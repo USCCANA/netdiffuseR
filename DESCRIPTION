@@ -63,6 +63,7 @@ Collate:
     'graph_data.r'
     'adjmat.r'
     'adoption_mechanisms.R'
+    'disadoption_mechanisms.R'
     'bass.r'
     'bootnet.r'
     'citer_environment.R'
