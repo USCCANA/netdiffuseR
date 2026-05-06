@@ -96,3 +96,6 @@ Enough but not too many: A bi-threshold model for behavioral
 diffusion. \emph{PNAS Nexus} 3(10).
 \doi{10.1093/pnasnexus/pgae428}
 }
+\author{
+Aníbal Olivera M.
+}

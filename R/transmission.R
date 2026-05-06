@@ -69,6 +69,7 @@
 #'
 #' @export
 #' @seealso \code{\link{new_diffnet}}
+#' @author Aníbal Olivera M.
 as_transmission_tree <- function(x, tree, pars = list()) {
 
   if (!inherits(x, "diffnet"))
@@ -128,6 +129,7 @@ as_transmission_tree <- function(x, tree, pars = list()) {
 #'   \code{target}, \code{source_exposure_date}, \code{virus_id}, \code{virus}.
 #' @export
 #' @seealso \code{\link{as_transmission_tree}}
+#' @author Aníbal Olivera M.
 transmission_tree <- function(x) {
   if (!inherits(x, "diffnet"))
     stop("-x- must be a diffnet object.")

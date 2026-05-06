@@ -841,6 +841,7 @@ split_behaviors <- function(diffnet_obj) {
     diffnets[[q]]$adopt <- diffnet_obj$adopt[[q]]
 
     diffnets[[q]]$cumadopt <- diffnet_obj$cumadopt[[q]]
+    diffnets[[q]]$status   <- diffnets[[q]]$cumadopt   # canonical alias
 
     diffnets[[q]]$meta$behavior <- behaviors_names[q]
   }

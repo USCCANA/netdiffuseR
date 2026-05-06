@@ -72,6 +72,7 @@
 #'                seed.p.adopt = 0.10, stop.no.diff = FALSE,
 #'                disadopt = disadoptmech_logit(beta0 = -1, beta_expo = -2))
 #'
+#' @author Aníbal Olivera M.
 #' @name disadoption_mechanisms
 NULL
 

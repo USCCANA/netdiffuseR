@@ -701,7 +701,7 @@ new_diffnet <- function(
   # Step 3.1: Creating the {adopt, cumadopt} matrices --------------------------
   if (!is.null(status)) {
     # Build {adopt, cumadopt} directly from the -status- array.
-    mat <- mat_from_status(status, t0 = t0, t1 = t1, labels = meta$ids)
+    mat <- status_mat(status, t0 = t0, t1 = t1, labels = meta$ids)
   } else {
     # Legacy path: build absorbing {adopt, cumadopt} from -toa-.
     mat <- toa_mat(toa, labels = meta$ids, t0 = t0, t1 = t1)
@@ -958,6 +958,7 @@ diffnet.toa <- function(graph) {
   nper <- ncol(mat[[1]])
   graph$adopt    <- unname(mat$adopt)
   graph$cumadopt <- unname(mat$cumadopt)
+  graph$status   <- graph$cumadopt   # keep canonical alias in sync
 
   graph
 

@@ -73,3 +73,6 @@ toa_all(dn)    # one row per fresh adoption event
 tod_all(dn)    # zero-row data.frame for an absorbing diffnet
 
 }
+\author{
+Aníbal Olivera M.
+}

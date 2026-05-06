@@ -20,3 +20,6 @@ been attached, an empty data.frame with the standard columns is returned.
 \seealso{
 \code{\link{as_transmission_tree}}
 }
+\author{
+Aníbal Olivera M.
+}

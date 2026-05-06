@@ -293,6 +293,7 @@ rgraph_ba <- function(
         graph$cumadopt,
         matrix(0, nrow=nnew-n, ncol=graph$meta$nper)
       )
+      graph$status <- graph$cumadopt   # keep canonical alias in sync
 
       graph$toa <- c(graph$toa, rep(NA, nnew-n))
       names(graph$toa) <- graph$meta$ids
@@ -300,6 +301,7 @@ rgraph_ba <- function(
       # Names
       dimnames(graph$adopt) <- list(graph$meta$ids, graph$meta$pers)
       dimnames(graph$cumadopt) <- list(graph$meta$ids, graph$meta$pers)
+      dimnames(graph$status)   <- list(graph$meta$ids, graph$meta$pers)
 
       for (i in 1:length(out))
         dimnames(graph$graph[[i]]) <- list(graph$meta$ids, graph$meta$ids)

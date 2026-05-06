@@ -72,3 +72,6 @@ dn <- rdiffnet(n = 30, t = 6, seed.graph = "small-world",
                adoption_pars      = list(beta0 = -2, beta_expo = 5))
 
 }
+\author{
+Aníbal Olivera M.
+}

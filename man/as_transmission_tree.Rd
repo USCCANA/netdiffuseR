@@ -49,3 +49,6 @@ estimation of the serial interval and reproductive number of an epidemic.
 \seealso{
 \code{\link{new_diffnet}}
 }
+\author{
+Aníbal Olivera M.
+}

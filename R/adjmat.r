@@ -553,7 +553,7 @@ toa_mat.default <- function(per, t0, t1) {
 # - cumadopt is exactly status (alias; no copy thanks to R's COW).
 # - adopt[i, t] = 1 iff status[i, t] == 1 AND (t == 1 OR status[i, t-1] == 0).
 #   That is, every "fresh" entry into the adopted state.
-mat_from_status_single <- function(status, t0, t1, labels = NULL) {
+status_mat_single <- function(status, t0, t1, labels = NULL) {
   storage.mode(status) <- "integer"
   n <- nrow(status)
   T <- ncol(status)
@@ -577,11 +577,11 @@ mat_from_status_single <- function(status, t0, t1, labels = NULL) {
 }
 
 # Public-facing dispatcher: returns the same shape as -toa_mat-.
-mat_from_status <- function(status, t0, t1, labels = NULL) {
+status_mat <- function(status, t0, t1, labels = NULL) {
   if (is.list(status)) {
-    lapply(status, mat_from_status_single, t0 = t0, t1 = t1, labels = labels)
+    lapply(status, status_mat_single, t0 = t0, t1 = t1, labels = labels)
   } else {
-    mat_from_status_single(status, t0 = t0, t1 = t1, labels = labels)
+    status_mat_single(status, t0 = t0, t1 = t1, labels = labels)
   }
 }
 

@@ -51,6 +51,7 @@
 #'                adoption_mechanism = adoptmech_logit,
 #'                adoption_pars      = list(beta0 = -2, beta_expo = 5))
 #'
+#' @author Aníbal Olivera M.
 #' @name adoption_mechanisms
 NULL
 
