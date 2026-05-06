@@ -356,13 +356,16 @@ check_as_diffnet_attrs <- function(
 #' @param as.df Logical scalar. When TRUE returns a data.frame.
 #' @param name Character scalar. Name of the diffusion network (descriptive).
 #' @param behavior Character vector. Name of the behavior(s) been analyzed (innovation).
-#' @param tod Optional numeric vector of size \eqn{n}. Times of disadoption
-#' (e.g. recovery, removal). When supplied, each non-\code{NA} entry must be
-#' strictly greater than the corresponding \code{toa} and \code{NA} whenever
-#' \code{toa} is \code{NA}. Node \eqn{i} is considered adopted over the closed
-#' interval \eqn{[\mathrm{toa}_i, \mathrm{tod}_i - 1]}; \code{NA} in \code{tod}
-#' means the adoption is absorbing. Currently only single-behavior (vector)
-#' \code{tod} is supported.
+#' @param status Optional state representation. Single-behavior: an
+#' \eqn{n \times T} integer matrix with \code{1} on the cells where node
+#' \eqn{i} is adopted at time \eqn{t} and \code{0} otherwise (need not be
+#' monotone — multi-cycle adoption / disadoption is supported). Multi-behavior:
+#' a length-\eqn{Q} list of such matrices. When \code{status} is supplied,
+#' it becomes the canonical state of the diffnet and \code{toa} is derived
+#' from it as the first time each node enters the adopted state. Passing
+#' both \code{toa} and \code{status} emits a warning and uses \code{status};
+#' the warning reports whether the supplied \code{toa} is consistent with
+#' the \code{toa} derived from \code{status}.
 #'
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
@@ -568,9 +571,9 @@ as_diffnet.networkDynamic <- function(graph, toavar, ...) {
 #' @export
 #' @rdname diffnet-class
 new_diffnet <- function(
-  graph, toa,
-  t0=min(toa, na.rm   = TRUE),
-  t1=max(toa, na.rm   = TRUE),
+  graph, toa = NULL,
+  t0                  = NULL,
+  t1                  = NULL,
   vertex.dyn.attrs    = NULL,
   vertex.static.attrs = NULL,
   id.and.per.vars     = NULL,
@@ -580,7 +583,7 @@ new_diffnet <- function(
   multiple            = getOption("diffnet.multiple"),
   name                = "Diffusion Network",
   behavior            = NULL,
-  tod                 = NULL
+  status              = NULL
 ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -589,12 +592,37 @@ new_diffnet <- function(
     return(graph)
   }
 
-  # Step 0.1: Setting num_of_behavior ------------------------------------------
+  # Step 0.1: Reconcile -toa- and -status- ------------------------------------
+  # -status- is the canonical multi-cycle state; -toa- remains the simple
+  # absorbing entry point. We do not derive -toa- from -status- yet; that
+  # happens in Step 1.5 once we know meta$n (so we can validate status
+  # dimensions first and emit a clear error if they mismatch).
+  if (is.null(toa) && is.null(status))
+    stop("-new_diffnet- requires either -toa- or -status-.")
+  user_supplied_toa <- toa
 
-  if (inherits(toa, "matrix"))
+  # Step 0.2: Resolve t0 / t1 defaults ----------------------------------------
+  if (is.null(t0))
+    t0 <- if (!is.null(status)) 1L else min(toa, na.rm = TRUE)
+  if (is.null(t1)) {
+    if (!is.null(status)) {
+      T_ <- if (is.list(status)) ncol(status[[1L]]) else ncol(status)
+      t1 <- t0 + T_ - 1L
+    } else {
+      t1 <- max(toa, na.rm = TRUE)
+    }
+  }
+
+  # Step 0.3: Setting num_of_behavior ------------------------------------------
+  # If -status- is provided, the number of behaviours comes from it (a list
+  # carries Q entries; a matrix means Q == 1). Otherwise we read it off -toa-.
+  if (!is.null(status)) {
+    num_of_behaviors <- if (is.list(status)) length(status) else 1L
+  } else if (inherits(toa, "matrix")) {
     num_of_behaviors <- dim(toa)[2]
-  else
+  } else {
     num_of_behaviors <- 1
+  }
 
   if (length(behavior) == 0L)
     behavior <- rep("Unknown", num_of_behaviors)
@@ -610,8 +638,31 @@ new_diffnet <- function(
   if (meta$type=="static")
     warning("-graph- is static and will be recycled (see ?new_diffnet).")
 
+  # Step 1.2: Validate -status- and derive -toa- from it -----------------
+  # Once we know meta$n we can validate the status array shape; if validation
+  # passes we derive -toa- from -status- and (when both were supplied) emit a
+  # consistency warning.
+  if (!is.null(status)) {
+    validate_status(status, n = meta$n, num_of_behaviors = num_of_behaviors)
 
-  # Step 1.2: Checking that lengths fit
+    derived_toa <- toa_from_status(status)
+    if (!is.null(user_supplied_toa)) {
+      consistent <- tryCatch(
+        identical(as.integer(user_supplied_toa), as.integer(derived_toa)),
+        error = function(e) FALSE
+      )
+      if (consistent) {
+        warning("Both -toa- and -status- supplied; using -status-. ")
+      } else {
+        warning("Both -toa- and -status- supplied; using -status-. ",
+                "Note: supplied -toa- does NOT match the -toa- derived ",
+                "from -status-; the supplied -toa- is being ignored.")
+      }
+    }
+    toa <- derived_toa
+  }
+
+  # Step 1.3: Checking that lengths fit
   if ((num_of_behaviors == 1L) && (length(toa) != meta$n)) {
 
     stop(
@@ -647,48 +698,13 @@ new_diffnet <- function(
     }
   }
 
-  # Step 2.3: Validating -tod- (time of disadoption), if provided -------------
-  if (length(tod)) {
-
-    if (num_of_behaviors > 1L)
-      stop("Multi-behavior -tod- is not supported yet. Provide a vector -tod- ",
-           "with a single behavior, or leave -tod- as NULL.")
-
-    if (!is.null(dim(tod)))
-      stop("-tod- must be a vector of the same length as -toa-.")
-
-    if (length(tod) != length(toa))
-      stop("-tod- and -toa- have different lengths (", length(tod), " and ",
-           length(toa), " respectively).")
-
-    if (!is.integer(tod)) {
-      warning("Coercing -tod- into integer.")
-      tod_names <- names(tod)
-      tod <- as.integer(tod)
-      names(tod) <- tod_names
-    }
-
-    has_both <- !is.na(toa) & !is.na(tod)
-    if (any(tod[has_both] <= toa[has_both]))
-      stop("-tod- must be strictly greater than -toa- for every node with ",
-           "both values defined (an adopter must remain so for at least one ",
-           "period before disadopting).")
-
-    if (any(!is.na(tod) & is.na(toa)))
-      stop("-tod- is defined for some nodes that never adopted (NA in -toa-). ",
-           "-tod- entries must be NA wherever -toa- is NA.")
-
-    if (!length(names(tod))) names(tod) <- names(toa)
-  }
-
-  # Step 3.1: Creating Time of adoption matrix ---------------------------------
-  mat <- toa_mat(toa, labels = meta$ids, t0=t0, t1=t1)
-
-  # Step 3.1b: Rebuilding cumadopt using [toa, tod-1] intervals if -tod- set
-  if (length(tod) && num_of_behaviors == 1L) {
-    intervals <- cumadopt_from_intervals(toa, tod, t0 = t0, t1 = t1,
-                                         labels = meta$ids)
-    mat$cumadopt <- intervals$cumadopt
+  # Step 3.1: Creating the {adopt, cumadopt} matrices --------------------------
+  if (!is.null(status)) {
+    # Build {adopt, cumadopt} directly from the -status- array.
+    mat <- mat_from_status(status, t0 = t0, t1 = t1, labels = meta$ids)
+  } else {
+    # Legacy path: build absorbing {adopt, cumadopt} from -toa-.
+    mat <- toa_mat(toa, labels = meta$ids, t0 = t0, t1 = t1)
   }
 
   # Step 3.2: Verifying dimensions and fixing meta$pers
@@ -819,14 +835,17 @@ new_diffnet <- function(
 
   }
 
+  # -$status- is the canonical multi-cycle state; for absorbing histories
+  # it equals -$cumadopt- bit-for-bit (no copy thanks to R's COW). Internal
+  # functions across the package keep reading -$cumadopt- unchanged.
   return(
     structure(
       list(
-        graph = graph,
-        toa   = toa,
-        tod   = tod,
-        adopt = adopt,
+        graph    = graph,
+        toa      = toa,
+        adopt    = adopt,
         cumadopt = cumadopt,
+        status   = cumadopt,
         # Attributes
         vertex.static.attrs = vertex.static.attrs,
         vertex.dyn.attrs    = vertex.dyn.attrs,

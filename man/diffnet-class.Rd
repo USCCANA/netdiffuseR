@@ -41,9 +41,9 @@ as_diffnet(graph, ...)
 
 new_diffnet(
   graph,
-  toa,
-  t0 = min(toa, na.rm = TRUE),
-  t1 = max(toa, na.rm = TRUE),
+  toa = NULL,
+  t0 = NULL,
+  t1 = NULL,
   vertex.dyn.attrs = NULL,
   vertex.static.attrs = NULL,
   id.and.per.vars = NULL,
@@ -53,7 +53,7 @@ new_diffnet(
   multiple = getOption("diffnet.multiple"),
   name = "Diffusion Network",
   behavior = NULL,
-  tod = NULL
+  status = NULL
 )
 
 \method{as.data.frame}{diffnet}(
@@ -149,13 +149,16 @@ order of the rows in the attribute data.}
 
 \item{behavior}{Character vector. Name of the behavior(s) been analyzed (innovation).}
 
-\item{tod}{Optional numeric vector of size \eqn{n}. Times of disadoption
-(e.g. recovery, removal). When supplied, each non-\code{NA} entry must be
-strictly greater than the corresponding \code{toa} and \code{NA} whenever
-\code{toa} is \code{NA}. Node \eqn{i} is considered adopted over the closed
-interval \eqn{[\mathrm{toa}_i, \mathrm{tod}_i - 1]}; \code{NA} in \code{tod}
-means the adoption is absorbing. Currently only single-behavior (vector)
-\code{tod} is supported.}
+\item{status}{Optional state representation. Single-behavior: an
+\eqn{n \times T} integer matrix with \code{1} on the cells where node
+\eqn{i} is adopted at time \eqn{t} and \code{0} otherwise (need not be
+monotone — multi-cycle adoption / disadoption is supported). Multi-behavior:
+a length-\eqn{Q} list of such matrices. When \code{status} is supplied,
+it becomes the canonical state of the diffnet and \code{toa} is derived
+from it as the first time each node enters the adopted state. Passing
+both \code{toa} and \code{status} emits a warning and uses \code{status};
+the warning reports whether the supplied \code{toa} is consistent with
+the \code{toa} derived from \code{status}.}
 
 \item{x}{A \code{diffnet} object.}
 

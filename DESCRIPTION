@@ -93,6 +93,7 @@ Collate:
     'select_egoalter.R'
     'spatial.R'
     'stats.R'
+    'status_accessors.R'
     'struct_equiv.R'
     'struct_test.R'
     'survey_to_diffnet.R'
