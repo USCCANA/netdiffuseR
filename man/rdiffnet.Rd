@@ -24,7 +24,8 @@ rdiffnet(
   stop.no.diff = TRUE,
   disadopt = NULL,
   adoption_mechanism = NULL,
-  adoption_pars = NULL
+  adoption_pars = NULL,
+  source_attribution = NULL
 )
 }
 \arguments{
@@ -87,6 +88,22 @@ signature.}
 verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
 kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
 \code{beta0} and \code{beta_expo}.}
+
+\item{source_attribution}{Optional lineage-tracking callback. When
+non-\code{NULL}, \code{rdiffnet} records the inferred infector of every
+fresh adopter during the simulation, builds a transmission tree, and
+returns a \code{\link{diffnet_epi}} (auto-promoted). Three modes:
+\itemize{
+  \item{\code{NULL} (default) — no lineage tracking; the output is a
+    plain \code{\link{diffnet}}.}
+  \item{A single function — applied to every behaviour (broadcast).
+    See \code{\link{source_attribution_uniform}} /
+    \code{\link{source_attribution_weighted}} /
+    \code{\link{source_attribution_earliest}} for the bundled
+    kernels.}
+  \item{A length-\eqn{Q} list — per-behaviour attributor;
+    \code{NULL} entries skip lineage tracking for that behaviour.}
+}}
 }
 \value{
 A random \code{\link{diffnet}} class object.

@@ -39,6 +39,21 @@
 #' verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
 #' kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
 #' \code{beta0} and \code{beta_expo}.
+#' @param source_attribution Optional lineage-tracking callback. When
+#' non-\code{NULL}, \code{rdiffnet} records the inferred infector of every
+#' fresh adopter during the simulation, builds a transmission tree, and
+#' returns a \code{\link{diffnet_epi}} (auto-promoted). Three modes:
+#' \itemize{
+#'   \item{\code{NULL} (default) — no lineage tracking; the output is a
+#'     plain \code{\link{diffnet}}.}
+#'   \item{A single function — applied to every behaviour (broadcast).
+#'     See \code{\link{source_attribution_uniform}} /
+#'     \code{\link{source_attribution_weighted}} /
+#'     \code{\link{source_attribution_earliest}} for the bundled
+#'     kernels.}
+#'   \item{A length-\eqn{Q} list — per-behaviour attributor;
+#'     \code{NULL} entries skip lineage tracking for that behaviour.}
+#' }
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -421,13 +436,22 @@ rdiffnet <- function(
     stop.no.diff   = TRUE,
     disadopt           = NULL,
     adoption_mechanism = NULL,
-    adoption_pars      = NULL
+    adoption_pars      = NULL,
+    source_attribution = NULL
   ) {
 
   if (is.null(adoption_mechanism))
     adoption_mechanism <- adoptmech_threshold
   if (!is.function(adoption_mechanism))
     stop("-adoption_mechanism- must be a function (see ?adoption_mechanisms).")
+
+  # adoption_mechanism contract extension (M8): rdiffnet passes -behavior- and
+  # -expo_all- to the mechanism only if it declares them (formal inspection),
+  # so M6 kernels keep working unchanged.
+  .mech_formals  <- names(formals(adoption_mechanism))
+  .mech_has_dots <- "..." %in% .mech_formals
+  .mech_wants_behavior <- "behavior" %in% .mech_formals || .mech_has_dots
+  .mech_wants_expo_all <- "expo_all" %in% .mech_formals || .mech_has_dots
 
   # Checking options
   for (arg in names(default_rewire.args))
@@ -567,6 +591,27 @@ rdiffnet <- function(
     toa[d[[q]],q] <- 1L
   }
 
+  # Step 1.4: Normalize -source_attribution-, seed the tree if active (M8) -----
+  attrs_q <- rdiffnet_normalize_source_attribution(
+    source_attribution, num_of_behaviors
+  )
+  tracking_lineage <- !all(vapply(attrs_q, is.null, logical(1)))
+  tree_rows <- list()
+  if (tracking_lineage) {
+    for (q in 1:num_of_behaviors) {
+      if (is.null(attrs_q[[q]])) next
+      seeds_q <- as.integer(d[[q]])
+      virus_name <- as.character(behavior[[q]])
+      for (s in seeds_q) {
+        tree_rows[[length(tree_rows) + 1L]] <- list(
+          date = 1L, source = NA_integer_, target = s,
+          source_exposure_date = NA_integer_,
+          virus_id = as.integer(q), virus = virus_name
+        )
+      }
+    }
+  }
+
   # Step 2.0: Thresholds -------------------------------------------------------
 
   thr <- rdiffnet_make_threshold(threshold.dist, n, num_of_behaviors)
@@ -585,25 +630,61 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      # 3.2 Identifying who adopts via the configured adoption_mechanism
-      whoadopts <- adoption_mechanism(
+      # 3.2 Identifying who adopts via the configured adoption_mechanism.
+      # The contract extension (M8) passes -behavior- and -expo_all- only
+      # when the mechanism declares them (or has -...-), so M6 kernels are
+      # untouched.
+      mech_call <- list(
         expo        = as.vector(expo[, , q]),
         thresholds  = thr[, q],
         not_adopted = is.na(toa[, q]),
         time        = i,
         pars        = adoption_pars
       )
+      if (.mech_wants_behavior) mech_call$behavior  <- q
+      if (.mech_wants_expo_all) mech_call$expo_all  <- expo
+      whoadopts <- do.call(adoption_mechanism, mech_call)
 
-      # 3.3 Updating the cumadopt
+      # 3.3 Source-attribution: for each fresh adopter, infer the infector
+      # *before* we mutate cumadopt/toa for this step. (M8)
+      if (tracking_lineage && !is.null(attrs_q[[q]]) && length(whoadopts) > 0) {
+        attr_fn    <- attrs_q[[q]]
+        graph_i    <- sgraph[[i]]
+        virus_name <- as.character(behavior[[q]])
+        for (target in whoadopts) {
+          # Adopted neighbours at slice i (pre-update state).
+          row_i <- as.vector(graph_i[target, ])
+          col_i <- as.vector(graph_i[, target])
+          nbrs  <- which((row_i != 0) | (col_i != 0))
+          nbrs  <- nbrs[cumadopt[nbrs, i, q] == 1L]
+          if (length(nbrs)) {
+            ord     <- order(toa[nbrs, q])
+            nbrs    <- nbrs[ord]
+            weights <- pmax(row_i[nbrs], col_i[nbrs])
+            src     <- attr_fn(target, nbrs, weights, i, adoption_pars)
+          } else {
+            src <- NA_integer_
+          }
+          sed <- if (is.na(src)) NA_integer_ else as.integer(toa[src, q])
+          tree_rows[[length(tree_rows) + 1L]] <- list(
+            date = as.integer(i), source = as.integer(src),
+            target = as.integer(target),
+            source_exposure_date = sed,
+            virus_id = as.integer(q), virus = virus_name
+          )
+        }
+      }
+
+      # 3.4 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L
 
-      # 3.4 Updating the toa
+      # 3.5 Updating the toa
       if (length(whoadopts) > 0) {
         toa[cbind(whoadopts, q)] <- i
       }
     }
 
-    # 3.5 identifiying the disadopters
+    # 3.6 identifiying the disadopters
     if (length(disadopt)) {
 
       # Run the disadoption algorithm. This will return the following:
@@ -658,7 +739,7 @@ rdiffnet <- function(
     toa <- array(as.integer(toa), dim = dim(toa))
   }
 
-  new_diffnet(
+  out <- new_diffnet(
     graph      = sgraph,
     toa        = toa,
     self       = isself,
@@ -668,6 +749,20 @@ rdiffnet <- function(
     name       = name,
     behavior   = behavior
   )
+
+  # M8: if lineage tracking was active in the simulation loop, build the
+  # transmission tree from the accumulated rows and auto-promote the diffnet
+  # to a -diffnet_epi-. -tracking_lineage- being TRUE without rows is
+  # possible (an empty simulation with NULL attributors), in which case we
+  # promote with an empty tree.
+  if (tracking_lineage) {
+    full_tree <- rdiffnet_tree_rows_to_df(tree_rows)
+    out <- as_diffnet_epi(out,
+                          transmission = list(tree = full_tree,
+                                              pars = list()))
+  }
+
+  out
 }
 
 rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
