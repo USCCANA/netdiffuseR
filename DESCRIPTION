@@ -75,6 +75,7 @@ Collate:
     'diffnet-epi.R'
     'diffnet-indexing.r'
     'diffnet-methods.r'
+    'epi_metrics.R'
     'egonets.R'
     'formula.r'
     'igraph.r'
