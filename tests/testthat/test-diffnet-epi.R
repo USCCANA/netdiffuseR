@@ -137,3 +137,69 @@ test_that("a fresh new_diffnet() does not include a $transmission slot", {
   # The slot is not part of the base structure anymore (M7).
   expect_false("transmission" %in% names(x))
 })
+
+# ----------------------------------------------------------------------------
+# M7.1 — new_diffnet() accepts an optional -transmission- argument
+# ----------------------------------------------------------------------------
+
+test_that("new_diffnet(graph, transmission = df) promotes to diffnet_epi in one call", {
+  set.seed(42)
+  gr   <- lapply(1:5, function(x) rgraph_ba(t = 4L))
+  tree <- data.frame(
+    date                 = c(1L, 2L),
+    source               = c(NA_integer_, 1L),
+    target               = c(1L, 2L),
+    source_exposure_date = c(NA_integer_, 1L),
+    virus_id             = c(1L, 1L),
+    virus                = c("flu", "flu"),
+    stringsAsFactors     = FALSE
+  )
+  dn <- new_diffnet(gr, toa = c(1L, 2L, NA, 3L, 5L), t0 = 1L, t1 = 5L,
+                    transmission = tree,
+                    transmission_pars = list(kernel = "wells-riley"))
+
+  expect_true(is.diffnet_epi(dn))
+  expect_s3_class(dn, c("diffnet_epi", "diffnet"))
+  expect_equal(nrow(transmission_tree(dn)), 2L)
+  expect_equal(dn$transmission$pars$kernel, "wells-riley")
+})
+
+test_that("new_diffnet(graph, transmission = list(tree, pars)) stores the list verbatim", {
+  set.seed(42)
+  gr   <- lapply(1:5, function(x) rgraph_ba(t = 4L))
+  pre  <- list(
+    tree = data.frame(
+      date = 1L, source = NA_integer_, target = 1L,
+      source_exposure_date = NA_integer_, virus_id = 1L,
+      virus = NA_character_, stringsAsFactors = FALSE
+    ),
+    pars = list(note = "imported")
+  )
+  dn <- new_diffnet(gr, toa = c(1L, 2L, NA, 3L, 5L), t0 = 1L, t1 = 5L,
+                    transmission = pre)
+
+  expect_true(is.diffnet_epi(dn))
+  expect_equal(dn$transmission$pars$note, "imported")
+  expect_equal(nrow(transmission_tree(dn)), 1L)
+})
+
+test_that("new_diffnet(..., transmission = <bad>) errors clearly", {
+  set.seed(42)
+  gr <- lapply(1:5, function(x) rgraph_ba(t = 4L))
+  expect_error(
+    new_diffnet(gr, toa = c(1L, 2L, NA, 3L, 5L), t0 = 1L, t1 = 5L,
+                transmission = 42),
+    "NULL, a data.frame, or a list"
+  )
+  expect_error(
+    new_diffnet(gr, toa = c(1L, 2L, NA, 3L, 5L), t0 = 1L, t1 = 5L,
+                transmission = list(foo = 1)),
+    "NULL, a data.frame, or a list"
+  )
+})
+
+test_that("new_diffnet() without -transmission- still returns a plain diffnet", {
+  x <- mk_diffnet()
+  expect_false(is.diffnet_epi(x))
+  expect_s3_class(x, "diffnet")
+})

@@ -53,7 +53,9 @@ new_diffnet(
   multiple = getOption("diffnet.multiple"),
   name = "Diffusion Network",
   behavior = NULL,
-  status = NULL
+  status = NULL,
+  transmission = NULL,
+  transmission_pars = list()
 )
 
 \method{as.data.frame}{diffnet}(
@@ -159,6 +161,17 @@ from it as the first time each node enters the adopted state. Passing
 both \code{toa} and \code{status} emits a warning and uses \code{status};
 the warning reports whether the supplied \code{toa} is consistent with
 the \code{toa} derived from \code{status}.}
+
+\item{transmission}{Optional transmission tree (who-infected-whom). Either
+a \code{data.frame} with the columns documented in
+\code{\link{as_transmission_tree}}, or a pre-built transmission list with
+components \code{tree} and \code{pars}. When supplied, the returned
+object is promoted to the \code{\link{diffnet_epi}} subclass. \code{NULL}
+(default) returns a plain \code{diffnet}.}
+
+\item{transmission_pars}{Optional named list stored verbatim in
+\code{x$transmission$pars}. Only consulted when \code{transmission} is a
+data.frame.}
 
 \item{x}{A \code{diffnet} object.}
 

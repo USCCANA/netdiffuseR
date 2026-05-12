@@ -366,6 +366,15 @@ check_as_diffnet_attrs <- function(
 #' both \code{toa} and \code{status} emits a warning and uses \code{status};
 #' the warning reports whether the supplied \code{toa} is consistent with
 #' the \code{toa} derived from \code{status}.
+#' @param transmission Optional transmission tree (who-infected-whom). Either
+#' a \code{data.frame} with the columns documented in
+#' \code{\link{as_transmission_tree}}, or a pre-built transmission list with
+#' components \code{tree} and \code{pars}. When supplied, the returned
+#' object is promoted to the \code{\link{diffnet_epi}} subclass. \code{NULL}
+#' (default) returns a plain \code{diffnet}.
+#' @param transmission_pars Optional named list stored verbatim in
+#' \code{x$transmission$pars}. Only consulted when \code{transmission} is a
+#' data.frame.
 #'
 #' @seealso Default options are listed at \code{\link{netdiffuseR-options}}
 #' @details
@@ -583,7 +592,9 @@ new_diffnet <- function(
   multiple            = getOption("diffnet.multiple"),
   name                = "Diffusion Network",
   behavior            = NULL,
-  status              = NULL
+  status              = NULL,
+  transmission        = NULL,
+  transmission_pars   = list()
 ) {
 
   # Step 0.0: Check if its diffnet! --------------------------------------------
@@ -840,23 +851,38 @@ new_diffnet <- function(
   # functions across the package keep reading -$cumadopt- unchanged.
   # -$transmission- is NOT a base-class slot; it only appears on -diffnet_epi-
   # (the subclass created by -as_diffnet_epi()-/-as_transmission_tree()-).
-  return(
-    structure(
-      list(
-        graph    = graph,
-        toa      = toa,
-        adopt    = adopt,
-        cumadopt = cumadopt,
-        status   = cumadopt,
-        # Attributes
-        vertex.static.attrs = vertex.static.attrs,
-        vertex.dyn.attrs    = vertex.dyn.attrs,
-        graph.attrs         = graph.attrs,
-        meta = meta
-      ),
-      class="diffnet"
-    )
+  out <- structure(
+    list(
+      graph    = graph,
+      toa      = toa,
+      adopt    = adopt,
+      cumadopt = cumadopt,
+      status   = cumadopt,
+      # Attributes
+      vertex.static.attrs = vertex.static.attrs,
+      vertex.dyn.attrs    = vertex.dyn.attrs,
+      graph.attrs         = graph.attrs,
+      meta = meta
+    ),
+    class="diffnet"
   )
+
+  # Optional -transmission-: promote to diffnet_epi in a single call by
+  # delegating to -as_transmission_tree- (data.frame) or -as_diffnet_epi-
+  # (pre-built transmission list).
+  if (!is.null(transmission)) {
+    if (is.data.frame(transmission)) {
+      out <- as_transmission_tree(out, transmission, pars = transmission_pars)
+    } else if (is.list(transmission) &&
+               all(c("tree", "pars") %in% names(transmission))) {
+      out <- as_diffnet_epi(out, transmission = transmission)
+    } else {
+      stop("-transmission- must be NULL, a data.frame, or a list with ",
+           "-tree- and -pars-. See ?as_transmission_tree and ?as_diffnet_epi.")
+    }
+  }
+
+  return(out)
 
 }
 
