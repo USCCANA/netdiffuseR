@@ -24,6 +24,10 @@ to \code{\link{as_transmission_tree}} instead. See examples.}
 \item{pars}{Optional named list stored verbatim in
 \code{x$transmission$pars}. Only consulted when \code{transmission} is
 \code{NULL} or carries no \code{pars} of its own.}
+
+\item{...}{Further arguments. Accepted for compatibility with the
+\code{\link[base]{print}} generic; currently ignored by
+\code{print.diffnet_epi}.}
 }
 \value{
 \describe{

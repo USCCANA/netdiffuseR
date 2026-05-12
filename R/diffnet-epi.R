@@ -17,6 +17,9 @@
 #' @param pars Optional named list stored verbatim in
 #'   \code{x$transmission$pars}. Only consulted when \code{transmission} is
 #'   \code{NULL} or carries no \code{pars} of its own.
+#' @param ... Further arguments. Accepted for compatibility with the
+#'   \code{\link[base]{print}} generic; currently ignored by
+#'   \code{print.diffnet_epi}.
 #'
 #' @return
 #' \describe{
