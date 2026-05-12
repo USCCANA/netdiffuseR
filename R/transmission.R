@@ -54,9 +54,15 @@
 #' into \code{x} (\code{1..nnodes(x)}); \code{target} is required for every
 #' row. Existing \code{$transmission} content is overwritten.
 #'
-#' @return The \code{diffnet} object \code{x} with \code{$transmission} set to
-#'   a list with components \code{tree} (a clean, ordered \code{data.frame})
-#'   and \code{pars}.
+#' Attaching a transmission tree promotes \code{x} to the
+#' \code{\link{diffnet_epi}} subclass (\code{class(x) <- c("diffnet_epi",
+#' "diffnet")}). The promotion is monotone — an already-\code{diffnet_epi}
+#' input keeps its class. See \code{\link{as_diffnet_epi}} for the low-level
+#' constructor.
+#'
+#' @return A \code{\link{diffnet_epi}} object — the input \code{x} promoted to
+#'   the subclass with \code{$transmission} set to a list with components
+#'   \code{tree} (a clean, ordered \code{data.frame}) and \code{pars}.
 #'
 #' @references
 #' Lloyd-Smith, J. O., Schreiber, S. J., Kopp, P. E., & Getz, W. M. (2005).
@@ -115,24 +121,31 @@ as_transmission_tree <- function(x, tree, pars = list()) {
   out <- out[order(out$date, out$target), , drop = FALSE]
   rownames(out) <- NULL
 
+  # Promote to diffnet_epi (monotone — keeps class if already promoted) and
+  # attach the validated tree.
+  if (!inherits(x, "diffnet_epi"))
+    class(x) <- c("diffnet_epi", class(x))
   x$transmission <- list(tree = out, pars = pars)
   x
 }
 
-#' Retrieve the transmission tree of a \code{diffnet} object
+#' Retrieve the transmission tree of a \code{\link{diffnet_epi}} object
 #'
-#' Returns the data.frame stored in \code{x$transmission$tree}. If none has
-#' been attached, an empty data.frame with the standard columns is returned.
+#' Returns the data.frame stored in \code{x$transmission$tree} for objects
+#' that inherit from \code{diffnet_epi}. Plain (non-epi) diffnets do not
+#' carry a tree by design; calling this function on one is an API error.
 #'
-#' @param x A \code{diffnet} object.
+#' @param x A \code{\link{diffnet_epi}} object.
 #' @return A \code{data.frame} with columns \code{date}, \code{source},
 #'   \code{target}, \code{source_exposure_date}, \code{virus_id}, \code{virus}.
+#'   Zero rows when the epi object has been promoted but no tree attached yet.
 #' @export
-#' @seealso \code{\link{as_transmission_tree}}
+#' @seealso \code{\link{as_transmission_tree}}, \code{\link{as_diffnet_epi}}
 #' @author Aníbal Olivera M.
 transmission_tree <- function(x) {
-  if (!inherits(x, "diffnet"))
-    stop("-x- must be a diffnet object.")
+  if (!inherits(x, "diffnet_epi"))
+    stop("-x- is not a -diffnet_epi-. Use -as_transmission_tree()- or ",
+         "-as_diffnet_epi()- to promote a plain diffnet first.")
 
   tr <- x$transmission$tree
   if (is.null(tr)) .empty_transmission_tree() else tr

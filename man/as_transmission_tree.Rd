@@ -19,9 +19,9 @@ of the tree).}
 Useful for recording kernel parameters, seeds, etc.}
 }
 \value{
-The \code{diffnet} object \code{x} with \code{$transmission} set to
-  a list with components \code{tree} (a clean, ordered \code{data.frame})
-  and \code{pars}.
+A \code{\link{diffnet_epi}} object — the input \code{x} promoted to
+  the subclass with \code{$transmission} set to a list with components
+  \code{tree} (a clean, ordered \code{data.frame}) and \code{pars}.
 }
 \description{
 Populates the \code{$transmission} slot of a \code{diffnet} with a
@@ -36,6 +36,12 @@ Each row of \code{tree} represents one infection event (an edge
 by \code{date}. \code{source} and \code{target} must be integer row indices
 into \code{x} (\code{1..nnodes(x)}); \code{target} is required for every
 row. Existing \code{$transmission} content is overwritten.
+
+Attaching a transmission tree promotes \code{x} to the
+\code{\link{diffnet_epi}} subclass (\code{class(x) <- c("diffnet_epi",
+"diffnet")}). The promotion is monotone — an already-\code{diffnet_epi}
+input keeps its class. See \code{\link{as_diffnet_epi}} for the low-level
+constructor.
 }
 \references{
 Lloyd-Smith, J. O., Schreiber, S. J., Kopp, P. E., & Getz, W. M. (2005).

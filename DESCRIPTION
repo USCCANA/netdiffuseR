@@ -72,6 +72,7 @@ Collate:
     'degree_adoption_diagnostic.R'
     'diffnet-c.R'
     'diffnet-class.r'
+    'diffnet-epi.R'
     'diffnet-indexing.r'
     'diffnet-methods.r'
     'egonets.R'

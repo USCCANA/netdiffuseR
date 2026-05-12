@@ -7,8 +7,15 @@ mk_diffnet <- function() {
   new_diffnet(gr, toa, t0 = 1L, t1 = 5L)
 }
 
-test_that("transmission_tree() returns an empty data.frame when unset", {
+test_that("transmission_tree() errors on a plain diffnet (not promoted)", {
   x <- mk_diffnet()
+  expect_false(is.diffnet_epi(x))
+  expect_error(transmission_tree(x), "diffnet_epi")
+})
+
+test_that("transmission_tree() returns an empty data.frame after empty promotion", {
+  x <- as_diffnet_epi(mk_diffnet())
+  expect_true(is.diffnet_epi(x))
   tr <- transmission_tree(x)
   expect_s3_class(tr, "data.frame")
   expect_equal(nrow(tr), 0L)
@@ -87,7 +94,22 @@ test_that("Missing optional columns are defaulted", {
   expect_true(all(is.na(tr$virus)))
 })
 
-test_that("transmission_tree() requires a diffnet", {
-  expect_error(transmission_tree(42), "must be a diffnet")
-  expect_error(as_transmission_tree(42, data.frame()), "must be a diffnet")
+test_that("transmission_tree() and as_transmission_tree() reject non-diffnet inputs", {
+  expect_error(transmission_tree(42),                   "diffnet_epi")
+  expect_error(as_transmission_tree(42, data.frame()),  "must be a diffnet")
+})
+
+test_that("as_transmission_tree() promotes the diffnet to diffnet_epi", {
+  x <- mk_diffnet()
+  expect_false(is.diffnet_epi(x))
+  tree <- data.frame(
+    date = c(1L, 2L),
+    source = c(NA_integer_, 1L),
+    target = c(1L, 2L),
+    source_exposure_date = c(NA_integer_, 1L)
+  )
+  y <- as_transmission_tree(x, tree)
+  expect_true(is.diffnet_epi(y))
+  expect_s3_class(y, "diffnet")            # still a diffnet
+  expect_s3_class(y, "diffnet_epi")        # also a diffnet_epi
 })

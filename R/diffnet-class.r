@@ -838,6 +838,8 @@ new_diffnet <- function(
   # -$status- is the canonical multi-cycle state; for absorbing histories
   # it equals -$cumadopt- bit-for-bit (no copy thanks to R's COW). Internal
   # functions across the package keep reading -$cumadopt- unchanged.
+  # -$transmission- is NOT a base-class slot; it only appears on -diffnet_epi-
+  # (the subclass created by -as_diffnet_epi()-/-as_transmission_tree()-).
   return(
     structure(
       list(
@@ -850,7 +852,6 @@ new_diffnet <- function(
         vertex.static.attrs = vertex.static.attrs,
         vertex.dyn.attrs    = vertex.dyn.attrs,
         graph.attrs         = graph.attrs,
-        transmission        = NULL,
         meta = meta
       ),
       class="diffnet"
