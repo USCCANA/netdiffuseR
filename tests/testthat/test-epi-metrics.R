@@ -182,6 +182,52 @@ test_that("generation_time print mentions Mean and Median", {
 })
 
 # ----------------------------------------------------------------------------
+# repr_number (M12)
+# ----------------------------------------------------------------------------
+
+test_that("repr_number errors on plain diffnet (and on arbitrary input)", {
+  dn <- mk_absorbing_dn()
+  expect_error(repr_number(dn), "diffnet_epi")
+  expect_error(repr_number(list(a = 1)), "diffnet_epi")
+})
+
+test_that("repr_number returns a netdiffuseR_repr data.frame", {
+  dn <- mk_epi_dn()
+  R  <- repr_number(dn)
+  expect_s3_class(R, "netdiffuseR_repr")
+  expect_s3_class(R, "data.frame")
+  expect_setequal(names(R), c("node", "virus_id", "n_offspring"))
+  expect_type(R$n_offspring, "integer")
+  expect_true(all(R$n_offspring >= 0L))
+})
+
+test_that("repr_number global = mean(n_offspring) and matches non-seed source count", {
+  dn <- mk_epi_dn()
+  R  <- repr_number(dn)
+  tr <- transmission_tree(dn)
+
+  # Aggregate is mean offspring
+  expect_equal(attr(R, "global"), mean(R$n_offspring))
+
+  # Sum of offspring equals number of non-seed source rows in the tree
+  expect_equal(sum(R$n_offspring), sum(!is.na(tr$source)))
+
+  # Row count equals number of unique (target, virus_id) cases
+  expect_equal(
+    nrow(R),
+    nrow(unique(tr[, c("target", "virus_id"), drop = FALSE]))
+  )
+})
+
+test_that("repr_number print mentions Reproduction number and Mean offspring", {
+  dn  <- mk_epi_dn()
+  out <- capture.output(print(repr_number(dn)))
+  expect_true(any(grepl("Reproduction number", out)))
+  expect_true(any(grepl("Mean offspring", out)))
+  expect_true(any(grepl("as.data.frame", out)))
+})
+
+# ----------------------------------------------------------------------------
 # summary.diffnet_epi
 # ----------------------------------------------------------------------------
 

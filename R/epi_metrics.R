@@ -403,6 +403,173 @@ print.netdiffuseR_generation_time <- function(x, ...) {
 }
 
 # ----------------------------------------------------------------------------
+# repr_number (diffnet_epi only)
+# ----------------------------------------------------------------------------
+
+#' Empirical reproduction number from a transmission tree
+#'
+#' For every infected case in \code{$transmission$tree},
+#' \code{repr_number(x)} counts the number of secondary cases it caused
+#' (its offspring count, \eqn{\nu_i} in Lloyd-Smith \emph{et al.}, 2005)
+#' and reports the mean across cases as the empirical reproduction
+#' number. Cases that did not transmit further (terminal cases) count
+#' as zero in the denominator; seeds are included.
+#'
+#' @param x A \code{\link{diffnet_epi}} object.
+#' @param ... Currently ignored.
+#'
+#' @return A \code{data.frame} (with extra class \code{netdiffuseR_repr})
+#'   carrying columns \code{node}, \code{virus_id}, \code{n_offspring}.
+#'   Printing shows the aggregate reproduction number (mean offspring),
+#'   plus SD and range; the per-case rows are exposed via standard
+#'   data.frame subscripting. The aggregate is also stored as
+#'   \code{attr(., "global")}. A \code{plot} method renders the
+#'   offspring distribution as a barplot.
+#'
+#' @details
+#' The empirical reproduction number is defined as the mean offspring
+#' count across all observed cases:
+#'
+#' \deqn{%
+#' R = \frac{1}{N}\sum_{i \in \mathrm{cases}} \nu_i %
+#' }{%
+#' R = (1/N) * sum_i nu_i %
+#' }
+#'
+#' where \eqn{N} is the total number of infected cases (seeds + secondary)
+#' in the tree and \eqn{\nu_i} is the number of times case \eqn{i} appears
+#' as a \code{source} in the tree. Terminal cases (\eqn{\nu_i = 0}) are
+#' included in the denominator, so \eqn{R} is the true mean offspring,
+#' not the mean among transmitters only.
+#'
+#' For trees built from observational data (Epigames / contact tracing),
+#' \eqn{R} matches the standard tree-based reproduction-number estimator.
+#' For trees produced by \code{rdiffnet()} with \code{source_attribution},
+#' the value depends on the attribution policy: \code{_uniform},
+#' \code{_weighted}, and \code{_earliest} will produce different empirical
+#' \eqn{R} on the same simulation, since they distribute observed
+#' adoptions across different infectors.
+#'
+#' @references
+#' Lloyd-Smith, J. O., Schreiber, S. J., Kopp, P. E., & Getz, W. M. (2005).
+#' Superspreading and the effect of individual variation on disease emergence.
+#' \emph{Nature} 438:355-359. \doi{10.1038/nature04153}
+#'
+#' @examples
+#' set.seed(2026)
+#' dn <- rdiffnet(n = 40, t = 6, seed.graph = "small-world",
+#'                seed.p.adopt = 0.10, stop.no.diff = FALSE,
+#'                source_attribution = source_attribution_uniform)
+#' R <- repr_number(dn)
+#' R                                 # aggregate print: mean / SD / range
+#' as.data.frame(R)                  # per-case offspring counts
+#' attr(R, "global")                 # the scalar R
+#' \dontrun{
+#' plot(R)                            # offspring distribution barplot
+#' }
+#'
+#' @name repr_number
+#' @author Aníbal Olivera M.
+NULL
+
+#' @rdname repr_number
+#' @export
+repr_number <- function(x, ...) UseMethod("repr_number")
+
+#' @rdname repr_number
+#' @export
+repr_number.default <- function(x, ...) {
+  stop("-repr_number()- requires a -diffnet_epi-. ",
+       "Use -as_transmission_tree()- or -as_diffnet_epi()- first.")
+}
+
+#' @rdname repr_number
+#' @export
+repr_number.diffnet_epi <- function(x, ...) {
+
+  tr <- transmission_tree(x)
+
+  if (!nrow(tr)) {
+    out <- data.frame(
+      node        = integer(0),
+      virus_id    = integer(0),
+      n_offspring = integer(0),
+      stringsAsFactors = FALSE
+    )
+    return(structure(out, global = NA_real_,
+                     class = c("netdiffuseR_repr", "data.frame")))
+  }
+
+  # All cases = unique (target, virus_id) pairs. Seeds and non-seeds both
+  # appear as targets, so this captures everyone who was infected.
+  cases <- unique(tr[, c("target", "virus_id"), drop = FALSE])
+  names(cases)[1] <- "node"
+  key_cases <- paste(cases$node, cases$virus_id, sep = "::")
+
+  # Count occurrences as -source- per case (offspring count).
+  src_rows <- tr[!is.na(tr$source), c("source", "virus_id"), drop = FALSE]
+  if (nrow(src_rows)) {
+    key_src     <- paste(src_rows$source, src_rows$virus_id, sep = "::")
+    src_tab     <- table(factor(key_src, levels = key_cases))
+    n_offspring <- as.integer(src_tab)
+  } else {
+    n_offspring <- rep(0L, nrow(cases))
+  }
+
+  cases$n_offspring <- n_offspring
+  cases             <- cases[order(cases$virus_id, cases$node), ,
+                              drop = FALSE]
+  rownames(cases)   <- NULL
+
+  global <- mean(cases$n_offspring)
+
+  structure(cases, global = global,
+            class = c("netdiffuseR_repr", "data.frame"))
+}
+
+#' @rdname repr_number
+#' @export
+print.netdiffuseR_repr <- function(x, ...) {
+  cat("Reproduction number (empirical, from transmission tree)\n")
+  if (!nrow(x)) {
+    cat(" Empty -- no cases in the transmission tree.\n")
+    return(invisible(x))
+  }
+  cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
+  if (nrow(x) > 1L)
+    cat(sprintf(" SD                 : %.3f\n", stats::sd(x$n_offspring)))
+  cat(sprintf(" Range              : %d - %d\n",
+              min(x$n_offspring), max(x$n_offspring)))
+  cat(sprintf(" Based on %d case%s in the transmission tree.\n",
+              nrow(x), if (nrow(x) == 1L) "" else "s"))
+  cat(" -> use as.data.frame(.) for the per-case offspring count,\n")
+  cat("    or plot(.) for the offspring distribution.\n")
+  invisible(x)
+}
+
+#' @rdname repr_number
+#' @param y Unused. Present for S3 consistency with \code{\link[graphics]{plot}}.
+#' @param main,xlab,ylab Plot annotations forwarded to \code{\link[graphics]{barplot}}.
+#' @export
+plot.netdiffuseR_repr <- function(x, y = NULL,
+                                  main = "Offspring distribution",
+                                  xlab = "Number of offspring (secondary cases)",
+                                  ylab = "Number of cases",
+                                  ...) {
+  if (!nrow(x)) {
+    graphics::plot.new()
+    graphics::title(main = main, sub = "Empty transmission tree")
+    return(invisible(x))
+  }
+  k   <- max(x$n_offspring)
+  tab <- table(factor(x$n_offspring, levels = 0:k))
+  graphics::barplot(as.numeric(tab),
+                    names.arg = names(tab),
+                    main = main, xlab = xlab, ylab = ylab, ...)
+  invisible(x)
+}
+
+# ----------------------------------------------------------------------------
 # summary.diffnet_epi
 # ----------------------------------------------------------------------------
 
