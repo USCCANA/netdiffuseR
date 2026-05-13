@@ -537,21 +537,21 @@ print.netdiffuseR_repr <- function(x, ...) {
   }
   nv <- length(unique(x$virus_id))
   if (nv > 1L) {
-    cat(sprintf(" Aggregate over %d behaviours (pooled across viruses).\n", nv))
+    cat(sprintf(" Aggregate over %d diffusions (pooled).\n", nv))
     cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
     if (nrow(x) > 1L)
       cat(sprintf(" SD                 : %.3f\n", stats::sd(x$n_offspring)))
     cat(sprintf(" Range              : %d - %d\n",
                 min(x$n_offspring), max(x$n_offspring)))
-    cat(sprintf(" Based on %d cases across %d behaviours.\n", nrow(x), nv))
-    cat(" Per-virus R:\n")
+    cat(sprintf(" Based on %d cases across %d diffusions.\n", nrow(x), nv))
+    cat(" Per-diffusion R:\n")
     for (v in sort(unique(x$virus_id))) {
       sub <- x$n_offspring[x$virus_id == v]
-      cat(sprintf("  virus %s: R = %.3f  (n = %d)\n",
+      cat(sprintf("  diffusion %s: R = %.3f  (n = %d)\n",
                   format(v), mean(sub), length(sub)))
     }
     cat(" -> use as.data.frame(.) for the per-case offspring count,\n")
-    cat("    subset by $virus_id for per-virus rows,\n")
+    cat("    subset by $virus_id for per-diffusion rows,\n")
     cat("    or plot(.) for the offspring distribution.\n")
   } else {
     cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
@@ -570,8 +570,9 @@ print.netdiffuseR_repr <- function(x, ...) {
 #' @rdname repr_number
 #' @param y Unused. Present for S3 consistency with \code{\link[graphics]{plot}}.
 #' @param main Plot title. When \code{NULL} (default), a sensible title is
-#'   chosen automatically: it includes "Pooled over k behaviours" when the
-#'   tree has multiple viruses, otherwise just "Offspring distribution".
+#'   chosen automatically: it includes "pooled over k diffusions" when the
+#'   tree carries multiple diffusion processes (i.e., multiple
+#'   \code{virus_id} values), otherwise just "Offspring distribution".
 #' @param xlab,ylab Axis labels forwarded to \code{\link[graphics]{barplot}}.
 #' @export
 plot.netdiffuseR_repr <- function(x, y = NULL,
@@ -588,12 +589,12 @@ plot.netdiffuseR_repr <- function(x, y = NULL,
   nv <- length(unique(x$virus_id))
   if (is.null(main)) {
     main <- if (nv > 1L)
-      sprintf("Offspring distribution (pooled over %d behaviours)", nv)
+      sprintf("Offspring distribution (pooled over %d diffusions)", nv)
     else
       "Offspring distribution"
   }
   sub <- if (nv > 1L)
-    sprintf("R = %.3f across %d cases / %d behaviours",
+    sprintf("R = %.3f across %d cases / %d diffusions",
             attr(x, "global"), nrow(x), nv)
   else
     sprintf("R = %.3f across %d cases", attr(x, "global"), nrow(x))

@@ -33,8 +33,9 @@ repr_number(x, ...)
 \item{y}{Unused. Present for S3 consistency with \code{\link[graphics]{plot}}.}
 
 \item{main}{Plot title. When \code{NULL} (default), a sensible title is
-chosen automatically: it includes "Pooled over k behaviours" when the
-tree has multiple viruses, otherwise just "Offspring distribution".}
+chosen automatically: it includes "pooled over k diffusions" when the
+tree carries multiple diffusion processes (i.e., multiple
+\code{virus_id} values), otherwise just "Offspring distribution".}
 
 \item{xlab, ylab}{Axis labels forwarded to \code{\link[graphics]{barplot}}.}
 }

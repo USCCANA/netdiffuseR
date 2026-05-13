@@ -225,11 +225,11 @@ test_that("repr_number print mentions Reproduction number and Mean offspring", {
   expect_true(any(grepl("Reproduction number", out)))
   expect_true(any(grepl("Mean offspring", out)))
   expect_true(any(grepl("as.data.frame", out)))
-  # Single-virus path: no aggregate-banner line
+  # Single-diffusion path: no aggregate-banner line
   expect_false(any(grepl("Aggregate over", out)))
 })
 
-test_that("repr_number print flags aggregate when tree has multiple viruses", {
+test_that("repr_number print flags aggregate when tree carries multiple diffusions", {
   set.seed(2026)
   suppressMessages(
     dn <- rdiffnet(n = 40, t = 6, seed.graph = "small-world",
@@ -238,11 +238,11 @@ test_that("repr_number print flags aggregate when tree has multiple viruses", {
   )
   R   <- repr_number(dn)
   out <- capture.output(print(R))
-  expect_true(any(grepl("Aggregate over 2 behaviours", out)))
-  expect_true(any(grepl("Per-virus R", out)))
-  # Both virus_ids must show up in the per-virus rollup lines
-  expect_true(any(grepl("virus 1:", out)))
-  expect_true(any(grepl("virus 2:", out)))
+  expect_true(any(grepl("Aggregate over 2 diffusions", out)))
+  expect_true(any(grepl("Per-diffusion R", out)))
+  # Both diffusion ids must show up in the per-diffusion rollup lines
+  expect_true(any(grepl("diffusion 1:", out)))
+  expect_true(any(grepl("diffusion 2:", out)))
   # Aggregate R must equal mean over all rows (pooled)
   expect_equal(attr(R, "global"), mean(R$n_offspring))
 })
