@@ -1075,20 +1075,38 @@ cumulative_adopt_count <- function(obj) {
 hazard_rate <- function(obj, no.plot=FALSE, include.grid=TRUE, ...) {
   if (inherits(obj, "diffnet")) {
     dn  <- with(obj$meta, list(ids, pers))
-    obj <- obj$cumadopt
+    # M11: read the canonical -$status- slot (alias of -$cumadopt- under M5).
+    # For absorbing diffnets the two are bit-identical, so legacy callers see
+    # no change. For multi-cycle diffnets, -$status- carries the actual state.
+    obj <- obj$status
     dimnames(obj) <- dn
   } else {
     if (!length(colnames(obj)))
       colnames(obj) <- seq_len(ncol(obj))
   }
 
-  q <- colSums(obj)
-  t <- length(q)
+  # M11: count fresh adoption events (0->1 transitions) and divide by the
+  # currently-not-adopted denominator. For monotone -obj- (the only kind
+  # supported pre-M5) this collapses to (q[t] - q[t-1]) / (n - q[t-1])
+  # bit-identically, so legacy tests pass without modification. For
+  # non-monotone -obj- (multi-cycle status arrays) the formula correctly
+  # counts re-adoptions in the numerator and currently-susceptible nodes
+  # in the denominator.
+  T_ <- ncol(obj)
+  if (T_ < 2L) {
+    haz <- 0
+  } else {
+    prev  <- obj[, 1:(T_ - 1L), drop = FALSE]
+    curr  <- obj[, 2:T_,        drop = FALSE]
+    fresh <- colSums((curr == 1L) & (prev == 0L))
+    susc  <- nrow(obj) - colSums(prev == 1L)
+    haz   <- c(0, fresh / (susc + 1e-15))
+  }
 
   x <- structure(
-    rbind(c(0,(q[-1] - q[-t])/(nrow(obj) - q[-t] + 1e-15)))
-    , dimnames = list("hazard", colnames(obj)),
-    class=c("diffnet_hr", "matrix")
+    rbind(haz),
+    dimnames = list("hazard", colnames(obj)),
+    class    = c("diffnet_hr", "matrix")
   )
 
   if (!no.plot) plot.diffnet_hr(x, include.grid=include.grid, ...)
