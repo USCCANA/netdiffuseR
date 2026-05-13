@@ -17,6 +17,16 @@
 #' @param pars Optional named list stored verbatim in
 #'   \code{x$transmission$pars}. Only consulted when \code{transmission} is
 #'   \code{NULL} or carries no \code{pars} of its own.
+#' @param attribution Optional source-attribution rule. When non-\code{NULL},
+#'   the tree is reconstructed from \code{x}'s graph slices and \code{toa}
+#'   via \code{\link{transmission_tree_from_events}} using this rule. Accepts
+#'   one of \code{"uniform"} / \code{"weighted"} / \code{"earliest"} or a
+#'   function with the \code{\link{source_attribution}} contract. Mutually
+#'   exclusive with \code{transmission}.
+#' @param seed Optional integer forwarded to
+#'   \code{\link{transmission_tree_from_events}} so the stochastic
+#'   attribution rules (\code{"uniform"}, \code{"weighted"}) produce a
+#'   reproducible tree. Ignored when \code{attribution} is \code{NULL}.
 #' @param ... Further arguments. Accepted for compatibility with the
 #'   \code{\link[base]{print}} generic; currently ignored by
 #'   \code{print.diffnet_epi}.
@@ -85,6 +95,12 @@
 #' is.diffnet_epi(dn_epi)              # TRUE (promoted automatically)
 #' transmission_tree(dn_epi)            # 2 rows
 #'
+#' # Reconstruct the tree from x's graph + toa via source-attribution
+#' # (general primitive — useful when you have observed adoption times
+#' # but no transmission log, like contact-tracing or experiment data).
+#' dn_epi <- as_diffnet_epi(dn, attribution = "uniform", seed = 2026)
+#' transmission_tree(dn_epi)
+#'
 #' @name diffnet_epi
 #' @aliases diffnet_epi
 #' @author Aníbal Olivera M.
@@ -92,10 +108,25 @@ NULL
 
 #' @rdname diffnet_epi
 #' @export
-as_diffnet_epi <- function(x, transmission = NULL, pars = list()) {
+as_diffnet_epi <- function(x, transmission = NULL, pars = list(),
+                           attribution = NULL, seed = NULL) {
 
   if (!inherits(x, "diffnet"))
     stop("-x- must be a diffnet object.")
+
+  if (!is.null(attribution) && !is.null(transmission))
+    stop("Pass either -transmission- (pre-built tree) or -attribution- ",
+         "(reconstruct tree from x's graph and toa), not both.")
+
+  # M13: reconstruct the tree from x's graph + toa using the chosen
+  # source-attribution rule. Returns a data.frame in canonical schema
+  # which we then wrap into the standard transmission = list(tree, pars).
+  if (!is.null(attribution)) {
+    tree <- transmission_tree_from_events(
+      x, attribution = attribution, pars = pars, seed = seed
+    )
+    transmission <- list(tree = tree, pars = pars)
+  }
 
   # Monotone promotion: prepend diffnet_epi to the class vector if absent.
   if (!inherits(x, "diffnet_epi"))

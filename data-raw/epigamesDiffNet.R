@@ -74,5 +74,13 @@ epigamesDiffNet <- as_diffnet(
   t1 = N_DAYS
 )
 
+# Reconstruct a transmission tree from the observed daily contact
+# network and the per-node times of adoption.
+epigamesDiffNet <- as_diffnet_epi(
+  epigamesDiffNet,
+  attribution = "uniform",
+  seed        = 2026
+)
+
 # Save
 usethis::use_data(epigamesDiffNet, overwrite = TRUE, compress = "xz")

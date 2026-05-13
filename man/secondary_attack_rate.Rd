@@ -44,6 +44,16 @@ classic per-source rollup. Under SIRS-style re-infection (a node enters
 state I multiple times for the same virus), each infection-life of the
 source is its own row, matching the convention used by epiworldR for
 tree-derived metrics.
+
+Under SIRS the same \code{(source, target)} pair can transmit multiple
+times during the source's infection life (the target disadopts and gets
+re-infected by the same source). Each such transmission is a distinct
+row in the tree and contributes to \code{n_secondary} for that
+source-event, while \code{n_contacts} is fixed at the source's
+neighbourhood size at \code{source_exposure_date}. Consequently the
+per-event \code{sar} may exceed 1 (it is no longer a probability of
+transmission but a count of transmissions per contact). The aggregate
+\code{attr(sar, "global")} retains its sum-over-sum interpretation.
 }
 \examples{
 set.seed(2026)

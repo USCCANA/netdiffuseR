@@ -7,7 +7,13 @@
 \alias{print.diffnet_epi}
 \title{The \code{diffnet_epi} subclass}
 \usage{
-as_diffnet_epi(x, transmission = NULL, pars = list())
+as_diffnet_epi(
+  x,
+  transmission = NULL,
+  pars = list(),
+  attribution = NULL,
+  seed = NULL
+)
 
 is.diffnet_epi(x)
 
@@ -24,6 +30,18 @@ to \code{\link{as_transmission_tree}} instead. See examples.}
 \item{pars}{Optional named list stored verbatim in
 \code{x$transmission$pars}. Only consulted when \code{transmission} is
 \code{NULL} or carries no \code{pars} of its own.}
+
+\item{attribution}{Optional source-attribution rule. When non-\code{NULL},
+the tree is reconstructed from \code{x}'s graph slices and \code{toa}
+via \code{\link{transmission_tree_from_events}} using this rule. Accepts
+one of \code{"uniform"} / \code{"weighted"} / \code{"earliest"} or a
+function with the \code{\link{source_attribution}} contract. Mutually
+exclusive with \code{transmission}.}
+
+\item{seed}{Optional integer forwarded to
+\code{\link{transmission_tree_from_events}} so the stochastic
+attribution rules (\code{"uniform"}, \code{"weighted"}) produce a
+reproducible tree. Ignored when \code{attribution} is \code{NULL}.}
 
 \item{...}{Further arguments. Accepted for compatibility with the
 \code{\link[base]{print}} generic; currently ignored by
@@ -95,6 +113,12 @@ tree <- data.frame(
 dn_epi <- as_transmission_tree(dn, tree)
 is.diffnet_epi(dn_epi)              # TRUE (promoted automatically)
 transmission_tree(dn_epi)            # 2 rows
+
+# Reconstruct the tree from x's graph + toa via source-attribution
+# (general primitive — useful when you have observed adoption times
+# but no transmission log, like contact-tracing or experiment data).
+dn_epi <- as_diffnet_epi(dn, attribution = "uniform", seed = 2026)
+transmission_tree(dn_epi)
 
 }
 \references{
