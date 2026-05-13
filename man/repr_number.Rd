@@ -19,7 +19,7 @@ repr_number(x, ...)
 \method{plot}{netdiffuseR_repr}(
   x,
   y = NULL,
-  main = "Offspring distribution",
+  main = NULL,
   xlab = "Number of offspring (secondary cases)",
   ylab = "Number of cases",
   ...
@@ -32,7 +32,11 @@ repr_number(x, ...)
 
 \item{y}{Unused. Present for S3 consistency with \code{\link[graphics]{plot}}.}
 
-\item{main, xlab, ylab}{Plot annotations forwarded to \code{\link[graphics]{barplot}}.}
+\item{main}{Plot title. When \code{NULL} (default), a sensible title is
+chosen automatically: it includes "Pooled over k behaviours" when the
+tree has multiple viruses, otherwise just "Offspring distribution".}
+
+\item{xlab, ylab}{Axis labels forwarded to \code{\link[graphics]{barplot}}.}
 }
 \value{
 A \code{data.frame} (with extra class \code{netdiffuseR_repr})

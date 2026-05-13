@@ -535,37 +535,75 @@ print.netdiffuseR_repr <- function(x, ...) {
     cat(" Empty -- no cases in the transmission tree.\n")
     return(invisible(x))
   }
-  cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
-  if (nrow(x) > 1L)
-    cat(sprintf(" SD                 : %.3f\n", stats::sd(x$n_offspring)))
-  cat(sprintf(" Range              : %d - %d\n",
-              min(x$n_offspring), max(x$n_offspring)))
-  cat(sprintf(" Based on %d case%s in the transmission tree.\n",
-              nrow(x), if (nrow(x) == 1L) "" else "s"))
-  cat(" -> use as.data.frame(.) for the per-case offspring count,\n")
-  cat("    or plot(.) for the offspring distribution.\n")
+  nv <- length(unique(x$virus_id))
+  if (nv > 1L) {
+    cat(sprintf(" Aggregate over %d behaviours (pooled across viruses).\n", nv))
+    cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
+    if (nrow(x) > 1L)
+      cat(sprintf(" SD                 : %.3f\n", stats::sd(x$n_offspring)))
+    cat(sprintf(" Range              : %d - %d\n",
+                min(x$n_offspring), max(x$n_offspring)))
+    cat(sprintf(" Based on %d cases across %d behaviours.\n", nrow(x), nv))
+    cat(" Per-virus R:\n")
+    for (v in sort(unique(x$virus_id))) {
+      sub <- x$n_offspring[x$virus_id == v]
+      cat(sprintf("  virus %s: R = %.3f  (n = %d)\n",
+                  format(v), mean(sub), length(sub)))
+    }
+    cat(" -> use as.data.frame(.) for the per-case offspring count,\n")
+    cat("    subset by $virus_id for per-virus rows,\n")
+    cat("    or plot(.) for the offspring distribution.\n")
+  } else {
+    cat(sprintf(" Mean offspring (R) : %.3f\n", attr(x, "global")))
+    if (nrow(x) > 1L)
+      cat(sprintf(" SD                 : %.3f\n", stats::sd(x$n_offspring)))
+    cat(sprintf(" Range              : %d - %d\n",
+                min(x$n_offspring), max(x$n_offspring)))
+    cat(sprintf(" Based on %d case%s in the transmission tree.\n",
+                nrow(x), if (nrow(x) == 1L) "" else "s"))
+    cat(" -> use as.data.frame(.) for the per-case offspring count,\n")
+    cat("    or plot(.) for the offspring distribution.\n")
+  }
   invisible(x)
 }
 
 #' @rdname repr_number
 #' @param y Unused. Present for S3 consistency with \code{\link[graphics]{plot}}.
-#' @param main,xlab,ylab Plot annotations forwarded to \code{\link[graphics]{barplot}}.
+#' @param main Plot title. When \code{NULL} (default), a sensible title is
+#'   chosen automatically: it includes "Pooled over k behaviours" when the
+#'   tree has multiple viruses, otherwise just "Offspring distribution".
+#' @param xlab,ylab Axis labels forwarded to \code{\link[graphics]{barplot}}.
 #' @export
 plot.netdiffuseR_repr <- function(x, y = NULL,
-                                  main = "Offspring distribution",
+                                  main = NULL,
                                   xlab = "Number of offspring (secondary cases)",
                                   ylab = "Number of cases",
                                   ...) {
   if (!nrow(x)) {
+    if (is.null(main)) main <- "Offspring distribution"
     graphics::plot.new()
     graphics::title(main = main, sub = "Empty transmission tree")
     return(invisible(x))
   }
+  nv <- length(unique(x$virus_id))
+  if (is.null(main)) {
+    main <- if (nv > 1L)
+      sprintf("Offspring distribution (pooled over %d behaviours)", nv)
+    else
+      "Offspring distribution"
+  }
+  sub <- if (nv > 1L)
+    sprintf("R = %.3f across %d cases / %d behaviours",
+            attr(x, "global"), nrow(x), nv)
+  else
+    sprintf("R = %.3f across %d cases", attr(x, "global"), nrow(x))
+
   k   <- max(x$n_offspring)
   tab <- table(factor(x$n_offspring, levels = 0:k))
   graphics::barplot(as.numeric(tab),
                     names.arg = names(tab),
-                    main = main, xlab = xlab, ylab = ylab, ...)
+                    main = main, sub = sub,
+                    xlab = xlab, ylab = ylab, ...)
   invisible(x)
 }
 
