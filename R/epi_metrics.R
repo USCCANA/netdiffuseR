@@ -187,7 +187,7 @@ survival_curve.diffnet <- function(x, ...) {
 print.netdiffuseR_survival <- function(x, ...) {
   cat("Survival curve (Kaplan-Meier-style)\n")
   if (!nrow(x)) {
-    cat(" Empty — no adopters in this diffnet.\n")
+    cat(" Empty -- no adopters in this diffnet.\n")
     return(invisible(x))
   }
   has_virus <- "virus_id" %in% names(x)
@@ -389,7 +389,7 @@ generation_time.diffnet_epi <- function(x, ...) {
 print.netdiffuseR_generation_time <- function(x, ...) {
   cat("Generation time distribution\n")
   if (!nrow(x)) {
-    cat(" Empty — no non-seed edges in the transmission tree.\n")
+    cat(" Empty -- no non-seed edges in the transmission tree.\n")
     return(invisible(x))
   }
   g <- x$gen_time
