@@ -22,18 +22,28 @@ secondary_attack_rate(x, ...)
 }
 \value{
 A \code{data.frame} (with extra class \code{netdiffuseR_sar})
-  carrying columns \code{source}, \code{virus_id}, \code{n_secondary},
-  \code{n_contacts}, \code{sar}. Printing shows the aggregate scalar;
-  the per-source rows are exposed via standard data.frame subscripting.
-  The aggregate is also stored as \code{attr(., "global")}.
+  carrying columns \code{source}, \code{virus_id},
+  \code{source_exposure_date}, \code{n_secondary}, \code{n_contacts},
+  \code{sar}. Printing shows the aggregate scalar; the per-event rows
+  are exposed via standard data.frame subscripting. The aggregate is
+  also stored as \code{attr(., "global")}.
 }
 \description{
-For each infector recorded in \code{$transmission$tree},
+For each infection event recorded in \code{$transmission$tree},
 \code{secondary_attack_rate(x)} reports the number of secondary infections
-it generated and the number of contacts it had in the contact network at
-its time of adoption. The per-source rate is
+caused by that event and the number of contacts the infector had in the
+contact network at the slice corresponding to \code{source_exposure_date}
+(the infector's own infection date). The per-event rate is
 \code{n_secondary / n_contacts}; the aggregate (printed by default) is
 \code{sum(n_secondary) / sum(n_contacts)}.
+}
+\details{
+Under absorbing diffusion each \code{(source, virus_id)} has exactly one
+\code{source_exposure_date}, so the per-event keying collapses to the
+classic per-source rollup. Under SIRS-style re-infection (a node enters
+state I multiple times for the same virus), each infection-life of the
+source is its own row, matching the convention used by epiworldR for
+tree-derived metrics.
 }
 \examples{
 set.seed(2026)

@@ -41,15 +41,16 @@ tree carries multiple diffusion processes (i.e., multiple
 }
 \value{
 A \code{data.frame} (with extra class \code{netdiffuseR_repr})
-  carrying columns \code{node}, \code{virus_id}, \code{n_offspring}.
-  Printing shows the aggregate reproduction number (mean offspring),
-  plus SD and range; the per-case rows are exposed via standard
-  data.frame subscripting. The aggregate is also stored as
-  \code{attr(., "global")}. A \code{plot} method renders the
-  offspring distribution as a barplot.
+  carrying columns \code{node}, \code{virus_id},
+  \code{exposure_date}, \code{n_offspring}. Printing shows the
+  aggregate reproduction number (mean offspring), plus SD and range;
+  the per-case rows are exposed via standard data.frame subscripting.
+  The aggregate is also stored as \code{attr(., "global")}. A
+  \code{plot} method renders the offspring distribution as a
+  barplot.
 }
 \description{
-For every infected case in \code{$transmission$tree},
+For every infection event in \code{$transmission$tree},
 \code{repr_number(x)} counts the number of secondary cases it caused
 (its offspring count, \eqn{\nu_i} in Lloyd-Smith \emph{et al.}, 2005)
 and reports the mean across cases as the empirical reproduction
@@ -57,6 +58,17 @@ number. Cases that did not transmit further (terminal cases) count
 as zero in the denominator; seeds are included.
 }
 \details{
+A case is one entry into state I, keyed by
+\code{(node, virus_id, exposure_date)}. Under absorbing diffusion
+(the classic netdiffuseR regime) each \code{(node, virus_id)} has
+exactly one \code{exposure_date}, so the 3-D key collapses to the
+familiar per-node rollup. Under SIRS-style re-infection (a node
+enters \eqn{I} multiple times for the same virus), each
+infection-life is its own case with its own offspring tally. This
+matches the convention used by epiworldR's
+\code{get_reproductive_number()} and the Lloyd-Smith framework.
+
+
 The empirical reproduction number is defined as the mean offspring
 count across all observed cases:
 
@@ -91,6 +103,27 @@ as.data.frame(R)                  # per-case offspring counts
 attr(R, "global")                 # the scalar R
 \dontrun{
 plot(R)                            # offspring distribution barplot
+}
+
+# SIRS-style: a disadopt function lets nodes re-enter I, and every
+# re-infection is recorded as its own case in the returned frame.
+\dontrun{
+disadopt_30 <- function(expo, cumadopt, time) {
+  q_max <- dim(cumadopt)[3]; res <- vector("list", q_max)
+  for (q in seq_len(q_max)) {
+    adopters <- which(cumadopt[, time, q] == 1L)
+    res[[q]] <- if (length(adopters))
+      sample(adopters, ceiling(0.30 * length(adopters))) else integer()
+  }
+  res
+}
+set.seed(2026)
+dn_sirs <- rdiffnet(n = 60, t = 10, seed.graph = "small-world",
+                    seed.p.adopt = 0.15, stop.no.diff = FALSE,
+                    disadopt = disadopt_30,
+                    source_attribution = source_attribution_uniform)
+R_sirs <- repr_number(dn_sirs)
+table(table(paste(R_sirs$node, R_sirs$virus_id))) # nodes by # of lives
 }
 
 }

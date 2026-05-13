@@ -122,11 +122,13 @@ test_that("secondary_attack_rate returns a netdiffuseR_sar data.frame", {
   sar <- secondary_attack_rate(dn)
   expect_s3_class(sar, "netdiffuseR_sar")
   expect_s3_class(sar, "data.frame")
+  # M12.2: column set now carries source_exposure_date (per-event keying)
   expect_setequal(
     names(sar),
-    c("source", "virus_id", "n_secondary", "n_contacts", "sar")
+    c("source", "virus_id", "source_exposure_date",
+      "n_secondary", "n_contacts", "sar")
   )
-  # All per-source rates are in [0, 1] (or NA when contacts = 0)
+  # All per-event rates are in [0, 1] (or NA when contacts = 0)
   sar_vals <- sar$sar[!is.na(sar$sar)]
   expect_true(all(sar_vals >= 0))
   expect_true(all(sar_vals <= 1))
@@ -196,7 +198,9 @@ test_that("repr_number returns a netdiffuseR_repr data.frame", {
   R  <- repr_number(dn)
   expect_s3_class(R, "netdiffuseR_repr")
   expect_s3_class(R, "data.frame")
-  expect_setequal(names(R), c("node", "virus_id", "n_offspring"))
+  # M12.2: column set now carries exposure_date (per-event keying)
+  expect_setequal(names(R),
+                  c("node", "virus_id", "exposure_date", "n_offspring"))
   expect_type(R$n_offspring, "integer")
   expect_true(all(R$n_offspring >= 0L))
 })
@@ -245,6 +249,104 @@ test_that("repr_number print flags aggregate when tree carries multiple diffusio
   expect_true(any(grepl("diffusion 2:", out)))
   # Aggregate R must equal mean over all rows (pooled)
   expect_equal(attr(R, "global"), mean(R$n_offspring))
+})
+
+# ----------------------------------------------------------------------------
+# Re-infection / SIRS end-to-end (M12.2)
+# ----------------------------------------------------------------------------
+
+mk_sirs_dn <- function() {
+  # 30% of currently-adopted nodes disadopt each period; those nodes become
+  # susceptible again and can re-adopt, producing multiple infection-lives
+  # per (node, virus_id) in the transmission tree.
+  disadopt_30 <- function(expo, cumadopt, time) {
+    q_max <- dim(cumadopt)[3]
+    res <- vector("list", q_max)
+    for (q in seq_len(q_max)) {
+      adopters <- which(cumadopt[, time, q] == 1L)
+      if (length(adopters) == 0L) {
+        res[[q]] <- integer()
+        next
+      }
+      res[[q]] <- sample(adopters, ceiling(0.30 * length(adopters)))
+    }
+    res
+  }
+  set.seed(2026)
+  suppressWarnings(
+    rdiffnet(
+      n = 60, t = 10, seed.graph = "small-world",
+      seed.p.adopt = 0.15, stop.no.diff = FALSE,
+      disadopt = disadopt_30,
+      source_attribution = source_attribution_uniform
+    )
+  )
+}
+
+test_that("rdiffnet with disadopt produces re-infections in the tree", {
+  dn <- mk_sirs_dn()
+  tr <- transmission_tree(dn)
+  # At least one (target, virus_id) appears more than once in the tree.
+  key <- paste(tr$target, tr$virus_id, sep = "::")
+  expect_true(any(table(key) > 1L))
+})
+
+test_that("repr_number counts each re-infection as its own case (3-D key)", {
+  dn <- mk_sirs_dn()
+  tr <- transmission_tree(dn)
+  R  <- repr_number(dn)
+
+  # Cases match unique (target, virus_id, date) tuples in the tree.
+  cases_3d <- unique(tr[, c("target", "virus_id", "date")])
+  expect_equal(nrow(R), nrow(cases_3d))
+
+  # Sum of offspring equals number of non-seed edges (the M12 identity,
+  # still holds under per-event keying since every non-seed edge maps to
+  # exactly one source-event).
+  expect_equal(sum(R$n_offspring), sum(!is.na(tr$source)))
+
+  # Aggregate R matches mean(n_offspring).
+  expect_equal(attr(R, "global"), mean(R$n_offspring))
+
+  # exposure_date column is present and integer.
+  expect_true("exposure_date" %in% names(R))
+  expect_type(R$exposure_date, "integer")
+
+  # A re-infected node must appear in multiple R rows.
+  node_counts <- table(paste(R$node, R$virus_id, sep = "::"))
+  expect_true(any(node_counts > 1L))
+})
+
+test_that("secondary_attack_rate aggregates per source-event under re-infection", {
+  dn  <- mk_sirs_dn()
+  sar <- secondary_attack_rate(dn)
+  tr  <- transmission_tree(dn)
+
+  # Each row corresponds to a distinct (source, virus_id, exposure_date).
+  expect_true("source_exposure_date" %in% names(sar))
+  key_sar <- paste(sar$source, sar$virus_id, sar$source_exposure_date,
+                   sep = "::")
+  expect_equal(length(key_sar), length(unique(key_sar)))
+
+  # At least one source has multiple infection-events (otherwise the
+  # multi-cycle test is degenerate).
+  src_key <- paste(sar$source, sar$virus_id, sep = "::")
+  expect_true(any(table(src_key) > 1L))
+
+  # n_contacts uses graph[[source_exposure_date]], not graph[[toa]]. Verify
+  # on one row that the contact count matches the slice the row points to.
+  i  <- which(sar$n_contacts > 0L)[1L]
+  s  <- sar$source[i]; t_inf <- sar$source_exposure_date[i]
+  g  <- dn$graph[[t_inf]]
+  expected_con <- as.integer(sum((g[s, ] != 0) | (g[, s] != 0)))
+  expect_equal(sar$n_contacts[i], expected_con)
+
+  # Global aggregate identity holds (sum-of-secondaries / sum-of-contacts).
+  expect_equal(attr(sar, "global"),
+               sum(sar$n_secondary) / sum(sar$n_contacts))
+
+  # n_secondary sums to the number of non-seed edges in the tree.
+  expect_equal(sum(sar$n_secondary), sum(!is.na(tr$source)))
 })
 
 # ----------------------------------------------------------------------------

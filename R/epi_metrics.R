@@ -217,21 +217,40 @@ print.netdiffuseR_survival <- function(x, ...) {
 
 #' Secondary attack rate from a transmission tree
 #'
-#' For each infector recorded in \code{$transmission$tree},
+#' For each infection event recorded in \code{$transmission$tree},
 #' \code{secondary_attack_rate(x)} reports the number of secondary infections
-#' it generated and the number of contacts it had in the contact network at
-#' its time of adoption. The per-source rate is
+#' caused by that event and the number of contacts the infector had in the
+#' contact network at the slice corresponding to \code{source_exposure_date}
+#' (the infector's own infection date). The per-event rate is
 #' \code{n_secondary / n_contacts}; the aggregate (printed by default) is
 #' \code{sum(n_secondary) / sum(n_contacts)}.
+#'
+#' Under absorbing diffusion each \code{(source, virus_id)} has exactly one
+#' \code{source_exposure_date}, so the per-event keying collapses to the
+#' classic per-source rollup. Under SIRS-style re-infection (a node enters
+#' state I multiple times for the same virus), each infection-life of the
+#' source is its own row, matching the convention used by epiworldR for
+#' tree-derived metrics.
+#'
+#' Under SIRS the same \code{(source, target)} pair can transmit multiple
+#' times during the source's infection life (the target disadopts and gets
+#' re-infected by the same source). Each such transmission is a distinct
+#' row in the tree and contributes to \code{n_secondary} for that
+#' source-event, while \code{n_contacts} is fixed at the source's
+#' neighbourhood size at \code{source_exposure_date}. Consequently the
+#' per-event \code{sar} may exceed 1 (it is no longer a probability of
+#' transmission but a count of transmissions per contact). The aggregate
+#' \code{attr(sar, "global")} retains its sum-over-sum interpretation.
 #'
 #' @param x A \code{\link{diffnet_epi}} object.
 #' @param ... Currently ignored.
 #'
 #' @return A \code{data.frame} (with extra class \code{netdiffuseR_sar})
-#'   carrying columns \code{source}, \code{virus_id}, \code{n_secondary},
-#'   \code{n_contacts}, \code{sar}. Printing shows the aggregate scalar;
-#'   the per-source rows are exposed via standard data.frame subscripting.
-#'   The aggregate is also stored as \code{attr(., "global")}.
+#'   carrying columns \code{source}, \code{virus_id},
+#'   \code{source_exposure_date}, \code{n_secondary}, \code{n_contacts},
+#'   \code{sar}. Printing shows the aggregate scalar; the per-event rows
+#'   are exposed via standard data.frame subscripting. The aggregate is
+#'   also stored as \code{attr(., "global")}.
 #'
 #' @examples
 #' set.seed(2026)
@@ -264,11 +283,11 @@ secondary_attack_rate.diffnet_epi <- function(x, ...) {
 
   tr <- transmission_tree(x)
   tr_edges <- tr[!is.na(tr$source), , drop = FALSE]
-  toa_mat  <- if (is.null(dim(x$toa))) matrix(x$toa, ncol = 1L) else x$toa
 
   if (!nrow(tr_edges)) {
     out <- data.frame(
       source = integer(0), virus_id = integer(0),
+      source_exposure_date = integer(0),
       n_secondary = integer(0), n_contacts = integer(0),
       sar = numeric(0), stringsAsFactors = FALSE
     )
@@ -276,43 +295,51 @@ secondary_attack_rate.diffnet_epi <- function(x, ...) {
                      class = c("netdiffuseR_sar", "data.frame")))
   }
 
-  # Aggregate secondaries by (source, virus_id)
-  key <- paste(tr_edges$source, tr_edges$virus_id, sep = "::")
+  # M12.2: aggregate secondaries per *infection event* of the source,
+  # keyed by (source, virus_id, source_exposure_date). Under absorbing
+  # diffusion each source has one exposure_date and this collapses to
+  # the M12 per-source rollup; under SIRS-style re-infection each
+  # infection-life of the source is its own row.
+  key <- paste(tr_edges$source, tr_edges$virus_id,
+               tr_edges$source_exposure_date, sep = "::")
   agg <- tapply(seq_len(nrow(tr_edges)), key, length)
-  src <- as.integer(vapply(strsplit(names(agg), "::", fixed = TRUE),
-                           `[`, character(1L), 1L))
-  vid <- as.integer(vapply(strsplit(names(agg), "::", fixed = TRUE),
-                           `[`, character(1L), 2L))
+  parts <- strsplit(names(agg), "::", fixed = TRUE)
+  src   <- as.integer(vapply(parts, `[`, character(1L), 1L))
+  vid   <- as.integer(vapply(parts, `[`, character(1L), 2L))
+  sed   <- as.integer(vapply(parts, `[`, character(1L), 3L))
   n_sec <- as.integer(agg)
 
-  # Contacts at slice toa[source, virus_id]
+  # Contacts at the slice corresponding to *this* infection event of the
+  # source, i.e. graph[[source_exposure_date]] (not graph[[toa[source]]],
+  # which under re-infection only carries the latest exposure date).
   T_slices <- length(x$graph)
   n_con <- vapply(seq_along(src), function(i) {
-    s <- src[i]; q <- vid[i]
-    if (q > ncol(toa_mat)) return(0L)
-    t_inf <- toa_mat[s, q]
+    t_inf <- sed[i]
     if (is.na(t_inf) || t_inf < 1L || t_inf > T_slices) return(0L)
     g <- x$graph[[t_inf]]
+    s <- src[i]
     as.integer(sum((g[s, ] != 0) | (g[, s] != 0)))
   }, integer(1L))
 
-  per_source <- data.frame(
-    source      = src,
-    virus_id    = vid,
-    n_secondary = n_sec,
-    n_contacts  = n_con,
-    sar         = ifelse(n_con > 0, n_sec / n_con, NA_real_),
+  per_event <- data.frame(
+    source               = src,
+    virus_id             = vid,
+    source_exposure_date = sed,
+    n_secondary          = n_sec,
+    n_contacts           = n_con,
+    sar                  = ifelse(n_con > 0, n_sec / n_con, NA_real_),
     stringsAsFactors = FALSE
   )
-  per_source <- per_source[order(per_source$virus_id, per_source$source), ,
-                            drop = FALSE]
-  rownames(per_source) <- NULL
+  per_event <- per_event[order(per_event$virus_id, per_event$source,
+                                per_event$source_exposure_date), ,
+                          drop = FALSE]
+  rownames(per_event) <- NULL
 
-  total_s <- sum(per_source$n_secondary)
-  total_c <- sum(per_source$n_contacts)
+  total_s <- sum(per_event$n_secondary)
+  total_c <- sum(per_event$n_contacts)
   global  <- if (total_c > 0) total_s / total_c else NA_real_
 
-  structure(per_source, global = global,
+  structure(per_event, global = global,
             class = c("netdiffuseR_sar", "data.frame"))
 }
 
@@ -322,10 +349,19 @@ print.netdiffuseR_sar <- function(x, ...) {
   cat("Secondary Attack Rate\n")
   cat(sprintf(" Aggregate (sum of secondaries / sum of contacts) : %.3f\n",
               attr(x, "global")))
-  cat(sprintf(" Based on %d infector%s in the transmission tree.\n",
-              nrow(x), if (nrow(x) == 1L) "" else "s"))
+  n_events  <- nrow(x)
+  n_sources <- length(unique(paste(x$source, x$virus_id, sep = "::")))
+  if (n_events == n_sources) {
+    cat(sprintf(" Based on %d infector%s in the transmission tree.\n",
+                n_events, if (n_events == 1L) "" else "s"))
+  } else {
+    cat(sprintf(" Based on %d infection event%s from %d distinct infector%s\n",
+                n_events, if (n_events == 1L) "" else "s",
+                n_sources, if (n_sources == 1L) "" else "s"))
+    cat("  (some infectors re-entered I and transmitted in more than one life).\n")
+  }
   cat(" -> use as.data.frame(.) or standard subscripting for the\n")
-  cat("    per-source breakdown.\n")
+  cat("    per-event breakdown.\n")
   invisible(x)
 }
 
@@ -408,23 +444,34 @@ print.netdiffuseR_generation_time <- function(x, ...) {
 
 #' Empirical reproduction number from a transmission tree
 #'
-#' For every infected case in \code{$transmission$tree},
+#' For every infection event in \code{$transmission$tree},
 #' \code{repr_number(x)} counts the number of secondary cases it caused
 #' (its offspring count, \eqn{\nu_i} in Lloyd-Smith \emph{et al.}, 2005)
 #' and reports the mean across cases as the empirical reproduction
 #' number. Cases that did not transmit further (terminal cases) count
 #' as zero in the denominator; seeds are included.
 #'
+#' A case is one entry into state I, keyed by
+#' \code{(node, virus_id, exposure_date)}. Under absorbing diffusion
+#' (the classic netdiffuseR regime) each \code{(node, virus_id)} has
+#' exactly one \code{exposure_date}, so the 3-D key collapses to the
+#' familiar per-node rollup. Under SIRS-style re-infection (a node
+#' enters \eqn{I} multiple times for the same virus), each
+#' infection-life is its own case with its own offspring tally. This
+#' matches the convention used by epiworldR's
+#' \code{get_reproductive_number()} and the Lloyd-Smith framework.
+#'
 #' @param x A \code{\link{diffnet_epi}} object.
 #' @param ... Currently ignored.
 #'
 #' @return A \code{data.frame} (with extra class \code{netdiffuseR_repr})
-#'   carrying columns \code{node}, \code{virus_id}, \code{n_offspring}.
-#'   Printing shows the aggregate reproduction number (mean offspring),
-#'   plus SD and range; the per-case rows are exposed via standard
-#'   data.frame subscripting. The aggregate is also stored as
-#'   \code{attr(., "global")}. A \code{plot} method renders the
-#'   offspring distribution as a barplot.
+#'   carrying columns \code{node}, \code{virus_id},
+#'   \code{exposure_date}, \code{n_offspring}. Printing shows the
+#'   aggregate reproduction number (mean offspring), plus SD and range;
+#'   the per-case rows are exposed via standard data.frame subscripting.
+#'   The aggregate is also stored as \code{attr(., "global")}. A
+#'   \code{plot} method renders the offspring distribution as a
+#'   barplot.
 #'
 #' @details
 #' The empirical reproduction number is defined as the mean offspring
@@ -468,6 +515,27 @@ print.netdiffuseR_generation_time <- function(x, ...) {
 #' plot(R)                            # offspring distribution barplot
 #' }
 #'
+#' # SIRS-style: a disadopt function lets nodes re-enter I, and every
+#' # re-infection is recorded as its own case in the returned frame.
+#' \dontrun{
+#' disadopt_30 <- function(expo, cumadopt, time) {
+#'   q_max <- dim(cumadopt)[3]; res <- vector("list", q_max)
+#'   for (q in seq_len(q_max)) {
+#'     adopters <- which(cumadopt[, time, q] == 1L)
+#'     res[[q]] <- if (length(adopters))
+#'       sample(adopters, ceiling(0.30 * length(adopters))) else integer()
+#'   }
+#'   res
+#' }
+#' set.seed(2026)
+#' dn_sirs <- rdiffnet(n = 60, t = 10, seed.graph = "small-world",
+#'                     seed.p.adopt = 0.15, stop.no.diff = FALSE,
+#'                     disadopt = disadopt_30,
+#'                     source_attribution = source_attribution_uniform)
+#' R_sirs <- repr_number(dn_sirs)
+#' table(table(paste(R_sirs$node, R_sirs$virus_id))) # nodes by # of lives
+#' }
+#'
 #' @name repr_number
 #' @author Aníbal Olivera M.
 NULL
@@ -491,25 +559,34 @@ repr_number.diffnet_epi <- function(x, ...) {
 
   if (!nrow(tr)) {
     out <- data.frame(
-      node        = integer(0),
-      virus_id    = integer(0),
-      n_offspring = integer(0),
+      node          = integer(0),
+      virus_id      = integer(0),
+      exposure_date = integer(0),
+      n_offspring   = integer(0),
       stringsAsFactors = FALSE
     )
     return(structure(out, global = NA_real_,
                      class = c("netdiffuseR_repr", "data.frame")))
   }
 
-  # All cases = unique (target, virus_id) pairs. Seeds and non-seeds both
-  # appear as targets, so this captures everyone who was infected.
-  cases <- unique(tr[, c("target", "virus_id"), drop = FALSE])
-  names(cases)[1] <- "node"
-  key_cases <- paste(cases$node, cases$virus_id, sep = "::")
+  # M12.2: cases are keyed per infection event = unique
+  # (target, virus_id, date). Under single-adoption each (target, virus_id)
+  # has exactly one date, so this collapses to the M12 2-D keying for
+  # absorbing diffusions; under SIRS-style re-infection each entry-to-I
+  # is its own case (Lloyd-Smith / epiworldR convention).
+  cases <- unique(tr[, c("target", "virus_id", "date"), drop = FALSE])
+  names(cases) <- c("node", "virus_id", "exposure_date")
+  key_cases <- paste(cases$node, cases$virus_id, cases$exposure_date,
+                     sep = "::")
 
-  # Count occurrences as -source- per case (offspring count).
-  src_rows <- tr[!is.na(tr$source), c("source", "virus_id"), drop = FALSE]
+  # Count offspring per source-event: a row in the tree contributes +1 to
+  # the case that infected someone *at that source_exposure_date*.
+  src_rows <- tr[!is.na(tr$source),
+                 c("source", "virus_id", "source_exposure_date"),
+                 drop = FALSE]
   if (nrow(src_rows)) {
-    key_src     <- paste(src_rows$source, src_rows$virus_id, sep = "::")
+    key_src     <- paste(src_rows$source, src_rows$virus_id,
+                         src_rows$source_exposure_date, sep = "::")
     src_tab     <- table(factor(key_src, levels = key_cases))
     n_offspring <- as.integer(src_tab)
   } else {
@@ -517,7 +594,8 @@ repr_number.diffnet_epi <- function(x, ...) {
   }
 
   cases$n_offspring <- n_offspring
-  cases             <- cases[order(cases$virus_id, cases$node), ,
+  cases             <- cases[order(cases$virus_id, cases$node,
+                                   cases$exposure_date), ,
                               drop = FALSE]
   rownames(cases)   <- NULL
 
