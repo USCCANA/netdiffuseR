@@ -1,0 +1,561 @@
+---
+title: "Epidemiological analysis on diffusion networks"
+author: "Anibal Olivera M."
+date: "May 14, 2026"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Epidemiological analysis on diffusion networks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4.5,
+  out.width = "85%",
+  fig.align = "center"
+)
+set.seed(2026)
+library(netdiffuseR)
+```
+
+`netdiffuseR` was built to study how *behaviours* spread through social
+networks. Since version 1.26.0 it also speaks the language of
+*contagion*: the package ships an epidemiological extension that turns
+any diffusion network into a first-class epidemic object, with the
+infrastructure needed to compute reproduction numbers, secondary attack
+rates, generation times, survival curves, and offspring distributions
+directly from the contact graph.
+
+This vignette has two halves. **Part I** is a methods tour: each new
+piece of machinery is introduced with a minimal simulated example so
+the concept lands before the syntax. **Part II** is a case study on
+real experimental data --- the *Epigames* pandemic simulation
+(Musa *et al.*, 2026) --- where 594 students played a 15-day infection
+game on their campus. The dataset is shipped with the package, so the
+analysis is reproducible end-to-end from a fresh install.
+
+The intended reader is a social-network researcher who is comfortable
+with `diffnet` objects but new to compartmental / contagion analysis.
+The companion vignettes "Introduction to netdiffuseR", "Simulating
+diffusion networks" and "Multiple behaviours" cover the substrate this
+vignette builds on.
+
+------------------------------------------------------------------------
+
+# Part I --- Methods
+
+## §1 From diffusion to contagion
+
+A classic netdiffuseR question is *"who adopted a new practice, when,
+and through which ties?"*. The answer lives in a `diffnet` object,
+which records adoption times (`$toa`), the contact network at each
+period (`$graph`), and derived state (`$cumadopt`, `$adopt`).
+
+A classic epidemiological question is *"who infected whom, with what
+probability, and how fast did the epidemic move?"*. The substrate is
+the same --- a graph plus per-node infection times --- but the answer
+also requires a *transmission tree*: a who-infected-whom edge list
+that links each case to its presumed source. With that tree you can
+compute the empirical reproduction number, secondary attack rate, and
+generation time --- the standard ingredients of an outbreak report.
+
+netdiffuseR's epidemiological subsystem is exactly the set of
+primitives that turn the first object into the second.
+
+## §2 The `diffnet_epi` subclass
+
+A `diffnet_epi` is a `diffnet` with one extra slot: `$transmission`,
+holding the tree. The class hierarchy is
+
+``` r
+class(x) #> c("diffnet_epi", "diffnet")
+```
+
+so every method that worked on a plain `diffnet` (`plot`, `summary`,
+`hazard_rate`, `threshold`, `exposure`, indexing, ...) keeps working
+unchanged on the subclass via S3 dispatch.
+
+There are three ways to obtain a `diffnet_epi`:
+
+1.  Let `rdiffnet()` build one for you by passing a
+    `source_attribution =` callback (it tracks lineage during
+    simulation).
+2.  Promote an existing `diffnet` from a tree you already have
+    (e.g. from another tool or an observed outbreak), via
+    `as_transmission_tree()`.
+3.  Reconstruct the tree from a plain `diffnet`'s graph and adoption
+    times by source-attribution, via
+    `as_diffnet_epi(dn, attribution = ...)`.
+
+We start with path (1) because it is the shortest:
+
+```{r quickstart}
+set.seed(2026)
+dn <- rdiffnet(
+  n  = 30, t = 6, seed.graph = "small-world",
+  seed.p.adopt = 0.10, stop.no.diff = FALSE,
+  source_attribution = source_attribution_uniform
+)
+class(dn)
+```
+
+The simulation behaves exactly like any other `rdiffnet()` call ---
+the only difference is the `source_attribution` argument that asks
+the engine to track infectors as it goes. The result is a
+`diffnet_epi`. The transmission tree is now accessible:
+
+```{r tree-shape}
+tr <- transmission_tree(dn)
+head(tr)
+nrow(tr)
+```
+
+Each row is one infection event: `target` was infected on `date` by
+`source` (which itself entered I on `source_exposure_date`). Seeds
+have `source = NA`. The `virus_id` / `virus` columns are useful when
+multiple behaviours are tracked at once.
+
+## §3 Source attribution: three bundled rules
+
+In observed data a target can have several already-infected
+neighbours; the experiment does not tell you which one transmitted.
+Source attribution is the rule used to break that tie. netdiffuseR
+ships three kernels (all exported, all follow the same contract so
+users can write their own):
+
+| Rule                        | Behaviour                                           |
+|-----------------------------|-----------------------------------------------------|
+| `source_attribution_uniform`   | Sample one infectious neighbour uniformly at random |
+| `source_attribution_weighted`  | Sample with probability proportional to edge weight |
+| `source_attribution_earliest`  | Pick the neighbour with the earliest adoption time  |
+
+Pass any of them to `rdiffnet()`, or to the post-hoc reconstruction
+function `transmission_tree_from_events()` introduced in §7. The choice affects
+*which* node gets credit for each transmission, but not the *total*
+number of transmissions: every non-seed adopter contributes one row
+to the tree regardless of who is named as their infector. So a
+non-obvious algebraic invariant emerges:
+
+```{r attribution-comparison}
+make_dn <- function(attr_fn) {
+  set.seed(2026)
+  rdiffnet(n = 40, t = 6, seed.graph = "small-world",
+           seed.p.adopt = 0.10, stop.no.diff = FALSE,
+           source_attribution = attr_fn)
+}
+
+dn_unif <- make_dn(source_attribution_uniform)
+dn_earl <- make_dn(source_attribution_earliest)
+
+# Aggregate R is invariant: sum(offspring) = #non-seed edges, fixed by
+# (graph, toa) alone, and N (= #cases) is also fixed.
+c(uniform_R  = attr(repr_number(dn_unif), "global"),
+  earliest_R = attr(repr_number(dn_earl), "global"))
+```
+
+What *does* change is the per-source distribution of offspring
+counts. Under `_earliest` the earliest infectors collect all the
+credit, producing a more concentrated right tail; `_uniform` spreads
+it out:
+
+```{r attribution-shape, fig.height=3.5, fig.cap="Same dataset, same aggregate R, different shape of offspring distribution under two attribution rules."}
+op <- par(mfrow = c(1, 2))
+plot(repr_number(dn_unif),  main = "uniform")
+plot(repr_number(dn_earl), main = "earliest")
+par(op)
+```
+
+Use `_earliest` when you want a deterministic, "first contact wins"
+baseline; `_weighted` when contact intensity is meaningful; `_uniform`
+when you have no prior. None of them is "the right answer" in an
+absolute sense --- they are explicit modelling choices that move
+mass between nodes but conserve the global epidemic accounting.
+
+## §4 The five epidemiological metrics
+
+Once a tree is in place, netdiffuseR exposes five tree-aware metrics.
+All return classed `data.frame`s with custom `print` methods, so the
+console reads as a summary while the full per-row breakdown remains
+accessible via standard subscripting / `as.data.frame()`.
+
+```{r quickstart-metrics, eval=TRUE}
+pp <- peak_prevalence(dn)
+pt <- peak_time(dn)
+sc <- survival_curve(dn)
+sar <- secondary_attack_rate(dn)
+gt  <- generation_time(dn)
+
+cat(sprintf("Peak prevalence    : %.3f at t = %d\n", pp, pt))
+sar
+gt
+sc
+```
+
+A quick glossary, since the names overlap with several literatures:
+
+-   **Peak prevalence** is the maximum share of currently-adopted
+    nodes across the time horizon. For an absorbing diffusion (no
+    recovery, the default) this is the final share; under SIRS it can
+    occur mid-run.
+-   **Survival curve** is a Kaplan-Meier estimate of "time until
+    recovery" among adopters. For absorbing diffusions every adopter
+    is right-censored (no recovery ever observed) and the curve is
+    flat at 1.
+-   **Secondary attack rate** (SAR) is `n_secondary / n_contacts`,
+    keyed per infection event of the source (one row per
+    `(source, virus_id, source_exposure_date)`). The aggregate is
+    the sum-over-sum: `sum(n_secondary) / sum(n_contacts)`.
+-   **Generation time** is, per tree edge, `date - source_exposure_date`:
+    how long the infector had been in state I before transmitting.
+
+`summary.diffnet_epi()` rolls all five up into a single block on top
+of the standard `summary.diffnet` output:
+
+```{r summary-epi}
+summary(dn)
+```
+
+## §5 Reproduction number and the offspring distribution
+
+`repr_number()` produces the *empirical mean offspring count*: for
+every infection event in the tree it counts how many secondary cases
+it caused, and returns the mean. The convention matches
+Lloyd-Smith *et al.* (2005) and `epiworldR::get_reproductive_number()`:
+seeds are included as cases (with offspring counted from the moment
+they entered I), and terminal cases (\(\nu_i = 0\)) stay in the
+denominator.
+
+```{r repr-toy}
+R <- repr_number(dn)
+R
+```
+
+Three things to notice. First, the printed scalar is the aggregate
+mean. Second, the full per-case offspring is one column of the
+returned `data.frame` --- ready for plotting, model fitting, or
+distributional checks. Third, the `plot` method renders the offspring
+distribution as a barplot, the visual signature of superspreading
+when the right tail is heavy:
+
+```{r repr-plot, fig.cap="Offspring distribution on a toy absorbing diffusion."}
+plot(R)
+```
+
+### A note on multi-behaviour datasets
+
+When the tree carries more than one virus, the print method makes the
+aggregation explicit and adds a per-diffusion rollup, so the reader
+never confuses a pooled `R` with a single-diffusion one:
+
+```{r repr-multi}
+set.seed(2026)
+suppressMessages(
+  dn_multi <- rdiffnet(
+    n = 40, t = 6, seed.graph = "small-world",
+    seed.p.adopt = list(0.10, 0.05), stop.no.diff = FALSE,
+    source_attribution = source_attribution_uniform
+  )
+)
+repr_number(dn_multi)
+```
+
+## §6 SIRS: re-infection support
+
+So far every example was *absorbing*: once a node adopted, it stayed
+adopted. To model recovery and re-infection (the S-I-R-S regime), pass
+`disadopt =` to `rdiffnet()` --- any function that decides who returns
+to S each period. netdiffuseR's tree machinery records each fresh
+adoption as its own row, so a node infected three times during the
+run shows up as three cases:
+
+```{r sirs-toy}
+disadopt_30 <- function(expo, cumadopt, time) {
+  q_max <- dim(cumadopt)[3]
+  res <- vector("list", q_max)
+  for (q in seq_len(q_max)) {
+    adopters <- which(cumadopt[, time, q] == 1L)
+    res[[q]] <- if (length(adopters))
+      sample(adopters, ceiling(0.30 * length(adopters))) else integer()
+  }
+  res
+}
+
+set.seed(2026)
+dn_sirs <- rdiffnet(
+  n = 60, t = 10, seed.graph = "small-world",
+  seed.p.adopt = 0.15, stop.no.diff = FALSE,
+  disadopt = disadopt_30,
+  source_attribution = source_attribution_uniform
+)
+tr_sirs <- transmission_tree(dn_sirs)
+
+# Some nodes appear as targets in more than one row -> re-infected.
+node_lives <- table(paste(tr_sirs$target, tr_sirs$virus_id, sep = "::"))
+table(as.integer(node_lives))
+```
+
+Under absorbing diffusion this table would always be `1 -> N`. Under
+SIRS, nodes with 2, 3, ... lives appear naturally. `repr_number()`
+counts each life as its own case (per-event keying); the resulting
+`R` is the mean offspring *per infection event*, which is the
+quantity Lloyd-Smith superspreader analyses operate on. The same
+keying applies to `secondary_attack_rate()`.
+
+A subtle consequence worth flagging: under SIRS, a single source can
+re-infect the *same* target multiple times during its infection
+life. Each transmission is a row in the tree and contributes to
+`n_secondary`. The per-row SAR can therefore exceed 1; this is
+expected (the unit shifts from "probability per contact" to
+"transmissions per contact"), and the aggregate sum-over-sum
+interpretation is preserved.
+
+## §7 Reconstructing the tree from observed data
+
+So far every `diffnet_epi` has come straight out of `rdiffnet()` ---
+the simulation engine built the tree as it went. In the empirical
+setting things look different: you start with a plain `diffnet`
+(contact graph + adoption times) and the tree has to be inferred
+*post hoc*. The primitive for that is
+`transmission_tree_from_events()`:
+
+```{r post-hoc}
+# Pretend dn was built by hand from observed data; strip the diffnet_epi
+# class so we are working from a plain diffnet.
+class(dn) <- "diffnet"
+
+# Reconstruct the tree from x's graph slices + toa, using uniform
+# attribution and a fixed seed for reproducibility.
+tree <- transmission_tree_from_events(
+  dn,
+  attribution = "uniform",
+  seed        = 2026
+)
+head(tree)
+```
+
+The same job, wrapped in one step that returns the promoted object,
+is `as_diffnet_epi(dn, attribution = ...)`:
+
+```{r as-diffnet-epi-reconstruction}
+dn_epi <- as_diffnet_epi(dn, attribution = "uniform", seed = 2026)
+is.diffnet_epi(dn_epi)
+identical(transmission_tree(dn_epi), tree)
+```
+
+This is exactly the primitive Part II uses --- the bundled
+`epigamesDiffNet` was constructed by running
+`as_diffnet_epi(., attribution = "uniform")` on the empirical contact
+graph and adoption times. The same algorithm therefore powers both
+*"simulate a network outbreak"* and *"analyse a real one"*. Custom
+attribution rules are user-functions with the
+`source_attribution_uniform` signature, so domain-specific priors
+(e.g. proximity duration, role homophily) can be wired in without
+touching the package internals.
+
+------------------------------------------------------------------------
+
+# Part II --- Case study: Epigames (Musa *et al.*, 2026)
+
+## §8 The experiment
+
+The bundled `epigamesDiffNet` records a controlled pandemic
+simulation in which 594 students used a mobile app for 15 days on
+their university campus. The app turned face-to-face encounters
+(measured by Bluetooth proximity) into a contact graph, and a
+seeded *virus* spread through that graph following experimental
+parameters (Musa *et al.*, 2026). The dataset shipped here aggregates
+the original raw history to daily slices and reconstructs the
+transmission tree by uniform source attribution --- which means the
+analysis below treats the dataset as a single observed outbreak with
+an attribution-model uncertainty we will quantify in §11.
+
+The companion hourly dataset, `epigames`, contains the raw inputs
+(static attributes, hourly edgelist, dynamic behavioural attributes)
+in case the user wants to build a finer-grained diffnet from scratch.
+
+## §9 Loading and inspecting
+
+```{r epigames-load}
+data("epigamesDiffNet", package = "netdiffuseR")
+class(epigamesDiffNet)
+nnodes(epigamesDiffNet)
+length(epigamesDiffNet$graph)   # number of daily slices
+```
+
+The header line of the print method shows the standard diffnet
+summary plus a transmission tree summary line:
+
+```{r epigames-print}
+epigamesDiffNet
+```
+
+Because `diffnet_epi` inherits from `diffnet`, the usual descriptive
+tooling works out of the box. The cumulative adoption curve, for
+instance:
+
+```{r epigames-adopters, fig.cap="Cumulative adoption curve for the Epigames outbreak (n = 594, 15 days)."}
+plot_adopters(epigamesDiffNet)
+```
+
+## §10 The five metrics
+
+```{r epigames-five}
+pp  <- peak_prevalence(epigamesDiffNet)
+pt  <- peak_time(epigamesDiffNet)
+sar <- secondary_attack_rate(epigamesDiffNet)
+gt  <- generation_time(epigamesDiffNet)
+sc  <- survival_curve(epigamesDiffNet)
+
+cat(sprintf("Peak prevalence    : %.3f at day %d\n", pp, pt))
+cat(sprintf("SAR (aggregate)    : %.3f over %d infection events\n",
+            attr(sar, "global"), nrow(sar)))
+cat(sprintf("Generation time    : mean = %.2f days, median = %.0f days, n_edges = %d\n",
+            mean(gt$gen_time), median(gt$gen_time), nrow(gt)))
+```
+
+The peak occurs on the last day of the experiment: the outbreak is
+still growing at the horizon, which is itself a methodological
+finding --- the 15-day window is shorter than the natural epidemic
+duration on this contact network. The mean SAR of ~0.18 is consistent
+with a moderately transmissible airborne agent under university-life
+mixing, with substantial heterogeneity across infectors (we will
+visualise this in §11). Mean generation time of ~2.2 days is in the
+right ballpark for the parameters used in the experiment.
+
+The survival curve is uninformative here because the experiment did
+not track recoveries within its 15-day horizon: every observed
+adopter remains right-censored at the end of the study, so the curve
+is flat at 1. (`survival_curve()` is included in the workflow for
+completeness; it lights up on datasets where recovery is observed.)
+
+## §11 The Epigames reproduction number
+
+```{r epigames-R}
+R_emp <- repr_number(epigamesDiffNet)
+R_emp
+```
+
+The aggregate `R` of \~`r round(attr(repr_number(epigamesDiffNet), "global"), 2)`
+is below the classical R > 1 outbreak threshold --- consistent with a
+diffusion that grew but never went exponential, and with the high
+share of seed-like rows (single contacts on day 1) inflating the
+denominator. The offspring distribution, however, is highly skewed:
+
+```{r epigames-R-plot, fig.cap="Empirical offspring distribution from the Epigames transmission tree."}
+plot(R_emp)
+```
+
+A small number of cases account for many secondary infections. This
+is the *superspreading signature* Lloyd-Smith *et al.* (2005)
+documented in SARS, MERS, and several other respiratory outbreaks. In
+the Epigames data it is visible despite the modest sample size and
+the controlled environment --- evidence that the network structure
+alone, even with homogeneous individual behaviour, is enough to
+generate this kind of right tail.
+
+## §12 Empirical vs simulated: same network, varying mechanism
+
+The empirical `R` is one realisation of one attribution policy on
+one tree. To contextualise it, we run a counter-factual:
+keep the *same contact graph* used by the experiment and let
+`rdiffnet()` simulate an absorbing diffusion with default
+threshold-based adoption. Both runs see the same network at each
+slice; only the adoption rule differs.
+
+```{r epigames-vs-sim}
+set.seed(2026)
+n_seeds <- sum(epigamesDiffNet$toa == 1, na.rm = TRUE)
+
+# Simulated counter-factual on the SAME contact graph as the experiment.
+# When -seed.graph- is a dynamic graph, -t- is inferred from its length, so
+# we omit it here to avoid the redundancy warning.
+dn_sim <- rdiffnet(
+  seed.graph         = epigamesDiffNet$graph,
+  seed.p.adopt       = n_seeds / nnodes(epigamesDiffNet),
+  stop.no.diff       = FALSE,
+  source_attribution = source_attribution_uniform
+)
+
+R_sim <- repr_number(dn_sim)
+
+c(empirical = attr(R_emp, "global"),
+  simulated = attr(R_sim, "global"))
+```
+
+The aggregate scalars are not directly comparable; the *shape* of the
+two trees explains why. The empirical tree is dominated by seeds:
+`r sum(is.na(transmission_tree(epigamesDiffNet)$source))` of its
+`r nrow(transmission_tree(epigamesDiffNet))` rows are day-1 infections
+with no prior adopter to attribute to, all of which enter the
+Lloyd-Smith denominator with zero offspring. The simulated cascade,
+in contrast, starts from a smaller seeded core and grows
+diffusion-like through the network --- so its denominator is
+correspondingly smaller and its `R` correspondingly larger.
+
+Side by side:
+
+```{r epigames-vs-sim-plot, fig.height=4.5, fig.cap="Empirical (left) vs simulated (right) offspring distributions on the same contact graph. Both use uniform source attribution; the simulation uses threshold-based adoption with a uniform threshold distribution."}
+op <- par(mfrow = c(1, 2))
+plot(R_emp, main = "Empirical (Epigames)")
+plot(R_sim, main = "Simulated (rdiffnet, threshold)")
+par(op)
+```
+
+What is comparable across the two panels is the *right tail*. The
+simulated threshold model reaches offspring counts of
+`r max(R_sim$n_offspring)` per infection event; the empirical
+distribution caps at `r max(R_emp$n_offspring)`. The threshold
+model on this network produces more concentrated transmission events
+than the experiment did, even though the contact graph is identical.
+A plausible reading is that the experimental subjects' heterogeneous
+behaviour --- mask use, medicine, voluntary isolation --- flattened
+the right tail relative to a homogeneous-threshold null model. This
+is exactly the kind of discrepancy a network-aware epidemiological
+analysis should surface: by holding the contact graph fixed we
+isolate the adoption-mechanism contribution to the offspring
+distribution from the network's contribution.
+
+------------------------------------------------------------------------
+
+# Appendix
+
+## Related vignettes
+
+-   *Introduction to netdiffuseR* --- the substrate
+    (`diffnet`, adoption, exposure).
+-   *Simulating diffusion networks: Using the `rdiffnet` function* ---
+    detailed coverage of the simulation API, including the
+    `adoption_mechanism`, `disadopt`, and exposure modes used here.
+-   *Multiple behaviours* --- multi-virus / multi-behaviour diffusion,
+    the substrate for the per-diffusion `repr_number` rollup shown in
+    §5.
+
+## References
+
+-   Lloyd-Smith, J. O., Schreiber, S. J., Kopp, P. E., & Getz, W. M.
+    (2005). Superspreading and the effect of individual variation on
+    disease emergence. *Nature*, 438, 355--359.
+    <https://doi.org/10.1038/nature04153>
+-   Wallinga, J., & Teunis, P. (2004). Different epidemic curves for
+    severe acute respiratory syndrome reveal similar impacts of
+    control measures. *American Journal of Epidemiology*, 160(6),
+    509--516.
+-   White, L. F., & Pagano, M. (2008). A likelihood-based method for
+    real-time estimation of the serial interval and reproductive
+    number of an epidemic. *Statistics in Medicine*, 27, 2999--3016.
+-   Valente, T. W. (1995). *Network Models of the Diffusion of
+    Innovations*. Hampton Press.
+-   Musa, S., *et al.* (2026). EpiGames: an in-the-wild
+    pandemic-simulation game on university campuses. *(In preparation;
+    dataset shipped with the package.)*
+
+## Session info
+
+```{r session, echo=FALSE}
+sessionInfo()
+```
