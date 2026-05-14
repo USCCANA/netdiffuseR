@@ -109,15 +109,19 @@ class(dn)
 Two of those arguments deserve attention because they recur
 throughout this part. `threshold.dist = 1` combined with
 `exposure.args = list(normalized = FALSE)` configures `rdiffnet()`
-as the simplest possible *virus model*: **a single infectious
-contact is enough to infect the target**, and exposure is the raw
-count of infectious neighbours (so infection probability is,
-implicitly, linear in the number of contacts). This is the
-deliberately simple null model we will work with throughout
-§3-§7. The unrealism of that linearity --- exposure time *should*
-saturate, not stack --- is exactly what §8.1 addresses with the
-Wells-Riley equation. In the meantime, every toy in this part
-uses the same two arguments.
+as the simplest possible *virus model*: exposure is the raw count
+of infectious neighbours, and the adoption rule is the deterministic
+step `exposure >= 1`. Concretely: **a single infectious contact, of
+any duration, infects the target with certainty**. The decision is
+binary --- if at least one neighbour is infected, the target becomes
+infected next period; otherwise it stays susceptible. Edge weights
+don't enter the picture under the default identity link and
+`valued = FALSE`. This is the deliberately simple null model we
+will work with throughout §3-§7. The unrealism of "any duration is
+enough" --- real airborne transmission depends non-linearly on
+exposure time --- is exactly what §8.1 addresses with the
+Wells-Riley equation. In the meantime, every toy in this part uses
+the same two arguments.
 
 The result is a `diffnet_epi` (the `source_attribution` argument
 is what asks the engine to track infectors as it goes during the
@@ -428,10 +432,10 @@ touching the package internals.
 Every toy in §3-§7 used the deliberately simple model laid out in
 §2: `threshold.dist = 1` with `exposure.args = list(normalized = FALSE)`
 --- a node becomes infected the moment one infectious neighbour
-exists, and exposure stacks linearly with contact count. The
-package supports **two independent generalisations of this model**,
-each one relaxing a different unrealistic assumption. They sit at
-different layers of the simulation:
+exists, with certainty, regardless of edge weight or contact
+duration. The package supports **two independent generalisations
+of this model**, each one relaxing a different unrealistic
+assumption. They sit at different layers of the simulation:
 
 ```
    contact graph + adopted neighbours
@@ -448,24 +452,33 @@ different layers of the simulation:
 ### §8.1 From threshold to infection probability (Wells-Riley)
 
 So far we have assumed something epidemiologically implausible:
-that **infection probability grows linearly with exposure** ---
-every additional infectious contact adds the same increment to your
-chance of getting sick. Real airborne transmission saturates: 30
-minutes with an infected person are not three times worse than 10
-minutes. Wells (1955) and Riley, Murphy and Riley (1978) formalised
-this in the **Wells-Riley equation**, where the per-contact
-probability of infection is
+that **a single infectious contact, regardless of its duration,
+infects the target with certainty**. A 1-second brush past an
+infected person and a 4-hour conversation are treated identically
+--- both cross `threshold = 1` because both contribute one unit of
+exposure under the default identity link. Real airborne
+transmission is neither deterministic nor exposure-duration-blind:
+the probability that a given contact transmits *grows with
+contact duration but saturates* --- doubling the time you share a
+room with an infected person less than doubles your chance of
+getting sick. Wells (1955) and Riley, Murphy and Riley (1978)
+formalised this in the **Wells-Riley equation**, where the
+per-contact probability of infection is
 
 \[
-P(\text{infection} \mid \text{exposure } w) \;=\; 1 - \exp(-\beta\,w),
+P(\text{infection} \mid \text{contact of duration } w) \;=\; 1 - \exp(-\beta\,w),
 \]
 
-non-linear in exposure duration \(w\), with \(\beta\) aggregating
-the infector's quanta-emission rate, ventilation, and the target's
-susceptibility. netdiffuseR's `exposure.mode = "stochastic"` with
-`link_fun = "wells-riley"` implements exactly this transform on
-every edge weight: each non-zero contact becomes a Bernoulli draw
-with the saturating probability above.
+with \(\beta\) aggregating the infector's quanta-emission rate,
+ventilation, and the target's susceptibility. The function is
+linear in \(w\) only at very short durations and saturates at 1 as
+\(w \to \infty\) --- exactly the qualitative behaviour we want.
+netdiffuseR's `exposure.mode = "stochastic"` with
+`link_fun = "wells-riley"` implements this transform on every edge
+weight: each non-zero contact becomes a Bernoulli draw with the
+saturating probability above. Two changes from the §3-§7 default
+work together: contacts are now *probabilistic* (not all transmit)
+and edge weights *matter* (longer contacts are riskier).
 
 ```{r stoch-exposure}
 set.seed(2026)
