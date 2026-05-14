@@ -737,5 +737,26 @@ summary.diffnet_epi <- function(object, ...) {
     cat(" Generation time : empty (seed-only tree)\n")
   }
 
+  # Survival curve (works on plain diffnet too; meaningful only when
+  # there is at least one recovery event in $status)
+  sc <- survival_curve(object)
+  if (nrow(sc) > 0L) {
+    n_rec   <- sum(sc$n_recovered)
+    surv_end <- sc$survival[nrow(sc)]
+    if (n_rec > 0L) {
+      med_ix <- which(sc$survival <= 0.5)[1L]
+      med_t  <- if (length(med_ix) && !is.na(med_ix)) sc$time[med_ix] else NA_integer_
+      cat(sprintf(
+        " Survival curve  : %d recoveries; final survival %.3f%s\n",
+        n_rec, surv_end,
+        if (is.na(med_t)) "" else sprintf("; median t = %s", as.character(med_t))
+      ))
+    } else {
+      cat(" Survival curve  : flat at 1 (no recoveries observed)\n")
+    }
+  } else {
+    cat(" Survival curve  : empty (no adopters)\n")
+  }
+
   invisible(base_summary)
 }

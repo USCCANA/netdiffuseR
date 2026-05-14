@@ -73,11 +73,12 @@ A `diffnet_epi` is a `diffnet` with one extra slot: `$transmission`,
 holding the tree. The class hierarchy is
 
 ``` r
-class(x) #> c("diffnet_epi", "diffnet")
+class(x)
+#> c("diffnet_epi", "diffnet")
 ```
 
 so every method that worked on a plain `diffnet` (`plot`, `summary`,
-`hazard_rate`, `threshold`, `exposure`, indexing, ...) keeps working
+`hazard_rate`, `threshold`, `exposure`, ...) keeps working
 unchanged on the subclass via S3 dispatch.
 
 There are three ways to obtain a `diffnet_epi`:
@@ -135,7 +136,7 @@ users can write their own):
 | `source_attribution_earliest`  | Pick the neighbour with the earliest adoption time  |
 
 Pass any of them to `rdiffnet()`, or to the post-hoc reconstruction
-function `transmission_tree_from_events()` introduced in §7. The choice affects
+function `transmission_tree_from_events()` introduced in §8. The choice affects
 *which* node gets credit for each transmission, but not the *total*
 number of transmissions: every non-seed adopter contributes one row
 to the tree regardless of who is named as their infector. So a
@@ -176,7 +177,91 @@ when you have no prior. None of them is "the right answer" in an
 absolute sense --- they are explicit modelling choices that move
 mass between nodes but conserve the global epidemic accounting.
 
-## §4 The five epidemiological metrics
+## §4 Stochasticity in `rdiffnet()`
+
+The examples so far used `rdiffnet()`'s deterministic default: a
+node's exposure is a weighted sum of adopted neighbours, and
+adoption fires when that exposure crosses a fixed threshold.
+netdiffuseR also exposes **two independent sources of noise**, both
+useful when modelling real contagion processes. They sit at
+different layers of the simulation:
+
+```
+   contact graph + adopted neighbours
+              │
+              ▼  (a) noisy exposure  ──── exposure.mode = "stochastic"
+              │                            exposure.args$link_fun = ...
+       exposure value
+              │
+              ▼  (b) noisy adoption  ──── adoption_mechanism = adoptmech_logit
+              │                            adoption_pars = list(beta0=, beta_expo=)
+       adoption decision
+```
+
+### (a) Stochastic exposure
+
+The first switch lives at the exposure stage. With
+`exposure.mode = "stochastic"`, each non-zero edge weight \(w\)
+becomes a Bernoulli draw with probability \(f(w)\) for a kernel
+\(f \in\) {`"identity"`, `"linear"`, `"sigmoid"`, `"wells-riley"`}.
+The exposure value is then the count of *successful* contacts
+rather than the sum of weights. Useful when the data carries
+contact duration / intensity and you want to model "did this
+contact actually transmit?" as a coin flip per encounter.
+
+```{r stoch-exposure}
+set.seed(2026)
+suppressMessages(
+  dn_stoch_expo <- rdiffnet(
+    n = 30, t = 6, seed.graph = "small-world",
+    seed.p.adopt = 0.10, stop.no.diff = FALSE,
+    exposure.mode = "stochastic",
+    exposure.args = list(link_fun = "sigmoid",
+                         link_pars = list(h = 0.5, scale = 0.2)),
+    source_attribution = source_attribution_weighted
+  )
+)
+cat(sprintf("Final prevalence : %.3f\n", peak_prevalence(dn_stoch_expo)))
+cat(sprintf("R                : %.3f\n",
+            attr(repr_number(dn_stoch_expo), "global")))
+```
+
+### (b) Stochastic adoption
+
+The second switch lives one layer below. Even with a deterministic
+exposure value, the *adoption decision* can be a Bernoulli draw
+governed by a logit or probit link. The bundled `adoptmech_logit`
+samples adoption with probability
+
+\[
+P(\text{adopt} \mid \text{expo}) \;=\; \mathrm{logit}^{-1}\!\bigl(\beta_0 + \beta_{\text{expo}}\,\cdot\,\text{expo}\bigr).
+\]
+
+A negative `beta0` keeps baseline transmission low; a positive
+`beta_expo` makes adoption more likely as exposure grows.
+
+```{r stoch-adopt}
+set.seed(2026)
+dn_logit <- rdiffnet(
+  n = 30, t = 6, seed.graph = "small-world",
+  seed.p.adopt = 0.10, stop.no.diff = FALSE,
+  adoption_mechanism = adoptmech_logit,
+  adoption_pars      = list(beta0 = -2, beta_expo = 4),
+  source_attribution = source_attribution_uniform
+)
+cat(sprintf("Final prevalence : %.3f\n", peak_prevalence(dn_logit)))
+cat(sprintf("R                : %.3f\n",
+            attr(repr_number(dn_logit), "global")))
+```
+
+The two switches are independent. The default deterministic run is
+the classic Valente threshold model; flipping each switch to
+"stochastic" moves the simulator progressively closer to a
+network-aware compartmental model. The five metrics introduced in
+§5 work identically on any of these regimes --- they consume the
+tree the simulator produces, not the simulator's internal mechanics.
+
+## §5 The five epidemiological metrics
 
 Once a tree is in place, netdiffuseR exposes five tree-aware metrics.
 All return classed `data.frame`s with custom `print` methods, so the
@@ -186,9 +271,9 @@ accessible via standard subscripting / `as.data.frame()`.
 ```{r quickstart-metrics, eval=TRUE}
 pp <- peak_prevalence(dn)
 pt <- peak_time(dn)
-sc <- survival_curve(dn)
 sar <- secondary_attack_rate(dn)
 gt  <- generation_time(dn)
+sc <- survival_curve(dn)
 
 cat(sprintf("Peak prevalence    : %.3f at t = %d\n", pp, pt))
 sar
@@ -202,16 +287,16 @@ A quick glossary, since the names overlap with several literatures:
     nodes across the time horizon. For an absorbing diffusion (no
     recovery, the default) this is the final share; under SIRS it can
     occur mid-run.
--   **Survival curve** is a Kaplan-Meier estimate of "time until
-    recovery" among adopters. For absorbing diffusions every adopter
-    is right-censored (no recovery ever observed) and the curve is
-    flat at 1.
 -   **Secondary attack rate** (SAR) is `n_secondary / n_contacts`,
     keyed per infection event of the source (one row per
     `(source, virus_id, source_exposure_date)`). The aggregate is
     the sum-over-sum: `sum(n_secondary) / sum(n_contacts)`.
 -   **Generation time** is, per tree edge, `date - source_exposure_date`:
     how long the infector had been in state I before transmitting.
+-   **Survival curve** is a Kaplan-Meier estimate of "time until
+    recovery" among adopters. For absorbing diffusions every adopter
+    is right-censored (no recovery ever observed) and the curve is
+    flat at 1.
 
 `summary.diffnet_epi()` rolls all five up into a single block on top
 of the standard `summary.diffnet` output:
@@ -220,13 +305,31 @@ of the standard `summary.diffnet` output:
 summary(dn)
 ```
 
-## §5 Reproduction number and the offspring distribution
+## §6 Reproduction number and the offspring distribution
 
-`repr_number()` produces the *empirical mean offspring count*: for
-every infection event in the tree it counts how many secondary cases
-it caused, and returns the mean. The convention matches
-Lloyd-Smith *et al.* (2005) and `epiworldR::get_reproductive_number()`:
-seeds are included as cases (with offspring counted from the moment
+In the SIR convention, a node is **susceptible (S)** before it adopts,
+**infectious (I)** during the period in which it can transmit, and
+**recovered (R)** once it stops. The *reproduction number*
+\(R\) is, in plain words, the **average number of secondary cases
+that a typical infectious node causes during its time in I**. For an
+absorbing diffusion every adopter stays in I until the simulation
+ends; under SIRS (see §6) a node can enter and leave I more than
+once, and each such infection-life counts as its own case.
+
+The arithmetic is straightforward. Let \(\nu_i\) (the *offspring
+count*) be the number of secondary cases attributable to infection
+event \(i\) --- exactly the number of times that node-event appears
+as a `source` in the transmission tree. The empirical reproduction
+number is
+
+\[
+R \;=\; \frac{1}{N}\sum_{i=1}^{N} \nu_i,
+\]
+
+where \(N\) is the total number of infection events
+(seeds + secondary). The convention matches Lloyd-Smith *et al.*
+(2005) and `epiworldR::get_reproductive_number()`: seeds are
+included as cases (with their offspring counted from the moment
 they entered I), and terminal cases (\(\nu_i = 0\)) stay in the
 denominator.
 
@@ -264,7 +367,28 @@ suppressMessages(
 repr_number(dn_multi)
 ```
 
-## §6 SIRS: re-infection support
+The `source_attribution` argument also accepts a *list* of length
+\(Q\) (number of diffusions), one attribution rule per virus. This
+is useful when the different processes have different plausible
+infectors --- e.g. a uniform-attribution behaviour spreading
+alongside an earliest-attribution behaviour:
+
+```{r repr-multi-mixed}
+set.seed(2026)
+suppressMessages(
+  dn_mixed <- rdiffnet(
+    n = 40, t = 6, seed.graph = "small-world",
+    seed.p.adopt = list(0.10, 0.05), stop.no.diff = FALSE,
+    source_attribution = list(
+      source_attribution_uniform,    # for virus 1
+      source_attribution_earliest    # for virus 2
+    )
+  )
+)
+repr_number(dn_mixed)
+```
+
+## §7 SIRS: re-infection support
 
 So far every example was *absorbing*: once a node adopted, it stayed
 adopted. To model recovery and re-infection (the S-I-R-S regime), pass
@@ -274,6 +398,10 @@ adoption as its own row, so a node infected three times during the
 run shows up as three cases:
 
 ```{r sirs-toy}
+# disadopt_30 returns the set of nodes that recover each period. Here it
+# randomly disadopts 30% of the currently-adopted population at every
+# step, mimicking a short infectious window. Any user function with
+# signature (expo, cumadopt, time) -> list-of-disadopter-vectors works.
 disadopt_30 <- function(expo, cumadopt, time) {
   q_max <- dim(cumadopt)[3]
   res <- vector("list", q_max)
@@ -299,12 +427,17 @@ node_lives <- table(paste(tr_sirs$target, tr_sirs$virus_id, sep = "::"))
 table(as.integer(node_lives))
 ```
 
-Under absorbing diffusion this table would always be `1 -> N`. Under
-SIRS, nodes with 2, 3, ... lives appear naturally. `repr_number()`
-counts each life as its own case (per-event keying); the resulting
-`R` is the mean offspring *per infection event*, which is the
-quantity Lloyd-Smith superspreader analyses operate on. The same
-keying applies to `secondary_attack_rate()`.
+How to read this table: the names are *number of infection events*
+that a single `(node, virus_id)` pair experienced over the
+simulation; the values are *how many nodes* fall into each bucket.
+For an absorbing simulation the table is always `1 -> N` (every
+node-virus pair appears in the tree exactly once). Under SIRS,
+buckets `2`, `3`, ... light up because some nodes cycle through I
+multiple times --- a node in bucket `3` was infected, recovered,
+re-infected, recovered again, and re-infected a third time. Each
+entry into I is its own *case* for the purposes of `repr_number()`
+and `secondary_attack_rate()` (per-event keying), which is the
+quantity Lloyd-Smith superspreader analyses operate on.
 
 A subtle consequence worth flagging: under SIRS, a single source can
 re-infect the *same* target multiple times during its infection
@@ -314,7 +447,7 @@ expected (the unit shifts from "probability per contact" to
 "transmissions per contact"), and the aggregate sum-over-sum
 interpretation is preserved.
 
-## §7 Reconstructing the tree from observed data
+## §8 Reconstructing the tree from observed data
 
 So far every `diffnet_epi` has come straight out of `rdiffnet()` ---
 the simulation engine built the tree as it went. In the empirical
@@ -359,9 +492,9 @@ touching the package internals.
 
 ------------------------------------------------------------------------
 
-# Part II --- Case study: Epigames (Musa *et al.*, 2026)
+# Part II --- Case study: Epigames
 
-## §8 The experiment
+## §9 The experiment
 
 The bundled `epigamesDiffNet` records a controlled pandemic
 simulation in which 594 students used a mobile app for 15 days on
@@ -378,7 +511,7 @@ The companion hourly dataset, `epigames`, contains the raw inputs
 (static attributes, hourly edgelist, dynamic behavioural attributes)
 in case the user wants to build a finer-grained diffnet from scratch.
 
-## §9 Loading and inspecting
+## §10 Loading and inspecting
 
 ```{r epigames-load}
 data("epigamesDiffNet", package = "netdiffuseR")
@@ -402,7 +535,7 @@ instance:
 plot_adopters(epigamesDiffNet)
 ```
 
-## §10 The five metrics
+## §11 The five metrics
 
 ```{r epigames-five}
 pp  <- peak_prevalence(epigamesDiffNet)
@@ -419,21 +552,25 @@ cat(sprintf("Generation time    : mean = %.2f days, median = %.0f days, n_edges 
 ```
 
 The peak occurs on the last day of the experiment: the outbreak is
-still growing at the horizon, which is itself a methodological
-finding --- the 15-day window is shorter than the natural epidemic
-duration on this contact network. The mean SAR of ~0.18 is consistent
+still growing at the horizon. The mean SAR of ~0.18 is consistent
 with a moderately transmissible airborne agent under university-life
 mixing, with substantial heterogeneity across infectors (we will
-visualise this in §11). Mean generation time of ~2.2 days is in the
+visualise this in §12). Mean generation time of ~2.2 days is in the
 right ballpark for the parameters used in the experiment.
 
-The survival curve is uninformative here because the experiment did
-not track recoveries within its 15-day horizon: every observed
-adopter remains right-censored at the end of the study, so the curve
-is flat at 1. (`survival_curve()` is included in the workflow for
-completeness; it lights up on datasets where recovery is observed.)
+The survival curve printed above is flat at 1 because the bundled
+`epigamesDiffNet$status` array only carries adoption events ---
+every adopter is right-censored. This is a *preprocessing artefact*
+of the current data pipeline, not a property of the experiment. The
+underlying `histories.csv` (in the project's `playground/`) contains
+295 `outcome` events, including **42 `RECOVERED`**, 62 `DEAD`, and
+191 `ESCAPED` transitions, none of which the bundled diffnet
+currently wires in. A future revision of `data-raw/epigamesDiffNet.R`
+will read those into a non-monotone `$status` array and make
+`survival_curve()` and the SIRS branch of `repr_number()` light up
+on this dataset.
 
-## §11 The Epigames reproduction number
+## §12 The Epigames reproduction number
 
 ```{r epigames-R}
 R_emp <- repr_number(epigamesDiffNet)
@@ -454,11 +591,9 @@ A small number of cases account for many secondary infections. This
 is the *superspreading signature* Lloyd-Smith *et al.* (2005)
 documented in SARS, MERS, and several other respiratory outbreaks. In
 the Epigames data it is visible despite the modest sample size and
-the controlled environment --- evidence that the network structure
-alone, even with homogeneous individual behaviour, is enough to
-generate this kind of right tail.
+the controlled environment.
 
-## §12 Empirical vs simulated: same network, varying mechanism
+## §13 Empirical vs simulated: same network, varying mechanism
 
 The empirical `R` is one realisation of one attribution policy on
 one tree. To contextualise it, we run a counter-factual:
@@ -514,11 +649,11 @@ model on this network produces more concentrated transmission events
 than the experiment did, even though the contact graph is identical.
 A plausible reading is that the experimental subjects' heterogeneous
 behaviour --- mask use, medicine, voluntary isolation --- flattened
-the right tail relative to a homogeneous-threshold null model. This
-is exactly the kind of discrepancy a network-aware epidemiological
-analysis should surface: by holding the contact graph fixed we
-isolate the adoption-mechanism contribution to the offspring
-distribution from the network's contribution.
+the right tail relative to a homogeneous-threshold null model.
+
+The takeaway is methodological: because we held the contact graph
+fixed and varied only the adoption rule, any difference in offspring
+distributions is attributable to behaviour, not to the network.
 
 ------------------------------------------------------------------------
 
@@ -532,7 +667,7 @@ distribution from the network's contribution.
     detailed coverage of the simulation API, including the
     `adoption_mechanism`, `disadopt`, and exposure modes used here.
 -   *Multiple behaviours* --- multi-virus / multi-behaviour diffusion,
-    the substrate for the per-diffusion `repr_number` rollup shown in
+    the substrate for the per-diffusion `repr_number` rollup shown in §6 of
     §5.
 
 ## References
@@ -550,9 +685,10 @@ distribution from the network's contribution.
     number of an epidemic. *Statistics in Medicine*, 27, 2999--3016.
 -   Valente, T. W. (1995). *Network Models of the Diffusion of
     Innovations*. Hampton Press.
--   Musa, S., *et al.* (2026). EpiGames: an in-the-wild
-    pandemic-simulation game on university campuses. *(In preparation;
-    dataset shipped with the package.)*
+-   Musa, S.S., Mkandawire, W., Inekwe, T. et al. App-based epidemic 
+    game in a university campus reveals how risk perception and 
+    behavioral interventions shape disease transmission dynamics. 
+    *Sci Rep* (2026). <https://doi.org/10.1038/s41598-026-49530-y>
 
 ## Session info
 
