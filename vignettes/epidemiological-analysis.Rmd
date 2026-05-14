@@ -98,17 +98,30 @@ We start with path (1) because it is the shortest:
 ```{r quickstart}
 set.seed(2026)
 dn <- rdiffnet(
-  n  = 30, t = 6, seed.graph = "small-world",
-  seed.p.adopt = 0.10, stop.no.diff = FALSE,
+  n  = 60, t = 6, seed.graph = "small-world",
+  seed.p.adopt = 0.05, stop.no.diff = FALSE,
+  threshold.dist = 1, exposure.args = list(normalized = FALSE),
   source_attribution = source_attribution_uniform
 )
 class(dn)
 ```
 
-The simulation behaves exactly like any other `rdiffnet()` call ---
-the only difference is the `source_attribution` argument that asks
-the engine to track infectors as it goes. The result is a
-`diffnet_epi`. The transmission tree is now accessible:
+Two of those arguments deserve attention because they recur
+throughout this part. `threshold.dist = 1` combined with
+`exposure.args = list(normalized = FALSE)` configures `rdiffnet()`
+as the simplest possible *virus model*: **a single infectious
+contact is enough to infect the target**, and exposure is the raw
+count of infectious neighbours (so infection probability is,
+implicitly, linear in the number of contacts). This is the
+deliberately simple null model we will work with throughout
+§3-§7. The unrealism of that linearity --- exposure time *should*
+saturate, not stack --- is exactly what §8.1 addresses with the
+Wells-Riley equation. In the meantime, every toy in this part
+uses the same two arguments.
+
+The result is a `diffnet_epi` (the `source_attribution` argument
+is what asks the engine to track infectors as it goes during the
+simulation). The transmission tree is now accessible:
 
 ```{r tree-shape}
 tr <- transmission_tree(dn)
@@ -136,7 +149,7 @@ users can write their own):
 | `source_attribution_earliest`  | Pick the neighbour with the earliest adoption time  |
 
 Pass any of them to `rdiffnet()`, or to the post-hoc reconstruction
-function `transmission_tree_from_events()` introduced in §8. The choice affects
+function `transmission_tree_from_events()` introduced in §7. The choice affects
 *which* node gets credit for each transmission, but not the *total*
 number of transmissions: every non-seed adopter contributes one row
 to the tree regardless of who is named as their infector. So a
@@ -145,8 +158,9 @@ non-obvious algebraic invariant emerges:
 ```{r attribution-comparison}
 make_dn <- function(attr_fn) {
   set.seed(2026)
-  rdiffnet(n = 40, t = 6, seed.graph = "small-world",
-           seed.p.adopt = 0.10, stop.no.diff = FALSE,
+  rdiffnet(n = 60, t = 6, seed.graph = "small-world",
+           seed.p.adopt = 0.05, stop.no.diff = FALSE,
+           threshold.dist = 1, exposure.args = list(normalized = FALSE),
            source_attribution = attr_fn)
 }
 
@@ -177,91 +191,7 @@ when you have no prior. None of them is "the right answer" in an
 absolute sense --- they are explicit modelling choices that move
 mass between nodes but conserve the global epidemic accounting.
 
-## §4 Stochasticity in `rdiffnet()`
-
-The examples so far used `rdiffnet()`'s deterministic default: a
-node's exposure is a weighted sum of adopted neighbours, and
-adoption fires when that exposure crosses a fixed threshold.
-netdiffuseR also exposes **two independent sources of noise**, both
-useful when modelling real contagion processes. They sit at
-different layers of the simulation:
-
-```
-   contact graph + adopted neighbours
-              │
-              ▼  (a) noisy exposure  ──── exposure.mode = "stochastic"
-              │                            exposure.args$link_fun = ...
-       exposure value
-              │
-              ▼  (b) noisy adoption  ──── adoption_mechanism = adoptmech_logit
-              │                            adoption_pars = list(beta0=, beta_expo=)
-       adoption decision
-```
-
-### (a) Stochastic exposure
-
-The first switch lives at the exposure stage. With
-`exposure.mode = "stochastic"`, each non-zero edge weight \(w\)
-becomes a Bernoulli draw with probability \(f(w)\) for a kernel
-\(f \in\) {`"identity"`, `"linear"`, `"sigmoid"`, `"wells-riley"`}.
-The exposure value is then the count of *successful* contacts
-rather than the sum of weights. Useful when the data carries
-contact duration / intensity and you want to model "did this
-contact actually transmit?" as a coin flip per encounter.
-
-```{r stoch-exposure}
-set.seed(2026)
-suppressMessages(
-  dn_stoch_expo <- rdiffnet(
-    n = 30, t = 6, seed.graph = "small-world",
-    seed.p.adopt = 0.10, stop.no.diff = FALSE,
-    exposure.mode = "stochastic",
-    exposure.args = list(link_fun = "sigmoid",
-                         link_pars = list(h = 0.5, scale = 0.2)),
-    source_attribution = source_attribution_weighted
-  )
-)
-cat(sprintf("Final prevalence : %.3f\n", peak_prevalence(dn_stoch_expo)))
-cat(sprintf("R                : %.3f\n",
-            attr(repr_number(dn_stoch_expo), "global")))
-```
-
-### (b) Stochastic adoption
-
-The second switch lives one layer below. Even with a deterministic
-exposure value, the *adoption decision* can be a Bernoulli draw
-governed by a logit or probit link. The bundled `adoptmech_logit`
-samples adoption with probability
-
-\[
-P(\text{adopt} \mid \text{expo}) \;=\; \mathrm{logit}^{-1}\!\bigl(\beta_0 + \beta_{\text{expo}}\,\cdot\,\text{expo}\bigr).
-\]
-
-A negative `beta0` keeps baseline transmission low; a positive
-`beta_expo` makes adoption more likely as exposure grows.
-
-```{r stoch-adopt}
-set.seed(2026)
-dn_logit <- rdiffnet(
-  n = 30, t = 6, seed.graph = "small-world",
-  seed.p.adopt = 0.10, stop.no.diff = FALSE,
-  adoption_mechanism = adoptmech_logit,
-  adoption_pars      = list(beta0 = -2, beta_expo = 4),
-  source_attribution = source_attribution_uniform
-)
-cat(sprintf("Final prevalence : %.3f\n", peak_prevalence(dn_logit)))
-cat(sprintf("R                : %.3f\n",
-            attr(repr_number(dn_logit), "global")))
-```
-
-The two switches are independent. The default deterministic run is
-the classic Valente threshold model; flipping each switch to
-"stochastic" moves the simulator progressively closer to a
-network-aware compartmental model. The five metrics introduced in
-§5 work identically on any of these regimes --- they consume the
-tree the simulator produces, not the simulator's internal mechanics.
-
-## §5 The five epidemiological metrics
+## §4 The five epidemiological metrics
 
 Once a tree is in place, netdiffuseR exposes five tree-aware metrics.
 All return classed `data.frame`s with custom `print` methods, so the
@@ -305,7 +235,7 @@ of the standard `summary.diffnet` output:
 summary(dn)
 ```
 
-## §6 Reproduction number and the offspring distribution
+## §5 Reproduction number and the offspring distribution
 
 In the SIR convention, a node is **susceptible (S)** before it adopts,
 **infectious (I)** during the period in which it can transmit, and
@@ -359,8 +289,9 @@ never confuses a pooled `R` with a single-diffusion one:
 set.seed(2026)
 suppressMessages(
   dn_multi <- rdiffnet(
-    n = 40, t = 6, seed.graph = "small-world",
-    seed.p.adopt = list(0.10, 0.05), stop.no.diff = FALSE,
+    n = 60, t = 6, seed.graph = "small-world",
+    seed.p.adopt = list(0.05, 0.03), stop.no.diff = FALSE,
+    threshold.dist = 1, exposure.args = list(normalized = FALSE),
     source_attribution = source_attribution_uniform
   )
 )
@@ -377,8 +308,9 @@ alongside an earliest-attribution behaviour:
 set.seed(2026)
 suppressMessages(
   dn_mixed <- rdiffnet(
-    n = 40, t = 6, seed.graph = "small-world",
-    seed.p.adopt = list(0.10, 0.05), stop.no.diff = FALSE,
+    n = 60, t = 6, seed.graph = "small-world",
+    seed.p.adopt = list(0.05, 0.03), stop.no.diff = FALSE,
+    threshold.dist = 1, exposure.args = list(normalized = FALSE),
     source_attribution = list(
       source_attribution_uniform,    # for virus 1
       source_attribution_earliest    # for virus 2
@@ -388,7 +320,7 @@ suppressMessages(
 repr_number(dn_mixed)
 ```
 
-## §7 SIRS: re-infection support
+## §6 SIRS: re-infection support
 
 So far every example was *absorbing*: once a node adopted, it stayed
 adopted. To model recovery and re-infection (the S-I-R-S regime), pass
@@ -416,7 +348,8 @@ disadopt_30 <- function(expo, cumadopt, time) {
 set.seed(2026)
 dn_sirs <- rdiffnet(
   n = 60, t = 10, seed.graph = "small-world",
-  seed.p.adopt = 0.15, stop.no.diff = FALSE,
+  seed.p.adopt = 0.05, stop.no.diff = FALSE,
+  threshold.dist = 1, exposure.args = list(normalized = FALSE),
   disadopt = disadopt_30,
   source_attribution = source_attribution_uniform
 )
@@ -447,7 +380,7 @@ expected (the unit shifts from "probability per contact" to
 "transmissions per contact"), and the aggregate sum-over-sum
 interpretation is preserved.
 
-## §8 Reconstructing the tree from observed data
+## §7 Reconstructing the tree from observed data
 
 So far every `diffnet_epi` has come straight out of `rdiffnet()` ---
 the simulation engine built the tree as it went. In the empirical
@@ -489,6 +422,129 @@ attribution rules are user-functions with the
 `source_attribution_uniform` signature, so domain-specific priors
 (e.g. proximity duration, role homophily) can be wired in without
 touching the package internals.
+
+## §8 Stochasticity: virus exposure and behavioural adoption
+
+Every toy in §3-§7 used the deliberately simple model laid out in
+§2: `threshold.dist = 1` with `exposure.args = list(normalized = FALSE)`
+--- a node becomes infected the moment one infectious neighbour
+exists, and exposure stacks linearly with contact count. The
+package supports **two independent generalisations of this model**,
+each one relaxing a different unrealistic assumption. They sit at
+different layers of the simulation:
+
+```
+   contact graph + adopted neighbours
+              |
+              v  (a) noisy exposure  ---- exposure.mode = "stochastic"
+              |                            exposure.args$link_fun = ...
+       exposure value
+              |
+              v  (b) noisy adoption  ---- adoption_mechanism = adoptmech_logit
+              |                            adoption_pars = list(beta0=, beta_expo=)
+       adoption decision
+```
+
+### §8.1 From threshold to infection probability (Wells-Riley)
+
+So far we have assumed something epidemiologically implausible:
+that **infection probability grows linearly with exposure** ---
+every additional infectious contact adds the same increment to your
+chance of getting sick. Real airborne transmission saturates: 30
+minutes with an infected person are not three times worse than 10
+minutes. Wells (1955) and Riley, Murphy and Riley (1978) formalised
+this in the **Wells-Riley equation**, where the per-contact
+probability of infection is
+
+\[
+P(\text{infection} \mid \text{exposure } w) \;=\; 1 - \exp(-\beta\,w),
+\]
+
+non-linear in exposure duration \(w\), with \(\beta\) aggregating
+the infector's quanta-emission rate, ventilation, and the target's
+susceptibility. netdiffuseR's `exposure.mode = "stochastic"` with
+`link_fun = "wells-riley"` implements exactly this transform on
+every edge weight: each non-zero contact becomes a Bernoulli draw
+with the saturating probability above.
+
+```{r stoch-exposure}
+set.seed(2026)
+suppressMessages(
+  dn_wr <- rdiffnet(
+    n = 60, t = 6, seed.graph = "small-world",
+    seed.p.adopt = 0.05, stop.no.diff = FALSE,
+    threshold.dist = 1,
+    exposure.mode  = "stochastic",
+    exposure.args  = list(normalized = FALSE,
+                          link_fun  = "wells-riley",
+                          link_pars = list(beta = 0.5)),
+    source_attribution = source_attribution_weighted
+  )
+)
+cat(sprintf("Final prevalence : %.3f\n", peak_prevalence(dn_wr)))
+cat(sprintf("R                : %.3f\n",
+            attr(repr_number(dn_wr), "global")))
+```
+
+`beta` is the only knob: small `beta` damps transmission per
+contact, large `beta` recovers the deterministic 1-contact-infects
+regime. The exposure layer is now noisy, but the adoption decision
+itself remains deterministic given the (random) exposure count.
+
+### §8.2 From threshold to a noisy behavioural decision (logit on mask adoption)
+
+The virus is not the only thing that diffuses through a contact
+network during a pandemic. **Protective behaviours** --- wearing a
+mask, accepting a vaccine, voluntarily quarantining --- also spread
+person-to-person, and the standard model for them is *adoption*,
+not infection. Threshold-based diffusion (§3-§7) is one option;
+*probabilistic adoption* is the natural alternative. Each susceptible
+individual evaluates their exposure to mask-wearing peers and adopts
+with probability
+
+\[
+P(\text{wears mask today} \mid \text{exposure}) \;=\; \mathrm{logit}^{-1}\!\bigl(\beta_0 + \beta_{\text{expo}}\,\cdot\,\text{exposure}\bigr).
+\]
+
+A negative \(\beta_0\) keeps baseline adoption rare; a positive
+\(\beta_{\text{expo}}\) makes adoption increasingly likely as peer
+adoption rises. `adoptmech_logit` implements exactly this rule, and
+because it overrides `rdiffnet()`'s threshold mechanism, we no
+longer need `threshold.dist`:
+
+```{r stoch-adopt}
+set.seed(2026)
+dn_mask <- rdiffnet(
+  n = 60, t = 6, seed.graph = "small-world",
+  seed.p.adopt = 0.05, stop.no.diff = FALSE,
+  adoption_mechanism = adoptmech_logit,
+  adoption_pars      = list(beta0 = -2, beta_expo = 4),
+  source_attribution = source_attribution_uniform
+)
+cat(sprintf("Final mask prevalence : %.3f\n", peak_prevalence(dn_mask)))
+cat(sprintf("R (mask adoption)     : %.3f\n",
+            attr(repr_number(dn_mask), "global")))
+```
+
+The vocabulary deliberately shifts here: we say *adoption*, not
+*infection*, because the underlying process is behavioural, not
+contagious. The Lloyd-Smith machinery from §5 still applies ---
+\(R\) is now the mean number of *secondary mask adopters* per
+adopter --- but the interpretation tracks the substantive question.
+
+### §8.3 Together: the simulation analogue of a real pandemic experiment
+
+(a) and (b) are independent and composable. A simulation can have
+Wells-Riley exposure for the virus *and* logit adoption for masks
+running on the same contact graph as two separate diffusion
+processes. That combination --- a stochastically transmitted virus
+plus an adoption decision that itself spreads through the same
+social network --- is the simulation analogue of a real-world
+pandemic experiment. **And that is exactly the setting Epigames
+captures in the wild**: a virus propagating through Bluetooth
+proximity contacts, while participants make mask / medicine /
+isolation decisions whose own contagion the experiment also
+records. Part II turns to that data.
 
 ------------------------------------------------------------------------
 
@@ -667,7 +723,7 @@ distributions is attributable to behaviour, not to the network.
     detailed coverage of the simulation API, including the
     `adoption_mechanism`, `disadopt`, and exposure modes used here.
 -   *Multiple behaviours* --- multi-virus / multi-behaviour diffusion,
-    the substrate for the per-diffusion `repr_number` rollup shown in §6 of
+    the substrate for the per-diffusion `repr_number` rollup shown in §5 of
     §5.
 
 ## References
@@ -676,6 +732,12 @@ distributions is attributable to behaviour, not to the network.
     (2005). Superspreading and the effect of individual variation on
     disease emergence. *Nature*, 438, 355--359.
     <https://doi.org/10.1038/nature04153>
+-   Wells, W. F. (1955). *Airborne Contagion and Air Hygiene: An
+    Ecological Study of Droplet Infections.* Harvard University Press.
+-   Riley, E. C., Murphy, G., & Riley, R. L. (1978). Airborne spread
+    of measles in a suburban elementary school. *American Journal of
+    Epidemiology*, 107(5), 421--432.
+    <https://doi.org/10.1093/oxfordjournals.aje.a112560>
 -   Wallinga, J., & Teunis, P. (2004). Different epidemic curves for
     severe acute respiratory syndrome reveal similar impacts of
     control measures. *American Journal of Epidemiology*, 160(6),
