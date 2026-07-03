@@ -50,6 +50,35 @@ test_that("More plot methods", {
   expect_silent(plot_adopters(g$cumadopt))
 })
 
+# plot_adopters -- status-aware (M11) -----------------------------------------
+# Confirms that plot_adopters runs on a multi-cycle diffnet (built from a
+# non-monotone status array) and that the returned counts reflect the
+# canonical $status semantics (the underlying state, not a forced cumulative).
+
+test_that("plot_adopters runs on a multi-cycle diffnet built from -status-", {
+  set.seed(2026)
+  g <- lapply(1:6, function(t) rgraph_ba(t = 4L))
+  status <- rbind(
+    c(1L, 1L, 0L, 0L, 1L, 1L),    # node 1: adopt, recover, re-adopt
+    c(0L, 1L, 1L, 0L, 0L, 0L),    # node 2: adopt, recover
+    c(0L, 0L, 0L, 0L, 0L, 0L),    # node 3: never
+    c(0L, 0L, 1L, 1L, 1L, 1L),    # node 4: absorbing
+    c(0L, 1L, 1L, 1L, 1L, 1L)     # node 5: absorbing
+  )
+  dn <- new_diffnet(g, status = status, t0 = 1L, t1 = 6L)
+
+  out <- expect_silent(plot_adopters(dn))
+
+  # "num" row in the returned cumadopt-like summary equals colSums($status),
+  # which is the currently-adopted count per period.
+  expect_equal(as.integer(out["num", ]),
+               as.integer(colSums(status)))
+
+  # And it really IS non-monotone for this multi-cycle data (sanity check).
+  diffs <- diff(as.integer(out["num", ]))
+  expect_true(any(diffs < 0L))
+})
+
 # plot_threshold, threshold and exposure ---------------------------------------
 context("Threshold functions")
 test_that("Returning threshold equal to the threshold fun (plot_threshold and )", {

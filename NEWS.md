@@ -1,3 +1,40 @@
+# Changes in netdiffuseR version 1.26.0
+
+## Epidemiological metrics and coupled disease+behavior diffusion
+
+This release adds an epidemiological subsystem to `diffnet`. It is backward compatible: when the new `$tod`, `$status`, and
+`$transmission` slots are unset, every existing function returns identical
+results.
+
+* **Disadoption / recovery.** New `$tod` (time-of-disadoption) slot and a
+  canonical `$status` array from which `toa` and `tod` are derived. New
+  accessors `tod()`, `toa_all()`, and `tod_all()` expose the full adoption /
+  disadoption history, including multi-cycle (re-infection) episodes.
+
+* **Epidemiological metrics**, computed natively on the contact network:
+  `repr_number()`, `secondary_attack_rate()`,
+  `generation_time()`, `survival_curve()`, `peak_prevalence()`, and
+  `peak_time()`.
+
+* **Transmission tree.** `transmission_tree_from_events()` reconstructs the
+  who-infected-whom tree from observed adoption events, with pluggable
+  source-attribution kernels (uniform, weighted, earliest, or user-supplied).
+  `as_diffnet_epi()`, `is.diffnet_epi()`, `transmission_tree()`, and
+  `as_transmission_tree()` manage the new `diffnet_epi` subclass; `rdiffnet()`
+  can build the tree online during a simulation.
+
+* **Adoption / disadoption mechanisms** for `rdiffnet()`:
+  `disadoptmech_random()`, `disadoptmech_bithreshold()`, `disadoptmech_logit()`,
+  `disadoptmech_probit()`, and `adoptmech_logit()` / `adoptmech_probit()` /
+  `adoptmech_threshold()`.
+
+* **Stochastic transmission.** `exposure()` gains a pluggable `link_fun`
+  (linear, sigmoid, Wells-Riley, or a user-supplied function).
+
+## Bug fixes
+
+* `rdiffnet(disadopt=)` no longer erases a behavior's adoption history.
+
 # Changes in netdiffuseR version 1.25.0 (2026-03-27)
 
 ## User-visible changes
@@ -11,6 +48,9 @@
 * New dataset `epigames` and `epigamesDiffNet`: a simulated epidemic game
   network with 594 nodes and 15 time periods from the WKU Epi Games study.
 
+* `exposure()` and `rdiffnet()` now support `mode = "stochastic"`, allowing
+  for probabilistic interpretation of edge weights in exposure calculations.
+
 ## Internal changes
 
 * Fixed CRAN example error in `round_to_seq()`: `plot(w, x)` replaced with
@@ -18,7 +58,6 @@
   when called via `plot.data.frame()`.
 
 * Removed `configure` framework. R already provides paths and configuration for OpenMP.
-
 
 # Changes in netdiffuseR version 1.24.0 (2025-12-09)
 

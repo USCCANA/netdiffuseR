@@ -22,11 +22,38 @@
 #' it can also be an \eqn{n \times Q} matrix or a list of \eqn{Q} single behavior inputs. Sets the adoption
 #' threshold for each node.
 #' @param exposure.args List. Arguments to be passed to \code{\link{exposure}}.
+#' @param exposure.mode Character scalar. Either "deterministic" (default) or "stochastic".
 #' @param name Character scalar. Passed to \code{\link{as_diffnet}}.
 #' @param behavior Character scalar or a list or character scalar (multiple behaviors only). Passed to \code{\link{as_diffnet}}.
 #' @param stop.no.diff Logical scalar. When \code{TRUE}, the function will return
 #' with error if there was no diffusion. Otherwise it throws a warning.
 #' @param disadopt Function of disadoption, with current exposition, cumulative adoption, and time as possible inputs.
+#' @param adoption_mechanism Function. Per-step adoption rule. Receives
+#' \code{(expo, thresholds, not_adopted, time, pars)} and returns the integer
+#' indices that adopt at the current step. Defaults to
+#' \code{\link{adoptmech_threshold}} (Tom Valente's deterministic threshold
+#' rule). Pass \code{\link{adoptmech_logit}} or \code{\link{adoptmech_probit}}
+#' for stochastic adoption, or any user-defined function with the same
+#' signature.
+#' @param adoption_pars Named list. Mechanism-specific parameters forwarded
+#' verbatim as \code{pars} to \code{adoption_mechanism}. Stochastic
+#' kernels (\code{adoptmech_logit}, \code{adoptmech_probit}) require
+#' \code{beta0} and \code{beta_expo}.
+#' @param source_attribution Optional lineage-tracking callback. When
+#' non-\code{NULL}, \code{rdiffnet} records the inferred infector of every
+#' fresh adopter during the simulation, builds a transmission tree, and
+#' returns a \code{\link{diffnet_epi}} (auto-promoted). Three modes:
+#' \itemize{
+#'   \item{\code{NULL} (default) — no lineage tracking; the output is a
+#'     plain \code{\link{diffnet}}.}
+#'   \item{A single function — applied to every behaviour (broadcast).
+#'     See \code{\link{source_attribution_uniform}} /
+#'     \code{\link{source_attribution_weighted}} /
+#'     \code{\link{source_attribution_earliest}} for the bundled
+#'     kernels.}
+#'   \item{A length-\eqn{Q} list — per-behaviour attributor;
+#'     \code{NULL} entries skip lineage tracking for that behaviour.}
+#' }
 #' @return A random \code{\link{diffnet}} class object.
 #' @family simulation functions
 #' @details
@@ -100,6 +127,10 @@
 #'   \code{valued} \tab \code{getOption("diffnet.valued", FALSE)} \cr
 #'   \code{normalized} \tab \code{TRUE}
 #' }
+#'
+#' When \code{exposure.mode = "stochastic"}, the \code{valued} argument in
+#' \code{exposure.args} is forced to \code{TRUE} (with a message) to ensure that
+#' edge weights are treated as probabilities.
 #'
 #' @examples
 #' # (Single behavior): --------------------------------------------------------
@@ -399,11 +430,28 @@ rdiffnet <- function(
     rewire.args    = list(),
     threshold.dist = runif(n),
     exposure.args  = list(),
+    exposure.mode  = "deterministic",
     name           = "A diffusion network",
     behavior       = "Random contagion",
     stop.no.diff   = TRUE,
-    disadopt       = NULL
+    disadopt           = NULL,
+    adoption_mechanism = NULL,
+    adoption_pars      = NULL,
+    source_attribution = NULL
   ) {
+
+  if (is.null(adoption_mechanism))
+    adoption_mechanism <- adoptmech_threshold
+  if (!is.function(adoption_mechanism))
+    stop("-adoption_mechanism- must be a function (see ?adoption_mechanisms).")
+
+  # adoption_mechanism contract extension (M8): rdiffnet passes -behavior- and
+  # -expo_all- to the mechanism only if it declares them (formal inspection),
+  # so M6 kernels keep working unchanged.
+  .mech_formals  <- names(formals(adoption_mechanism))
+  .mech_has_dots <- "..." %in% .mech_formals
+  .mech_wants_behavior <- "behavior" %in% .mech_formals || .mech_has_dots
+  .mech_wants_expo_all <- "expo_all" %in% .mech_formals || .mech_has_dots
 
   # Checking options
   for (arg in names(default_rewire.args))
@@ -413,6 +461,14 @@ rdiffnet <- function(
   for (arg in names(default_exposure.args))
     if (!length(exposure.args[[arg]]))
       exposure.args[[arg]] <- default_exposure.args[[arg]]
+
+  exposure.args$mode <- exposure.mode
+
+  # If stochastic mode is selected, ensure valued is TRUE (enabling weights as probabilities)
+  if (exposure.mode == "stochastic" && !exposure.args$valued) {
+    message("exposure.mode='stochastic' requires valued=TRUE to use weights as probabilities. Setting exposure.args$valued=TRUE.")
+    exposure.args$valued <- TRUE
+  }
 
   if (inherits(exposure.args[["attrs"]], "matrix")) {
     # Checking if the attrs matrix is has dims n x t
@@ -535,6 +591,27 @@ rdiffnet <- function(
     toa[d[[q]],q] <- 1L
   }
 
+  # Step 1.4: Normalize -source_attribution-, seed the tree if active (M8) -----
+  attrs_q <- rdiffnet_normalize_source_attribution(
+    source_attribution, num_of_behaviors
+  )
+  tracking_lineage <- !all(vapply(attrs_q, is.null, logical(1)))
+  tree_rows <- list()
+  if (tracking_lineage) {
+    for (q in 1:num_of_behaviors) {
+      if (is.null(attrs_q[[q]])) next
+      seeds_q <- as.integer(d[[q]])
+      virus_name <- as.character(behavior[[q]])
+      for (s in seeds_q) {
+        tree_rows[[length(tree_rows) + 1L]] <- list(
+          date = 1L, source = NA_integer_, target = s,
+          source_exposure_date = NA_integer_,
+          virus_id = as.integer(q), virus = virus_name
+        )
+      }
+    }
+  }
+
   # Step 2.0: Thresholds -------------------------------------------------------
 
   thr <- rdiffnet_make_threshold(threshold.dist, n, num_of_behaviors)
@@ -553,19 +630,61 @@ rdiffnet <- function(
 
     for (q in 1:num_of_behaviors) {
 
-      # 3.2 Identifying who adopts based on the threshold
-      whoadopts <- which( (expo[,,q] >= thr[,q]) & is.na(toa[,q]))
+      # 3.2 Identifying who adopts via the configured adoption_mechanism.
+      # The contract extension (M8) passes -behavior- and -expo_all- only
+      # when the mechanism declares them (or has -...-), so M6 kernels are
+      # untouched.
+      mech_call <- list(
+        expo        = as.vector(expo[, , q]),
+        thresholds  = thr[, q],
+        not_adopted = is.na(toa[, q]),
+        time        = i,
+        pars        = adoption_pars
+      )
+      if (.mech_wants_behavior) mech_call$behavior  <- q
+      if (.mech_wants_expo_all) mech_call$expo_all  <- expo
+      whoadopts <- do.call(adoption_mechanism, mech_call)
 
-      # 3.3 Updating the cumadopt
+      # 3.3 Source-attribution: for each fresh adopter, infer the infector
+      # *before* we mutate cumadopt/toa for this step. (M8)
+      if (tracking_lineage && !is.null(attrs_q[[q]]) && length(whoadopts) > 0) {
+        attr_fn    <- attrs_q[[q]]
+        graph_i    <- sgraph[[i]]
+        virus_name <- as.character(behavior[[q]])
+        for (target in whoadopts) {
+          # Adopted neighbours at slice i (pre-update state).
+          row_i <- as.vector(graph_i[target, ])
+          col_i <- as.vector(graph_i[, target])
+          nbrs  <- which((row_i != 0) | (col_i != 0))
+          nbrs  <- nbrs[cumadopt[nbrs, i, q] == 1L]
+          if (length(nbrs)) {
+            ord     <- order(toa[nbrs, q])
+            nbrs    <- nbrs[ord]
+            weights <- pmax(row_i[nbrs], col_i[nbrs])
+            src     <- attr_fn(target, nbrs, weights, i, adoption_pars)
+          } else {
+            src <- NA_integer_
+          }
+          sed <- if (is.na(src)) NA_integer_ else as.integer(toa[src, q])
+          tree_rows[[length(tree_rows) + 1L]] <- list(
+            date = as.integer(i), source = as.integer(src),
+            target = as.integer(target),
+            source_exposure_date = sed,
+            virus_id = as.integer(q), virus = virus_name
+          )
+        }
+      }
+
+      # 3.4 Updating the cumadopt
       cumadopt[whoadopts, i:t, q] <- 1L
 
-      # 3.4 Updating the toa
+      # 3.5 Updating the toa
       if (length(whoadopts) > 0) {
         toa[cbind(whoadopts, q)] <- i
       }
     }
 
-    # 3.5 identifiying the disadopters
+    # 3.6 identifiying the disadopters
     if (length(disadopt)) {
 
       # Run the disadoption algorithm. This will return the following:
@@ -595,7 +714,15 @@ rdiffnet <- function(
   }
 
   for (i in 1:num_of_behaviors) {
-    reachedt <- max(toa[,i], na.rm=TRUE)
+    toa_i <- toa[, i]
+    # Under disadoption a fully-displaced behaviour can have every -toa- reset to
+    # NA even though it diffused; judge "no diffusion" from -cumadopt- in that
+    # case (and avoid a spurious max()-on-all-NA warning).
+    if (all(is.na(toa_i))) {
+      reachedt <- if (any(cumadopt[, -1L, i] == 1L)) 2L else 1L
+    } else {
+      reachedt <- max(toa_i, na.rm = TRUE)
+    }
 
     if (reachedt == 1) {
       if (stop.no.diff)
@@ -614,22 +741,67 @@ rdiffnet <- function(
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  if (num_of_behaviors==1) {
-    toa <- as.integer(toa)
+  # When disadoption is in play, the per-step -cumadopt- array carries the true
+  # non-absorbing history (adopt, then drop, then possibly re-adopt). Rebuilding
+  # the object from -toa- alone loses it: disadoption sets -toa- to NA above, and
+  # -toa_mat()- is an absorbing step function, so a displaced behaviour would
+  # report prevalence 0 at every period. We therefore hand the canonical -status-
+  # to -new_diffnet-, which derives -toa- (first adoption) and -tod- (first
+  # disadoption) from it. Absorbing runs (no -disadopt-) keep the legacy -toa-
+  # path, byte-identical to before.
+  if (length(disadopt)) {
+
+    if (num_of_behaviors == 1L) {
+      status_arg <- matrix(as.integer(cumadopt[, , 1L]), nrow = n, ncol = t)
+    } else {
+      status_arg <- lapply(seq_len(num_of_behaviors), function(q)
+        matrix(as.integer(cumadopt[, , q]), nrow = n, ncol = t))
+    }
+
+    out <- new_diffnet(
+      graph      = sgraph,
+      status     = status_arg,
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
+
   } else {
-    toa <- array(as.integer(toa), dim = dim(toa))
+
+    if (num_of_behaviors==1) {
+      toa <- as.integer(toa)
+    } else {
+      toa <- array(as.integer(toa), dim = dim(toa))
+    }
+
+    out <- new_diffnet(
+      graph      = sgraph,
+      toa        = toa,
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
   }
 
-  new_diffnet(
-    graph      = sgraph,
-    toa        = toa,
-    self       = isself,
-    t0         = 1,
-    t1         = t,
-    vertex.static.attrs = data.frame(real_threshold=thr),
-    name       = name,
-    behavior   = behavior
-  )
+  # M8: if lineage tracking was active in the simulation loop, build the
+  # transmission tree from the accumulated rows and auto-promote the diffnet
+  # to a -diffnet_epi-. -tracking_lineage- being TRUE without rows is
+  # possible (an empty simulation with NULL attributors), in which case we
+  # promote with an empty tree.
+  if (tracking_lineage) {
+    full_tree <- rdiffnet_tree_rows_to_df(tree_rows)
+    out <- as_diffnet_epi(out,
+                          transmission = list(tree = full_tree,
+                                              pars = list()))
+  }
+
+  out
 }
 
 rdiffnet_validate_args <- function(seed.p.adopt, seed.nodes, behavior) {
@@ -803,6 +975,7 @@ split_behaviors <- function(diffnet_obj) {
     diffnets[[q]]$adopt <- diffnet_obj$adopt[[q]]
 
     diffnets[[q]]$cumadopt <- diffnet_obj$cumadopt[[q]]
+    diffnets[[q]]$status   <- diffnets[[q]]$cumadopt   # canonical alias
 
     diffnets[[q]]$meta$behavior <- behaviors_names[q]
   }

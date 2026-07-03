@@ -41,9 +41,9 @@ as_diffnet(graph, ...)
 
 new_diffnet(
   graph,
-  toa,
-  t0 = min(toa, na.rm = TRUE),
-  t1 = max(toa, na.rm = TRUE),
+  toa = NULL,
+  t0 = NULL,
+  t1 = NULL,
   vertex.dyn.attrs = NULL,
   vertex.static.attrs = NULL,
   id.and.per.vars = NULL,
@@ -52,7 +52,10 @@ new_diffnet(
   self = getOption("diffnet.self"),
   multiple = getOption("diffnet.multiple"),
   name = "Diffusion Network",
-  behavior = NULL
+  behavior = NULL,
+  status = NULL,
+  transmission = NULL,
+  transmission_pars = list()
 )
 
 \method{as.data.frame}{diffnet}(
@@ -147,6 +150,28 @@ order of the rows in the attribute data.}
 \item{name}{Character scalar. Name of the diffusion network (descriptive).}
 
 \item{behavior}{Character vector. Name of the behavior(s) been analyzed (innovation).}
+
+\item{status}{Optional state representation. Single-behavior: an
+\eqn{n \times T} integer matrix with \code{1} on the cells where node
+\eqn{i} is adopted at time \eqn{t} and \code{0} otherwise (need not be
+monotone — multi-cycle adoption / disadoption is supported). Multi-behavior:
+a length-\eqn{Q} list of such matrices. When \code{status} is supplied,
+it becomes the canonical state of the diffnet and \code{toa} is derived
+from it as the first time each node enters the adopted state. Passing
+both \code{toa} and \code{status} emits a warning and uses \code{status};
+the warning reports whether the supplied \code{toa} is consistent with
+the \code{toa} derived from \code{status}.}
+
+\item{transmission}{Optional transmission tree (who-infected-whom). Either
+a \code{data.frame} with the columns documented in
+\code{\link{as_transmission_tree}}, or a pre-built transmission list with
+components \code{tree} and \code{pars}. When supplied, the returned
+object is promoted to the \code{\link{diffnet_epi}} subclass. \code{NULL}
+(default) returns a plain \code{diffnet}.}
+
+\item{transmission_pars}{Optional named list stored verbatim in
+\code{x$transmission$pars}. Only consulted when \code{transmission} is a
+data.frame.}
 
 \item{x}{A \code{diffnet} object.}
 

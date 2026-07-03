@@ -498,6 +498,7 @@ rewire_qap <- function(graph) {
 
       # Adoptions
       graph$cumadopt <- graph$cumadopt[neword,,drop=FALSE]
+      graph$status   <- graph$cumadopt   # keep canonical alias in sync
       graph$adopt    <- graph$adopt[neword,,drop=FALSE]
       graph$toa      <- graph$toa[neword]
 

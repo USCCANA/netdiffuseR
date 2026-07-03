@@ -163,6 +163,7 @@ diffnet.subset.slices <- function(graph, k) {
   graph$cumadopt[beforeslice,k] <- 1
   graph$cumadopt[afterslice,k[nslices]] <- 1
   graph$cumadopt <- graph$cumadopt[,k]
+  graph$status   <- graph$cumadopt   # keep canonical alias in sync
 
   # Changing toa mat (truncating it)
   graph$toa[beforeslice] <- pers[k][1]
@@ -404,6 +405,7 @@ diffnet_check_attr_class <- function(value, meta) {
     # 2.0: Matrices
     x$adopt               <- x$adopt[i,,drop=FALSE]
     x$cumadopt            <- x$cumadopt[i,,drop=FALSE]
+    x$status              <- x$cumadopt   # keep canonical alias in sync
     x$vertex.static.attrs <- x$vertex.static.attrs[i,,drop=FALSE]
     x$toa                 <- x$toa[i]
 

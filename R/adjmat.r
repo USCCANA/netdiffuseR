@@ -537,6 +537,109 @@ toa_mat.default <- function(per, t0, t1) {
   )
 }
 
+# Status-array helpers.
+#
+# A -status- array carries the multi-cycle state of a diffnet: 1 wherever
+# node i is adopted at time t for behaviour q, 0 otherwise. It need not be
+# monotone (adoption + recovery cycles, behavioural relapse, etc.).
+#
+# Single-behaviour layout: an n x T integer matrix.
+# Multi-behaviour  layout: a length-Q list of n x T integer matrices.
+#
+# These helpers mirror -toa_mat- (which builds the absorbing case from -toa-)
+# but consume -status- directly.
+
+# Internal: build {adopt, cumadopt} matrices from a single-behaviour status.
+# - cumadopt is exactly status (alias; no copy thanks to R's COW).
+# - adopt[i, t] = 1 iff status[i, t] == 1 AND (t == 1 OR status[i, t-1] == 0).
+#   That is, every "fresh" entry into the adopted state.
+status_mat_single <- function(status, t0, t1, labels = NULL) {
+  storage.mode(status) <- "integer"
+  n <- nrow(status)
+  T <- ncol(status)
+
+  cumadopt <- status
+  adopt    <- matrix(0L, n, T)
+  if (T >= 1L) adopt[, 1L] <- cumadopt[, 1L]
+  if (T >= 2L) {
+    prev  <- cumadopt[, 1:(T - 1L), drop = FALSE]
+    curr  <- cumadopt[, 2:T,        drop = FALSE]
+    fresh <- (curr == 1L) & (prev == 0L)
+    sub   <- adopt[, 2:T, drop = FALSE]
+    sub[fresh] <- 1L
+    adopt[, 2:T] <- sub
+  }
+
+  rn <- if (length(labels)) labels else seq_len(n)
+  dimnames(adopt)    <- list(rn, t0:t1)
+  dimnames(cumadopt) <- list(rn, t0:t1)
+  list(adopt = adopt, cumadopt = cumadopt)
+}
+
+# Public-facing dispatcher: returns the same shape as -toa_mat-.
+status_mat <- function(status, t0, t1, labels = NULL) {
+  if (is.list(status)) {
+    lapply(status, status_mat_single, t0 = t0, t1 = t1, labels = labels)
+  } else {
+    status_mat_single(status, t0 = t0, t1 = t1, labels = labels)
+  }
+}
+
+# Derive -toa- from a status array: first time of 1 per node (per behaviour).
+# Returns an integer vector for single-behaviour, an n x Q matrix otherwise.
+# Names / rownames are intentionally NOT preserved — -new_diffnet- assigns
+# them from -meta$ids- downstream so the diffnet's labelling stays canonical.
+toa_from_status <- function(status, t0 = 1L) {
+  if (is.list(status)) {
+    Q <- length(status)
+    n <- nrow(status[[1L]])
+    out <- matrix(NA_integer_, n, Q)
+    for (q in seq_len(Q)) out[, q] <- toa_from_status(status[[q]], t0 = t0)
+    return(out)
+  }
+
+  n <- nrow(status)
+  vapply(seq_len(n), function(i) {
+    idx <- which(status[i, ] == 1L)
+    if (length(idx)) as.integer(idx[1L] + t0 - 1L) else NA_integer_
+  }, integer(1L))
+}
+
+# Validation for -status- supplied to -new_diffnet-.
+validate_status <- function(status, n, num_of_behaviors) {
+  if (num_of_behaviors == 1L) {
+    if (!is.matrix(status))
+      stop("-status- for a single-behaviour diffnet must be an n x T matrix.")
+    if (nrow(status) != n)
+      stop("-status- has ", nrow(status), " rows but the graph has ", n,
+           " nodes.")
+    if (any(!status %in% c(0L, 1L, NA_integer_, 0, 1)))
+      stop("-status- entries must be 0 or 1.")
+  } else {
+    if (!is.list(status))
+      stop("-status- for a multi-behaviour diffnet must be a length-Q list ",
+           "of n x T matrices.")
+    if (length(status) != num_of_behaviors)
+      stop("-status- has length ", length(status),
+           " but -toa- carries ", num_of_behaviors, " behaviours.")
+    for (q in seq_along(status)) {
+      if (!is.matrix(status[[q]]))
+        stop("-status[[", q, "]]- must be an n x T matrix.")
+      if (nrow(status[[q]]) != n)
+        stop("-status[[", q, "]]- has ", nrow(status[[q]]),
+             " rows but the graph has ", n, " nodes.")
+      if (any(!status[[q]] %in% c(0L, 1L, NA_integer_, 0, 1)))
+        stop("-status[[", q, "]]- entries must be 0 or 1.")
+    }
+    # All behaviours must share a common T.
+    Ts <- vapply(status, ncol, integer(1L))
+    if (length(unique(Ts)) > 1L)
+      stop("All entries of -status- must share the same number of columns ",
+           "(time periods).")
+  }
+  invisible(TRUE)
+}
+
 # @rdname toa_mat
 # @export
 toa_mat.numeric <- function(times, labels=NULL,
