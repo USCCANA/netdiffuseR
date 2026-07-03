@@ -714,7 +714,15 @@ rdiffnet <- function(
   }
 
   for (i in 1:num_of_behaviors) {
-    reachedt <- max(toa[,i], na.rm=TRUE)
+    toa_i <- toa[, i]
+    # Under disadoption a fully-displaced behaviour can have every -toa- reset to
+    # NA even though it diffused; judge "no diffusion" from -cumadopt- in that
+    # case (and avoid a spurious max()-on-all-NA warning).
+    if (all(is.na(toa_i))) {
+      reachedt <- if (any(cumadopt[, -1L, i] == 1L)) 2L else 1L
+    } else {
+      reachedt <- max(toa_i, na.rm = TRUE)
+    }
 
     if (reachedt == 1) {
       if (stop.no.diff)
@@ -733,22 +741,53 @@ rdiffnet <- function(
   # Checking attributes
   isself <- any(sapply(sgraph, function(x) any(Matrix::diag(x) != 0) ))
 
-  if (num_of_behaviors==1) {
-    toa <- as.integer(toa)
-  } else {
-    toa <- array(as.integer(toa), dim = dim(toa))
-  }
+  # When disadoption is in play, the per-step -cumadopt- array carries the true
+  # non-absorbing history (adopt, then drop, then possibly re-adopt). Rebuilding
+  # the object from -toa- alone loses it: disadoption sets -toa- to NA above, and
+  # -toa_mat()- is an absorbing step function, so a displaced behaviour would
+  # report prevalence 0 at every period. We therefore hand the canonical -status-
+  # to -new_diffnet-, which derives -toa- (first adoption) and -tod- (first
+  # disadoption) from it. Absorbing runs (no -disadopt-) keep the legacy -toa-
+  # path, byte-identical to before.
+  if (length(disadopt)) {
 
-  out <- new_diffnet(
-    graph      = sgraph,
-    toa        = toa,
-    self       = isself,
-    t0         = 1,
-    t1         = t,
-    vertex.static.attrs = data.frame(real_threshold=thr),
-    name       = name,
-    behavior   = behavior
-  )
+    if (num_of_behaviors == 1L) {
+      status_arg <- matrix(as.integer(cumadopt[, , 1L]), nrow = n, ncol = t)
+    } else {
+      status_arg <- lapply(seq_len(num_of_behaviors), function(q)
+        matrix(as.integer(cumadopt[, , q]), nrow = n, ncol = t))
+    }
+
+    out <- new_diffnet(
+      graph      = sgraph,
+      status     = status_arg,
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
+
+  } else {
+
+    if (num_of_behaviors==1) {
+      toa <- as.integer(toa)
+    } else {
+      toa <- array(as.integer(toa), dim = dim(toa))
+    }
+
+    out <- new_diffnet(
+      graph      = sgraph,
+      toa        = toa,
+      self       = isself,
+      t0         = 1,
+      t1         = t,
+      vertex.static.attrs = data.frame(real_threshold=thr),
+      name       = name,
+      behavior   = behavior
+    )
+  }
 
   # M8: if lineage tracking was active in the simulation loop, build the
   # transmission tree from the accumulated rows and auto-promote the diffnet

@@ -158,3 +158,62 @@ test_that("adoptmech_logit composes with disadoptmech_random in rdiffnet", {
   expect_s3_class(dn, "diffnet")
   expect_equal(length(dn$toa), 50)
 })
+
+# ----------------------------------------------------------------------------
+# Regression: disadoption must not erase a behaviour's adoption history.
+# ----------------------------------------------------------------------------
+
+test_that("disadoption preserves the adoption history (no toa erasure)", {
+
+  # behaviour 2 displaces behaviour 1 wherever both are currently held
+  winner <- function(expo, cumadopt, time) {
+    has <- cumadopt[, time, ]
+    list(which(has[, 1] == 1 & has[, 2] == 1), integer())
+  }
+
+  set.seed(1231)
+  dn <- rdiffnet(
+    n = 300, t = 12, seed.graph = "small-world",
+    rgraph.args    = list(k = 4, p = .2),
+    seed.p.adopt   = list(0.20, 0.05),
+    threshold.dist = runif(300, .2, .4),
+    behavior       = list("b1", "b2"),
+    disadopt       = winner,
+    stop.no.diff   = FALSE
+  )
+
+  A <- dn$cumadopt[[1]]                    # behaviour 1, nodes x time
+
+  # (1) history is not erased: cells remain adopted and the seeds survive at t=1
+  expect_gt(sum(A), 0L)
+  expect_gt(mean(A[, 1]), 0)
+
+  # (2) the drop is recorded: at least one node transitions 1 -> 0
+  dropped <- which(apply(A, 1, function(r) any(diff(r) < 0)))
+  expect_gt(length(dropped), 0L)
+
+  # (3) toa keeps first adoption; tod records disadoption, strictly after toa
+  expect_true(all(!is.na(toa(dn)[dropped, 1])))
+  expect_true(all(!is.na(tod(dn)[dropped, 1])))
+  expect_true(all(tod(dn)[dropped, 1] > toa(dn)[dropped, 1]))
+
+  # (4) split_behaviors inherits the corrected (non-zero) history
+  sb <- split_behaviors(dn)
+  expect_gt(sum(sb[[1]]$cumadopt), 0L)
+})
+
+test_that("disadoption that never fires is identical to no disadoption", {
+
+  noop <- function(expo, cumadopt, time) list(integer(), integer())
+  args <- list(
+    n = 200, t = 10, seed.graph = "small-world",
+    rgraph.args = list(k = 4, p = .2), seed.p.adopt = list(0.10, 0.05),
+    threshold.dist = 0.30, behavior = list("b1", "b2")
+  )
+
+  set.seed(77); d_noop  <- do.call(rdiffnet, c(args, list(disadopt = noop)))
+  set.seed(77); d_plain <- do.call(rdiffnet, args)
+
+  expect_identical(d_noop$cumadopt, d_plain$cumadopt)
+  expect_identical(toa(d_noop), toa(d_plain))
+})
