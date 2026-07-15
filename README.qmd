@@ -2,6 +2,10 @@
 format: gfm
 ---
 
+## Checklist (to be filled by @aoliveram)
+
+
+
 ```{r}
 #| label: setup
 #| echo: false
