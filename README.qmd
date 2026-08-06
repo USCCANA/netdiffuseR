@@ -107,6 +107,16 @@ library(netdiffuseR)
 
 ```{r plot_infectsuscept}
 # Generating a random graph
+
+<!-- how-to-cite -->
+> [!NOTE]
+> **How to cite netdiffuseR.** If you use **netdiffuseR** in published work, please cite it:
+>
+> Valente TW, Vega Yon GG (2020). Diffusion/Contagion Processes on Social Networks. *Health Education & Behavior* 47(2), 235-248. doi:[10.1177/1090198120901497](https://doi.org/10.1177/1090198120901497)
+>
+> Run `citation("netdiffuseR")` in R for the BibTeX entry.
+<!-- how-to-cite -->
+
 set.seed(1234)
 n <- 100
 nper <- 20

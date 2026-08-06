@@ -9,6 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- how-to-cite -->
+> **How to cite.** If you use **netdiffuseR** in published work, please cite it — run
+> `citation("netdiffuseR")` in R for the full entry.
+<!-- how-to-cite -->
+
 \tableofcontents
 
 News for **netdiffuseR** package.

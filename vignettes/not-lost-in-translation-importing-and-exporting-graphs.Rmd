@@ -10,6 +10,11 @@ vignette: >
 output: html_vignette
 ---
 
+<!-- how-to-cite -->
+> **How to cite.** If you use **netdiffuseR** in published work, please cite it — run
+> `citation("netdiffuseR")` in R for the full entry.
+<!-- how-to-cite -->
+
 \tableofcontents
 
 # Introduction
