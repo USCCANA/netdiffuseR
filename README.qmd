@@ -105,9 +105,6 @@ library(netdiffuseR)
 
 ### Infectiousness and Susceptibility
 
-```{r plot_infectsuscept}
-# Generating a random graph
-
 <!-- how-to-cite -->
 > [!NOTE]
 > **How to cite netdiffuseR.** If you use **netdiffuseR** in published work, please cite it:
@@ -117,6 +114,8 @@ library(netdiffuseR)
 > Run `citation("netdiffuseR")` in R for the BibTeX entry.
 <!-- how-to-cite -->
 
+```{r plot_infectsuscept}
+# Generating a random graph
 set.seed(1234)
 n <- 100
 nper <- 20
