@@ -10,6 +10,11 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
+<!-- how-to-cite -->
+> **How to cite.** If you use **netdiffuseR** in published work, please cite it — run
+> `citation("netdiffuseR")` in R for the full entry.
+<!-- how-to-cite -->
+
 ```{r Setup, echo=FALSE}
 library(knitr)
 knitr::opts_chunk$set(fig.width=9, fig.height=6, out.width="600px",fig.align = "center")
