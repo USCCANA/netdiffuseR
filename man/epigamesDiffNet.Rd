@@ -14,6 +14,21 @@ A directed dynamic graph with 594 vertices and 15 time periods. The attributes
 in the graph are described in \code{\link{epigames}}.
 }
 \details{
+By default, this \code{diffnet} object is **non-cumulative** (each slice represents 
+ephemeral daily contacts) and **valued** (edge weights represent contact duration in seconds). 
+
+To reconstruct the classic cumulative/binarized network, you can run:
+
+\preformatted{
+epigames_cumul <- epigamesDiffNet
+
+# 1. Accumulate the history across time periods
+epigames_cumul$graph <- Reduce("+", epigames_cumul$graph, accumulate = TRUE)
+
+# 2. Apply a logical cut-off to binarize the network
+epigames_cumul$graph <- lapply(epigames_cumul$graph, function(m) { m@x[] <- 1; m })
+}
+
 Non-adopters have \code{toa = NA}.
 }
 \seealso{
