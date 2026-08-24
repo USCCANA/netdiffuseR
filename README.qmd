@@ -2,8 +2,58 @@
 format: gfm
 ---
 
-## Checklist (to be filled by @aoliveram)
+## Checklist - review by layers
 
+PR #79 is large, so we review it in layers, ordered from the core 
+of the package outward. Each layer only depends on the ones
+above it and carries its own tests.
+
+| # | Layer | Main files | Tests | Milestones | Review question |
+|---|-------|-----------|-------|------------|-----------------|
+| 1 | Canonical state: `$status` | `R/diffnet-class.r`, `R/adjmat.r`, `R/status_accessors.R` | `test-status-slot.R`, `test-adjmat.R`, `test-diffnet-class.R` | M1, M5 | Multi-cycle state is representable; legacy objects are bit-identical |
+| 2 | The `diffnet_epi` class + transmission tree | `R/diffnet-epi.R`, `R/transmission.R` (class side) | `test-diffnet-epi.R`, `test-transmission.R` | M1, M7 | Tree schema and promotion/accessors are sound |
+| 3 | Simulation engine: pluggable mechanisms in `rdiffnet()` | `R/rdiffnet.r`, `R/adoption_mechanisms.R`, `R/disadoption_mechanisms.R`, `R/source_attribution.R`, `R/stats.R` (`link_fun`) | `test-rdiffnet*.R`, `test-exposure-link-fun.R`, `test-stochastic-exposure.R` | M2, M3, M6, M8 (M4 superseded by M6) | Callback contracts; without the new args, `rdiffnet()` is unchanged |
+| 4 | Epidemiological metrics | `R/epi_metrics.R`, `R/stats.R` (`hazard_rate`) | `test-epi-metrics.R`, `test-stats.R` | M10, M11, M12, M12.2 | Definitions match Lloyd-Smith / `epiworldR` conventions |
+| 5 | Post-hoc reconstruction + Epigames data | `R/transmission.R` (reconstruction), `data-raw/` | `test-transmission.R` | M13 | Post-hoc tree matches the online one; dataset builds cleanly |
+| 6 | Documentation & release | `vignettes/epidemiological-analysis.Rmd`, `man/`, `NEWS.md` | `R CMD check` / pkgdown | M14 | The documentation tells the truth about the code |
+
+### Layer 1 — Canonical state (`$status`)  [M1, M5]
+- [ ] `new_diffnet(status = )` accepts an n × T matrix (list of Q for multi-behavior); `toa` and `tod` are *derived* from `$status`.
+- [ ] Accessors: `toa()`, `tod()`, `toa_all()`, `tod_all()` (full multi-cycle event history).
+- [ ] Validators in `R/adjmat.r` reject malformed status arrays.
+- [ ] Backward compatibility: with `status` unset, every existing function returns identical results.
+- Tests: `test-status-slot.R`, `test-adjmat.R`, `test-diffnet-class.R`.
+
+### Layer 2 — `diffnet_epi` + `$transmission`  [M1, M7]
+- [ ] Tree schema: `date, source, target, source_exposure_date, virus_id, virus`; seeds have `source = NA`.
+- [ ] `as_diffnet_epi()`, `as_transmission_tree()`, `is.diffnet_epi()`, `transmission_tree()`; `print`/`summary` methods.
+- [ ] `diffnet_epi` inherits from `diffnet`: every base method still dispatches.
+- Tests: `test-diffnet-epi.R`, `test-transmission.R` (class side).
+
+### Layer 3 — Simulation engine  [M2, M3, M6, M8]
+- [ ] `adoption_mechanism =` callback + `adoptmech_threshold` / `_logit` / `_probit` (M6; supersedes M4's string API).
+- [ ] `disadopt =` callback + `disadoptmech_random` / `_bithreshold` / `_logit` / `_probit`; finalization flows through `$status` (SIRS-safe).
+- [ ] `source_attribution =` online lineage tracking (`_uniform` / `_weighted` / `_earliest`), auto-promotion to `diffnet_epi` (M8).
+- [ ] Stochastic exposure: `exposure.mode = "stochastic"` + `link_fun` (`identity`, `linear`, `sigmoid`, `wells-riley`, user function) (M2–M3).
+- [ ] Backward compatibility: without the new arguments, `rdiffnet()` output is unchanged.
+- Tests: `test-rdiffnet.R`, `test-rdiffnet-disadoption.R`, `test-rdiffnet-source-attribution.R`, `test-rdiffnet-stochastic.R`, `test-rdiffnet-cross-coupling.R`, `test-exposure-link-fun.R`, `test-stochastic-exposure.R`.
+
+### Layer 4 — Epidemiological metrics  [M10, M11, M12, M12.2]
+- [ ] `peak_prevalence()`, `peak_time()`, `secondary_attack_rate()`, `generation_time()`, `survival_curve()`; `summary.diffnet_epi` rollup.
+- [ ] `repr_number()`: mean offspring per infection event; seeds count as cases, terminal cases stay in the denominator; per-event keying under SIRS (M12.2); offspring-distribution `plot()`.
+- [ ] `hazard_rate()` reads `$status` (fresh-adoption indicator); bit-identical for absorbing diffnets (M11).
+- [ ] Cross-check: bit-equivalence with `epiworldR::get_reproductive_number()` under single-adoption regime.
+- Tests: `test-epi-metrics.R`, `test-stats.R`.
+
+### Layer 5 — Post-hoc reconstruction + Epigames  [M13]
+- [ ] `transmission_tree_from_events()` on a plain diffnet; parity-tested against the online path.
+- [ ] `data-raw/` pipeline → `epigamesDiffNet` (594 nodes, 15 daily slices, tree attached).
+- Tests: `test-transmission.R` (reconstruction + epigames smoke test).
+
+### Layer 6 — Documentation & release  [M14]
+- [ ] Vignette `epidemiological-analysis.Rmd` runs and matches the current API.
+- [ ] Man pages for every exported function; `NEWS.md` for 1.26.0; README.
+- Check: `R CMD check` clean; pkgdown builds.
 
 
 ```{r}
