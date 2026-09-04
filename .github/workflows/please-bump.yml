@@ -1,0 +1,30 @@
+name: please-bump
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [master]
+
+permissions:
+  contents: read
+  # A PR from a fork gets a read-only GITHUB_TOKEN no matter what this says,
+  # so please-bump can't post/update its sticky comment there -- it logs a
+  # warning and continues; the pass/fail result and step summary are
+  # unaffected either way. `pull_request_target` would fix that, but it
+  # hands a write-scoped token to a job that also diffs/checks out the
+  # fork's own code, which needs careful sandboxing to be safe -- not worth
+  # it just for a comment. Report-only-for-forks is the deliberate tradeoff.
+  pull-requests: write
+
+jobs:
+  please-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gvegayon/please-bump@v1
+        with:
+          # Report-only for now: posts the sticky comment, never reddens a PR.
+          # Flip to true once we've seen it behave on real PRs.
+          fail-on-error: false
