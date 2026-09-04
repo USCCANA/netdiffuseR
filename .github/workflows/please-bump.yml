@@ -3,6 +3,7 @@ name: please-bump
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    branches: [master]
 
 permissions:
   contents: read
