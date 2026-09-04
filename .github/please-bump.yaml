@@ -1,0 +1,16 @@
+version: 1
+groups:
+  netdiffuseR:
+    paths:
+      - R/
+      - src/
+      - inst/
+      - man/
+      - man-roxygen/
+      - data-raw/
+      - DESCRIPTION
+      - NAMESPACE
+      - NEWS.md
+    rules:
+      - preset: r-package
+      - preset: r-news-changes

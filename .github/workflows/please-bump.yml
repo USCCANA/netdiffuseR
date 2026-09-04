@@ -1,0 +1,22 @@
+name: please-bump
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  please-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gvegayon/please-bump@v1
+        with:
+          # Report-only for now: posts the sticky comment, never reddens a PR.
+          # Flip to true once we've seen it behave on real PRs.
+          fail-on-error: false
