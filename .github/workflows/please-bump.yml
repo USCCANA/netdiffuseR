@@ -5,6 +5,13 @@ on:
     types: [opened, synchronize, reopened]
     branches: [master]
 
+# Without this, two quick pushes to the same PR can start two overlapping
+# runs; both read "no sticky comment yet" before either has posted one, and
+# both create one. Cancelling the superseded run keeps exactly one comment.
+concurrency:
+  group: please-bump-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   # A PR from a fork gets a read-only GITHUB_TOKEN no matter what this says,
