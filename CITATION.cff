@@ -1,0 +1,74 @@
+cff-version: 1.2.0
+message: 'To cite package "netdiffuseR" in publications use:'
+type: software
+license: MIT
+title: 'netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks'
+version: 1.25.0
+doi: 10.32614/CRAN.package.netdiffuseR
+abstract: 'Empirical statistical analysis, visualization and simulation of diffusion
+  and contagion processes on networks. The package implements algorithms for calculating
+  network diffusion statistics such as transmission rate, hazard rates, exposure models,
+  network threshold levels, infectiousness (contagion), and susceptibility. The package
+  is inspired by work published in Valente, et al., (2015) <DOI:10.1016/j.socscimed.2015.10.001>;
+  Valente (1995) <ISBN: 9781881303213>, Myers (2000) <DOI:10.1086/303110>, Iyengar
+  and others (2011) <DOI:10.1287/mksc.1100.0566>, Burt (1987) <DOI:10.1086/228667>;
+  among others.'
+authors:
+- family-names: Vega Yon
+  given-names: George
+  email: g.vegayon@gmail.com
+  orcid: https://orcid.org/0000-0002-3171-0844
+- family-names: Valente
+  given-names: Thomas
+  email: tvalente@usc.edu
+  orcid: https://orcid.org/0000-0002-8824-5816
+- family-names: Olivera Morales
+  given-names: Anibal
+  orcid: https://orcid.org/0009-0000-3736-7939
+preferred-citation:
+  type: article
+  title: Diffusion/Contagion Processes on Social Networks
+  authors:
+  - family-names: Valente
+    given-names: Thomas
+    orcid: https://orcid.org/0000-0002-8824-5816
+    email: tvalente@usc.edu
+  - family-names: Vega Yon
+    given-names: George
+    orcid: https://orcid.org/0000-0002-3171-0844
+    email: g.vegayon@gmail.com
+  journal: Health Education & Behavior
+  year: '2020'
+  month: '2'
+  volume: '47'
+  issue: '2'
+  issn: 1090-1981
+  doi: 10.1177/1090198120901497
+  url: https://doi.org/10.1177/1090198120901497
+  notes: 'PMID: 32090655'
+  start: 235-248
+repository: https://CRAN.R-project.org/package=netdiffuseR
+repository-code: https://github.com/USCCANA/netdiffuseR
+url: https://USCCANA.github.io/netdiffuseR/
+contact:
+- family-names: Vega Yon
+  given-names: George
+  email: g.vegayon@gmail.com
+  orcid: https://orcid.org/0000-0002-3171-0844
+references:
+- type: manual
+  title: 'netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks'
+  authors:
+  - family-names: Vega Yon
+    given-names: George
+    orcid: https://orcid.org/0000-0002-3171-0844
+  - family-names: Olivera Morales
+    given-names: Anibal
+    orcid: https://orcid.org/0009-0000-3736-7939
+  - family-names: Valente
+    given-names: Thomas
+    orcid: https://orcid.org/0000-0002-8824-5816
+  year: '2026'
+  notes: R package version 1.25.0
+  url: https://github.com/USCCANA/netdiffuseR
+  doi: 10.32614/CRAN.package.netdiffuseR

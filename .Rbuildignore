@@ -41,3 +41,4 @@ netdiffuseR\.Rcheck
 ^\.devcontainer$
 ^\.vscode$
 ^scripts$
+^CITATION\.cff$
