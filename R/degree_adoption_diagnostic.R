@@ -78,12 +78,14 @@
 #'
 #' # Different degree aggregation strategies
 #' result_first <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "first")
-#' result_last  <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
+#' result_last <- degree_adoption_diagnostic(kfamilyDiffNet, degree_strategy = "last")
 #'
 #' # Multi-diffusion (toy) ----------------------------------------------------
 #' set.seed(999)
-#' n <- 40; t <- 5; q <- 2
-#' garr <- rgraph_ws(n, t, p=.3)
+#' n <- 40
+#' t <- 5
+#' q <- 2
+#' garr <- rgraph_ws(n, t, p = .3)
 #' diffnet_multi <- rdiffnet(seed.graph = garr, t = t, seed.p.adopt = rep(list(0.1), q))
 #'
 #' # pooled (one combined analysis)
@@ -96,20 +98,19 @@
 #' @family statistics
 #' @export
 degree_adoption_diagnostic <- function(
-  graph,
-  degree_strategy = c("mean", "first", "last"),
-  bootstrap = TRUE,
-  R = 1000,
-  conf.level = 0.95,
-  toa = NULL,
-  t0 = NULL, t1 = NULL,
-  name = NULL,
-  behavior = NULL,
-  combine = c("none", "pooled", "average", "earliest"),
-  min_adopters = 3,
-  valued = getOption("diffnet.valued", FALSE),
-  ...
-) {
+    graph,
+    degree_strategy = c("mean", "first", "last"),
+    bootstrap = TRUE,
+    R = 1000,
+    conf.level = 0.95,
+    toa = NULL,
+    t0 = NULL, t1 = NULL,
+    name = NULL,
+    behavior = NULL,
+    combine = c("none", "pooled", "average", "earliest"),
+    min_adopters = 3,
+    valued = getOption("diffnet.valued", FALSE),
+    ...) {
   # Check that bootstrap is a logical scalar
   if (!is.logical(bootstrap) || length(bootstrap) != 1 || is.na(bootstrap)) {
     stop("'bootstrap' must be a logical scalar")
@@ -154,8 +155,10 @@ degree_adoption_diagnostic <- function(
       }
       behavior_indices <- match(behavior, colnames(toa))
       if (any(is.na(behavior_indices))) {
-        stop("Some behavior names not found in colnames(toa): ",
-             paste(behavior[is.na(behavior_indices)], collapse = ", "))
+        stop(
+          "Some behavior names not found in colnames(toa): ",
+          paste(behavior[is.na(behavior_indices)], collapse = ", ")
+        )
       }
     } else if (is.numeric(behavior)) {
       behavior_indices <- behavior
@@ -186,8 +189,10 @@ degree_adoption_diagnostic <- function(
   combined_data <- prepare_combined_data(degrees, toa, combine, min_adopters, Q)
 
   if (nrow(combined_data) < min_adopters) {
-    stop("Insufficient adopters for correlation analysis. (n=", nrow(combined_data),
-      ", minimum = ", min_adopters, ").")
+    stop(
+      "Insufficient adopters for correlation analysis. (n=", nrow(combined_data),
+      ", minimum = ", min_adopters, ")."
+    )
   }
 
   # Compute correlations
@@ -200,8 +205,8 @@ degree_adoption_diagnostic <- function(
     NULL
   }
 
-  # Determine if undirected (graph is always a diffnet here)
-  undirected <- isTRUE(is_undirected(graph))
+  # Determine if undirected by checking matrices
+  undirected <- check_undirected_graph(graph)
 
   # Return results
   structure(list(
@@ -232,8 +237,12 @@ process_graph_input <- function(graph, toa, t0, t1, name, ...) {
   # If graph is a list, ensure all elements are dgCMatrix
   if (is.list(graph)) {
     graph <- lapply(graph, function(g) {
-      if (inherits(g, "dgCMatrix")) return(g)
-      if (is.matrix(g)) return(as(Matrix::Matrix(g, sparse = TRUE), "dgCMatrix"))
+      if (inherits(g, "dgCMatrix")) {
+        return(g)
+      }
+      if (is.matrix(g)) {
+        return(as(Matrix::Matrix(g, sparse = TRUE), "dgCMatrix"))
+      }
       stop("All elements of the graph list must be matrices or dgCMatrix.")
     })
   }
@@ -271,31 +280,16 @@ compute_degree_measures <- function(graph, degree_strategy, valued) {
     indegree <- rowMeans(dgr(graph, cmode = "indegree", valued = valued), na.rm = TRUE)
     outdegree <- rowMeans(dgr(graph, cmode = "outdegree", valued = valued), na.rm = TRUE)
   } else {
-    deg_matrix <- dgr(graph, valued = valued)
-    if (length(dim(deg_matrix)) == 3) {
-      # Dynamic case
-      if (degree_strategy == "first") {
-        indegree <- deg_matrix[, 1, "indegree"]
-        outdegree <- deg_matrix[, 1, "outdegree"]
-      } else if (degree_strategy == "last") {
-        last_time <- dim(deg_matrix)[2]
-        indegree <- deg_matrix[, last_time, "indegree"]
-        outdegree <- deg_matrix[, last_time, "outdegree"]
-      }
-    } else if (length(dim(deg_matrix)) == 2) {
-      # Static case: check for column names, else use position
-      cn <- colnames(deg_matrix)
-      if (!is.null(cn) && all(c("indegree", "outdegree") %in% cn)) {
-        indegree <- deg_matrix[, "indegree"]
-        outdegree <- deg_matrix[, "outdegree"]
-      } else if (ncol(deg_matrix) >= 2) {
-        indegree <- deg_matrix[, 1]
-        outdegree <- deg_matrix[, 2]
-      } else {
-        stop("Degree matrix does not have expected columns for static graph.")
-      }
-    } else {
-      stop("Unexpected degree matrix dimensions in compute_degree_measures.")
+    # Request in-degree and out-degree separately and explicitly
+    indeg_mat <- dgr(graph, cmode = "indegree", valued = valued)
+    outdeg_mat <- dgr(graph, cmode = "outdegree", valued = valued)
+
+    if (degree_strategy == "first") {
+      indegree <- if (is.matrix(indeg_mat)) indeg_mat[, 1] else indeg_mat
+      outdegree <- if (is.matrix(outdeg_mat)) outdeg_mat[, 1] else outdeg_mat
+    } else { # last
+      indegree <- if (is.matrix(indeg_mat)) indeg_mat[, ncol(indeg_mat)] else indeg_mat
+      outdegree <- if (is.matrix(outdeg_mat)) outdeg_mat[, ncol(outdeg_mat)] else outdeg_mat
     }
   }
 
@@ -328,8 +322,8 @@ analyze_multi_behaviors_separately <- function(degrees, toa, min_adopters, boots
         toa = toa_q[adopters_q]
       )
 
-      correlations_matrix[1, q] <- cor_safe(data_q$indegree, data_q$toa )
-      correlations_matrix[2, q] <- cor_safe(data_q$outdegree, data_q$toa )
+      correlations_matrix[1, q] <- cor_safe(data_q$indegree, data_q$toa)
+      correlations_matrix[2, q] <- cor_safe(data_q$outdegree, data_q$toa)
       sample_sizes[q] <- nrow(data_q)
 
       if (bootstrap) {
@@ -341,11 +335,7 @@ analyze_multi_behaviors_separately <- function(degrees, toa, min_adopters, boots
   }
 
   # Determine if undirected
-  undirected <- if (inherits(graph, "diffnet")) {
-    is_undirected(graph)
-  } else {
-    check_undirected_graph(graph)
-  }
+  undirected <- check_undirected_graph(graph)
 
   structure(list(
     correlations = correlations_matrix,
@@ -391,7 +381,9 @@ prepare_combined_data <- function(degrees, toa, combine, min_adopters, Q) {
   } else if (combine == "earliest") {
     # Earliest TOA across behaviors per actor
     toa_min <- apply(toa, 1, function(row) {
-      if (all(is.na(row))) return(NA_real_)
+      if (all(is.na(row))) {
+        return(NA_real_)
+      }
       min(row, na.rm = TRUE)
     })
     toa_min[is.infinite(toa_min)] <- NA
@@ -414,12 +406,12 @@ compute_correlations <- function(data) {
 
 compute_bootstrap_results <- function(combined_data, R, conf.level) {
   # Compute baseline correlations
-  base_corr   <- compute_correlations(combined_data)
-  indeg_corr  <- base_corr[["indegree_toa"]]
+  base_corr <- compute_correlations(combined_data)
+  indeg_corr <- base_corr[["indegree_toa"]]
   outdeg_corr <- base_corr[["outdegree_toa"]]
 
   indeg_boot_list <- NULL
-  out_boot_list   <- NULL
+  out_boot_list <- NULL
 
   # Out-degree
   if (!is.na(outdeg_corr)) {
@@ -430,13 +422,16 @@ compute_bootstrap_results <- function(combined_data, R, conf.level) {
     }
     boot_obj_out <- boot::boot(combined_data, statistic = safe_bootstrap_out, R = R)
     bias_out <- mean(boot_obj_out$t, na.rm = TRUE) - outdeg_corr
-    se_out   <- stats::sd(boot_obj_out$t, na.rm = TRUE)
+    se_out <- stats::sd(boot_obj_out$t, na.rm = TRUE)
 
-    ci_out <- tryCatch({
-      bci <- boot::boot.ci(boot_obj_out, conf = conf.level, type = "perc")
-      # Percentile CI vector (low, high)
-      if (!is.null(bci$percent)) bci$percent[4:5] else NULL
-    }, error = function(e) NULL)
+    ci_out <- tryCatch(
+      {
+        bci <- boot::boot.ci(boot_obj_out, conf = conf.level, type = "perc")
+        # Percentile CI vector (low, high)
+        if (!is.null(bci$percent)) bci$percent[4:5] else NULL
+      },
+      error = function(e) NULL
+    )
 
     out_boot_list <- list(
       correlation = outdeg_corr,
@@ -462,12 +457,15 @@ compute_bootstrap_results <- function(combined_data, R, conf.level) {
     }
     boot_obj_in <- boot::boot(combined_data, statistic = safe_bootstrap_in, R = R)
     bias_in <- mean(boot_obj_in$t, na.rm = TRUE) - indeg_corr
-    se_in   <- stats::sd(boot_obj_in$t, na.rm = TRUE)
+    se_in <- stats::sd(boot_obj_in$t, na.rm = TRUE)
 
-    ci_in <- tryCatch({
-      bci <- boot::boot.ci(boot_obj_in, conf = conf.level, type = "perc")
-      if (!is.null(bci$percent)) bci$percent[4:5] else NULL
-    }, error = function(e) NULL)
+    ci_in <- tryCatch(
+      {
+        bci <- boot::boot.ci(boot_obj_in, conf = conf.level, type = "perc")
+        if (!is.null(bci$percent)) bci$percent[4:5] else NULL
+      },
+      error = function(e) NULL
+    )
 
     indeg_boot_list <- list(
       correlation = indeg_corr,
@@ -504,11 +502,15 @@ create_empty_result <- function(degree_strategy, original_call, combine, sample_
 }
 
 check_undirected_graph <- function(graph) {
+  # If the input is a diffnet, we extract its raw list of matrices
+  if (inherits(graph, "diffnet")) {
+    graph <- graph$graph
+  }
   if (is.list(graph)) {
     return(all(sapply(graph, function(g) isSymmetric(as.matrix(g)))))
   }
   if (is.array(graph) && length(dim(graph)) == 3) {
-    return(all(sapply(seq_len(dim(graph)[3]), function(t) isSymmetric(as.matrix(graph[,,t])))))
+    return(all(sapply(seq_len(dim(graph)[3]), function(t) isSymmetric(as.matrix(graph[, , t])))))
   }
   if (is.matrix(graph)) {
     return(isSymmetric(as.matrix(graph)))
@@ -568,7 +570,7 @@ print_single_behavior_results <- function(x, undirected) {
   # Print correlations
   cat("Correlations:\n")
   if (undirected) {
-    deg_r <- indeg_r  # For undirected graphs, in-degree = out-degree = degree
+    deg_r <- indeg_r # For undirected graphs, in-degree = out-degree = degree
     cat(sprintf("  Degree - Time of Adoption: %.3f\n", deg_r))
   } else {
     cat(sprintf("  In-degree  - Time of Adoption: %.3f\n", indeg_r))
@@ -582,16 +584,24 @@ print_single_behavior_results <- function(x, undirected) {
     bootstrap_data <- x$bootstrap
     deg_ci <- if (undirected && !is.null(bootstrap_data$indegree$conf_int)) {
       bootstrap_data$indegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     indeg_ci <- if (!is.null(bootstrap_data$indegree$conf_int)) {
       bootstrap_data$indegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     outdeg_ci <- if (!is.null(bootstrap_data$outdegree$conf_int)) {
       bootstrap_data$outdegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     lvl <- if (!is.null(bootstrap_data$indegree$conf_level)) {
       bootstrap_data$indegree$conf_level * 100
-    } else NA_real_
+    } else {
+      NA_real_
+    }
 
     if (undirected) {
       explain_degree_correlation("Degree", deg_r, deg_ci, lvl_arg = lvl)
@@ -648,16 +658,24 @@ print_multi_behavior_results <- function(x, undirected) {
     bootstrap_data <- if (!is.null(x$bootstrap)) x$bootstrap[[j]] else NULL
     deg_ci <- if (undirected && !is.null(bootstrap_data) && !is.null(bootstrap_data$indegree$conf_int)) {
       bootstrap_data$indegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     indeg_ci <- if (!is.null(bootstrap_data) && !is.null(bootstrap_data$indegree$conf_int)) {
       bootstrap_data$indegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     outdeg_ci <- if (!is.null(bootstrap_data) && !is.null(bootstrap_data$outdegree$conf_int)) {
       bootstrap_data$outdegree$conf_int
-    } else NULL
+    } else {
+      NULL
+    }
     lvl <- if (!is.null(bootstrap_data) && !is.null(bootstrap_data$indegree$conf_level)) {
       bootstrap_data$indegree$conf_level * 100
-    } else NA_real_
+    } else {
+      NA_real_
+    }
 
     cat(sprintf("  [%s]\n", bname))
     if (undirected) {
@@ -696,14 +714,20 @@ explain_degree_correlation <- function(label, r, ci, lvl_arg = NA_real_, thr = 0
 
 format_interpretation_no_ci <- function(label, r, abs_big, degree_term, thr) {
   if (!abs_big) {
-    cat(sprintf("  %s: Weak relationship between %s and adoption timing:\n             |r| \u2264 %.1f; no CI.\n",
-                label, degree_term, thr))
-  } else if (r > 0) {
-    cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters):\n             |r| > %.1f; no CI.\n",
-                label, degree_term, thr))
+    cat(sprintf(
+      "  %s: Weak relationship between %s and adoption timing:\n             |r| \u2264 %.1f; no CI.\n",
+      label, degree_term, thr
+    ))
+  } else if (r < 0) {
+    cat(sprintf(
+      "  %s: Central actors (high %s) tended to adopt early (supporters):\n             |r| > %.1f; no CI.\n",
+      label, degree_term, thr
+    ))
   } else {
-    cat(sprintf("  %s: Central actors (high %s) tended to adopt late (opposers):\n             |r| > %.1f; no CI.\n",
-                label, degree_term, thr))
+    cat(sprintf(
+      "  %s: Central actors (high %s) tended to adopt late (opposers):\n             |r| > %.1f; no CI.\n",
+      label, degree_term, thr
+    ))
   }
 }
 
@@ -711,34 +735,51 @@ format_interpretation_with_ci <- function(label, r, ci, abs_big, degree_term, th
   lvl_local <- if (!is.na(lvl_arg)) lvl_arg else 95
   ci_includes_zero <- (length(ci) >= 2) && is.finite(ci[1]) && is.finite(ci[2]) && (ci[1] <= 0 && ci[2] >= 0)
 
+  ci_low <- if (length(ci) >= 1) ci[1] else NA_real_
+  ci_high <- if (length(ci) >= 2) ci[2] else NA_real_
+
   if (!abs_big) {
-    cat(sprintf("  %s: Weak relationship between %s and adoption timing; %s statistically supported:\n             |r| \u2264 %.1f; CI (%.1f%%) %s 0.\n",
-                label, degree_term,
-                if (ci_includes_zero) "NOT" else "",
-                thr, lvl_local,
-                if (ci_includes_zero) "includes" else "excludes"))
-  } else if (r > 0) {
-    cat(sprintf("  %s: Central actors (high %s) tended to adopt early (supporters); %s statistically supported:\n             |r| > %.1f; CI (%.1f%%) %s 0.\n",
-                label, degree_term,
-                if (ci_includes_zero) "NOT" else "",
-                thr, lvl_local,
-                if (ci_includes_zero) "includes" else "excludes"))
+    cat(sprintf(
+      "  %s: Weak relationship between %s and adoption timing; %s statistically supported:\n             |r| \u2264 %.1f; CI (%.1f%%) = [%.3f, %.3f]\n",
+      label, degree_term,
+      if (ci_includes_zero) "NOT" else "",
+      thr, lvl_local,
+      ci_low, ci_high
+    ))
+  } else if (r < 0) {
+    cat(sprintf(
+      "  %s: Central actors (high %s) tended to adopt early (supporters); %s statistically supported:\n             |r| > %.1f; CI (%.1f%%) = [%.3f, %.3f]\n",
+      label, degree_term,
+      if (ci_includes_zero) "NOT" else "",
+      thr, lvl_local,
+      ci_low, ci_high
+    ))
   } else {
-    cat(sprintf("  %s: Central actors (high %s) tended to adopt late (opposers); %s statistically supported:\n             |r| > %.1f; CI (%.1f%%) %s 0.\n",
-                label, degree_term,
-                if (ci_includes_zero) "NOT" else "",
-                thr, lvl_local,
-                if (ci_includes_zero) "includes" else "excludes"))
+    cat(sprintf(
+      "  %s: Central actors (high %s) tended to adopt late (opposers); %s statistically supported:\n             |r| > %.1f; CI (%.1f%%) = [%.3f, %.3f]\n",
+      label, degree_term,
+      if (ci_includes_zero) "NOT" else "",
+      thr, lvl_local,
+      ci_low, ci_high
+    ))
   }
 }
 
 # Safe correlation: returns NA (no warnings) if zero-variance or too few pairs
 cor_safe <- function(x, y) {
-  x <- as.numeric(x); y <- as.numeric(y)
+  x <- as.numeric(x)
+  y <- as.numeric(y)
   ok <- is.finite(x) & is.finite(y)
-  if (!any(ok)) return(NA_real_)
-  x <- x[ok]; y <- y[ok]
-  if (length(x) < 2L) return(NA_real_)
-  if (sd(x) == 0 || sd(y) == 0) return(NA_real_)
+  if (!any(ok)) {
+    return(NA_real_)
+  }
+  x <- x[ok]
+  y <- y[ok]
+  if (length(x) < 2L) {
+    return(NA_real_)
+  }
+  if (sd(x) == 0 || sd(y) == 0) {
+    return(NA_real_)
+  }
   stats::cor(x, y)
 }
