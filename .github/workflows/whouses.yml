@@ -1,0 +1,22 @@
+name: whouses
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: whouses
+
+jobs:
+  whouses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gvegayon/whouses@v0
+        with:
+          data-branch: whouses
+          search-token: ${{ secrets.WHOUSES_SEARCH_PAT }}

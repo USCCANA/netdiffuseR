@@ -1,6 +1,7 @@
 
 
 [![R-CMD-check](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml/badge.svg)](https://github.com/USCCANA/netdiffuseR/actions/workflows/r.yml)
+[![Used by](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/USCCANA/netdiffuseR/whouses/badge.json)](https://github.com/USCCANA/netdiffuseR/blob/whouses/REPORT.md)
 [![codecov.io](https://codecov.io/github/USCCANA/netdiffuseR/coverage.svg?branch=master)](https://app.codecov.io/github/USCCANA/netdiffuseR?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/netdiffuseR)](https://cran.r-project.org/package=netdiffuseR)
