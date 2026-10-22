@@ -623,7 +623,7 @@ new_diffnet <- function(
   }
 
   # Step 2.1: Checking class of TOA and coercing if necessary
-  if (!inherits(toa, "integer")) {
+  if (!is.integer(toa)) {
 
     warning("Coercing -toa- into integer.")
     toa[] <- as.integer(toa)

@@ -1,3 +1,17 @@
+# Changes in netdiffuseR version 1.25.1 (2026-10-21)
+
+## Bug fixes
+
+* Multi-behavior simulations with `rdiffnet()` no longer emit a spurious
+  "Coercing -toa- into integer." warning. `new_diffnet()` now checks the storage
+  mode of `toa` instead of its class, which failed for integer matrices (#86).
+
+* `exposure(..., alt.graph = "se")` no longer triggers the deprecated
+  `as(<dgeMatrix>, "dgCMatrix")` coercion from the **Matrix** package.
+  `as_dgCMatrix()` now uses the recommended `dMatrix` -> `generalMatrix` ->
+  `CsparseMatrix` coercion chain (#87).
+
+
 # Changes in netdiffuseR version 1.25.0 (2026-03-27)
 
 ## User-visible changes

@@ -490,7 +490,10 @@ as_spmat <- as_dgCMatrix
 #' @rdname as_dgCMatrix
 as_dgCMatrix.default <- function(x, make.dimnames = TRUE, ...) {
 
-  ans <- methods::as(x, "dgCMatrix")
+  ans <- methods::as(
+    methods::as(methods::as(x, "dMatrix"), "generalMatrix"),
+    "CsparseMatrix"
+  )
 
   # Updating row and colnames if necesary
   if (make.dimnames)
