@@ -42,3 +42,6 @@ netdiffuseR\.Rcheck
 ^\.vscode$
 ^scripts$
 ^CITATION\.cff$
+\.whouses\.yml
+
+
