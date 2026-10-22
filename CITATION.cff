@@ -3,7 +3,7 @@ message: 'To cite package "netdiffuseR" in publications use:'
 type: software
 license: MIT
 title: 'netdiffuseR: Analysis of Diffusion and Contagion Processes on Networks'
-version: 1.25.0
+version: 1.25.1
 doi: 10.32614/CRAN.package.netdiffuseR
 abstract: 'Empirical statistical analysis, visualization and simulation of diffusion
   and contagion processes on networks. The package implements algorithms for calculating
@@ -69,6 +69,6 @@ references:
     given-names: Thomas
     orcid: https://orcid.org/0000-0002-8824-5816
   year: '2026'
-  notes: R package version 1.25.0
+  notes: R package version 1.25.1
   url: https://github.com/USCCANA/netdiffuseR
   doi: 10.32614/CRAN.package.netdiffuseR

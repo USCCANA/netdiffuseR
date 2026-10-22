@@ -177,3 +177,17 @@ test_that("transformGraphBy", {
   expect_equivalent(ans1, ans2)
 
 })
+
+# SE exposure should not use deprecated Matrix coercions (#87)
+test_that("SE exposure avoids deprecated Matrix coercions", {
+
+  # Turning deprecated coercions into errors
+  old <- options(Matrix.warnDeprecatedCoerce = 2)
+  on.exit(options(old))
+
+  set.seed(1231)
+  diffnet <- rdiffnet(100, 5, seed.graph = "small-world")
+
+  expect_silent(exposure(diffnet, alt.graph = "se", valued = TRUE))
+
+})

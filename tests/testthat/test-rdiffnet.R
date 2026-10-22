@@ -210,3 +210,20 @@ test_that("Disadoption works", {
   expect_true(all(should_be_ones_or_zeros %in% c(0,1)))
 
 })
+
+# Multi-behavior simulations should not warn about -toa- coercion (#86)
+test_that("Multi-behavior rdiffnet does not coerce toa", {
+
+  set.seed(1231)
+  expect_silent(
+    ans <- suppressMessages(rdiffnet(
+      200, 10,
+      seed.p.adopt = list(0.1, 0.15),
+      seed.nodes   = list("random", "random"),
+      behavior     = list("Behavior 1", "Behavior 2")
+    ))
+  )
+
+  expect_true(is.integer(ans$toa))
+
+})
