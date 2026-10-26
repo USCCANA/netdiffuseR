@@ -1,7 +1,14 @@
 # Who uses netdiffuseR
 
-- Repositories / packages: **27**
+- Repositories / packages: **31**
 - Papers: **88** (8 appear not to cite the package)
+
+## New this run
+
+- [geowaa/Escaping_social_ecological_trap](https://github.com/geowaa/Escaping_social_ecological_trap) (repo, uses)
+- [gvegayon/fctc](https://github.com/gvegayon/fctc) (repo, uses)
+- [catslab-kaist/SNA_fall_2025](https://github.com/catslab-kaist/SNA_fall_2025) (repo, uses)
+- [mdnieman/website](https://github.com/mdnieman/website) (repo, uses)
 
 ## Papers that use it without citing it
 
