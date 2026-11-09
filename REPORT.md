@@ -1,11 +1,18 @@
 # Who uses netdiffuseR
 
-- Repositories / packages: **32**
-- Papers: **88** (8 appear not to cite the package)
+- Repositories / packages: **33**
+- Papers: **93** (7 appear not to cite the package)
+
+Uncertain items are awaiting review in PR #96.
 
 ## New this run
 
-- [aoliveram/Low-Threshold-E-cigarette-Users](https://github.com/aoliveram/Low-Threshold-E-cigarette-Users) (repo, uses)
+- [Diffusion of Mass Education](https://doi.org/10.1093/oxfordhb/9780197570685.013.19) (paper, uses)
+- [Contributions towards a positive epidemiology of compassion: Exploring the transmission dynamics of acts of microkindness](https://doi.org/10.5502/ijw.v16i2.5521) (paper, uses)
+- [Disentangling social contagion from prior similarity in time-ordered behaviour sequences](https://doi.org/10.1093/jrsssa/qnag069) (paper, uses)
+- [Implementing a primary-tertiary shared care model for enhancing cascade testing for familial hypercholesterolaemia: an effectiveness–implementation hybrid type III pre–post study](https://doi.org/10.1186/s43058-026-00988-x) (paper, uses)
+- [stocnet/infernet](https://github.com/stocnet/infernet) (repo, uses)
+- [Smoking Diffusion through Networks of Diverse, Urban American Adolescents over the High School Period](https://doi.org/10.1177/0022146519870521) (paper, uses)
 
 ## Papers that use it without citing it
 
@@ -22,8 +29,6 @@
   _full text, section “References” (1 mention)_  
   > …hold, academic grades, parental smoking, sibling smoking, being Hispanic/Latino, and fixed effects for school. Analysis conducted using the NetdiffuseR package in R.
 - [Developing a High-Performing Network Computation of Big Bipartite Network Data Toward Alcohol Use Disorder Treatment Referrals](https://doi.org/10.1109/icsc64641.2025.00044) — Muhammad “Tuan” Amith, Sharon Andrews, Angela M. Bowman Heads  
-  _reported by openalex; no open-access full text found to excerpt_
-- [Testing for the money: an analysis on the interdependence of participation in international large-scale assessments and development aid networks](https://doi.org/10.3389/feduc.2025.1429107) — Fabian Besche-Truthe, Helen Seitzer  
   _reported by openalex; no open-access full text found to excerpt_
 - [netrics: Many Marks, Measures, Memberships, and Motifs for Networks](https://doi.org/10.32614/cran.package.netrics) — James Hollway  
   _reported by openalex; no open-access full text found to excerpt_
